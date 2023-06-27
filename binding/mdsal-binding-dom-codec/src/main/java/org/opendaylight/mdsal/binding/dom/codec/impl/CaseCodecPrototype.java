@@ -16,7 +16,7 @@ final class CaseCodecPrototype extends DataObjectCodecPrototype<CaseRuntimeType>
     }
 
     @Override
-    CaseNodeCodecContext<?> createInstance() {
-        return new CaseNodeCodecContext<>(this);
+    CaseCodecContext<?> createInstance() {
+        return new CaseCodecContext<>(this);
     }
 }

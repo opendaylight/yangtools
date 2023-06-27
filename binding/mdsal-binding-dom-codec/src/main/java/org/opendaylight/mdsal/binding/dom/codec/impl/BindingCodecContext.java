@@ -317,7 +317,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             LOG.debug("Instance identifier targeting a choice is not representable ({})", dom);
             return null;
         }
-        if (currentNode instanceof CaseNodeCodecContext) {
+        if (currentNode instanceof CaseCodecContext) {
             LOG.debug("Instance identifier targeting a case is not representable ({})", dom);
             return null;
         }

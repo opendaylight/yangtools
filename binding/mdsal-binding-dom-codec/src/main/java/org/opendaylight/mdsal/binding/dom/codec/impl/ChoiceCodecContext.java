@@ -250,7 +250,7 @@ final class ChoiceCodecContext<D extends DataObject> extends DataContainerCodecC
             return null;
         }
         final var caze = byYangCaseChild.get(first.name());
-        return ((CaseNodeCodecContext<D>) caze.get()).deserialize(data);
+        return ((CaseCodecContext<D>) caze.get()).deserialize(data);
     }
 
     @Override
