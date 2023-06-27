@@ -17,12 +17,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 /**
  * A {@link ContainerNodeCodecContext} specialized for {@code container}s which do not have a presence statement.
  */
-final class NonPresenceContainerNodeCodecContext<D extends DataObject> extends ContainerNodeCodecContext<D> {
+final class StructuralContainerCodecContext<D extends DataObject> extends ContainerNodeCodecContext<D> {
     private static final VarHandle EMPTY_OBJECT;
 
     static {
         try {
-            EMPTY_OBJECT = MethodHandles.lookup().findVarHandle(NonPresenceContainerNodeCodecContext.class,
+            EMPTY_OBJECT = MethodHandles.lookup().findVarHandle(StructuralContainerCodecContext.class,
                 "emptyObject", DataObject.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
@@ -32,7 +32,7 @@ final class NonPresenceContainerNodeCodecContext<D extends DataObject> extends C
     @SuppressWarnings("unused")
     private volatile D emptyObject;
 
-    NonPresenceContainerNodeCodecContext(final DataContainerCodecPrototype<ContainerLikeRuntimeType<?, ?>> prototype) {
+    StructuralContainerCodecContext(final DataContainerCodecPrototype<ContainerLikeRuntimeType<?, ?>> prototype) {
         super(prototype);
     }
 

@@ -50,7 +50,7 @@ non-sealed class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extend
             if (containerLike instanceof ContainerRuntimeType container
                 && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class)
                     .isEmpty()) {
-                return new NonPresenceContainerNodeCodecContext(this);
+                return new StructuralContainerCodecContext(this);
             }
             return new ContainerNodeCodecContext(this);
         } else if (type instanceof ListRuntimeType) {

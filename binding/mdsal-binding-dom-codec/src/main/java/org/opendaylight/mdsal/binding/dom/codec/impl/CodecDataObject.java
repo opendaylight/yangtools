@@ -90,8 +90,8 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     private @NonNull Object emptyObject(final @NonNull Class<? extends DataObject> bindingClass) {
         final var childContext = context.getStreamChild(bindingClass);
-        if (childContext instanceof NonPresenceContainerNodeCodecContext<?> nonPresence) {
-            return nonPresence.emptyObject();
+        if (childContext instanceof StructuralContainerCodecContext<?> structural) {
+            return structural.emptyObject();
         }
         throw new VerifyException("Unexpected context " + childContext);
     }
