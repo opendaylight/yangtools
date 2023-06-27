@@ -327,14 +327,6 @@ public final class Naming {
         return getMethodName(name.getLocalName());
     }
 
-    public static @NonNull String getGetterMethodName(final String localName) {
-        return GETTER_PREFIX + toFirstUpper(getPropertyName(localName));
-    }
-
-    public static @NonNull String getGetterMethodName(final QName name) {
-        return GETTER_PREFIX + getGetterSuffix(name);
-    }
-
     public static boolean isGetterMethodName(final String methodName) {
         return methodName.startsWith(GETTER_PREFIX);
     }
@@ -363,11 +355,6 @@ public final class Naming {
 
     public static boolean isRequireMethodName(final String methodName) {
         return methodName.startsWith(REQUIRE_PREFIX);
-    }
-
-    public static @NonNull String getGetterSuffix(final QName name) {
-        final String candidate = toFirstUpper(toCamelCase(name.getLocalName()));
-        return "Class".equals(candidate) ? "XmlClass" : candidate;
     }
 
     public static @NonNull String getPropertyName(final String yangIdentifier) {
