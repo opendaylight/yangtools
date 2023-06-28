@@ -237,6 +237,17 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         assertEquals(cont1Normalized, transformedInput);
     }
 
+    @Test
+    public void parseNotification() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/complexjson/notify.json");
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final var transformedInput = result.getResult().data();
+        assertNotNull(transformedInput);
+    }
+
     private static void verifyTransformationToNormalizedNode(final String inputJson,
             final NormalizedNode awaitedStructure) {
         final var result = new NormalizationResultHolder();
