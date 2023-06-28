@@ -1,0 +1,9 @@
+{
+  "opendaylight-mdsal-binding-test:two-level-list-changed": {
+    "top-level-list": [
+      {
+        "name": "test"
+      }
+    ]
+  }
+}

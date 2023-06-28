@@ -14,9 +14,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArray;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
+import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont2;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -26,12 +28,18 @@ import com.google.gson.JsonPrimitive;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 
 /**
  * Each test tests whether json output obtained after transformation contains is corect. The transformation takes
@@ -286,6 +294,50 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
             TestingNormalizedNodeStructuresCreator.cont2Node());
         final JsonObject cont2 = resolveCont2(jsonOutput);
         assertNotNull(cont2);
+    }
+
+    @Test
+    public void notifyTest() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/complexjson/notify.json");
+        final String expectedJson = "{\n"
+                + "  \"opendaylight-mdsal-binding-test:two-level-list-changed\": {\n"
+                + "    \"top-level-list\": [\n"
+                + "      {\n"
+                + "        \"name\": \"test\"\n"
+                + "      }\n"
+                + "    ]\n"
+                + "  }\n"
+                + "}";
+        final var notify = QName.create("urn:opendaylight:params:xml:ns:yang:mdsal:test:binding",
+                "2014-07-01", "two-level-list-changed");
+        final var topList = QName.create("urn:opendaylight:params:xml:ns:yang:mdsal:test:binding",
+                "2014-07-01", "top-level-list");
+        final var name = QName.create(topList, "name");
+
+        // Find the notification so we can build node
+        final var notification = schemaContext.findNotification(notify).get();
+        final var node = Builders.containerBuilder()
+                .withNodeIdentifier(NodeIdentifier.create(notification.getQName()))
+                .withChild(Builders.mapBuilder()
+                        .withNodeIdentifier(NodeIdentifier.create(notification.dataChildByName(topList).getQName()))
+                        .withChild(Builders.mapEntryBuilder()
+                                .withNodeIdentifier(NodeIdentifierWithPredicates.of(topList, name, "test"))
+                                .build())
+                        .build())
+                .build();
+
+
+        var inference = DefaultSchemaTreeInference
+                .unsafeOf(schemaContext, ImmutableList.of().of(notification.asEffectiveStatement()));
+
+        final Writer writer = new StringWriter();
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+                lhotkaCodecFactory, inference, null, JsonWriterFactory.createJsonWriter(writer, 2));
+        try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
+            nodeWriter.write(node);
+        }
+        String result = writer.toString();
+        assertEquals(expectedJson, result);
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final NormalizedNode inputStructure)

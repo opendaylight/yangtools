@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBu
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
+import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 /**
@@ -235,6 +237,32 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final var transformedInput = result.getResult().data();
         assertNotNull(transformedInput);
         assertEquals(cont1Normalized, transformedInput);
+    }
+
+    @Test
+    public void parseNotification() throws IOException, URISyntaxException {
+        //final String inputJson = loadTextFile("/complexjson/notify.json");
+        final String inputJson = "{\n"
+                + "  \"opendaylight-mdsal-binding-test:two-level-list-changed\": {\n"
+                + "    \"top-level-list\": [\n"
+                + "      {\n"
+                + "        \"name\": \"test\"\n"
+                + "      }\n"
+                + "    ]\n"
+                + "  }\n"
+                + "}";
+        final var result = new NormalizationResultHolder();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var notify = QName.create("urn:opendaylight:params:xml:ns:yang:mdsal:test:binding",
+                "2014-07-01", "two-level-list-changed");
+        final var notification = schemaContext.findNotification(notify).get();
+        var inference = DefaultSchemaTreeInference
+                .unsafeOf(schemaContext, ImmutableList.of().of(notification.asEffectiveStatement()));
+        final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory, inference);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final var transformedInput = result.getResult().data();
+
+        assertNotNull(transformedInput);
     }
 
     private static void verifyTransformationToNormalizedNode(final String inputJson,
