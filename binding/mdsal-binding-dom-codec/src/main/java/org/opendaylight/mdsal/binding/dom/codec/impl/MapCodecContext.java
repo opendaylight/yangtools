@@ -44,7 +44,7 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends DataObject & K
 
         @Override
         Map<I, D> fromMap(final MapNode map, final int size) {
-            return LazyBindingMap.create(this, map, size);
+            return LazyBindingMap.of(this, map, size);
         }
     }
 
@@ -56,9 +56,9 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends DataObject & K
         this.codec = requireNonNull(codec);
     }
 
-    static @NonNull MapCodecContext<?, ?>  of(final Class<? extends DataObject> cls,
-            final ListRuntimeType list, final CodecContextFactory factory) {
-        return of(new MapCodecPrototype(Item.of(cls), list, factory));
+    static @NonNull MapCodecContext<?, ?>  of(final Class<? extends DataObject> cls, final ListRuntimeType type,
+            final CodecContextFactory factory) {
+        return of(new MapCodecPrototype(Item.of(cls), type, factory));
     }
 
     static @NonNull MapCodecContext<?, ?> of(final MapCodecPrototype prototype) {

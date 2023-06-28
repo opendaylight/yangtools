@@ -80,8 +80,8 @@ final class LazyBindingMap<K extends Key<V>, V extends DataObject & KeyAware<K>>
         this.mapNode = requireNonNull(mapNode);
     }
 
-    static <K extends Key<V>, V extends DataObject & KeyAware<K>> @NonNull Map<K, V> create(
-            final Unordered<K, V> codec, final MapNode mapNode, final int size) {
+    static <K extends Key<V>, V extends DataObject & KeyAware<K>> @NonNull Map<K, V> of(final Unordered<K, V> codec,
+            final MapNode mapNode, final int size) {
         if (size == 1) {
             // Do not bother with lazy instantiation in case of a singleton
             final V entry = codec.createBindingProxy(mapNode.body().iterator().next());

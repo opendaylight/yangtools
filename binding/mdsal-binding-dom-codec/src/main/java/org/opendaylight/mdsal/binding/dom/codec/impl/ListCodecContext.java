@@ -64,7 +64,7 @@ sealed class ListCodecContext<D extends DataObject> extends DataObjectCodecConte
     }
 
     @NonNull Object fromMap(final MapNode map, final int size) {
-        return LazyBindingList.create(this, size, map.body());
+        return LazyBindingList.of(this, size, map.body());
     }
 
     private Object fromMap(final MapNode map) {
@@ -76,6 +76,6 @@ sealed class ListCodecContext<D extends DataObject> extends DataObjectCodecConte
     private List<D> fromUnkeyedList(final UnkeyedListNode node) {
         final int size;
         // This should never happen, but we do need to ensure users never see an empty List
-        return (size = node.size()) == 0 ? null : LazyBindingList.create(this, size, node.body());
+        return (size = node.size()) == 0 ? null : LazyBindingList.of(this, size, node.body());
     }
 }

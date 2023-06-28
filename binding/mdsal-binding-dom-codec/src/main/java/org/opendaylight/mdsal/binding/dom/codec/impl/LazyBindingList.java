@@ -72,7 +72,7 @@ final class LazyBindingList<E extends DataObject> extends AbstractList<E> implem
         objects = entries.toArray();
     }
 
-    static <E extends DataObject> @NonNull List<E> create(final ListCodecContext<E> codec, final int size,
+    static <E extends DataObject> @NonNull List<E> of(final ListCodecContext<E> codec, final int size,
             final Collection<? extends DataContainerNode> entries) {
         if (size == 1) {
             // Do not bother with lazy instantiation in case of a singleton
@@ -81,8 +81,8 @@ final class LazyBindingList<E extends DataObject> extends AbstractList<E> implem
         return size > LAZY_CUTOFF ? new LazyBindingList<>(codec, entries) : eagerList(codec, size, entries);
     }
 
-    private static <E extends DataObject> @NonNull List<E> eagerList(final ListCodecContext<E> codec,
-            final int size, final Collection<? extends DataContainerNode> entries) {
+    private static <E extends DataObject> @NonNull List<E> eagerList(final ListCodecContext<E> codec, final int size,
+            final Collection<? extends DataContainerNode> entries) {
         @SuppressWarnings("unchecked")
         final E[] objs = (E[]) new DataObject[size];
         int offset = 0;

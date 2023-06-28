@@ -24,8 +24,7 @@ final class MapCodecPrototype extends ListCodecPrototype {
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    ListCodecContext createInstance() {
+    ListCodecContext<?> createInstance() {
         return MapCodecContext.of(this);
     }
 }
