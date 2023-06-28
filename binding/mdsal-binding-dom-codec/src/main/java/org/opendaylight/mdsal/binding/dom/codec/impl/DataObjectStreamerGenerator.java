@@ -54,7 +54,6 @@ import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -178,9 +177,8 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         final StackManipulation startEvent;
         if (schema instanceof ContainerLike || schema instanceof NotificationDefinition) {
             startEvent = classUnknownSizeMethod(START_CONTAINER_NODE, type);
-        } else if (schema instanceof ListSchemaNode) {
-            startEvent = ((ListSchemaNode) schema).getKeyDefinition().isEmpty() ? START_UNKEYED_LIST_ITEM
-                    : START_MAP_ENTRY_NODE;
+        } else if (schema instanceof ListSchemaNode listSchema) {
+            startEvent = listSchema.getKeyDefinition().isEmpty() ? START_UNKEYED_LIST_ITEM : START_MAP_ENTRY_NODE;
         } else if (schema instanceof AugmentationSchemaNode) {
             // startAugmentationNode(Foo.class)
             startEvent = new StackManipulation.Compound(
@@ -251,12 +249,11 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         if (childSchema instanceof ContainerSchemaNode) {
             return containerChildStream(getter);
         }
-        if (childSchema instanceof ListSchemaNode) {
+        if (childSchema instanceof ListSchemaNode listSchema) {
             final String getterName = getter.getName();
             final Type childType = props.get(getterName);
             verify(childType instanceof ParameterizedType, "Unexpected type %s for %s", childType, getterName);
             final Type[] params = ((ParameterizedType) childType).getActualTypeArguments();
-            final ListSchemaNode listSchema = (ListSchemaNode) childSchema;
             final Class<?> valueClass;
             if (!listSchema.isUserOrdered() && !listSchema.getKeyDefinition().isEmpty()) {
                 loadTypeClass(loader, params[0]);
@@ -276,9 +273,9 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         if (childSchema instanceof AnyxmlSchemaNode) {
             return qnameChildStream(STREAM_ANYXML, getter, childSchema);
         }
-        if (childSchema instanceof LeafListSchemaNode) {
-            return qnameChildStream(((LeafListSchemaNode) childSchema).isUserOrdered() ? STREAM_ORDERED_LEAF_LIST
-                    : STREAM_LEAF_LIST, getter, childSchema);
+        if (childSchema instanceof LeafListSchemaNode leafListSchema) {
+            return qnameChildStream(leafListSchema.isUserOrdered() ? STREAM_ORDERED_LEAF_LIST : STREAM_LEAF_LIST,
+                getter, childSchema);
         }
 
         LOG.debug("Ignoring {} due to unhandled schema {}", getter, childSchema);
@@ -365,12 +362,12 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     }
 
     private static void collectAllProperties(final GeneratedType type, final Map<String, Type> hashMap) {
-        for (final MethodSignature definition : type.getMethodDefinitions()) {
+        for (var definition : type.getMethodDefinitions()) {
             hashMap.put(definition.getName(), definition.getReturnType());
         }
-        for (final Type parent : type.getImplements()) {
-            if (parent instanceof GeneratedType) {
-                collectAllProperties((GeneratedType) parent, hashMap);
+        for (var parent : type.getImplements()) {
+            if (parent instanceof GeneratedType generated) {
+                collectAllProperties(generated, hashMap);
             }
         }
     }
