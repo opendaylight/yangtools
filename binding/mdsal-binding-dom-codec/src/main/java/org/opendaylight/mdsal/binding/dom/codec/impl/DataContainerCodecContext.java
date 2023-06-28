@@ -64,7 +64,7 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
     static {
         try {
             EVENT_STREAM_SERIALIZER = MethodHandles.lookup().findVarHandle(DataContainerCodecContext.class,
-                "eventStreamSerializer", DataObjectSerializer.class);
+                "eventStreamSerializer", DataContainerSerializer.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -74,7 +74,7 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
 
     // Accessed via a VarHandle
     @SuppressWarnings("unused")
-    private volatile DataObjectSerializer eventStreamSerializer;
+    private volatile DataContainerSerializer eventStreamSerializer;
 
     DataContainerCodecContext(final DataContainerCodecPrototype<T> prototype) {
         this.prototype = requireNonNull(prototype);
@@ -251,16 +251,16 @@ abstract sealed class DataContainerCodecContext<D extends DataObject, T extends 
         return new IncorrectNestingException(message, args);
     }
 
-    final DataObjectSerializer eventStreamSerializer() {
-        final DataObjectSerializer existing = (DataObjectSerializer) EVENT_STREAM_SERIALIZER.getAcquire(this);
+    final DataContainerSerializer eventStreamSerializer() {
+        final DataContainerSerializer existing = (DataContainerSerializer) EVENT_STREAM_SERIALIZER.getAcquire(this);
         return existing != null ? existing : loadEventStreamSerializer();
     }
 
     // Split out to aid inlining
-    private DataObjectSerializer loadEventStreamSerializer() {
-        final DataObjectSerializer loaded = factory().getEventStreamSerializer(getBindingClass());
+    private DataContainerSerializer loadEventStreamSerializer() {
+        final DataContainerSerializer loaded = factory().getEventStreamSerializer(getBindingClass());
         final Object witness = EVENT_STREAM_SERIALIZER.compareAndExchangeRelease(this, null, loaded);
-        return witness == null ? loaded : (DataObjectSerializer) witness;
+        return witness == null ? loaded : (DataContainerSerializer) witness;
     }
 
     final @NonNull NormalizedNode serializeImpl(final @NonNull D data) {

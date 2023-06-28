@@ -29,13 +29,13 @@ import org.slf4j.LoggerFactory;
  * Base superclass for all concrete streamers, that is objects which are able to turn a concrete DataObject into a
  * stream of events.
  *
- * @param <T> DataObject type
+ * @param <T> DataContainer type
  */
 @Beta
-public abstract class DataObjectStreamer<T extends DataObject> {
-    private static final Logger LOG = LoggerFactory.getLogger(DataObjectStreamer.class);
+public abstract class DataContainerStreamer<T extends DataContainer> {
+    private static final Logger LOG = LoggerFactory.getLogger(DataContainerStreamer.class);
 
-    protected DataObjectStreamer() {
+    protected DataContainerStreamer() {
 
     }
 
@@ -46,14 +46,14 @@ public abstract class DataObjectStreamer<T extends DataObject> {
      * DataObjectSerializerRegistry may be used to lookup serializers for other generated classes  in order to support
      * writing their events.
      */
-    protected abstract void serialize(DataObjectSerializerRegistry reg, DataObject obj, BindingStreamEventWriter stream)
-            throws IOException;
+    protected abstract void serialize(DataContainerSerializerRegistry reg, DataContainer obj,
+        BindingStreamEventWriter stream) throws IOException;
 
     protected static final void streamAnydata(final BindingStreamEventWriter writer, final String localName,
             final Object value) throws IOException {
-        if (value != null && writer instanceof AnydataBindingStreamWriter) {
+        if (value != null && writer instanceof AnydataBindingStreamWriter anydataWriter) {
             verify(value instanceof OpaqueObject, "Unexpected data %s", value);
-            ((AnydataBindingStreamWriter) writer).anydataNode(localName, (OpaqueObject<?>) value);
+            anydataWriter.anydataNode(localName, (OpaqueObject<?>) value);
         }
     }
 
@@ -64,7 +64,7 @@ public abstract class DataObjectStreamer<T extends DataObject> {
         }
     }
 
-    protected static final void streamAugmentations(final DataObjectSerializerRegistry registry,
+    protected static final void streamAugmentations(final DataContainerSerializerRegistry registry,
             final BindingStreamEventWriter writer, final Augmentable<?> obj) throws IOException {
         for (final var aug : obj.augmentations().entrySet()) {
             emitAugmentation(aug.getKey(), aug.getValue(), writer, registry);
@@ -72,12 +72,12 @@ public abstract class DataObjectStreamer<T extends DataObject> {
     }
 
     protected static final <C extends DataContainer> void streamChoice(final Class<C> choiceClass,
-            final DataObjectSerializerRegistry registry, final BindingStreamEventWriter writer, final C value)
+            final DataContainerSerializerRegistry registry, final BindingStreamEventWriter writer, final C value)
                     throws IOException {
         if (value != null) {
             final Class<? extends DataContainer> caseClass = value.implementedInterface();
             writer.startChoiceNode(choiceClass, BindingStreamEventWriter.UNKNOWN_SIZE);
-            final DataObjectSerializer caseStreamer = registry.getSerializer(caseClass.asSubclass(DataObject.class));
+            final DataContainerSerializer caseStreamer = registry.getSerializer(caseClass.asSubclass(DataObject.class));
             if (caseStreamer != null) {
                 if (tryCache(writer, (DataObject) value)) {
                     caseStreamer.serialize((DataObject) value, writer);
@@ -90,8 +90,8 @@ public abstract class DataObjectStreamer<T extends DataObject> {
         }
     }
 
-    protected static final <C extends DataObject> void streamContainer(final DataObjectStreamer<C> childStreamer,
-            final DataObjectSerializerRegistry registry, final BindingStreamEventWriter writer, final C value)
+    protected static final <C extends DataObject> void streamContainer(final DataContainerStreamer<C> childStreamer,
+            final DataContainerSerializerRegistry registry, final BindingStreamEventWriter writer, final C value)
                     throws IOException {
         if (value != null && tryCache(writer, value)) {
             childStreamer.serialize(registry, value, writer);
@@ -122,7 +122,7 @@ public abstract class DataObjectStreamer<T extends DataObject> {
     }
 
     protected static final <E extends DataObject> void streamList(final Class<E> childClass,
-            final DataObjectStreamer<E> childStreamer, final DataObjectSerializerRegistry registry,
+            final DataContainerStreamer<E> childStreamer, final DataContainerSerializerRegistry registry,
             final BindingStreamEventWriter writer, final List<? extends E> value) throws IOException {
         final int size = nullSize(value);
         if (size != 0) {
@@ -132,7 +132,7 @@ public abstract class DataObjectStreamer<T extends DataObject> {
     }
 
     protected static final <E extends DataObject & KeyAware<?>> void streamMap(final Class<E> childClass,
-            final DataObjectStreamer<E> childStreamer, final DataObjectSerializerRegistry registry,
+            final DataContainerStreamer<E> childStreamer, final DataContainerSerializerRegistry registry,
             final BindingStreamEventWriter writer, final Map<?, ? extends E> value) throws IOException {
         final int size = nullSize(value);
         if (size != 0) {
@@ -142,7 +142,7 @@ public abstract class DataObjectStreamer<T extends DataObject> {
     }
 
     protected static final <E extends DataObject & KeyAware<?>> void streamOrderedMap(final Class<E> childClass,
-            final DataObjectStreamer<E> childStreamer, final DataObjectSerializerRegistry registry,
+            final DataContainerStreamer<E> childStreamer, final DataContainerSerializerRegistry registry,
             final BindingStreamEventWriter writer, final List<? extends E> value) throws IOException {
         final int size = nullSize(value);
         if (size != 0) {
@@ -151,8 +151,8 @@ public abstract class DataObjectStreamer<T extends DataObject> {
         }
     }
 
-    private static <E extends DataObject> void commonStreamList(final DataObjectSerializerRegistry registry,
-            final BindingStreamEventWriter writer, final DataObjectStreamer<E> childStreamer,
+    private static <E extends DataObject> void commonStreamList(final DataContainerSerializerRegistry registry,
+            final BindingStreamEventWriter writer, final DataContainerStreamer<E> childStreamer,
             final Collection<? extends E> value) throws IOException {
 
         for (E entry : value) {
@@ -172,13 +172,13 @@ public abstract class DataObjectStreamer<T extends DataObject> {
     }
 
     private static void emitAugmentation(final Class<? extends Augmentation<?>> type, final Augmentation<?> value,
-            final BindingStreamEventWriter writer, final DataObjectSerializerRegistry registry) throws IOException {
+            final BindingStreamEventWriter writer, final DataContainerSerializerRegistry registry) throws IOException {
         /*
          * Binding Specification allowed to insert augmentation with null for value, which effectively could be used to
          * remove augmentation from builder / DTO.
          */
         if (value != null) {
-            final DataObjectSerializer serializer = registry.getSerializer(type);
+            final DataContainerSerializer serializer = registry.getSerializer(type);
             if (serializer != null) {
                 serializer.serialize(value, writer);
             } else {

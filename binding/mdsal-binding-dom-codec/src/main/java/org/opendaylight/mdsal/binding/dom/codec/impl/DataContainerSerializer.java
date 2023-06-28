@@ -12,16 +12,16 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
-import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 
 /**
  * A serializer which writes DataObject to supplied stream event writer.
  */
-final class DataObjectSerializer {
-    private final @NonNull DataObjectSerializerRegistry registry;
-    private final @NonNull DataObjectStreamer<?> delegate;
+public final class DataContainerSerializer {
+    private final @NonNull DataContainerSerializerRegistry registry;
+    private final @NonNull DataContainerStreamer<?> delegate;
 
-    DataObjectSerializer(final DataObjectSerializerRegistry registry, final DataObjectStreamer<?> delegate) {
+    DataContainerSerializer(final DataContainerSerializerRegistry registry, final DataContainerStreamer<?> delegate) {
         this.registry = requireNonNull(registry);
         this.delegate = requireNonNull(delegate);
     }
@@ -32,7 +32,7 @@ final class DataObjectSerializer {
      * @param obj Source of stream events
      * @param stream Stream to which events should be written.
      */
-    void serialize(final DataObject obj, final BindingStreamEventWriter stream) throws IOException {
+    void serialize(final DataContainer obj, final BindingStreamEventWriter stream) throws IOException {
         delegate.serialize(registry, obj, stream);
     }
 }

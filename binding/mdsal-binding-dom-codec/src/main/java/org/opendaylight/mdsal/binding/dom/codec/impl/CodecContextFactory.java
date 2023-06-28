@@ -55,7 +55,7 @@ sealed interface CodecContextFactory permits BindingCodecContext {
      */
     @NonNull BindingClassLoader getLoader();
 
-    @NonNull DataObjectStreamer<?> getDataObjectSerializer(Class<?> type);
+    @NonNull DataContainerStreamer<?> getDataContainerStreamer(Class<?> type);
 
-    DataObjectSerializer getEventStreamSerializer(Class<?> type);
+    DataContainerSerializer getEventStreamSerializer(Class<?> type);
 }

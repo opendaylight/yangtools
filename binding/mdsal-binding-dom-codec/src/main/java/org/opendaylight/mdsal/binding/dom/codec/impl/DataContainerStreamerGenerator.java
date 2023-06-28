@@ -78,17 +78,17 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> implements ClassGenerator<T> {
+final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> implements ClassGenerator<T> {
     static final String INSTANCE_FIELD = "INSTANCE";
 
-    private static final Logger LOG = LoggerFactory.getLogger(DataObjectStreamerGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataContainerStreamerGenerator.class);
     private static final Generic BB_VOID = TypeDefinition.Sort.describe(void.class);
-    private static final Generic BB_DATAOBJECT = TypeDefinition.Sort.describe(DataObject.class);
-    private static final Generic BB_DOSR = TypeDefinition.Sort.describe(DataObjectSerializerRegistry.class);
+    private static final Generic BB_DATA_CONTAINER = TypeDefinition.Sort.describe(DataContainer.class);
+    private static final Generic BB_DOSR = TypeDefinition.Sort.describe(DataContainerSerializerRegistry.class);
     private static final Generic BB_BESV = TypeDefinition.Sort.describe(BindingStreamEventWriter.class);
     private static final Generic BB_IOX = TypeDefinition.Sort.describe(IOException.class);
 
-    private static final Builder<?> TEMPLATE = new ByteBuddy().subclass(DataObjectStreamer.class)
+    private static final Builder<?> TEMPLATE = new ByteBuddy().subclass(DataContainerStreamer.class)
             .modifiers(Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC);
 
     private static final StackManipulation REG = MethodVariableAccess.REFERENCE.loadFrom(1);
@@ -118,31 +118,31 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         UNKNOWN_SIZE,
         invokeMethod(BindingStreamEventWriter.class, "startUnkeyedListItem", int.class));
 
-    private static final StackManipulation STREAM_ANYDATA = invokeMethod(DataObjectStreamer.class,
+    private static final StackManipulation STREAM_ANYDATA = invokeMethod(DataContainerStreamer.class,
         "streamAnydata", BindingStreamEventWriter.class, String.class, Object.class);
-    private static final StackManipulation STREAM_ANYXML = invokeMethod(DataObjectStreamer.class,
+    private static final StackManipulation STREAM_ANYXML = invokeMethod(DataContainerStreamer.class,
         "streamAnyxml", BindingStreamEventWriter.class, String.class, Object.class);
-    private static final StackManipulation STREAM_CHOICE = invokeMethod(DataObjectStreamer.class,
-        "streamChoice", Class.class, DataObjectSerializerRegistry.class, BindingStreamEventWriter.class,
+    private static final StackManipulation STREAM_CHOICE = invokeMethod(DataContainerStreamer.class,
+        "streamChoice", Class.class, DataContainerSerializerRegistry.class, BindingStreamEventWriter.class,
         DataContainer.class);
-    private static final StackManipulation STREAM_CONTAINER = invokeMethod(DataObjectStreamer.class,
-        "streamContainer", DataObjectStreamer.class, DataObjectSerializerRegistry.class, BindingStreamEventWriter.class,
-        DataObject.class);
-    private static final StackManipulation STREAM_LEAF = invokeMethod(DataObjectStreamer.class,
+    private static final StackManipulation STREAM_CONTAINER = invokeMethod(DataContainerStreamer.class,
+        "streamContainer", DataContainerStreamer.class, DataContainerSerializerRegistry.class,
+        BindingStreamEventWriter.class, DataObject.class);
+    private static final StackManipulation STREAM_LEAF = invokeMethod(DataContainerStreamer.class,
         "streamLeaf", BindingStreamEventWriter.class, String.class, Object.class);
-    private static final StackManipulation STREAM_LEAF_LIST = invokeMethod(DataObjectStreamer.class,
+    private static final StackManipulation STREAM_LEAF_LIST = invokeMethod(DataContainerStreamer.class,
         "streamLeafList",
         BindingStreamEventWriter.class, String.class, Set.class);
-    private static final StackManipulation STREAM_ORDERED_LEAF_LIST = invokeMethod(DataObjectStreamer.class,
+    private static final StackManipulation STREAM_ORDERED_LEAF_LIST = invokeMethod(DataContainerStreamer.class,
         "streamOrderedLeafList", BindingStreamEventWriter.class, String.class, List.class);
-    private static final StackManipulation STREAM_LIST = invokeMethod(DataObjectStreamer.class,
-        "streamList", Class.class, DataObjectStreamer.class, DataObjectSerializerRegistry.class,
+    private static final StackManipulation STREAM_LIST = invokeMethod(DataContainerStreamer.class,
+        "streamList", Class.class, DataContainerStreamer.class, DataContainerSerializerRegistry.class,
         BindingStreamEventWriter.class, List.class);
-    private static final StackManipulation STREAM_MAP = invokeMethod(DataObjectStreamer.class,
-        "streamMap", Class.class, DataObjectStreamer.class, DataObjectSerializerRegistry.class,
+    private static final StackManipulation STREAM_MAP = invokeMethod(DataContainerStreamer.class,
+        "streamMap", Class.class, DataContainerStreamer.class, DataContainerSerializerRegistry.class,
         BindingStreamEventWriter.class, Map.class);
-    private static final StackManipulation STREAM_ORDERED_MAP = invokeMethod(DataObjectStreamer.class,
-        "streamOrderedMap", Class.class, DataObjectStreamer.class, DataObjectSerializerRegistry.class,
+    private static final StackManipulation STREAM_ORDERED_MAP = invokeMethod(DataContainerStreamer.class,
+        "streamOrderedMap", Class.class, DataContainerStreamer.class, DataContainerSerializerRegistry.class,
         BindingStreamEventWriter.class, List.class);
 
     // streamAugmentations(reg, stream, obj)
@@ -150,7 +150,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         REG,
         STREAM,
         OBJ,
-        invokeMethod(DataObjectStreamer.class, "streamAugmentations", DataObjectSerializerRegistry.class,
+        invokeMethod(DataContainerStreamer.class, "streamAugmentations", DataContainerSerializerRegistry.class,
             BindingStreamEventWriter.class, Augmentable.class));
 
     private final CodecContextFactory registry;
@@ -159,7 +159,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     private final Class<?> type;
     private final GeneratedType genType;
 
-    private DataObjectStreamerGenerator(final CodecContextFactory registry, final GeneratedType genType,
+    private DataContainerStreamerGenerator(final CodecContextFactory registry, final GeneratedType genType,
             final DataNodeContainer schema, final Class<?> type, final StackManipulation startEvent) {
         this.registry = requireNonNull(registry);
         this.genType = requireNonNull(genType);
@@ -168,7 +168,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         this.startEvent = requireNonNull(startEvent);
     }
 
-    static Class<? extends DataObjectStreamer<?>> generateStreamer(final BindingClassLoader loader,
+    static Class<? extends DataContainerStreamer<?>> generateStreamer(final BindingClassLoader loader,
             final CodecContextFactory registry, final Class<?> type) {
 
         final var typeAndSchema = registry.getRuntimeContext().getTypeWithSchema(type);
@@ -192,7 +192,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
 
         return CodecPackage.STREAMER.generateClass(loader, type,
             // FIXME: cast to GeneratedType: we really should adjust getTypeWithSchema()
-            new DataObjectStreamerGenerator<>(registry, (GeneratedType) typeAndSchema.javaType(),
+            new DataContainerStreamerGenerator<>(registry, (GeneratedType) typeAndSchema.javaType(),
                 (DataNodeContainer) schema, type, startEvent));
     }
 
@@ -233,7 +233,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
 
         final GeneratorResult<T> result = GeneratorResult.of(builder
             .defineMethod("serialize", BB_VOID, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC)
-                .withParameters(BB_DOSR, BB_DATAOBJECT, BB_BESV)
+                .withParameters(BB_DOSR, BB_DATA_CONTAINER, BB_BESV)
                 .throwing(BB_IOX)
             .intercept(new SerializeImplementation(bindingInterface, startEvent, children)).make(), depBuilder.build());
 
@@ -295,7 +295,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
 
     private ChildStream containerChildStream(final Method getter) {
         final Class<? extends DataObject> itemClass = getter.getReturnType().asSubclass(DataObject.class);
-        final DataObjectStreamer<?> streamer = registry.getDataObjectSerializer(itemClass);
+        final DataContainerStreamer<?> streamer = registry.getDataContainerStreamer(itemClass);
 
         // streamContainer(FooStreamer.INSTANCE, reg, stream, obj.getFoo())
         return new ChildStream(streamer,
@@ -309,7 +309,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
 
     private ChildStream listChildStream(final Method getter, final Class<? extends DataObject> itemClass,
             final ListSchemaNode childSchema) {
-        final DataObjectStreamer<?> streamer = registry.getDataObjectSerializer(itemClass);
+        final DataContainerStreamer<?> streamer = registry.getDataContainerStreamer(itemClass);
         final StackManipulation method;
         if (childSchema.getKeyDefinition().isEmpty()) {
             method = STREAM_LIST;
@@ -339,7 +339,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             method);
     }
 
-    private static StackManipulation streamerInstance(final DataObjectStreamer<?> streamer) {
+    private static StackManipulation streamerInstance(final DataContainerStreamer<?> streamer) {
         try {
             return getField(streamer.getClass().getDeclaredField(INSTANCE_FIELD));
         } catch (NoSuchFieldException e) {
@@ -436,7 +436,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             dependency = null;
         }
 
-        ChildStream(final DataObjectStreamer<?> streamer, final StackManipulation... stackManipulation) {
+        ChildStream(final DataContainerStreamer<?> streamer, final StackManipulation... stackManipulation) {
             super(stackManipulation);
             dependency = streamer.getClass();
         }

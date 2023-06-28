@@ -26,8 +26,8 @@ import org.slf4j.LoggerFactory;
  * This serializer implements {@link BindingStreamEventWriter} along with {@link BindingSerializer}.
  *
  * <p>
- * {@link BindingSerializer} interface is used by generated implementations of {@link DataObjectSerializer} to provide
- * Binding object for inspection and to prevent streaming of already serialized object.
+ * {@link BindingSerializer} interface is used by generated implementations of {@link DataContainerSerializer} to
+ * provide Binding object for inspection and to prevent streaming of already serialized object.
  */
 final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEventWriter
         implements BindingSerializer<Object, DataObject> {
@@ -103,7 +103,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
      *
      * <p>
      * Note that this optional is serialization of child node invoked from
-     * {@link org.opendaylight.mdsal.binding.dom.codec.impl.DataObjectSerializer}, which may opt-out from
+     * {@link org.opendaylight.mdsal.binding.dom.codec.impl.DataContainerSerializer}, which may opt-out from
      * streaming of data when non-null result is returned.
      */
     @Override

@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -103,7 +102,7 @@ import org.slf4j.LoggerFactory;
 
 @MetaInfServices(value = BindingDOMCodecServices.class)
 public final class BindingCodecContext extends AbstractBindingNormalizedNodeSerializer
-        implements BindingDOMCodecServices, Immutable, CodecContextFactory, DataObjectSerializerRegistry {
+        implements BindingDOMCodecServices, Immutable, CodecContextFactory, DataContainerSerializerRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
     private static final @NonNull NodeIdentifier FAKE_NODEID = new NodeIdentifier(QName.create("fake", "fake"));
     private static final File BYTECODE_DIRECTORY;
@@ -113,21 +112,21 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         BYTECODE_DIRECTORY = Strings.isNullOrEmpty(dir) ? null : new File(dir);
     }
 
-    private final LoadingCache<Class<?>, DataObjectStreamer<?>> streamers = CacheBuilder.newBuilder().build(
-        new CacheLoader<Class<?>, DataObjectStreamer<?>>() {
+    private final LoadingCache<Class<?>, DataContainerStreamer<?>> streamers = CacheBuilder.newBuilder().build(
+        new CacheLoader<>() {
             @Override
-            public DataObjectStreamer<?> load(final Class<?> key) throws ReflectiveOperationException {
-                final Class<?> streamer = DataObjectStreamerGenerator.generateStreamer(loader, BindingCodecContext.this,
+            public DataContainerStreamer<?> load(final Class<?> key) throws ReflectiveOperationException {
+                final var streamer = DataContainerStreamerGenerator.generateStreamer(loader, BindingCodecContext.this,
                     key);
-                final Field instance = streamer.getDeclaredField(DataObjectStreamerGenerator.INSTANCE_FIELD);
-                return (DataObjectStreamer<?>) instance.get(null);
+                final var instance = streamer.getDeclaredField(DataContainerStreamerGenerator.INSTANCE_FIELD);
+                return (DataContainerStreamer<?>) instance.get(null);
             }
         });
-    private final LoadingCache<Class<?>, DataObjectSerializer> serializers = CacheBuilder.newBuilder().build(
-        new CacheLoader<Class<?>, DataObjectSerializer>() {
+    private final LoadingCache<Class<?>, DataContainerSerializer> serializers = CacheBuilder.newBuilder().build(
+        new CacheLoader<>() {
             @Override
-            public DataObjectSerializer load(final Class<?> key) throws ExecutionException {
-                return new DataObjectSerializer(BindingCodecContext.this, streamers.get(key));
+            public DataContainerSerializer load(final Class<?> key) throws ExecutionException {
+                return new DataContainerSerializer(BindingCodecContext.this, streamers.get(key));
             }
         });
 
@@ -171,17 +170,17 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public DataObjectSerializer getEventStreamSerializer(final Class<?> type) {
+    public DataContainerSerializer getEventStreamSerializer(final Class<?> type) {
         return serializers.getUnchecked(type);
     }
 
     @Override
-    public DataObjectStreamer<?> getDataObjectSerializer(final Class<?> type) {
+    public DataContainerStreamer<?> getDataContainerStreamer(final Class<?> type) {
         return streamers.getUnchecked(type);
     }
 
     @Override
-    public DataObjectSerializer getSerializer(final Class<? extends DataObject> type) {
+    public DataContainerSerializer getSerializer(final Class<? extends DataContainer> type) {
         return serializers.getUnchecked(type);
     }
 
