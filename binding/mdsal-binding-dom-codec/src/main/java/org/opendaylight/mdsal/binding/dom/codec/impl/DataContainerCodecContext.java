@@ -17,11 +17,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -265,63 +263,6 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Expected " + expectedType.getSimpleName(), e);
         }
-    }
-
-    // FIXME: MDSAL-780 replace this method with BindingRuntimeTypes-driven logic
-    static final Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
-            final String prefix) {
-        final String methodName = method.getName();
-        if ("getClass".equals(methodName) || !methodName.startsWith(prefix) || method.getParameterCount() > 0) {
-            return Optional.empty();
-        }
-
-        final Class<?> returnType = method.getReturnType();
-        if (DataContainer.class.isAssignableFrom(returnType)) {
-            return optionalDataContainer(returnType);
-        } else if (List.class.isAssignableFrom(returnType)) {
-            return getYangModeledReturnType(method, 0);
-        } else if (Map.class.isAssignableFrom(returnType)) {
-            return getYangModeledReturnType(method, 1);
-        }
-        return Optional.empty();
-    }
-
-    @SuppressWarnings("checkstyle:illegalCatch")
-    private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
-            final int parameterOffset) {
-        try {
-            return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(),
-                () -> genericParameter(method.getGenericReturnType(), parameterOffset)
-                    .flatMap(result -> result instanceof Class ? optionalCast((Class<?>) result) : Optional.empty()));
-        } catch (Exception e) {
-            /*
-             * It is safe to log this this exception on debug, since this
-             * method should not fail. Only failures are possible if the
-             * runtime / backing.
-             */
-            LOG.debug("Unable to find YANG modeled return type for {}", method, e);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<java.lang.reflect.Type> genericParameter(final java.lang.reflect.Type type,
-            final int offset) {
-        if (type instanceof ParameterizedType parameterized) {
-            final var parameters = parameterized.getActualTypeArguments();
-            if (parameters.length > offset) {
-                return Optional.of(parameters[offset]);
-            }
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<Class<? extends DataContainer>> optionalCast(final Class<?> type) {
-        return DataContainer.class.isAssignableFrom(type) ? optionalDataContainer(type) : Optional.empty();
-    }
-
-    // FIXME: MDSAL-780: remove this method
-    static final Optional<Class<? extends DataContainer>> optionalDataContainer(final Class<?> type) {
-        return Optional.of(type.asSubclass(DataContainer.class));
     }
 
     /**

@@ -317,10 +317,8 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
         checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
         final var ret = new LinkedList<Class<? extends DataObject>>();
         for (var method : type.getMethods()) {
-            final var entity = getYangModeledReturnType(method, Naming.GETTER_PREFIX);
-            if (entity.isPresent()) {
-                ret.add((Class<? extends DataObject>) entity.orElseThrow());
-            }
+            AbstractDataContainerAnalysis.getYangModeledReturnType(method, Naming.GETTER_PREFIX)
+                .ifPresent(entity -> ret.add((Class<? extends DataObject>) entity));
         }
         return ret;
     }
