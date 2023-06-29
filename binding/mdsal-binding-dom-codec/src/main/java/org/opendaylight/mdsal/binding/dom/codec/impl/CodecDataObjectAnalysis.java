@@ -140,12 +140,12 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
             }
 
             possibleAugmentations = augmentableRuntimeType.augments();
-            generatedClass = CodecDataObjectGenerator.generateAugmentable(prototype.getFactory().getLoader(),
-                bindingClass, leafContexts, daoProperties, keyMethod);
+            generatedClass = CodecDataObjectGenerator.generateAugmentable(factory.getLoader(), bindingClass,
+                leafContexts, daoProperties, keyMethod);
         } else {
             possibleAugmentations = List.of();
-            generatedClass = CodecDataObjectGenerator.generate(prototype.getFactory().getLoader(), bindingClass,
-                leafContexts, daoProperties, keyMethod);
+            generatedClass = CodecDataObjectGenerator.generate(factory.getLoader(), bindingClass, leafContexts,
+                daoProperties, keyMethod);
         }
 
         // All done: acquire the constructor: it is supposed to be public
