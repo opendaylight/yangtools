@@ -14,11 +14,13 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +38,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.kohsuke.MetaInfServices;
@@ -47,12 +50,22 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterF
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingYangDataCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
+import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
 import org.opendaylight.mdsal.binding.dom.codec.spi.AbstractBindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingSchemaMapping;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
+import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.DataRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -60,21 +73,26 @@ import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BaseNotification;
+import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.Key;
 import org.opendaylight.yangtools.yang.binding.KeyAware;
+import org.opendaylight.yangtools.yang.binding.KeyedListAction;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.binding.YangData;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -87,13 +105,19 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
@@ -132,13 +156,231 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 return new DataContainerSerializer(BindingCodecContext.this, streamers.get(key));
             }
         });
+    private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?>> childrenByClass =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public DataContainerCodecContext<?, ?> load(final Class<? extends DataObject> key) {
+                final var childSchema = context.getTypes().bindingChild(JavaTypeName.create(key));
+                if (childSchema instanceof ContainerLikeRuntimeType containerLike) {
+                    if (childSchema instanceof ContainerRuntimeType container
+                        && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class)
+                            .isEmpty()) {
+                        return new StructuralContainerCodecContext<>(key, container, BindingCodecContext.this);
+                    }
+                    return new ContainerLikeCodecContext<>(key, containerLike, BindingCodecContext.this);
+                } else if (childSchema instanceof ListRuntimeType list) {
+                    return list.keyType() == null ? new ListCodecContext<>(key, list, BindingCodecContext.this)
+                        : MapCodecContext.of(key, list, BindingCodecContext.this);
+                } else if (childSchema instanceof ChoiceRuntimeType choice) {
+                    return new ChoiceCodecContext<>(key, choice, BindingCodecContext.this);
+                } else if (childSchema == null) {
+                    throw DataContainerCodecContext.childNullException(context, key, "%s is not top-level item.", key);
+                } else {
+                    throw new IncorrectNestingException("%s is not a valid data tree child of %s", key, this);
+                }
+            }
+        });
+
+    // FIXME: this could also be a leaf!
+    private final LoadingCache<QName, DataContainerCodecContext<?, ?>> childrenByDomArg =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public DataContainerCodecContext<?, ?> load(final QName qname) throws ClassNotFoundException {
+                final var type = context.getTypes();
+                final var child = type.schemaTreeChild(qname);
+                if (child == null) {
+                    final var module = qname.getModule();
+                    if (context.getEffectiveModelContext().findModule(module).isEmpty()) {
+                        throw new MissingSchemaException(
+                            "Module " + module + " is not present in current schema context.");
+                    }
+                    throw new IncorrectNestingException("Argument %s is not valid child of %s", qname, type);
+                }
+
+                if (!(child instanceof DataRuntimeType)) {
+                    throw new IncorrectNestingException("Argument %s is not valid data tree child of %s", qname, type);
+                }
+
+                // TODO: improve this check?
+                final var childSchema = child.statement();
+                if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
+                    return getStreamChild(context.loadClass(child.javaType()));
+                }
+
+                throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
+            }
+        });
+
+    private final LoadingCache<Class<? extends DataObject>, ChoiceCodecContext<?>> choicesByClass =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public ChoiceCodecContext<?> load(final Class<? extends DataObject> caseType) {
+                final var choiceClass = findCaseChoice(caseType);
+                if (choiceClass == null) {
+                    throw new IllegalArgumentException(caseType + " is not a valid case representation");
+                }
+                if (context.getSchemaDefinition(choiceClass) instanceof ChoiceRuntimeType choiceType) {
+                    // FIXME: accurate type!
+                    return new ChoiceCodecContext(choiceClass, choiceType, BindingCodecContext.this);
+                }
+                throw new IllegalArgumentException(caseType + " does not refer to a choice");
+            }
+
+            private static Class<?> findCaseChoice(final Class<? extends DataObject> caseClass) {
+                for (var type : caseClass.getGenericInterfaces()) {
+                    if (type instanceof Class<?> typeClass && ChoiceIn.class.isAssignableFrom(typeClass)) {
+                        return typeClass.asSubclass(ChoiceIn.class);
+                    }
+                }
+                return null;
+            }
+        });
+
+    private final LoadingCache<Class<? extends Action<?, ?, ?>>, ActionCodecContext> actionsByClass =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> action) {
+                if (KeyedListAction.class.isAssignableFrom(action)) {
+                    return prepareActionContext(2, 3, 4, action, KeyedListAction.class);
+                } else if (Action.class.isAssignableFrom(action)) {
+                    return prepareActionContext(1, 2, 3, action, Action.class);
+                }
+                throw new IllegalArgumentException("The specific action type does not exist for action "
+                    + action.getName());
+            }
+
+            private ActionCodecContext prepareActionContext(final int inputOffset, final int outputOffset,
+                    final int expectedArgsLength, final Class<? extends Action<?, ?, ?>> action,
+                    final Class<?> actionType) {
+                final var args = ClassLoaderUtils.findParameterizedType(action, actionType)
+                    .orElseThrow(() -> new IllegalStateException(action + " does not specialize " + actionType))
+                    .getActualTypeArguments();
+                checkArgument(args.length == expectedArgsLength, "Unexpected (%s) Action generatic arguments",
+                    args.length);
+                final ActionRuntimeType schema = context.getActionDefinition(action);
+                return new ActionCodecContext(
+                    new ContainerLikeCodecContext(asClass(args[inputOffset], RpcInput.class), schema.input(),
+                        BindingCodecContext.this),
+                    new ContainerLikeCodecContext(asClass(args[outputOffset], RpcOutput.class), schema.output(),
+                        BindingCodecContext.this));
+            }
+
+            private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
+                verify(type instanceof Class, "Type %s is not a class", type);
+                return ((Class<?>) type).asSubclass(target);
+            }
+        });
+
+    private final LoadingCache<Class<?>, NotificationCodecContext<?>> notificationsByClass = CacheBuilder.newBuilder()
+        .build(new CacheLoader<>() {
+            @Override
+            public NotificationCodecContext<?> load(final Class<?> key) {
+                // FIXME: sharpen check to an Notification.class
+                checkArgument(key.isInterface(), "Supplied class must be interface.");
+
+                // TODO: we should be able to work with bindingChild() instead of schemaTreeChild() here
+                final var qname = BindingReflections.findQName(key);
+                if (context.getTypes().schemaTreeChild(qname) instanceof NotificationRuntimeType type) {
+                    return new NotificationCodecContext<>(key, type, BindingCodecContext.this);
+                }
+                throw new IllegalArgumentException("Supplied " + key + " is not valid notification");
+            }
+        });
+    private final LoadingCache<Absolute, NotificationCodecContext<?>> notificationsByPath =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public NotificationCodecContext<?> load(final Absolute key) {
+                final var cls = context.getClassForSchema(key);
+                try {
+                    return getNotificationContext(cls.asSubclass(Notification.class));
+                } catch (ClassCastException e) {
+                    throw new IllegalArgumentException("Path " + key + " does not represent a notification", e);
+                }
+            }
+        });
+
+    private final LoadingCache<Class<?>, ContainerLikeCodecContext<?>> rpcDataByClass =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public ContainerLikeCodecContext<?> load(final Class<?> key) {
+                final BiFunction<BindingRuntimeTypes, QName, Optional<? extends ContainerLikeRuntimeType<?, ?>>> lookup;
+                if (RpcInput.class.isAssignableFrom(key)) {
+                    lookup = BindingRuntimeTypes::findRpcInput;
+                } else if (RpcOutput.class.isAssignableFrom(key)) {
+                    lookup = BindingRuntimeTypes::findRpcOutput;
+                } else {
+                    throw new IllegalArgumentException(key + " does not represent an RPC container");
+                }
+
+                final QName qname = BindingReflections.findQName(key);
+                final QNameModule qnameModule = qname.getModule();
+                final Module module = context.getEffectiveModelContext().findModule(qnameModule)
+                    .orElseThrow(() -> new IllegalArgumentException("Failed to find module for " + qnameModule));
+                final String className = Naming.getClassName(qname);
+
+                for (var potential : module.getRpcs()) {
+                    final QName potentialQName = potential.getQName();
+                    /*
+                     * Check if rpc and class represents data from same module and then checks if rpc local name
+                     * produces same class name as class name appended with Input/Output based on QName associated
+                     * with binding class.
+                     *
+                     * FIXME: Rework this to have more precise logic regarding Binding Specification.
+                     */
+                    if (key.getSimpleName().equals(Naming.getClassName(potentialQName) + className)) {
+                        final ContainerLike schema = getRpcDataSchema(potential, qname);
+                        checkArgument(schema != null, "Schema for %s does not define input / output.", potentialQName);
+
+                        final var type = lookup.apply(context.getTypes(), potentialQName)
+                            .orElseThrow(() -> new IllegalArgumentException("Cannot find runtime type for " + key));
+
+                        // FIXME: accurate type
+                        return new ContainerLikeCodecContext(key, type, BindingCodecContext.this);
+                    }
+                }
+
+                throw new IllegalArgumentException("Supplied class " + key + " is not valid RPC class.");
+            }
+
+            /**
+             * Returns RPC input or output schema based on supplied QName.
+             *
+             * @param rpc RPC Definition
+             * @param qname input or output QName with namespace same as RPC
+             * @return input or output schema. Returns null if RPC does not have input/output specified.
+             */
+            private static @Nullable ContainerLike getRpcDataSchema(final @NonNull RpcDefinition rpc,
+                    final @NonNull QName qname) {
+                requireNonNull(rpc, "Rpc Schema must not be null");
+                return switch (requireNonNull(qname, "QName must not be null").getLocalName()) {
+                    case "input" -> rpc.getInput();
+                    case "output" -> rpc.getOutput();
+                    default -> throw new IllegalArgumentException(
+                        "Supplied qname " + qname + " does not represent rpc input or output.");
+                };
+            }
+        });
+    private final LoadingCache<Absolute, RpcInputCodec<?>> rpcDataByPath =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public RpcInputCodec<?> load(final Absolute key) {
+                final var rpcName = key.firstNodeIdentifier();
+
+                final Class<? extends DataContainer> container = switch (key.lastNodeIdentifier().getLocalName()) {
+                    case "input" -> context.getRpcInput(rpcName);
+                    case "output" -> context.getRpcOutput(rpcName);
+                    default -> throw new IllegalArgumentException("Unhandled path " + key);
+                };
+
+                return getRpc(container);
+            }
+        });
 
     private final @NonNull BindingClassLoader loader =
         BindingClassLoader.create(BindingCodecContext.class, BYTECODE_DIRECTORY);
     private final @NonNull InstanceIdentifierCodec instanceIdentifierCodec;
     private final @NonNull IdentityCodec identityCodec;
     private final @NonNull BindingRuntimeContext context;
-    private final @NonNull RootCodecContext<?> root;
 
     public BindingCodecContext() {
         this(ServiceLoader.load(BindingRuntimeContext.class).findFirst()
@@ -147,7 +389,6 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     public BindingCodecContext(final BindingRuntimeContext context) {
         this.context = requireNonNull(context, "Binding Runtime Context is required.");
-        root = new RootCodecContext<>(this);
         identityCodec = new IdentityCodec(context);
         instanceIdentifierCodec = new InstanceIdentifierCodec(this);
     }
@@ -200,7 +441,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Override
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
             final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
-        final var yangArgs = new ArrayList<YangInstanceIdentifier.PathArgument>();
+        final var yangArgs = new ArrayList<PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
         return Map.entry(YangInstanceIdentifier.of(yangArgs),
             new BindingToNormalizedStreamWriter(codecContext, domWriter));
@@ -215,13 +456,13 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Override
     public BindingStreamEventWriter newRpcWriter(final Class<? extends DataContainer> rpcInputOrOutput,
             final NormalizedNodeStreamWriter domWriter) {
-        return new BindingToNormalizedStreamWriter(root.getRpc(rpcInputOrOutput), domWriter);
+        return new BindingToNormalizedStreamWriter(getRpc(rpcInputOrOutput), domWriter);
     }
 
     @Override
     public BindingStreamEventWriter newNotificationWriter(final Class<? extends Notification<?>> notification,
             final NormalizedNodeStreamWriter domWriter) {
-        return new BindingToNormalizedStreamWriter(root.getNotification(notification), domWriter);
+        return new BindingToNormalizedStreamWriter(getNotificationContext(notification), domWriter);
     }
 
     @Override
@@ -237,10 +478,27 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @NonNull DataContainerCodecContext<?,?> getCodecContextNode(final InstanceIdentifier<?> binding,
-            final List<YangInstanceIdentifier.PathArgument> builder) {
-        DataContainerCodecContext<?, ?> current = root;
-        for (var bindingArg : binding.getPathArguments()) {
-            current = current.bindingPathArgumentChild(bindingArg, builder);
+            final List<PathArgument> builder) {
+        final var it = binding.getPathArguments().iterator();
+        final var arg = it.next();
+
+        DataContainerCodecContext<?, ?> current;
+        final var caseType = arg.getCaseType();
+        if (caseType.isPresent()) {
+            final @NonNull Class<? extends DataObject> type = caseType.orElseThrow();
+            final var choice = choicesByClass.getUnchecked(type);
+            choice.addYangPathArgument(arg, builder);
+            final var caze = choice.getStreamChild(type);
+            caze.addYangPathArgument(arg, builder);
+            current = caze.bindingPathArgumentChild(arg, builder);
+        } else {
+            final var child = getStreamChild(arg.getType());
+            child.addYangPathArgument(arg, builder);
+            current = child;
+        }
+
+        while (it.hasNext()) {
+            current = current.bindingPathArgumentChild(it.next(), builder);
         }
         return current;
     }
@@ -253,20 +511,66 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
      *
      * @param dom {@link YangInstanceIdentifier} which is to be translated
      * @param bindingArguments Collection for traversed path arguments
-     * @return Codec for target node, or @null if the node does not have a
-     *         binding representation (choice, case, leaf).
-     *
+     * @return Codec for target node, or {@code null} if the node does not have a binding representation (choice, case,
+     *         leaf).
+     * @throws IllegalArgumentException if {@code dom} is empty
      */
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
             final @Nullable Collection<InstanceIdentifier.PathArgument> bindingArguments) {
-        CodecContext currentNode = root;
-        ListCodecContext<?> currentList = null;
+        final var it = dom.getPathArguments().iterator();
+        if (!it.hasNext()) {
+            throw new IllegalArgumentException("Path may not be empty");
+        }
 
-        for (var domArg : dom.getPathArguments()) {
-            checkArgument(currentNode instanceof DataContainerCodecContext,
-                "Unexpected child of non-container node %s", currentNode);
-            final var previous = (DataContainerCodecContext<?, ?>) currentNode;
-            var nextNode = previous.yangPathArgumentChild(domArg);
+        // First item is somewhat special:
+        // 1. it has to be a NodeIdentifier, otherwise it is a malformed identifier and we do not find it
+        var domArg = it.next();
+        if (!(domArg instanceof NodeIdentifier)) {
+            return null;
+        }
+        CodecContext nextNode = getOrRethrow(childrenByDomArg, domArg.getNodeType());
+
+        CodecContext currentNode;
+        if (nextNode instanceof ListCodecContext<?> listNode) {
+            // 2. if it is a list, we need to see if we are consuming another item.
+            if (!it.hasNext()) {
+                // 2a: not further items: it boils down to a wildcard
+                if (bindingArguments != null) {
+                    bindingArguments.add(listNode.getBindingPathArgument(null));
+                }
+                return listNode;
+            }
+
+            // 2b: there is a next item: it should either be a NodeIdentifier or a NodeIdentifierWithPredicates, but it
+            //     has to have the same node type
+            final var nextArg = it.next();
+            if (nextArg instanceof NodeWithValue || !nextArg.getNodeType().equals(domArg.getNodeType())) {
+                throw new IllegalArgumentException(
+                    "List should be referenced two times in YANG Instance Identifier " + dom);
+            }
+            if (bindingArguments != null) {
+                bindingArguments.add(listNode.getBindingPathArgument(nextArg));
+            }
+            currentNode = nextNode;
+        } else if (nextNode instanceof ChoiceCodecContext) {
+            currentNode = nextNode;
+        } else if (nextNode instanceof CommonDataObjectCodecContext<?, ?> firstContainer) {
+            if (bindingArguments != null) {
+                bindingArguments.add(firstContainer.getBindingPathArgument(domArg));
+            }
+            currentNode = nextNode;
+        } else {
+            return null;
+        }
+
+        ListCodecContext<?> currentList = null;
+        while (it.hasNext()) {
+            domArg = it.next();
+            if (!(currentNode instanceof DataContainerCodecContext previous)) {
+                throw new IllegalArgumentException("Unexpected child of non-container node " + currentNode);
+            }
+
+            nextNode = previous.yangPathArgumentChild(domArg);
 
             /**
              * Compatibility case: if it's determined the node belongs to augmentation
@@ -281,12 +585,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
 
             /*
-             * List representation in YANG Instance Identifier consists of two
-             * arguments: first is list as a whole, second is list as an item so
-             * if it is /list it means list as whole, if it is /list/list - it
-             * is wildcarded and if it is /list/list[key] it is concrete item,
-             * all this variations are expressed in Binding Aware Instance
-             * Identifier as Item or IdentifiableItem
+             * List representation in YANG Instance Identifier consists of two arguments: first is list as a whole,
+             * second is list as an item so if it is /list it means list as whole, if it is /list/list - it is
+             * wildcarded and if it is /list/list[key] it is concrete item, all this variations are expressed in
+             * InstanceIdentifier as Item or IdentifiableItem
              */
             if (currentList != null) {
                 checkArgument(currentList == nextNode,
@@ -344,15 +646,23 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     NotificationCodecContext<?> getNotificationContext(final Absolute notification) {
-        return root.getNotification(notification);
+        return getOrRethrow(notificationsByPath, notification);
+    }
+
+    private NotificationCodecContext<?> getNotificationContext(final Class<?> notification) {
+        return getOrRethrow(notificationsByClass, notification);
+    }
+
+    ContainerLikeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
+        return getOrRethrow(rpcDataByClass, rpcInputOrOutput);
     }
 
     RpcInputCodec<?> getRpcInputCodec(final Absolute containerPath) {
-        return root.getRpc(containerPath);
+        return getOrRethrow(rpcDataByPath, containerPath);
     }
 
     ActionCodecContext getActionCodec(final Class<? extends Action<?, ?, ?>> action) {
-        return root.getAction(action);
+        return getOrRethrow(actionsByClass, action);
     }
 
     @Override
@@ -493,8 +803,11 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <E extends DataObject> CommonDataObjectCodecTreeNode<E> getStreamChild(final Class<E> childClass) {
-        return root.getStreamChild(childClass);
+    @SuppressWarnings("unchecked")
+    public <E extends DataObject> CommonDataObjectCodecContext<E, ?> getStreamChild(final Class<E> childClass) {
+        final var result = Notification.class.isAssignableFrom(childClass) ? getNotificationContext(childClass)
+            : getOrRethrow(childrenByClass, childClass);
+        return (CommonDataObjectCodecContext<E, ?>) result;
     }
 
     @Override
@@ -522,7 +835,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Override
     @SuppressWarnings("unchecked")
     public <T extends DataObject> CodecWithPath<T> getSubtreeCodecWithPath(final InstanceIdentifier<T> path) {
-        final var yangArgs = new ArrayList<YangInstanceIdentifier.PathArgument>();
+        final var yangArgs = new ArrayList<PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
 
         // TODO Do we need defensive check here?
@@ -539,7 +852,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public BindingCodecTreeNode getSubtreeCodec(final YangInstanceIdentifier path) {
-        return getCodecContextNode(path, null);
+        return getCodecContextNode(requireNonNull(path), null);
     }
 
     @Override
@@ -579,7 +892,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Override
     public <T extends DataObject> NormalizedResult toNormalizedNode(final InstanceIdentifier<T> path, final T data) {
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
-        final var yangArgs = new ArrayList<YangInstanceIdentifier.PathArgument>();
+        final var yangArgs = new ArrayList<PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
         final var yangPath = YangInstanceIdentifier.of(yangArgs);
 
@@ -623,8 +936,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             return null;
         }
 
-        final List<PathArgument> builder = new ArrayList<>();
-        final BindingDataObjectCodecTreeNode<?> codec = getCodecContextNode(path, builder);
+        final var builder = new ArrayList<InstanceIdentifier.PathArgument>();
+        final var codec = getCodecContextNode(path, builder);
         if (codec == null) {
             if (data != null) {
                 LOG.warn("Path {} does not have a binding equivalent, should have been caught earlier ({})", path,
@@ -739,6 +1052,18 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             || data instanceof MapNode || data instanceof UnkeyedListNode
             || data instanceof ChoiceNode
             || data instanceof LeafSetNode;
+    }
+
+    private static <K,V> V getOrRethrow(final LoadingCache<K, V> cache, final K key) {
+        try {
+            return cache.getUnchecked(key);
+        } catch (UncheckedExecutionException e) {
+            final var cause = e.getCause();
+            if (cause != null) {
+                Throwables.throwIfUnchecked(cause);
+            }
+            throw e;
+        }
     }
 
     @SuppressWarnings("rawtypes")

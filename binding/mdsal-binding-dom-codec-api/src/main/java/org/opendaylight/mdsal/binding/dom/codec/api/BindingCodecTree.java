@@ -88,7 +88,14 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      */
     <T extends DataObject> @NonNull CommonDataObjectCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path);
 
-    // FIXME: NonNull and throwing exception
+    /**
+     * Look up a codec by its {@link YangInstanceIdentifier} path.
+     *
+     * @param path A non-empty {@link YangInstanceIdentifier}
+     * @return A {@link BindingCodecTreeNode}
+     * @throws NullPointerException if {@code path} is {@code null}
+     * @throws IllegalArgumentException if {@code path} is empty
+     */
     @Nullable BindingCodecTreeNode getSubtreeCodec(YangInstanceIdentifier path);
 
     // FIXME: NonNull and throwing exception
