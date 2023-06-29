@@ -12,12 +12,12 @@ import static java.util.Objects.requireNonNull;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
+import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-abstract sealed class CommonDataObjectCodecPrototype<T extends RuntimeTypeContainer> implements CodecContextSupplier
+abstract sealed class CommonDataObjectCodecPrototype<T extends CompositeRuntimeType> implements CodecContextSupplier
         permits AugmentationCodecPrototype, DataObjectCodecPrototype {
     private static final VarHandle INSTANCE;
 

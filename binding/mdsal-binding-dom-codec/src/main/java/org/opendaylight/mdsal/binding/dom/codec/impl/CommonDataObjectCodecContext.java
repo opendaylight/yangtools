@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
+import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 /**
  * Base implementation of {@link CommonDataObjectCodecTreeNode}.
  */
-abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T extends RuntimeTypeContainer>
+abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
         extends DataContainerCodecContext<D, T> implements CommonDataObjectCodecTreeNode<D>
         permits AbstractDataObjectCodecContext, ChoiceCodecContext {
     final @NonNull CommonDataObjectCodecPrototype<T> prototype;

@@ -35,8 +35,6 @@ import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassExcepti
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -63,7 +61,7 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract sealed class DataContainerCodecContext<D extends BindingObject & DataContainer, T extends RuntimeTypeContainer>
+abstract sealed class DataContainerCodecContext<D extends BindingObject & DataContainer, T extends CompositeRuntimeType>
         extends CodecContext implements BindingDataContainerCodecTreeNode<D>
         permits CommonDataObjectCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecContext.class);
@@ -85,10 +83,7 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
     private volatile DataContainerSerializer eventStreamSerializer;
 
     DataContainerCodecContext(final T type) {
-        childAddressabilitySummary = type instanceof RuntimeType runtimeType
-            ? computeChildAddressabilitySummary(runtimeType.statement())
-                // BindingRuntimeTypes, does not matter
-                : ChildAddressabilitySummary.MIXED;
+        childAddressabilitySummary = computeChildAddressabilitySummary(type.statement());
     }
 
     @Override

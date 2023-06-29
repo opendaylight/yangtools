@@ -10,12 +10,12 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeTypeContainer;
+import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-abstract sealed class DataObjectCodecPrototype<T extends RuntimeTypeContainer> extends CommonDataObjectCodecPrototype<T>
+abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> extends CommonDataObjectCodecPrototype<T>
         permits CaseCodecPrototype, ChoiceCodecPrototype, ContainerLikeCodecPrototype, ListCodecPrototype,
                 NotificationCodecContext.Prototype {
     private final @NonNull NodeIdentifier yangArg;
