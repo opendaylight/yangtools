@@ -14,7 +14,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.YangData;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
@@ -105,4 +107,25 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      * @return A BindingInstanceIdentifierCodec instance.
      */
     @NonNull BindingInstanceIdentifierCodec getInstanceIdentifierCodec();
+
+    /**
+     * Get the {@link BindingYangDataCodecTreeNode} corresponding to a particular generated {@link YangData} type.
+     *
+     * @param <T> {@link YangData} type
+     * @param yangDataClass Class object of {@link YangData} type
+     * @return A {@link BindingYangDataCodecTreeNode}
+     * @throws NullPointerException if {@code yangDataClass} is {@code null}
+     * @throws IllegalArgumentException if the specified type is not known
+     */
+    <T extends YangData<T>> @NonNull BindingYangDataCodecTreeNode<T> getYangDataCodec(Class<T> yangDataClass);
+
+    /**
+     * Get the {@link BindingYangDataCodecTreeNode} corresponding to a particular {@link YangDataName}.
+     *
+     * @param yangDataName a {@link YangDataName}
+     * @return A {@link BindingYangDataCodecTreeNode}
+     * @throws NullPointerException if {@code yangDataName} is {@code null}
+     * @throws IllegalArgumentException if the specified name is not known
+     */
+    @NonNull BindingYangDataCodecTreeNode<?> getYangDataCodec(YangDataName yangDataName);
 }

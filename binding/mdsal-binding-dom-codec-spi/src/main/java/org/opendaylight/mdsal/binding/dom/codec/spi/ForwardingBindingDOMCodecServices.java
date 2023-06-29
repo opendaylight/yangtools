@@ -19,6 +19,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingYangDataCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -30,6 +31,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
+import org.opendaylight.yangtools.yang.binding.YangData;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -230,6 +233,16 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     @Override
     public BindingInstanceIdentifierCodec getInstanceIdentifierCodec() {
         return delegate().getInstanceIdentifierCodec();
+    }
+
+    @Override
+    public <T extends YangData<T>> BindingYangDataCodecTreeNode<T> getYangDataCodec(final Class<T> yangDataClass) {
+        return delegate().getYangDataCodec(yangDataClass);
+    }
+
+    @Override
+    public BindingYangDataCodecTreeNode<?> getYangDataCodec(final YangDataName yangDataName) {
+        return delegate().getYangDataCodec(yangDataName);
     }
 
     @Override
