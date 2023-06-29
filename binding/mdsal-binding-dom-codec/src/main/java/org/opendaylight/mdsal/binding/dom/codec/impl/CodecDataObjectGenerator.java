@@ -46,7 +46,6 @@ import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.LocalN
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,16 +259,15 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         this.keyMethod = keyMethod;
     }
 
-    static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generate(final BindingClassLoader loader,
-            final Class<D> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
+    static <T extends CodecDataObject<T>> Class<T> generate(final BindingClassLoader loader,
+            final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
         return CodecPackage.CODEC.generateClass(loader, bindingInterface,
             new Reusable<>(BB_CDO, simpleProperties, daoProperties, keyMethod));
     }
 
-    static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generateAugmentable(
-            final BindingClassLoader loader, final Class<D> bindingInterface,
-            final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
+    static <T extends CodecDataObject<T>> Class<T> generateAugmentable(final BindingClassLoader loader,
+            final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
         return CodecPackage.CODEC.generateClass(loader, bindingInterface,
             new Reusable<>(BB_ACDO, simpleProperties, daoProperties, keyMethod));

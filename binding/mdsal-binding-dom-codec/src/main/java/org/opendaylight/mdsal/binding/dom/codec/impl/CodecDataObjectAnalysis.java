@@ -60,8 +60,7 @@ final class CodecDataObjectAnalysis<R extends CompositeRuntimeType> {
     CodecDataObjectAnalysis(final CommonDataObjectCodecPrototype<R> prototype, final CodecItemFactory itemFactory,
             final Method keyMethod) {
         // Preliminaries from prototype
-        @SuppressWarnings("unchecked")
-        final Class<DataObject> bindingClass = Class.class.cast(prototype.getBindingClass());
+        final var bindingClass = prototype.getBindingClass();
         final var runtimeType = prototype.getType();
         final var factory = prototype.getFactory();
         final var leafContexts = factory.getLeafNodes(bindingClass, runtimeType.statement());
