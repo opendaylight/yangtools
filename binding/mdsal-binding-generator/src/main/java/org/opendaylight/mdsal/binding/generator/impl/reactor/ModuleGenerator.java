@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
@@ -23,6 +24,7 @@ import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.YangDataRuntimeType;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -128,7 +130,15 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
             ModuleRuntimeType build(final GeneratedType type, final ModuleEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 verify(augments.isEmpty(), "Unexpected augments %s", augments);
-                return new DefaultModuleRuntimeType(type, statement, children);
+
+                final var yangDataChildren = new ArrayList<YangDataRuntimeType>();
+                for (var child : ModuleGenerator.this) {
+                    if (child instanceof YangDataGenerator yangDataGen) {
+                        yangDataGen.runtimeType().ifPresent(yangDataChildren::add);
+                    }
+                }
+
+                return new DefaultModuleRuntimeType(type, statement, children, yangDataChildren);
             }
         };
     }

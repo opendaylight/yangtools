@@ -7,8 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import java.util.List;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleRuntimeType;
@@ -20,27 +23,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 @Beta
 public final class DefaultModuleRuntimeType extends AbstractCompositeRuntimeType<ModuleEffectiveStatement>
         implements ModuleRuntimeType {
-    private final ImmutableList<YangDataRuntimeType> yangDataChildren;
+    private final ImmutableMap<YangDataName, YangDataRuntimeType> yangDataChildren;
 
     public DefaultModuleRuntimeType(final GeneratedType bindingType, final ModuleEffectiveStatement statement,
-            final List<RuntimeType> children) {
+            final List<RuntimeType> children, final List<YangDataRuntimeType> yangDataChildren) {
         super(bindingType, statement, children);
-        yangDataChildren = children.stream()
-            .filter(YangDataRuntimeType.class::isInstance)
-            .map(YangDataRuntimeType.class::cast)
-            .collect(ImmutableList.toImmutableList());
+        this.yangDataChildren = Maps.uniqueIndex(yangDataChildren, type -> type.statement().argument());
     }
 
     @Override
     public YangDataRuntimeType yangDataChild(final YangDataName templateName) {
-        if (statement().localQNameModule().equals(templateName.module())) {
-            final var name = templateName.name();
-            for (var child : yangDataChildren) {
-                if (name.equals(child.statement().argument())) {
-                    return child;
-                }
-            }
-        }
-        return null;
+        return yangDataChildren.get(requireNonNull(templateName));
     }
 }
