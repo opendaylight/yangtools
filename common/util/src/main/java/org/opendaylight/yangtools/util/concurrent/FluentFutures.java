@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.Futures;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -120,5 +122,18 @@ public final class FluentFutures {
      */
     public static FluentFuture<Boolean> immediateFalseFluentFuture() {
         return FALSE_FUTURE;
+    }
+
+    /**
+     * Submit a {@link Callable} to specified {@link Executor} and return a {@link FluentFuture} that completes with the
+     * result of the {@link Callable}.
+     *
+     * @param <T> Callable return type
+     * @param callable The Callable to call
+     * @param executor The Executor to use
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public static <T> FluentFuture<T> submit(final Callable<T> callable, final Executor executor) {
+        return FluentFuture.from(Futures.submit(callable, executor));
     }
 }
