@@ -216,11 +216,9 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             .map(stmt -> new NodeIdentifier((QName) stmt.argument()))
             .collect(ImmutableSet.toImmutableSet());
 
-        final var it = childPaths.iterator();
-        if (!it.hasNext()) {
+        if (childPaths.isEmpty()) {
             return null;
         }
-        final var namespace = it.next().getNodeType().getModule();
 
         final var factory = factory();
         final GeneratedType javaType = augment.javaType();
@@ -231,7 +229,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             throw new IllegalStateException(
                 "RuntimeContext references type " + javaType + " but failed to load its class", e);
         }
-        return new AugmentationCodecPrototype(augClass, namespace, augment, factory, childPaths);
+        return new AugmentationCodecPrototype(augClass, augment, factory, childPaths);
     }
 
     @Override

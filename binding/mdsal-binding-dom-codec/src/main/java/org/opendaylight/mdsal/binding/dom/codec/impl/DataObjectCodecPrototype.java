@@ -29,7 +29,7 @@ abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> e
 
     DataObjectCodecPrototype(final Item<?> bindingArg, final NodeIdentifier yangArg, final T type,
             final CodecContextFactory factory) {
-        super(bindingArg, yangArg.getNodeType().getModule(), type, factory);
+        super(bindingArg, type, factory);
         this.yangArg = requireNonNull(yangArg);
     }
 

@@ -14,7 +14,6 @@ import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNod
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
@@ -61,9 +60,5 @@ abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T exten
 
     protected final PathArgument bindingArg() {
         return prototype.getBindingArg();
-    }
-
-    protected final QNameModule namespace() {
-        return prototype.getNamespace();
     }
 }

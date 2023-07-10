@@ -14,7 +14,6 @@ import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 abstract sealed class CommonDataObjectCodecPrototype<T extends CompositeRuntimeType> implements CodecContextSupplier
@@ -31,31 +30,21 @@ abstract sealed class CommonDataObjectCodecPrototype<T extends CompositeRuntimeT
     }
 
     private final @NonNull T type;
-    private final @NonNull QNameModule namespace;
     private final @NonNull CodecContextFactory factory;
     private final @NonNull Item<?> bindingArg;
-
-    // multiple paths represent augmentation wrapper
-    // FIXME: this means it is either this or 'childArgs'
 
     // Accessed via INSTANCE
     @SuppressWarnings("unused")
     private volatile CommonDataObjectCodecContext<?, T> instance;
 
-    CommonDataObjectCodecPrototype(final Item<?> bindingArg, final QNameModule namespace, final T type,
-            final CodecContextFactory factory) {
+    CommonDataObjectCodecPrototype(final Item<?> bindingArg, final T type, final CodecContextFactory factory) {
         this.bindingArg = requireNonNull(bindingArg);
-        this.namespace = requireNonNull(namespace);
         this.type = requireNonNull(type);
         this.factory = requireNonNull(factory);
     }
 
     final @NonNull T getType() {
         return type;
-    }
-
-    final @NonNull QNameModule getNamespace() {
-        return namespace;
     }
 
     final @NonNull CodecContextFactory getFactory() {

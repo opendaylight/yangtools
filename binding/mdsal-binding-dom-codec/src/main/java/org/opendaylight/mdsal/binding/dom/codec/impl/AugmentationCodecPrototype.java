@@ -14,16 +14,15 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 final class AugmentationCodecPrototype extends CommonDataObjectCodecPrototype<AugmentRuntimeType> {
     private final @NonNull ImmutableSet<NodeIdentifier> childArgs;
 
     @SuppressWarnings("unchecked")
-    AugmentationCodecPrototype(final Class<?> cls, final QNameModule namespace, final AugmentRuntimeType type,
-            final CodecContextFactory factory, final ImmutableSet<NodeIdentifier> childArgs) {
-        super(Item.of((Class<? extends DataObject>) cls), namespace, type, factory);
+    AugmentationCodecPrototype(final Class<?> cls, final AugmentRuntimeType type, final CodecContextFactory factory,
+            final ImmutableSet<NodeIdentifier> childArgs) {
+        super(Item.of((Class<? extends DataObject>) cls), type, factory);
         this.childArgs = requireNonNull(childArgs);
     }
 
