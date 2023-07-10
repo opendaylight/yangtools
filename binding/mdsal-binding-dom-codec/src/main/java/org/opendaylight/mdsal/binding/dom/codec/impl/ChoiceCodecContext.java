@@ -208,11 +208,9 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
         return (WithStatus) type().statement();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {
-        final var child = byClass.get(childClass);
-        return child == null ? null : (CommonDataObjectCodecContext<C, ?>) child.get();
+    CommonDataObjectCodecPrototype<?> streamChildPrototype(final Class<?> childClass) {
+        return byClass.get(childClass);
     }
 
     Iterable<Class<?>> getCaseChildrenClasses() {

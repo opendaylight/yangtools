@@ -130,8 +130,14 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
             "Child %s is not valid child of %s", getBindingClass(), childClass);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public abstract <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(Class<C> childClass);
+    public final <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {
+        final var childProto = streamChildPrototype(requireNonNull(childClass));
+        return childProto == null ? null : (CommonDataObjectCodecContext<C, ?>) childProto.get();
+    }
+
+    abstract @Nullable CommonDataObjectCodecPrototype<?> streamChildPrototype(@NonNull Class<?> childClass);
 
     @Override
     public String toString() {

@@ -68,14 +68,8 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
         return (WithStatus) type().statement();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public final <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {
-        final var childProto = streamChildPrototype(childClass);
-        return childProto == null ? null : (CommonDataObjectCodecContext<C, ?>) childProto.get();
-    }
-
-    @Nullable CommonDataObjectCodecPrototype<?> streamChildPrototype(final @NonNull Class<?> childClass) {
+    CommonDataObjectCodecPrototype<?> streamChildPrototype(final Class<?> childClass) {
         return byStreamClass.get(childClass);
     }
 
