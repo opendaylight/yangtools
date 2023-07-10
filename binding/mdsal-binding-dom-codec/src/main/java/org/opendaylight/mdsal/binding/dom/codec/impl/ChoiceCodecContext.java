@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -219,15 +218,12 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
 
     @Override
     public CodecContext yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
-        final CommonDataObjectCodecPrototype<?> cazeProto;
-        if (arg instanceof NodeIdentifierWithPredicates) {
-            cazeProto = byYangCaseChild.get(new NodeIdentifier(arg.getNodeType()));
-        } else {
-            cazeProto = byYangCaseChild.get(arg);
-        }
+        return ((CaseCodecContext<?>) super.yangPathArgumentChild(arg)).yangPathArgumentChild(arg);
+    }
 
-        return childNonNull(cazeProto, arg, "Argument %s is not valid child of %s", arg, getSchema()).get()
-                .yangPathArgumentChild(arg);
+    @Override
+    CaseCodecPrototype yangChildSupplier(final NodeIdentifier arg) {
+        return byYangCaseChild.get(arg);
     }
 
     @Override

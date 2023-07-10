@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
@@ -105,19 +104,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     }
 
     @Override
-    public final CodecContext yangPathArgumentChild(final PathArgument arg) {
-        CodecContextSupplier supplier;
-        if (arg instanceof NodeIdentifier nodeId) {
-            supplier = yangChildSupplier(nodeId);
-        } else if (arg instanceof NodeIdentifierWithPredicates nip) {
-            supplier = yangChildSupplier(new NodeIdentifier(nip.getNodeType()));
-        } else {
-            supplier = null;
-        }
-        return childNonNull(supplier, arg, "Argument %s is not valid child of %s", arg, getSchema()).get();
-    }
-
-    @Nullable CodecContextSupplier yangChildSupplier(final @NonNull NodeIdentifier arg) {
+    CodecContextSupplier yangChildSupplier(final NodeIdentifier arg) {
         return byYang.get(arg);
     }
 

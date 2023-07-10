@@ -44,6 +44,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
@@ -94,8 +96,21 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
 
     protected abstract @NonNull T type();
 
+    // Non-final for ChoiceCodecContext
     @Override
-    public abstract CodecContext yangPathArgumentChild(YangInstanceIdentifier.PathArgument arg);
+    public CodecContext yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
+        CodecContextSupplier supplier;
+        if (arg instanceof NodeIdentifier nodeId) {
+            supplier = yangChildSupplier(nodeId);
+        } else if (arg instanceof NodeIdentifierWithPredicates nip) {
+            supplier = yangChildSupplier(new NodeIdentifier(nip.getNodeType()));
+        } else {
+            supplier = null;
+        }
+        return childNonNull(supplier, arg, "Argument %s is not valid child of %s", arg, getSchema()).get();
+    }
+
+    abstract @Nullable CodecContextSupplier yangChildSupplier(@NonNull NodeIdentifier arg);
 
     @Override
     public CommonDataObjectCodecContext<?, ?> bindingPathArgumentChild(final PathArgument arg,
