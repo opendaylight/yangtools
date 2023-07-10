@@ -125,7 +125,10 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
     }
 
     @Override
-    public abstract <C extends DataObject> CommonDataObjectCodecContext<C, ?> getStreamChild(Class<C> childClass);
+    public final <C extends DataObject> CommonDataObjectCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
+        return childNonNull(streamChild(childClass), childClass,
+            "Child %s is not valid child of %s", getBindingClass(), childClass);
+    }
 
     @Override
     public abstract <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(Class<C> childClass);

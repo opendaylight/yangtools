@@ -208,12 +208,6 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
         return (WithStatus) type().statement();
     }
 
-    @Override
-    public <C extends DataObject> CommonDataObjectCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
-        return childNonNull(streamChild(childClass), childClass,
-            "Supplied class %s is not valid case in %s", childClass, bindingArg());
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {

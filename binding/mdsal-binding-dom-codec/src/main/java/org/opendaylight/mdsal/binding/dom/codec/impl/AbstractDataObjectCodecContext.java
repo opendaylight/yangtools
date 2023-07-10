@@ -68,12 +68,6 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
         return (WithStatus) type().statement();
     }
 
-    @Override
-    public final <C extends DataObject> CommonDataObjectCodecContext<C, ?> getStreamChild(final Class<C> childClass) {
-        return childNonNull(streamChild(childClass), childClass,
-            "Child %s is not valid child of %s", getBindingClass(), childClass);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public final <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {
