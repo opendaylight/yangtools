@@ -10,14 +10,19 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Throwables;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -26,8 +31,10 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCaching
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -52,6 +59,10 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         permits CaseCodecContext, ContainerLikeCodecContext, ListCodecContext, NotificationCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
 
+    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
+        AbstractDataObjectCodecContext.class, DataContainerNode.class);
+    private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
+        DataObjectCodecContext.class, DataContainerNode.class);
     private static final VarHandle MISMATCHED_AUGMENTED;
 
     static {
@@ -66,6 +77,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     private final ImmutableMap<Class<?>, AugmentationCodecPrototype> augmentToPrototype;
     private final ImmutableMap<NodeIdentifier, Class<?>> yangToAugmentClass;
     private final @NonNull Class<? extends CodecDataObject<?>> generatedClass;
+    private final MethodHandle proxyConstructor;
 
     // Note this the content of this field depends only of invariants expressed as this class's fields or
     // BindingRuntimeContext. It is only accessed via MISMATCHED_AUGMENTED above.
@@ -78,24 +90,52 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype, final CodecItemFactory itemFactory) {
-        this(prototype, new CodecDataObjectAnalysis<>(prototype, itemFactory, null));
+        this(prototype, new DataContainerAnalysis<>(prototype, itemFactory), null);
     }
 
     DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype, final Method keyMethod) {
-        this(prototype, new CodecDataObjectAnalysis<>(prototype, CodecItemFactory.of(), keyMethod));
+        this(prototype, new DataContainerAnalysis<>(prototype, CodecItemFactory.of()), keyMethod);
     }
 
     private DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype,
-            final CodecDataObjectAnalysis<T> analysis) {
+            final DataContainerAnalysis<T> analysis, final Method keyMethod) {
         super(prototype, analysis);
 
-        // Inherit analysis stuff
-        generatedClass = analysis.generatedClass;
+        final var bindingClass = getBindingClass();
+
+        // Final bits: generate the appropriate class, As a side effect we identify what Augmentations are possible
+        final List<AugmentRuntimeType> possibleAugmentations;
+        if (Augmentable.class.isAssignableFrom(bindingClass)) {
+            // Verify we have the appropriate backing runtimeType
+            final var runtimeType = prototype.getType();
+            if (!(runtimeType instanceof AugmentableRuntimeType augmentableRuntimeType)) {
+                throw new VerifyException(
+                    "Unexpected type %s backing augmenable %s".formatted(runtimeType, bindingClass));
+            }
+
+            possibleAugmentations = augmentableRuntimeType.augments();
+            generatedClass = CodecDataObjectGenerator.generateAugmentable(factory().getLoader(), bindingClass,
+                analysis.leafContexts, analysis.daoProperties, keyMethod);
+        } else {
+            possibleAugmentations = List.of();
+            generatedClass = CodecDataObjectGenerator.generate(factory().getLoader(), bindingClass,
+                analysis.leafContexts, analysis.daoProperties, keyMethod);
+        }
+
+        // All done: acquire the constructor: it is supposed to be public
+        final MethodHandle ctor;
+        try {
+            ctor = MethodHandles.publicLookup().findConstructor(generatedClass, CONSTRUCTOR_TYPE);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            throw new LinkageError("Failed to find contructor for class " + generatedClass, e);
+        }
+
+        proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
 
         // Deal with augmentations, which are not something we analysis provides
         final var augPathToBinding = new HashMap<NodeIdentifier, Class<?>>();
         final var augClassToProto = new HashMap<Class<?>, AugmentationCodecPrototype>();
-        for (var augment : analysis.possibleAugmentations) {
+        for (var augment : possibleAugmentations) {
             final var augProto = loadAugmentPrototype(augment);
             if (augProto != null) {
                 final var augBindingClass = augProto.getBindingClass();
@@ -266,10 +306,6 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         return map;
     }
 
-    final @NonNull Class<? extends CodecDataObject<?>> generatedClass() {
-        return generatedClass;
-    }
-
     @Override
     public InstanceIdentifier.PathArgument deserializePathArgument(final PathArgument arg) {
         checkArgument(getDomPathArgument().equals(arg));
@@ -291,5 +327,19 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     public final BindingNormalizedNodeCachingCodec<D> createCachingCodec(
             final ImmutableCollection<Class<? extends BindingObject>> cacheSpecifier) {
         return createCachingCodec(this, cacheSpecifier);
+    }
+
+    final @NonNull Class<? extends CodecDataObject<?>> generatedClass() {
+        return generatedClass;
+    }
+
+    @SuppressWarnings("checkstyle:illegalCatch")
+    final @NonNull D createBindingProxy(final DataContainerNode node) {
+        try {
+            return (D) proxyConstructor.invokeExact(this, node);
+        } catch (final Throwable e) {
+            Throwables.throwIfUnchecked(e);
+            throw new IllegalStateException(e);
+        }
     }
 }

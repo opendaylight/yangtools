@@ -7,7 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.List;
 import java.util.Map;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
@@ -22,8 +26,32 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
         extends AbstractDataObjectCodecContext<D, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<D> {
+    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
+        AbstractDataObjectCodecContext.class, DataContainerNode.class);
+    private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
+        AugmentationCodecContext.class, DataContainerNode.class);
+
+    private final MethodHandle proxyConstructor;
+
+    private AugmentationCodecContext(final AugmentationCodecPrototype prototype,
+            final DataContainerAnalysis<AugmentRuntimeType> analysis) {
+        super(prototype, analysis);
+
+        final var bindingClass = CodecDataObjectGenerator.generate(prototype.getFactory().getLoader(),
+            prototype.getBindingClass(), analysis.leafContexts, analysis.daoProperties, null);
+
+        final MethodHandle ctor;
+        try {
+            ctor = MethodHandles.publicLookup().findConstructor(bindingClass, CONSTRUCTOR_TYPE);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            throw new LinkageError("Failed to find contructor for class " + bindingClass, e);
+        }
+
+        proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
+    }
+
     AugmentationCodecContext(final AugmentationCodecPrototype prototype) {
-        super(prototype, new CodecDataObjectAnalysis<>(prototype, CodecItemFactory.of(), null));
+        this(prototype, new DataContainerAnalysis<>(prototype, CodecItemFactory.of()));
     }
 
     @Override
@@ -42,11 +70,17 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
         return bindingArg();
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     @Override
     public D filterFrom(final DataContainerNode parentData) {
         for (var childArg : ((AugmentationCodecPrototype) prototype).getChildArgs()) {
             if (parentData.childByArg(childArg) != null) {
-                return createBindingProxy(parentData);
+                try {
+                    return (D) proxyConstructor.invokeExact(this, parentData);
+                } catch (final Throwable e) {
+                    Throwables.throwIfUnchecked(e);
+                    throw new IllegalStateException(e);
+                }
             }
         }
         return null;

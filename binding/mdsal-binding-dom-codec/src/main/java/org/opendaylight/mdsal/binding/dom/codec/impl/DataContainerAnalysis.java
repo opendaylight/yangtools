@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
  * Analysis of a {@link DataContainer} specialization class. This includes things needed for
  * {@link DataContainerCodecContext}'s methods as well as the appropriate run-time generated class.
  */
-abstract class AbstractDataContainerAnalysis<R extends CompositeRuntimeType> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractDataContainerAnalysis.class);
+final class DataContainerAnalysis<R extends CompositeRuntimeType> {
+    private static final Logger LOG = LoggerFactory.getLogger(DataContainerAnalysis.class);
 
     // Needed for DataContainerCodecContext
     final @NonNull ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byStreamClass;
@@ -51,7 +51,11 @@ abstract class AbstractDataContainerAnalysis<R extends CompositeRuntimeType> {
     final @NonNull ImmutableMap<Method, ValueNodeCodecContext> leafContexts;
     final @NonNull ImmutableMap<Class<?>, PropertyInfo> daoProperties;
 
-    AbstractDataContainerAnalysis(final Class<?> bindingClass, final R runtimeType, final CodecContextFactory factory,
+    DataContainerAnalysis(final CommonDataObjectCodecPrototype<R> prototype, final CodecItemFactory itemFactory) {
+        this(prototype.getBindingClass(), prototype.getType(), prototype.getFactory(), itemFactory);
+    }
+
+    DataContainerAnalysis(final Class<?> bindingClass, final R runtimeType, final CodecContextFactory factory,
             final CodecItemFactory itemFactory) {
         leafContexts = factory.getLeafNodes(bindingClass, runtimeType.statement());
 
@@ -189,7 +193,7 @@ abstract class AbstractDataContainerAnalysis<R extends CompositeRuntimeType> {
         return ret;
     }
 
-    static final Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
+    static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
             final String prefix) {
         final String methodName = method.getName();
         if ("getClass".equals(methodName) || !methodName.startsWith(prefix) || method.getParameterCount() > 0) {

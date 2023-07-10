@@ -7,10 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.lang.invoke.MethodHandle;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
@@ -49,16 +47,14 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<NodeIdentifier, CodecContextSupplier> byYang;
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
-    private final MethodHandle proxyConstructor;
 
     AbstractDataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype,
-            final CodecDataObjectAnalysis<T> analysis) {
+            final DataContainerAnalysis<T> analysis) {
         super(prototype);
         byBindingArgClass = analysis.byBindingArgClass;
         byStreamClass = analysis.byStreamClass;
         byYang = analysis.byYang;
         leafChild = analysis.leafNodes;
-        proxyConstructor = analysis.proxyConstructor;
     }
 
     @Override
@@ -106,16 +102,6 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     @Override
     CodecContextSupplier yangChildSupplier(final NodeIdentifier arg) {
         return byYang.get(arg);
-    }
-
-    @SuppressWarnings("checkstyle:illegalCatch")
-    final @NonNull D createBindingProxy(final DataContainerNode node) {
-        try {
-            return (D) proxyConstructor.invokeExact(this, node);
-        } catch (final Throwable e) {
-            Throwables.throwIfUnchecked(e);
-            throw new IllegalStateException(e);
-        }
     }
 
     final ValueNodeCodecContext getLeafChild(final String name) {
