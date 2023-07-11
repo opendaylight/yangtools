@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runners.Parameterized.Parameter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -33,7 +33,7 @@ public abstract class AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(expectedSize, bytes.length);
+        Assertions.assertEquals(expectedSize, bytes.length);
 
         final NormalizedNode deser;
         try {
@@ -41,7 +41,7 @@ public abstract class AbstractSerializationTest {
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }
-        Assert.assertEquals(node, deser);
+        Assertions.assertEquals(node, deser);
         return node;
     }
 
@@ -58,7 +58,7 @@ public abstract class AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(expectedSize, bytes.length);
+        Assertions.assertEquals(expectedSize, bytes.length);
 
         final PathArgument deser;
         try {
@@ -66,7 +66,7 @@ public abstract class AbstractSerializationTest {
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }
-        Assert.assertEquals(arg, deser);
+        Assertions.assertEquals(arg, deser);
         return (T) deser;
     }
 
@@ -80,23 +80,23 @@ public abstract class AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(expectedSize, bytes.length);
+        Assertions.assertEquals(expectedSize, bytes.length);
 
         try {
             final NormalizedNodeDataInput in = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-            Assert.assertEquals(arg, in.readPathArgument());
-            Assert.assertEquals(arg, in.readPathArgument());
+            Assertions.assertEquals(arg, in.readPathArgument());
+            Assertions.assertEquals(arg, in.readPathArgument());
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }
     }
 
     final void assertSame(final Object value, final int expectedSize) {
-        Assert.assertSame(value, assertEquals(value, expectedSize));
+        Assertions.assertSame(value, assertEquals(value, expectedSize));
     }
 
     final void assertSame(final PathArgument arg, final int expectedSize) {
-        Assert.assertSame(arg, assertEquals(arg, expectedSize));
+        Assertions.assertSame(arg, assertEquals(arg, expectedSize));
     }
 
     static final List<QName> generateQNames(final int size) {

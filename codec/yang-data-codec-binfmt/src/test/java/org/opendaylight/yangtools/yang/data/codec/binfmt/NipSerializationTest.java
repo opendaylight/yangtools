@@ -13,8 +13,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -88,12 +88,12 @@ public class NipSerializationTest extends AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(twiceSize65792, bytes.length);
+        Assertions.assertEquals(twiceSize65792, bytes.length);
 
         try {
             final NormalizedNodeDataInput input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-            Assert.assertEquals(nip, input.readPathArgument());
-            Assert.assertEquals(nip, input.readPathArgument());
+            Assertions.assertEquals(nip, input.readPathArgument());
+            Assertions.assertEquals(nip, input.readPathArgument());
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }

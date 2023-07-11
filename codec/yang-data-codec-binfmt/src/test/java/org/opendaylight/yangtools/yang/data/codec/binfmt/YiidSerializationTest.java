@@ -11,8 +11,8 @@ import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
-import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -101,12 +101,12 @@ public class YiidSerializationTest extends AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(twiceSize65792, bytes.length);
+        Assertions.assertEquals(twiceSize65792, bytes.length);
 
         try {
             final NormalizedNodeDataInput input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-            Assert.assertEquals(yiid, input.readYangInstanceIdentifier());
-            Assert.assertEquals(yiid, input.readYangInstanceIdentifier());
+            Assertions.assertEquals(yiid, input.readYangInstanceIdentifier());
+            Assertions.assertEquals(yiid, input.readYangInstanceIdentifier());
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }
@@ -118,7 +118,7 @@ public class YiidSerializationTest extends AbstractSerializationTest {
             builder.node(TestModel.TEST_QNAME);
         }
         final YangInstanceIdentifier ret = builder.build();
-        Assert.assertEquals(size, ret.getPathArguments().size());
+        Assertions.assertEquals(size, ret.getPathArguments().size());
         return ret;
     }
 
@@ -128,7 +128,7 @@ public class YiidSerializationTest extends AbstractSerializationTest {
             builder.node(QName.create(TestModel.TEST_QNAME, "a" + Integer.toHexString(i)));
         }
         final YangInstanceIdentifier ret = builder.build();
-        Assert.assertEquals(size, ret.getPathArguments().size());
+        Assertions.assertEquals(size, ret.getPathArguments().size());
         return ret;
     }
 }

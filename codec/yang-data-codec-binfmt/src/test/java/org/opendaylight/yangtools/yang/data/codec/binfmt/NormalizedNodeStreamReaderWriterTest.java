@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
@@ -215,14 +215,14 @@ public class NormalizedNodeStreamReaderWriterTest {
         ContainerNode deserialized = (ContainerNode)nnin.readNormalizedNode();
 
         Optional<DataContainerChild> child = deserialized.findChildByArg(new NodeIdentifier(TestModel.ANY_XML_QNAME));
-        assertEquals("AnyXml child present", true, child.isPresent());
+        assertEquals(true, child.isPresent(), "AnyXml child present");
 
         StreamResult xmlOutput = new StreamResult(new StringWriter());
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(((DOMSourceAnyxmlNode)child.orElseThrow()).body(), xmlOutput);
 
-        assertEquals("XML", xml, xmlOutput.getWriter().toString());
+        assertEquals(xml, xmlOutput.getWriter().toString(), "XML");
         assertEquals("http://www.w3.org/TR/html4/",
             ((DOMSourceAnyxmlNode)child.orElseThrow()).body().getNode().getNamespaceURI());
     }

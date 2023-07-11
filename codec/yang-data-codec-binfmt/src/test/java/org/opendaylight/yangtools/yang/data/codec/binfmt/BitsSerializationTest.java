@@ -13,8 +13,8 @@ import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
-import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -81,12 +81,12 @@ public class BitsSerializationTest extends AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(twiceSize65821, bytes.length);
+        Assertions.assertEquals(twiceSize65821, bytes.length);
 
         try {
             final NormalizedNodeDataInput input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-            Assert.assertEquals(leaf, input.readNormalizedNode());
-            Assert.assertEquals(leaf, input.readNormalizedNode());
+            Assertions.assertEquals(leaf, input.readNormalizedNode());
+            Assertions.assertEquals(leaf, input.readNormalizedNode());
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }
@@ -98,7 +98,7 @@ public class BitsSerializationTest extends AbstractSerializationTest {
             builder.add(Integer.toHexString(i));
         }
         final ImmutableSet<String> ret = builder.build();
-        Assert.assertEquals(size, ret.size());
+        Assertions.assertEquals(size, ret.size());
         return ret;
     }
 }
