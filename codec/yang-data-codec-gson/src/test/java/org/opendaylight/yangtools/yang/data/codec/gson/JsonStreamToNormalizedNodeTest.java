@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
@@ -21,7 +20,7 @@ import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -32,37 +31,37 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference
 /**
  * Each test tests whether json input is correctly transformed to normalized node structure.
  */
-public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
+class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     @Test
-    public void leafNodeInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/leaf-node-in-container.json");
+    void leafNodeInContainer() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/leaf-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.leafNodeInContainer());
     }
 
     @Test
-    public void leafNodeViaAugmentationInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/leaf-node-via-augmentation-in-container.json");
+    void leafNodeViaAugmentationInContainer() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/leaf-node-via-augmentation-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.leafNodeViaAugmentationInContainer());
     }
 
     @Test
-    public void leafListNodeInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/leaflist-node-in-container.json");
+    void leafListNodeInContainer() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/leaflist-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.leafListNodeInContainer());
     }
 
     @Test
-    public void keyedListNodeInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/keyed-list-node-in-container.json");
+    void keyedListNodeInContainer() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/keyed-list-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.keyedListNodeInContainer());
     }
 
     @Test
-    public void choiceNodeInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/choice-node-in-container.json");
+    void choiceNodeInContainer() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/choice-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.choiceNodeInContainer());
     }
 
@@ -74,8 +73,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * member of case.
      */
     @Test
-    public void caseNodeAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/case-node-augmentation-in-choice-in-container.json");
+    void caseNodeAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/case-node-augmentation-in-choice-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.caseNodeAugmentationInChoiceInContainer());
     }
@@ -84,8 +83,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * also test using of namesakes (equal local names with different.
      */
     @Test
-    public void caseNodeExternalAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        final String inputJson =
+    void caseNodeExternalAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
+        final var inputJson =
                 loadTextFile("/complexjson/case-node-external-augmentation-in-choice-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.caseNodeExternalAugmentationInChoiceInContainer());
@@ -95,15 +94,15 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * augmentation of choice - adding new case.
      */
     @Test
-    public void choiceNodeAugmentationInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/choice-node-augmentation-in-container.json");
+    void choiceNodeAugmentationInContainer() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/choice-node-augmentation-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.choiceNodeAugmentationInContainer());
     }
 
     @Test
-    public void unkeyedNodeInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/unkeyed-node-in-container.json");
+    void unkeyedNodeInContainer() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/unkeyed-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
             TestingNormalizedNodeStructuresCreator.unkeyedNodeInContainer());
     }
@@ -115,8 +114,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * It should be possible to find out potential module name from available schema context.
      */
     @Test
-    public void missingModuleInfoInTopLevelElement() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/missing-module-in-top-level.json");
+    void missingModuleInfoInTopLevelElement() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/missing-module-in-top-level.json");
         verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.topLevelContainer());
     }
 
@@ -128,21 +127,21 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * without module name prefix.
      */
     @Test
-    public void leafNamesakes() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/namesakes.json");
-        final IllegalStateException ex = assertThrows(IllegalStateException.class,
+    void leafNamesakes() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/namesakes.json");
+        final var ex = assertThrows(IllegalStateException.class,
             // second parameter isn't necessary because error will be raised before it is used.
             () -> verifyTransformationToNormalizedNode(inputJson, null));
 
-        final String errorMessage = ex.getMessage();
-        assertThat(errorMessage, containsString("Choose suitable module name for element lf11-namesake:"));
-        assertThat(errorMessage, containsString("complexjson-augmentation"));
-        assertThat(errorMessage, containsString("complexjson-augmentation-namesake"));
+        final var errorMessage = ex.getMessage();
+        assertTrue(errorMessage.contains("Choose suitable module name for element lf11-namesake:"));
+        assertTrue(errorMessage.contains("complexjson-augmentation"));
+        assertTrue(errorMessage.contains("complexjson-augmentation-namesake"));
     }
 
     @Test
-    public void emptyTypeTest() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/type-empty.json");
+    void emptyTypeTest() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/type-empty.json");
         verifyTransformationToNormalizedNode(inputJson, CONT1_WITH_EMPTYLEAF);
     }
 
@@ -153,13 +152,13 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * Json input contains element which doesn't exist in YANG schema
      */
     @Test
-    public void parsingNotExistingElement() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/not-existing-element.json");
-        final IllegalStateException ex = assertThrows(IllegalStateException.class,
+    void parsingNotExistingElement() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/not-existing-element.json");
+        final var ex = assertThrows(IllegalStateException.class,
             //second parameter isn't necessary because error will be raised before it is used.
             () -> verifyTransformationToNormalizedNode(inputJson, null));
 
-        assertThat(ex.getMessage(), containsString("Schema node with name dummy-element was not found"));
+        assertTrue(ex.getMessage().contains("Schema node with name dummy-element was not found"));
     }
 
     /**
@@ -169,8 +168,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * Json input contains element which doesn't exist in YANG schema
      */
     @Test
-    public void parsingSkipNotExistingElement() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/not-existing-element.json");
+    void parsingSkipNotExistingElement() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/not-existing-element.json");
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.createLenient(streamWriter,
@@ -181,8 +180,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void listItemWithoutArray() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/keyed-list-restconf-behaviour.json");
+    void listItemWithoutArray() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/keyed-list-restconf-behaviour.json");
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory,
@@ -193,8 +192,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void listItemWithArray() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/keyed-list-yang-json-behaviour.json");
+    void listItemWithArray() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/keyed-list-yang-json-behaviour.json");
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory,
@@ -205,16 +204,16 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void multipleChoiceAugmentation() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/multiple-choice-augmentation-in-container.json");
+    void multipleChoiceAugmentation() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/complexjson/multiple-choice-augmentation-in-container.json");
 
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final QName augmentChoice1QName = QName.create(CONT_1, "augment-choice1");
-        final QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
-        final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
-        final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
+        final var augmentChoice1QName = QName.create(CONT_1, "augment-choice1");
+        final var augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
+        final var containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
+        final var leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
         final var cont1Normalized = containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(CONT_1))
@@ -244,7 +243,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final var transformedInput = result.getResult().data();
-        assertEquals("Transformation of json input to normalized node wasn't successful.", awaitedStructure,
-                transformedInput);
+        assertEquals(awaitedStructure,
+                transformedInput,
+                "Transformation of json input to normalized node wasn't successful.");
     }
 }

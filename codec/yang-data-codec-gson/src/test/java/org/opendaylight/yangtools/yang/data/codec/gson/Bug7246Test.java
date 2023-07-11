@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.io.FileReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -27,11 +27,11 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug7246Test {
+class Bug7246Test {
     private static final String NS = "my-namespace";
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final var schemaContext = YangParserTestUtils.parseYang("""
             module rpc-test {
               namespace my-namespace;
