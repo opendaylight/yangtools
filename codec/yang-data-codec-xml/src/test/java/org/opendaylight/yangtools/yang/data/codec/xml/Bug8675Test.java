@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

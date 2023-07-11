@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -77,7 +75,7 @@ public class XmlStreamUtilsTest {
             writer.writeEndElement();
         });
 
-        assertThat(xmlAsString, containsString("element>identity"));
+        assertTrue(xmlAsString.contains("element>identity"));
 
         xmlAsString = createXml(writer -> {
             writer.writeStartElement("elementDifferent");
@@ -90,7 +88,7 @@ public class XmlStreamUtilsTest {
 
         final Pattern prefixedIdentityPattern = Pattern.compile(".*\"different:namespace\">(.*):identity.*");
         final Matcher matcher = prefixedIdentityPattern.matcher(xmlAsString);
-        assertTrue("Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern, matcher.matches());
+        assertTrue(matcher.matches(), "Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern);
     }
 
     private static String createXml(final XMLStreamWriterConsumer consumer) throws XMLStreamException, IOException {
@@ -147,12 +145,12 @@ public class XmlStreamUtilsTest {
         }
 
         final EffectiveStatement<?, ?> leaf = stack.currentStatement();
-        assertThat(leaf, instanceOf(LeafSchemaNode.class));
+        assertInstanceOf(LeafSchemaNode.class, leaf);
         final TypeDefinition<? extends TypeDefinition<?>> type = ((TypedDataSchemaNode) leaf).getType();
-        assertThat(type, instanceOf(LeafrefTypeDefinition.class));
+        assertInstanceOf(LeafrefTypeDefinition.class, type);
 
         final TypeDefinition<?> resolved = stack.resolveLeafref((LeafrefTypeDefinition) type);
-        assertThat(resolved, instanceOf(clas));
+        assertInstanceOf(clas, resolved);
         return resolved;
     }
 }

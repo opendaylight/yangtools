@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,7 +96,7 @@ public class Bug5446Test extends XMLTestCase {
         LeafNode<?> ipAdress = (LeafNode<?>) child;
 
         Object value = ipAdress.body();
-        assertTrue(value instanceof byte[]);
+        assertInstanceOf(byte[].class, value);
         assertEquals("fwAAAQ==", Base64.getEncoder().encodeToString((byte[]) value));
 
         DOMResult serializationResult = writeNormalizedNode(docNode, schemaContext);

@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.StringWriter;
 import java.util.Collection;
@@ -85,7 +84,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         xmlParser.parse(reader);
 
         final var transformedInput = result.getResult().data();
-        assertThat(transformedInput, instanceOf(AnydataNode.class));
+        assertInstanceOf(AnydataNode.class, transformedInput);
         AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
 
         // serialization
@@ -163,11 +162,11 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
 
         //Get Result
         final var node = normalizedResult.getResult().data();
-        assertThat(node, instanceOf(AnydataNode.class));
+        assertInstanceOf(AnydataNode.class, node);
         final AnydataNode<?> anydataResult = (AnydataNode<?>) node;
 
         //Get Result in formatted String
-        assertThat(anydataResult.body(), instanceOf(DOMSourceAnydata.class));
+        assertInstanceOf(DOMSourceAnydata.class, anydataResult.body());
         final String serializedXml = getXmlFromDOMSource(((DOMSourceAnydata)anydataResult.body()).getSource());
         final String expectedXml = toString(doc.getDocumentElement());
 

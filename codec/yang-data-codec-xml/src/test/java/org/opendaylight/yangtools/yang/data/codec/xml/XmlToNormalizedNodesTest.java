@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -134,7 +133,7 @@ public class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("""
+        assertTrue(ex.getMessage().contains("""
             Duplicate element "decimal64-leaf" in namespace "foo-namespace" with parent \
             "EmptyContainerEffectiveStatement{argument=(foo-namespace)leaf-container}" in XML input"""));
     }
@@ -148,7 +147,7 @@ public class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("""
+        assertTrue(ex.getMessage().contains("""
             Duplicate element "my-anyxml" in namespace "foo-namespace" with parent \
             "EmptyContainerEffectiveStatement{argument=(foo-namespace)anyxml-container}" in XML input"""));
     }
@@ -162,7 +161,7 @@ public class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("""
+        assertTrue(ex.getMessage().contains("""
             Duplicate element "leaf-container" in namespace "foo-namespace" with parent \
             "EmptyContainerEffectiveStatement{argument=(foo-namespace)parent-container}" in XML input"""));
     }
@@ -176,7 +175,7 @@ public class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString(" START_ELEMENT "));
+        assertTrue(ex.getMessage().contains(" START_ELEMENT "));
     }
 
     @Test
@@ -188,7 +187,7 @@ public class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("</my-leaf-1>"));
+        assertTrue(ex.getMessage().contains("</my-leaf-1>"));
     }
 
     @Test
@@ -200,7 +199,7 @@ public class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("</my-container-1>"));
+        assertTrue(ex.getMessage().contains("</my-container-1>"));
     }
 
     @Test
@@ -212,7 +211,7 @@ public class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("""
+        assertTrue(ex.getMessage().contains("""
             Schema for node with name my-container-1 and namespace baz-namespace does not exist in parent \
             EmptyContainerEffectiveStatement{argument=(baz-namespace)my-container-1}"""));
     }

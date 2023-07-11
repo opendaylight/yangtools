@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -34,6 +33,6 @@ public class AnydataParseTest extends AbstractAnydataTest {
             true);
         xmlParser.parse(reader);
 
-        assertThat(result.getResult().data(), instanceOf(AnydataNode.class));
+        assertInstanceOf(AnydataNode.class, result.getResult().data());
     }
 }

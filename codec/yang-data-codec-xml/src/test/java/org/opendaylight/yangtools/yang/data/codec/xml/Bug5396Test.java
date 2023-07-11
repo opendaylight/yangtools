@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -90,11 +91,11 @@ public class Bug5396Test {
         xmlParser.parse(reader);
 
         final var data = result.getResult().data();
-        assertTrue(data instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, data);
         final ContainerNode rootContainer = (ContainerNode) data;
 
         DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(QName.create(FOO, "my-leaf")));
-        assertTrue(myLeaf instanceof LeafNode);
+        assertInstanceOf(LeafNode.class, myLeaf);
         assertEquals(expectedValue, myLeaf.body());
     }
 }

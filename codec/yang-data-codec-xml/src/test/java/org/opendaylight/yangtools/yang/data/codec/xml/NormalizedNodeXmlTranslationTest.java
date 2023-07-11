@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;

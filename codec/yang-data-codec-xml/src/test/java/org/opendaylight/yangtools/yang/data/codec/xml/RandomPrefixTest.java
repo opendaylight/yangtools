@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;

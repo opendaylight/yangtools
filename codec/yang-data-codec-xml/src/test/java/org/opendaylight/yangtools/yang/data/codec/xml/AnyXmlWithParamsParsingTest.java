@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -69,13 +68,11 @@ public class AnyXmlWithParamsParsingTest {
         assertNotNull(anyXmlParsedDom);
         final String anyXmlParsedDomString = toStringDom(anyXmlParsedDom);
 
-        assertThat(anyXmlParsedDomString, containsString(
-                "active xmpref:prefixed2=\"attribute2\""));
-        assertThat(anyXmlParsedDomString, containsString(
-                "interface-name xmpref:prefixed3=\"attribute3\""));
-        assertThat(anyXmlParsedDomString, containsString(
+        assertTrue(anyXmlParsedDomString.contains("active xmpref:prefixed2=\"attribute2\""));
+        assertTrue(anyXmlParsedDomString.contains("interface-name xmpref:prefixed3=\"attribute3\""));
+        assertTrue(anyXmlParsedDomString.contains(
                 "interface-configuration xmlns:xmpref=\"xml:namespace:prefix\" simple=\"attribute\""));
-        assertThat(anyXmlParsedDomString, containsString(
+        assertTrue(anyXmlParsedDomString.contains(
                 "interface-configurations xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg\""));
     }
 

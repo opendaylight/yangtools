@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;

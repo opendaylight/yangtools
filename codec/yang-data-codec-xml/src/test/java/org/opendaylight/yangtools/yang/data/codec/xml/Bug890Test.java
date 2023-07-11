@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import org.junit.Test;
@@ -46,16 +47,16 @@ public class Bug890Test {
         xmlParser.parse(reader);
 
         assertNotNull(result.getResult());
-        assertTrue(result.getResult().data() instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, result.getResult().data());
         final ContainerNode rootContainer = (ContainerNode) result.getResult().data();
 
         DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(OUTGOING_LABELS_QNAME));
-        assertTrue(myLeaf instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, myLeaf);
 
         ContainerNode outgoingLabelsContainer = (ContainerNode)myLeaf;
         DataContainerChild outgoingLabelsList =
                 outgoingLabelsContainer.childByArg(new NodeIdentifier(OUTGOING_LABELS_QNAME));
-        assertTrue(outgoingLabelsList instanceof MapNode);
+        assertInstanceOf(MapNode.class, outgoingLabelsList);
         MapNode outgoingLabelsMap = (MapNode) outgoingLabelsList;
 
         assertEquals(2, outgoingLabelsMap.size());
