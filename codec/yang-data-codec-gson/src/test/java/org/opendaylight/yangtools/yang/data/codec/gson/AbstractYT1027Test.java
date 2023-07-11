@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verify;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
@@ -108,17 +107,17 @@ public abstract class AbstractYT1027Test {
 
     @Test
     public void testDecimal() {
-        assertThat(codecFactory().decimalCodec(DECIMAL_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().decimalCodec(DECIMAL_TYPE));
     }
 
     @Test
     public void testInt64() {
-        assertThat(codecFactory().int64Codec(INT64_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().int64Codec(INT64_TYPE));
     }
 
     @Test
     public void testUint64() {
-        assertThat(codecFactory().uint64Codec(UINT64_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().uint64Codec(UINT64_TYPE));
     }
 
     @Test

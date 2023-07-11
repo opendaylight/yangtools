@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.common.collect.ImmutableSet;
@@ -77,7 +77,7 @@ public class Bug4501Test {
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final var transformedInput = result.getResult().data();
-        assertTrue(transformedInput instanceof UnkeyedListNode);
+        assertInstanceOf(UnkeyedListNode.class, transformedInput);
 
         final UnkeyedListNode hop = (UnkeyedListNode) transformedInput;
         final DataContainerChild lrsBits = hop.childAt(0).getChildByArg(

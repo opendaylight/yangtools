@@ -8,9 +8,9 @@
 
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -196,10 +196,10 @@ public class Bug8083Test {
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final var transformedInput = result.getResult().data();
 
-        assertTrue(transformedInput instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, transformedInput);
         final var container = (ContainerNode) transformedInput;
         final var child = container.childByArg(new NodeIdentifier(FOO_QNAME));
-        assertTrue(child instanceof LeafNode);
+        assertInstanceOf(LeafNode.class, child);
         assertEquals(TEST_IID, child.body());
     }
 
@@ -250,11 +250,11 @@ public class Bug8083Test {
 
     private static JSONCodec<YangInstanceIdentifier> getCodec(final JSONCodecFactorySupplier supplier) {
         final DataSchemaNode top = FULL_SCHEMA_CONTEXT.getDataChildByName(TOP_QNAME);
-        assertTrue(top instanceof ContainerSchemaNode);
+        assertInstanceOf(ContainerSchemaNode.class, top);
         final DataSchemaNode foo = ((ContainerSchemaNode) top).getDataChildByName(FOO_QNAME);
-        assertTrue(foo instanceof LeafSchemaNode);
+        assertInstanceOf(LeafSchemaNode.class, foo);
         final TypeDefinition<? extends TypeDefinition<?>> type = ((LeafSchemaNode) foo).getType();
-        assertTrue(type instanceof InstanceIdentifierTypeDefinition);
+        assertInstanceOf(InstanceIdentifierTypeDefinition.class, type);
         return supplier.createSimple(FULL_SCHEMA_CONTEXT)
                 .instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
     }

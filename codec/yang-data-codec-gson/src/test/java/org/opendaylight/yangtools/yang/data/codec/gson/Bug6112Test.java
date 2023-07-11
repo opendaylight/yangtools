@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.gson.stream.JsonReader;
@@ -85,14 +85,14 @@ public class Bug6112Test {
     @Test
     public void testUnionIdentityrefInput() throws IOException, URISyntaxException {
         final NormalizedNode transformedInput = readJson("/bug-6112/json/data-identityref.json");
-        assertTrue(transformedInput instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, transformedInput);
         ContainerNode root = (ContainerNode) transformedInput;
         DataContainerChild leafValue = root.childByArg(NodeIdentifier.create(
             QName.create("union:identityref:test", "2016-07-12", "leaf-value")));
 
         assertNotNull(leafValue);
         Object value = leafValue.body();
-        assertTrue(value instanceof QName);
+        assertInstanceOf(QName.class, value);
         QName identityref = (QName) value;
         assertEquals(QName.create("union:identityref:test", "2016-07-12", "ident-one"), identityref);
     }
@@ -100,7 +100,7 @@ public class Bug6112Test {
     @Test
     public void testUnionUint8Input() throws IOException, URISyntaxException {
         final NormalizedNode transformedInput = readJson("/bug-6112/json/data-uint8.json");
-        assertTrue(transformedInput instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, transformedInput);
         ContainerNode root = (ContainerNode) transformedInput;
         DataContainerChild leafValue = root.childByArg(NodeIdentifier.create(
             QName.create("union:identityref:test", "2016-07-12", "leaf-value")));

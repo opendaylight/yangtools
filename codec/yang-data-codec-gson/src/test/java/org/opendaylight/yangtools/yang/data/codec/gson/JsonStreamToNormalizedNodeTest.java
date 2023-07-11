@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
@@ -135,9 +134,9 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
             () -> verifyTransformationToNormalizedNode(inputJson, null));
 
         final String errorMessage = ex.getMessage();
-        assertThat(errorMessage, containsString("Choose suitable module name for element lf11-namesake:"));
-        assertThat(errorMessage, containsString("complexjson-augmentation"));
-        assertThat(errorMessage, containsString("complexjson-augmentation-namesake"));
+        assertTrue(errorMessage.contains("Choose suitable module name for element lf11-namesake:"));
+        assertTrue(errorMessage.contains("complexjson-augmentation"));
+        assertTrue(errorMessage.contains("complexjson-augmentation-namesake"));
     }
 
     @Test
@@ -159,7 +158,7 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
             //second parameter isn't necessary because error will be raised before it is used.
             () -> verifyTransformationToNormalizedNode(inputJson, null));
 
-        assertThat(ex.getMessage(), containsString("Schema node with name dummy-element was not found"));
+        assertTrue(ex.getMessage().contains("Schema node with name dummy-element was not found"));
     }
 
     /**
@@ -244,7 +243,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final var jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final var transformedInput = result.getResult().data();
-        assertEquals("Transformation of json input to normalized node wasn't successful.", awaitedStructure,
-                transformedInput);
+        assertEquals(awaitedStructure,
+                transformedInput,
+                "Transformation of json input to normalized node wasn't successful.");
     }
 }
