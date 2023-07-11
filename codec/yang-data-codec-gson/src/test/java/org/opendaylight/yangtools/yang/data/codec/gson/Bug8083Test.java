@@ -8,9 +8,9 @@
 
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -23,9 +23,9 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -38,14 +38,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug8083Test {
+class Bug8083Test {
     private static final QNameModule FOOMOD = QNameModule.create(XMLNamespace.of("http://example.com/foomod"));
     private static final QNameModule BARMOD = QNameModule.create(XMLNamespace.of("http://example.com/barmod"));
 
@@ -132,8 +130,8 @@ public class Bug8083Test {
 
     private static EffectiveModelContext FULL_SCHEMA_CONTEXT;
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         FULL_SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module example-barmod {
               namespace "http://example.com/barmod";
@@ -166,27 +164,27 @@ public class Bug8083Test {
             }""", FOOBAR_YANG, ZAB_YANG);
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         FULL_SCHEMA_CONTEXT = null;
     }
 
     @Test
-    public void testInstanceIdentifierSerializeNew() throws IOException {
+    void testInstanceIdentifierSerializeNew() throws IOException {
         assertEquals("/example-foomod:top/foo-list[name='key-value']/example-barmod:bar-container/bar-leaf",
             writeInstanceIdentifier(JSONCodecFactorySupplier.RFC7951));
     }
 
     @Test
-    public void testInstanceIdentifierSerializeOld() throws IOException {
+    void testInstanceIdentifierSerializeOld() throws IOException {
         assertEquals("/example-foomod:top/example-foomod:foo-list[example-foomod:name='key-value']"
                 + "/example-barmod:bar-container/example-barmod:bar-leaf",
             writeInstanceIdentifier(JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02));
     }
 
     @Test
-    public void testRFC7951InstanceIdentifierPath() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/bug8083/json/foo.json");
+    void testRFC7951InstanceIdentifierPath() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/bug8083/json/foo.json");
 
         // deserialization
         final var result = new NormalizationResultHolder();
@@ -196,17 +194,17 @@ public class Bug8083Test {
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final var transformedInput = result.getResult().data();
 
-        assertTrue(transformedInput instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, transformedInput);
         final var container = (ContainerNode) transformedInput;
         final var child = container.childByArg(new NodeIdentifier(FOO_QNAME));
-        assertTrue(child instanceof LeafNode);
+        assertInstanceOf(LeafNode.class, child);
         assertEquals(TEST_IID, child.body());
     }
 
     @Test
-    public void testInstanceIdentifierPathWithEmptyListKey() throws IOException, URISyntaxException {
+    void testInstanceIdentifierPathWithEmptyListKey() throws IOException, URISyntaxException {
         final var schemaContext = YangParserTestUtils.parseYang(BAZ_YANG);
-        final String inputJson = loadTextFile("/bug8083/json/baz.json");
+        final var inputJson = loadTextFile("/bug8083/json/baz.json");
 
         // deserialization
         final var result = new NormalizationResultHolder();
@@ -219,9 +217,9 @@ public class Bug8083Test {
     }
 
     @Test
-    public void testInstanceIdentifierPathWithIdentityrefListKey() throws IOException, URISyntaxException {
+    void testInstanceIdentifierPathWithIdentityrefListKey() throws IOException, URISyntaxException {
         final var schemaContext = YangParserTestUtils.parseYang(ZAB_YANG);
-        final String inputJson = loadTextFile("/bug8083/json/zab.json");
+        final var inputJson = loadTextFile("/bug8083/json/zab.json");
 
         // deserialization
         final var result = new NormalizationResultHolder();
@@ -234,9 +232,9 @@ public class Bug8083Test {
     }
 
     @Test
-    public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws IOException, URISyntaxException {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang(FOOBAR_YANG);
-        final String inputJson = loadTextFile("/bug8083/json/foobar.json");
+    void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws IOException, URISyntaxException {
+        final var schemaContext = YangParserTestUtils.parseYang(FOOBAR_YANG);
+        final var inputJson = loadTextFile("/bug8083/json/foobar.json");
 
         // deserialization
         final var result = new NormalizationResultHolder();
@@ -249,18 +247,18 @@ public class Bug8083Test {
     }
 
     private static JSONCodec<YangInstanceIdentifier> getCodec(final JSONCodecFactorySupplier supplier) {
-        final DataSchemaNode top = FULL_SCHEMA_CONTEXT.getDataChildByName(TOP_QNAME);
-        assertTrue(top instanceof ContainerSchemaNode);
-        final DataSchemaNode foo = ((ContainerSchemaNode) top).getDataChildByName(FOO_QNAME);
-        assertTrue(foo instanceof LeafSchemaNode);
-        final TypeDefinition<? extends TypeDefinition<?>> type = ((LeafSchemaNode) foo).getType();
-        assertTrue(type instanceof InstanceIdentifierTypeDefinition);
+        final var top = FULL_SCHEMA_CONTEXT.getDataChildByName(TOP_QNAME);
+        assertInstanceOf(ContainerSchemaNode.class, top);
+        final var foo = ((ContainerSchemaNode) top).getDataChildByName(FOO_QNAME);
+        assertInstanceOf(LeafSchemaNode.class, foo);
+        final var type = ((LeafSchemaNode) foo).getType();
+        assertInstanceOf(InstanceIdentifierTypeDefinition.class, type);
         return supplier.createSimple(FULL_SCHEMA_CONTEXT)
                 .instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
     }
 
     private static String writeInstanceIdentifier(final JSONCodecFactorySupplier supplier) throws IOException {
-        final JsonWriter writer = mock(JsonWriter.class);
+        final var writer = mock(JsonWriter.class);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         doReturn(writer).when(writer).value(captor.capture());
 

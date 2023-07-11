@@ -8,29 +8,25 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verify;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -39,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public abstract class AbstractYT1027Test {
+abstract class AbstractYT1027Test {
     private static final QName DECIMAL = QName.create("yt1027.test", "decimal");
     private static final QName INT64 = QName.create(DECIMAL, "int64");
     private static final QName UINT64 = QName.create(DECIMAL, "uint64");
@@ -66,7 +62,7 @@ public abstract class AbstractYT1027Test {
     private static Int64TypeDefinition INT64_TYPE;
     private static Uint64TypeDefinition UINT64_TYPE;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module yt1027 {
@@ -93,12 +89,12 @@ public abstract class AbstractYT1027Test {
     }
 
     private static TypeDefinition<?> getTypeDefinition(final QName name) {
-        DataSchemaNode child = SCHEMA_CONTEXT.findDataTreeChild(name).orElseThrow();
+        final var child = SCHEMA_CONTEXT.findDataTreeChild(name).orElseThrow();
         verify(child instanceof LeafSchemaNode);
         return ((LeafSchemaNode) child).getType();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         DECIMAL_TYPE = null;
         INT64_TYPE = null;
@@ -108,17 +104,17 @@ public abstract class AbstractYT1027Test {
 
     @Test
     public void testDecimal() {
-        assertThat(codecFactory().decimalCodec(DECIMAL_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().decimalCodec(DECIMAL_TYPE));
     }
 
     @Test
     public void testInt64() {
-        assertThat(codecFactory().int64Codec(INT64_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().int64Codec(INT64_TYPE));
     }
 
     @Test
     public void testUint64() {
-        assertThat(codecFactory().uint64Codec(UINT64_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().uint64Codec(UINT64_TYPE));
     }
 
     @Test
@@ -170,10 +166,10 @@ public abstract class AbstractYT1027Test {
     }
 
     private String toJSON(final NormalizedNode input) throws IOException {
-        final Writer writer = new StringWriter();
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+        final var writer = new StringWriter();
+        final var jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             codecFactory(), JsonWriterFactory.createJsonWriter(writer, 2));
-        try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
+        try (var nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
             nodeWriter.write(input);
         }
 

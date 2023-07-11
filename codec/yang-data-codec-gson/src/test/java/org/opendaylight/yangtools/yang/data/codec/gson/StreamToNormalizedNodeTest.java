@@ -15,30 +15,29 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.LoggingNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
+class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     private static final Logger LOG = LoggerFactory.getLogger(StreamToNormalizedNodeTest.class);
     private static String streamAsString;
 
-    @BeforeClass
-    public static void initialization() throws IOException, URISyntaxException {
+    @BeforeAll
+    static void initialization() throws IOException, URISyntaxException {
         streamAsString = loadTextFile(new File(StreamToNormalizedNodeTest.class.getResource(
                 "/complexjson/complex-json.json").toURI()));
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         streamAsString = null;
     }
 
@@ -46,15 +45,15 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * Demonstrates how to log events produced by a {@link JsonReader}.
      */
     @Test
-    public void ownStreamWriterImplementationDemonstration() throws IOException {
+    void ownStreamWriterImplementationDemonstration() throws IOException {
         // GSON's JsonReader reading from the loaded string (our event source)
-        final JsonReader reader = new JsonReader(new StringReader(streamAsString));
+        final var reader = new JsonReader(new StringReader(streamAsString));
 
         // StreamWriter which outputs SLF4J events
-        final LoggingNormalizedNodeStreamWriter logWriter = new LoggingNormalizedNodeStreamWriter();
+        final var logWriter = new LoggingNormalizedNodeStreamWriter();
 
         // JSON -> StreamWriter parser
-        try (JsonParserStream jsonHandler = JsonParserStream.create(logWriter, lhotkaCodecFactory)) {
+        try (var jsonHandler = JsonParserStream.create(logWriter, lhotkaCodecFactory)) {
             // Process multiple readers, flush()/close() as needed
             jsonHandler.parse(reader);
         }
@@ -65,12 +64,12 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
      * then writes the data back into string representation.
      */
     @Test
-    public void immutableNormalizedNodeStreamWriterDemonstration() throws IOException {
+    void immutableNormalizedNodeStreamWriterDemonstration() throws IOException {
         /*
          * This is the parsing part
          */
         // This is where we will output the nodes
-        var result = new NormalizationResultHolder();
+        final var result = new NormalizationResultHolder();
 
         // StreamWriter which attaches NormalizedNode under parent
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -87,18 +86,18 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
          * This is the serialization part.
          */
         // We want to write the first child out
-        final DataContainerChild firstChild = (DataContainerChild) parsedData;
+        final var firstChild = (DataContainerChild) parsedData;
 
         // String holder
-        final StringWriter writer = new StringWriter();
+        final var writer = new StringWriter();
 
         // StreamWriter which outputs JSON strings
         // StreamWriter which outputs JSON strings
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+        final var jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             lhotkaCodecFactory, JsonWriterFactory.createJsonWriter(writer, 2));
 
         // NormalizedNode -> StreamWriter
-        final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
+        final var nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
 
         // Write multiple NormalizedNodes fluently, flush()/close() as needed
         nodeWriter.write(firstChild).close();

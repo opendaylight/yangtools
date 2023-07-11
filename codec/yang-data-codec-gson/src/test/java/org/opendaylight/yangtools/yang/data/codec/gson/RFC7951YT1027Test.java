@@ -7,38 +7,38 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-public class RFC7951YT1027Test extends AbstractYT1027Test {
+class RFC7951YT1027Test extends AbstractYT1027Test {
     private static JSONCodecFactory CODEC_FACTORY;
 
-    @BeforeClass
-    public static void createFactory() {
+    @BeforeAll
+    static void createFactory() {
         CODEC_FACTORY = JSONCodecFactorySupplier.RFC7951.getShared(SCHEMA_CONTEXT);
     }
 
-    @AfterClass
-    public static void destroyFactory() {
+    @AfterAll
+    static void destroyFactory() {
         CODEC_FACTORY = null;
     }
 
     @Test
-    public void testDecimalUnquotedParsing() throws IOException {
+    void testDecimalUnquotedParsing() throws IOException {
         assertEquals(DECIMAL_DATA, fromJSON(UNQUOTED_DECIMAL));
     }
 
     @Test
-    public void testInt64UnquotedParsing() throws IOException {
+    void testInt64UnquotedParsing() throws IOException {
         assertEquals(INT64_DATA, fromJSON(UNQUOTED_INT64));
     }
 
     @Test
-    public void testUint64UnquotedParsing() throws IOException {
+    void testUint64UnquotedParsing() throws IOException {
         assertEquals(UINT64_DATA, fromJSON(UNQUOTED_UINT64));
     }
 
