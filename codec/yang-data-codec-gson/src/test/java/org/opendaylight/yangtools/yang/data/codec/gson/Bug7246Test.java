@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -27,11 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug7246Test {
+class Bug7246Test {
     private static final String NS = "my-namespace";
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final var schemaContext = YangParserTestUtils.parseYang("""
             module rpc-test {
               namespace my-namespace;
@@ -71,8 +70,7 @@ public class Bug7246Test {
             .withNodeIdentifier(new NodeIdentifier(qN("my-name")))
             .withChild(ImmutableNodes.leafNode(new NodeIdentifier(qN("my-name")), "my-value"))
             .build();
-        final var writer = new StringWriter();
-        final var jsonOutput = normalizedNodeToJsonStreamTransformation(schemaContext,  writer, inputStructure,
+        final var jsonOutput = normalizedNodeToJsonStreamTransformation(schemaContext, inputStructure,
             qN("my-name"), qN("input"));
 
         assertEquals(JsonParser.parseReader(new FileReader(
@@ -85,7 +83,8 @@ public class Bug7246Test {
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final EffectiveModelContext schemaContext,
-            final Writer writer, final NormalizedNode inputStructure, final QName... path) throws Exception {
+            final NormalizedNode inputStructure, final QName... path) throws Exception {
+        final var writer = new StringWriter();
         final var jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
                 JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), Absolute.of(path),
                 XMLNamespace.of(NS), JsonWriterFactory.createJsonWriter(writer, 2));

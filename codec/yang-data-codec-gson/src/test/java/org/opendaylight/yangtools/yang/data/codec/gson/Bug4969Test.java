@@ -7,30 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.gson.stream.JsonReader;
-import java.io.IOException;
 import java.io.StringReader;
-import java.net.URISyntaxException;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug4969Test {
-
+class Bug4969Test {
     @Test
-    public void newParserLeafRefTest() throws IOException, URISyntaxException {
-        EffectiveModelContext context = YangParserTestUtils.parseYang("""
+    void newParserLeafRefTest() throws Exception {
+        final var context = YangParserTestUtils.parseYang("""
             module bar {
               namespace "bar";
               prefix bar;
@@ -124,61 +121,33 @@ public class Bug4969Test {
         verifyNormalizedNodeResult(context);
     }
 
-    private static void verifyNormalizedNodeResult(final EffectiveModelContext context) throws IOException,
-            URISyntaxException {
-        final String inputJson = TestUtils.loadTextFile("/bug-4969/json/foo.json");
+    private static void verifyNormalizedNodeResult(final EffectiveModelContext context) throws Exception {
+        final var inputJson = TestUtils.loadTextFile("/bug-4969/json/foo.json");
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(context));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final var transformedInput = result.getResult().data();
 
-        assertTrue(transformedInput instanceof ContainerNode);
-        ContainerNode root = (ContainerNode) transformedInput;
-        final DataContainerChild ref1 = root.childByArg(NodeIdentifier.create(
-            QName.create("foo", "2016-01-22", "ref1")));
-        final DataContainerChild ref2 = root.childByArg(NodeIdentifier.create(
-            QName.create("foo", "2016-01-22", "ref2")));
-        final DataContainerChild ref3 = root.childByArg(NodeIdentifier.create(
-            QName.create("foo", "2016-01-22", "ref3")));
-        final DataContainerChild ref4 = root.childByArg(NodeIdentifier.create(
-            QName.create("foo", "2016-01-22", "ref4")));
+        final var root = assertInstanceOf(ContainerNode.class, result.getResult().data());
+        final var ref1 = assertInstanceOf(LeafNode.class, root.childByArg(NodeIdentifier.create(
+            QName.create("foo", "2016-01-22", "ref1"))));
+        final var ref2 = assertInstanceOf(LeafNode.class, root.childByArg(NodeIdentifier.create(
+            QName.create("foo", "2016-01-22", "ref2"))));
+        final var ref3 = assertInstanceOf(LeafNode.class, root.childByArg(NodeIdentifier.create(
+            QName.create("foo", "2016-01-22", "ref3"))));
+        final var ref4 = assertInstanceOf(LeafNode.class, root.childByArg(NodeIdentifier.create(
+            QName.create("foo", "2016-01-22", "ref4"))));
 
-        assertNotNull(ref1);
-        assertNotNull(ref2);
-        assertNotNull(ref3);
-        assertNotNull(ref4);
-
-        final Object value1 = ref1.body();
-        final Object value2 = ref2.body();
-        final Object value3 = ref3.body();
-        final Object value4 = ref4.body();
-
-        assertTrue(value1 instanceof Set);
-        assertTrue(value2 instanceof Set);
-        assertTrue(value3 instanceof Set);
-        assertTrue(value4 instanceof Set);
-
-        final Set<?> set1 = (Set<?>) value1;
-        final Set<?> set2 = (Set<?>) value2;
-        final Set<?> set3 = (Set<?>) value3;
-        final Set<?> set4 = (Set<?>) value4;
-
-        assertEquals(1, set1.size());
-        assertEquals(2, set2.size());
-        assertEquals(3, set3.size());
-        assertEquals(4, set4.size());
-
-        assertTrue(set1.contains("a"));
-        assertTrue(set2.contains("a") && set2.contains("b"));
-        assertTrue(set3.contains("a") && set3.contains("b") && set3.contains("c"));
-        assertTrue(set4.contains("a") && set4.contains("b") && set4.contains("c") && set4.contains("d"));
+        assertEquals(Set.of("a"), ref1.body());
+        assertEquals(Set.of("a", "b"), ref2.body());
+        assertEquals(Set.of("a", "b", "c"), ref3.body());
+        assertEquals(Set.of("a", "b", "c", "d"), ref4.body());
     }
 
     @Test
-    public void newParserLeafRefTest2() throws URISyntaxException, IOException {
-        EffectiveModelContext context = YangParserTestUtils.parseYang("""
+    void newParserLeafRefTest2() throws Exception {
+        final var context = YangParserTestUtils.parseYang("""
             module augment-leafref-module {
               namespace "augment:leafref:module";
               prefix "auglfrfmo";
@@ -220,9 +189,8 @@ public class Bug4969Test {
         parseJsonToNormalizedNodes(context);
     }
 
-    private static void parseJsonToNormalizedNodes(final EffectiveModelContext context) throws IOException,
-            URISyntaxException {
-        final String inputJson = TestUtils.loadTextFile("/leafref/json/data.json");
+    private static void parseJsonToNormalizedNodes(final EffectiveModelContext context) throws Exception {
+        final var inputJson = TestUtils.loadTextFile("/leafref/json/data.json");
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter,

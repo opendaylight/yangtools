@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.stream.JsonReader;
 import java.io.StringReader;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1472Test {
+class YT1472Test {
     private static final QNameModule RESTCONF_MODULE =
         QNameModule.create(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-restconf"), Revision.of("2017-01-26"));
     private static final YangDataName ERRORS_NAME = new YangDataName(RESTCONF_MODULE, "yang-errors");
@@ -38,8 +38,8 @@ public class YT1472Test {
     private static JSONCodecFactory CODEC_FACTORY;
     private static Inference ERRORS_INFERENCE;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/yt1472");
         CODEC_FACTORY = JSONCodecFactorySupplier.RFC7951.getShared(CONTEXT);
 
@@ -49,7 +49,7 @@ public class YT1472Test {
     }
 
     @Test
-    public void testErrorsParsing() {
+    void testErrorsParsing() {
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter, CODEC_FACTORY, ERRORS_INFERENCE);

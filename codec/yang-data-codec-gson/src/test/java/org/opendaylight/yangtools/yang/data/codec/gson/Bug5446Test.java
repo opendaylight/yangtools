@@ -7,36 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
-import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Base64;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug5446Test {
+class Bug5446Test {
     private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2015-11-05"));
     private static final QName ROOT_QNAME = QName.create(FOO_MODULE, "root");
     private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
     private EffectiveModelContext schemaContext;
 
-    @Before
-    public void init() {
+    @Test
+    void test() throws Exception {
         schemaContext = YangParserTestUtils.parseYang("""
             module foo {
               yang-version 1;
@@ -71,16 +67,11 @@ public class Bug5446Test {
                 }
               }
             }""");
-    }
 
-    @Test
-    public void test() throws Exception {
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
-            new StringWriter(),
-            Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
-                .withChild(ImmutableNodes.leafNode(IP_ADDRESS_QNAME, Base64.getDecoder().decode("fwAAAQ==")))
-                .build());
+        final var jsonOutput = normalizedNodeToJsonStreamTransformation(Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
+            .withChild(ImmutableNodes.leafNode(IP_ADDRESS_QNAME, Base64.getDecoder().decode("fwAAAQ==")))
+            .build());
 
         assertEquals(JsonParser.parseString("""
             {
@@ -91,12 +82,12 @@ public class Bug5446Test {
             JsonParser.parseString(jsonOutput));
     }
 
-    private String normalizedNodeToJsonStreamTransformation(final Writer writer, final ContainerNode inputStructure)
-            throws IOException {
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+    private String normalizedNodeToJsonStreamTransformation(final ContainerNode inputStructure) throws Exception {
+        final var writer = new StringWriter();
+        final var jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext),
             JsonWriterFactory.createJsonWriter(writer, 2));
-        try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
+        try (var nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
             nodeWriter.write(inputStructure);
         }
 

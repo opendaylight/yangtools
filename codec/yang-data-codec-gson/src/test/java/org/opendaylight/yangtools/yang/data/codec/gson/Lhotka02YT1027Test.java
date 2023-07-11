@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
-public class Lhotka02YT1027Test extends AbstractYT1027Test {
+class Lhotka02YT1027Test extends AbstractYT1027Test {
     private static JSONCodecFactory CODEC_FACTORY;
 
-    @BeforeClass
-    public static void createFactory() {
+    @BeforeAll
+    static void createFactory() {
         CODEC_FACTORY = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(SCHEMA_CONTEXT);
     }
 
-    @AfterClass
-    public static void destroyFactory() {
+    @AfterAll
+    static void destroyFactory() {
         CODEC_FACTORY = null;
     }
 

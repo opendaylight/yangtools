@@ -7,34 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.util.Set;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug4501Test {
+class Bug4501Test {
 
     private static EffectiveModelContext schemaContext;
 
-    @BeforeClass
-    public static void initialization() {
+    @BeforeAll
+    static void initialization() {
         schemaContext = YangParserTestUtils.parseYang("""
             module foo {
               namespace "foo";
@@ -63,39 +62,37 @@ public class Bug4501Test {
             }""");
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         schemaContext = null;
     }
 
     @Test
-    public void testCorrectInput() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/bug-4501/json/foo-correct.json");
+    void testCorrectInput() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/bug-4501/json/foo-correct.json");
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final var transformedInput = result.getResult().data();
-        assertTrue(transformedInput instanceof UnkeyedListNode);
 
-        final UnkeyedListNode hop = (UnkeyedListNode) transformedInput;
-        final DataContainerChild lrsBits = hop.childAt(0).getChildByArg(
+        final var hop = assertInstanceOf(UnkeyedListNode.class, result.getResult().data());
+        final var lrsBits = hop.childAt(0).getChildByArg(
                 NodeIdentifier.create(QName.create("foo", "lrs-bits")));
 
-        assertEquals(ImmutableSet.of("lookup", "rloc-probe", "strict"), lrsBits.body());
+        assertEquals(Set.of("lookup", "rloc-probe", "strict"), lrsBits.body());
     }
 
     @Test
-    public void testIncorrectInput() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/bug-4501/json/foo-incorrect.json");
+    void testIncorrectInput() throws IOException, URISyntaxException {
+        final var inputJson = loadTextFile("/bug-4501/json/foo-incorrect.json");
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
 
-        final JsonReader reader = new JsonReader(new StringReader(inputJson));
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        final var reader = new JsonReader(new StringReader(inputJson));
+        final var ex = assertThrows(IllegalArgumentException.class,
             () -> jsonParser.parse(reader));
         assertEquals("Node '(foo)lrs-bits' has already set its value to '[lookup]'", ex.getMessage());
     }

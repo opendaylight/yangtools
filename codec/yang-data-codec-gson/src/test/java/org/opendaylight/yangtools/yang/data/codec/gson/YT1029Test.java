@@ -7,37 +7,35 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 
-public class YT1029Test extends AbstractComplexJsonTest {
+class YT1029Test extends AbstractComplexJsonTest {
     @Test
-    public void testMultipleRootChildren() throws IOException {
-        final Writer writer = new StringWriter();
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+    void testMultipleRootChildren() throws Exception {
+        final var writer = new StringWriter();
+        final var jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             lhotkaCodecFactory, JsonWriterFactory.createJsonWriter(writer, 2));
-        try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
+        try (var nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
             nodeWriter.write(CONT1_WITH_EMPTYLEAF);
             nodeWriter.write(CONT1_WITH_EMPTYLEAF);
         }
 
-        assertEquals("{\n"
-                + "  \"complexjson:cont1\": {\n"
-                + "    \"empty\": [\n"
-                + "      null\n"
-                + "    ]\n"
-                + "  },\n"
-                + "  \"complexjson:cont1\": {\n"
-                + "    \"empty\": [\n"
-                + "      null\n"
-                + "    ]\n"
-                + "  }\n"
-                + "}", writer.toString());
+        assertEquals("""
+            {
+              "complexjson:cont1": {
+                "empty": [
+                  null
+                ]
+              },
+              "complexjson:cont1": {
+                "empty": [
+                  null
+                ]
+              }
+            }""", writer.toString());
     }
 }

@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public abstract class AbstractComplexJsonTest {
+abstract class AbstractComplexJsonTest {
     static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
     static final NodeIdentifier CONT_1_NODEID = new NodeIdentifier(CONT_1);
 
@@ -32,14 +32,14 @@ public abstract class AbstractComplexJsonTest {
     static EffectiveModelContext schemaContext;
     static JSONCodecFactory lhotkaCodecFactory;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static final void beforeClass() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
         lhotkaCodecFactory = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext);
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static final void afterClass() {
         lhotkaCodecFactory = null;
         schemaContext = null;
     }

@@ -28,14 +28,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 
-public final class TestingNormalizedNodeStructuresCreator {
+final class TestingNormalizedNodeStructuresCreator {
     private static final QNameModule COMPLEX_JSON =
         QNameModule.create(XMLNamespace.of("ns:complex:json"), Revision.of("2014-08-11"));
     private static final QNameModule COMPLEX_JSON_AUG =
         QNameModule.create(XMLNamespace.of("ns:complex:json:augmentation"), Revision.of("2014-08-14"));
 
     private TestingNormalizedNodeStructuresCreator() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     static ContainerNode cont1Node(final DataContainerChild... children) {

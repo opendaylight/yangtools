@@ -7,34 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug6112Test {
+class Bug6112Test {
     private static EffectiveModelContext schemaContext;
 
-    @BeforeClass
-    public static void initialization() {
+    @BeforeAll
+    static void initialization() {
         schemaContext = YangParserTestUtils.parseYang("""
             module union-with-identityref {
               yang-version 1;
@@ -66,13 +65,13 @@ public class Bug6112Test {
             }""");
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         schemaContext = null;
     }
 
     private static NormalizedNode readJson(final String jsonPath) throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile(jsonPath);
+        final var inputJson = loadTextFile(jsonPath);
 
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -83,26 +82,22 @@ public class Bug6112Test {
     }
 
     @Test
-    public void testUnionIdentityrefInput() throws IOException, URISyntaxException {
-        final NormalizedNode transformedInput = readJson("/bug-6112/json/data-identityref.json");
-        assertTrue(transformedInput instanceof ContainerNode);
-        ContainerNode root = (ContainerNode) transformedInput;
-        DataContainerChild leafValue = root.childByArg(NodeIdentifier.create(
+    void testUnionIdentityrefInput() throws IOException, URISyntaxException {
+        final var transformedInput = readJson("/bug-6112/json/data-identityref.json");
+        final var root = assertInstanceOf(ContainerNode.class, transformedInput);
+        final var leafValue = root.childByArg(NodeIdentifier.create(
             QName.create("union:identityref:test", "2016-07-12", "leaf-value")));
 
         assertNotNull(leafValue);
-        Object value = leafValue.body();
-        assertTrue(value instanceof QName);
-        QName identityref = (QName) value;
-        assertEquals(QName.create("union:identityref:test", "2016-07-12", "ident-one"), identityref);
+        assertEquals(QName.create("union:identityref:test", "2016-07-12", "ident-one"),
+            assertInstanceOf(QName.class, leafValue.body()));
     }
 
     @Test
-    public void testUnionUint8Input() throws IOException, URISyntaxException {
-        final NormalizedNode transformedInput = readJson("/bug-6112/json/data-uint8.json");
-        assertTrue(transformedInput instanceof ContainerNode);
-        ContainerNode root = (ContainerNode) transformedInput;
-        DataContainerChild leafValue = root.childByArg(NodeIdentifier.create(
+    void testUnionUint8Input() throws IOException, URISyntaxException {
+        final var transformedInput = readJson("/bug-6112/json/data-uint8.json");
+        final var root = assertInstanceOf(ContainerNode.class, transformedInput);
+        final var leafValue = root.childByArg(NodeIdentifier.create(
             QName.create("union:identityref:test", "2016-07-12", "leaf-value")));
 
         assertNotNull(leafValue);
