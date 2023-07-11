@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Base64;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -35,7 +35,7 @@ public class Bug5446Test {
     private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
     private EffectiveModelContext schemaContext;
 
-    @Before
+    @BeforeEach
     public void init() {
         schemaContext = YangParserTestUtils.parseYang("""
             module foo {

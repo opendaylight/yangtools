@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -32,13 +32,13 @@ public abstract class AbstractComplexJsonTest {
     static EffectiveModelContext schemaContext;
     static JSONCodecFactory lhotkaCodecFactory;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
         lhotkaCodecFactory = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         lhotkaCodecFactory = null;
         schemaContext = null;

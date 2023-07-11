@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class RFC7951YT1027Test extends AbstractYT1027Test {
     private static JSONCodecFactory CODEC_FACTORY;
 
-    @BeforeClass
+    @BeforeAll
     public static void createFactory() {
         CODEC_FACTORY = JSONCodecFactorySupplier.RFC7951.getShared(SCHEMA_CONTEXT);
     }
 
-    @AfterClass
+    @AfterAll
     public static void destroyFactory() {
         CODEC_FACTORY = null;
     }

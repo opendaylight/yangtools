@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -134,7 +135,7 @@ public class Bug4969Test {
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final var transformedInput = result.getResult().data();
 
-        assertTrue(transformedInput instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, transformedInput);
         ContainerNode root = (ContainerNode) transformedInput;
         final DataContainerChild ref1 = root.childByArg(NodeIdentifier.create(
             QName.create("foo", "2016-01-22", "ref1")));
@@ -155,10 +156,10 @@ public class Bug4969Test {
         final Object value3 = ref3.body();
         final Object value4 = ref4.body();
 
-        assertTrue(value1 instanceof Set);
-        assertTrue(value2 instanceof Set);
-        assertTrue(value3 instanceof Set);
-        assertTrue(value4 instanceof Set);
+        assertInstanceOf(Set.class, value1);
+        assertInstanceOf(Set.class, value2);
+        assertInstanceOf(Set.class, value3);
+        assertInstanceOf(Set.class, value4);
 
         final Set<?> set1 = (Set<?>) value1;
         final Set<?> set2 = (Set<?>) value2;

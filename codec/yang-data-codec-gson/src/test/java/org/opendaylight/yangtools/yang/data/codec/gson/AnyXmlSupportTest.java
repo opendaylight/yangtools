@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadXmlToNormalizedNodes;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.normalizedNodesToJsonString;
@@ -23,7 +24,7 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import javax.xml.transform.dom.DOMSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -154,7 +155,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         loadXmlToNormalizedNodes(resourceAsStream, result, schemaContext);
 
         assertNotNull(result.getResult().data());
-        assertTrue(result.getResult().data() instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, result.getResult().data());
 
         final DataContainerChild data = ((ContainerNode) result.getResult().data())
                 .childByArg(new NodeIdentifier(QName.create(namespace, revision, localName)));
@@ -166,10 +167,10 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
     }
 
     private static DOMSource getParsedAnyXmlValue(final NormalizedNode transformedInput, final QName anyxmlName) {
-        assertTrue(transformedInput instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, transformedInput);
         final ContainerNode cont1 = (ContainerNode) transformedInput;
         final DataContainerChild child = cont1.childByArg(new NodeIdentifier(anyxmlName));
-        assertTrue(child instanceof DOMSourceAnyxmlNode);
+        assertInstanceOf(DOMSourceAnyxmlNode.class, child);
         final DOMSourceAnyxmlNode anyXmlNode = (DOMSourceAnyxmlNode) child;
         return anyXmlNode.body();
     }

@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.stream.JsonReader;
 import java.io.StringReader;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -38,7 +38,7 @@ public class YT1472Test {
     private static JSONCodecFactory CODEC_FACTORY;
     private static Inference ERRORS_INFERENCE;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/yt1472");
         CODEC_FACTORY = JSONCodecFactorySupplier.RFC7951.getShared(CONTEXT);

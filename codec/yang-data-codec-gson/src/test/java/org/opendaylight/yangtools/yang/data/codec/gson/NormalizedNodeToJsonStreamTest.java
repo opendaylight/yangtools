@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArray;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
@@ -28,7 +29,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -63,7 +64,7 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
 
         final HashSet<Object> lflst11Values = new HashSet<>();
         for (final JsonElement jsonElement : lflst11) {
-            assertTrue(jsonElement instanceof JsonPrimitive);
+            assertInstanceOf(JsonPrimitive.class, jsonElement);
             lflst11Values.add(jsonElement.getAsString());
         }
 
@@ -95,7 +96,7 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
 
         final HashSet<Object> lflst11Values = new HashSet<>();
         for (final JsonElement jsonElement : lflst11) {
-            assertTrue(jsonElement instanceof JsonPrimitive);
+            assertInstanceOf(JsonPrimitive.class, jsonElement);
             lflst11Values.add(jsonElement.getAsString());
         }
 
@@ -115,7 +116,7 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         assertTrue(iterator.hasNext());
         final JsonElement lst11Entry1Raw = iterator.next();
         assertFalse(iterator.hasNext());
-        assertTrue(lst11Entry1Raw instanceof JsonObject);
+        assertInstanceOf(JsonObject.class, lst11Entry1Raw);
         final JsonObject lst11Entry1 = (JsonObject) lst11Entry1Raw;
 
         final JsonPrimitive key111 = childPrimitive(lst11Entry1, "complexjson:key111", "key111");
@@ -245,7 +246,7 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         final JsonElement lst12Entry1Raw = iterator.next();
         assertFalse(iterator.hasNext());
 
-        assertTrue(lst12Entry1Raw instanceof JsonObject);
+        assertInstanceOf(JsonObject.class, lst12Entry1Raw);
         final JsonObject lst12Entry1 = (JsonObject) lst12Entry1Raw;
         final JsonPrimitive lf121 = childPrimitive(lst12Entry1, "complexjson:lf121", "lf121");
         assertNotNull(lf121);
@@ -259,9 +260,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         final JsonObject cont1 = resolveCont1(jsonOutput);
         final JsonElement emptyObj = cont1.get("empty");
         assertNotNull(emptyObj);
-        assertTrue(emptyObj instanceof JsonArray);
+        assertInstanceOf(JsonArray.class, emptyObj);
         assertEquals(1, emptyObj.getAsJsonArray().size());
-        assertTrue(emptyObj.getAsJsonArray().get(0) instanceof JsonNull);
+        assertInstanceOf(JsonNull.class, emptyObj.getAsJsonArray().get(0));
     }
 
     @Test

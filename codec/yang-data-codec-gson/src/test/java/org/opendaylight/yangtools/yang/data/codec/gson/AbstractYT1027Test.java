@@ -8,18 +8,17 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verify;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -66,7 +65,7 @@ public abstract class AbstractYT1027Test {
     private static Int64TypeDefinition INT64_TYPE;
     private static Uint64TypeDefinition UINT64_TYPE;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module yt1027 {
@@ -98,7 +97,7 @@ public abstract class AbstractYT1027Test {
         return ((LeafSchemaNode) child).getType();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         DECIMAL_TYPE = null;
         INT64_TYPE = null;
@@ -108,17 +107,17 @@ public abstract class AbstractYT1027Test {
 
     @Test
     public void testDecimal() {
-        assertThat(codecFactory().decimalCodec(DECIMAL_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().decimalCodec(DECIMAL_TYPE));
     }
 
     @Test
     public void testInt64() {
-        assertThat(codecFactory().int64Codec(INT64_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().int64Codec(INT64_TYPE));
     }
 
     @Test
     public void testUint64() {
-        assertThat(codecFactory().uint64Codec(UINT64_TYPE), instanceOf(wrapperClass()));
+        assertInstanceOf(wrapperClass(), codecFactory().uint64Codec(UINT64_TYPE));
     }
 
     @Test

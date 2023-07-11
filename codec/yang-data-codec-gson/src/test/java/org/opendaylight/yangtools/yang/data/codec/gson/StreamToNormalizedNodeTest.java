@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.LoggingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -31,13 +31,13 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     private static final Logger LOG = LoggerFactory.getLogger(StreamToNormalizedNodeTest.class);
     private static String streamAsString;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialization() throws IOException, URISyntaxException {
         streamAsString = loadTextFile(new File(StreamToNormalizedNodeTest.class.getResource(
                 "/complexjson/complex-json.json").toURI()));
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() {
         streamAsString = null;
     }

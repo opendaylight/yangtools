@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.gson.stream.JsonReader;
 import java.io.StringReader;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -45,7 +44,7 @@ public class YT1411Test extends AbstractComplexJsonTest {
               }
             }""")));
         final var cont1 = result.getResult().data();
-        assertThat(cont1, instanceOf(ContainerNode.class));
+        assertInstanceOf(ContainerNode.class, cont1);
 
         final QName lst11 = QName.create(CONT_1, "lst11");
         final var lf112 = NormalizedNodes.findNode(cont1,
@@ -54,7 +53,7 @@ public class YT1411Test extends AbstractComplexJsonTest {
                 Map.of(QName.create(CONT_1, "key111"), "foo", QName.create(CONT_1, "lf111"), "bar")),
             new NodeIdentifier(QName.create(CONT_1, "lf112")))
             .orElseThrow();
-        assertThat(lf112, instanceOf(LeafNode.class));
+        assertInstanceOf(LeafNode.class, lf112);
 
         final QName augmentChoice1 = QName.create(CONT_1, "augment-choice1");
         assertEquals(YangInstanceIdentifier.of(

@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.common.collect.ImmutableSet;
@@ -17,9 +17,9 @@ import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -33,7 +33,7 @@ public class Bug4501Test {
 
     private static EffectiveModelContext schemaContext;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialization() {
         schemaContext = YangParserTestUtils.parseYang("""
             module foo {
@@ -63,7 +63,7 @@ public class Bug4501Test {
             }""");
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() {
         schemaContext = null;
     }
@@ -77,7 +77,7 @@ public class Bug4501Test {
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final var transformedInput = result.getResult().data();
-        assertTrue(transformedInput instanceof UnkeyedListNode);
+        assertInstanceOf(UnkeyedListNode.class, transformedInput);
 
         final UnkeyedListNode hop = (UnkeyedListNode) transformedInput;
         final DataContainerChild lrsBits = hop.childAt(0).getChildByArg(
