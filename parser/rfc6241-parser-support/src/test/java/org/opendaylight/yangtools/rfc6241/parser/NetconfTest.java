@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.rfc6241.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -75,7 +73,7 @@ public class NetconfTest {
         final var optFilter = def.getInput().findDataTreeChild(FILTER);
         assertEquals(expected, optFilter.isPresent());
         optFilter.ifPresent(filter -> {
-            assertThat(filter, is(instanceOf(AnyxmlSchemaNode.class)));
+            assertInstanceOf(AnyxmlSchemaNode.class, filter);
             assertTrue(GetFilterElementAttributesSchemaNode.findIn((AnyxmlSchemaNode) filter).isPresent());
         });
     }
