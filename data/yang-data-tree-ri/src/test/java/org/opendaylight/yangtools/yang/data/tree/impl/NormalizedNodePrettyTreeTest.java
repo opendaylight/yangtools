@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
+class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     @Test
-    public void testMapNodePrettyTree() {
+    void testMapNodePrettyTree() {
         assertEquals(String.join("\n",
             "systemMapNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)list-a = {",
             "    mapEntryNode list-a = {",
@@ -34,7 +34,7 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testMapEntryPrettyTree() {
+    void testMapEntryPrettyTree() {
         assertEquals(String.join("\n",
             "mapEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)list-a = {",
             "    leafNode leaf-a = \"bar\"",
@@ -50,7 +50,7 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testChoicePrettyTree() {
+    void testChoicePrettyTree() {
         assertEquals(String.join("\n",
             "choiceNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)choice = {",
             "    leafNode augment = \"Augmented leaf value\"",
@@ -58,13 +58,13 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testLeafPrettyTree() {
+    void testLeafPrettyTree() {
         assertEquals("leafNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)leaf = \"Leaf value\"",
             createLeafNode().prettyTree().get());
     }
 
     @Test
-    public void testLeafSetPrettyTree() {
+    void testLeafSetPrettyTree() {
         assertEquals(String.join("\n",
             "systemLeafSetNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)leaf-set = {",
             "    leafSetEntryNode leaf-set = \"Leaf set value\"",
@@ -72,7 +72,7 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testUserLeafSetPrettyTree() {
+    void testUserLeafSetPrettyTree() {
         assertEquals(String.join("\n",
             "userLeafSetNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-leaf-set = {",
             "    leafSetEntryNode user-leaf-set = \"User leaf set value\"",
@@ -80,7 +80,7 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testUserMapPrettyTree() {
+    void testUserMapPrettyTree() {
         assertEquals(String.join("\n",
             "userMapNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-map = {",
             "    mapEntryNode user-map = {",
@@ -90,7 +90,7 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testUserMapEntryPrettyTree() {
+    void testUserMapEntryPrettyTree() {
         assertEquals(String.join("\n",
             "mapEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-map = {",
             "    leafNode user-map-entry = \"User map entry value\"",
@@ -98,7 +98,7 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testUnkeyedListPrettyTree() {
+    void testUnkeyedListPrettyTree() {
         assertEquals(String.join("\n",
             "unkeyedListNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)unkeyed-list = {",
             "    unkeyedListEntryNode unkeyed-list-entry = {",
@@ -108,7 +108,7 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testUnkeyedListEntryPrettyTree() {
+    void testUnkeyedListEntryPrettyTree() {
         assertEquals(String.join("\n",
             "unkeyedListEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)unkeyed-list-entry = {",
             "    leafNode unkeyed-list-leaf = \"Unkeyed list leaf value\"",
@@ -116,14 +116,14 @@ public class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     }
 
     @Test
-    public void testAnyDataPrettyTree() {
+    void testAnyDataPrettyTree() {
         assertEquals(String.join("\n",
             "anydataNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)any-data = (java.lang.String)"),
             createAnyDataNode().prettyTree().get());
     }
 
     @Test
-    public void testContainerPrettyTree() {
+    void testContainerPrettyTree() {
         assertEquals(String.join("\n",
             "containerNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)root = {",
             "    userMapNode user-map = {",

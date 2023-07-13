@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashMap;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -32,9 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -87,11 +83,11 @@ public class DataTreeCandidateValidatorTest {
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest.class);
     private static final String NEW_LINE = System.getProperty("line.separator");
 
-    @BeforeClass
-    public static void init() throws DataValidationFailedException {
+    @BeforeAll
+    static void init() throws DataValidationFailedException {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
-        for (final Module module : context.getModules()) {
+        for (final var module : context.getModules()) {
             if (module.getName().equals("leafref-validation")) {
                 valModule = module;
             }
@@ -136,21 +132,21 @@ public class DataTreeCandidateValidatorTest {
 
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
 
-        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
 
-        final ContainerNode odlProjectContainer = createOdlContainer();
+        final var odlProjectContainer = createOdlContainer();
 
-        final YangInstanceIdentifier path = YangInstanceIdentifier.of(odl);
+        final var path = YangInstanceIdentifier.of(odl);
         initialDataTreeModification.write(path, odlProjectContainer);
         initialDataTreeModification.ready();
 
-        final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
+        final var writeContributorsCandidate = inMemoryDataTree
                 .prepare(initialDataTreeModification);
         inMemoryDataTree.commit(writeContributorsCandidate);
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         inMemoryDataTree = null;
         rootLeafRefContext = null;
         valModule = null;
@@ -158,7 +154,7 @@ public class DataTreeCandidateValidatorTest {
     }
 
     @Test
-    public void dataTreeCanditateValidationTest() throws DataValidationFailedException {
+    void dataTreeCanditateValidationTest() throws DataValidationFailedException {
         write();
 
         write2();
@@ -174,14 +170,14 @@ public class DataTreeCandidateValidatorTest {
 
     private static void writeContributors() throws DataValidationFailedException {
 
-        final ContainerNode contributorContainer = createBasicContributorContainer();
+        final var contributorContainer = createBasicContributorContainer();
 
-        final YangInstanceIdentifier contributorPath = YangInstanceIdentifier.of(odlContributor);
-        final DataTreeModification writeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var contributorPath = YangInstanceIdentifier.of(odlContributor);
+        final var writeModification = inMemoryDataTree.takeSnapshot().newModification();
         writeModification.write(contributorPath, contributorContainer);
         writeModification.ready();
 
-        final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
+        final var writeContributorsCandidate = inMemoryDataTree
                 .prepare(writeModification);
 
         LOG.debug("*************************");
@@ -189,7 +185,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug(inMemoryDataTree.toString());
 
-        final LeafRefDataValidationFailedException ex = assertThrows(LeafRefDataValidationFailedException.class,
+        final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
         assertEquals(3, ex.getValidationsErrorsCount());
 
@@ -202,27 +198,27 @@ public class DataTreeCandidateValidatorTest {
     }
 
     private static void writeIntoMapEntry() throws DataValidationFailedException {
-        final Map<QName, Object> keys = new HashMap<>();
+        final var keys = new HashMap<QName, Object>();
         keys.put(name, "New Project");
-        final NodeIdentifierWithPredicates mapEntryPath = NodeIdentifierWithPredicates.of(project, keys);
+        final var mapEntryPath = NodeIdentifierWithPredicates.of(project, keys);
 
-        final YangInstanceIdentifier leaderPath = YangInstanceIdentifier.of(odl).node(project).node(mapEntryPath)
+        final var leaderPath = YangInstanceIdentifier.of(odl).node(project).node(mapEntryPath)
             .node(lead);
 
-        final LeafNode<String> leader = ImmutableNodes.leafNode(lead, "Updated leader");
+        final var leader = ImmutableNodes.leafNode(lead, "Updated leader");
 
-        final DataTreeModification writeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var writeModification = inMemoryDataTree.takeSnapshot().newModification();
         writeModification.write(leaderPath, leader);
         writeModification.ready();
 
-        final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
+        final var writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
 
         LOG.debug("*************************");
         LOG.debug("Before write into map entry (update of leader name): ");
         LOG.debug("*************************");
         LOG.debug(inMemoryDataTree.toString());
 
-        final LeafRefDataValidationFailedException ex = assertThrows(LeafRefDataValidationFailedException.class,
+        final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
         assertEquals(1, ex.getValidationsErrorsCount());
 
@@ -235,24 +231,24 @@ public class DataTreeCandidateValidatorTest {
     }
 
     private static void writeMapEntry() throws DataValidationFailedException {
-        final NodeIdentifierWithPredicates mapEntryPath = NodeIdentifierWithPredicates.of(project, name, "New Project");
+        final var mapEntryPath = NodeIdentifierWithPredicates.of(project, name, "New Project");
 
-        final MapEntryNode newProjectMapEntry = createProjectListEntry(
+        final var newProjectMapEntry = createProjectListEntry(
                 "New Project", "New Project description ...",
                 "Leader of New Project", "Owner of New Project");
 
-        final DataTreeModification writeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var writeModification = inMemoryDataTree.takeSnapshot().newModification();
         writeModification.write(YangInstanceIdentifier.of(odl).node(project).node(mapEntryPath), newProjectMapEntry);
         writeModification.ready();
 
-        final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
+        final var writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
 
         LOG.debug("*************************");
         LOG.debug("Before map entry write: ");
         LOG.debug("*************************");
         LOG.debug(inMemoryDataTree.toString());
 
-        final LeafRefDataValidationFailedException ex = assertThrows(LeafRefDataValidationFailedException.class,
+        final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
         assertEquals(2, ex.getValidationsErrorsCount());
 
@@ -265,11 +261,11 @@ public class DataTreeCandidateValidatorTest {
     }
 
     private static void write() throws DataValidationFailedException {
-        final ContainerNode contributorContainer = createContributorContainer(
+        final var contributorContainer = createContributorContainer(
             (ContainerSchemaNode) valModule.getDataChildByName(odlContributor));
 
-        final YangInstanceIdentifier contributorPath = YangInstanceIdentifier.of(odlContributor);
-        final DataTreeModification writeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var contributorPath = YangInstanceIdentifier.of(odlContributor);
+        final var writeModification = inMemoryDataTree.takeSnapshot().newModification();
         writeModification.write(contributorPath, contributorContainer);
 
         writeModification.write(YangInstanceIdentifier.of(l1),
@@ -278,14 +274,14 @@ public class DataTreeCandidateValidatorTest {
             ImmutableNodes.leafNode(l2, "Leafref target l2 under the root"));
 
         writeModification.ready();
-        final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
+        final var writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
 
         LOG.debug("*************************");
         LOG.debug("Before write: ");
         LOG.debug("*************************");
         LOG.debug(inMemoryDataTree.toString());
 
-        final LeafRefDataValidationFailedException ex = assertThrows(LeafRefDataValidationFailedException.class,
+        final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
         assertEquals(12, ex.getValidationsErrorsCount());
 
@@ -298,7 +294,7 @@ public class DataTreeCandidateValidatorTest {
     }
 
     private static void write2() throws DataValidationFailedException {
-        final DataTreeModification writeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var writeModification = inMemoryDataTree.takeSnapshot().newModification();
         writeModification.write(YangInstanceIdentifier.of(odl).node(con1), Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(con1))
             .addChild(ImmutableNodes.leafNode(l1, "l1 value"))
@@ -308,14 +304,14 @@ public class DataTreeCandidateValidatorTest {
         writeModification.write(YangInstanceIdentifier.of(odl).node(leafrefLeafList), createLeafRefLeafListNode());
         writeModification.ready();
 
-        final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
+        final var writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
 
         LOG.debug("*************************");
         LOG.debug("Before write2: ");
         LOG.debug("*************************");
         LOG.debug(inMemoryDataTree.toString());
 
-        final LeafRefDataValidationFailedException ex = assertThrows(LeafRefDataValidationFailedException.class,
+        final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
         assertEquals(6, ex.getValidationsErrorsCount());
 
@@ -397,11 +393,11 @@ public class DataTreeCandidateValidatorTest {
     }
 
     private static void delete() throws DataValidationFailedException {
-        final DataTreeModification delete = inMemoryDataTree.takeSnapshot().newModification();
+        final var delete = inMemoryDataTree.takeSnapshot().newModification();
         delete.delete(YangInstanceIdentifier.of(odlContributor));
         delete.ready();
 
-        final DataTreeCandidate deleteContributorsCanditate = inMemoryDataTree.prepare(delete);
+        final var deleteContributorsCanditate = inMemoryDataTree.prepare(delete);
 
         LOG.debug("*************************");
         LOG.debug("Before delete: ");
@@ -409,7 +405,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug(inMemoryDataTree.toString());
 
 
-        final LeafRefDataValidationFailedException ex = assertThrows(LeafRefDataValidationFailedException.class,
+        final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(deleteContributorsCanditate, rootLeafRefContext));
         assertEquals(6, ex.getValidationsErrorsCount());
 

@@ -7,34 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug5830Test {
+class Bug5830Test {
     private static final String NS = "foo";
     private static final String REV = "2016-05-17";
     private static final QName TASK_CONTAINER = QName.create(NS, REV, "task-container");
@@ -51,29 +45,29 @@ public class Bug5830Test {
 
     private static DataTree initDataTree(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
-        DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+        final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
-        final SystemMapNode taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(TASK_CONTAINER, TASK), taskNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
         return inMemoryDataTree;
     }
 
     @Test
-    public void testMandatoryNodes() throws DataValidationFailedException {
+    void testMandatoryNodes() throws DataValidationFailedException {
         testPresenceContainer();
         testNonPresenceContainer();
         testMultipleContainers();
     }
 
     private static void testPresenceContainer() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang("""
+        final var schemaContext = YangParserTestUtils.parseYang("""
             module foo-presence {
               yang-version 1;
               namespace "foo";
@@ -107,7 +101,7 @@ public class Bug5830Test {
                 }
               }
             }""");
-        assertNotNull("Schema context must not be null.", schemaContext);
+        assertNotNull(schemaContext, "Schema context must not be null.");
 
         testContainerIsNotPresent(schemaContext);
         final var ex = assertThrows(IllegalArgumentException.class, () -> testContainerIsPresent(schemaContext));
@@ -118,7 +112,7 @@ public class Bug5830Test {
     }
 
     private static void testNonPresenceContainer() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang("""
+        final var schemaContext = YangParserTestUtils.parseYang("""
             module foo-non-presence {
               yang-version 1;
               namespace "foo";
@@ -152,7 +146,7 @@ public class Bug5830Test {
                 }
               }
             }""");
-        assertNotNull("Schema context must not be null.", schemaContext);
+        assertNotNull(schemaContext, "Schema context must not be null.");
 
         try {
             testContainerIsNotPresent(schemaContext);
@@ -175,7 +169,7 @@ public class Bug5830Test {
     }
 
     private static void testMultipleContainers() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang("""
+        final var schemaContext = YangParserTestUtils.parseYang("""
             module foo-multiple {
               yang-version 1;
               namespace "foo";
@@ -239,7 +233,7 @@ public class Bug5830Test {
                 }
               }
             }""");
-        assertNotNull("Schema context must not be null.", schemaContext);
+        assertNotNull(schemaContext, "Schema context must not be null.");
 
         testContainerIsNotPresent(schemaContext);
 
@@ -275,90 +269,90 @@ public class Bug5830Test {
 
     private static void testContainerIsNotPresent(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree(schemaContext);
-        final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
+        final var inMemoryDataTree = initDataTree(schemaContext);
+        final var taskEntryNode = Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .build();
 
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
             YangInstanceIdentifier.of(TASK_CONTAINER, TASK).node(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123")),
             taskEntryNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
     }
 
     private static void testContainerIsPresent(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree(schemaContext);
+        final var inMemoryDataTree = initDataTree(schemaContext);
 
-        final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
+        final var taskEntryNode = Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataContainer(false)).build();
 
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
             YangInstanceIdentifier.of(TASK_CONTAINER, TASK).node(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123")),
             taskEntryNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
     }
 
     private static void testMandatoryDataLeafIsPresent(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree(schemaContext);
+        final var inMemoryDataTree = initDataTree(schemaContext);
 
-        final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
+        final var taskEntryNode = Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataContainer(true)).build();
 
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
             YangInstanceIdentifier.of(TASK_CONTAINER, TASK).node(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123")),
             taskEntryNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
     }
 
     private static void testMandatoryLeaf2IsPresent(final EffectiveModelContext schemaContext,
             final boolean withPresenceContianer) throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree(schemaContext);
+        final var inMemoryDataTree = initDataTree(schemaContext);
 
-        final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
+        final var taskEntryNode = Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataMultipleContainer(withPresenceContianer))
                 .build();
 
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
             YangInstanceIdentifier.of(TASK_CONTAINER, TASK).node(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123")),
             taskEntryNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
     }
 
     private static DataContainerChild createTaskDataContainer(final boolean withMandatoryNode) {
-        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
+        final var taskDataBuilder = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
                 .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"));
         if (withMandatoryNode) {
@@ -368,24 +362,22 @@ public class Bug5830Test {
     }
 
     private static DataContainerChild createTaskDataMultipleContainer(final boolean withPresenceContianer) {
-        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> nonPresenceContainerBuilder = Builders
-                .containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER))
-                .withChild(
-                        Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER_2))
-                                .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF_2, "mandatory leaf data 2")).build());
+        final var nonPresenceContainerBuilder = Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER))
+            .withChild(Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER_2))
+                .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF_2, "mandatory leaf data 2")).build());
 
         if (withPresenceContianer) {
             nonPresenceContainerBuilder.withChild(Builders.containerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(PRESENCE_CONTAINER_2)).build());
         }
 
-        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
-                .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"));
-        taskDataBuilder.withChild(ImmutableNodes.leafNode(MANDATORY_DATA, "mandatory-data-value"));
-        taskDataBuilder.withChild(nonPresenceContainerBuilder.build());
-
-        return taskDataBuilder.build();
+        return Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
+            .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"))
+            .withChild(ImmutableNodes.leafNode(MANDATORY_DATA, "mandatory-data-value"))
+            .withChild(nonPresenceContainerBuilder.build())
+            .build();
     }
 }

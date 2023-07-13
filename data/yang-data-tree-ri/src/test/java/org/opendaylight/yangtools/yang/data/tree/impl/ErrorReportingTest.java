@@ -7,31 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
-public class ErrorReportingTest extends AbstractTestModelTest {
+class ErrorReportingTest extends AbstractTestModelTest {
     private DataTree tree;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
     }
 
     @Test
-    public void writeWithoutParentExisting() {
-        DataTreeModification modification = tree.takeSnapshot().newModification();
+    void writeWithoutParentExisting() {
+        final var modification = tree.takeSnapshot().newModification();
         // We write node without creating parent
         modification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
             .build());
@@ -47,16 +46,16 @@ public class ErrorReportingTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void parentConcurrentlyDeletedExisting() throws DataValidationFailedException {
-        DataTreeModification initial = tree.takeSnapshot().newModification();
+    void parentConcurrentlyDeletedExisting() throws DataValidationFailedException {
+        final var initial = tree.takeSnapshot().newModification();
         // We write node without creating parent
         initial.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initial.ready();
         // We commit transaction
         tree.commit(tree.prepare(initial));
 
-        final DataTreeModification writeTx = tree.takeSnapshot().newModification();
-        final DataTreeModification deleteTx = tree.takeSnapshot().newModification();
+        final var writeTx = tree.takeSnapshot().newModification();
+        final var deleteTx = tree.takeSnapshot().newModification();
         deleteTx.delete(TestModel.TEST_PATH);
         deleteTx.ready();
         // We commit delete modification

@@ -7,26 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
@@ -57,17 +55,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  *      }
  * }
  */
-public class ModificationMetadataTreeTest extends AbstractTestModelTest {
+class ModificationMetadataTreeTest extends AbstractTestModelTest {
 
     private static final Short ONE_ID = 1;
     private static final Short TWO_ID = 2;
     private static final String TWO_ONE_NAME = "one";
     private static final String TWO_TWO_NAME = "two";
-
-    private static final YangInstanceIdentifier OUTER_LIST_1_PATH =
-            YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
-            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
-            .build();
 
     private static final YangInstanceIdentifier OUTER_LIST_2_PATH =
             YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
@@ -92,8 +85,8 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
 
     private RootApplyStrategy rootOper;
 
-    @Before
-    public void prepare() throws ExcludedDataSchemaNodeException {
+    @BeforeEach
+    void prepare() throws ExcludedDataSchemaNodeException {
         rootOper = RootApplyStrategy.from(SchemaAwareApplyOperation.from(SCHEMA_CONTEXT,
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
@@ -132,11 +125,11 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void basicReadWrites() {
-        final DataTreeModification modificationTree = new InMemoryDataTreeModification(
+    void basicReadWrites() {
+        final var modificationTree = new InMemoryDataTreeModification(
             new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper), rootOper);
-        final Optional<NormalizedNode> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
+        final var originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
         assertSame(BAR_NODE, originalBarNode.orElseThrow());
 
@@ -145,13 +138,13 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
 
         // reads node to /outer-list/1/inner_list/two/value
         // and checks if node is already present
-        final Optional<NormalizedNode> barTwoCModified = modificationTree.readNode(TWO_TWO_VALUE_PATH);
+        final var barTwoCModified = modificationTree.readNode(TWO_TWO_VALUE_PATH);
         assertTrue(barTwoCModified.isPresent());
         assertEquals(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "test"), barTwoCModified.orElseThrow());
 
         // delete node to /outer-list/1/inner_list/two/value
         modificationTree.delete(TWO_TWO_VALUE_PATH);
-        final Optional<NormalizedNode> barTwoCAfterDelete = modificationTree.readNode(TWO_TWO_VALUE_PATH);
+        final var barTwoCAfterDelete = modificationTree.readNode(TWO_TWO_VALUE_PATH);
         assertFalse(barTwoCAfterDelete.isPresent());
     }
 
@@ -160,7 +153,7 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
         /**
          * Creates empty Snapshot with associated schema context.
          */
-        final DataTree t = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+        final var t = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
             SCHEMA_CONTEXT);
 
         /**
@@ -173,9 +166,9 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void createFromEmptyState() {
+    void createFromEmptyState() {
 
-        final DataTreeModification modificationTree = createEmptyModificationTree();
+        final var modificationTree = createEmptyModificationTree();
         // Writes empty container node to /test
         modificationTree.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
 
@@ -184,33 +177,33 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
             .build());
 
         // Reads list node from /test/outer-list.
-        final Optional<NormalizedNode> potentialOuterList = modificationTree.readNode(TestModel.OUTER_LIST_PATH);
+        final var potentialOuterList = modificationTree.readNode(TestModel.OUTER_LIST_PATH);
         assertFalse(potentialOuterList.isPresent());
 
         // Reads container node from /test and verifies that it contains test node.
-        final Optional<NormalizedNode> potentialTest = modificationTree.readNode(TestModel.TEST_PATH);
+        final var potentialTest = modificationTree.readNode(TestModel.TEST_PATH);
         assertPresentAndType(potentialTest, ContainerNode.class);
     }
 
     @Test
-    public void writeSubtreeReadChildren() {
-        final DataTreeModification modificationTree = createEmptyModificationTree();
+    void writeSubtreeReadChildren() {
+        final var modificationTree = createEmptyModificationTree();
         modificationTree.write(TestModel.TEST_PATH, createTestContainer());
-        final Optional<NormalizedNode> potential = modificationTree.readNode(TWO_TWO_PATH);
+        final var potential = modificationTree.readNode(TWO_TWO_PATH);
         assertPresentAndType(potential, MapEntryNode.class);
     }
 
     @Test
-    public void writeSubtreeDeleteChildren() {
-        final DataTreeModification modificationTree = createEmptyModificationTree();
+    void writeSubtreeDeleteChildren() {
+        final var modificationTree = createEmptyModificationTree();
         modificationTree.write(TestModel.TEST_PATH, createTestContainer());
 
         // We verify data are present
-        final Optional<NormalizedNode> potentialBeforeDelete = modificationTree.readNode(TWO_TWO_PATH);
+        final var potentialBeforeDelete = modificationTree.readNode(TWO_TWO_PATH);
         assertPresentAndType(potentialBeforeDelete, MapEntryNode.class);
 
         modificationTree.delete(TWO_TWO_PATH);
-        final Optional<NormalizedNode> potentialAfterDelete = modificationTree.readNode(TWO_TWO_PATH);
+        final var potentialAfterDelete = modificationTree.readNode(TWO_TWO_PATH);
         assertFalse(potentialAfterDelete.isPresent());
 
     }

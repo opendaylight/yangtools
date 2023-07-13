@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafBuilder;
@@ -19,10 +19,10 @@ import static org.opendaylight.yangtools.yang.data.tree.impl.ListConstraintsVali
 import static org.opendaylight.yangtools.yang.data.tree.impl.ListConstraintsValidation.assertTooManyElements;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT776Test {
+class YT776Test {
     private static final QName MODULE = QName.create("yt776", "yt776");
     private static final NodeIdentifier BOX = new NodeIdentifier(QName.create(MODULE, "box"));
     private static final QName OBJECT = QName.create(MODULE, "object");
@@ -66,8 +66,8 @@ public class YT776Test {
 
     private DataTree dataTree;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module yt776 {
               namespace yt776;
@@ -113,19 +113,19 @@ public class YT776Test {
             }""");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         SCHEMA_CONTEXT = null;
     }
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
     }
 
     @Test
-    public void testNoAttributes() {
-        final DataTreeModification mod = dataTree.takeSnapshot().newModification();
+    void testNoAttributes() {
+        final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
@@ -142,8 +142,8 @@ public class YT776Test {
     }
 
     @Test
-    public void testEmptyAttributes() throws DataValidationFailedException {
-        final DataTreeModification mod = write(containerBuilder().withNodeIdentifier(BOX)
+    void testEmptyAttributes() throws DataValidationFailedException {
+        final var mod = write(containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -152,13 +152,13 @@ public class YT776Test {
                 .build())
             .build());
 
-        final IllegalArgumentException ex = assertThrows(MinMaxElementsValidationFailedException.class, mod::ready);
+        final var ex = assertThrows(MinMaxElementsValidationFailedException.class, mod::ready);
         assertEquals("(yt776)attributes does not have enough elements (0), needs at least 1", ex.getMessage());
         assertTooFewElements(ex);
     }
 
     @Test
-    public void testOneAttribute() throws DataValidationFailedException {
+    void testOneAttribute() throws DataValidationFailedException {
         writeAndCommit(containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
@@ -172,7 +172,7 @@ public class YT776Test {
     }
 
     @Test
-    public void testTwoAttributes() throws DataValidationFailedException {
+    void testTwoAttributes() throws DataValidationFailedException {
         writeAndCommit(containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
@@ -187,8 +187,8 @@ public class YT776Test {
     }
 
     @Test
-    public void testThreeAttributes() throws DataValidationFailedException {
-        final DataTreeModification mod = write(containerBuilder().withNodeIdentifier(BOX)
+    void testThreeAttributes() throws DataValidationFailedException {
+        final var mod = write(containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -201,14 +201,14 @@ public class YT776Test {
                 .build())
             .build());
 
-        final IllegalArgumentException ex = assertThrows(MinMaxElementsValidationFailedException.class, mod::ready);
+        final var ex = assertThrows(MinMaxElementsValidationFailedException.class, mod::ready);
         assertEquals("(yt776)attributes has too many elements (3), can have at most 2", ex.getMessage());
         assertTooManyElements(ex);
     }
 
     @Test
-    public void testEmptyAndMergeOne() throws DataValidationFailedException {
-        final DataTreeModification mod = dataTree.takeSnapshot().newModification();
+    void testEmptyAndMergeOne() throws DataValidationFailedException {
+        final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
@@ -231,8 +231,8 @@ public class YT776Test {
     }
 
     @Test
-    public void testEmptyAndMergeOneWithListTouched() throws DataValidationFailedException {
-        final DataTreeModification mod = dataTree.takeSnapshot().newModification();
+    void testEmptyAndMergeOneWithListTouched() throws DataValidationFailedException {
+        final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
@@ -257,8 +257,8 @@ public class YT776Test {
     }
 
     @Test
-    public void testDisappearInChoice() throws DataValidationFailedException {
-        DataTreeModification mod = dataTree.takeSnapshot().newModification();
+    void testDisappearInChoice() throws DataValidationFailedException {
+        var mod = dataTree.takeSnapshot().newModification();
         // Initialize choice with list
         mod.write(YangInstanceIdentifier.of(BOX), containerBuilder()
             .withNodeIdentifier(BOX)
@@ -283,13 +283,13 @@ public class YT776Test {
     }
 
     private DataTreeModification write(final ContainerNode data) throws DataValidationFailedException {
-        final DataTreeModification mod = dataTree.takeSnapshot().newModification();
+        final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), data);
         return mod;
     }
 
     private void writeAndCommit(final ContainerNode data) throws DataValidationFailedException {
-        final DataTreeModification mod = dataTree.takeSnapshot().newModification();
+        final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), data);
         commit(mod);
     }

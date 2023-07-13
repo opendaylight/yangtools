@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 
-public class TreeNodeFactoryTest {
+class TreeNodeFactoryTest {
 
     private static void checkTreeNode(final TreeNode node, final NormalizedNode data, final Version version) {
         assertSame(data, node.getData());
@@ -26,32 +26,32 @@ public class TreeNodeFactoryTest {
     }
 
     @Test
-    public void testNormalizedNodeContainer() {
-        final ContainerNode data = Mockito.mock(ContainerNode.class);
-        final Version version = Version.initial();
-        final TreeNode node = TreeNode.of(data, version);
+    void testNormalizedNodeContainer() {
+        final var data = Mockito.mock(ContainerNode.class);
+        final var version = Version.initial();
+        final var node = TreeNode.of(data, version);
 
-        assertTrue(node instanceof SimpleContainerNode);
+        assertInstanceOf(SimpleContainerNode.class, node);
         checkTreeNode(node, data, version);
     }
 
     @Test
-    public void testOrderedNodeContainer() {
-        final UserMapNode data = Mockito.mock(UserMapNode.class);
-        final Version version = Version.initial();
-        final TreeNode node = TreeNode.of(data, version);
+    void testOrderedNodeContainer() {
+        final var data = Mockito.mock(UserMapNode.class);
+        final var version = Version.initial();
+        final var node = TreeNode.of(data, version);
 
-        assertTrue(node instanceof SimpleContainerNode);
+        assertInstanceOf(SimpleContainerNode.class, node);
         checkTreeNode(node, data, version);
     }
 
     @Test
-    public void testLeaf() {
-        final LeafNode<?> data = Mockito.mock(LeafNode.class);
-        final Version version = Version.initial();
-        final TreeNode node = TreeNode.of(data, version);
+    void testLeaf() {
+        final var data = Mockito.mock(LeafNode.class);
+        final var version = Version.initial();
+        final var node = TreeNode.of(data, version);
 
-        assertTrue(node instanceof ValueNode);
+        assertInstanceOf(ValueNode.class, node);
         checkTreeNode(node, data, version);
     }
 }

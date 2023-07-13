@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -18,14 +18,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT892Test {
+class YT892Test {
     private static final QName BGP = QName.create("urn:opendaylight:params:xml:ns:yang:test:bgp", "2018-08-14", "bgp");
     private static final QName PEER_GROUPS = QName.create(BGP, "peer-groups");
     private static final QName PEER_GROUP = QName.create(BGP, "peer-group");
@@ -63,16 +60,16 @@ public class YT892Test {
     private LeafRefContext leafRefContext;
     private DataTree dataTree;
 
-    @Before
-    public void setup() {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yt892");
+    @BeforeEach
+    void setup() {
+        final var schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yt892");
         leafRefContext = LeafRefContext.create(schemaContext);
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
     }
 
     @Test
-    public void testWriteBgpNeighbour() throws Exception {
-        final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
+    void testWriteBgpNeighbour() throws Exception {
+        final var writeModification = dataTree.takeSnapshot().newModification();
         writeModification.write(BGP_ID, Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(BGP))
             .withChild(Builders.containerBuilder()
@@ -164,7 +161,7 @@ public class YT892Test {
             .build());
 
         writeModification.ready();
-        final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
+        final var writeContributorsCandidate = dataTree.prepare(writeModification);
         LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
         dataTree.commit(writeContributorsCandidate);
     }

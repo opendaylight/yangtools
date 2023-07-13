@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.Consumer;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1276Test {
+class YT1276Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create(FOO, "bar");
     private static final QName BAZ = QName.create(FOO, "baz");
@@ -46,13 +46,13 @@ public class YT1276Test {
     private final DataTree tree = new InMemoryDataTreeFactory()
         .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL);
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         MODEL = YangParserTestUtils.parseYangResource("/yt1276.yang");
     }
 
     @Test
-    public void testFooWithBar() throws DataValidationFailedException {
+    void testFooWithBar() throws DataValidationFailedException {
         applyOperation(mod -> {
             mod.write(YangInstanceIdentifier.of(FOO), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
@@ -63,7 +63,7 @@ public class YT1276Test {
 
     @Test
     @Deprecated
-    public void testFooWithBarLegacy() throws DataValidationFailedException {
+    void testFooWithBarLegacy() throws DataValidationFailedException {
         applyOperation(mod -> {
             mod.write(YangInstanceIdentifier.of(FOO), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
@@ -73,7 +73,7 @@ public class YT1276Test {
     }
 
     @Test
-    public void testFooWithoutBar() {
+    void testFooWithoutBar() {
         final IllegalArgumentException ex = assertFailsReady(mod -> {
             mod.write(YangInstanceIdentifier.of(FOO), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
@@ -83,7 +83,7 @@ public class YT1276Test {
     }
 
     @Test
-    public void testBarWithXyzzyWithSubtree() throws DataValidationFailedException {
+    void testBarWithXyzzyWithSubtree() throws DataValidationFailedException {
         applyOperation(mod -> {
             mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
@@ -104,7 +104,7 @@ public class YT1276Test {
     }
 
     @Test
-    public void testBazWithAugmentedCaseWithMandatoryLeaf() throws DataValidationFailedException {
+    void testBazWithAugmentedCaseWithMandatoryLeaf() throws DataValidationFailedException {
         applyOperation(mod -> {
             mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
@@ -117,21 +117,23 @@ public class YT1276Test {
         });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testBazWithAugmentedCaseWithoutMandatoryLeaf() throws DataValidationFailedException {
-        applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(BAZ))
-                    .withChild(ImmutableNodes.leafNode(BAZ_AUG_CASE_NON_MANDAT_LEAF, "augmentedCaseNonMandatory"))
-                    .build())
-                .build());
+    @Test
+    void testBazWithAugmentedCaseWithoutMandatoryLeaf() throws DataValidationFailedException {
+        assertThrows(IllegalArgumentException.class, () -> {
+            applyOperation(mod -> {
+                mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(BAR))
+                    .withChild(Builders.choiceBuilder()
+                        .withNodeIdentifier(new NodeIdentifier(BAZ))
+                        .withChild(ImmutableNodes.leafNode(BAZ_AUG_CASE_NON_MANDAT_LEAF, "augmentedCaseNonMandatory"))
+                        .build())
+                    .build());
+            });
         });
     }
 
     @Test
-    public void testWithAugmentedNestedBazWithMandatoryLeaf() throws DataValidationFailedException {
+    void testWithAugmentedNestedBazWithMandatoryLeaf() throws DataValidationFailedException {
         applyOperation(mod -> {
             mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
@@ -147,25 +149,27 @@ public class YT1276Test {
         });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testWithAugmentedNestedBazWithhoutMandatoryLeaf() throws DataValidationFailedException {
-        applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(BAZ))
+    @Test
+    void testWithAugmentedNestedBazWithhoutMandatoryLeaf() throws DataValidationFailedException {
+        assertThrows(IllegalArgumentException.class, () -> {
+            applyOperation(mod -> {
+                mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(BAR))
                     .withChild(Builders.choiceBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(NESTED_BAZ_CHOICE))
-                        .withChild(ImmutableNodes.leafNode(NESTED_BAZ_XYZ_CASE_NON_MANDATORY, "nestedNonMandatory"))
+                        .withNodeIdentifier(new NodeIdentifier(BAZ))
+                        .withChild(Builders.choiceBuilder()
+                            .withNodeIdentifier(new NodeIdentifier(NESTED_BAZ_CHOICE))
+                            .withChild(ImmutableNodes.leafNode(NESTED_BAZ_XYZ_CASE_NON_MANDATORY, "nestedNonMandatory"))
+                            .build())
                         .build())
-                    .build())
-                .build());
+                    .build());
+            });
         });
     }
 
     @Test
     @Deprecated
-    public void testBarWithXyzzyLegacy() throws DataValidationFailedException {
+    void testBarWithXyzzyLegacy() throws DataValidationFailedException {
         applyOperation(mod -> {
             mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
@@ -186,8 +190,8 @@ public class YT1276Test {
     }
 
     @Test
-    public void testBarWithoutXyzzyLeaf() {
-        final IllegalArgumentException ex = assertFailsReady(mod -> {
+    void testBarWithoutXyzzyLeaf() {
+        final var ex = assertFailsReady(mod -> {
             mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
                 .withChild(Builders.choiceBuilder()
@@ -209,8 +213,8 @@ public class YT1276Test {
     }
 
     @Test
-    public void testBarWithoutXyzzyAugment() {
-        final IllegalArgumentException ex = assertFailsReady(mod -> {
+    void testBarWithoutXyzzyAugment() {
+        final var ex = assertFailsReady(mod -> {
             mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
                 .withChild(Builders.choiceBuilder()
@@ -229,7 +233,7 @@ public class YT1276Test {
 
     private void applyOperation(final Consumer<DataTreeModification> operation)
             throws DataValidationFailedException {
-        final DataTreeModification mod = tree.takeSnapshot().newModification();
+        final var mod = tree.takeSnapshot().newModification();
         operation.accept(mod);
         mod.ready();
         tree.commit(tree.prepare(mod));

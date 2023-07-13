@@ -7,29 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug8713Test {
+class Bug8713Test {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
     private static final String REV = "2017-09-06";
 
     @Test
-    public void dataTreeCanditateValidationTest() throws Exception {
-        final EffectiveModelContext context = YangParserTestUtils.parseYang("""
+    void dataTreeCanditateValidationTest() throws Exception {
+        final var context = YangParserTestUtils.parseYang("""
             module bar {
               namespace bar;
               prefix bar;
@@ -56,17 +52,17 @@ public class Bug8713Test {
               container root {
               }
             }""");
-        final LeafRefContext rootLeafRefContext = LeafRefContext.create(context);
-        final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+        final var rootLeafRefContext = LeafRefContext.create(context);
+        final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
 
-        final ContainerNode root = createRootContainer();
-        final YangInstanceIdentifier rootPath = YangInstanceIdentifier.of(foo("root"));
-        final DataTreeModification writeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var root = createRootContainer();
+        final var rootPath = YangInstanceIdentifier.of(foo("root"));
+        final var writeModification = inMemoryDataTree.takeSnapshot().newModification();
         writeModification.write(rootPath, root);
         writeModification.ready();
 
-        final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
+        final var writeContributorsCandidate = inMemoryDataTree.prepare(writeModification);
 
         LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext);
         inMemoryDataTree.commit(writeContributorsCandidate);

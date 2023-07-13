@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
-public abstract class AbstractTestModelTest {
+abstract class AbstractTestModelTest {
     static EffectiveModelContext SCHEMA_CONTEXT;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static final void beforeClass() {
         SCHEMA_CONTEXT = TestModel.createTestContext();
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static final void afterClass() {
         SCHEMA_CONTEXT = null;
     }
 }

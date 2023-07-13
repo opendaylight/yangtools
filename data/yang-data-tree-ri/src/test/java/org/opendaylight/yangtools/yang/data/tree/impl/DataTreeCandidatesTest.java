@@ -7,17 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collection;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -25,8 +24,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
@@ -34,51 +31,51 @@ import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory
 import org.opendaylight.yangtools.yang.data.tree.spi.DataTreeCandidates;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class DataTreeCandidatesTest extends AbstractTestModelTest {
+class DataTreeCandidatesTest extends AbstractTestModelTest {
     private DataTree dataTree;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
 
-        final ContainerNode testContainer = Builders.containerBuilder()
+        final var testContainer = Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
             .withChild(Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
                 .build())
             .build();
 
-        final InMemoryDataTreeModification modification = (InMemoryDataTreeModification) dataTree.takeSnapshot()
+        final var modification = (InMemoryDataTreeModification) dataTree.takeSnapshot()
                 .newModification();
-        final DataTreeModificationCursor cursor = modification.openCursor();
+        final var cursor = modification.openCursor();
         cursor.write(TestModel.TEST_PATH.getLastPathArgument(), testContainer);
         modification.ready();
 
         dataTree.validate(modification);
-        final DataTreeCandidate candidate = dataTree.prepare(modification);
+        final var candidate = dataTree.prepare(modification);
         dataTree.commit(candidate);
     }
 
     @Test
-    public void testRootedCandidate() throws DataValidationFailedException {
-        final DataTree innerDataTree = new InMemoryDataTreeFactory().create(
+    void testRootedCandidate() throws DataValidationFailedException {
+        final var innerDataTree = new InMemoryDataTreeFactory().create(
             new DataTreeConfiguration.Builder(TreeType.OPERATIONAL)
             .setMandatoryNodesValidation(true)
             .setRootPath(TestModel.INNER_CONTAINER_PATH)
             .setUniqueIndexes(true).build(), SCHEMA_CONTEXT);
 
-        final LeafNode<String> leaf = ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "testing-value");
+        final var leaf = ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "testing-value");
 
-        final DataTreeModification modification = innerDataTree.takeSnapshot().newModification();
+        final var modification = innerDataTree.takeSnapshot().newModification();
         modification.write(TestModel.VALUE_PATH, leaf);
 
         modification.ready();
         dataTree.validate(modification);
-        final DataTreeCandidate candidate = dataTree.prepare(modification);
+        final var candidate = dataTree.prepare(modification);
         dataTree.commit(candidate);
 
-        final DataTreeModification newModification = dataTree.takeSnapshot().newModification();
-        final DataTreeCandidate newCandidate = DataTreeCandidates.newDataTreeCandidate(TestModel.INNER_CONTAINER_PATH,
+        final var newModification = dataTree.takeSnapshot().newModification();
+        final var newCandidate = DataTreeCandidates.newDataTreeCandidate(TestModel.INNER_CONTAINER_PATH,
             candidate.getRootNode());
 
         // lets see if getting the identifier of the root node throws an exception
@@ -88,20 +85,20 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         DataTreeCandidates.applyToModification(newModification,
                 newCandidate);
 
-        final LeafNode<?> readLeaf = (LeafNode<?>) newModification.readNode(TestModel.INNER_VALUE_PATH).orElseThrow();
+        final var readLeaf = (LeafNode<?>) newModification.readNode(TestModel.INNER_VALUE_PATH).orElseThrow();
         assertEquals(readLeaf, leaf);
     }
 
     @Test
-    public void testEmptyMergeOnContainer() throws DataValidationFailedException {
-        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+    void testEmptyMergeOnContainer() throws DataValidationFailedException {
+        final var modification = dataTree.takeSnapshot().newModification();
         modification.merge(TestModel.NON_PRESENCE_PATH, ImmutableNodes.containerNode(TestModel.NON_PRESENCE_QNAME));
         modification.ready();
         dataTree.validate(modification);
 
         // The entire transaction needs to fizzle to a no-op
-        DataTreeCandidate candidate = dataTree.prepare(modification);
-        DataTreeCandidateNode node = candidate.getRootNode();
+        final var candidate = dataTree.prepare(modification);
+        final var node = candidate.getRootNode();
         assertEquals(ModificationType.UNMODIFIED, node.modificationType());
 
         // 'test'
@@ -109,15 +106,15 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void testEmptyWriteOnContainer() throws DataValidationFailedException {
-        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+    void testEmptyWriteOnContainer() throws DataValidationFailedException {
+        final var modification = dataTree.takeSnapshot().newModification();
         modification.write(TestModel.NON_PRESENCE_PATH, ImmutableNodes.containerNode(TestModel.NON_PRESENCE_QNAME));
         modification.ready();
         dataTree.validate(modification);
 
         // The entire transaction needs to fizzle to a no-op
-        DataTreeCandidate candidate = dataTree.prepare(modification);
-        DataTreeCandidateNode node = candidate.getRootNode();
+        final var candidate = dataTree.prepare(modification);
+        final var node = candidate.getRootNode();
         assertEquals(ModificationType.UNMODIFIED, node.modificationType());
 
         // 'test'
@@ -125,16 +122,16 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void testEmptyMergesOnDeleted() throws DataValidationFailedException {
-        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+    void testEmptyMergesOnDeleted() throws DataValidationFailedException {
+        final var modification = dataTree.takeSnapshot().newModification();
         modification.delete(TestModel.NON_PRESENCE_PATH);
         modification.merge(TestModel.DEEP_CHOICE_PATH, ImmutableNodes.choiceNode(TestModel.DEEP_CHOICE_QNAME));
         modification.ready();
         dataTree.validate(modification);
 
-        final DataTreeCandidate candidate = dataTree.prepare(modification);
+        final var candidate = dataTree.prepare(modification);
         assertEquals(YangInstanceIdentifier.of(), candidate.getRootPath());
-        final DataTreeCandidateNode node = candidate.getRootNode();
+        final var node = candidate.getRootNode();
         assertEquals(ModificationType.UNMODIFIED, node.modificationType());
 
         // 'test'
@@ -142,9 +139,9 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void testEmptyMergesOnExisting() throws DataValidationFailedException {
+    void testEmptyMergesOnExisting() throws DataValidationFailedException {
         // Make sure 'non-presence' is present
-        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+        var modification = dataTree.takeSnapshot().newModification();
         modification.write(TestModel.NAME_PATH, ImmutableNodes.leafNode(TestModel.NAME_QNAME, "foo"));
         modification.ready();
         dataTree.validate(modification);
@@ -158,9 +155,9 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         dataTree.validate(modification);
 
         // The entire transaction needs to fizzle to a no-op
-        final DataTreeCandidate candidate = dataTree.prepare(modification);
+        final var candidate = dataTree.prepare(modification);
         assertEquals(YangInstanceIdentifier.of(), candidate.getRootPath());
-        final DataTreeCandidateNode node = candidate.getRootNode();
+        final var node = candidate.getRootNode();
         assertEquals(ModificationType.UNMODIFIED, node.modificationType());
 
         // 'non-presence' and 'test'
@@ -168,8 +165,8 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void testAggregateWithoutChanges() throws DataValidationFailedException {
-        DataTreeModification modification1 = dataTree.takeSnapshot().newModification();
+    void testAggregateWithoutChanges() throws DataValidationFailedException {
+        final var modification1 = dataTree.takeSnapshot().newModification();
         modification1.write(
                 TestModel.INNER_CONTAINER_PATH.node(QName.create(TestModel.INNER_CONTAINER_QNAME,"value")),
                 ImmutableNodes.leafNode(QName.create(TestModel.INNER_CONTAINER_QNAME,"value"),"value1"));
@@ -178,46 +175,46 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         DataTreeCandidate candidate1 = dataTree.prepare(modification1);
         dataTree.commit(candidate1);
 
-        DataTreeModification modification2 = dataTree.takeSnapshot().newModification();
+        final var modification2 = dataTree.takeSnapshot().newModification();
         modification2.delete(TestModel.INNER_CONTAINER_PATH);
         modification2.ready();
         dataTree.validate(modification2);
-        DataTreeCandidate candidate2 = dataTree.prepare(modification2);
+        final var candidate2 = dataTree.prepare(modification2);
         dataTree.commit(candidate2);
 
-        DataTreeCandidate aggregateCandidate = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregateCandidate = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.UNMODIFIED, aggregateCandidate.getRootNode().modificationType());
     }
 
     @Test
-    public void testAggregate() throws DataValidationFailedException {
-        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+    void testAggregate() throws DataValidationFailedException {
+        final var modification = dataTree.takeSnapshot().newModification();
         modification.write(
                 TestModel.INNER_CONTAINER_PATH.node(QName.create(TestModel.INNER_CONTAINER_QNAME,"value")),
                 ImmutableNodes.leafNode(QName.create(TestModel.INNER_CONTAINER_QNAME,"value"),"value1"));
         modification.ready();
         dataTree.validate(modification);
-        DataTreeCandidate candidate = dataTree.prepare(modification);
+        final var candidate = dataTree.prepare(modification);
         dataTree.commit(candidate);
 
-        DataTreeModification modification1 = dataTree.takeSnapshot().newModification();
+        final var modification1 = dataTree.takeSnapshot().newModification();
         modification1.delete(TestModel.INNER_CONTAINER_PATH);
         modification1.ready();
         dataTree.validate(modification1);
         DataTreeCandidate candidate1 = dataTree.prepare(modification1);
         dataTree.commit(candidate1);
 
-        DataTreeModification modification2 = dataTree.takeSnapshot().newModification();
+        final var modification2 = dataTree.takeSnapshot().newModification();
         modification2.write(
                 TestModel.INNER_CONTAINER_PATH.node(QName.create(TestModel.INNER_CONTAINER_QNAME,"value")),
                 ImmutableNodes.leafNode(QName.create(TestModel.INNER_CONTAINER_QNAME,"value"),"value2"));
         modification2.ready();
         dataTree.validate(modification2);
-        DataTreeCandidate candidate2 = dataTree.prepare(modification2);
+        final var candidate2 = dataTree.prepare(modification2);
         dataTree.commit(candidate2);
 
-        DataTreeCandidate aggregateCandidate = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregateCandidate = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(ModificationType.SUBTREE_MODIFIED,aggregateCandidate.getRootNode().modificationType());
     }
