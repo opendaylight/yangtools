@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -25,7 +25,7 @@ public class QNameToStatementDefinitionMapTest {
     private final StatementSupport<?, ?, ?> support = mock(StatementSupport.class);
     private final StatementDefinition definition = mock(StatementDefinition.class);
 
-    @Before
+    @BeforeEach
     public void before() {
         doReturn(definition).when(support).definition();
     }

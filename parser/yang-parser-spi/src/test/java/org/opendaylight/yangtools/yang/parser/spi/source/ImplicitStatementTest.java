@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 public class ImplicitStatementTest {
