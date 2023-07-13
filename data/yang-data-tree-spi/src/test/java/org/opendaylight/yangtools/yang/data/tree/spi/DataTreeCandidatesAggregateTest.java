@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.APPEARED;
@@ -20,7 +20,7 @@ import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.UNM
 import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.WRITE;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
