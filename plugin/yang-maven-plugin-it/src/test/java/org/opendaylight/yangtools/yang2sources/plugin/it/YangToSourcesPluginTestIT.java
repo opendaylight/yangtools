@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin.it;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
@@ -132,7 +131,7 @@ public class YangToSourcesPluginTestIT {
     }
 
     static void assertVerificationException(final VerificationException ex, final String string) {
-        assertThat(ex.getMessage(), containsString(string));
+        assertTrue(ex.getMessage().contains(string));
     }
 
     static Verifier setUp(final String project, final boolean ignoreF)
