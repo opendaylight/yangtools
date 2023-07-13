@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
-import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,29 +23,18 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
-public class AnnotationTest {
+class AnnotationTest {
     private static final AnnotationName LAST_MODIFIED =
         new AnnotationName(QName.create("http://example.org/example-last-modified", "last-modified"));
-    private static CrossSourceStatementReactor REACTOR;
-
-    @BeforeClass
-    public static void createReactor() {
-        REACTOR = RFC7950Reactors.vanillaReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new AnnotationStatementSupport(YangParserConfiguration.DEFAULT))
-                .build();
-    }
-
-    @AfterClass
-    public static void freeReactor() {
-        REACTOR = null;
-    }
 
     @Test
-    public void testAnnotationResolution() throws Exception {
-        final var context = REACTOR.newBuild()
+    void testAnnotationResolution() throws Exception {
+        final var reactor = RFC7950Reactors.vanillaReactorBuilder()
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new AnnotationStatementSupport(YangParserConfiguration.DEFAULT))
+            .build();
+        final var context = reactor.newBuild()
             .addSources(YangStatementStreamSource.create(
                     YangTextSchemaSource.forResource("/ietf-yang-metadata@2016-08-05.yang")),
                 YangStatementStreamSource.create(YangTextSchemaSource.forResource("/example-last-modified.yang")))
