@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Optional;
@@ -60,15 +58,15 @@ public class MultipleRevImportBug6875Test {
         final SchemaContext context = schemaContextFuture.get();
         assertEquals(context.getModules().size(), 4);
 
-        assertThat(context.findDataTreeChild(foo("root"), foo("my-container-1")).orElse(null),
-            instanceOf(ContainerSchemaNode.class));
-        assertThat(context.findDataTreeChild(foo("root"), foo("my-container-2")).orElse(null),
-            instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class,
+                context.findDataTreeChild(foo("root"), foo("my-container-1")).orElse(null));
+        assertInstanceOf(ContainerSchemaNode.class,
+                context.findDataTreeChild(foo("root"), foo("my-container-2")).orElse(null));
 
-        assertThat(context.findDataTreeChild(bar3("root"), foo("my-container-1")).orElse(null),
-            instanceOf(ContainerSchemaNode.class));
-        assertThat(context.findDataTreeChild(bar3("root"), foo("my-container-2")).orElse(null),
-            instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class,
+                context.findDataTreeChild(bar3("root"), foo("my-container-1")).orElse(null));
+        assertInstanceOf(ContainerSchemaNode.class,
+                context.findDataTreeChild(bar3("root"), foo("my-container-2")).orElse(null));
 
         assertEquals(Optional.empty(), context.findDataTreeChild(bar2("root"), foo("my-container-1")));
         assertEquals(Optional.empty(), context.findDataTreeChild(bar2("root"), foo("my-container-2")));
@@ -100,8 +98,8 @@ public class MultipleRevImportBug6875Test {
 
         final ExecutionException ex = assertThrows(ExecutionException.class, schemaContextFuture::get);
         final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(IllegalArgumentException.class));
-        assertThat(cause.getMessage(), startsWith("Module:bar imported twice with different revisions"));
+        assertInstanceOf(IllegalArgumentException.class, cause);
+        assertTrue(cause.getMessage().startsWith("Module:bar imported twice with different revisions"));
     }
 
     private static void setAndRegister(final SharedSchemaRepository sharedSchemaRepository,

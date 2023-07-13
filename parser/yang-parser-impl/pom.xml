@@ -169,6 +169,27 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <version>5.2.6</version>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>org.openrewrite.java.testing.hamcrest.HamcrestMatcherToJUnit5</recipe> <!-- my new recipe -->
+                        <recipe>org.openrewrite.java.testing.hamcrest.AssertThatBooleanToJUnit5</recipe> <!-- my new recipe -->
+                        <recipe>org.openrewrite.java.testing.junit5.MigrateJUnitTestCase</recipe>
+                        <recipe>org.openrewrite.java.testing.junit5.AssertToAssertions</recipe>
+                        <recipe>org.openrewrite.java.testing.junit5.AssertTrueInstanceofToAssertInstanceOf</recipe> <!-- my new recipe-->
+                    </activeRecipes>
+                </configuration>
+                <dependencies>   <!-- This part is necessary, as we need to use local maven repo when working with custom forked openrewrite project -->
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-testing-frameworks</artifactId>
+                        <version>0.1.0-SNAPSHOT</version> <!-- version yielded by ./gradlew publishToMavenLocal -->
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 

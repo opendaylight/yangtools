@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static java.util.Objects.requireNonNull;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
@@ -106,7 +105,7 @@ public class SharedEffectiveModelContextFactoryTest {
                 sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
 
         final ExecutionException exception = assertThrows(ExecutionException.class, schemaContext::get);
-        assertThat(exception.getCause(), instanceOf(MissingSchemaSourceException.class));
+        assertInstanceOf(MissingSchemaSourceException.class, exception.getCause());
 
         // check if future is invalidated and resolution of source is retried after failure
         schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);

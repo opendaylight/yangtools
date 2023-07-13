@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -86,9 +85,9 @@ public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepository
     public void shouldFailOnAttemptToDeviateTheSameModule2() {
         final var cause = Throwables.getRootCause(assertExecutionException(null, BAR_INVALID, BAZ_INVALID));
 
-        assertThat(cause, instanceOf(InferenceException.class));
-        assertThat(cause.getMessage(),
-            startsWith("Deviation must not target the same module as the one it is defined in"));
+        assertInstanceOf(InferenceException.class, cause);
+        assertTrue(cause.getMessage()
+                .startsWith("Deviation must not target the same module as the one it is defined in"));
     }
 
     private static void assertAbsent(final EffectiveModelContext schemaContext, final QName qname) {
