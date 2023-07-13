@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.testing.EqualsTester;
 import java.util.Objects;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @Deprecated(since = "11.0.0", forRemoval = true)
-public class EvenMoreObjectsTest {
+class EvenMoreObjectsTest {
 
     @Test
-    public void thingPassesEqualsTester() {
+    void thingPassesEqualsTester() {
         new EqualsTester()
                 .addEqualityGroup(new Thing("hello", 123), new Thing("hello", 123))
                 .addEqualityGroup(new Thing("hoi", 123), new Thing("hoi", 123))
@@ -28,7 +28,7 @@ public class EvenMoreObjectsTest {
     }
 
     @Test
-    public void nullEqualsNull() {
+    void nullEqualsNull() {
         assertTrue(EvenMoreObjects.equalsHelper(null, null, (one, another) -> Boolean.TRUE));
     }
 

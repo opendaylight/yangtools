@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Stopwatch;
 import java.util.Map;
@@ -20,8 +21,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,57 +31,62 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Pantelis
  */
-public class ThreadPoolExecutorTest {
+class ThreadPoolExecutorTest {
     private static final Logger LOG = LoggerFactory.getLogger(ThreadPoolExecutorTest.class);
 
     private ExecutorService executor;
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         if (executor != null) {
             executor.shutdownNow();
         }
     }
 
     @Test
-    public void testFastThreadPoolExecution() throws InterruptedException {
+    void testFastThreadPoolExecution() throws InterruptedException {
         testThreadPoolExecution(
                 SpecialExecutors.newBoundedFastThreadPool(50, 100000, "TestPool", getClass()), 100000, "TestPool", 0);
     }
 
-    @Test(expected = RejectedExecutionException.class)
-    public void testFastThreadPoolRejectingTask() throws InterruptedException {
-        executor = SpecialExecutors.newBoundedFastThreadPool(1, 1, "TestPool", getClass());
+    @Test
+    void testFastThreadPoolRejectingTask() throws InterruptedException {
+        assertThrows(RejectedExecutionException.class, () -> {
+            executor = SpecialExecutors.newBoundedFastThreadPool(1, 1, "TestPool", getClass());
 
-        for (int i = 0; i < 5; i++) {
-            executor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
-        }
+            for (int i = 0; i < 5; i++) {
+                executor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
+            }
+        });
     }
 
     @Test
-    public void testBlockingFastThreadPoolExecution() throws InterruptedException {
+    void testBlockingFastThreadPoolExecution() throws InterruptedException {
         // With a queue capacity of 1, it should block at some point.
         testThreadPoolExecution(
                 SpecialExecutors.newBlockingBoundedFastThreadPool(2, 1, "TestPool", getClass()), 1000, null, 10);
     }
 
     @Test
-    public void testCachedThreadPoolExecution() throws InterruptedException {
+    void testCachedThreadPoolExecution() throws InterruptedException {
         testThreadPoolExecution(SpecialExecutors.newBoundedCachedThreadPool(10, 100000, "TestPool", getClass()),
                 100000, "TestPool", 0);
     }
 
-    @Test(expected = RejectedExecutionException.class)
-    public void testCachedThreadRejectingTask() throws InterruptedException {
-        ExecutorService localExecutor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool", getClass());
+    @Test
+    void testCachedThreadRejectingTask() throws InterruptedException {
+        assertThrows(RejectedExecutionException.class, () -> {
+            ExecutorService localExecutor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool", getClass());
 
-        for (int i = 0; i < 5; i++) {
-            localExecutor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
-        }
+            for (int i = 0; i < 5; i++) {
+                localExecutor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5,
+                        TimeUnit.SECONDS)));
+            }
+        });
     }
 
     @Test
-    public void testBlockingCachedThreadPoolExecution() throws InterruptedException {
+    void testBlockingCachedThreadPoolExecution() throws InterruptedException {
         testThreadPoolExecution(
                 SpecialExecutors.newBlockingBoundedCachedThreadPool(2, 1, "TestPool", getClass()), 1000, null, 10);
     }
@@ -92,11 +98,11 @@ public class ThreadPoolExecutorTest {
 
         LOG.debug("Testing {} with {} tasks.", executorToTest.getClass().getSimpleName(), numTasksToRun);
 
-        final CountDownLatch tasksRunLatch = new CountDownLatch(numTasksToRun);
-        final ConcurrentMap<Thread, AtomicLong> taskCountPerThread = new ConcurrentHashMap<>();
-        final AtomicReference<AssertionError> threadError = new AtomicReference<>();
+        final var tasksRunLatch = new CountDownLatch(numTasksToRun);
+        final var taskCountPerThread = new ConcurrentHashMap<Thread, AtomicLong>();
+        final var threadError = new AtomicReference<AssertionError>();
 
-        Stopwatch stopWatch = Stopwatch.createStarted();
+        final var stopWatch = Stopwatch.createStarted();
 
         new Thread() {
             @Override
@@ -112,7 +118,7 @@ public class ThreadPoolExecutorTest {
             }
         }.start();
 
-        boolean done = tasksRunLatch.await(15, TimeUnit.SECONDS);
+        final var done = tasksRunLatch.await(15, TimeUnit.SECONDS);
 
         stopWatch.stop();
 
@@ -174,8 +180,8 @@ public class ThreadPoolExecutorTest {
                 }
 
                 if (expThreadPrefix != null) {
-                    assertTrue("Thread name starts with " + expThreadPrefix,
-                            Thread.currentThread().getName().startsWith(expThreadPrefix));
+                    assertTrue(Thread.currentThread().getName().startsWith(expThreadPrefix),
+                            "Thread name starts with " + expThreadPrefix);
                 }
 
                 if (taskCountPerThread != null) {

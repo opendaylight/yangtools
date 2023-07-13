@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Serial;
 import java.util.concurrent.ExecutionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-public class ReflectiveExceptionMapperTest {
+class ReflectiveExceptionMapperTest {
     static final class NoArgumentCtorException extends Exception {
         @Serial
         private static final long serialVersionUID = 1L;
@@ -45,38 +46,38 @@ public class ReflectiveExceptionMapperTest {
         @Serial
         private static final long serialVersionUID = 1L;
 
-        public GoodException(final String message, final Throwable cause) {
+        GoodException(final String message, final Throwable cause) {
             super(message, cause);
         }
     }
 
 
     @Test
-    public void testNoArgumentsContructor() {
+    void testNoArgumentsContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("no arguments", NoArgumentCtorException.class));
     }
 
     @Test
-    public void testPrivateContructor() {
+    void testPrivateContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("private constructor", PrivateCtorException.class));
     }
 
     @Test
-    public void testFailingContructor() {
+    void testFailingContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("failing constructor", FailingCtorException.class));
     }
 
     @Test
-    public void testInstantiation() {
-        ReflectiveExceptionMapper<GoodException> mapper = ReflectiveExceptionMapper.create("instantiation",
+    void testInstantiation() {
+        final var mapper = ReflectiveExceptionMapper.create("instantiation",
             GoodException.class);
 
-        final Throwable cause = new Throwable("some test message");
+        final var cause = new Throwable("some test message");
 
-        GoodException ret = mapper.apply(new ExecutionException("test", cause));
+        final var ret = mapper.apply(new ExecutionException("test", cause));
 
         assertEquals("instantiation execution failed", ret.getMessage());
         assertEquals(cause, ret.getCause());

@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
-import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class LazyCollectionsTest {
+class LazyCollectionsTest {
 
     @Test
-    public void testLazyAddMethod() {
-        final List<Integer> list = new ArrayList<>();
-        List<Integer> anotherList = LazyCollections.lazyAdd(list, 5);
+    void testLazyAddMethod() {
+        final var list = new ArrayList<Integer>();
+        var anotherList = LazyCollections.lazyAdd(list, 5);
         assertEquals(1, anotherList.size());
 
         anotherList = LazyCollections.lazyAdd(anotherList, 4);
