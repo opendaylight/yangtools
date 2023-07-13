@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin.it;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
@@ -17,21 +16,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.Properties;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class YangToSourcesPluginTestIT {
+class YangToSourcesPluginTestIT {
     private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesPluginTestIT.class);
     private static final String MAVEN_OPTS = "MAVEN_OPTS";
     private static final String DESTFILE = "destfile=";
@@ -39,8 +35,8 @@ public class YangToSourcesPluginTestIT {
     private static String ARGLINE_PREFIX;
     private static String ARGLINE_SUFFIX;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeAll() {
         final String argLine = System.getProperty("itArgPath");
         if (argLine == null || argLine.isBlank()) {
             return;
@@ -60,19 +56,19 @@ public class YangToSourcesPluginTestIT {
     // TODO Test yang files in transitive dependencies
 
     @Test
-    public void testYangRootNotExist() throws Exception {
+    void testYangRootNotExist() throws Exception {
         setUp("test-parent/YangRootNotExist/", false)
             .verifyTextInLog("[WARNING] yang-to-sources: YANG source directory");
     }
 
     @Test
-    public void testCorrect() throws VerificationException, URISyntaxException, IOException {
+    void testCorrect() throws VerificationException, URISyntaxException, IOException {
         verifyCorrectLog(setUp("test-parent/Correct/", false));
     }
 
     @Test
-    @Ignore // FIXME depends on fix of a bug processing multiple fileGenerator definitions having same identifier
-    public void testAdditionalConfiguration() throws Exception {
+    @Disabled // FIXME depends on fix of a bug processing multiple fileGenerator definitions having same identifier
+    void testAdditionalConfiguration() throws Exception {
         Verifier vrf = setUp("test-parent/AdditionalConfig/", false);
         vrf.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : "
                 + "org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator: "
@@ -86,16 +82,16 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testMissingYangInDep() throws Exception {
+    void testMissingYangInDep() throws Exception {
         try {
             setUp("test-parent/MissingYangInDep/", false);
             fail("Verification exception should have been thrown");
         } catch (VerificationException e) {
-            assertVerificationException(e, "Imported module [unknownDep] was not found.");
+            assertTrue(e.getMessage().contains("Imported module [unknownDep] was not found."));
         }
     }
 
-    static void verifyCorrectLog(final Verifier vrf) throws VerificationException {
+    void verifyCorrectLog(final Verifier vrf) throws VerificationException {
         vrf.verifyErrorFreeLog();
         vrf.verifyTextInLog("[INFO] yang-to-sources: Project model files found: ");
         vrf.verifyTextInLog("[INFO] yang-to-sources: Code generator "
@@ -105,21 +101,21 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testNoGenerators() throws Exception {
+    void testNoGenerators() throws Exception {
         Verifier vrf = setUp("test-parent/NoGenerators/", false);
         vrf.verifyErrorFreeLog();
         vrf.verifyTextInLog("[WARNING] yang-to-sources: No code generators provided");
     }
 
     @Test
-    public void testInvalidVersion() throws Exception {
+    void testInvalidVersion() throws Exception {
         Verifier vrf = setUp("test-parent/InvalidVersion/", false);
         vrf.verifyErrorFreeLog();
         vrf.verifyTextInLog("[WARNING] yang-to-sources: Dependency resolution conflict:");
     }
 
     @Test
-    public void testUnknownGenerator() throws Exception {
+    void testUnknownGenerator() throws Exception {
         Verifier vrf = setUp("test-parent/UnknownGenerator/", true);
         vrf.verifyTextInLog("[INFO] yang-to-sources: Code generator "
                 + "org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator instantiated");
@@ -127,36 +123,37 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testNoYangFiles() throws Exception {
+    void testNoYangFiles() throws Exception {
         setUp("test-parent/NoYangFiles/", false).verifyTextInLog("[INFO] yang-to-sources: No input files found");
-    }
-
-    static void assertVerificationException(final VerificationException ex, final String string) {
-        assertThat(ex.getMessage(), containsString(string));
     }
 
     static Verifier setUp(final String project, final boolean ignoreF)
             throws VerificationException, URISyntaxException, IOException {
-        final URL path = YangToSourcesPluginTestIT.class.getResource("/" + project + "pom.xml");
-        final File parent = new File(path.toURI()).getParentFile();
-        final Verifier verifier = new Verifier(parent.toString());
+        final var path = YangToSourcesPluginTestIT.class.getResource("/" + project + "pom.xml");
+        final var parent = new File(path.toURI()).getParentFile();
+        final var verifier = new Verifier(parent.toString());
         if (ignoreF) {
             verifier.addCliOption("-fn");
         }
 
-        getEffectiveSettingsXML().ifPresent(settings -> {
+        final var parentPath = Resources.getResource(YangToSourcesPluginTestIT.class, "/test-parent/pom.xml");
+        final var parentBuildDir = new File(parentPath.toURI()).getParentFile().getParentFile().getParentFile();
+        final var parentEffectiveSettingsXML = new File(parentBuildDir, "effective-settings.xml");
+        if (parentEffectiveSettingsXML.exists()) {
             verifier.addCliOption("-gs");
-            verifier.addCliOption(settings);
-        });
+            verifier.addCliOption(parentEffectiveSettingsXML.getAbsolutePath());
+        } else {
+            fail(parentEffectiveSettingsXML.getAbsolutePath());
+        }
 
         verifier.setForkJvm(true);
         verifier.setMavenDebug(true);
 
         if (ARGLINE_PREFIX != null) {
-            final String argLine =
+            final var argLine =
                 ARGLINE_PREFIX + parent.getParent() + "/" + parent.getName() + ".exec" + ARGLINE_SUFFIX;
-            final String mavenOpts = System.getenv(MAVEN_OPTS);
-            final String newMavenOpts = mavenOpts == null ? argLine : mavenOpts + " " + argLine;
+            final var mavenOpts = System.getenv(MAVEN_OPTS);
+            final var newMavenOpts = mavenOpts == null ? argLine : mavenOpts + " " + argLine;
             LOG.debug("Adjusted {} to \"{}\"", MAVEN_OPTS, newMavenOpts);
             verifier.setEnvironmentVariable(MAVEN_OPTS, newMavenOpts);
         }
@@ -166,22 +163,22 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testNoOutputDir() throws Exception {
+    void testNoOutputDir() throws Exception {
         verifyCorrectLog(YangToSourcesPluginTestIT.setUp("test-parent/NoOutputDir/", false));
     }
 
     @Test
-    public void testFindResourceOnCp() throws Exception {
-        Verifier v1 = setUp("test-parent/GenerateTest1/", false);
+    void testFindResourceOnCp() throws Exception {
+        final var v1 = setUp("test-parent/GenerateTest1/", false);
         v1.executeGoal("clean");
         v1.executeGoal("package");
 
-        String buildDir = getMavenBuildDirectory(v1);
+        var buildDir = getMavenBuildDirectory(v1);
         v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
         v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
         v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
 
-        Verifier v2 = setUp("test-parent/GenerateTest2/", false);
+        final var v2 = setUp("test-parent/GenerateTest2/", false);
         v2.executeGoal("clean");
         v2.executeGoal("package");
 
@@ -193,12 +190,12 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    public void testFileGenerator() throws Exception {
-        Verifier v1 = setUp("test-parent/FileGenerator/", false);
+    void testFileGenerator() throws Exception {
+        final var v1 = setUp("test-parent/FileGenerator/", false);
         v1.executeGoal("clean");
         v1.executeGoal("package");
 
-        String buildDir = getMavenBuildDirectory(v1);
+        final var buildDir = getMavenBuildDirectory(v1);
 
         v1.assertFilePresent(buildDir + "/generated-sources/"
                 + "org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator/fooGenSource.test");
@@ -209,24 +206,11 @@ public class YangToSourcesPluginTestIT {
     }
 
     private static String getMavenBuildDirectory(final Verifier verifier) throws IOException {
-        final Properties sp = new Properties();
-        final Path path = new File(verifier.getBasedir() + "/it-project.properties").toPath();
+        final var sp = new Properties();
+        final var path = new File(verifier.getBasedir() + "/it-project.properties").toPath();
         try (InputStream is = Files.newInputStream(path)) {
             sp.load(is);
         }
         return sp.getProperty("target.dir");
-    }
-
-    private static Optional<String> getEffectiveSettingsXML() throws URISyntaxException, VerificationException,
-            IOException {
-        final URL path = Resources.getResource(YangToSourcesPluginTestIT.class, "/test-parent/pom.xml");
-        final File buildDir = new File(path.toURI()).getParentFile().getParentFile().getParentFile();
-        final File effectiveSettingsXML = new File(buildDir, "effective-settings.xml");
-        if (effectiveSettingsXML.exists()) {
-            return Optional.of(effectiveSettingsXML.getAbsolutePath());
-        }
-
-        fail(effectiveSettingsXML.getAbsolutePath());
-        return Optional.empty();
     }
 }
