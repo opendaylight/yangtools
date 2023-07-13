@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -19,46 +19,46 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class SoftSchemaSourceCacheTest {
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+class SoftSchemaSourceCacheTest {
     public static final Class<YangSchemaSourceRepresentation> REPRESENTATION = YangSchemaSourceRepresentation.class;
-    public static final long LIFETIME = 1000L;
-    public static final TimeUnit UNITS = TimeUnit.MILLISECONDS;
 
     @Mock
     public SchemaSourceRegistry registry;
     @Mock
     public SchemaSourceRegistration<?> registration;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         doNothing().when(registration).close();
         doReturn(registration).when(registry).registerSchemaSource(any(SchemaSourceProvider.class),
             any(PotentialSchemaSource.class));
     }
 
     @Test
-    public void inMemorySchemaSourceCacheTest() {
+    void inMemorySchemaSourceCacheTest() {
         try (var cache = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
             assertNotNull(cache);
         }
     }
 
     @Test
-    public void inMemorySchemaSourceCacheOfferAndGetSourcestest() throws Exception {
+    void inMemorySchemaSourceCacheOfferAndGetSourcestest() throws Exception {
         try (var cache = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
-            final String content = "content";
-            final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
+            final var content = "content";
+            final var source = new TestingYangSource("test", "2012-12-12", content);
             cache.offer(source);
             final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
             final var checkedSource = cache .getSource(sourceIdentifier);
@@ -70,7 +70,7 @@ public class SoftSchemaSourceCacheTest {
     }
 
     @Test
-    public void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
+    void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
         try (var cache = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
             final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
             final var checkedSource = cache.getSource(sourceIdentifier);
@@ -80,11 +80,11 @@ public class SoftSchemaSourceCacheTest {
     }
 
     @Test
-    public void inMemorySchemaSourceCache3test() throws InterruptedException, ExecutionException {
+    void inMemorySchemaSourceCache3test() throws InterruptedException, ExecutionException {
         try (var cache1 = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
             try (var cache2 = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
-                final String content = "content";
-                final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
+                final var content = "content";
+                final var source = new TestingYangSource("test", "2012-12-12", content);
                 cache1.offer(source);
                 cache2.offer(source);
 
