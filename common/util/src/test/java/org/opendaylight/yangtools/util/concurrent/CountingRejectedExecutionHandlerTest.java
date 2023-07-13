@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -56,11 +56,11 @@ public class CountingRejectedExecutionHandlerTest {
             executor.execute(new Task(null, null, null, null, 0));
         }
 
-        assertEquals("getRejectedTaskCount", tasks - 1, countingHandler.getRejectedTaskCount());
+        assertEquals(tasks - 1, countingHandler.getRejectedTaskCount(), "getRejectedTaskCount");
 
         blockLatch.countDown();
 
-        assertTrue("Tasks complete", tasksRunLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(tasksRunLatch.await(5, TimeUnit.SECONDS), "Tasks complete");
     }
 
     @Test
@@ -82,10 +82,10 @@ public class CountingRejectedExecutionHandlerTest {
             assertThrows(RejectedExecutionException.class, () -> executor.execute(new Task(null, null, null, null, 0)));
         }
 
-        assertEquals("getRejectedTaskCount", tasks - 1, countingHandler.getRejectedTaskCount());
+        assertEquals(tasks - 1, countingHandler.getRejectedTaskCount(), "getRejectedTaskCount");
 
         blockLatch.countDown();
 
-        assertTrue("Tasks complete", tasksRunLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(tasksRunLatch.await(5, TimeUnit.SECONDS), "Tasks complete");
     }
 }

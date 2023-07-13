@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Stopwatch;
 import java.util.Map;
@@ -174,8 +174,8 @@ public class ThreadPoolExecutorTest {
                 }
 
                 if (expThreadPrefix != null) {
-                    assertTrue("Thread name starts with " + expThreadPrefix,
-                            Thread.currentThread().getName().startsWith(expThreadPrefix));
+                    assertTrue(Thread.currentThread().getName().startsWith(expThreadPrefix),
+                            "Thread name starts with " + expThreadPrefix);
                 }
 
                 if (taskCountPerThread != null) {
