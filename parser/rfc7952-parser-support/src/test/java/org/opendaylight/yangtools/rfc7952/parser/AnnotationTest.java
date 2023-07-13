@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
-import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -32,7 +32,7 @@ public class AnnotationTest {
         new AnnotationName(QName.create("http://example.org/example-last-modified", "last-modified"));
     private static CrossSourceStatementReactor REACTOR;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         REACTOR = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -40,7 +40,7 @@ public class AnnotationTest {
                 .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         REACTOR = null;
     }
