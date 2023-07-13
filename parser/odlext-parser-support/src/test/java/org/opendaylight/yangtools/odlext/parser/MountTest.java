@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.odlext.model.api.MountEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -30,7 +30,7 @@ public class MountTest {
 
     private static CrossSourceStatementReactor reactor;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -38,7 +38,7 @@ public class MountTest {
             .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         reactor = null;
     }

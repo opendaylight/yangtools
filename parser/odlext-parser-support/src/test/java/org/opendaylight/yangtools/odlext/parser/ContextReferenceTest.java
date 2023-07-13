@@ -7,16 +7,15 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -42,7 +41,7 @@ public class ContextReferenceTest {
 
     private static CrossSourceStatementReactor reactor;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -52,7 +51,7 @@ public class ContextReferenceTest {
             .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         reactor = null;
     }
@@ -67,7 +66,7 @@ public class ContextReferenceTest {
             .get(FOO);
 
         final DataTreeEffectiveStatement<?> list = foo.findDataTreeNode(QName.create(FOO, "list")).orElseThrow();
-        assertThat(list, instanceOf(ListEffectiveStatement.class));
+        assertInstanceOf(ListEffectiveStatement.class, list);
 
         final ContextInstanceEffectiveStatement listType = list
             .findFirstEffectiveSubstatement(ContextInstanceEffectiveStatement.class).orElseThrow();
