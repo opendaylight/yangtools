@@ -7,44 +7,27 @@
  */
 package org.opendaylight.yangtools.rfc8639.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.util.stream.Collectors;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscribedNotificationsConstants;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
-public class SubscribedNotificationsTest {
-    private static CrossSourceStatementReactor reactor;
-
-    @BeforeClass
-    public static void createReactor() {
-        reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new SubscriptionStateNotificationStatementSupport(YangParserConfiguration.DEFAULT))
-                .build();
-    }
-
-    @AfterClass
-    public static void freeReactor() {
-        reactor = null;
-    }
-
+class SubscribedNotificationsTest {
     @Test
-    public void testSubscribedNotifications() throws ReactorException, IOException, YangSyntaxErrorException {
+    void testSubscribedNotifications() throws Exception {
+        final var reactor = RFC7950Reactors.vanillaReactorBuilder()
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                        new SubscriptionStateNotificationStatementSupport(YangParserConfiguration.DEFAULT))
+                .build();
+
         final var context = reactor.newBuild()
             .addLibSources(
                 YangStatementStreamSource.create(YangTextSchemaSource.forResource(
@@ -70,12 +53,12 @@ public class SubscribedNotificationsTest {
 
         final var notifications = context.getModuleStatement(SubscribedNotificationsConstants.RFC8639_MODULE)
             .streamEffectiveSubstatements(NotificationEffectiveStatement.class)
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
 
         assertEquals(7, notifications.size());
-        for (NotificationEffectiveStatement notif : notifications) {
+        for (var notif : notifications) {
             final var sub = notif.findFirstEffectiveSubstatement(SubscriptionStateNotificationEffectiveStatement.class);
-            assertTrue("No marker in " + notif.argument(), sub.isPresent());
+            assertTrue(sub.isPresent(), "No marker in " + notif.argument());
         }
     }
 }
