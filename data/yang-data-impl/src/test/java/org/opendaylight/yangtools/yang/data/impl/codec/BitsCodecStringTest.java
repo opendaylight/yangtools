@@ -7,34 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Collections;
-import org.junit.Test;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.BitsTypeBuilder;
 
 /**
  * Unit tests for BitsCodecString.
  *
  * @author Thomas Pantelis
  */
-public class BitsCodecStringTest {
+class BitsCodecStringTest {
     private  static BitsTypeDefinition toBitsTypeDefinition(final String... bits) {
-        final BitsTypeBuilder b = BaseTypes.bitsTypeBuilder(QName.create("foo", "foo"));
+        final var b = BaseTypes.bitsTypeBuilder(QName.create("foo", "foo"));
 
         long pos = 0;
-        for (String bit : bits) {
-            BitsTypeDefinition.Bit mockBit = mock(BitsTypeDefinition.Bit.class);
+        for (var bit : bits) {
+            final var mockBit = mock(Bit.class);
             doReturn(bit).when(mockBit).getName();
             doReturn(Uint32.valueOf(pos)).when(mockBit).getPosition();
             b.addBit(mockBit);
@@ -46,26 +44,24 @@ public class BitsCodecStringTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testSerialize() {
-        BitsCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(toBitsTypeDefinition("foo"),
+    void testSerialize() {
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(toBitsTypeDefinition("foo"),
                 BitsCodec.class);
 
-        String serialized = codec.serialize(ImmutableSet.of("foo", "bar"));
-        assertNotNull(serialized);
-        assertTrue(serialized.contains("foo"));
-        assertTrue(serialized.contains("bar"));
+        final var serialized = ((BitsCodec<String>) codec).serialize(ImmutableSet.of("foo", "bar"));
+        assertEquals("foo bar", serialized);
 
-        assertEquals("", codec.serialize(ImmutableSet.of()));
+        assertEquals("", codec.serialize(Set.of()));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testDeserialize() {
-        BitsCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(
+    void testDeserialize() {
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(
             toBitsTypeDefinition("bit1", "bit2"), BitsCodec.class);
 
-        assertEquals("deserialize", ImmutableSet.of("bit1", "bit2"), codec.deserialize("  bit1 bit2     "));
-        assertEquals("deserialize", Collections.emptySet(), codec.deserialize(""));
+        assertEquals(Set.of("bit1", "bit2"), codec.deserialize("  bit1 bit2     "), "deserialize");
+        assertEquals(Set.of(), codec.deserialize(""), "deserialize");
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "bit1 bit3");
     }

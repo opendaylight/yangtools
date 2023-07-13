@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1437Test {
+class YT1437Test {
     @Test
-    public void testDecimalFractionDigits() {
+    void testDecimalFractionDigits() {
         final var module = YangParserTestUtils.parseYang("""
             module yt1437 {
               namespace yt1437;
@@ -32,22 +31,20 @@ public class YT1437Test {
               }
             }""").findModule("yt1437").orElseThrow();
         final var foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo")).orElseThrow();
-        assertThat(foo, instanceOf(LeafSchemaNode.class));
 
-        final TypeDefinitionAwareCodec<?, ?> codec = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).getType());
-        assertThat(codec, instanceOf(DecimalStringCodec.class));
-        final var cast = (DecimalStringCodec) codec;
+        final var codec = assertInstanceOf(DecimalStringCodec.class,
+            TypeDefinitionAwareCodec.from(assertInstanceOf(LeafSchemaNode.class, foo).getType()));
 
-        final var one = cast.deserialize("20.0");
+        final var one = codec.deserialize("20.0");
         assertEquals(2, one.scale());
-        assertEquals("20.0", cast.serialize(one));
+        assertEquals("20.0", codec.serialize(one));
 
-        final var two = cast.deserialize("20.00");
+        final var two = codec.deserialize("20.00");
         assertEquals(2, two.scale());
-        assertEquals("20.0", cast.serialize(two));
+        assertEquals("20.0", codec.serialize(two));
 
-        final var three = cast.deserialize("20.000");
+        final var three = codec.deserialize("20.000");
         assertEquals(2, three.scale());
-        assertEquals("20.0", cast.serialize(three));
+        assertEquals("20.0", codec.serialize(three));
     }
 }

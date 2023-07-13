@@ -7,53 +7,51 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
-import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.StringTypeBuilder;
 
 /**
  * Unit tests for StringCodecString.
  *
  * @author Thomas Pantelis
  */
-public class StringCodecStringTest {
+class StringCodecStringTest {
     @Test
-    public void testSerialize() {
-        StringCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.stringType(),
+    void testSerialize() {
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.stringType(),
             StringCodec.class);
 
-        assertEquals("serialize", "foo", codec.serialize("foo"));
-        assertEquals("serialize", "", codec.serialize(""));
+        assertEquals("foo", codec.serialize("foo"), "serialize");
+        assertEquals("", codec.serialize(""), "serialize");
     }
 
     @Test
-    public void testDeserialize() {
-        StringCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.stringType(),
+    void testDeserialize() {
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.stringType(),
             StringCodec.class);
 
-        assertEquals("deserialize", "bar", codec.deserialize("bar"));
-        assertEquals("deserialize", "", codec.deserialize(""));
+        assertEquals("bar", codec.deserialize("bar"), "deserialize");
+        assertEquals("", codec.deserialize(""), "deserialize");
     }
 
     @Test
-    public void testDeserializeUnicode() throws InvalidLengthConstraintException {
-        final StringTypeBuilder builder = RestrictedTypes.newStringBuilder(BaseTypes.stringType(),
+    void testDeserializeUnicode() throws InvalidLengthConstraintException {
+        final var builder = RestrictedTypes.newStringBuilder(BaseTypes.stringType(),
             QName.create("foo", "foo"));
         builder.setLengthConstraint(mock(ConstraintMetaDefinition.class), List.of(ValueRange.of(1)));
-        final StringTypeDefinition type = builder.build();
+        final var type = builder.build();
 
-        StringCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(type, StringCodec.class);
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(type, StringCodec.class);
 
         assertEquals("🌞", codec.deserialize("🌞"));
     }

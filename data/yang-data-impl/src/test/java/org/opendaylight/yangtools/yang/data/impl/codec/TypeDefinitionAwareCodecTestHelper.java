@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -20,29 +19,28 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
 
-public final class TypeDefinitionAwareCodecTestHelper {
+final class TypeDefinitionAwareCodecTestHelper {
     private TypeDefinitionAwareCodecTestHelper() {
         // Hidden on purpose
     }
 
-    public static <T> T getCodec(final TypeDefinition<?> def, final Class<T> clazz) {
-        TypeDefinitionAwareCodec<?, ?> codec = TypeDefinitionAwareCodec.fromType(def);
-        assertThat(codec, instanceOf(clazz));
+    static <T> T getCodec(final TypeDefinition<?> def, final Class<T> clazz) {
+        final var codec = TypeDefinitionAwareCodec.fromType(def);
+        assertInstanceOf(clazz, codec);
         return clazz.cast(codec);
     }
 
-    public static void deserializeWithExpectedIllegalArgEx(final IllegalArgumentCodec<String, ?> codec,
+    static void deserializeWithExpectedIllegalArgEx(final IllegalArgumentCodec<String, ?> codec,
             final @NonNull String param) {
         assertThrows(IllegalArgumentException.class, () -> codec.deserialize(param));
     }
 
-    public static EnumTypeDefinition toEnumTypeDefinition(final String... enums) {
-        final EnumerationTypeBuilder b = BaseTypes.enumerationTypeBuilder(QName.create("foo", "foo"));
-        int val = 0;
-        for (String en : enums) {
-            EnumTypeDefinition.EnumPair mockEnum = mock(EnumPair.class);
+    static EnumTypeDefinition toEnumTypeDefinition(final String... enums) {
+        final var b = BaseTypes.enumerationTypeBuilder(QName.create("foo", "foo"));
+        var val = 0;
+        for (final var en : enums) {
+            final var mockEnum = mock(EnumPair.class);
             doReturn(en).when(mockEnum).getName();
             doReturn(val).when(mockEnum).getValue();
             b.addEnum(mockEnum);

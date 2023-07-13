@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
@@ -25,11 +24,11 @@ import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1442Test {
+class YT1442Test {
     private static DecimalStringCodec codec;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         final var foo = YangParserTestUtils.parseYang("""
             module yt1442 {
               namespace yt1442;
@@ -46,68 +45,62 @@ public class YT1442Test {
               }
             }""")
             .getDataChildByName(QName.create("yt1442", "foo"));
-        assertThat(foo, instanceOf(LeafSchemaNode.class));
-
-        final TypeDefinitionAwareCodec<?, ?> tmp = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).getType());
-        assertThat(tmp, instanceOf(DecimalStringCodec.class));
-        codec = (DecimalStringCodec) tmp;
+        codec = assertInstanceOf(DecimalStringCodec.class,
+            TypeDefinitionAwareCodec.from(assertInstanceOf(LeafSchemaNode.class, foo).getType()));
     }
 
     @Test
-    public void testTen() {
+    void testTen() {
         final var ten = codec.deserialize("10.00");
         assertDecimal(1000, ten);
         assertEquals("10.0", codec.serialize(ten));
     }
 
     @Test
-    public void testFifty() {
+    void testFifty() {
         final var fifty = codec.deserialize("50.00");
         assertDecimal(5000, fifty);
         assertEquals("50.0", codec.serialize(fifty));
     }
 
     @Test
-    public void testHundred() {
+    void testHundred() {
         final var hundred = codec.deserialize("100.00");
         assertDecimal(10000, hundred);
         assertEquals("100.0", codec.serialize(hundred));
     }
 
     @Test
-    public void testNegativeOutOfRange() {
+    void testNegativeOutOfRange() {
         assertYIVE("Value '-10.0' is not in required ranges [[10.0..100.0]]", "-10.00");
         assertYIVE("Value '-50.0' is not in required ranges [[10.0..100.0]]", "-50.00");
         assertYIVE("Value '-100.0' is not in required ranges [[10.0..100.0]]", "-100.00");
     }
 
     @Test
-    public void testPositiveOutOfRange() {
+    void testPositiveOutOfRange() {
         assertYIVE("Value '9.99' is not in required ranges [[10.0..100.0]]", "9.99");
         assertYIVE("Value '100.01' is not in required ranges [[10.0..100.0]]", "100.01");
     }
 
     @Test
-    public void testTooLargeFractionPart() {
+    void testTooLargeFractionPart() {
         final var ex = assertThrows(IllegalArgumentException.class, () -> codec.deserialize("100.001"));
         assertEquals("Value '100.001' does not match required fraction-digits", ex.getMessage());
-        final var cause = ex.getCause();
-        assertThat(cause, instanceOf(ArithmeticException.class));
+        final var cause = assertInstanceOf(ArithmeticException.class, ex.getCause());
         assertEquals("Decreasing scale of 100.001 to 2 requires rounding", cause.getMessage());
     }
 
     @Test
-    public void testTooLargeIntegralPart() {
+    void testTooLargeIntegralPart() {
         final var ex = assertThrows(IllegalArgumentException.class, () -> codec.deserialize("92233720368547759.0"));
         assertEquals("Value '92233720368547759.0' does not match required fraction-digits", ex.getMessage());
-        final var cause = ex.getCause();
-        assertThat(cause, instanceOf(ArithmeticException.class));
+        final var cause = assertInstanceOf(ArithmeticException.class, ex.getCause());
         assertEquals("Increasing scale of 92233720368547759.0 to 2 would overflow", cause.getMessage());
     }
 
     private static void assertDecimal(final long unscaledValue, final Object obj) {
-        assertThat(obj, instanceOf(Decimal64.class));
-        final var actual = (Decimal64) obj;
+        final var actual = assertInstanceOf(Decimal64.class, obj);
         assertEquals(2, actual.scale());
         assertEquals(unscaledValue, actual.unscaledValue());
     }
