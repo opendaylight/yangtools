@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
 public class PotentialSchemaSourceTest {
     private interface TestSchemaSourceRepresentation extends YangSchemaSourceRepresentation {
         @Override
@@ -35,7 +35,7 @@ public class PotentialSchemaSourceTest {
     @SuppressWarnings("exports")
     public PotentialSchemaSource<TestSchemaSourceRepresentation> same;
 
-    @Before
+    @BeforeEach
     public void before() {
         source = PotentialSchemaSource.create(sourceIdentifier, TestSchemaSourceRepresentation.class,
             PotentialSchemaSource.Costs.LOCAL_IO.getValue());
