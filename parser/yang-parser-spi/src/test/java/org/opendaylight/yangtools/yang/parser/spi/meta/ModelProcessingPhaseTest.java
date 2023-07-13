@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ModelProcessingPhaseTest {
+class ModelProcessingPhaseTest {
     @Test
-    public void testSequencing() {
+    void testSequencing() {
         assertNull(ModelProcessingPhase.INIT.getPreviousPhase());
         assertEquals(ModelProcessingPhase.INIT, ModelProcessingPhase.SOURCE_PRE_LINKAGE.getPreviousPhase());
         assertEquals(ModelProcessingPhase.SOURCE_PRE_LINKAGE, ModelProcessingPhase.SOURCE_LINKAGE.getPreviousPhase());
