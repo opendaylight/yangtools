@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.testing.EqualsTester;
 import java.util.Objects;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @Deprecated(since = "11.0.0", forRemoval = true)
 public class EvenMoreObjectsTest {

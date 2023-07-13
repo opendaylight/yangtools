@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.util.concurrent.AsyncNotifyingListeningExecutorServiceTest.testListenerCallback;
 import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_CALLABLE;
 import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE;
@@ -17,22 +17,18 @@ import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import java.io.Serial;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
 
 /**
@@ -40,51 +36,45 @@ import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
  *
  * @author Thomas Pantelis
  */
-public class DeadlockDetectingListeningExecutorServiceTest {
-
+class DeadlockDetectingListeningExecutorServiceTest {
+    @FunctionalInterface
     interface InitialInvoker {
         void invokeExecutor(ListeningExecutorService executor, Runnable task);
     }
 
-    static final InitialInvoker SUBMIT = ListeningExecutorService::submit;
-
-    static final InitialInvoker EXECUTE = Executor::execute;
-
-    public static class TestDeadlockException extends Exception {
-        @Serial
+    private static final class TestDeadlockException extends Exception {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
     }
 
+    private static final InitialInvoker SUBMIT = ListeningExecutorService::submit;
+    private static final InitialInvoker EXECUTE = Executor::execute;
     private static final Supplier<Exception> DEADLOCK_EXECUTOR_SUPPLIER = TestDeadlockException::new;
 
-    DeadlockDetectingListeningExecutorService executor;
+    private DeadlockDetectingListeningExecutorService executor;
 
-    @Before
-    public void setup() {
-    }
-
-    @After
+    @AfterEach
     public void tearDown() {
         if (executor != null) {
             executor.shutdownNow();
         }
     }
 
-    DeadlockDetectingListeningExecutorService newExecutor() {
+    private static DeadlockDetectingListeningExecutorService newExecutor() {
         return new DeadlockDetectingListeningExecutorService(Executors.newSingleThreadExecutor(),
                 DEADLOCK_EXECUTOR_SUPPLIER);
     }
 
     @Test
-    public void testBlockingSubmitOffExecutor() throws Exception {
+    void testBlockingSubmitOffExecutor() throws Exception {
 
         executor = newExecutor();
 
         // Test submit with Callable.
 
-        ListenableFuture<String> future = executor.submit(() -> "foo");
+        var future = executor.submit(() -> "foo");
 
-        assertEquals("Future result", "foo", future.get(5, TimeUnit.SECONDS));
+        assertEquals("foo", future.get(5, TimeUnit.SECONDS), "Future result");
 
         // Test submit with Runnable.
 
@@ -94,12 +84,12 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
         future = executor.submit(() -> { }, "foo");
 
-        assertEquals("Future result", "foo", future.get(5, TimeUnit.SECONDS));
+        assertEquals("foo", future.get(5, TimeUnit.SECONDS), "Future result");
     }
 
     @Test
     @SuppressWarnings("checkstyle:illegalThrows")
-    public void testNonBlockingSubmitOnExecutorThread() throws Throwable {
+    void testNonBlockingSubmitOnExecutorThread() throws Throwable {
 
         executor = newExecutor();
 
@@ -111,38 +101,36 @@ public class DeadlockDetectingListeningExecutorServiceTest {
     }
 
     @SuppressWarnings("checkstyle:illegalThrows")
-    void testNonBlockingSubmitOnExecutorThread(final InitialInvoker initialInvoker, final Invoker invoker)
+    private void testNonBlockingSubmitOnExecutorThread(final InitialInvoker initialInvoker, final Invoker invoker)
             throws Throwable {
+        final var caughtEx = new AtomicReference<Throwable>();
+        final var futureCompletedLatch = new CountDownLatch(1);
 
-        final AtomicReference<Throwable> caughtEx = new AtomicReference<>();
-        final CountDownLatch futureCompletedLatch = new CountDownLatch(1);
+        initialInvoker.invokeExecutor(executor,
+            () -> Futures.addCallback(invoker.invokeExecutor(executor, null), new FutureCallback<Object>() {
+                @Override
+                public void onSuccess(final Object result) {
+                    futureCompletedLatch.countDown();
+                }
 
-        Runnable task = () -> Futures.addCallback(invoker.invokeExecutor(executor, null), new FutureCallback<Object>() {
-            @Override
-            public void onSuccess(final Object result) {
-                futureCompletedLatch.countDown();
-            }
+                @Override
+                public void onFailure(final Throwable cause) {
+                    caughtEx.set(cause);
+                    futureCompletedLatch.countDown();
+                }
+            }, MoreExecutors.directExecutor()));
 
-            @Override
-            @SuppressWarnings("checkstyle:parameterName")
-            public void onFailure(final Throwable t) {
-                caughtEx.set(t);
-                futureCompletedLatch.countDown();
-            }
-        }, MoreExecutors.directExecutor());
+        assertTrue(futureCompletedLatch.await(5, TimeUnit.SECONDS),
+                "Task did not complete - executor likely deadlocked");
 
-        initialInvoker.invokeExecutor(executor, task);
-
-        assertTrue("Task did not complete - executor likely deadlocked",
-                futureCompletedLatch.await(5, TimeUnit.SECONDS));
-
-        if (caughtEx.get() != null) {
-            throw caughtEx.get();
+        final var ex = caughtEx.get();
+        if (ex != null) {
+            throw ex;
         }
     }
 
     @Test
-    public void testBlockingSubmitOnExecutorThread() throws InterruptedException {
+    void testBlockingSubmitOnExecutorThread() throws Exception {
 
         executor = newExecutor();
 
@@ -155,13 +143,11 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     void testBlockingSubmitOnExecutorThread(final InitialInvoker initialInvoker, final Invoker invoker)
-            throws InterruptedException {
+            throws Exception {
+        final var caughtEx = new AtomicReference<Throwable>();
+        final var latch = new CountDownLatch(1);
 
-        final AtomicReference<Throwable> caughtEx = new AtomicReference<>();
-        final CountDownLatch latch = new CountDownLatch(1);
-
-        Runnable task = () -> {
-
+        initialInvoker.invokeExecutor(executor, () -> {
             try {
                 invoker.invokeExecutor(executor, null).get();
             } catch (ExecutionException e) {
@@ -171,25 +157,21 @@ public class DeadlockDetectingListeningExecutorServiceTest {
             } finally {
                 latch.countDown();
             }
-        };
+        });
 
-        initialInvoker.invokeExecutor(executor, task);
-
-        assertTrue("Task did not complete - executor likely deadlocked", latch.await(5, TimeUnit.SECONDS));
-        assertNotNull("Expected exception thrown", caughtEx.get());
-        assertEquals("Caught exception type", TestDeadlockException.class, caughtEx.get().getClass());
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "Task did not complete - executor likely deadlocked");
+        assertInstanceOf(TestDeadlockException.class, caughtEx.get());
     }
 
     @Test
-    public void testListenableFutureCallbackWithExecutor() throws InterruptedException {
-
-        String listenerThreadPrefix = "ListenerThread";
-        ExecutorService listenerExecutor = Executors.newFixedThreadPool(1,
+    void testListenableFutureCallbackWithExecutor() throws Exception {
+        final var listenerThreadPrefix = "ListenerThread";
+        final var listenerExecutor = Executors.newFixedThreadPool(1,
                 new ThreadFactoryBuilder().setNameFormat(listenerThreadPrefix + "-%d").build());
 
         executor = new DeadlockDetectingListeningExecutorService(
             Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("SingleThread").build()),
-                DEADLOCK_EXECUTOR_SUPPLIER, listenerExecutor);
+            DEADLOCK_EXECUTOR_SUPPLIER, listenerExecutor);
 
         try {
             testListenerCallback(executor, SUBMIT_CALLABLE, listenerThreadPrefix);

@@ -8,9 +8,9 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Stopwatch;
@@ -27,8 +27,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.opendaylight.yangtools.util.concurrent.QueuedNotificationManager.BatchedInvoker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,7 @@ public class QueuedNotificationManagerTest {
 
         void verifyNotifications(final List<N> expected) {
             verifyNotifications();
-            assertEquals(name + ": Notifications", expected, actual);
+            assertEquals(expected, actual, name + ": Notifications");
         }
 
         // Implement bad hashCode/equals methods to verify it doesn't screw up the
@@ -140,14 +141,15 @@ public class QueuedNotificationManagerTest {
     private static final Logger LOG = LoggerFactory.getLogger(QueuedNotificationManagerTest.class);
     private ExecutorService queueExecutor;
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (queueExecutor != null) {
             queueExecutor.shutdownNow();
         }
     }
 
-    @Test(timeout = 10000)
+    @Test
+    @Timeout(10000)
     public void testNotificationsWithSingleListener() {
 
         queueExecutor = Executors.newFixedThreadPool(2);
@@ -244,7 +246,8 @@ public class QueuedNotificationManagerTest {
         }
     }
 
-    @Test(timeout = 10000)
+    @Test
+    @Timeout(10000)
     public void testNotificationsWithListenerRuntimeEx() {
 
         queueExecutor = Executors.newFixedThreadPool(1);
@@ -263,7 +266,8 @@ public class QueuedNotificationManagerTest {
         assertTrue(tasks.isEmpty());
     }
 
-    @Test(timeout = 10000)
+    @Test
+    @Timeout(10000)
     public void testNotificationsWithListenerJVMError() {
 
         final CountDownLatch errorCaughtLatch = new CountDownLatch(1);
@@ -289,7 +293,7 @@ public class QueuedNotificationManagerTest {
 
         manager.submitNotification(listener, 1);
 
-        assertTrue("JVM Error caught", Uninterruptibles.awaitUninterruptibly(errorCaughtLatch, 5, TimeUnit.SECONDS));
+        assertTrue(Uninterruptibles.awaitUninterruptibly(errorCaughtLatch, 5, TimeUnit.SECONDS), "JVM Error caught");
 
         manager.submitNotification(listener, 2);
 

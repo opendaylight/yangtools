@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PropertyUtilsTest {
 
     @Test
     public void testGetIntSystemProperty() {
         final int testValue = PropertyUtils.getIntSystemProperty("file.separator", 1);
-        assertEquals("Property value should be '1'.", 1, testValue);
+        assertEquals(1, testValue, "Property value should be '1'.");
     }
 }

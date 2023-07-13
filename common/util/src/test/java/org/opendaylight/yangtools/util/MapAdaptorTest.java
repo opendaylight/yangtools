@@ -7,23 +7,23 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MapAdaptorTest {
     private MapAdaptor adaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         adaptor = MapAdaptor.getInstance(true, 10, 5);
     }
@@ -35,7 +35,7 @@ public class MapAdaptorTest {
         // Converts the input into a hashmap;
         final Map<?, ?> snap = adaptor.takeSnapshot(input);
         assertNotSame(input, snap);
-        assertTrue(snap instanceof HashMap);
+        assertInstanceOf(HashMap.class, snap);
 
         final Map<?, ?> opt1 = adaptor.optimize(input);
         assertSame(ImmutableMap.of(), opt1);
@@ -51,7 +51,7 @@ public class MapAdaptorTest {
 
         final Map<?, ?> snap = adaptor.takeSnapshot(input);
         assertNotSame(input, snap);
-        assertTrue(snap instanceof HashMap);
+        assertInstanceOf(HashMap.class, snap);
         assertEquals(input, snap);
 
         final Map<?, ?> opt1 = adaptor.optimize(input);
@@ -59,7 +59,7 @@ public class MapAdaptorTest {
         assertEquals(input, opt1);
         assertEquals(Collections.singletonMap(null, null).getClass(), opt1.getClass());
         final Map<?, ?> snap1 = adaptor.takeSnapshot(opt1);
-        assertTrue(snap1 instanceof HashMap);
+        assertInstanceOf(HashMap.class, snap1);
         assertEquals(input, snap1);
 
         final Map<?, ?> opt2 = adaptor.optimize(snap);
@@ -69,7 +69,7 @@ public class MapAdaptorTest {
 
         final Map<?, ?> snap2 = adaptor.takeSnapshot(opt2);
         assertNotSame(opt2, snap2);
-        assertTrue(snap2 instanceof HashMap);
+        assertInstanceOf(HashMap.class, snap2);
         assertEquals(input, snap2);
     }
 
@@ -82,7 +82,7 @@ public class MapAdaptorTest {
         }
 
         final Map<String, String> snap = adaptor.takeSnapshot(input);
-        assertTrue(snap instanceof HashMap);
+        assertInstanceOf(HashMap.class, snap);
         assertEquals(input, snap);
 
         final Map<String, String> opt1 = adaptor.optimize(input);
@@ -90,7 +90,7 @@ public class MapAdaptorTest {
         assertEquals(ReadOnlyTrieMap.class, opt1.getClass());
 
         final Map<String, String> snap2 = adaptor.takeSnapshot(opt1);
-        assertTrue(snap2 instanceof ReadWriteTrieMap);
+        assertInstanceOf(ReadWriteTrieMap.class, snap2);
         assertEquals(opt1, snap2);
         assertEquals(26, snap2.size());
 

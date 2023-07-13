@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Serial;
 import java.util.concurrent.ExecutionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ReflectiveExceptionMapperTest {
     static final class NoArgumentCtorException extends Exception {

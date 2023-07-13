@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -24,14 +26,13 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
 
 /**
@@ -39,13 +40,12 @@ import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
  *
  * @author Thomas Pantelis
  */
-public class AsyncNotifyingListeningExecutorServiceTest {
-
+class AsyncNotifyingListeningExecutorServiceTest {
     private ExecutorService listenerExecutor;
     private AsyncNotifyingListeningExecutorService testExecutor;
 
-    @After
-    public void tearDown() {
+    @AfterEach
+    void tearDown() {
         if (listenerExecutor != null) {
             listenerExecutor.shutdownNow();
         }
@@ -56,8 +56,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
     }
 
     @Test
-    public void testListenerCallbackWithExecutor() throws InterruptedException {
-
+    void testListenerCallbackWithExecutor() throws InterruptedException {
         String listenerThreadPrefix = "ListenerThread";
         listenerExecutor = Executors.newFixedThreadPool(3,
                 new ThreadFactoryBuilder().setNameFormat(listenerThreadPrefix + "-%d").build());
@@ -73,7 +72,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
     }
 
     @Test
-    public void testListenerCallbackWithNoExecutor() throws InterruptedException {
+    void testListenerCallbackWithNoExecutor() throws InterruptedException {
 
         String listenerThreadPrefix = "SingleThread";
         testExecutor = new AsyncNotifyingListeningExecutorService(
@@ -89,9 +88,9 @@ public class AsyncNotifyingListeningExecutorServiceTest {
     static void testListenerCallback(final AsyncNotifyingListeningExecutorService executor,
             final Invoker invoker, final String expListenerThreadPrefix) throws InterruptedException {
 
-        AtomicReference<AssertionError> assertError = new AtomicReference<>();
-        CountDownLatch futureNotifiedLatch = new CountDownLatch(1);
-        CountDownLatch blockTaskLatch = new CountDownLatch(1);
+        final var assertError = new AtomicReference<AssertionError>();
+        final var blockTaskLatch = new CountDownLatch(1);
+        var futureNotifiedLatch = new CountDownLatch(1);
 
         // The blockTaskLatch is used to block the task from completing until we've added
         // our listener to the Future. Otherwise, if the task completes quickly and the Future is
@@ -99,15 +98,15 @@ public class AsyncNotifyingListeningExecutorServiceTest {
         // will immediately notify synchronously on this thread as Futures#addCallback defaults to
         // a same thread executor. This would erroneously fail the test.
 
-        ListenableFuture<?> future = invoker.invokeExecutor(executor, blockTaskLatch);
+        final var future = invoker.invokeExecutor(executor, blockTaskLatch);
         addCallback(future, futureNotifiedLatch, expListenerThreadPrefix, assertError);
 
         // Now that we've added our listener, signal the latch to let the task complete.
 
         blockTaskLatch.countDown();
 
-        assertTrue("ListenableFuture callback was not notified of onSuccess",
-                    futureNotifiedLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(futureNotifiedLatch.await(5, TimeUnit.SECONDS),
+                    "ListenableFuture callback was not notified of onSuccess");
 
         if (assertError.get() != null) {
             throw assertError.get();
@@ -119,26 +118,22 @@ public class AsyncNotifyingListeningExecutorServiceTest {
         futureNotifiedLatch = new CountDownLatch(1);
         addCallback(future, futureNotifiedLatch, Thread.currentThread().getName(), assertError);
 
-        assertTrue("ListenableFuture callback was not notified of onSuccess",
-                    futureNotifiedLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(futureNotifiedLatch.await(5, TimeUnit.SECONDS),
+                    "ListenableFuture callback was not notified of onSuccess");
 
-        if (assertError.get() != null) {
-            throw assertError.get();
+        final var error = assertError.get();
+        if (error != null) {
+            throw error;
         }
     }
 
     static void addCallback(final ListenableFuture<?> future, final CountDownLatch futureNotifiedLatch,
             final String expListenerThreadPrefix, final AtomicReference<AssertionError> assertError) {
-
         Futures.addCallback(future, new FutureCallback<Object>() {
             @Override
             public void onSuccess(final Object result) {
                 try {
-                    String theadName = Thread.currentThread().getName();
-                    assertTrue("ListenableFuture callback was not notified on the listener executor."
-                        + " Expected thread name prefix \"" + expListenerThreadPrefix
-                        + "\". Actual thread name \"" + theadName + "\"",
-                            theadName.startsWith(expListenerThreadPrefix));
+                    assertThat(Thread.currentThread().getName(), startsWith(expListenerThreadPrefix));
                 } catch (AssertionError e) {
                     assertError.set(e);
                 } finally {
@@ -147,22 +142,20 @@ public class AsyncNotifyingListeningExecutorServiceTest {
             }
 
             @Override
-            @SuppressWarnings("checkstyle:parameterName")
-            public void onFailure(final Throwable t) {
+            public void onFailure(final Throwable cause) {
                 // Shouldn't happen
-                fail("Unexpected failure " + t);
+                fail("Unexpected failure " + cause);
             }
         }, MoreExecutors.directExecutor());
     }
 
     @Test
-    public void testDelegatedMethods() throws InterruptedException {
+    void testDelegatedMethods() throws Exception {
+        final Runnable task = () -> { };
 
-        Runnable task = () -> { };
+        final var taskList = new ArrayList<Runnable>();
 
-        List<Runnable> taskList = new ArrayList<>();
-
-        ExecutorService mockDelegate = mock(ExecutorService.class);
+        final var mockDelegate = mock(ExecutorService.class);
         doNothing().when(mockDelegate).execute(task);
         doNothing().when(mockDelegate).shutdown();
         doReturn(taskList).when(mockDelegate).shutdownNow();
@@ -170,15 +163,14 @@ public class AsyncNotifyingListeningExecutorServiceTest {
         doReturn(Boolean.TRUE).when(mockDelegate).isShutdown();
         doReturn(Boolean.TRUE).when(mockDelegate).isTerminated();
 
-        AsyncNotifyingListeningExecutorService executor = new AsyncNotifyingListeningExecutorService(
-                                                                   mockDelegate, null);
+        final var executor = new AsyncNotifyingListeningExecutorService(mockDelegate, null);
 
         executor.execute(task);
         executor.shutdown();
-        assertTrue("awaitTermination", executor.awaitTermination(3, TimeUnit.SECONDS));
-        assertSame("shutdownNow", taskList, executor.shutdownNow());
-        assertTrue("isShutdown", executor.isShutdown());
-        assertTrue("isTerminated", executor.isTerminated());
+        assertTrue(executor.awaitTermination(3, TimeUnit.SECONDS), "awaitTermination");
+        assertSame(taskList, executor.shutdownNow(), "shutdownNow");
+        assertTrue(executor.isShutdown(), "isShutdown");
+        assertTrue(executor.isTerminated(), "isTerminated");
 
         verify(mockDelegate).execute(task);
         verify(mockDelegate).shutdown();
