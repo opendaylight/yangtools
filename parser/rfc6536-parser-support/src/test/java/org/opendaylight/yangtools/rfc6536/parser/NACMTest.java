@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMConstants;
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 public class NACMTest {
     private static CrossSourceStatementReactor REACTOR;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         REACTOR = RFC7950Reactors.defaultReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -37,7 +37,7 @@ public class NACMTest {
                 .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         REACTOR = null;
     }
