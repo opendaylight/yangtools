@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
@@ -21,27 +21,25 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyIn
 public class DependencyResolverTest {
     @Test
     public void testModulesWithoutRevisionAndImport() throws Exception {
-        final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
+        final var map = new HashMap<SourceIdentifier, YangModelDependencyInfo>();
         addToMap(map, "/no-revision/imported.yang");
         addToMap(map, "/no-revision/imported@2012-12-12.yang");
         addToMap(map, "/no-revision/top@2012-10-10.yang");
 
-        final DependencyResolver resolved = RevisionDependencyResolver.create(map);
-
+        final var resolved = RevisionDependencyResolver.create(map);
         assertEquals(0, resolved.getUnresolvedSources().size());
         assertEquals(0, resolved.getUnsatisfiedImports().size());
     }
 
     @Test
     public void testSubmoduleNoModule() throws Exception {
-        final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
+        final var map = new HashMap<SourceIdentifier, YangModelDependencyInfo>();
         // Subfoo does not have parent in reactor
         addToMap(map, "/model/subfoo.yang");
         addToMap(map, "/model/bar.yang");
         addToMap(map, "/model/baz.yang");
 
-        final DependencyResolver resolved = RevisionDependencyResolver.create(map);
-
+        final var resolved = RevisionDependencyResolver.create(map);
         assertEquals(2, resolved.getResolvedSources().size());
         assertEquals(1, resolved.getUnresolvedSources().size());
         assertEquals(0, resolved.getUnsatisfiedImports().size());
@@ -49,20 +47,20 @@ public class DependencyResolverTest {
 
     @Test
     public void testSubmodule() throws Exception {
-        final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
+        final var map = new HashMap<SourceIdentifier, YangModelDependencyInfo>();
         addToMap(map, "/model/subfoo.yang");
         addToMap(map, "/model/foo.yang");
         addToMap(map, "/model/bar.yang");
         addToMap(map, "/model/baz.yang");
 
-        final DependencyResolver resolved = RevisionDependencyResolver.create(map);
+        final var resolved = RevisionDependencyResolver.create(map);
         assertEquals(0, resolved.getUnresolvedSources().size());
         assertEquals(0, resolved.getUnsatisfiedImports().size());
         assertEquals(4, resolved.getResolvedSources().size());
     }
 
-    private static void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map,
-            final String yangFileName) throws Exception {
+    private static void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map, final String yangFileName)
+            throws Exception {
         final var info = ModuleDependencyInfo.forYangText(YangTextSchemaSource.forResource(DependencyResolverTest.class,
             yangFileName));
         map.put(new SourceIdentifier(info.getName(), info.getFormattedRevision()), info);

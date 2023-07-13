@@ -7,21 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
@@ -35,40 +32,34 @@ public class MultipleRevImportBug6875Test {
 
     @Test
     public void testYang11() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
-                "shared-schema-repo-multiple-rev-import-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-multiple-rev-import-test");
 
-        final SettableSchemaProvider<YangIRSchemaSource> foo = getSourceProvider(
-            "/rfc7950/bug6875/yang1-1/foo.yang");
-        final SettableSchemaProvider<YangIRSchemaSource> bar1 = getSourceProvider(
-            "/rfc7950/bug6875/yang1-1/bar@1999-01-01.yang");
-        final SettableSchemaProvider<YangIRSchemaSource> bar2 = getSourceProvider(
-            "/rfc7950/bug6875/yang1-1/bar@2017-02-06.yang");
-        final SettableSchemaProvider<YangIRSchemaSource> bar3 = getSourceProvider(
-            "/rfc7950/bug6875/yang1-1/bar@1970-01-01.yang");
+        final var foo = getSourceProvider("/rfc7950/bug6875/yang1-1/foo.yang");
+        final var bar1 = getSourceProvider("/rfc7950/bug6875/yang1-1/bar@1999-01-01.yang");
+        final var bar2 = getSourceProvider("/rfc7950/bug6875/yang1-1/bar@2017-02-06.yang");
+        final var bar3 = getSourceProvider("/rfc7950/bug6875/yang1-1/bar@1970-01-01.yang");
 
         setAndRegister(sharedSchemaRepository, foo);
         setAndRegister(sharedSchemaRepository, bar1);
         setAndRegister(sharedSchemaRepository, bar2);
         setAndRegister(sharedSchemaRepository, bar3);
 
-        final ListenableFuture<EffectiveModelContext> schemaContextFuture =
-                sharedSchemaRepository.createEffectiveModelContextFactory().createEffectiveModelContext(
-                    foo.getId(), bar1.getId(), bar2.getId(), bar3.getId());
+        final var schemaContextFuture = sharedSchemaRepository.createEffectiveModelContextFactory()
+            .createEffectiveModelContext(foo.getId(), bar1.getId(), bar2.getId(), bar3.getId());
         assertTrue(schemaContextFuture.isDone());
 
-        final SchemaContext context = schemaContextFuture.get();
+        final var context = schemaContextFuture.get();
         assertEquals(context.getModules().size(), 4);
 
-        assertThat(context.findDataTreeChild(foo("root"), foo("my-container-1")).orElse(null),
-            instanceOf(ContainerSchemaNode.class));
-        assertThat(context.findDataTreeChild(foo("root"), foo("my-container-2")).orElse(null),
-            instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class,
+                context.findDataTreeChild(foo("root"), foo("my-container-1")).orElse(null));
+        assertInstanceOf(ContainerSchemaNode.class,
+                context.findDataTreeChild(foo("root"), foo("my-container-2")).orElse(null));
 
-        assertThat(context.findDataTreeChild(bar3("root"), foo("my-container-1")).orElse(null),
-            instanceOf(ContainerSchemaNode.class));
-        assertThat(context.findDataTreeChild(bar3("root"), foo("my-container-2")).orElse(null),
-            instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class,
+                context.findDataTreeChild(bar3("root"), foo("my-container-1")).orElse(null));
+        assertInstanceOf(ContainerSchemaNode.class,
+                context.findDataTreeChild(bar3("root"), foo("my-container-2")).orElse(null));
 
         assertEquals(Optional.empty(), context.findDataTreeChild(bar2("root"), foo("my-container-1")));
         assertEquals(Optional.empty(), context.findDataTreeChild(bar2("root"), foo("my-container-2")));
@@ -79,28 +70,22 @@ public class MultipleRevImportBug6875Test {
 
     @Test
     public void testYang10() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
-                "shared-schema-repo-multiple-rev-import-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-multiple-rev-import-test");
 
-        final SettableSchemaProvider<YangIRSchemaSource> foo = getSourceProvider(
-            "/rfc7950/bug6875/yang1-0/foo.yang");
-        final SettableSchemaProvider<YangIRSchemaSource> bar1 = getSourceProvider(
-            "/rfc7950/bug6875/yang1-0/bar@1999-01-01.yang");
-        final SettableSchemaProvider<YangIRSchemaSource> bar2 = getSourceProvider(
-            "/rfc7950/bug6875/yang1-0/bar@2017-02-06.yang");
+        final var foo = getSourceProvider("/rfc7950/bug6875/yang1-0/foo.yang");
+        final var bar1 = getSourceProvider("/rfc7950/bug6875/yang1-0/bar@1999-01-01.yang");
+        final var bar2 = getSourceProvider("/rfc7950/bug6875/yang1-0/bar@2017-02-06.yang");
 
         setAndRegister(sharedSchemaRepository, foo);
         setAndRegister(sharedSchemaRepository, bar1);
         setAndRegister(sharedSchemaRepository, bar2);
 
-        final ListenableFuture<EffectiveModelContext> schemaContextFuture =
-                sharedSchemaRepository.createEffectiveModelContextFactory().createEffectiveModelContext(
-                    foo.getId(), bar1.getId(), bar2.getId());
+        final var schemaContextFuture = sharedSchemaRepository.createEffectiveModelContextFactory()
+            .createEffectiveModelContext(foo.getId(), bar1.getId(), bar2.getId());
         assertTrue(schemaContextFuture.isDone());
 
-        final ExecutionException ex = assertThrows(ExecutionException.class, schemaContextFuture::get);
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        final var ex = assertThrows(ExecutionException.class, schemaContextFuture::get);
+        final var cause = assertInstanceOf(IllegalArgumentException.class, ex.getCause());
         assertThat(cause.getMessage(), startsWith("Module:bar imported twice with different revisions"));
     }
 
@@ -112,8 +97,8 @@ public class MultipleRevImportBug6875Test {
 
     private static SettableSchemaProvider<YangIRSchemaSource> getSourceProvider(final String resourceName)
             throws Exception {
-        final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
+        return SettableSchemaProvider.createImmediate(
+            TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName)),
             YangIRSchemaSource.class);
     }
 

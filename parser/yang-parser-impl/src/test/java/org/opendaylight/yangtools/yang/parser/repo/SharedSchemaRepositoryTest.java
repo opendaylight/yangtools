@@ -7,22 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.ExecutionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -31,15 +30,12 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 public class SharedSchemaRepositoryTest {
     @Test
     public void testSourceWithAndWithoutRevision() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SourceIdentifier idNoRevision = loadAndRegisterSource(sharedSchemaRepository,
-            "/no-revision/imported.yang");
-        final SourceIdentifier id2 = loadAndRegisterSource(sharedSchemaRepository,
-            "/no-revision/imported@2012-12-12.yang");
+        final var idNoRevision = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported.yang");
+        final var id2 = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported@2012-12-12.yang");
 
-        ListenableFuture<YangIRSchemaSource> source = sharedSchemaRepository.getSchemaSource(idNoRevision,
-            YangIRSchemaSource.class);
+        var source = sharedSchemaRepository.getSchemaSource(idNoRevision, YangIRSchemaSource.class);
         assertEquals(idNoRevision, source.get().getIdentifier());
         source = sharedSchemaRepository.getSchemaSource(id2, YangIRSchemaSource.class);
         assertEquals(id2, source.get().getIdentifier());
@@ -47,29 +43,26 @@ public class SharedSchemaRepositoryTest {
 
     private static SourceIdentifier loadAndRegisterSource(final SharedSchemaRepository sharedSchemaRepository,
             final String resourceName) throws Exception {
-        final SettableSchemaProvider<YangIRSchemaSource> sourceProvider = getImmediateYangSourceProviderFromResource(
-            resourceName);
+        final var sourceProvider = getImmediateYangSourceProviderFromResource(resourceName);
         sourceProvider.setResult();
-        final SourceIdentifier idNoRevision = sourceProvider.getId();
+        final var idNoRevision = sourceProvider.getId();
         sourceProvider.register(sharedSchemaRepository);
         return idNoRevision;
     }
 
     @Test
     public void testSimpleSchemaContext() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SettableSchemaProvider<YangIRSchemaSource> remoteInetTypesYang =
+        final var remoteInetTypesYang =
             getImmediateYangSourceProviderFromResource("/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
-        final ListenableFuture<YangIRSchemaSource> registeredSourceFuture = sharedSchemaRepository.getSchemaSource(
+        final var registeredSourceFuture = sharedSchemaRepository.getSchemaSource(
             remoteInetTypesYang.getId(), YangIRSchemaSource.class);
         assertFalse(registeredSourceFuture.isDone());
 
-        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
-        final ListenableFuture<EffectiveModelContext> schemaContextFuture =
-                fact.createEffectiveModelContext(remoteInetTypesYang.getId());
-
+        final var fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final var schemaContextFuture = fact.createEffectiveModelContext(remoteInetTypesYang.getId());
         assertFalse(schemaContextFuture.isDone());
 
         // Make source appear
@@ -78,13 +71,12 @@ public class SharedSchemaRepositoryTest {
 
         // Verify schema created successfully
         assertTrue(schemaContextFuture.isDone());
-        final SchemaContext firstSchemaContext = schemaContextFuture.get();
+        final var firstSchemaContext = schemaContextFuture.get();
         assertSchemaContext(firstSchemaContext, 1);
 
         // Try same schema second time
-        final ListenableFuture<EffectiveModelContext> secondSchemaFuture =
-                sharedSchemaRepository.createEffectiveModelContextFactory().createEffectiveModelContext(
-                    remoteInetTypesYang.getId());
+        final var secondSchemaFuture = sharedSchemaRepository.createEffectiveModelContextFactory()
+            .createEffectiveModelContext(remoteInetTypesYang.getId());
 
         // Verify second schema created successfully immediately
         assertTrue(secondSchemaFuture.isDone());
@@ -94,28 +86,28 @@ public class SharedSchemaRepositoryTest {
 
     @Test
     public void testTwoSchemaContextsSharingSource() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SettableSchemaProvider<YangIRSchemaSource> remoteInetTypesYang =
+        final var remoteInetTypesYang =
             getImmediateYangSourceProviderFromResource("/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
         remoteInetTypesYang.setResult();
-        final SettableSchemaProvider<YangIRSchemaSource> remoteTopologyYang =
+        final var remoteTopologyYang =
             getImmediateYangSourceProviderFromResource("/ietf/network-topology@2013-10-21.yang");
         remoteTopologyYang.register(sharedSchemaRepository);
         remoteTopologyYang.setResult();
-        final SettableSchemaProvider<YangIRSchemaSource> remoteModuleNoRevYang =
-                getImmediateYangSourceProviderFromResource("/no-revision/module-without-revision.yang");
+        final var remoteModuleNoRevYang =
+            getImmediateYangSourceProviderFromResource("/no-revision/module-without-revision.yang");
         remoteModuleNoRevYang.register(sharedSchemaRepository);
 
-        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
-        final ListenableFuture<EffectiveModelContext> inetAndTopologySchemaContextFuture = fact
-                .createEffectiveModelContext(remoteInetTypesYang.getId(), remoteTopologyYang.getId());
+        final var fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final var inetAndTopologySchemaContextFuture = fact.createEffectiveModelContext(
+            remoteInetTypesYang.getId(), remoteTopologyYang.getId());
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
         assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 2);
 
-        final ListenableFuture<EffectiveModelContext> inetAndNoRevSchemaContextFuture =
-                fact.createEffectiveModelContext(remoteInetTypesYang.getId(), remoteModuleNoRevYang.getId());
+        final var inetAndNoRevSchemaContextFuture = fact.createEffectiveModelContext(
+            remoteInetTypesYang.getId(), remoteModuleNoRevYang.getId());
         assertFalse(inetAndNoRevSchemaContextFuture.isDone());
 
         remoteModuleNoRevYang.setResult();
@@ -125,74 +117,64 @@ public class SharedSchemaRepositoryTest {
 
     @Test
     public void testFailedSchemaContext() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SettableSchemaProvider<YangIRSchemaSource> remoteInetTypesYang =
+        final var remoteInetTypesYang =
             getImmediateYangSourceProviderFromResource("/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
 
-        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final var fact = sharedSchemaRepository.createEffectiveModelContextFactory();
 
         // Make source appear
-        final Throwable ex = new IllegalStateException("failed schema");
-        remoteInetTypesYang.setException(ex);
+        final var ise = new IllegalStateException("failed schema");
+        remoteInetTypesYang.setException(ise);
 
-        final ListenableFuture<EffectiveModelContext> schemaContextFuture = fact.createEffectiveModelContext(
-            remoteInetTypesYang.getId());
-
-        try {
-            schemaContextFuture.get();
-        } catch (final ExecutionException e) {
-            assertNotNull(e.getCause());
-            assertNotNull(e.getCause().getCause());
-            assertSame(ex, e.getCause().getCause());
-            return;
-        }
-
-        fail("Schema context creation should have failed");
+        final var schemaContextFuture = fact.createEffectiveModelContext(remoteInetTypesYang.getId());
+        final var ex = assertThrows(ExecutionException.class, schemaContextFuture::get);
+        final var cause = assertInstanceOf(MissingSchemaSourceException.class, ex.getCause());
+        assertSame(ise, cause.getCause());
     }
 
     @Test
     public void testDifferentCosts() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final SettableSchemaProvider<YangIRSchemaSource> immediateInetTypesYang = spy(
+        final var immediateInetTypesYang = spy(
             getImmediateYangSourceProviderFromResource("/ietf/ietf-inet-types@2010-09-24.yang"));
         immediateInetTypesYang.register(sharedSchemaRepository);
         immediateInetTypesYang.setResult();
 
-        final SettableSchemaProvider<YangIRSchemaSource> remoteInetTypesYang = spy(
+        final var remoteInetTypesYang = spy(
             getRemoteYangSourceProviderFromResource("/ietf/ietf-inet-types@2010-09-24.yang"));
         remoteInetTypesYang.register(sharedSchemaRepository);
         remoteInetTypesYang.setResult();
 
-        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
-        final ListenableFuture<EffectiveModelContext> schemaContextFuture =
-                fact.createEffectiveModelContext(remoteInetTypesYang.getId());
+        final var fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final var schemaContextFuture = fact.createEffectiveModelContext(remoteInetTypesYang.getId());
 
         assertSchemaContext(schemaContextFuture.get(), 1);
 
-        final SourceIdentifier id = immediateInetTypesYang.getId();
+        final var id = immediateInetTypesYang.getId();
         verify(remoteInetTypesYang, times(0)).getSource(id);
         verify(immediateInetTypesYang).getSource(id);
     }
 
-    private static void assertSchemaContext(final SchemaContext schemaContext, final int moduleSize) {
+    private static void assertSchemaContext(final EffectiveModelContext schemaContext, final int moduleSize) {
         assertNotNull(schemaContext);
         assertEquals(moduleSize, schemaContext.getModules().size());
     }
 
     static SettableSchemaProvider<YangIRSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName)
             throws Exception {
-        final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createRemote(TextToIRTransformer.transformText(yangSource),
+        return SettableSchemaProvider.createRemote(
+            TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName)),
             YangIRSchemaSource.class);
     }
 
     static SettableSchemaProvider<YangIRSchemaSource> getImmediateYangSourceProviderFromResource(
             final String resourceName) throws Exception {
-        final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
+        return SettableSchemaProvider.createImmediate(
+            TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName)),
             YangIRSchemaSource.class);
     }
 }

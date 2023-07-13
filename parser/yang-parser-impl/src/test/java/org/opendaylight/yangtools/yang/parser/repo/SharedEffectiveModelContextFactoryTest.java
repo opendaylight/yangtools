@@ -8,20 +8,16 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static java.util.Objects.requireNonNull;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.ExecutionException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -31,23 +27,21 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SharedEffectiveModelContextFactoryTest {
-
     private final SharedSchemaRepository repository = new SharedSchemaRepository("test");
-
     private final SchemaContextFactoryConfiguration config = SchemaContextFactoryConfiguration.getDefault();
+
     private SourceIdentifier s1;
     private SourceIdentifier s2;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        final YangTextSchemaSource source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
-        final YangTextSchemaSource source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
+        final var source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
+        final var source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
         s1 = new SourceIdentifier("ietf-inet-types", "2010-09-24");
         s2 = new SourceIdentifier("iana-timezones", "2012-07-09");
 
-        final TextToIRTransformer transformer = TextToIRTransformer.create(repository, repository);
+        final var transformer = TextToIRTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);
 
         repository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(source1),
@@ -58,36 +52,32 @@ public class SharedEffectiveModelContextFactoryTest {
     }
 
     @Test
-    public void testCreateSchemaContextWithDuplicateRequiredSources() throws InterruptedException, ExecutionException {
-        final SharedEffectiveModelContextFactory sharedSchemaContextFactory =
-            new SharedEffectiveModelContextFactory(repository, config);
-        final ListenableFuture<EffectiveModelContext> schemaContext =
-                sharedSchemaContextFactory.createEffectiveModelContext(s1, s1, s2);
+    public void testCreateSchemaContextWithDuplicateRequiredSources() throws Exception {
+        final var sharedSchemaContextFactory = new SharedEffectiveModelContextFactory(repository, config);
+        final var schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(s1, s1, s2);
         assertNotNull(schemaContext.get());
     }
 
     @Test
     public void testSourceRegisteredWithDifferentSI() throws Exception {
-        final YangTextSchemaSource source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
-        final YangTextSchemaSource source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
+        final var source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
+        final var source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
         s1 = source1.getIdentifier();
         s2 = source2.getIdentifier();
 
-        final SettableSchemaProvider<YangIRSchemaSource> provider =
-                SharedSchemaRepositoryTest.getImmediateYangSourceProviderFromResource(
-                    "/no-revision/imported@2012-12-12.yang");
+        final var provider = SharedSchemaRepositoryTest.getImmediateYangSourceProviderFromResource(
+            "/no-revision/imported@2012-12-12.yang");
         provider.setResult();
         provider.register(repository);
 
         // Register the same provider under source id without revision
-        final SourceIdentifier sIdWithoutRevision = new SourceIdentifier(provider.getId().name());
-        repository.registerSchemaSource(provider, PotentialSchemaSource.create(
-                sIdWithoutRevision, YangIRSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
+        final var sIdWithoutRevision = new SourceIdentifier(provider.getId().name());
+        repository.registerSchemaSource(provider, PotentialSchemaSource.create(sIdWithoutRevision,
+            YangIRSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
-        final SharedEffectiveModelContextFactory sharedSchemaContextFactory =
-            new SharedEffectiveModelContextFactory(repository, config);
-        final ListenableFuture<EffectiveModelContext> schemaContext =
-                sharedSchemaContextFactory.createEffectiveModelContext(sIdWithoutRevision, provider.getId());
+        final var sharedSchemaContextFactory = new SharedEffectiveModelContextFactory(repository, config);
+        final var schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(
+            sIdWithoutRevision, provider.getId());
         assertNotNull(schemaContext.get());
     }
 
@@ -99,14 +89,12 @@ public class SharedEffectiveModelContextFactoryTest {
             YangTextSchemaSource.forResource("/ietf/network-topology@2013-10-21.yang")),
             PotentialSchemaSource.create(s3, YangTextSchemaSource.class, 1));
 
-        final SharedEffectiveModelContextFactory sharedSchemaContextFactory =
-                new SharedEffectiveModelContextFactory(repository, config);
+        final var sharedSchemaContextFactory = new SharedEffectiveModelContextFactory(repository, config);
 
-        ListenableFuture<EffectiveModelContext> schemaContext =
-                sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
+        var schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
 
-        final ExecutionException exception = assertThrows(ExecutionException.class, schemaContext::get);
-        assertThat(exception.getCause(), instanceOf(MissingSchemaSourceException.class));
+        final var exception = assertThrows(ExecutionException.class, schemaContext::get);
+        assertInstanceOf(MissingSchemaSourceException.class, exception.getCause());
 
         // check if future is invalidated and resolution of source is retried after failure
         schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
@@ -118,8 +106,8 @@ public class SharedEffectiveModelContextFactoryTest {
      * to simulate transient failures of source retrieval.
      */
     private static final class TransientFailureProvider implements SchemaSourceProvider<YangTextSchemaSource> {
-
         private final YangTextSchemaSource schemaSource;
+
         private boolean shouldFail = true;
 
         private TransientFailureProvider(final YangTextSchemaSource schemaSource) {
@@ -127,7 +115,7 @@ public class SharedEffectiveModelContextFactoryTest {
         }
 
         @Override
-        public ListenableFuture<? extends YangTextSchemaSource> getSource(final SourceIdentifier sourceIdentifier) {
+        public ListenableFuture<YangTextSchemaSource> getSource(final SourceIdentifier sourceIdentifier) {
             if (shouldFail) {
                 shouldFail = false;
                 return immediateFailedFluentFuture(new Exception("Transient test failure."));

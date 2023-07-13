@@ -7,77 +7,66 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import org.junit.Test;
-import org.opendaylight.yangtools.concepts.Registration;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
 public class YangTextSchemaContextResolverTest {
-
     @Test
     public void testYangTextSchemaContextResolver() throws Exception {
-        final YangTextSchemaContextResolver yangTextSchemaContextResolver =
-                YangTextSchemaContextResolver.create("test-bundle");
+        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("test-bundle");
         assertNotNull(yangTextSchemaContextResolver);
 
-        final URL yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo.yang");
+        final var yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo.yang");
         assertNotNull(yangFile1);
-        final URL yangFile2 = getClass().getResource("/yang-text-schema-context-resolver-test/bar.yang");
+        final var yangFile2 = getClass().getResource("/yang-text-schema-context-resolver-test/bar.yang");
         assertNotNull(yangFile2);
-        final URL yangFile3 = getClass().getResource("/yang-text-schema-context-resolver-test/baz.yang");
+        final var yangFile3 = getClass().getResource("/yang-text-schema-context-resolver-test/baz.yang");
         assertNotNull(yangFile2);
 
-        final YangTextSchemaSourceRegistration registration1 =
-                yangTextSchemaContextResolver.registerSource(yangFile1);
+        final var registration1 = yangTextSchemaContextResolver.registerSource(yangFile1);
         assertNotNull(registration1);
-        final YangTextSchemaSourceRegistration registration2 =
-                yangTextSchemaContextResolver.registerSource(yangFile2);
+        final var registration2 = yangTextSchemaContextResolver.registerSource(yangFile2);
         assertNotNull(registration2);
-        final YangTextSchemaSourceRegistration registration3 =
-                yangTextSchemaContextResolver.registerSource(yangFile3);
+        final var registration3 = yangTextSchemaContextResolver.registerSource(yangFile3);
         assertNotNull(registration3);
 
         assertEquals(3, yangTextSchemaContextResolver.getAvailableSources().size());
 
-        final SourceIdentifier fooModuleId = new SourceIdentifier("foo", "2016-09-26");
-        final ListenableFuture<YangTextSchemaSource> foo = yangTextSchemaContextResolver.getSource(fooModuleId);
+        final var fooModuleId = new SourceIdentifier("foo", "2016-09-26");
+        final var foo = yangTextSchemaContextResolver.getSource(fooModuleId);
         assertTrue(foo.isDone());
         assertEquals(fooModuleId, foo.get().getIdentifier());
 
-        final SourceIdentifier barModuleId = new SourceIdentifier("bar", "2016-09-26");
-        final ListenableFuture<YangTextSchemaSource> bar = yangTextSchemaContextResolver.getSource(barModuleId);
+        final var barModuleId = new SourceIdentifier("bar", "2016-09-26");
+        final var bar = yangTextSchemaContextResolver.getSource(barModuleId);
         assertTrue(bar.isDone());
         assertEquals(barModuleId, bar.get().getIdentifier());
 
-        final SourceIdentifier bazModuleId = new SourceIdentifier("baz", "2016-09-26");
-        final ListenableFuture<YangTextSchemaSource> baz =
-                yangTextSchemaContextResolver.getSource(bazModuleId);
+        final var bazModuleId = new SourceIdentifier("baz", "2016-09-26");
+        final var baz = yangTextSchemaContextResolver.getSource(bazModuleId);
         assertTrue(baz.isDone());
         assertEquals(bazModuleId, baz.get().getIdentifier());
 
-        final SourceIdentifier foobarModuleId = new SourceIdentifier("foobar", "2016-09-26");
-        final ListenableFuture<YangTextSchemaSource> foobar = yangTextSchemaContextResolver.getSource(foobarModuleId);
+        final var foobarModuleId = new SourceIdentifier("foobar", "2016-09-26");
+        final var foobar = yangTextSchemaContextResolver.getSource(foobarModuleId);
         assertTrue(foobar.isDone());
 
-        final Throwable cause = assertThrows(ExecutionException.class, foobar::get).getCause();
-        assertThat(cause, instanceOf(MissingSchemaSourceException.class));
+        final var cause = assertInstanceOf(MissingSchemaSourceException.class,
+            assertThrows(ExecutionException.class, foobar::get).getCause());
         assertEquals("URL for SourceIdentifier [foobar@2016-09-26] not registered", cause.getMessage());
 
         var schemaContextOptional = yangTextSchemaContextResolver.getEffectiveModelContext();
@@ -99,19 +88,16 @@ public class YangTextSchemaContextResolverTest {
 
     @Test
     public void testFeatureRegistration() throws Exception {
-        final YangTextSchemaContextResolver yangTextSchemaContextResolver =
-                YangTextSchemaContextResolver.create("feature-test-bundle");
+        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("feature-test-bundle");
         assertNotNull(yangTextSchemaContextResolver);
-        final URL yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo-feature.yang");
+        final var yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo-feature.yang");
         assertNotNull(yangFile1);
-        final URL yangFile2 = getClass().getResource("/yang-text-schema-context-resolver-test/aux-feature.yang");
+        final var yangFile2 = getClass().getResource("/yang-text-schema-context-resolver-test/aux-feature.yang");
         assertNotNull(yangFile2);
 
-        final YangTextSchemaSourceRegistration registration1 =
-                yangTextSchemaContextResolver.registerSource(yangFile1);
+        final var registration1 = yangTextSchemaContextResolver.registerSource(yangFile1);
         assertNotNull(registration1);
-        final YangTextSchemaSourceRegistration registration2 =
-                yangTextSchemaContextResolver.registerSource(yangFile2);
+        final var registration2 = yangTextSchemaContextResolver.registerSource(yangFile2);
         assertNotNull(registration2);
 
         final QName cont = QName.create("foo-feature-namespace", "2016-09-26", "bar-feature-container");
@@ -122,55 +108,55 @@ public class YangTextSchemaContextResolverTest {
         final QName usedFeature = QName.create("foo-feature-namespace", "2016-09-26", "used-feature");
         final QName unusedFeature = QName.create("foo-feature-namespace", "2016-09-26", "unused-feature");
 
-        Iterable<QName> pathToConditional = List.of(cont, condLeaf);
-        Iterable<QName> pathToUnconditional = List.of(cont, uncondLeaf);
-        Iterable<QName> pathToAuxiliary = List.of(auxCont);
+        final var pathToConditional = List.of(cont, condLeaf);
+        final var pathToUnconditional = List.of(cont, uncondLeaf);
+        final var pathToAuxiliary = List.of(auxCont);
 
-        final EffectiveModelContext context1 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
+        final var context1 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
 
         assertTrue(isModulePresent(context1, condLeaf.getModule(), pathToConditional));
         assertTrue(isModulePresent(context1, uncondLeaf.getModule(), pathToUnconditional));
         assertTrue(isModulePresent(context1, auxCont.getModule(), pathToAuxiliary));
 
-        final Registration featRegistration1 = yangTextSchemaContextResolver.registerSupportedFeatures(
+        final var featRegistration1 = yangTextSchemaContextResolver.registerSupportedFeatures(
                 unusedFeature.getModule(), Set.of(unusedFeature.getLocalName()));
-        final EffectiveModelContext context2 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
+        final var context2 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
 
         assertFalse(isModulePresent(context2, condLeaf.getModule(), pathToConditional));
         assertTrue(isModulePresent(context2, uncondLeaf.getModule(), pathToUnconditional));
         assertTrue(isModulePresent(context2, auxCont.getModule(), pathToAuxiliary));
 
-        final Registration featRegistration2 = yangTextSchemaContextResolver.registerSupportedFeatures(
+        final var featRegistration2 = yangTextSchemaContextResolver.registerSupportedFeatures(
                 unusedFeature.getModule(), Set.of(usedFeature.getLocalName()));
-        final EffectiveModelContext context3 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
+        final var context3 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
 
         assertTrue(isModulePresent(context3, condLeaf.getModule(), pathToConditional));
 
-        final Registration featRegistration3 = yangTextSchemaContextResolver.registerSupportedFeatures(
+        final var featRegistration3 = yangTextSchemaContextResolver.registerSupportedFeatures(
                 unusedFeature.getModule(), Set.of(usedFeature.getLocalName(), unusedFeature.getLocalName()));
         featRegistration1.close();
         featRegistration2.close();
-        final EffectiveModelContext context4 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
+        final var context4 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
 
         assertTrue(isModulePresent(context4, condLeaf.getModule(), pathToConditional));
         assertTrue(isModulePresent(context4, auxCont.getModule(), pathToAuxiliary));
 
         featRegistration3.close();
-        final Registration featRegistration4 = yangTextSchemaContextResolver.registerSupportedFeatures(
+        final var featRegistration4 = yangTextSchemaContextResolver.registerSupportedFeatures(
                 auxCont.getModule(), Set.of());
-        final EffectiveModelContext context5 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
+        final var context5 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
 
         assertTrue(isModulePresent(context5, condLeaf.getModule(), pathToConditional));
         assertFalse(isModulePresent(context5, auxCont.getModule(), pathToAuxiliary));
 
         featRegistration4.close();
-        final EffectiveModelContext context6 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
+        final var context6 = yangTextSchemaContextResolver.getEffectiveModelContext().orElseThrow();
 
         assertTrue(isModulePresent(context6, auxCont.getModule(), pathToAuxiliary));
     }
 
     private static boolean isModulePresent(final EffectiveModelContext context, final QNameModule qnameModule,
-            final Iterable<QName> path) {
+            final List<QName> path) {
         for (var module : context.getModules()) {
             if (module.getQNameModule().equals(qnameModule)) {
                 return module.findDataTreeChild(path).isPresent();

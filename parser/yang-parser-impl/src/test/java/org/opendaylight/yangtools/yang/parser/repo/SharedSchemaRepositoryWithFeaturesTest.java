@@ -7,133 +7,121 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class SharedSchemaRepositoryWithFeaturesTest {
-
     @Test
     public void testSharedSchemaRepositoryWithSomeFeaturesSupported() throws Exception {
-        final FeatureSet supportedFeatures = FeatureSet.of(QName.create("foobar-namespace", "test-feature-1"));
+        final var supportedFeatures = FeatureSet.of(QName.create("foobar-namespace", "test-feature-1"));
 
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
-                "shared-schema-repo-with-features-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<YangIRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+        final var foobar = getImmediateYangSourceProviderFromResource(
             "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
-        final ListenableFuture<EffectiveModelContext> testSchemaContextFuture =
-                sharedSchemaRepository.createEffectiveModelContextFactory(
+        final var testSchemaContextFuture = sharedSchemaRepository.createEffectiveModelContextFactory(
                 SchemaContextFactoryConfiguration.builder().setSupportedFeatures(supportedFeatures).build())
                 .createEffectiveModelContext(foobar.getId());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
+        final var module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
         assertNotNull(module);
         assertEquals(2, module.getChildNodes().size());
 
-        final ContainerSchemaNode testContainerA = (ContainerSchemaNode) module.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-container-a"));
-        final LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-leaf-a"));
+        final var testContainerA = assertInstanceOf(ContainerSchemaNode.class,
+            module.dataChildByName(QName.create(module.getQNameModule(), "test-container-a")));
+        assertInstanceOf(LeafSchemaNode.class,
+            testContainerA.dataChildByName(QName.create(module.getQNameModule(), "test-leaf-a")));
 
-        final ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.dataChildByName(
-                QName.create(module.getQNameModule(), "test-container-b"));
-        assertNull(testContainerB);
+        assertNull(module.dataChildByName(QName.create(module.getQNameModule(), "test-container-b")));
 
-        final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-container-c"));
-        final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-leaf-c"));
+        final var testContainerC = assertInstanceOf(ContainerSchemaNode.class,
+            module.dataChildByName(QName.create(module.getQNameModule(), "test-container-c")));
+        assertInstanceOf(LeafSchemaNode.class,
+            testContainerC.dataChildByName(QName.create(module.getQNameModule(), "test-leaf-c")));
     }
 
     @Test
     public void testSharedSchemaRepositoryWithAllFeaturesSupported() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
-                "shared-schema-repo-with-features-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<YangIRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+        final var foobar = getImmediateYangSourceProviderFromResource(
             "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
-        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
-        final ListenableFuture<EffectiveModelContext> testSchemaContextFuture =
-                fact.createEffectiveModelContext(foobar.getId());
+        final var fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final var testSchemaContextFuture = fact.createEffectiveModelContext(foobar.getId());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
+        final var module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
         assertNotNull(module);
         assertEquals(3, module.getChildNodes().size());
 
-        final ContainerSchemaNode testContainerA = (ContainerSchemaNode) module.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-container-a"));
-        final LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-leaf-a"));
+        final var testContainerA = assertInstanceOf(ContainerSchemaNode.class,
+            module.dataChildByName(QName.create(module.getQNameModule(), "test-container-a")));
+        assertInstanceOf(LeafSchemaNode.class,
+            testContainerA.dataChildByName(QName.create(module.getQNameModule(), "test-leaf-a")));
 
-        final ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-container-b"));
-        final LeafSchemaNode testLeafB = (LeafSchemaNode) testContainerB.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-leaf-b"));
+        final var testContainerB = assertInstanceOf(ContainerSchemaNode.class,
+            module.dataChildByName(QName.create(module.getQNameModule(), "test-container-b")));
+        assertInstanceOf(LeafSchemaNode.class,
+            testContainerB.dataChildByName(QName.create(module.getQNameModule(), "test-leaf-b")));
 
-        final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-container-c"));
-        final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-leaf-c"));
+        final var testContainerC = assertInstanceOf(ContainerSchemaNode.class,
+            module.dataChildByName(QName.create(module.getQNameModule(), "test-container-c")));
+        assertInstanceOf(LeafSchemaNode.class,
+            testContainerC.dataChildByName(QName.create(module.getQNameModule(), "test-leaf-c")));
     }
 
     @Test
     public void testSharedSchemaRepositoryWithNoFeaturesSupported() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
-                "shared-schema-repo-with-features-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<YangIRSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+        final var foobar = getImmediateYangSourceProviderFromResource(
             "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
-        final ListenableFuture<EffectiveModelContext> testSchemaContextFuture =
-                sharedSchemaRepository.createEffectiveModelContextFactory(
-                    SchemaContextFactoryConfiguration.builder().setSupportedFeatures(FeatureSet.of()).build())
-                .createEffectiveModelContext(foobar.getId());
+        final var testSchemaContextFuture = sharedSchemaRepository.createEffectiveModelContextFactory(
+            SchemaContextFactoryConfiguration.builder().setSupportedFeatures(FeatureSet.of()).build())
+            .createEffectiveModelContext(foobar.getId());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
+        final var module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
         assertNotNull(module);
         assertEquals(1, module.getChildNodes().size());
 
-        final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-container-c"));
-        final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
-                QName.create(module.getQNameModule(), "test-leaf-c"));
+        final var testContainerC = assertInstanceOf(ContainerSchemaNode.class,
+            module.dataChildByName(QName.create(module.getQNameModule(), "test-container-c")));
+        assertInstanceOf(LeafSchemaNode.class,
+            testContainerC.dataChildByName(QName.create(module.getQNameModule(), "test-leaf-c")));
     }
 
     private static SettableSchemaProvider<YangIRSchemaSource> getImmediateYangSourceProviderFromResource(
             final String resourceName) throws Exception {
-        final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
-        return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
+        return SettableSchemaProvider.createImmediate(
+            TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName)),
             YangIRSchemaSource.class);
     }
 
