@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
-public class ImplicitStatementTest {
+class ImplicitStatementTest {
     @Test
-    public void testForwarding() {
-        final StatementSourceReference ref = mock(StatementSourceReference.class);
-        final ImplicitSubstatement stmt = ImplicitSubstatement.of(ref);
+    void testForwarding() {
+        final var ref = mock(StatementSourceReference.class);
+        final var stmt = ImplicitSubstatement.of(ref);
         assertEquals(StatementOrigin.CONTEXT, stmt.statementOrigin());
 
         doReturn("ref").when(ref).toString();

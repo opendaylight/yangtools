@@ -55,6 +55,11 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-repo-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
