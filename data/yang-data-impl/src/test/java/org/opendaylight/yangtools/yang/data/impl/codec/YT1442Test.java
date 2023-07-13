@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -46,10 +45,10 @@ public class YT1442Test {
               }
             }""")
             .getDataChildByName(QName.create("yt1442", "foo"));
-        assertThat(foo, instanceOf(LeafSchemaNode.class));
+        assertInstanceOf(LeafSchemaNode.class, foo);
 
         final TypeDefinitionAwareCodec<?, ?> tmp = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).getType());
-        assertThat(tmp, instanceOf(DecimalStringCodec.class));
+        assertInstanceOf(DecimalStringCodec.class, tmp);
         codec = (DecimalStringCodec) tmp;
     }
 
@@ -92,7 +91,7 @@ public class YT1442Test {
         final var ex = assertThrows(IllegalArgumentException.class, () -> codec.deserialize("100.001"));
         assertEquals("Value '100.001' does not match required fraction-digits", ex.getMessage());
         final var cause = ex.getCause();
-        assertThat(cause, instanceOf(ArithmeticException.class));
+        assertInstanceOf(ArithmeticException.class, cause);
         assertEquals("Decreasing scale of 100.001 to 2 requires rounding", cause.getMessage());
     }
 
@@ -101,12 +100,12 @@ public class YT1442Test {
         final var ex = assertThrows(IllegalArgumentException.class, () -> codec.deserialize("92233720368547759.0"));
         assertEquals("Value '92233720368547759.0' does not match required fraction-digits", ex.getMessage());
         final var cause = ex.getCause();
-        assertThat(cause, instanceOf(ArithmeticException.class));
+        assertInstanceOf(ArithmeticException.class, cause);
         assertEquals("Increasing scale of 92233720368547759.0 to 2 would overflow", cause.getMessage());
     }
 
     private static void assertDecimal(final long unscaledValue, final Object obj) {
-        assertThat(obj, instanceOf(Decimal64.class));
+        assertInstanceOf(Decimal64.class, obj);
         final var actual = (Decimal64) obj;
         assertEquals(2, actual.scale());
         assertEquals(unscaledValue, actual.unscaledValue());

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.getCodec;
 
@@ -25,7 +25,7 @@ public class Int16CodecStringTest {
     @Test
     public void testSerialize() {
         Int16Codec<String> codec = getCodec(BaseTypes.int16Type(), Int16Codec.class);
-        assertEquals("serialize", "10", codec.serialize(Short.valueOf((short) 10)));
+        assertEquals("10", codec.serialize(Short.valueOf((short) 10)), "serialize");
     }
 
     @SuppressWarnings("unchecked")
@@ -40,12 +40,12 @@ public class Int16CodecStringTest {
 
         Int16Codec<String> codec = getCodec(BaseTypes.int16Type(), Int16Codec.class);
 
-        assertEquals("deserialize", codec.deserialize(hexa), Short.valueOf("+045c", 16));
-        assertEquals("deserialize", codec.deserialize(negHexa), Short.valueOf("-045c", 16));
-        assertEquals("deserialize", codec.deserialize(octal), Short.valueOf(octal, 8));
-        assertEquals("deserialize", codec.deserialize(negOctal), Short.valueOf(negOctal, 8));
-        assertEquals("deserialize", codec.deserialize(integer), Short.valueOf(integer, 10));
-        assertEquals("deserialize", codec.deserialize(negInteger), Short.valueOf(negInteger, 10));
+        assertEquals(codec.deserialize(hexa), Short.valueOf("+045c", 16), "deserialize");
+        assertEquals(codec.deserialize(negHexa), Short.valueOf("-045c", 16), "deserialize");
+        assertEquals(codec.deserialize(octal), Short.valueOf(octal, 8), "deserialize");
+        assertEquals(codec.deserialize(negOctal), Short.valueOf(negOctal, 8), "deserialize");
+        assertEquals(codec.deserialize(integer), Short.valueOf(integer, 10), "deserialize");
+        assertEquals(codec.deserialize(negInteger), Short.valueOf(negInteger, 10), "deserialize");
 
         deserializeWithExpectedIllegalArgEx(codec, "1o");
         deserializeWithExpectedIllegalArgEx(codec, "");

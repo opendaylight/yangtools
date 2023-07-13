@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
@@ -24,7 +24,7 @@ public class Int8CodecStringTest {
     public void testSerialize() {
         Int8Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.int8Type(), Int8Codec.class);
 
-        assertEquals("serialize", "10", codec.serialize(Byte.valueOf((byte) 10)));
+        assertEquals("10", codec.serialize(Byte.valueOf((byte) 10)), "serialize");
     }
 
     @SuppressWarnings("unchecked")
@@ -39,12 +39,12 @@ public class Int8CodecStringTest {
 
         Int8Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.int8Type(), Int8Codec.class);
 
-        assertEquals("deserialize", codec.deserialize(hexa), Byte.valueOf("040", 16));
-        assertEquals("deserialize", codec.deserialize(negHexa), Byte.valueOf("-040", 16));
-        assertEquals("deserialize", codec.deserialize(octal), Byte.valueOf(octal, 8));
-        assertEquals("deserialize", codec.deserialize(negOctal), Byte.valueOf(negOctal, 8));
-        assertEquals("deserialize", codec.deserialize(integer), Byte.valueOf(integer, 10));
-        assertEquals("deserialize", codec.deserialize(negInteger), Byte.valueOf(negInteger, 10));
+        assertEquals(codec.deserialize(hexa), Byte.valueOf("040", 16), "deserialize");
+        assertEquals(codec.deserialize(negHexa), Byte.valueOf("-040", 16), "deserialize");
+        assertEquals(codec.deserialize(octal), Byte.valueOf(octal, 8), "deserialize");
+        assertEquals(codec.deserialize(negOctal), Byte.valueOf(negOctal, 8), "deserialize");
+        assertEquals(codec.deserialize(integer), Byte.valueOf(integer, 10), "deserialize");
+        assertEquals(codec.deserialize(negInteger), Byte.valueOf(negInteger, 10), "deserialize");
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "1o");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "");
