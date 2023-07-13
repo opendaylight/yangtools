@@ -7,20 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -77,7 +76,7 @@ public class YangTextSchemaContextResolverTest {
         assertTrue(foobar.isDone());
 
         final Throwable cause = assertThrows(ExecutionException.class, foobar::get).getCause();
-        assertThat(cause, instanceOf(MissingSchemaSourceException.class));
+        assertInstanceOf(MissingSchemaSourceException.class, cause);
         assertEquals("URL for SourceIdentifier [foobar@2016-09-26] not registered", cause.getMessage());
 
         var schemaContextOptional = yangTextSchemaContextResolver.getEffectiveModelContext();

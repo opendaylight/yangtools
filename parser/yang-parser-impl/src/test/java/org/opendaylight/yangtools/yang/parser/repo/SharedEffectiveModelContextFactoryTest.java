@@ -8,19 +8,16 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static java.util.Objects.requireNonNull;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.ExecutionException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
@@ -31,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SharedEffectiveModelContextFactoryTest {
 
     private final SharedSchemaRepository repository = new SharedSchemaRepository("test");
@@ -40,7 +36,7 @@ public class SharedEffectiveModelContextFactoryTest {
     private SourceIdentifier s1;
     private SourceIdentifier s2;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final YangTextSchemaSource source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         final YangTextSchemaSource source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
@@ -106,7 +102,7 @@ public class SharedEffectiveModelContextFactoryTest {
                 sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
 
         final ExecutionException exception = assertThrows(ExecutionException.class, schemaContext::get);
-        assertThat(exception.getCause(), instanceOf(MissingSchemaSourceException.class));
+        assertInstanceOf(MissingSchemaSourceException.class, exception.getCause());
 
         // check if future is invalidated and resolution of source is retried after failure
         schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
