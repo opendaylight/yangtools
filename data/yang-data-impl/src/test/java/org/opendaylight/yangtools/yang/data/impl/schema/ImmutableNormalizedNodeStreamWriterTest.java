@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -27,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 
-public class ImmutableNormalizedNodeStreamWriterTest {
+class ImmutableNormalizedNodeStreamWriterTest {
 
     private QNameModule bazModule;
 
@@ -64,8 +62,8 @@ public class ImmutableNormalizedNodeStreamWriterTest {
 
     private DOMSource anyxmlDomSource;
 
-    @Before
-    public void setup() throws ParseException {
+    @Test
+    void testImmutableNormalizedNodeStreamWriter() throws IOException {
         bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"), Revision.of("1970-01-01"));
 
         outerContainer = QName.create(bazModule, "outer-container");
@@ -100,10 +98,7 @@ public class ImmutableNormalizedNodeStreamWriterTest {
         myLeafInList3 = QName.create(bazModule, "my-leaf-in-list-3");
 
         anyxmlDomSource = new DOMSource();
-    }
 
-    @Test
-    public void testImmutableNormalizedNodeStreamWriter() throws IOException {
         final var result = new NormalizationResultHolder();
         final var immutableNormalizedNodeStreamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(immutableNormalizedNodeStreamWriter);

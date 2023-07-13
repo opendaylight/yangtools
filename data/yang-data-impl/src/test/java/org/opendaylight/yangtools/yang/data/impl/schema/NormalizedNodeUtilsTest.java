@@ -8,14 +8,13 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
-import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -24,29 +23,29 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 
 /*
- * Schema structure of document is:
- *
- * container root { 
- *      list list-a {
- *              key leaf-a;
- *              leaf leaf-a;
- *              choice choice-a {
- *                      case one {
- *                              leaf one;
- *                      }
- *                      case two-three {
- *                              leaf two;
- *                              leaf three;
- *                      }
- *              }
- *              list list-b {
- *                      key leaf-b;
- *                      leaf leaf-b;
- *              }
- *      }
- * }
- */
-public class NormalizedNodeUtilsTest {
+* Schema structure of document is:
+*
+* container root { 
+*      list list-a {
+*              key leaf-a;
+*              leaf leaf-a;
+*              choice choice-a {
+*                      case one {
+*                              leaf one;
+*                      }
+*                      case two-three {
+*                              leaf two;
+*                              leaf three;
+*                      }
+*              }
+*              list list-b {
+*                      key leaf-b;
+*                      leaf leaf-b;
+*              }
+*      }
+* }
+*/
+class NormalizedNodeUtilsTest {
 
     private static final QName ROOT_QNAME = QName.create("urn:opendaylight:controller:sal:dom:store:test", "2014-03-13",
             "root");
@@ -105,14 +104,14 @@ public class NormalizedNodeUtilsTest {
     }
 
     @Test
-    public void findNodeTest() {
-        NormalizedNode tree = createDocumentOne();
+    void findNodeTest() {
+        final var tree = createDocumentOne();
         assertNotNull(tree);
 
-        Optional<NormalizedNode> listFooResult = NormalizedNodes.findNode(tree, LIST_A_FOO_PATH);
+        final var listFooResult = NormalizedNodes.findNode(tree, LIST_A_FOO_PATH);
         assertTrue(listFooResult.isPresent());
 
-        Optional<NormalizedNode> listTwoResult = NormalizedNodes.findNode(tree, LIST_B_TWO_PATH);
+        final var listTwoResult = NormalizedNodes.findNode(tree, LIST_B_TWO_PATH);
         assertTrue(listTwoResult.isPresent());
     }
 }

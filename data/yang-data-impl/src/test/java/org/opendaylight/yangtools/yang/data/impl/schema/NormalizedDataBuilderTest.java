@@ -8,32 +8,26 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 
-public class NormalizedDataBuilderTest {
+class NormalizedDataBuilderTest {
     @Test
-    public void testSchemaUnaware() {
+    void testSchemaUnaware() {
         // Container
-        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> builder = Builders
-                .containerBuilder().withNodeIdentifier(getNodeIdentifier("container"));
+        final var builder = Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("container"));
 
         // leaf
-        LeafNode<String> leafChild = Builders.<String>leafBuilder().withNodeIdentifier(getNodeIdentifier("leaf"))
+        final var leafChild = Builders.<String>leafBuilder().withNodeIdentifier(getNodeIdentifier("leaf"))
                 .withValue("String").build();
         builder.withChild(leafChild);
 
         // leafList
-        LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder()
+        final var leafList = Builders.<Integer>leafSetBuilder()
                 .withNodeIdentifier(getNodeIdentifier("leaf"))
                 .withChildValue(1)
                 .withChild(Builders.<Integer>leafSetEntryBuilder()
@@ -42,7 +36,7 @@ public class NormalizedDataBuilderTest {
         builder.withChild(leafList);
 
         // list
-        MapEntryNode listChild1 = Builders
+        final var listChild1 = Builders
                 .mapEntryBuilder()
                 .withChild(
                         Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"))

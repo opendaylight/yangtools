@@ -16,7 +16,7 @@ import org.custommonkey.xmlunit.DifferenceListener;
  *
  * @author mirehak
  */
-public class IgnoreWhiteCharsDiffListener implements DifferenceListener {
+class IgnoreWhiteCharsDiffListener implements DifferenceListener {
 
     @Override
     public void skippedComparison(org.w3c.dom.Node control,
@@ -28,7 +28,7 @@ public class IgnoreWhiteCharsDiffListener implements DifferenceListener {
     public int differenceFound(Difference diff) {
 
         if (diff.getId() == DifferenceConstants.TEXT_VALUE.getId()) {
-            String control = diff.getControlNodeDetail().getValue();
+            var control = diff.getControlNodeDetail().getValue();
             if (control != null) {
                 control = control.trim();
                 if (diff.getTestNodeDetail().getValue() != null
