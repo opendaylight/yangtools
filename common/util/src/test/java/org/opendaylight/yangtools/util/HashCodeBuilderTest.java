@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class HashCodeBuilderTest {
+class HashCodeBuilderTest {
     @Test
-    public void testAllMethodsOfHashCodeBuilder() {
-        final HashCodeBuilder<String> builder = new HashCodeBuilder<>();
-        assertEquals("Default hash code should be '1'.", 1, builder.build());
+    void testAllMethodsOfHashCodeBuilder() {
+        final var builder = new HashCodeBuilder<>();
+        assertEquals(1, builder.build(), "Default hash code should be '1'.");
 
-        int nextHashCode = HashCodeBuilder.nextHashCode(1, "test");
-        assertEquals("Next hash code should be '3556529'.", 3556529, nextHashCode);
+        final var nextHashCode = HashCodeBuilder.nextHashCode(1, "test");
+        assertEquals(3556529, nextHashCode, "Next hash code should be '3556529'.");
 
         builder.addArgument("another test");
-        assertEquals("Updated internal hash code should be '700442706'.", -700442706, builder.build());
+        assertEquals(-700442706, builder.build(), "Updated internal hash code should be '700442706'.");
     }
 }

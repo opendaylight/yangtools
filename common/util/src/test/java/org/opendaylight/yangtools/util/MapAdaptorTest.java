@@ -7,95 +7,94 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class MapAdaptorTest {
+class MapAdaptorTest {
     private MapAdaptor adaptor;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         adaptor = MapAdaptor.getInstance(true, 10, 5);
     }
 
     @Test
-    public void testTreeToEmpty() {
-        final Map<String, String> input = new TreeMap<>();
+    void testTreeToEmpty() {
+        final var input = new TreeMap<>();
 
         // Converts the input into a hashmap;
-        final Map<?, ?> snap = adaptor.takeSnapshot(input);
+        final var snap = adaptor.takeSnapshot(input);
         assertNotSame(input, snap);
-        assertTrue(snap instanceof HashMap);
+        assertInstanceOf(HashMap.class, snap);
 
-        final Map<?, ?> opt1 = adaptor.optimize(input);
+        final var opt1 = adaptor.optimize(input);
         assertSame(ImmutableMap.of(), opt1);
 
-        final Map<?, ?> opt2 = adaptor.optimize(snap);
+        final var opt2 = adaptor.optimize(snap);
         assertSame(ImmutableMap.of(), opt2);
     }
 
     @Test
-    public void testTreeToSingleton() {
-        final Map<String, String> input = new TreeMap<>();
+    void testTreeToSingleton() {
+        final var input = new TreeMap<>();
         input.put("a", "b");
 
-        final Map<?, ?> snap = adaptor.takeSnapshot(input);
+        final var snap = adaptor.takeSnapshot(input);
         assertNotSame(input, snap);
-        assertTrue(snap instanceof HashMap);
+        assertInstanceOf(HashMap.class, snap);
         assertEquals(input, snap);
 
-        final Map<?, ?> opt1 = adaptor.optimize(input);
+        final var opt1 = adaptor.optimize(input);
         assertNotSame(input, opt1);
         assertEquals(input, opt1);
         assertEquals(Collections.singletonMap(null, null).getClass(), opt1.getClass());
-        final Map<?, ?> snap1 = adaptor.takeSnapshot(opt1);
-        assertTrue(snap1 instanceof HashMap);
+        final var snap1 = adaptor.takeSnapshot(opt1);
+        assertInstanceOf(HashMap.class, snap1);
         assertEquals(input, snap1);
 
-        final Map<?, ?> opt2 = adaptor.optimize(snap);
+        final var opt2 = adaptor.optimize(snap);
         assertNotSame(snap, opt2);
         assertEquals(input, opt2);
         assertEquals(Collections.singletonMap(null, null).getClass(), opt2.getClass());
 
-        final Map<?, ?> snap2 = adaptor.takeSnapshot(opt2);
+        final var snap2 = adaptor.takeSnapshot(opt2);
         assertNotSame(opt2, snap2);
-        assertTrue(snap2 instanceof HashMap);
+        assertInstanceOf(HashMap.class, snap2);
         assertEquals(input, snap2);
     }
 
     @Test
-    public void testTreeToTrie() {
-        final Map<String, String> input = new TreeMap<>();
-        for (char c = 'a'; c <= 'z'; ++c) {
-            final String s = String.valueOf(c);
+    void testTreeToTrie() {
+        final var input = new TreeMap<String, String>();
+        for (var c = 'a'; c <= 'z'; ++c) {
+            final var s = String.valueOf(c);
             input.put(s, s);
         }
 
-        final Map<String, String> snap = adaptor.takeSnapshot(input);
-        assertTrue(snap instanceof HashMap);
+        final var snap = adaptor.takeSnapshot(input);
+        assertInstanceOf(HashMap.class, snap);
         assertEquals(input, snap);
 
-        final Map<String, String> opt1 = adaptor.optimize(input);
+        final var opt1 = adaptor.optimize(input);
         assertEquals(input, opt1);
         assertEquals(ReadOnlyTrieMap.class, opt1.getClass());
 
-        final Map<String, String> snap2 = adaptor.takeSnapshot(opt1);
-        assertTrue(snap2 instanceof ReadWriteTrieMap);
+        final var snap2 = adaptor.takeSnapshot(opt1);
+        assertInstanceOf(ReadWriteTrieMap.class, snap2);
         assertEquals(opt1, snap2);
         assertEquals(26, snap2.size());
 
         // snap2 and snap3 are independent
-        final Map<String, String> snap3 = adaptor.takeSnapshot(opt1);
+        final var snap3 = adaptor.takeSnapshot(opt1);
 
         snap2.remove("a");
         assertEquals(25, snap2.size());
@@ -114,33 +113,33 @@ public class MapAdaptorTest {
     }
 
     @Test
-    public void testTrieToHash() {
-        final Map<String, String> input = new TreeMap<>();
+    void testTrieToHash() {
+        final var input = new TreeMap<String, String>();
         for (char c = 'a'; c <= 'k'; ++c) {
             final String s = String.valueOf(c);
             input.put(s, s);
         }
 
         // Translated to read-only
-        final Map<String, String> opt1 = adaptor.optimize(input);
+        final var opt1 = adaptor.optimize(input);
         assertEquals(input, opt1);
         assertEquals(ReadOnlyTrieMap.class, opt1.getClass());
         assertEquals(11, opt1.size());
 
         // 11 elements -- should retain TrieMap
-        final Map<String, String> snap1 = adaptor.takeSnapshot(opt1);
+        final var snap1 = adaptor.takeSnapshot(opt1);
         assertEquals(ReadWriteTrieMap.class, snap1.getClass());
         assertEquals(11, snap1.size());
 
-        for (char c = 'e'; c <= 'k'; ++c) {
-            final String s = String.valueOf(c);
+        for (var c = 'e'; c <= 'k'; ++c) {
+            final var s = String.valueOf(c);
             snap1.remove(s);
         }
 
         // 4 elements: should revert to HashMap
         assertEquals(4, snap1.size());
 
-        final Map<String, String> opt2 = adaptor.optimize(snap1);
+        final var opt2 = adaptor.optimize(snap1);
         assertEquals(snap1, opt2);
         assertEquals(HashMap.class, opt2.getClass());
         assertEquals(4, opt2.size());

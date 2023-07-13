@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.NoSuchElementException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class EmptyDequeTest {
+class EmptyDequeTest {
 
     @Test
-    public void testEmptyDeque() {
-        final EmptyDeque<?> deque = EmptyDeque.instance();
+    void testEmptyDeque() {
+        final var deque = EmptyDeque.instance();
         assertFalse(deque.offer(null));
         assertFalse(deque.offerFirst(null));
         assertFalse(deque.offerLast(null));
@@ -36,7 +36,7 @@ public class EmptyDequeTest {
         assertFalse(deque.descendingIterator().hasNext());
         assertEquals(0L, deque.spliterator().estimateSize());
 
-        final Object[] a = deque.toArray();
+        final var a = deque.toArray();
         assertEquals(0, a.length);
         assertSame(a, deque.toArray());
         assertSame(a, deque.toArray(a));

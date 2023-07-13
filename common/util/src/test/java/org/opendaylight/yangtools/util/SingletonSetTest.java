@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
-import java.util.Iterator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SingletonSetTest {
+class SingletonSetTest {
     private static final String ELEMENT = "element";
 
     private static SingletonSet<?> nullSet() {
@@ -26,8 +26,8 @@ public class SingletonSetTest {
     }
 
     @Test
-    public void testNullSingleton() {
-        final SingletonSet<?> s = nullSet();
+    void testNullSingleton() {
+        final var s = nullSet();
 
         assertFalse(s.isEmpty());
         assertEquals(1, s.size());
@@ -35,17 +35,17 @@ public class SingletonSetTest {
         assertTrue(s.contains(null));
         assertNull(s.getElement());
         assertEquals(0, s.hashCode());
-        assertTrue(s.equals(Collections.singleton(null)));
-        assertFalse(s.equals(Collections.singleton("")));
-        assertFalse(s.equals(""));
-        assertTrue(s.equals(s));
-        assertFalse(s.equals(null));
+        assertEquals(s, Collections.singleton(null));
+        assertNotEquals(s, Collections.singleton(""));
+        assertNotEquals("", s);
+        assertEquals(s, s);
+        assertNotEquals(null, s);
         assertEquals(Collections.singleton(null).toString(), s.toString());
     }
 
     @Test
-    public void testRegularSingleton() {
-        final SingletonSet<?> s = SingletonSet.of(ELEMENT);
+    void testRegularSingleton() {
+        final var s = SingletonSet.of(ELEMENT);
 
         assertFalse(s.isEmpty());
         assertEquals(1, s.size());
@@ -55,19 +55,19 @@ public class SingletonSetTest {
 
         assertSame(ELEMENT, s.getElement());
         assertEquals(ELEMENT.hashCode(), s.hashCode());
-        assertTrue(s.equals(Collections.singleton(ELEMENT)));
-        assertFalse(s.equals(Collections.singleton("")));
-        assertFalse(s.equals(Collections.singleton(null)));
-        assertFalse(s.equals(""));
-        assertTrue(s.equals(s));
-        assertFalse(s.equals(null));
+        assertEquals(s, Collections.singleton(ELEMENT));
+        assertNotEquals(s, Collections.singleton(""));
+        assertNotEquals(s, Collections.singleton(null));
+        assertNotEquals("", s);
+        assertEquals(s, s);
+        assertNotEquals(null, s);
         assertEquals(Collections.singleton(ELEMENT).toString(), s.toString());
     }
 
     @Test
-    public void testIterator() {
-        final SingletonSet<?> s = SingletonSet.of(ELEMENT);
-        final Iterator<?> it = s.iterator();
+    void testIterator() {
+        final var s = SingletonSet.of(ELEMENT);
+        final var it = s.iterator();
 
         assertTrue(it.hasNext());
         assertSame(ELEMENT, it.next());
@@ -75,38 +75,38 @@ public class SingletonSetTest {
     }
 
     @Test
-    public void testRejectedAdd() {
-        final SingletonSet<?> s = nullSet();
+    void testRejectedAdd() {
+        final var s = nullSet();
         assertThrows(UnsupportedOperationException.class, () -> s.add(null));
     }
 
     @Test
-    public void testRejectedAddAll() {
-        final SingletonSet<?> s = nullSet();
+    void testRejectedAddAll() {
+        final var s = nullSet();
         assertThrows(UnsupportedOperationException.class, () -> s.addAll(null));
     }
 
     @Test
-    public void testRejectedClear() {
-        final SingletonSet<?> s = nullSet();
+    void testRejectedClear() {
+        final var s = nullSet();
         assertThrows(UnsupportedOperationException.class, () -> s.clear());
     }
 
     @Test
-    public void testRejectedRemove() {
-        final SingletonSet<?> s = nullSet();
+    void testRejectedRemove() {
+        final var s = nullSet();
         assertThrows(UnsupportedOperationException.class, () -> s.remove(null));
     }
 
     @Test
-    public void testRejectedRemoveAll() {
-        final SingletonSet<?> s = nullSet();
+    void testRejectedRemoveAll() {
+        final var s = nullSet();
         assertThrows(UnsupportedOperationException.class, () -> s.removeAll(null));
     }
 
     @Test
-    public void testRejectedRetainAll() {
-        final SingletonSet<?> s = nullSet();
+    void testRejectedRetainAll() {
+        final var s = nullSet();
         assertThrows(UnsupportedOperationException.class, () -> s.retainAll(null));
     }
 }

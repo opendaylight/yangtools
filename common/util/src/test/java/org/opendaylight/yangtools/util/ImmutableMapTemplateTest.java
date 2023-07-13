@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.Map;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ImmutableMapTemplateTest {
+class ImmutableMapTemplateTest {
     private static final String FOO = "foo";
     private static final String BAR = "bar";
     private static final String BAZ = "baz";
@@ -26,19 +25,19 @@ public class ImmutableMapTemplateTest {
     private static final Set<String> TWO_KEYSET = ImmutableSet.of(FOO, BAR);
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         assertThrows(IllegalArgumentException.class, () -> ImmutableMapTemplate.ordered(ImmutableList.of()));
         assertThrows(IllegalArgumentException.class, () -> ImmutableMapTemplate.unordered(ImmutableList.of()));
     }
 
     @Test
-    public void testOneKeyTemplate() {
+    void testOneKeyTemplate() {
         assertOne(ImmutableMapTemplate.ordered(ONE_KEYSET), SharedSingletonMap.Ordered.class);
         assertOne(ImmutableMapTemplate.unordered(ONE_KEYSET), SharedSingletonMap.Unordered.class);
     }
 
     @Test
-    public void testTwoKeyTemplate() {
+    void testTwoKeyTemplate() {
         assertTwo(ImmutableMapTemplate.ordered(TWO_KEYSET), ImmutableOffsetMap.Ordered.class);
         assertTwo(ImmutableMapTemplate.unordered(TWO_KEYSET), ImmutableOffsetMap.Unordered.class);
     }
@@ -48,7 +47,7 @@ public class ImmutableMapTemplateTest {
         assertEquals(mapClass.getSimpleName() + "{keySet=[foo]}", template.toString());
 
         // Successful instantiation
-        Map<String, String> map = template.instantiateWithValues(BAR);
+        var map = template.instantiateWithValues(BAR);
         assertTrue(mapClass.isInstance(map));
         assertEquals(ImmutableMap.of(FOO, BAR), map);
         assertEquals("{foo=bar}", map.toString());
@@ -82,7 +81,7 @@ public class ImmutableMapTemplateTest {
         assertEquals(mapClass.getSimpleName() + "{offsets={foo=0, bar=1}}", template.toString());
 
         // Successful instantiation
-        Map<String, String> map = template.instantiateWithValues(BAR, FOO);
+        var map = template.instantiateWithValues(BAR, FOO);
         assertTrue(mapClass.isInstance(map));
         assertEquals(ImmutableMap.of(FOO, BAR, BAR, FOO), map);
         assertEquals("{foo=bar, bar=foo}", map.toString());

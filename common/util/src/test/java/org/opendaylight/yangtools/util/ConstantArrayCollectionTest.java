@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ConstantArrayCollectionTest {
+class ConstantArrayCollectionTest {
     private static final String[] ARRAY = new String[] { "a", "bb", "ccc" };
     private static final Collection<String> REF = ImmutableList.copyOf(ARRAY);
 
@@ -27,7 +27,7 @@ public class ConstantArrayCollectionTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // Empty
         assertEquals(Collections.emptySet().toString(), new ConstantArrayCollection<>(new Object[0]).toString());
 
@@ -36,8 +36,8 @@ public class ConstantArrayCollectionTest {
     }
 
     @Test
-    public void testEquals() {
-        final Collection<?> c = create();
+    void testEquals() {
+        final var c = create();
 
         assertTrue(c.containsAll(REF));
         assertTrue(REF.containsAll(c));
@@ -45,8 +45,8 @@ public class ConstantArrayCollectionTest {
     }
 
     @Test
-    public void testSimpleOperations() {
-        final Collection<?> c = create();
+    void testSimpleOperations() {
+        final var c = create();
 
         assertEquals(ARRAY.length, c.size());
         assertFalse(c.isEmpty());
@@ -60,8 +60,8 @@ public class ConstantArrayCollectionTest {
     }
 
     @Test
-    public void testProtection() {
-        final Collection<?> c = create();
+    void testProtection() {
+        final var c = create();
 
         assertThrows(UnsupportedOperationException.class, () -> c.add(null));
         assertThrows(UnsupportedOperationException.class, () -> c.remove(null));

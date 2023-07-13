@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author Thomas Pantelis
  */
-public final class CommonTestUtils {
+final class CommonTestUtils {
     private CommonTestUtils() {
         throw new UnsupportedOperationException();
     }
