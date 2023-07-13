@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.APPEARED;
@@ -20,7 +20,7 @@ import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.UNM
 import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.WRITE;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
-public class DataTreeCandidatesAggregateTest {
+class DataTreeCandidatesAggregateTest {
     private static final YangInstanceIdentifier ROOT_PATH = YangInstanceIdentifier.of(QName.create(
             "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test:container",
             "2014-03-13", "container"));
@@ -39,18 +39,18 @@ public class DataTreeCandidatesAggregateTest {
             "2014-03-13", "data"));
 
     @Test
-    public void testLeafUnmodifiedUnmodified() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
-        NormalizedNode normalizedNode2 = normalizedNode("value1");
-        NormalizedNode normalizedNode3 = normalizedNode("value1");
+    void testLeafUnmodifiedUnmodified() {
+        final var normalizedNode1 = normalizedNode("value1");
+        final var normalizedNode2 = normalizedNode("value1");
+        final var normalizedNode3 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, UNMODIFIED);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, UNMODIFIED);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(UNMODIFIED, aggregationResult.getRootNode().modificationType());
         assertEquals("value1", aggregationResult.getRootNode().dataBefore().body());
@@ -58,18 +58,18 @@ public class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    public void testLeaftUnmodifiedWrite() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
-        NormalizedNode normalizedNode2 = normalizedNode("value1");
-        NormalizedNode normalizedNode3 = normalizedNode("value2");
+    void testLeaftUnmodifiedWrite() {
+        final var normalizedNode1 = normalizedNode("value1");
+        final var normalizedNode2 = normalizedNode("value1");
+        final var normalizedNode3 = normalizedNode("value2");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, WRITE);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, WRITE);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
         assertEquals("value1", aggregationResult.getRootNode().dataBefore().body());
@@ -77,15 +77,15 @@ public class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    public void testLeafUnmodifiedDelete() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
-        NormalizedNode normalizedNode2 = normalizedNode("value1");
+    void testLeafUnmodifiedDelete() {
+        final var normalizedNode1 = normalizedNode("value1");
+        final var normalizedNode2 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, UNMODIFIED);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, null, DELETE);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(normalizedNode2, null, DELETE);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
@@ -95,41 +95,41 @@ public class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    public void testLeafUnmodifiedDeleteWithoutDataBefore() {
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+    void testLeafUnmodifiedDeleteWithoutDataBefore() {
+        final var node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DELETE);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
-
-        assertThrows(IllegalArgumentException.class,
-            () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
-    }
-
-    @Test
-    public void testLeafUnmodifiedSubtreeModifiedWithoutDataBefore() {
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
-
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(null, null, DELETE);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testLeafWriteUnmodified() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
-        NormalizedNode normalizedNode2 = normalizedNode("value2");
+    void testLeafUnmodifiedSubtreeModifiedWithoutDataBefore() {
+        final var node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode2, UNMODIFIED);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
+    }
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+    @Test
+    void testLeafWriteUnmodified() {
+        final var normalizedNode1 = normalizedNode("value1");
+        final var normalizedNode2 = normalizedNode("value2");
+
+        final var node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+
+        final var node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode2, UNMODIFIED);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
         assertEquals("value1", aggregationResult.getRootNode().dataBefore().body());
@@ -137,18 +137,18 @@ public class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    public void testLeafWriteWrite() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
-        NormalizedNode normalizedNode2 = normalizedNode("value2");
-        NormalizedNode normalizedNode3 = normalizedNode("value3");
+    void testLeafWriteWrite() {
+        final var normalizedNode1 = normalizedNode("value1");
+        final var normalizedNode2 = normalizedNode("value2");
+        final var normalizedNode3 = normalizedNode("value3");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, WRITE);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(normalizedNode2, normalizedNode3, WRITE);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
         assertEquals("value1", aggregationResult.getRootNode().dataBefore().body());
@@ -156,34 +156,34 @@ public class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    public void testLeafWriteDeleteWithoutChanges() {
-        NormalizedNode normalizedNode = normalizedNode("value1");
+    void testLeafWriteDeleteWithoutChanges() {
+        final var normalizedNode = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(null, normalizedNode, WRITE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(null, normalizedNode, WRITE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode, null, DELETE);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(normalizedNode, null, DELETE);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(UNMODIFIED, aggregationResult.getRootNode().modificationType());
-        assertEquals(null, aggregationResult.getRootNode().dataBefore());
-        assertEquals(null, aggregationResult.getRootNode().dataAfter());
+        assertNull(aggregationResult.getRootNode().dataBefore());
+        assertNull(aggregationResult.getRootNode().dataAfter());
     }
 
     @Test
-    public void testLeafWriteDelete() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
-        NormalizedNode normalizedNode2 = normalizedNode("value2");
+    void testLeafWriteDelete() {
+        final var normalizedNode1 = normalizedNode("value1");
+        final var normalizedNode2 = normalizedNode("value2");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2, WRITE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(normalizedNode2, null, DELETE);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(normalizedNode2, null, DELETE);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DELETE, aggregationResult.getRootNode().modificationType());
         assertEquals("value1", aggregationResult.getRootNode().dataBefore().body());
@@ -191,16 +191,16 @@ public class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    public void testLeafDeleteUnmodified() {
-        NormalizedNode normalizedNode = normalizedNode("value");
+    void testLeafDeleteUnmodified() {
+        final var normalizedNode = normalizedNode("value");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode, null, DELETE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode, null, DELETE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DELETE, aggregationResult.getRootNode().modificationType());
         assertEquals("value", aggregationResult.getRootNode().dataBefore().body());
@@ -208,17 +208,17 @@ public class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    public void testLeafDeleteWrite() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
-        NormalizedNode normalizedNode2 = normalizedNode("value2");
+    void testLeafDeleteWrite() {
+        final var normalizedNode1 = normalizedNode("value1");
+        final var normalizedNode2 = normalizedNode("value2");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, normalizedNode2, WRITE);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(null, normalizedNode2, WRITE);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
         assertEquals("value1", aggregationResult.getRootNode().dataBefore().body());
@@ -226,123 +226,123 @@ public class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    public void testLeafDeleteDelete() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
+    void testLeafDeleteDelete() {
+        final var normalizedNode1 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DELETE);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
-
-        assertThrows(IllegalArgumentException.class,
-            () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
-    }
-
-    @Test
-    public void testLeafDeleteDisappear() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
-
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
-
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DISAPPEARED);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(null, null, DELETE);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testLeafDeleteSubtreeModified() {
-        NormalizedNode normalizedNode1 = normalizedNode("value1");
+    void testLeafDeleteDisappear() {
+        final var normalizedNode1 = normalizedNode("value1");
 
-        DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        DataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var node2 = dataTreeCandidateNode(null, null, DISAPPEARED);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testUnmodifiedUnmodified() throws NoSuchFieldException {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testLeafDeleteSubtreeModified() {
+        final var normalizedNode1 = normalizedNode("value1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(normalizedNode1, null, DELETE);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+
+        final var node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
+    }
+
+    @Test
+    void testUnmodifiedUnmodified() throws NoSuchFieldException {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
+
+        final var node1 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
+        final var node2 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
+        final var child2 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(UNMODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testUnmodifiedDelete() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testUnmodifiedDelete() {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null, DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode, null, DELETE);
+        final var child2 = dataTreeCandidateNode(childNode, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DELETE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testUnmodifiedWrite() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode parentNode2 = normalizedNode("container2");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testUnmodifiedWrite() {
+        final var parentNode1 = normalizedNode("container1");
+        final var childNode1 = normalizedNode("child1");
+        final var parentNode2 = normalizedNode("container2");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testUnmodifiedSubtreeModifiedWithoutDataBefore() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testUnmodifiedSubtreeModifiedWithoutDataBefore() {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode, parentNode, SUBTREE_MODIFIED);
+        final var child2 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
@@ -350,43 +350,43 @@ public class DataTreeCandidatesAggregateTest {
 
     //FIXME
     @Test
-    public void testUnmodifiedSubtreeModified() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode parentNode2 = normalizedNode("container1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testUnmodifiedSubtreeModified() {
+        final var parentNode1 = normalizedNode("container1");
+        final var childNode1 = normalizedNode("child1");
+        final var parentNode2 = normalizedNode("container1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(SUBTREE_MODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testUnmodifiedAppearedWithDataBefore() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode parentNode2 = normalizedNode("container1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testUnmodifiedAppearedWithDataBefore() {
+        final var parentNode1 = normalizedNode("container1");
+        final var childNode1 = normalizedNode("child1");
+        final var parentNode2 = normalizedNode("container1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode2, APPEARED);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
@@ -394,678 +394,678 @@ public class DataTreeCandidatesAggregateTest {
 
     //FIXME
     @Test
-    public void testUnmodifiedAppeared() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testUnmodifiedAppeared() {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode, parentNode, APPEARED);
+        final var child2 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(APPEARED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testUnmodifiedDisappearWithoutDataBefore() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testUnmodifiedDisappearWithoutDataBefore() {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode, parentNode, DISAPPEARED);
+        final var child2 = dataTreeCandidateNode(null, childNode, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testUnmodifiedDisappear() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testUnmodifiedDisappear() {
+        final var parentNode1 = normalizedNode("container1");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child2 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DISAPPEARED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testDeleteUnmodified() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testDeleteUnmodified() {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, null, DELETE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode, null, DELETE);
+        final var child1 = dataTreeCandidateNode(childNode, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var child2 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DELETE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testDeleteWrite() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container2");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testDeleteWrite() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container2");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DELETE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode1, null, DELETE);
+        final var child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(null, parentNode2, WRITE);
+        final var child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testDeleteAppear() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container2");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testDeleteAppear() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container2");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DELETE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode1, null, DELETE);
+        final var child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
+        final var child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testWriteUnmodified() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testWriteUnmodified() {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode, WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode, WRITE);
+        final var child1 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
+        final var node2 = dataTreeCandidateNode(parentNode, parentNode, UNMODIFIED);
+        final var child2 = dataTreeCandidateNode(childNode, childNode, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testWriteDeleteWithoutChanges() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testWriteDeleteWithoutChanges() {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode, WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode, WRITE);
+        final var child1 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null, DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode, null, DELETE);
+        final var child2 = dataTreeCandidateNode(childNode, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(UNMODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testWriteDelete() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container2");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testWriteDelete() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container2");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null, DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode2, null, DELETE);
+        final var child2 = dataTreeCandidateNode(childNode2, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DELETE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testWriteWrite() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container2");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testWriteWrite() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container2");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode1, WRITE);
+        final var child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testWriteSubtreeModified() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container1");
-        NormalizedNode childNode = normalizedNode("child");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testWriteSubtreeModified() {
+        final var parentNode = normalizedNode("container");
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container1");
+        final var childNode = normalizedNode("child");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode1, WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode, parentNode1, WRITE);
+        final var child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testWriteAppear() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container2");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
-        NormalizedNode childNode3 = normalizedNode("child3");
+    void testWriteAppear() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container2");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
+        final var childNode3 = normalizedNode("child3");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, parentNode2, APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, childNode3, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode2, parentNode2, APPEARED);
+        final var child2 = dataTreeCandidateNode(childNode2, childNode3, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testWriteDisappearWithoutChanges() {
-        NormalizedNode parentNode = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("child");
+    void testWriteDisappearWithoutChanges() {
+        final var parentNode = normalizedNode("container");
+        final var childNode = normalizedNode("child");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode, WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode, WRITE);
+        final var child1 = dataTreeCandidateNode(null, childNode, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode, null, DISAPPEARED);
+        final var child2 = dataTreeCandidateNode(childNode, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(UNMODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testWriteDisappear() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container2");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testWriteDisappear() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container2");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode2, null, DISAPPEARED);
+        final var child2 = dataTreeCandidateNode(childNode2, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DISAPPEARED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testSubtreeModifiedUnmodified() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container1");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testSubtreeModifiedUnmodified() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container1");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, parentNode2, UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, childNode2, UNMODIFIED);
+        final var node2 = dataTreeCandidateNode(parentNode2, parentNode2, UNMODIFIED);
+        final var child2 = dataTreeCandidateNode(childNode2, childNode2, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(SUBTREE_MODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testSubtreeModifiedDelete() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container1");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testSubtreeModifiedDelete() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container1");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode2, SUBTREE_MODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode2, null, DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode2, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode2, null, DELETE);
+        final var child2 = dataTreeCandidateNode(childNode2, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DELETE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testSubtreeModifiedWrite() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode parentNode2 = normalizedNode("value2");
-        NormalizedNode childNode = normalizedNode("childNode");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testSubtreeModifiedWrite() {
+        final var parentNode1 = normalizedNode("container");
+        final var parentNode2 = normalizedNode("value2");
+        final var childNode = normalizedNode("childNode");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testSubtreeModifiedSubtreeModified() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("childNode");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testSubtreeModifiedSubtreeModified() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode = normalizedNode("childNode");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(SUBTREE_MODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testSubtreeModifiedAppear() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode parentNode2 = normalizedNode("value2");
-        NormalizedNode childNode = normalizedNode("childNode");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testSubtreeModifiedAppear() {
+        final var parentNode1 = normalizedNode("container");
+        final var parentNode2 = normalizedNode("value2");
+        final var childNode = normalizedNode("childNode");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
+        final var child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testSubtreeModifiedDisappear() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode = normalizedNode("childNode");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testSubtreeModifiedDisappear() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode = normalizedNode("childNode");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        final var child1 = dataTreeCandidateNode(childNode, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child2 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DISAPPEARED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testAppearedUnmodified() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testAppearedUnmodified() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        final var child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode1, UNMODIFIED);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode1, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(APPEARED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testAppearedDelete() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testAppearedDelete() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        final var child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null, DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode1, null, DELETE);
+        final var child2 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(UNMODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testAppearedWriteWithoutChanges() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode parentNode2 = normalizedNode("value2");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testAppearedWriteWithoutChanges() {
+        final var parentNode1 = normalizedNode("container");
+        final var parentNode2 = normalizedNode("value2");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        final var child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode2, WRITE);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testAppearedSubtreeModified() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testAppearedSubtreeModified() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        final var child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(parentNode1, parentNode1, SUBTREE_MODIFIED);
+        final var child2 = dataTreeCandidateNode(childNode1, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(APPEARED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testAppearedAppeared() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testAppearedAppeared() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        final var child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode1, APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode1, WRITE);
+        final var node2 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        final var child2 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testAppearedDisappeared() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testAppearedDisappeared() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(null, childNode1, WRITE);
+        final var node1 = dataTreeCandidateNode(null, parentNode1, APPEARED);
+        final var child1 = dataTreeCandidateNode(null, childNode1, WRITE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node2 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child2 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(UNMODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testDisappearedUnmodified() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testDisappearedUnmodified() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var node2 = dataTreeCandidateNode(null, null, UNMODIFIED);
+        final var child2 = dataTreeCandidateNode(null, null, UNMODIFIED);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(DISAPPEARED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testDisappearedDelete() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testDisappearedDelete() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DELETE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null, DELETE);
+        final var node2 = dataTreeCandidateNode(null, null, DELETE);
+        final var child2 = dataTreeCandidateNode(null, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testDisappearedWrite() {
-        NormalizedNode parentNode1 = normalizedNode("container1");
-        NormalizedNode parentNode2 = normalizedNode("container2");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testDisappearedWrite() {
+        final var parentNode1 = normalizedNode("container1");
+        final var parentNode2 = normalizedNode("container2");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, WRITE);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(null, parentNode2, WRITE);
+        final var child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(WRITE, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testDisappearedSubtreeModified() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testDisappearedSubtreeModified() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(null, null, SUBTREE_MODIFIED);
+        final var child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     @Test
-    public void testDisappearedAppeared() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode parentNode2 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
-        NormalizedNode childNode2 = normalizedNode("child2");
+    void testDisappearedAppeared() {
+        final var parentNode1 = normalizedNode("container");
+        final var parentNode2 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
+        final var childNode2 = normalizedNode("child2");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, childNode2, WRITE);
+        final var node2 = dataTreeCandidateNode(null, parentNode2, APPEARED);
+        final var child2 = dataTreeCandidateNode(null, childNode2, WRITE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
+        final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
         assertEquals(SUBTREE_MODIFIED, aggregationResult.getRootNode().modificationType());
     }
 
     @Test
-    public void testDisappearedDisappear() {
-        NormalizedNode parentNode1 = normalizedNode("container");
-        NormalizedNode childNode1 = normalizedNode("child1");
+    void testDisappearedDisappear() {
+        final var parentNode1 = normalizedNode("container");
+        final var childNode1 = normalizedNode("child1");
 
-        TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child1 = dataTreeCandidateNode(childNode1, null, DELETE);
+        final var node1 = dataTreeCandidateNode(parentNode1, null, DISAPPEARED);
+        final var child1 = dataTreeCandidateNode(childNode1, null, DELETE);
         setChildNodes(node1, List.of(child1));
-        DataTreeCandidate candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
+        final var candidate1 = new DefaultDataTreeCandidate(ROOT_PATH, node1);
 
-        TerminalDataTreeCandidateNode node2 = dataTreeCandidateNode(null, null, DISAPPEARED);
-        TerminalDataTreeCandidateNode child2 = dataTreeCandidateNode(null, null, DELETE);
+        final var node2 = dataTreeCandidateNode(null, null, DISAPPEARED);
+        final var child2 = dataTreeCandidateNode(null, null, DELETE);
         setChildNodes(node2, List.of(child2));
-        DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
+        final var candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
         assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.aggregate(List.of(candidate1, candidate2)));
     }
 
     private static LeafNode<String> normalizedNode(final String value) {
-        LeafNode<String> node = mock(LeafNode.class);
+        final var node = mock(LeafNode.class);
         doReturn(value).when(node).body();
         return node;
     }
@@ -1073,7 +1073,7 @@ public class DataTreeCandidatesAggregateTest {
     private static TerminalDataTreeCandidateNode dataTreeCandidateNode(final NormalizedNode before,
                                                                        final NormalizedNode after,
                                                                        final ModificationType modification) {
-        TerminalDataTreeCandidateNode dataTreeCandidateNode = mock(TerminalDataTreeCandidateNode.class);
+        final var dataTreeCandidateNode = mock(TerminalDataTreeCandidateNode.class);
         doReturn(null).when(dataTreeCandidateNode).name();
         doReturn(before).when(dataTreeCandidateNode).dataBefore();
         doReturn(after).when(dataTreeCandidateNode).dataAfter();

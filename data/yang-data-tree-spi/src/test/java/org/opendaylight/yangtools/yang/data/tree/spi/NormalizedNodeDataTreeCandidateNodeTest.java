@@ -7,54 +7,53 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
-public class NormalizedNodeDataTreeCandidateNodeTest {
+class NormalizedNodeDataTreeCandidateNodeTest {
     @Test
-    public void testNormalizedNodeDataTreeCandidateNode() {
-        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
-        final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode = new
+    void testNormalizedNodeDataTreeCandidateNode() {
+        final var mockedNormalizedNode = mock(NormalizedNode.class);
+        final var normalizedNodeDataTreeCandidateNode = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNode);
 
         final var mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
         doReturn(mockedPathArgument).when(mockedNormalizedNode).name();
         assertSame(mockedPathArgument, normalizedNodeDataTreeCandidateNode.name());
 
-        final Collection<DataTreeCandidateNode> childNodes = normalizedNodeDataTreeCandidateNode.childNodes();
-        assertTrue(childNodes instanceof List);
+        final var childNodes = normalizedNodeDataTreeCandidateNode.childNodes();
+        assertInstanceOf(List.class, childNodes);
         assertTrue(childNodes.isEmpty());
 
         assertNull(normalizedNodeDataTreeCandidateNode.modifiedChild(mockedPathArgument));
 
         assertEquals(ModificationType.WRITE, normalizedNodeDataTreeCandidateNode.modificationType());
         assertEquals(mockedNormalizedNode, normalizedNodeDataTreeCandidateNode.dataAfter());
-        assertEquals(null, normalizedNodeDataTreeCandidateNode.dataBefore());
+        assertNull(normalizedNodeDataTreeCandidateNode.dataBefore());
 
-        final DistinctNodeContainer mockedNormalizedNodeContainer = mock(DistinctNodeContainer.class);
-        final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode2 = new
+        final var mockedNormalizedNodeContainer = mock(DistinctNodeContainer.class);
+        final var normalizedNodeDataTreeCandidateNode2 = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNodeContainer);
-        final NormalizedNode mockedChildNormNode1 = mock(NormalizedNode.class);
-        final NormalizedNode mockedChildNormNode2 = mock(NormalizedNode.class);
+        final var mockedChildNormNode1 = mock(NormalizedNode.class);
+        final var mockedChildNormNode2 = mock(NormalizedNode.class);
         final var mockedChildNodes = Arrays.asList(mockedChildNormNode1, mockedChildNormNode2, null);
         doReturn(mockedChildNodes).when(mockedNormalizedNodeContainer).body();
         final var childNodes2 = normalizedNodeDataTreeCandidateNode2.childNodes();
