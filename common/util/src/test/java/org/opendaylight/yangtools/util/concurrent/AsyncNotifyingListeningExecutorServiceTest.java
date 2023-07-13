@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -30,8 +30,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
 
 /**
@@ -44,7 +44,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
     private ExecutorService listenerExecutor;
     private AsyncNotifyingListeningExecutorService testExecutor;
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (listenerExecutor != null) {
             listenerExecutor.shutdownNow();
@@ -106,8 +106,8 @@ public class AsyncNotifyingListeningExecutorServiceTest {
 
         blockTaskLatch.countDown();
 
-        assertTrue("ListenableFuture callback was not notified of onSuccess",
-                    futureNotifiedLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(futureNotifiedLatch.await(5, TimeUnit.SECONDS),
+                    "ListenableFuture callback was not notified of onSuccess");
 
         if (assertError.get() != null) {
             throw assertError.get();
@@ -119,8 +119,8 @@ public class AsyncNotifyingListeningExecutorServiceTest {
         futureNotifiedLatch = new CountDownLatch(1);
         addCallback(future, futureNotifiedLatch, Thread.currentThread().getName(), assertError);
 
-        assertTrue("ListenableFuture callback was not notified of onSuccess",
-                    futureNotifiedLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(futureNotifiedLatch.await(5, TimeUnit.SECONDS),
+                    "ListenableFuture callback was not notified of onSuccess");
 
         if (assertError.get() != null) {
             throw assertError.get();
@@ -135,10 +135,10 @@ public class AsyncNotifyingListeningExecutorServiceTest {
             public void onSuccess(final Object result) {
                 try {
                     String theadName = Thread.currentThread().getName();
-                    assertTrue("ListenableFuture callback was not notified on the listener executor."
+                    assertTrue(theadName.startsWith(expListenerThreadPrefix),
+                            "ListenableFuture callback was not notified on the listener executor."
                         + " Expected thread name prefix \"" + expListenerThreadPrefix
-                        + "\". Actual thread name \"" + theadName + "\"",
-                            theadName.startsWith(expListenerThreadPrefix));
+                        + "\". Actual thread name \"" + theadName + "\"");
                 } catch (AssertionError e) {
                     assertError.set(e);
                 } finally {
@@ -175,10 +175,10 @@ public class AsyncNotifyingListeningExecutorServiceTest {
 
         executor.execute(task);
         executor.shutdown();
-        assertTrue("awaitTermination", executor.awaitTermination(3, TimeUnit.SECONDS));
-        assertSame("shutdownNow", taskList, executor.shutdownNow());
-        assertTrue("isShutdown", executor.isShutdown());
-        assertTrue("isTerminated", executor.isTerminated());
+        assertTrue(executor.awaitTermination(3, TimeUnit.SECONDS), "awaitTermination");
+        assertSame(taskList, executor.shutdownNow(), "shutdownNow");
+        assertTrue(executor.isShutdown(), "isShutdown");
+        assertTrue(executor.isTerminated(), "isTerminated");
 
         verify(mockDelegate).execute(task);
         verify(mockDelegate).shutdown();

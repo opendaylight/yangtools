@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -32,8 +33,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OffsetMapTest {
     private final Map<String, String> twoEntryMap = ImmutableMap.of("k1", "v1", "k2", "v2");
@@ -47,7 +48,7 @@ public class OffsetMapTest {
         return (ImmutableOffsetMap<String, String>) ImmutableOffsetMap.unorderedCopyOf(twoEntryMap);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         OffsetMapCache.invalidateCache();
     }
@@ -63,7 +64,7 @@ public class OffsetMapTest {
         final Map<String, String> result = ImmutableOffsetMap.orderedCopyOf(source);
 
         assertEquals(source, result);
-        assertTrue(result instanceof ImmutableMap);
+        assertInstanceOf(ImmutableMap.class, result);
     }
 
     @Test
@@ -72,7 +73,7 @@ public class OffsetMapTest {
         final Map<String, String> result = ImmutableOffsetMap.orderedCopyOf(source);
 
         assertEquals(source, result);
-        assertTrue(result instanceof SharedSingletonMap);
+        assertInstanceOf(SharedSingletonMap.class, result);
     }
 
     @Test
@@ -218,7 +219,7 @@ public class OffsetMapTest {
         final Map<String, String> result = source.toModifiableMap();
 
         // The two maps should be equal, but isolated
-        assertTrue(result instanceof MutableOffsetMap);
+        assertInstanceOf(MutableOffsetMap.class, result);
         assertEquals(source, result);
         assertEquals(result, source);
 
@@ -322,7 +323,7 @@ public class OffsetMapTest {
         final Map<String, String> result = mutable.toUnmodifiableMap();
 
         // Should devolve to a singleton
-        assertTrue(result instanceof SharedSingletonMap);
+        assertInstanceOf(SharedSingletonMap.class, result);
         assertEquals(ImmutableMap.of("k2", "v2"), result);
     }
 
@@ -335,7 +336,7 @@ public class OffsetMapTest {
 
         final Map<String, String> result = mutable.toUnmodifiableMap();
 
-        assertTrue(result instanceof ImmutableOffsetMap);
+        assertInstanceOf(ImmutableOffsetMap.class, result);
         assertEquals(ImmutableMap.of("k2", "v2", "k3", "v3"), result);
     }
 
@@ -364,7 +365,7 @@ public class OffsetMapTest {
 
         final Map<String, String> result = mutable.toUnmodifiableMap();
 
-        assertTrue(result instanceof ImmutableOffsetMap);
+        assertInstanceOf(ImmutableOffsetMap.class, result);
         assertEquals(threeEntryMap, result);
         assertEquals(result, threeEntryMap);
         assertFalse(Iterators.elementsEqual(threeEntryMap.entrySet().iterator(), result.entrySet().iterator()));
@@ -382,7 +383,7 @@ public class OffsetMapTest {
 
         final Map<String, String> result = mutable.toUnmodifiableMap();
 
-        assertTrue(result instanceof ImmutableOffsetMap);
+        assertInstanceOf(ImmutableOffsetMap.class, result);
         assertEquals(threeEntryMap, result);
         assertEquals(result, threeEntryMap);
         assertTrue(Iterators.elementsEqual(threeEntryMap.entrySet().iterator(), result.entrySet().iterator()));

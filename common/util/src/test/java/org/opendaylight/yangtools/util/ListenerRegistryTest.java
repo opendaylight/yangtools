@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.EventListener;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 
 public class ListenerRegistryTest {
     private ExtendedTestEventListener extendedTestEventListener;
     private ListenerRegistry<TestEventListener> registry;
 
-    @Before
+    @BeforeEach
     public void init() {
         extendedTestEventListener = new ExtendedTestEventListener() {};
         registry = ListenerRegistry.create();
@@ -27,19 +27,19 @@ public class ListenerRegistryTest {
 
     @Test
     public void testCreateNewInstance() {
-        assertNotNull("Intance of listener registry should not be null.", registry);
+        assertNotNull(registry, "Intance of listener registry should not be null.");
     }
 
     @Test
     public void testGetListenersMethod() {
-        assertEquals("Listener registry should not have any listeners.", 0, registry.streamListeners().count());
+        assertEquals(0, registry.streamListeners().count(), "Listener registry should not have any listeners.");
     }
 
     @Test
     public void testRegisterMethod() {
         final ListenerRegistration<ExtendedTestEventListener> listenerRegistration = registry.register(
             extendedTestEventListener);
-        assertEquals("Listeners should be the same.", extendedTestEventListener, listenerRegistration.getInstance());
+        assertEquals(extendedTestEventListener, listenerRegistration.getInstance(), "Listeners should be the same.");
     }
 
     interface TestEventListener extends EventListener {

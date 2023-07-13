@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.util.concurrent.AsyncNotifyingListeningExecutorServiceTest.testListenerCallback;
 import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_CALLABLE;
 import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE;
@@ -30,9 +30,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
 
 /**
@@ -59,11 +59,11 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
     DeadlockDetectingListeningExecutorService executor;
 
-    @Before
+    @BeforeEach
     public void setup() {
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (executor != null) {
             executor.shutdownNow();
@@ -84,7 +84,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
         ListenableFuture<String> future = executor.submit(() -> "foo");
 
-        assertEquals("Future result", "foo", future.get(5, TimeUnit.SECONDS));
+        assertEquals("foo", future.get(5, TimeUnit.SECONDS), "Future result");
 
         // Test submit with Runnable.
 
@@ -94,7 +94,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
         future = executor.submit(() -> { }, "foo");
 
-        assertEquals("Future result", "foo", future.get(5, TimeUnit.SECONDS));
+        assertEquals("foo", future.get(5, TimeUnit.SECONDS), "Future result");
     }
 
     @Test
@@ -133,8 +133,8 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
         initialInvoker.invokeExecutor(executor, task);
 
-        assertTrue("Task did not complete - executor likely deadlocked",
-                futureCompletedLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(futureCompletedLatch.await(5, TimeUnit.SECONDS),
+                "Task did not complete - executor likely deadlocked");
 
         if (caughtEx.get() != null) {
             throw caughtEx.get();
@@ -175,9 +175,9 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
         initialInvoker.invokeExecutor(executor, task);
 
-        assertTrue("Task did not complete - executor likely deadlocked", latch.await(5, TimeUnit.SECONDS));
-        assertNotNull("Expected exception thrown", caughtEx.get());
-        assertEquals("Caught exception type", TestDeadlockException.class, caughtEx.get().getClass());
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "Task did not complete - executor likely deadlocked");
+        assertNotNull(caughtEx.get(), "Expected exception thrown");
+        assertEquals(TestDeadlockException.class, caughtEx.get().getClass(), "Caught exception type");
     }
 
     @Test

@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Stopwatch;
 import java.util.Map;
@@ -20,8 +21,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class ThreadPoolExecutorTest {
 
     private ExecutorService executor;
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (executor != null) {
             executor.shutdownNow();
@@ -48,13 +49,15 @@ public class ThreadPoolExecutorTest {
                 SpecialExecutors.newBoundedFastThreadPool(50, 100000, "TestPool", getClass()), 100000, "TestPool", 0);
     }
 
-    @Test(expected = RejectedExecutionException.class)
+    @Test
     public void testFastThreadPoolRejectingTask() throws InterruptedException {
-        executor = SpecialExecutors.newBoundedFastThreadPool(1, 1, "TestPool", getClass());
+        assertThrows(RejectedExecutionException.class, () -> {
+            executor = SpecialExecutors.newBoundedFastThreadPool(1, 1, "TestPool", getClass());
 
-        for (int i = 0; i < 5; i++) {
-            executor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
-        }
+            for (int i = 0; i < 5; i++) {
+                executor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
+            }
+        });
     }
 
     @Test
@@ -70,13 +73,16 @@ public class ThreadPoolExecutorTest {
                 100000, "TestPool", 0);
     }
 
-    @Test(expected = RejectedExecutionException.class)
+    @Test
     public void testCachedThreadRejectingTask() throws InterruptedException {
-        ExecutorService localExecutor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool", getClass());
+        assertThrows(RejectedExecutionException.class, () -> {
+            ExecutorService localExecutor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool", getClass());
 
-        for (int i = 0; i < 5; i++) {
-            localExecutor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
-        }
+            for (int i = 0; i < 5; i++) {
+                localExecutor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5,
+                        TimeUnit.SECONDS)));
+            }
+        });
     }
 
     @Test
@@ -174,8 +180,8 @@ public class ThreadPoolExecutorTest {
                 }
 
                 if (expThreadPrefix != null) {
-                    assertTrue("Thread name starts with " + expThreadPrefix,
-                            Thread.currentThread().getName().startsWith(expThreadPrefix));
+                    assertTrue(Thread.currentThread().getName().startsWith(expThreadPrefix),
+                            "Thread name starts with " + expThreadPrefix);
                 }
 
                 if (taskCountPerThread != null) {
