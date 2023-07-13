@@ -7,27 +7,24 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
 
-public class TopologicalSortTest {
-
+class TopologicalSortTest {
     @Test
-    public void test() {
-        Set<Node> nodes = new HashSet<>();
+    void test() {
+        final var nodes = new HashSet<Node>();
 
-        NodeImpl node1 = new NodeImpl();
+        final var node1 = new NodeImpl();
         nodes.add(node1);
-        NodeImpl node2 = new NodeImpl();
+        final var node2 = new NodeImpl();
         nodes.add(node2);
-        NodeImpl node3 = new NodeImpl();
+        final var node3 = new NodeImpl();
         nodes.add(node3);
 
         node1.addEdge(node2);
@@ -38,16 +35,16 @@ public class TopologicalSortTest {
     }
 
     @Test
-    public void testValidSimple() throws Exception {
-        Set<Node> nodes = new HashSet<>();
+    void testValidSimple() {
+        final var nodes = new HashSet<Node>();
 
-        NodeImpl node1 = new NodeImpl();
+        final var node1 = new NodeImpl();
         nodes.add(node1);
-        NodeImpl node2 = new NodeImpl();
+        final var node2 = new NodeImpl();
         nodes.add(node2);
-        NodeImpl node3 = new NodeImpl();
+        final var node3 = new NodeImpl();
         nodes.add(node3);
-        Node node4 = new NodeImpl();
+        final var node4 = new NodeImpl();
         nodes.add(node4);
 
         node1.addEdge(node2);
@@ -55,7 +52,7 @@ public class TopologicalSortTest {
         node2.addEdge(node4);
         node3.addEdge(node2);
 
-        List<Node> sorted = TopologicalSort.sort(nodes);
+        final var sorted = TopologicalSort.sort(nodes);
 
         assertEquals(node4, sorted.get(0));
         assertEquals(node2, sorted.get(1));

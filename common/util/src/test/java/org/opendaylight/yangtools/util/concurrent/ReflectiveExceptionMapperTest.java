@@ -7,24 +7,24 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.Serial;
 import java.util.concurrent.ExecutionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ReflectiveExceptionMapperTest {
-    static final class NoArgumentCtorException extends Exception {
-        @Serial
+    public static final class NoArgumentCtorException extends Exception {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
-        NoArgumentCtorException() {
+        public NoArgumentCtorException() {
+            // Noop
         }
     }
 
-    static final class PrivateCtorException extends Exception {
-        @Serial
+    public static final class PrivateCtorException extends Exception {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private PrivateCtorException(final String message, final Throwable cause) {
@@ -32,17 +32,17 @@ public class ReflectiveExceptionMapperTest {
         }
     }
 
-    static final class FailingCtorException extends Exception {
-        @Serial
+    public static final class FailingCtorException extends Exception {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
-        FailingCtorException(final String message, final Throwable cause) {
+        public FailingCtorException(final String message, final Throwable cause) {
             throw new IllegalArgumentException("just for test");
         }
     }
 
     public static final class GoodException extends Exception {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         public GoodException(final String message, final Throwable cause) {
@@ -52,31 +52,28 @@ public class ReflectiveExceptionMapperTest {
 
 
     @Test
-    public void testNoArgumentsContructor() {
+    void testNoArgumentsContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("no arguments", NoArgumentCtorException.class));
     }
 
     @Test
-    public void testPrivateContructor() {
+    void testPrivateContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("private constructor", PrivateCtorException.class));
     }
 
     @Test
-    public void testFailingContructor() {
+    void testFailingContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("failing constructor", FailingCtorException.class));
     }
 
     @Test
-    public void testInstantiation() {
-        ReflectiveExceptionMapper<GoodException> mapper = ReflectiveExceptionMapper.create("instantiation",
-            GoodException.class);
-
-        final Throwable cause = new Throwable("some test message");
-
-        GoodException ret = mapper.apply(new ExecutionException("test", cause));
+    void testInstantiation() {
+        final var mapper = ReflectiveExceptionMapper.create("instantiation", GoodException.class);
+        final var cause = new Throwable("some test message");
+        final var ret = mapper.apply(new ExecutionException("test", cause));
 
         assertEquals("instantiation execution failed", ret.getMessage());
         assertEquals(cause, ret.getCause());

@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -18,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author Thomas Pantelis
  */
-public final class CommonTestUtils {
+final class CommonTestUtils {
     private CommonTestUtils() {
         throw new UnsupportedOperationException();
     }

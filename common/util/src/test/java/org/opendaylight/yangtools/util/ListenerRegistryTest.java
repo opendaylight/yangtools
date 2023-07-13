@@ -7,39 +7,30 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.EventListener;
-import org.junit.Before;
-import org.junit.Test;
-import org.opendaylight.yangtools.concepts.ListenerRegistration;
+import org.junit.jupiter.api.Test;
 
-public class ListenerRegistryTest {
-    private ExtendedTestEventListener extendedTestEventListener;
-    private ListenerRegistry<TestEventListener> registry;
+class ListenerRegistryTest {
+    private final ExtendedTestEventListener extendedTestEventListener = new ExtendedTestEventListener() {};
+    private final ListenerRegistry<TestEventListener> registry = ListenerRegistry.create();
 
-    @Before
-    public void init() {
-        extendedTestEventListener = new ExtendedTestEventListener() {};
-        registry = ListenerRegistry.create();
+    @Test
+    void testCreateNewInstance() {
+        assertNotNull(registry, "Intance of listener registry should not be null.");
     }
 
     @Test
-    public void testCreateNewInstance() {
-        assertNotNull("Intance of listener registry should not be null.", registry);
+    void testGetListenersMethod() {
+        assertEquals(0, registry.streamListeners().count(), "Listener registry should not have any listeners.");
     }
 
     @Test
-    public void testGetListenersMethod() {
-        assertEquals("Listener registry should not have any listeners.", 0, registry.streamListeners().count());
-    }
-
-    @Test
-    public void testRegisterMethod() {
-        final ListenerRegistration<ExtendedTestEventListener> listenerRegistration = registry.register(
-            extendedTestEventListener);
-        assertEquals("Listeners should be the same.", extendedTestEventListener, listenerRegistration.getInstance());
+    void testRegisterMethod() {
+        final var listenerRegistration = registry.register(extendedTestEventListener);
+        assertEquals(extendedTestEventListener, listenerRegistration.getInstance(), "Listeners should be the same.");
     }
 
     interface TestEventListener extends EventListener {
