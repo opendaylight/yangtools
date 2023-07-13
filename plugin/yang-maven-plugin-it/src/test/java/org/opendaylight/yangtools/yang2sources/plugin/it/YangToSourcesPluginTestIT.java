@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin.it;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
@@ -25,9 +24,9 @@ import java.util.Optional;
 import java.util.Properties;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ public class YangToSourcesPluginTestIT {
     private static String ARGLINE_PREFIX;
     private static String ARGLINE_SUFFIX;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         final String argLine = System.getProperty("itArgPath");
         if (argLine == null || argLine.isBlank()) {
@@ -71,7 +70,7 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    @Ignore // FIXME depends on fix of a bug processing multiple fileGenerator definitions having same identifier
+    @Disabled // FIXME depends on fix of a bug processing multiple fileGenerator definitions having same identifier
     public void testAdditionalConfiguration() throws Exception {
         Verifier vrf = setUp("test-parent/AdditionalConfig/", false);
         vrf.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : "
@@ -132,7 +131,7 @@ public class YangToSourcesPluginTestIT {
     }
 
     static void assertVerificationException(final VerificationException ex, final String string) {
-        assertThat(ex.getMessage(), containsString(string));
+        assertTrue(ex.getMessage().contains(string));
     }
 
     static Verifier setUp(final String project, final boolean ignoreF)
