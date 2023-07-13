@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 
-public class IetfYangSmiv2ExtensionsMappingTest {
+class IetfYangSmiv2ExtensionsMappingTest {
     @Test
-    public void testGetEffectiveRepresentationClass() {
-        assertEquals(IetfYangSmiv2ExtensionsMapping.ALIAS.getEffectiveRepresentationClass(),
-            AliasEffectiveStatement.class);
+    void testGetEffectiveRepresentationClass() {
+        assertEquals(AliasEffectiveStatement.class,
+            IetfYangSmiv2ExtensionsMapping.ALIAS.getEffectiveRepresentationClass());
     }
 
     @Test
-    public void testIsArgumentYinElement() {
+    void testIsArgumentYinElement() {
         assertFalse(IetfYangSmiv2ExtensionsMapping.ALIAS.getArgumentDefinition().orElseThrow().isYinElement());
     }
 }
