@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class NamespaceTest {
+class NamespaceTest {
     @Test
-    public void testNamespaces() {
+    void testNamespaces() {
         // Touch behaviors
         // FIXME: add more checks/split this up when behaviours are testable
         assertNotNull(StatementDefinitions.BEHAVIOUR);

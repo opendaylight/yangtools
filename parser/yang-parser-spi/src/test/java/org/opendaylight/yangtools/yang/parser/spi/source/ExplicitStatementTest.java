@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
-public class ExplicitStatementTest {
+class ExplicitStatementTest {
     @Test
-    public void testStatementSource() {
+    void testStatementSource() {
         assertEquals(StatementOrigin.DECLARATION, ExplicitStatement.inFile("foo").statementOrigin());
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("foo", ExplicitStatement.inFile("foo").toString());
         assertEquals("<UNKNOWN>:5:10", ExplicitStatement.atPosition(5, 10).toString());
         assertEquals("foo:5:10", ExplicitStatement.atPosition("foo", 5, 10).toString());
