@@ -8,9 +8,9 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Stopwatch;
@@ -101,7 +101,7 @@ public class QueuedNotificationManagerTest {
 
         void verifyNotifications(final List<N> expected) {
             verifyNotifications();
-            assertEquals(name + ": Notifications", expected, actual);
+            assertEquals(expected, actual, name + ": Notifications");
         }
 
         // Implement bad hashCode/equals methods to verify it doesn't screw up the
@@ -289,7 +289,7 @@ public class QueuedNotificationManagerTest {
 
         manager.submitNotification(listener, 1);
 
-        assertTrue("JVM Error caught", Uninterruptibles.awaitUninterruptibly(errorCaughtLatch, 5, TimeUnit.SECONDS));
+        assertTrue(Uninterruptibles.awaitUninterruptibly(errorCaughtLatch, 5, TimeUnit.SECONDS), "JVM Error caught");
 
         manager.submitNotification(listener, 2);
 

@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
@@ -67,7 +66,7 @@ public class SharedSingletonMapTest {
         assertFalse(m.equals(ImmutableMap.of("k1", "v1", "k2", "v2")));
 
         final Set<String> set = m.keySet();
-        assertThat(set, instanceOf(SingletonSet.class));
+        assertInstanceOf(SingletonSet.class, set);
         assertTrue(set.contains("k1"));
     }
 
