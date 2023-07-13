@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -107,7 +107,7 @@ public class Bug5830Test {
                 }
               }
             }""");
-        assertNotNull("Schema context must not be null.", schemaContext);
+        assertNotNull(schemaContext, "Schema context must not be null.");
 
         testContainerIsNotPresent(schemaContext);
         final var ex = assertThrows(IllegalArgumentException.class, () -> testContainerIsPresent(schemaContext));
@@ -152,7 +152,7 @@ public class Bug5830Test {
                 }
               }
             }""");
-        assertNotNull("Schema context must not be null.", schemaContext);
+        assertNotNull(schemaContext, "Schema context must not be null.");
 
         try {
             testContainerIsNotPresent(schemaContext);
@@ -239,7 +239,7 @@ public class Bug5830Test {
                 }
               }
             }""");
-        assertNotNull("Schema context must not be null.", schemaContext);
+        assertNotNull(schemaContext, "Schema context must not be null.");
 
         testContainerIsNotPresent(schemaContext);
 

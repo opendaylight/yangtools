@@ -7,20 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -40,7 +38,7 @@ public class LeafRefContextTreeBuilderTest {
     private static QNameModule tst;
     private static LeafRefContext rootLeafRefContext;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/correct-modules");
 
@@ -55,7 +53,7 @@ public class LeafRefContextTreeBuilderTest {
         rootLeafRefContext = LeafRefContext.create(context);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() {
         context = null;
         tst = null;
@@ -210,9 +208,9 @@ public class LeafRefContextTreeBuilderTest {
             () -> YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/incorrect-modules"));
         final Throwable ype = ise.getCause();
         final Throwable reactor = ype.getCause();
-        assertThat(reactor, instanceOf(ReactorException.class));
+        assertInstanceOf(ReactorException.class, reactor);
         final Throwable source = reactor.getCause();
-        assertThat(source, instanceOf(SourceException.class));
-        assertThat(source.getMessage(), startsWith("token recognition error at: './' at 1:2"));
+        assertInstanceOf(SourceException.class, source);
+        assertTrue(source.getMessage().startsWith("token recognition error at: './' at 1:2"));
     }
 }

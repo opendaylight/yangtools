@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -52,7 +52,7 @@ public class OrderedListTest {
     private QName childKeyLeaf;
     private QName childOrdinaryLeaf;
 
-    @Before
+    @BeforeEach
     public void setup() {
         testModule = QNameModule.create(XMLNamespace.of("ordered-list-modification-test"));
         parentContainer = QName.create(testModule, "parent-container");

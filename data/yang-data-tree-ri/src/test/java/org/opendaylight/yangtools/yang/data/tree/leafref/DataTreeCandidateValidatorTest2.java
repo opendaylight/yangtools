@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Map;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -61,7 +61,7 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest2.class);
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws DataValidationFailedException {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
@@ -119,7 +119,7 @@ public class DataTreeCandidateValidatorTest2 {
         LOG.debug("{}", inMemoryDataTree);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() {
         inMemoryDataTree = null;
         rootLeafRefContext = null;

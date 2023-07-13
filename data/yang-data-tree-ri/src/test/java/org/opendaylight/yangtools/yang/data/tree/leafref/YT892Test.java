@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -63,7 +63,7 @@ public class YT892Test {
     private LeafRefContext leafRefContext;
     private DataTree dataTree;
 
-    @Before
+    @BeforeEach
     public void setup() {
         final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yt892");
         leafRefContext = LeafRefContext.create(schemaContext);

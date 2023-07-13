@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -70,71 +71,81 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
             .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(BAR_NODE).build()).build();
     }
 
-    @Test(expected = SchemaValidationFailedException.class)
+    @Test
     public void testOnPathFail() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        final YangInstanceIdentifier ii = OUTER_LIST_1_PATH.node(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
-            .node(INNER_FOO_ENTRY_NODE.name());
-        modificationTree.write(ii, INNER_FOO_ENTRY_NODE);
+        assertThrows(SchemaValidationFailedException.class, () -> {
+            final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            final YangInstanceIdentifier ii = OUTER_LIST_1_PATH.node(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
+                .node(INNER_FOO_ENTRY_NODE.name());
+            modificationTree.write(ii, INNER_FOO_ENTRY_NODE);
 
-        inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+            inMemoryDataTree.validate(modificationTree);
+            final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+            inMemoryDataTree.commit(prepare);
+        });
     }
 
-    @Test(expected = SchemaValidationFailedException.class)
+    @Test
     public void testOnDataFail() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(TestModel.TEST_PATH, createFooTestContainerNode());
-        modificationTree.ready();
-        inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+        assertThrows(SchemaValidationFailedException.class, () -> {
+            final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree.write(TestModel.TEST_PATH, createFooTestContainerNode());
+            modificationTree.ready();
+            inMemoryDataTree.validate(modificationTree);
+            final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+            inMemoryDataTree.commit(prepare);
+        });
     }
 
-    @Test(expected = SchemaValidationFailedException.class)
+    @Test
     public void testOnDataLeafFail() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(TestModel.TEST_PATH, createBarTestContainerNode());
-        modificationTree.ready();
-        inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+        assertThrows(SchemaValidationFailedException.class, () -> {
+            final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree.write(TestModel.TEST_PATH, createBarTestContainerNode());
+            modificationTree.ready();
+            inMemoryDataTree.validate(modificationTree);
+            final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+            inMemoryDataTree.commit(prepare);
+        });
     }
 
-    @Test(expected = SchemaValidationFailedException.class)
+    @Test
     public void testOnPathCaseLeafFail() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
-        final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
-        final NodeIdentifier case2ContId = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont"));
-        final YangInstanceIdentifier ii = TestModel.TEST_PATH.node(choice1Id).node(case2ContId);
-        final ContainerNode case2Cont = Builders.containerBuilder().withNodeIdentifier(case2ContId)
+        assertThrows(SchemaValidationFailedException.class, () -> {
+            final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
+            final NodeIdentifier case2ContId = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont"));
+            final YangInstanceIdentifier ii = TestModel.TEST_PATH.node(choice1Id).node(case2ContId);
+            final ContainerNode case2Cont = Builders.containerBuilder().withNodeIdentifier(case2ContId)
                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value")).build();
 
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(ii, case2Cont);
-        modificationTree.ready();
+            final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree.write(ii, case2Cont);
+            modificationTree.ready();
+        });
     }
 
-    @Test(expected = SchemaValidationFailedException.class)
+    @Test
     public void testOnDataCaseLeafFail() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
-        final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
-        final YangInstanceIdentifier ii = TestModel.TEST_PATH.node(choice1Id);
-        final ChoiceNode choice1 = Builders.choiceBuilder().withNodeIdentifier(choice1Id)
+        assertThrows(SchemaValidationFailedException.class, () -> {
+            final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
+            final YangInstanceIdentifier ii = TestModel.TEST_PATH.node(choice1Id);
+            final ChoiceNode choice1 = Builders.choiceBuilder().withNodeIdentifier(choice1Id)
                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value")).build();
 
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(ii, choice1);
+            final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree.write(ii, choice1);
 
-        modificationTree.ready();
+            modificationTree.ready();
+        });
     }
 }

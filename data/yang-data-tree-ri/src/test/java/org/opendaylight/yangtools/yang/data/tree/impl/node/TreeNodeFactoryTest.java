@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -31,7 +31,7 @@ public class TreeNodeFactoryTest {
         final Version version = Version.initial();
         final TreeNode node = TreeNode.of(data, version);
 
-        assertTrue(node instanceof SimpleContainerNode);
+        assertInstanceOf(SimpleContainerNode.class, node);
         checkTreeNode(node, data, version);
     }
 
@@ -41,7 +41,7 @@ public class TreeNodeFactoryTest {
         final Version version = Version.initial();
         final TreeNode node = TreeNode.of(data, version);
 
-        assertTrue(node instanceof SimpleContainerNode);
+        assertInstanceOf(SimpleContainerNode.class, node);
         checkTreeNode(node, data, version);
     }
 
@@ -51,7 +51,7 @@ public class TreeNodeFactoryTest {
         final Version version = Version.initial();
         final TreeNode node = TreeNode.of(data, version);
 
-        assertTrue(node instanceof ValueNode);
+        assertInstanceOf(ValueNode.class, node);
         checkTreeNode(node, data, version);
     }
 }

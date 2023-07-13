@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -37,7 +37,7 @@ public class Bug8291Test {
 
     private EffectiveModelContext schemaContext;
 
-    @Before
+    @BeforeEach
     public void init() {
         schemaContext = YangParserTestUtils.parseYang("""
             module bug8291 {
@@ -64,7 +64,7 @@ public class Bug8291Test {
                 }
               }
             }""");
-        assertNotNull("Schema context must not be null.", schemaContext);
+        assertNotNull(schemaContext, "Schema context must not be null.");
     }
 
     private static DataTree initDataTree(final EffectiveModelContext schemaContext)

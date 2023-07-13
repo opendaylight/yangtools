@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -18,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory
 public class DataTreeTransactionTest extends AbstractTestModelTest {
     private DataTree tree;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
     }
@@ -37,15 +39,19 @@ public class DataTreeTransactionTest extends AbstractTestModelTest {
         tree.prepare(mod);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnsealedValidate() throws DataValidationFailedException {
-        final DataTreeModification mod = tree.takeSnapshot().newModification();
-        tree.validate(mod);
+        assertThrows(IllegalArgumentException.class, () -> {
+            final DataTreeModification mod = tree.takeSnapshot().newModification();
+            tree.validate(mod);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnsealedPrepare() throws DataValidationFailedException {
-        final DataTreeModification mod = tree.takeSnapshot().newModification();
-        tree.prepare(mod);
+        assertThrows(IllegalArgumentException.class, () -> {
+            final DataTreeModification mod = tree.takeSnapshot().newModification();
+            tree.prepare(mod);
+        });
     }
 }
