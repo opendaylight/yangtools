@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -23,8 +24,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class YT1455Test {
+@ExtendWith(MockitoExtension.class)
+class YT1455Test {
     @Mock
     public DistinctNodeContainer<PathArgument, NormalizedNode> oldData;
     @Mock
@@ -33,7 +34,7 @@ public class YT1455Test {
     public UnkeyedListNode child;
 
     @Test
-    public void testDeleteUnkeyedList() {
+    void testDeleteUnkeyedList() {
         final var childId = new NodeIdentifier(QName.create("foo", "foo"));
         doReturn(childId).when(child).name();
         doReturn(List.of(child)).when(oldData).body();
@@ -47,7 +48,7 @@ public class YT1455Test {
         assertEquals(childId, first.name());
         assertEquals(ModificationType.DELETE, first.modificationType());
         assertEquals(child, first.dataBefore());
-        assertEquals(null, first.dataAfter());
+        assertNull(first.dataAfter());
         assertEquals(0, first.childNodes().size());
     }
 }
