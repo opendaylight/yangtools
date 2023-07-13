@@ -7,25 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 
-public class OrderingEqualityTest {
+class OrderingEqualityTest {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
 
     @Test
-    public void testUserMap() {
-        final UserMapNode firstMap = Builders.orderedMapBuilder()
+    void testUserMap() {
+        final var firstMap = Builders.orderedMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "two"))
@@ -37,7 +34,7 @@ public class OrderingEqualityTest {
                 .build())
             .build();
 
-        final UserMapNode secondMap = Builders.orderedMapBuilder()
+        final var secondMap = Builders.orderedMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
@@ -50,10 +47,10 @@ public class OrderingEqualityTest {
             .build();
 
         assertEquals(firstMap.asMap(), secondMap.asMap());
-        assertFalse(firstMap.equals(secondMap));
-        assertFalse(secondMap.equals(firstMap));
+        assertNotEquals(firstMap, secondMap);
+        assertNotEquals(secondMap, firstMap);
 
-        final UserMapNode thirdMap = Builders.orderedMapBuilder()
+        final var thirdMap = Builders.orderedMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
@@ -66,13 +63,13 @@ public class OrderingEqualityTest {
             .build();
 
         assertEquals(secondMap.asMap(), thirdMap.asMap());
-        assertFalse(firstMap.equals(thirdMap));
-        assertTrue(secondMap.equals(thirdMap));
+        assertNotEquals(firstMap, thirdMap);
+        assertEquals(secondMap, thirdMap);
         assertArrayEquals(secondMap.body().toArray(), thirdMap.body().toArray());
         assertEquals(secondMap.hashCode(), thirdMap.hashCode());
 
         // Although this map looks as secondMap, it is not equal
-        final SystemMapNode systemMap = Builders.mapBuilder()
+        final var systemMap = Builders.mapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
@@ -85,13 +82,13 @@ public class OrderingEqualityTest {
             .build();
 
         assertEquals(secondMap.asMap(), systemMap.asMap());
-        assertFalse(firstMap.equals(systemMap));
-        assertFalse(secondMap.equals(systemMap));
+        assertNotEquals(firstMap, systemMap);
+        assertNotEquals(secondMap, systemMap);
     }
 
     @Test
-    public void testSystemMap() {
-        final SystemMapNode firstMap = Builders.mapBuilder()
+    void testSystemMap() {
+        final var firstMap = Builders.mapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
@@ -102,7 +99,7 @@ public class OrderingEqualityTest {
                 .withChild(ImmutableNodes.leafNode(BAR, "two"))
                 .build())
             .build();
-        final SystemMapNode secondMap = Builders.mapBuilder()
+        final var secondMap = Builders.mapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(Builders.mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "two"))
@@ -116,8 +113,8 @@ public class OrderingEqualityTest {
 
         assertEquals(firstMap.asMap(), secondMap.asMap());
         // Order does not matter
-        assertTrue(firstMap.equals(secondMap));
-        assertTrue(secondMap.equals(firstMap));
+        assertEquals(firstMap, secondMap);
+        assertEquals(secondMap, firstMap);
         assertEquals(firstMap.hashCode(), secondMap.hashCode());
     }
 }

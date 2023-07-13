@@ -7,21 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1097Test {
+class YT1097Test {
     @Test
-    public void testBooleanStringUnion() {
-        final Module module = YangParserTestUtils.parseYang("""
+    void testBooleanStringUnion() {
+        final var module = YangParserTestUtils.parseYang("""
             module yt1097 {
               namespace yt1097;
               prefix yt1097;
@@ -33,12 +30,12 @@ public class YT1097Test {
                 }
               }
             }""").findModule("yt1097").orElseThrow();
-        final DataSchemaNode foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo"))
+        final var foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo"))
                 .orElseThrow();
-        assertThat(foo, instanceOf(LeafSchemaNode.class));
+        assertInstanceOf(LeafSchemaNode.class, foo);
 
-        final TypeDefinitionAwareCodec<?, ?> codec = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).getType());
-        assertThat(codec, instanceOf(UnionStringCodec.class));
+        final var codec = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).getType());
+        assertInstanceOf(UnionStringCodec.class, codec);
 
         assertDecoded(codec, Boolean.TRUE, "true");
         assertDecoded(codec, Boolean.FALSE, "false");
@@ -54,8 +51,8 @@ public class YT1097Test {
 
     private static void assertDecoded(final TypeDefinitionAwareCodec<?, ?> codec, final Object expected,
             final String input) {
-        final Object result = codec.deserialize(input);
-        assertThat(result, instanceOf(expected.getClass()));
+        final var result = codec.deserialize(input);
+        assertInstanceOf(expected.getClass(), result);
         assertEquals(expected, result);
     }
 }

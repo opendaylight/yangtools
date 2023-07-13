@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1437Test {
+class YT1437Test {
     @Test
-    public void testDecimalFractionDigits() {
+    void testDecimalFractionDigits() {
         final var module = YangParserTestUtils.parseYang("""
             module yt1437 {
               namespace yt1437;
@@ -32,10 +31,11 @@ public class YT1437Test {
               }
             }""").findModule("yt1437").orElseThrow();
         final var foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo")).orElseThrow();
-        assertThat(foo, instanceOf(LeafSchemaNode.class));
+        assertInstanceOf(LeafSchemaNode.class, foo);
 
-        final TypeDefinitionAwareCodec<?, ?> codec = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).getType());
-        assertThat(codec, instanceOf(DecimalStringCodec.class));
+        final var codec = (TypeDefinitionAwareCodec<?, ?>) TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo)
+                .getType());
+        assertInstanceOf(DecimalStringCodec.class, codec);
         final var cast = (DecimalStringCodec) codec;
 
         final var one = cast.deserialize("20.0");

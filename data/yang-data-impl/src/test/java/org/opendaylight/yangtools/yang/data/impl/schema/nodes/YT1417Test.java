@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -25,13 +25,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class YT1417Test {
+@ExtendWith(MockitoExtension.class)
+class YT1417Test {
     public static final QName FOO = QName.create("foo", "foo");
     public static final QName BAR = QName.create("foo", "bar");
 
     @Test
-    public void testContainerNodeEquality() {
+    void testContainerNodeEquality() {
         final var mock = mock(ContainerNode.class);
         doReturn(new NodeIdentifier(FOO)).when(mock).name();
         doReturn(1).when(mock).size();
@@ -63,7 +63,7 @@ public class YT1417Test {
     }
 
     @Test
-    public void testSystemLeafSetNodeEquality() {
+    void testSystemLeafSetNodeEquality() {
         final var mock = mock(SystemLeafSetNode.class);
         doReturn(new NodeIdentifier(FOO)).when(mock).name();
         doReturn(1).when(mock).size();
@@ -113,7 +113,7 @@ public class YT1417Test {
     }
 
     @Test
-    public void testUserLeafSetNodeEquality() {
+    void testUserLeafSetNodeEquality() {
         final var mock = mock(UserLeafSetNode.class);
         doReturn(new NodeIdentifier(FOO)).when(mock).name();
         doReturn(List.of(

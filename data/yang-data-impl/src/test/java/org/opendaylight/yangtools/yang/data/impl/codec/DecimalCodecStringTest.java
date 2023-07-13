@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
@@ -21,18 +21,18 @@ import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
  *
  * @author Thomas Pantelis
  */
-public class DecimalCodecStringTest {
+class DecimalCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
-    public void testSerialize() {
-        DecimalCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(getType(), DecimalCodec.class);
+    void testSerialize() {
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(getType(), DecimalCodec.class);
         assertEquals("123.456", codec.serialize(Decimal64.valueOf("123.456")));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testDeserialize() {
-        DecimalCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(getType(), DecimalCodec.class);
+    void testDeserialize() {
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(getType(), DecimalCodec.class);
 
         assertEquals(Decimal64.valueOf("123.456"), codec.deserialize("123.456"));
 

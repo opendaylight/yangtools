@@ -20,7 +20,7 @@ public class MemoryConsumption {
      * Record memory and timestamp.
      */
     public void startObserving() {
-        Runtime runtime = Runtime.getRuntime();
+        final var runtime = Runtime.getRuntime();
         // Run the garbage collector
         runtime.gc();
         memBegin = getActualMemoryConsumption();
@@ -33,8 +33,8 @@ public class MemoryConsumption {
      * @return memory usage and time elapsed message
      */
     public String finishObserving() {
-        long memEnd = getActualMemoryConsumption();
-        long tsEnd = System.currentTimeMillis();
+        final var memEnd = getActualMemoryConsumption();
+        final var tsEnd = System.currentTimeMillis();
         return String.format("Used memory: %10d B; Elapsed time: %5d ms", memEnd - memBegin, tsEnd - tsBegin);
     }
 
@@ -44,9 +44,9 @@ public class MemoryConsumption {
      * @return actual memory usage
      */
     public static long getActualMemoryConsumption() {
-        Runtime runtime = Runtime.getRuntime();
+        final var runtime = Runtime.getRuntime();
         // Calculate the used memory
-        long memory = runtime.totalMemory() - runtime.freeMemory();
+        final var memory = runtime.totalMemory() - runtime.freeMemory();
         return memory;
     }
 }
