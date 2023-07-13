@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMConstants;
@@ -22,29 +20,18 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
-public class NACMTest {
-    private static CrossSourceStatementReactor REACTOR;
-
-    @BeforeClass
-    public static void createReactor() {
-        REACTOR = RFC7950Reactors.defaultReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new DefaultDenyAllStatementSupport(YangParserConfiguration.DEFAULT))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new DefaultDenyWriteStatementSupport(YangParserConfiguration.DEFAULT))
-                .build();
-    }
-
-    @AfterClass
-    public static void freeReactor() {
-        REACTOR = null;
-    }
-
+class NACMTest {
     @Test
-    public void testResolution() throws Exception {
-        final var context = REACTOR.newBuild()
+    void testResolution() throws Exception {
+        final var reactor = RFC7950Reactors.defaultReactorBuilder()
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new DefaultDenyAllStatementSupport(YangParserConfiguration.DEFAULT))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new DefaultDenyWriteStatementSupport(YangParserConfiguration.DEFAULT))
+            .build();
+
+        final var context = reactor.newBuild()
             .addSources(
                 YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-netconf-acm@2012-02-22.yang")),
                 YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-yang-types@2013-07-15.yang")))
