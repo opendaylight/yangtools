@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -31,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
-public abstract class AbstractPrettyTreeTest {
+abstract class AbstractPrettyTreeTest {
     protected static final QName ROOT_QNAME = QName.create(
             "urn:opendaylight:controller:sal:dom:store:test", "2014-03-13", "root");
     protected static final QName ANOTHER_QNAME = QName.create(
@@ -154,7 +153,7 @@ public abstract class AbstractPrettyTreeTest {
     }
 
     protected static LeafSetNode<String> createLeafSetNode() {
-        final String value = "Leaf set value";
+        final var value = "Leaf set value";
         return Builders.<String>leafSetBuilder()
             .withNodeIdentifier(NodeIdentifier.create(LEAF_SET_QNAME))
             .withValue(List.of(Builders.<String>leafSetEntryBuilder()
@@ -165,8 +164,8 @@ public abstract class AbstractPrettyTreeTest {
     }
 
     protected static UserLeafSetNode<String> createUserLeafSetNode() {
-        final String value = "User leaf set value";
-        final LeafSetEntryNode<String> leafSetValue = Builders.<String>leafSetEntryBuilder()
+        final var value = "User leaf set value";
+        final var leafSetValue = Builders.<String>leafSetEntryBuilder()
                 .withNodeIdentifier(new NodeWithValue<>(USER_LEAF_SET_QNAME, value))
                 .withValue(value)
                 .build();

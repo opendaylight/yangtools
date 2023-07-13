@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
@@ -24,13 +21,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
@@ -38,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.UniqueConstraintException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
-public class UniqueConstraintTest {
+class UniqueConstraintTest {
     private static final String NS = "foo";
     private static final String REV = "2016-05-17";
     private static final QName TASK_CONTAINER = QName.create(NS, REV, "task-container");
@@ -51,21 +45,21 @@ public class UniqueConstraintTest {
 
     private static EffectiveModelContext TEST_MODEL;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         TEST_MODEL = TestModel.createTestContext("/yt570.yang");
     }
 
     @Test
-    public void switchEntriesTest() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(TEST_MODEL, true);
+    void switchEntriesTest() throws DataValidationFailedException {
+        final var inMemoryDataTree = initDataTree(TEST_MODEL, true);
         writeMapEntry(inMemoryDataTree, "1", "l1", "l2", "l3");
         writeMapEntry(inMemoryDataTree, "2", "l2", "l3", "l4");
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final MapEntryNode mapEntry1 = createMapEntry("1", "l2", "l3", "l4");
-        final MapEntryNode mapEntry2 = createMapEntry("2", "l1", "l2", "l3");
+        final var mapEntry1 = createMapEntry("1", "l2", "l3", "l4");
+        final var mapEntry2 = createMapEntry("2", "l1", "l2", "l3");
 
         //switch values of map entries
         modificationTree.write(
@@ -77,13 +71,13 @@ public class UniqueConstraintTest {
 
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
     }
 
     @Test
-    public void mapTest() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = emptyDataTree(TEST_MODEL, true);
+    void mapTest() throws DataValidationFailedException {
+        final var inMemoryDataTree = emptyDataTree(TEST_MODEL, true);
 
 
         verifyException(assertThrows(UniqueValidationFailedException.class,
@@ -103,8 +97,8 @@ public class UniqueConstraintTest {
     }
 
     @Test
-    public void mapEntryTest() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(TEST_MODEL, true);
+    void mapEntryTest() throws DataValidationFailedException {
+        final var inMemoryDataTree = initDataTree(TEST_MODEL, true);
         writeAndRemoveMapEntries(inMemoryDataTree, true);
         writeAndRemoveMapEntries(inMemoryDataTree, false);
     }
@@ -151,10 +145,10 @@ public class UniqueConstraintTest {
     private static void verifyException(final Exception ex, final String expectedStart,
             final String... expectedLeaves) {
         verifyExceptionMessage(expectedStart, ex.getMessage(), expectedLeaves);
-        assertThat(ex, instanceOf(YangNetconfErrorAware.class));
-        final List<YangNetconfError> errors = ((YangNetconfErrorAware) ex).getNetconfErrors();
+        assertInstanceOf(YangNetconfErrorAware.class, ex);
+        final var errors = ((YangNetconfErrorAware) ex).getNetconfErrors();
         assertEquals(1, errors.size());
-        final YangNetconfError error = errors.get(0);
+        final var error = errors.get(0);
         assertEquals(ErrorSeverity.ERROR, error.severity());
         assertEquals(ErrorType.APPLICATION, error.type());
         assertEquals(ErrorTag.OPERATION_FAILED, error.tag());
@@ -163,15 +157,15 @@ public class UniqueConstraintTest {
 
     private static void verifyExceptionMessage(final String expectedStart, final String message,
             final String... leafs) {
-        assertThat(message, startsWith(expectedStart));
-        for (final String leaf : leafs) {
-            assertThat(message, containsString(leaf));
+        assertTrue(message.startsWith(expectedStart));
+        for (final var leaf : leafs) {
+            assertTrue(message.contains(leaf));
         }
     }
 
     private static void writeMap(final InMemoryDataTree inMemoryDataTree, final boolean withUniqueViolation)
             throws DataValidationFailedException {
-        final MapNode taskNode = Builders
+        final var taskNode = Builders
                 .mapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TASK))
                 .withChild(createMapEntry("1", "l1", "l2", "l3"))
@@ -180,18 +174,18 @@ public class UniqueConstraintTest {
                         withUniqueViolation ? createMapEntry("3", "l1", "l2", "l10") : createMapEntry("3", "l3", "l4",
                                 "l5")).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK), taskNode);
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
     }
 
     private static void writeMapEntry(final InMemoryDataTree inMemoryDataTree, final Object taskIdValue,
             final Object myLeaf1Value, final Object myLeaf2Value, final Object myLeaf3Value)
             throws DataValidationFailedException {
-        final MapEntryNode taskEntryNode = Builders
+        final var taskEntryNode = Builders
                 .mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, taskIdValue))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, taskIdValue))
@@ -201,29 +195,29 @@ public class UniqueConstraintTest {
                         Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(MY_CONTAINER))
                                 .withChild(ImmutableNodes.leafNode(MY_LEAF_3, myLeaf3Value)).build()).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
                         .node(NodeIdentifierWithPredicates.of(TASK, TASK_ID, taskIdValue)),
                 taskEntryNode);
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
     }
 
     private static void removeMapEntry(final InMemoryDataTree inMemoryDataTree,
             final NodeIdentifierWithPredicates mapEntryKey) throws DataValidationFailedException {
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.delete(YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK).node(mapEntryKey));
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
     }
 
     private static MapEntryNode createMapEntry(final Object taskIdValue, final Object myLeaf1Value,
-            final Object myLeaf2Value, final Object myLeaf3Value) throws DataValidationFailedException {
+            final Object myLeaf2Value, final Object myLeaf3Value) {
         return Builders
                 .mapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, taskIdValue))
@@ -240,8 +234,8 @@ public class UniqueConstraintTest {
     }
 
     @Test
-    public void disabledUniqueIndexTest() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(TEST_MODEL, false);
+    void disabledUniqueIndexTest() throws DataValidationFailedException {
+        final var inMemoryDataTree = initDataTree(TEST_MODEL, false);
 
         writeMapEntry(inMemoryDataTree, "1", "l1", "l2", "l3");
         writeMapEntry(inMemoryDataTree, "2", "l2", "l3", "l4");
@@ -259,24 +253,24 @@ public class UniqueConstraintTest {
 
     private static InMemoryDataTree initDataTree(final EffectiveModelContext schemaContext, final boolean uniqueIndex)
             throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory().create(
+        final var inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory().create(
             new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build());
         inMemoryDataTree.setEffectiveModelContext(schemaContext);
 
-        final MapNode taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK), taskNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
         return inMemoryDataTree;
     }
 
     private static InMemoryDataTree emptyDataTree(final EffectiveModelContext schemaContext,
             final boolean uniqueIndex) {
-        final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory().create(
+        final var inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory().create(
             new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build());
         inMemoryDataTree.setEffectiveModelContext(schemaContext);
 

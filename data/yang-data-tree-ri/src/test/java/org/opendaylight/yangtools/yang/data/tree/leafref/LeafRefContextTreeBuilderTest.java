@@ -7,20 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -32,7 +29,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LeafRefContextTreeBuilderTest {
+class LeafRefContextTreeBuilderTest {
     private static final Logger LOG = LoggerFactory.getLogger(LeafRefContextTreeBuilderTest.class);
 
     private static EffectiveModelContext context;
@@ -40,11 +37,11 @@ public class LeafRefContextTreeBuilderTest {
     private static QNameModule tst;
     private static LeafRefContext rootLeafRefContext;
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/correct-modules");
 
-        for (final Module module : context.getModules()) {
+        for (final var module : context.getModules()) {
             if (module.getName().equals("leafref-test")) {
                 tstMod = module;
             }
@@ -55,8 +52,8 @@ public class LeafRefContextTreeBuilderTest {
         rootLeafRefContext = LeafRefContext.create(context);
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         context = null;
         tst = null;
         tstMod = null;
@@ -64,13 +61,13 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test
-    public void buildLeafRefContextTreeTest1() {
+    void buildLeafRefContextTreeTest1() {
 
-        final QName q1 = QName.create(tst, "odl-project");
-        final QName q2 = QName.create(tst, "project");
-        final QName q3 = QName.create(tst, "project-lead");
+        final var q1 = QName.create(tst, "odl-project");
+        final var q2 = QName.create(tst, "project");
+        final var q3 = QName.create(tst, "project-lead");
 
-        final LeafRefContext leafRefCtx = rootLeafRefContext.getReferencingChildByName(q1)
+        final var leafRefCtx = rootLeafRefContext.getReferencingChildByName(q1)
                 .getReferencingChildByName(q2).getReferencingChildByName(q3);
 
         assertTrue(leafRefCtx.isReferencing());
@@ -86,13 +83,13 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test
-    public void buildLeafRefContextTreeTest2() {
+    void buildLeafRefContextTreeTest2() {
 
-        final QName q1 = QName.create(tst, "odl-project");
-        final QName q2 = QName.create(tst, "project");
-        final QName q4 = QName.create(tst, "project-lead2");
+        final var q1 = QName.create(tst, "odl-project");
+        final var q2 = QName.create(tst, "project");
+        final var q4 = QName.create(tst, "project-lead2");
 
-        final LeafRefContext leafRefCtx2 = rootLeafRefContext.getReferencingChildByName(q1)
+        final var leafRefCtx2 = rootLeafRefContext.getReferencingChildByName(q1)
                 .getReferencingChildByName(q2).getReferencingChildByName(q4);
 
         assertTrue(leafRefCtx2.isReferencing());
@@ -108,14 +105,14 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test
-    public void buildLeafRefContextTreeXPathTest() {
-        final QName q1 = QName.create(tst, "odl-project");
-        final QName q2 = QName.create(tst, "project");
-        final QName q5 = QName.create(tst, "ch1");
-        final QName q6 = QName.create(tst, "c1");
-        final QName q7 = QName.create(tst, "ch2");
-        final QName q8 = QName.create(tst, "l1");
-        final LeafRefContext leafRefCtx3 = rootLeafRefContext.getReferencingChildByName(q1)
+    void buildLeafRefContextTreeXPathTest() {
+        final var q1 = QName.create(tst, "odl-project");
+        final var q2 = QName.create(tst, "project");
+        final var q5 = QName.create(tst, "ch1");
+        final var q6 = QName.create(tst, "c1");
+        final var q7 = QName.create(tst, "ch2");
+        final var q8 = QName.create(tst, "l1");
+        final var leafRefCtx3 = rootLeafRefContext.getReferencingChildByName(q1)
                 .getReferencingChildByName(q2).getReferencingChildByName(q5).getReferencingChildByName(q6)
                 .getReferencingChildByName(q7).getReferencingChildByName(q6).getReferencingChildByName(q8);
 
@@ -132,12 +129,12 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test
-    public void buildLeafRefContextTreeTest4() {
-        final QName q9 = QName.create(tst, "odl-project");
-        final QName q10 = QName.create(tst, "project");
-        final QName q11 = QName.create(tst, "name");
+    void buildLeafRefContextTreeTest4() {
+        final var q9 = QName.create(tst, "odl-project");
+        final var q10 = QName.create(tst, "project");
+        final var q11 = QName.create(tst, "name");
 
-        final LeafRefContext leafRefCtx4 = rootLeafRefContext.getReferencedChildByName(q9)
+        final var leafRefCtx4 = rootLeafRefContext.getReferencedChildByName(q9)
                 .getReferencedChildByName(q10).getReferencedChildByName(q11);
 
         assertNotNull(leafRefCtx4);
@@ -147,12 +144,12 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test
-    public void leafRefContextUtilsTest() {
-        final QName q1 = QName.create(tst, "odl-contributor");
-        final QName q2 = QName.create(tst, "contributor");
-        final QName q3 = QName.create(tst, "odl-project-name");
+    void leafRefContextUtilsTest() {
+        final var q1 = QName.create(tst, "odl-contributor");
+        final var q2 = QName.create(tst, "contributor");
+        final var q3 = QName.create(tst, "odl-project-name");
 
-        final LeafRefContext found = rootLeafRefContext.getLeafRefReferencingContext(Absolute.of(q1, q2, q3));
+        final var found = rootLeafRefContext.getLeafRefReferencingContext(Absolute.of(q1, q2, q3));
         assertNotNull(found);
         assertTrue(found.isReferencing());
         assertNotNull(found.getLeafRefTargetPath());
@@ -161,12 +158,12 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test
-    public void leafRefContextUtilsTest2() {
-        final QName q1 = QName.create(tst, "odl-project");
-        final QName q2 = QName.create(tst, "project");
-        final QName q3 = QName.create(tst, "name");
+    void leafRefContextUtilsTest2() {
+        final var q1 = QName.create(tst, "odl-project");
+        final var q2 = QName.create(tst, "project");
+        final var q3 = QName.create(tst, "name");
 
-        final Absolute node = Absolute.of(q1, q2, q3);
+        final var node = Absolute.of(q1, q2, q3);
         LeafRefContext found = rootLeafRefContext.getLeafRefReferencingContext(node);
         assertNull(found);
 
@@ -181,17 +178,17 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test
-    public void leafRefContextUtilsTest3() {
-        final QName q16 = QName.create(tst, "con1");
-        final Absolute con1 = Absolute.of(q16);
+    void leafRefContextUtilsTest3() {
+        final var q16 = QName.create(tst, "con1");
+        final var con1 = Absolute.of(q16);
 
-        final List<LeafRefContext> allLeafRefChilds = rootLeafRefContext.findAllLeafRefChilds(con1);
+        final var allLeafRefChilds = rootLeafRefContext.findAllLeafRefChilds(con1);
 
         assertNotNull(allLeafRefChilds);
         assertFalse(allLeafRefChilds.isEmpty());
         assertEquals(4, allLeafRefChilds.size());
 
-        List<LeafRefContext> allChildsReferencedByLeafRef = rootLeafRefContext.findAllChildsReferencedByLeafRef(
+        var allChildsReferencedByLeafRef = rootLeafRefContext.findAllChildsReferencedByLeafRef(
             Absolute.of(QName.create(tst, "odl-contributor")));
 
         assertNotNull(allChildsReferencedByLeafRef);
@@ -205,14 +202,14 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test
-    public void incorrectLeafRefPathTest() {
-        final IllegalStateException ise = assertThrows(IllegalStateException.class,
+    void incorrectLeafRefPathTest() {
+        final var ise = assertThrows(IllegalStateException.class,
             () -> YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/incorrect-modules"));
-        final Throwable ype = ise.getCause();
-        final Throwable reactor = ype.getCause();
-        assertThat(reactor, instanceOf(ReactorException.class));
-        final Throwable source = reactor.getCause();
-        assertThat(source, instanceOf(SourceException.class));
-        assertThat(source.getMessage(), startsWith("token recognition error at: './' at 1:2"));
+        final var ype = ise.getCause();
+        final var reactor = ype.getCause();
+        assertInstanceOf(ReactorException.class, reactor);
+        final var source = reactor.getCause();
+        assertInstanceOf(SourceException.class, source);
+        assertTrue(source.getMessage().startsWith("token recognition error at: './' at 1:2"));
     }
 }

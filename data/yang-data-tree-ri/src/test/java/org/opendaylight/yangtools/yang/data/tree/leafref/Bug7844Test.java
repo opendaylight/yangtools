@@ -7,28 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug7844Test {
+class Bug7844Test {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
     private static final String BAZ_NS = "baz";
 
     @Test
-    public void test() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYang("""
+    void test() {
+        final var context = YangParserTestUtils.parseYang("""
             module bar {
               namespace bar;
               prefix bar-mod;
@@ -117,17 +115,17 @@ public class Bug7844Test {
             }""");
         assertNotNull(context);
 
-        final LeafRefContext leafRefContext = LeafRefContext.create(context);
+        final var leafRefContext = LeafRefContext.create(context);
         assertNotNull(leafRefContext);
 
-        final Map<QName, LeafRefContext> referencingChilds = leafRefContext.getReferencingChilds();
+        final var referencingChilds = leafRefContext.getReferencingChilds();
         assertEquals(7, referencingChilds.size());
 
-        final QNameModule bazQNameModule = QNameModule.create(XMLNamespace.of(BAZ_NS));
-        final LeafRefPath expectedPathToBazTarget = LeafRefPath.create(true,
+        final var bazQNameModule = QNameModule.create(XMLNamespace.of(BAZ_NS));
+        final var expectedPathToBazTarget = LeafRefPath.create(true,
                 new QNameWithPredicateImpl(bazQNameModule, "root", ImmutableList.of()),
                 new QNameWithPredicateImpl(bazQNameModule, "target", ImmutableList.of()));
-        final LeafRefContext myLeafCtx = referencingChilds.get(foo("my-leaf"));
+        final var myLeafCtx = referencingChilds.get(foo("my-leaf"));
         assertLeafRef(myLeafCtx, expectedPathToBazTarget);
         assertLeafRef(referencingChilds.get(foo("my-leaf-2")), expectedPathToBazTarget);
         assertLeafRef(referencingChilds.get(foo("bar-base-leafref")), expectedPathToBazTarget);
@@ -135,27 +133,27 @@ public class Bug7844Test {
         assertLeafRef(referencingChilds.get(bar("my-leafref-in-bar")), expectedPathToBazTarget);
         assertLeafRef(referencingChilds.get(bar("my-leafref-in-bar-2")), expectedPathToBazTarget);
 
-        final QNameModule barQNameModule = QNameModule.create(XMLNamespace.of(BAR_NS));
-        final LeafRefPath expectedPathToBarTarget = LeafRefPath.create(true,
+        final var barQNameModule = QNameModule.create(XMLNamespace.of(BAR_NS));
+        final var expectedPathToBarTarget = LeafRefPath.create(true,
                 new QNameWithPredicateImpl(barQNameModule, "bar-target", ImmutableList.of()));
         assertLeafRef(referencingChilds.get(foo("direct-leafref")), expectedPathToBarTarget);
 
-        final Map<QName, LeafRefContext> referencedByChilds = leafRefContext.getReferencedByChilds();
+        final var referencedByChilds = leafRefContext.getReferencedByChilds();
         assertEquals(2, referencedByChilds.size());
 
-        final LeafRefContext rootCtx = referencedByChilds.get(baz("root"));
+        final var rootCtx = referencedByChilds.get(baz("root"));
         assertEquals(1, rootCtx.getReferencedByChilds().size());
         assertTrue(rootCtx.getReferencingChilds().isEmpty());
         assertFalse(rootCtx.isReferencing());
         assertFalse(rootCtx.isReferenced());
 
-        final LeafRefContext targetCtx = rootCtx.getReferencedChildByName(baz("target"));
+        final var targetCtx = rootCtx.getReferencedChildByName(baz("target"));
         assertTrue(targetCtx.getReferencedByChilds().isEmpty());
         assertTrue(targetCtx.getReferencingChilds().isEmpty());
         assertTrue(targetCtx.isReferenced());
         assertFalse(targetCtx.isReferencing());
 
-        final Map<QName, LeafRefContext> allReferencedByLeafRefCtxs = targetCtx.getAllReferencedByLeafRefCtxs();
+        final var allReferencedByLeafRefCtxs = targetCtx.getAllReferencedByLeafRefCtxs();
         assertEquals(6, allReferencedByLeafRefCtxs.size());
         assertTrue(myLeafCtx == targetCtx.getReferencedByLeafRefCtxByName(foo("my-leaf")));
     }

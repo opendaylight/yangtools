@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedExcepti
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug4295Test {
+class Bug4295Test {
 
     private DataTree inMemoryDataTree;
     private QName root;
@@ -42,8 +41,8 @@ public class Bug4295Test {
     private QName ileaf;
     private QNameModule foo;
 
-    @Before
-    public void init() {
+    @Test
+    void test() throws DataValidationFailedException {
         foo = QNameModule.create(XMLNamespace.of("foo"));
         root = QName.create(foo, "root");
         subRoot = QName.create(foo, "sub-root");
@@ -54,7 +53,7 @@ public class Bug4295Test {
         oleaf = QName.create(foo, "o");
         ileaf = QName.create(foo, "i");
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            YangParserTestUtils.parseYang("""
+                YangParserTestUtils.parseYang("""
                 module foo {
                   namespace "foo";
                   prefix foo;
@@ -82,10 +81,7 @@ public class Bug4295Test {
                     }
                   }
                 }"""));
-    }
 
-    @Test
-    public void test() throws DataValidationFailedException {
         firstModification();
         secondModification(1);
         secondModification(2);

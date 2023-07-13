@@ -7,21 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -29,26 +27,20 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug4454Test {
+class Bug4454Test {
 
     private static final QName MASTER_CONTAINER_QNAME = QName
             .create("urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model", "2015-02-02",
@@ -105,8 +97,8 @@ public class Bug4454Test {
 
     private DataTree inMemoryDataTree;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYang("""
             module Bug4454Test {
               yang-version 1;
@@ -161,17 +153,17 @@ public class Bug4454Test {
             }""");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         schemaContext = null;
     }
 
-    @Before
-    public void prepare() throws DataValidationFailedException {
+    @BeforeEach
+    void prepare() throws DataValidationFailedException {
         inMemoryDataTree =  new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
             schemaContext);
-        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
-        final DataTreeModification modificationTree = initialDataTreeSnapshot.newModification();
+        final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final var modificationTree = initialDataTreeSnapshot.newModification();
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
         modificationTree.ready();
@@ -179,15 +171,15 @@ public class Bug4454Test {
     }
 
     @Test
-    public void minMaxListDeleteWriteTest() throws DataValidationFailedException {
-        final DataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
+    void minMaxListDeleteWriteTest() throws DataValidationFailedException {
+        final var modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
 
-        Map<QName, Object> key = new HashMap<>();
+        final var key = new HashMap<QName, Object>();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        NodeIdentifierWithPredicates mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME , key);
+        var mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME , key);
 
-        final YangInstanceIdentifier minMaxLeafFoo = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
+        final var minMaxLeafFoo = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2).build();
 
         key.clear();
@@ -195,15 +187,15 @@ public class Bug4454Test {
 
         mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, key);
 
-        final YangInstanceIdentifier minMaxLeafNel = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
+        final var minMaxLeafNel = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2).build();
 
-        final Map<QName, Object> keyTemp = new HashMap<>();
+        final var keyTemp = new HashMap<QName, Object>();
         keyTemp.put(MIN_MAX_KEY_LEAF_QNAME, "baz");
 
-        NodeIdentifierWithPredicates mapEntryPathTest = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME , keyTemp);
+        var mapEntryPathTest = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME , keyTemp);
 
-        final YangInstanceIdentifier pathToBaz = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
+        final var pathToBaz = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPathTest).node(MIN_MAX_VALUE_LEAF_QNAME).build();
 
         keyTemp.clear();
@@ -211,28 +203,28 @@ public class Bug4454Test {
 
         mapEntryPathTest = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME , keyTemp);
 
-        final YangInstanceIdentifier pathToBar = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
+        final var pathToBar = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPathTest).node(MIN_MAX_VALUE_LEAF_QNAME).build();
 
         keyTemp.clear();
         keyTemp.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        final NodeIdentifierWithPredicates mapEntryPathTestKey = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME,
+        final var mapEntryPathTestKey = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME,
             keyTemp);
 
-        final YangInstanceIdentifier pathToKeyFoo = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
+        final var pathToKeyFoo = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPathTestKey).node(MIN_MAX_KEY_LEAF_QNAME).build();
 
-        final LeafNode<String> newNode = ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "test");
-        final LeafNode<String> newNode1 = ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "test1");
-        final LeafNode<String> newNode2 = ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "test2");
-        final LeafNode<String> newNodekey = ImmutableNodes.leafNode(MIN_MAX_KEY_LEAF_QNAME, "foo");
+        final var newNode = ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "test");
+        final var newNode1 = ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "test1");
+        final var newNode2 = ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "test2");
+        final var newNodekey = ImmutableNodes.leafNode(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
         assertFalse(inMemoryDataTree.toString().contains("list"));
 
-        DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
-        assertTrue(!minMaxListRead.isPresent());
+        final var snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        var minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+        assertFalse(minMaxListRead.isPresent());
 
         modificationTree1.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
         modificationTree1.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
@@ -248,13 +240,13 @@ public class Bug4454Test {
 
         modificationTree1.ready();
         inMemoryDataTree.validate(modificationTree1);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree1);
+        final var prepare = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare);
 
-        DataTreeSnapshot test = inMemoryDataTree.takeSnapshot();
+        final var test = inMemoryDataTree.takeSnapshot();
         testLoop(test, "bar", "test");
 
-        DataTreeModification tempMod = test.newModification();
+        final var tempMod = test.newModification();
         tempMod.write(pathToBaz, newNode2);
         tempMod.write(pathToBaz, newNode1);
         tempMod.merge(pathToBaz, newNode2);
@@ -262,68 +254,68 @@ public class Bug4454Test {
 
         tempMod.ready();
         inMemoryDataTree.validate(tempMod);
-        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(tempMod);
+        final var prepare1 = inMemoryDataTree.prepare(tempMod);
         inMemoryDataTree.commit(prepare1);
 
-        DataTreeSnapshot test1 = inMemoryDataTree.takeSnapshot();
+        final var test1 = inMemoryDataTree.takeSnapshot();
         testLoop(test1, "bar", "test1");
 
-        DataTreeModification tempMod1 = test1.newModification();
+        final var tempMod1 = test1.newModification();
         tempMod1.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
 
         tempMod1.ready();
         inMemoryDataTree.validate(tempMod1);
-        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(tempMod1);
+        final var prepare2 = inMemoryDataTree.prepare(tempMod1);
         inMemoryDataTree.commit(prepare2);
 
-        DataTreeSnapshot test2 = inMemoryDataTree.takeSnapshot();
+        final var test2 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test2.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertEquals(3, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
-        DataTreeModification tempMod2 = test2.newModification();
+        final var tempMod2 = test2.newModification();
         tempMod2.write(MIN_MAX_LIST_PATH, mapNodeBaz);
         tempMod2.write(pathToBaz, newNode2);
 
         tempMod2.ready();
         inMemoryDataTree.validate(tempMod2);
-        final DataTreeCandidate prepare3 = inMemoryDataTree.prepare(tempMod2);
+        final var prepare3 = inMemoryDataTree.prepare(tempMod2);
         inMemoryDataTree.commit(prepare3);
 
-        DataTreeSnapshot test3 = inMemoryDataTree.takeSnapshot();
+        final var test3 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test3.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertEquals(1, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
-        assertThat(minMaxListRead.orElseThrow().body().toString(), containsString("test2"));
+        assertTrue(minMaxListRead.orElseThrow().body().toString().contains("test2"));
 
-        DataTreeModification tempMod3 = test3.newModification();
+        final var tempMod3 = test3.newModification();
         tempMod3.merge(MIN_MAX_LIST_PATH, mapNodeBar);
         tempMod3.merge(pathToBar, newNode1);
 
         tempMod3.ready();
         inMemoryDataTree.validate(tempMod3);
-        final DataTreeCandidate prepare4 = inMemoryDataTree.prepare(tempMod3);
+        final var prepare4 = inMemoryDataTree.prepare(tempMod3);
         inMemoryDataTree.commit(prepare4);
 
-        DataTreeSnapshot test4 = inMemoryDataTree.takeSnapshot();
+        final var test4 = inMemoryDataTree.takeSnapshot();
         testLoop(test4, "test1", "test2");
     }
 
     @Test
-    public void minMaxLeafListPass() throws DataValidationFailedException {
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    void minMaxLeafListPass() throws DataValidationFailedException {
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final NodeWithValue<?> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
-        final NodeWithValue<?> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
+        final var barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
+        final var gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
-        final LeafSetEntryNode<Object> barLeafSetEntry = Builders.leafSetEntryBuilder()
+        final var barLeafSetEntry = Builders.leafSetEntryBuilder()
                 .withNodeIdentifier(barPath)
                 .withValue("bar").build();
-        final LeafSetEntryNode<Object> gooLeafSetEntry = Builders.leafSetEntryBuilder()
+        final var gooLeafSetEntry = Builders.leafSetEntryBuilder()
                 .withNodeIdentifier(gooPath)
                 .withValue("goo").build();
 
-        final LeafSetNode<Object> fooLeafSetNode = Builders.leafSetBuilder()
+        final var fooLeafSetNode = Builders.leafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
                 .withChildValue("foo")
                 .build();
@@ -333,48 +325,48 @@ public class Bug4454Test {
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
+        final var prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
 
-        DataTreeSnapshot test1 = inMemoryDataTree.takeSnapshot();
+        final var test1 = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification tempMod1 = test1.newModification();
+        final var tempMod1 = test1.newModification();
         tempMod1.write(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
         tempMod1.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), barLeafSetEntry);
         tempMod1.ready();
 
         inMemoryDataTree.validate(tempMod1);
-        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(tempMod1);
+        final var prepare2 = inMemoryDataTree.prepare(tempMod1);
         inMemoryDataTree.commit(prepare2);
 
-        final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
+        final var snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final var masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
-        final Optional<NormalizedNodeContainer<?>> leafList = ((DistinctNodeContainer) masterContainer.orElseThrow())
+        final var leafList = ((DistinctNodeContainer) masterContainer.orElseThrow())
                 .findChildByArg(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
-        assertEquals(3, leafList.orElseThrow().size());
+        assertEquals(3, ((Optional<NormalizedNodeContainer<?>>) leafList).orElseThrow().size());
     }
 
     @Test
-    public void minMaxListDeleteTest() throws DataValidationFailedException {
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    void minMaxListDeleteTest() throws DataValidationFailedException {
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
 
-        NodeIdentifierWithPredicates mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME,
+        var mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME,
             MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        final YangInstanceIdentifier minMaxLeafFoo = MASTER_CONTAINER_PATH
+        final var minMaxLeafFoo = MASTER_CONTAINER_PATH
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
 
         mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar");
 
-        final YangInstanceIdentifier minMaxLeafBar = MASTER_CONTAINER_PATH
+        final var minMaxLeafBar = MASTER_CONTAINER_PATH
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
 
         mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "baz");
 
-        final YangInstanceIdentifier minMaxLeafBaz = MASTER_CONTAINER_PATH
+        final var minMaxLeafBaz = MASTER_CONTAINER_PATH
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
 
         modificationTree.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
@@ -387,31 +379,31 @@ public class Bug4454Test {
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
 
         // Empty list should have disappeared, along with the container, as we are not enforcing root
-        final NormalizedNode data = inMemoryDataTree.takeSnapshot().readNode(YangInstanceIdentifier.of()).orElseThrow();
-        assertTrue(data instanceof ContainerNode);
+        final var data = inMemoryDataTree.takeSnapshot().readNode(YangInstanceIdentifier.of()).orElseThrow();
+        assertInstanceOf(ContainerNode.class, data);
         assertEquals(0, ((ContainerNode) data).size());
     }
 
     @Test
-    public void minMaxListDeleteExceptionTest() throws DataValidationFailedException {
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    void minMaxListDeleteExceptionTest() throws DataValidationFailedException {
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        NodeIdentifierWithPredicates mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME,
+        var mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME,
             MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        final YangInstanceIdentifier minMaxLeafFoo = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
+        final var minMaxLeafFoo = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
 
         mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar");
 
-        final YangInstanceIdentifier minMaxLeafBar = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
+        final var minMaxLeafBar = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
 
         mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "baz");
 
-        final YangInstanceIdentifier minMaxLeafBaz = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
+        final var minMaxLeafBaz = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
 
         modificationTree.write(PRESENCE_PATH, ImmutableNodes.containerNode(PRESENCE_QNAME));
         modificationTree.write(PRESENCE_MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
@@ -434,21 +426,21 @@ public class Bug4454Test {
     }
 
     @Test
-    public void minMaxListNoMinMaxDeleteTest() throws DataValidationFailedException {
-        final MapEntryNode fooEntryNoMinMaxNode =
+    void minMaxListNoMinMaxDeleteTest() throws DataValidationFailedException {
+        final var fooEntryNoMinMaxNode =
                 ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME, "foo");
-        final SystemMapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
+        final var mapNode1 = ImmutableNodes.mapNodeBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
                 .withChild(fooEntryNoMinMaxNode).build();
 
-        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        Map<QName, Object> key = new HashMap<>();
+        final var key = new HashMap<QName, Object>();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        NodeIdentifierWithPredicates mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME_NO_MINMAX, key);
+        var mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME_NO_MINMAX, key);
 
-        final YangInstanceIdentifier minMaxLeafFoo = MASTER_CONTAINER_PATH
+        final var minMaxLeafFoo = MASTER_CONTAINER_PATH
                 .node(MIN_MAX_LIST_QNAME_NO_MINMAX).node(mapEntryPath2);
 
         key.clear();
@@ -456,7 +448,7 @@ public class Bug4454Test {
 
         mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME_NO_MINMAX, key);
 
-        YangInstanceIdentifier minMaxLeafNel = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
+        final var minMaxLeafNel = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME_NO_MINMAX).node(mapEntryPath2).build();
 
         modificationTree.write(MIN_MAX_LIST_NO_MINMAX_PATH, mapNode1);
@@ -466,22 +458,22 @@ public class Bug4454Test {
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        final var prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
 
-        final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_NO_MINMAX_PATH);
+        final var snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final var minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_NO_MINMAX_PATH);
 
         // Empty list should have disappeared
         assertFalse(minMaxListRead.isPresent());
     }
 
     private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
-        Optional<NormalizedNode> minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
+        final var minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
-        for (Object collectionChild : (Collection<?>) minMaxListRead.orElseThrow().body()) {
+        for (var collectionChild : (Collection<?>) minMaxListRead.orElseThrow().body()) {
             if (collectionChild.toString().contains(first)) {
                 assertTrue(collectionChild.toString().contains(first));
             } else {

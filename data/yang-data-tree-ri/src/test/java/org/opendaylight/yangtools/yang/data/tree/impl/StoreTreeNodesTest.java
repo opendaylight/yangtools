@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
-import java.util.Map.Entry;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -65,8 +64,8 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
 
     private RootApplyStrategy rootOper;
 
-    @Before
-    public void prepare() throws ExcludedDataSchemaNodeException {
+    @BeforeEach
+    void prepare() throws ExcludedDataSchemaNodeException {
         rootOper = RootApplyStrategy.from(SchemaAwareApplyOperation.from(SCHEMA_CONTEXT,
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
@@ -79,31 +78,31 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void findNodeTestNodeFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
+    void findNodeTestNodeFound() {
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
-        final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<? extends TreeNode> node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
+        final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
+        final var node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
         assertPresentAndType(node, TreeNode.class);
     }
 
     @Test
-    public void findNodeTestNodeNotFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
+    void findNodeTestNodeNotFound() {
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
-        final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+        final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
+        final var outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
-        final Optional<? extends TreeNode> node = StoreTreeNodes.findNode(rootNode, outerList1InvalidPath);
+        final var node = StoreTreeNodes.findNode(rootNode, outerList1InvalidPath);
         assertFalse(node.isPresent());
     }
 
     @Test
-    public void findNodeCheckedTestNodeFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
+    void findNodeCheckedTestNodeFound() {
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
-        final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
+        final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
         TreeNode foundNode = null;
         try {
             foundNode = StoreTreeNodes.findNodeChecked(rootNode, OUTER_LIST_1_PATH);
@@ -114,11 +113,11 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void findNodeCheckedTestNodeNotFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
+    void findNodeCheckedTestNodeNotFound() {
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
-        final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+        final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
+        final var outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
         try {
@@ -130,33 +129,33 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void findClosestOrFirstMatchTestNodeExists() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
+    void findClosestOrFirstMatchTestNodeExists() {
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
-        final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<? extends TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
+        final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
+        final var expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
         assertPresentAndType(expectedNode, TreeNode.class);
 
-        final Entry<YangInstanceIdentifier, TreeNode> actualNode = StoreTreeNodes.findClosest(rootNode, TWO_TWO_PATH);
+        final var actualNode = StoreTreeNodes.findClosest(rootNode, TWO_TWO_PATH);
         assertTreeNodeEquals(expectedNode.orElseThrow(), actualNode.getValue());
     }
 
     @Test
-    public void findClosestOrFirstMatchTestNodeDoesNotExist() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
+    void findClosestOrFirstMatchTestNodeDoesNotExist() {
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
-        final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final YangInstanceIdentifier outerListInnerListPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
+        final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
+        final var outerListInnerListPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
                 .node(TestModel.INNER_LIST_QNAME)
                 .build();
-        final YangInstanceIdentifier twoTwoInvalidPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
+        final var twoTwoInvalidPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
                 .node(TestModel.INNER_LIST_QNAME)
                 .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, "three")
                 .build();
-        final Optional<? extends TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, outerListInnerListPath);
+        final var expectedNode = StoreTreeNodes.findNode(rootNode, outerListInnerListPath);
         assertPresentAndType(expectedNode, TreeNode.class);
 
-        final Entry<YangInstanceIdentifier, TreeNode> actualNode = StoreTreeNodes.findClosest(rootNode,
+        final var actualNode = StoreTreeNodes.findClosest(rootNode,
             twoTwoInvalidPath);
         assertTreeNodeEquals(expectedNode.orElseThrow(), actualNode.getValue());
     }

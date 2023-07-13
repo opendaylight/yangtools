@@ -7,52 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
-public final class StructuralApplyModificationTest extends AbstractTestModelTest {
+final class StructuralApplyModificationTest extends AbstractTestModelTest {
     private DataTree inMemoryDataTree;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION);
         inMemoryDataTree.setEffectiveModelContext(SCHEMA_CONTEXT);
     }
 
     @Test
-    public void testMapNodeParentAutoCreateDelete() throws DataValidationFailedException {
-        final DataTreeModification addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
+    void testMapNodeParentAutoCreateDelete() throws DataValidationFailedException {
+        final var addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
 
         // Prepare root
-        final YangInstanceIdentifier.NodeIdentifier rootContainerId = getNId(TestModel.TEST_QNAME);
+        final var rootContainerId = getNId(TestModel.TEST_QNAME);
         addListEntryModification.write(YangInstanceIdentifier.of(rootContainerId),
             Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
 
-        final NodeIdentifierWithPredicates outerListEntryId = NodeIdentifierWithPredicates.of(
+        final var outerListEntryId = NodeIdentifierWithPredicates.of(
             TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 1);
 
         // Write list entry (MapEntryNode) without creating list parent (MapNode)
-        final MapEntryNode outerListEntry = Builders.mapEntryBuilder().withNodeIdentifier(outerListEntryId).build();
-        final YangInstanceIdentifier outerListParentPath = YangInstanceIdentifier.of(getNId(TestModel.TEST_QNAME),
+        final var outerListEntry = Builders.mapEntryBuilder().withNodeIdentifier(outerListEntryId).build();
+        final var outerListParentPath = YangInstanceIdentifier.of(getNId(TestModel.TEST_QNAME),
             getNId(TestModel.OUTER_LIST_QNAME));
-        final YangInstanceIdentifier outerListEntryPath = outerListParentPath.node(outerListEntryId);
+        final var outerListEntryPath = outerListParentPath.node(outerListEntryId);
         addListEntryModification.write(outerListEntryPath, outerListEntry);
 
         addListEntryModification.ready();
@@ -63,7 +58,7 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
         assertNodeExistence(outerListParentPath, true);
 
         // Now delete
-        final DataTreeModification deleteListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var deleteListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
         deleteListEntryModification.delete(outerListEntryPath);
         deleteListEntryModification.ready();
         inMemoryDataTree.validate(deleteListEntryModification);
@@ -74,15 +69,15 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
     }
 
     @Test
-    public void testMapNodeDirectEmptyWrite() {
-        final DataTreeModification addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
+    void testMapNodeDirectEmptyWrite() {
+        final var addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
 
         // Prepare root container
-        final YangInstanceIdentifier.NodeIdentifier rootContainerId = getNId(TestModel.TEST_QNAME);
+        final var rootContainerId = getNId(TestModel.TEST_QNAME);
         addListEntryModification.write(YangInstanceIdentifier.of(rootContainerId),
             Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
 
-        final YangInstanceIdentifier outerListParentPath = YangInstanceIdentifier.of(getNId(TestModel.TEST_QNAME),
+        final var outerListParentPath = YangInstanceIdentifier.of(getNId(TestModel.TEST_QNAME),
             getNId(TestModel.OUTER_LIST_QNAME));
         addListEntryModification.merge(outerListParentPath, ImmutableNodes.mapNode(TestModel.OUTER_LIST_QNAME));
 
@@ -91,11 +86,11 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
     }
 
     @Test
-    public void testNonPresenceContainerDirectEmptyWrite() throws DataValidationFailedException {
-        final DataTreeModification addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
+    void testNonPresenceContainerDirectEmptyWrite() throws DataValidationFailedException {
+        final var addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
 
-        final YangInstanceIdentifier.NodeIdentifier rootContainerId = getNId(TestModel.NON_PRESENCE_QNAME);
-        final YangInstanceIdentifier path = YangInstanceIdentifier.of(rootContainerId);
+        final var rootContainerId = getNId(TestModel.NON_PRESENCE_QNAME);
+        final var path = YangInstanceIdentifier.of(rootContainerId);
         addListEntryModification.write(path, Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
 
         addListEntryModification.ready();
@@ -107,10 +102,10 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
     }
 
     @Test
-    public void testNestedStrucutralNodes() throws DataValidationFailedException {
-        final DataTreeModification addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
+    void testNestedStrucutralNodes() throws DataValidationFailedException {
+        final var addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
 
-        final YangInstanceIdentifier path = TestModel.DEEP_CHOICE_PATH.node(TestModel.A_LIST_QNAME)
+        final var path = TestModel.DEEP_CHOICE_PATH.node(TestModel.A_LIST_QNAME)
             .node(getNId(TestModel.A_LIST_QNAME, TestModel.A_NAME_QNAME, "1"));
 
         addListEntryModification.write(path,
@@ -129,8 +124,8 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
     }
 
     private void assertNodeExistence(final YangInstanceIdentifier outerListParentPath, final boolean shouldBePresent) {
-        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(outerListParentPath);
+        final var snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final var readNode = snapshotAfterCommits.readNode(outerListParentPath);
         assertEquals(readNode.isPresent(), shouldBePresent);
     }
 

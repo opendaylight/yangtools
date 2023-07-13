@@ -7,37 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OrderedListTest {
+class OrderedListTest {
     private static final Logger LOG = LoggerFactory.getLogger(OrderedListTest.class);
 
     private DataTree inMemoryDataTree;
@@ -52,8 +46,8 @@ public class OrderedListTest {
     private QName childKeyLeaf;
     private QName childOrdinaryLeaf;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         testModule = QNameModule.create(XMLNamespace.of("ordered-list-modification-test"));
         parentContainer = QName.create(testModule, "parent-container");
         childContainer = QName.create(testModule, "child-container");
@@ -100,7 +94,7 @@ public class OrderedListTest {
     }
 
     @Test
-    public void testsequentialModifications() throws DataValidationFailedException {
+    void testsequentialModifications() throws DataValidationFailedException {
         modification1();
         modification2();
         delete1();
@@ -110,28 +104,28 @@ public class OrderedListTest {
     }
 
     public void modification1() throws DataValidationFailedException {
-        UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        final var parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentOrderedList))
                 .withChild(createParentOrderedListEntry("pkval1", "plfval1"))
                 .withChild(createParentOrderedListEntry("pkval2", "plfval2"))
                 .withChild(createParentOrderedListEntry("pkval3", "plfval3")).build();
 
-        ContainerNode parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
+        final var parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentContainer)).withChild(Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(childContainer)).withChild(parentOrderedListNode).build())
                 .build();
 
-        YangInstanceIdentifier path1 = YangInstanceIdentifier.of(parentContainer);
+        final var path1 = YangInstanceIdentifier.of(parentContainer);
 
-        DataTreeModification treeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var treeModification = inMemoryDataTree.takeSnapshot().newModification();
         treeModification.write(path1, parentContainerNode);
 
-        UserMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        final var childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(childOrderedList))
                 .withChild(createChildOrderedListEntry("chkval1", "chlfval1"))
                 .withChild(createChildOrderedListEntry("chkval2", "chlfval2")).build();
 
-        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer, childContainer, parentOrderedList)
+        final var path2 = YangInstanceIdentifier.of(parentContainer, childContainer, parentOrderedList)
             .node(createParentOrderedListEntryPath("pkval2")).node(childOrderedList);
 
         treeModification.write(path2, childOrderedListNode);
@@ -139,8 +133,8 @@ public class OrderedListTest {
         inMemoryDataTree.validate(treeModification);
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
-        DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
+        final var snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        var readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -148,29 +142,29 @@ public class OrderedListTest {
     }
 
     public void modification2() throws DataValidationFailedException {
-        UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        final var parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentOrderedList))
                 .withChild(createParentOrderedListEntry("pkval3", "plfval3updated"))
                 .withChild(createParentOrderedListEntry("pkval4", "plfval4"))
                 .withChild(createParentOrderedListEntry("pkval5", "plfval5")).build();
 
-        ContainerNode parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
+        final var parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentContainer)).withChild(Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(childContainer)).withChild(parentOrderedListNode).build())
                 .build();
 
-        DataTreeModification treeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var treeModification = inMemoryDataTree.takeSnapshot().newModification();
 
-        YangInstanceIdentifier path1 = YangInstanceIdentifier.of(parentContainer);
+        final var path1 = YangInstanceIdentifier.of(parentContainer);
         treeModification.merge(path1, parentContainerNode);
 
-        UserMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        final var childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(childOrderedList))
                 .withChild(createChildOrderedListEntry("chkval1", "chlfval1updated"))
                 .withChild(createChildOrderedListEntry("chkval2", "chlfval2updated"))
                 .withChild(createChildOrderedListEntry("chkval3", "chlfval3")).build();
 
-        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer)
+        final var path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer)
                 .node(parentOrderedList).node(createParentOrderedListEntryPath("pkval2")).node(childOrderedList);
         treeModification.merge(path2, childOrderedListNode);
 
@@ -178,8 +172,8 @@ public class OrderedListTest {
         inMemoryDataTree.validate(treeModification);
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
-        DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
+        final var snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        var readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -187,25 +181,25 @@ public class OrderedListTest {
     }
 
     public void modification3() throws DataValidationFailedException {
-        UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        final var parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentOrderedList))
                 .withChild(createParentOrderedListEntry("pkval1", "plfval1")).build();
 
-        ContainerNode parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
+        final var parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentContainer)).withChild(Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(childContainer)).withChild(parentOrderedListNode).build())
                 .build();
 
-        YangInstanceIdentifier path1 = YangInstanceIdentifier.of(parentContainer);
+        final var path1 = YangInstanceIdentifier.of(parentContainer);
 
-        DataTreeModification treeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var treeModification = inMemoryDataTree.takeSnapshot().newModification();
         treeModification.write(path1, parentContainerNode);
 
-        UserMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        final var childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(childOrderedList))
                 .withChild(createChildOrderedListEntry("chkval1", "chlfval1new")).build();
 
-        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer)
+        final var path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer)
                 .node(parentOrderedList)
                 .node(createParentOrderedListEntryPath("pkval4")).node(childOrderedList);
 
@@ -221,8 +215,8 @@ public class OrderedListTest {
             assertTrue(ex.getMessage().contains("Metadata not available for modification ModifiedNode"));
         }
 
-        DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
+        final var snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        var readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -230,28 +224,28 @@ public class OrderedListTest {
     }
 
     public void modification4() throws DataValidationFailedException {
-        DataTreeModification treeModification1 = inMemoryDataTree.takeSnapshot().newModification();
-        DataTreeModification treeModification2 = inMemoryDataTree.takeSnapshot().newModification();
+        final var treeModification1 = inMemoryDataTree.takeSnapshot().newModification();
+        final var treeModification2 = inMemoryDataTree.takeSnapshot().newModification();
 
-        UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        final var parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
             new NodeIdentifier(parentOrderedList)).withChild(createParentOrderedListEntry("pkval1", "plfval1"))
                 .build();
 
-        UserMapNode parentOrderedListNode2 = Builders.orderedMapBuilder().withNodeIdentifier(
+        final var parentOrderedListNode2 = Builders.orderedMapBuilder().withNodeIdentifier(
             new NodeIdentifier(parentOrderedList)).withChild(createParentOrderedListEntry("pkval2", "plfval2"))
                 .build();
 
-        ContainerNode parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
+        final var parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentContainer)).withChild(Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(childContainer)).withChild(parentOrderedListNode).build())
                 .build();
 
-        ContainerNode parentContainerNode2 = Builders.containerBuilder().withNodeIdentifier(
+        final var parentContainerNode2 = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentContainer)).withChild(Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(childContainer)).withChild(parentOrderedListNode2).build())
                 .build();
 
-        YangInstanceIdentifier path = YangInstanceIdentifier.of(parentContainer);
+        final var path = YangInstanceIdentifier.of(parentContainer);
 
         treeModification1.write(path, parentContainerNode);
         treeModification2.write(path, parentContainerNode2);
@@ -270,39 +264,39 @@ public class OrderedListTest {
             assertTrue(ex.getMessage().contains("Node was replaced by other transaction"));
         }
 
-        DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
+        final var snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final var readNode = snapshotAfterCommits.readNode(path);
         assertTrue(readNode.isPresent());
     }
 
     public void delete1() throws DataValidationFailedException {
-        YangInstanceIdentifier path = YangInstanceIdentifier.of(parentContainer).node(childContainer)
+        final var path = YangInstanceIdentifier.of(parentContainer).node(childContainer)
                 .node(parentOrderedList).node(createParentOrderedListEntryPath("pkval2")).node(childOrderedList)
                 .node(createChildOrderedListEntryPath("chkval1"));
 
-        DataTreeModification treeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var treeModification = inMemoryDataTree.takeSnapshot().newModification();
         treeModification.delete(path);
         treeModification.ready();
         inMemoryDataTree.validate(treeModification);
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
-        DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
+        final var snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final var readNode = snapshotAfterCommits.readNode(path);
         assertFalse(readNode.isPresent());
     }
 
     public void delete2() throws DataValidationFailedException {
-        YangInstanceIdentifier path = YangInstanceIdentifier.of(parentContainer).node(childContainer)
+        final var path = YangInstanceIdentifier.of(parentContainer).node(childContainer)
                 .node(parentOrderedList).node(createParentOrderedListEntryPath("pkval2"));
 
-        DataTreeModification treeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final var treeModification = inMemoryDataTree.takeSnapshot().newModification();
         treeModification.delete(path);
         treeModification.ready();
         inMemoryDataTree.validate(treeModification);
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
-        DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
+        final var snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final var readNode = snapshotAfterCommits.readNode(path);
         assertFalse(readNode.isPresent());
     }
 

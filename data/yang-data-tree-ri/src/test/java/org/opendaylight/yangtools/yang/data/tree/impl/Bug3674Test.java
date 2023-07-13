@@ -7,16 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
@@ -26,28 +22,25 @@ import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory
  *           DataTreeModification, but should appear as UNMODIFIED in the
  *           resulting DataTreeCandidate.
  */
-public class Bug3674Test extends AbstractTestModelTest {
+class Bug3674Test extends AbstractTestModelTest {
     private DataTree tree;
 
-    @Before
-    public void setUp() throws DataValidationFailedException {
+    @Test
+    void testDeleteOfNonExistingNode() throws DataValidationFailedException {
         tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
 
         // Create the top-level container
-        final DataTreeModification mod = tree.takeSnapshot().newModification();
+        final var mod = tree.takeSnapshot().newModification();
         mod.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         mod.ready();
         tree.commit(tree.prepare(mod));
-    }
 
-    @Test
-    public void testDeleteOfNonExistingNode() throws DataValidationFailedException {
-        final DataTreeModification mod = tree.takeSnapshot().newModification();
-        mod.delete(TestModel.OUTER_LIST_PATH);
-        mod.ready();
+        final var mod2 = tree.takeSnapshot().newModification();
+        mod2.delete(TestModel.OUTER_LIST_PATH);
+        mod2.ready();
 
-        final DataTreeCandidate candidate = tree.prepare(mod);
-        final DataTreeCandidateNode root = candidate.getRootNode();
+        final var candidate = tree.prepare(mod2);
+        final var root = candidate.getRootNode();
         assertEquals(ModificationType.UNMODIFIED, root.modificationType());
     }
 }
