@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.Iterator;
 import java.util.List;
@@ -123,7 +122,7 @@ public class YT1193Test {
         assertEquals(def, foo.statementDefinition());
 
         final DeclarationReference ref = foo.declarationReference().orElseThrow();
-        assertThat(ref, instanceOf(DeclarationInText.class));
+        assertInstanceOf(DeclarationInText.class, ref);
         final DeclarationInText inText = (DeclarationInText) ref;
 
         assertEquals(line, inText.startLine());
