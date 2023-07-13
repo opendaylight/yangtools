@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.rfc8528.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -37,7 +36,7 @@ public class MountPointTest {
 
     private static CrossSourceStatementReactor reactor;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -45,7 +44,7 @@ public class MountPointTest {
                 .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         reactor = null;
     }
@@ -68,20 +67,20 @@ public class MountPointTest {
         assertEquals(5, context.getModules().size());
 
         var child = context.findDataTreeChild(EXAMPLE_CONT).orElseThrow();
-        assertThat(child, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, child);
         var mps = MountPointSchemaNode.streamAll((ContainerSchemaNode) child).toList();
         assertEquals(2, mps.size());
         assertEquals(EXAMPLE_CONT, mps.get(0).getQName());
         assertEquals(EXAMPLE_CONT, mps.get(1).getQName());
 
         child = context.findDataTreeChild(EXAMPLE_GRP_CONT).orElseThrow();
-        assertThat(child, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, child);
         mps = MountPointSchemaNode.streamAll((ContainerSchemaNode) child).toList();
         assertEquals(1, mps.size());
         assertEquals(EXAMPLE_GRP, mps.get(0).getQName());
 
         child = context.findDataTreeChild(EXAMPLE_LIST).orElseThrow();
-        assertThat(child, instanceOf(ListSchemaNode.class));
+        assertInstanceOf(ListSchemaNode.class, child);
         mps = MountPointSchemaNode.streamAll((ListSchemaNode) child).toList();
         assertEquals(1, mps.size());
         assertEquals(EXAMPLE_LIST, mps.get(0).getQName());
