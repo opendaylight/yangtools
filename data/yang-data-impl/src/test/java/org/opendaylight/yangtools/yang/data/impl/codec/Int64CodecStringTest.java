@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.getCodec;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
@@ -26,7 +26,7 @@ public class Int64CodecStringTest {
     @Test
     public void testSerialize() {
         Int64Codec<String> codec = getCodec(BaseTypes.int64Type(), Int64Codec.class);
-        assertEquals("serialize", "12345", codec.serialize(Long.valueOf(12345)));
+        assertEquals("12345", codec.serialize(Long.valueOf(12345)), "serialize");
     }
 
     @SuppressWarnings("unchecked")
@@ -41,12 +41,12 @@ public class Int64CodecStringTest {
 
         Int64Codec<String> codec = getCodec(BaseTypes.int64Type(), Int64Codec.class);
 
-        assertEquals("deserialize", codec.deserialize(hexa), Long.valueOf("075EDC78edCBA", 16));
-        assertEquals("deserialize", codec.deserialize(negHexa), Long.valueOf("-075EDC78edCBA", 16));
-        assertEquals("deserialize", codec.deserialize(octal), Long.valueOf(octal, 8));
-        assertEquals("deserialize", codec.deserialize(negOctal), Long.valueOf(negOctal, 8));
-        assertEquals("deserialize", codec.deserialize(integer), Long.valueOf(integer, 10));
-        assertEquals("deserialize", codec.deserialize(negInteger), Long.valueOf(negInteger, 10));
+        assertEquals(codec.deserialize(hexa), Long.valueOf("075EDC78edCBA", 16), "deserialize");
+        assertEquals(codec.deserialize(negHexa), Long.valueOf("-075EDC78edCBA", 16), "deserialize");
+        assertEquals(codec.deserialize(octal), Long.valueOf(octal, 8), "deserialize");
+        assertEquals(codec.deserialize(negOctal), Long.valueOf(negOctal, 8), "deserialize");
+        assertEquals(codec.deserialize(integer), Long.valueOf(integer, 10), "deserialize");
+        assertEquals(codec.deserialize(negInteger), Long.valueOf(negInteger, 10), "deserialize");
 
         deserializeWithExpectedIllegalArgEx(codec, "1234o");
         deserializeWithExpectedIllegalArgEx(codec, "");

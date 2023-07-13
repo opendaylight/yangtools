@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.getCodec;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
 
 /**
@@ -25,7 +25,7 @@ public class EnumCodecStringTest {
     @Test
     public void testSerialize() {
         EnumCodec<String> codec = getCodec(toEnumTypeDefinition("enum1", "enum2"), EnumCodec.class);
-        assertEquals("serialize", "enum1", codec.serialize("enum1"));
+        assertEquals("enum1", codec.serialize("enum1"), "serialize");
     }
 
     @SuppressWarnings("unchecked")
@@ -33,8 +33,8 @@ public class EnumCodecStringTest {
     public void testDeserialize() {
         EnumCodec<String> codec = getCodec(toEnumTypeDefinition("enum1", "enum2"), EnumCodec.class);
 
-        assertEquals("deserialize", "enum1", codec.deserialize("enum1"));
-        assertEquals("deserialize", "enum2", codec.deserialize("enum2"));
+        assertEquals("enum1", codec.deserialize("enum1"), "deserialize");
+        assertEquals("enum2", codec.deserialize("enum2"), "deserialize");
 
         deserializeWithExpectedIllegalArgEx(codec, "enum3");
     }

@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -64,7 +64,7 @@ public class ImmutableNormalizedNodeStreamWriterTest {
 
     private DOMSource anyxmlDomSource;
 
-    @Before
+    @BeforeEach
     public void setup() throws ParseException {
         bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"), Revision.of("1970-01-01"));
 

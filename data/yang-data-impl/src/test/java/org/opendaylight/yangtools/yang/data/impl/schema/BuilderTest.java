@@ -8,16 +8,16 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -78,7 +78,7 @@ public class BuilderTest {
     private ListSchemaNode list;
     private LeafListSchemaNode leafList;
 
-    @Before
+    @BeforeEach
     public void setup() throws URISyntaxException {
         final var schema = YangParserTestUtils.parseYang("""
             module immutable-ordered-map-node {

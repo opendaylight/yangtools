@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
 public class YT1417Test {
     public static final QName FOO = QName.create("foo", "foo");
     public static final QName BAR = QName.create("foo", "bar");

@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;

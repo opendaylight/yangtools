@@ -7,17 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -50,12 +49,12 @@ public class InstanceIdToNodesTest {
     private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
     private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         ctx = YangParserTestUtils.parseYangResources(InstanceIdToNodesTest.class, "/filter-test.yang");
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardown() {
         ctx = null;
     }
@@ -106,7 +105,7 @@ public class InstanceIdToNodesTest {
         assertArrayEquals(new Object[] { BAR, FOO }, id.keySet().toArray());
 
         final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of(TWO_KEY_LIST, id));
-        assertThat(filter, isA(MapNode.class));
+        assertInstanceOf(MapNode.class, filter);
         final Collection<MapEntryNode> value = ((MapNode) filter).body();
         assertEquals(1, value.size());
         final MapEntryNode entry = value.iterator().next();

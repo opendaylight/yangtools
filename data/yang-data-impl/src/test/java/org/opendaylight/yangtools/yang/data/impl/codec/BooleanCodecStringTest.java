@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
@@ -25,8 +25,8 @@ public class BooleanCodecStringTest {
         BooleanCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.booleanType(),
             BooleanCodec.class);
 
-        assertEquals("serialize", "true", codec.serialize(Boolean.TRUE));
-        assertEquals("serialize", "false", codec.serialize(Boolean.FALSE));
+        assertEquals("true", codec.serialize(Boolean.TRUE), "serialize");
+        assertEquals("false", codec.serialize(Boolean.FALSE), "serialize");
     }
 
     @SuppressWarnings("unchecked")
@@ -35,8 +35,8 @@ public class BooleanCodecStringTest {
         BooleanCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.booleanType(),
             BooleanCodec.class);
 
-        assertEquals("deserialize", Boolean.TRUE, codec.deserialize("true"));
-        assertEquals("deserialize", Boolean.FALSE, codec.deserialize("false"));
+        assertEquals(Boolean.TRUE, codec.deserialize("true"), "deserialize");
+        assertEquals(Boolean.FALSE, codec.deserialize("false"), "deserialize");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "TRUE");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "FALSE");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "foo");
