@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.List;

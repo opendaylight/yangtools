@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
@@ -98,7 +97,7 @@ public class DataTreeCandidateNodesTest {
         doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).modificationType();
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode));
-        assertThat(ex.getMessage(), containsString("Unsupported modification"));
+        assertTrue(ex.getMessage().contains("Unsupported modification"));
     }
 
     @Test
@@ -151,7 +150,7 @@ public class DataTreeCandidateNodesTest {
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
                 mockedDataTreeCandidateNode));
-        assertThat(ex.getMessage(), containsString("Unsupported modification"));
+        assertTrue(ex.getMessage().contains("Unsupported modification"));
     }
 
     @Test
@@ -177,7 +176,7 @@ public class DataTreeCandidateNodesTest {
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).modificationType();
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootToCursor(mockedCursor, mockedDataTreeCandidateNode));
-        assertThat(ex.getMessage(), containsString("Can not delete root"));
+        assertTrue(ex.getMessage().contains("Can not delete root"));
     }
 
     @Test
@@ -188,6 +187,6 @@ public class DataTreeCandidateNodesTest {
         doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).modificationType();
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootToCursor(mockedCursor, mockedDataTreeCandidateNode));
-        assertThat(ex.getMessage(), containsString("Unsupported modification"));
+        assertTrue(ex.getMessage().contains("Unsupported modification"));
     }
 }
