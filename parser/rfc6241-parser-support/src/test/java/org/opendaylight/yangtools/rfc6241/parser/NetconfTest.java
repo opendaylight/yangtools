@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc6241.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfConstants;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -33,7 +31,7 @@ public class NetconfTest {
 
     private static CrossSourceStatementReactor reactor;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         reactor = RFC7950Reactors.defaultReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -41,7 +39,7 @@ public class NetconfTest {
                 .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         reactor = null;
     }
@@ -75,7 +73,7 @@ public class NetconfTest {
         final var optFilter = def.getInput().findDataTreeChild(FILTER);
         assertEquals(expected, optFilter.isPresent());
         optFilter.ifPresent(filter -> {
-            assertThat(filter, is(instanceOf(AnyxmlSchemaNode.class)));
+            assertInstanceOf(AnyxmlSchemaNode.class, filter);
             assertTrue(GetFilterElementAttributesSchemaNode.findIn((AnyxmlSchemaNode) filter).isPresent());
         });
     }
