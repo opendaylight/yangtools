@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.Futures;
