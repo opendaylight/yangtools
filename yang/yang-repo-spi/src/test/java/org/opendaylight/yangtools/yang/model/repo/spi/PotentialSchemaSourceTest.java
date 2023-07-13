@@ -7,21 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class PotentialSchemaSourceTest {
+@ExtendWith(MockitoExtension.class)
+class PotentialSchemaSourceTest {
     private interface TestSchemaSourceRepresentation extends YangSchemaSourceRepresentation {
         @Override
         default Class<TestSchemaSourceRepresentation> getType() {
@@ -35,8 +34,8 @@ public class PotentialSchemaSourceTest {
     @SuppressWarnings("exports")
     public PotentialSchemaSource<TestSchemaSourceRepresentation> same;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         source = PotentialSchemaSource.create(sourceIdentifier, TestSchemaSourceRepresentation.class,
             PotentialSchemaSource.Costs.LOCAL_IO.getValue());
         same = PotentialSchemaSource.create(source.getSourceIdentifier(), source.getRepresentation(),
@@ -44,24 +43,24 @@ public class PotentialSchemaSourceTest {
     }
 
     @Test
-    public void testNegativeCost() {
+    void testNegativeCost() {
         assertThrows(IllegalArgumentException.class,
             () -> PotentialSchemaSource.create(sourceIdentifier, TestSchemaSourceRepresentation.class, -1));
     }
 
     @Test
-    public void testMethods() {
+    void testMethods() {
         assertEquals(PotentialSchemaSource.Costs.LOCAL_IO.getValue(), source.getCost());
         assertSame(sourceIdentifier, source.getSourceIdentifier());
         assertSame(TestSchemaSourceRepresentation.class, source.getRepresentation());
         assertEquals(same.hashCode(), source.hashCode());
-        assertFalse(source.equals(null));
-        assertTrue(source.equals(source));
-        assertTrue(source.equals(same));
+        assertNotEquals(null, source);
+        assertEquals(source, source);
+        assertEquals(source, same);
     }
 
     @Test
-    public void testIntern() {
+    void testIntern() {
         assertSame(source, source.cachedReference());
         assertSame(source, same.cachedReference());
     }

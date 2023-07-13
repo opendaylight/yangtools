@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.Arrays;
-import java.util.concurrent.Future;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -29,8 +28,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresenta
 import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SchemaSourceTransformerTest {
+@ExtendWith(MockitoExtension.class)
+class SchemaSourceTransformerTest {
     public static final Class<YangSchemaSourceRepresentation> SRC_CLASS = YangSchemaSourceRepresentation.class;
     public static final Class<YinXmlSchemaSource> DST_CLASS = YinXmlSchemaSource.class;
 
@@ -46,7 +45,7 @@ public class SchemaSourceTransformerTest {
     public SchemaSourceTransformer<YangSchemaSourceRepresentation, YinXmlSchemaSource> schema;
 
     @Test
-    public void schemaSourceTransformerTest() {
+    void schemaSourceTransformerTest() {
         schema = new SchemaSourceTransformer<>(
                 provider, SchemaSourceTransformerTest.SRC_CLASS, consumer,
                 SchemaSourceTransformerTest.DST_CLASS, function);
@@ -54,49 +53,49 @@ public class SchemaSourceTransformerTest {
     }
 
     @Test
-    public void schemaSourceTransformerGetSourceTest() {
-        final Provider p = new Provider();
-        final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS,
+    void schemaSourceTransformerGetSourceTest() {
+        final var p = new Provider();
+        final var reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS,
                 PotentialSchemaSource.Costs.IMMEDIATE);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
+        final var sourceIdentifier = new SourceIdentifier("source");
         reg.register(sourceIdentifier);
         schema = new SchemaSourceTransformer<>(p,
                 SchemaSourceTransformerTest.SRC_CLASS, consumer, SchemaSourceTransformerTest.DST_CLASS,
                 function);
-        final SchemaSourceProvider<YinXmlSchemaSource> prov = schema;
-        final Future<? extends YinXmlSchemaSource> source = prov.getSource(sourceIdentifier);
+        final var prov = schema;
+        final var source = prov.getSource(sourceIdentifier);
         assertNotNull(source);
         source.cancel(true);
         assertTrue(source.isDone());
     }
 
     @Test
-    public void schemaSourceRegAndUnregSchemaSourceTest() {
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
-        final Foo<YangSchemaSourceRepresentation> foo = new Foo<>(sourceIdentifier,
+    void schemaSourceRegAndUnregSchemaSourceTest() {
+        final var sourceIdentifier = new SourceIdentifier("source");
+        final var foo = new Foo<>(sourceIdentifier,
                 SchemaSourceTransformerTest.SRC_CLASS,
                 PotentialSchemaSource.Costs.COMPUTATION);
-        final Provider p = new Provider();
+        final var p = new Provider();
 
-        final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS,
+        final var reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS,
                 PotentialSchemaSource.Costs.IMMEDIATE);
         reg.register(sourceIdentifier);
 
-        final Consumer c = new Consumer();
+        final var c = new Consumer();
         schema = new SchemaSourceTransformer<>(p, SchemaSourceTransformerTest.SRC_CLASS, c,
             SchemaSourceTransformerTest.DST_CLASS, function);
 
-        final SchemaSourceListener listener = schema;
+        final var listener = schema;
         p.registerSchemaSourceListener(listener);
 
-        final PotentialSchemaSource<?>[] potList = { foo.getPotentialSchemSource() };
-        final Iterable<PotentialSchemaSource<?>> sources = Arrays.asList(potList);
+        final var potList = new PotentialSchemaSource<?>[]{ foo.getPotentialSchemSource() };
+        final var sources = Arrays.asList(potList);
         listener.schemaSourceRegistered(sources);
-        final ListenableFuture<YinXmlSchemaSource> source = schema.getSource(sourceIdentifier);
+        final var source = schema.getSource(sourceIdentifier);
         assertNotNull(source);
 
         listener.schemaSourceUnregistered(foo.getPotentialSchemSource());
-        final ListenableFuture<YinXmlSchemaSource> source2 = schema.getSource(sourceIdentifier);
+        final var source2 = schema.getSource(sourceIdentifier);
         assertNotNull(source2);
     }
 

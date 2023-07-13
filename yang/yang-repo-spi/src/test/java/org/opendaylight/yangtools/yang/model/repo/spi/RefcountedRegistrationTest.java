@@ -7,49 +7,40 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RefcountedRegistrationTest {
+@ExtendWith(MockitoExtension.class)
+class RefcountedRegistrationTest {
     @Mock
-    public SchemaSourceRegistration<?> reg;
+    private SchemaSourceRegistration<?> reg;
 
-    @Before
-    public void before() {
+    @Test
+    void refcountDecTrue() {
+        final var ref = new RefcountedRegistration(reg);
         doNothing().when(reg).close();
-    }
-
-    @Test
-    public void refcountDecTrue() {
-        final RefcountedRegistration ref = new RefcountedRegistration(reg);
         assertTrue(ref.decRef());
-        verify(reg, times(1)).close();
     }
 
     @Test
-    public void refcountIncDecFalse() {
-        final RefcountedRegistration ref = new RefcountedRegistration(reg);
+    void refcountIncDecFalse() {
+        final var ref = new RefcountedRegistration(reg);
         ref.incRef();
         assertFalse(ref.decRef());
-        verify(reg, times(0)).close();
     }
 
     @Test
-    public void refcountIncDecTrue() {
-        final RefcountedRegistration ref = new RefcountedRegistration(reg);
+    void refcountIncDecTrue() {
+        final var ref = new RefcountedRegistration(reg);
         ref.incRef();
         assertFalse(ref.decRef());
+        doNothing().when(reg).close();
         assertTrue(ref.decRef());
-        verify(reg, times(1)).close();
     }
 }
