@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -26,7 +26,7 @@ public class EmptyCodecStringTest {
     public void testSerialize() {
         EmptyCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.emptyType(), EmptyCodec.class);
 
-        assertEquals("serialize", "", codec.serialize(Empty.value()));
+        assertEquals("", codec.serialize(Empty.value()), "serialize");
     }
 
     @SuppressWarnings("unchecked")
@@ -34,7 +34,7 @@ public class EmptyCodecStringTest {
     public void testDeserialize() {
         EmptyCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.emptyType(), EmptyCodec.class);
 
-        assertEquals("deserialize", Empty.value(), codec.deserialize(""));
+        assertEquals(Empty.value(), codec.deserialize(""), "deserialize");
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "foo");
     }

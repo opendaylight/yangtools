@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -64,8 +64,8 @@ public class BitsCodecStringTest {
         BitsCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(
             toBitsTypeDefinition("bit1", "bit2"), BitsCodec.class);
 
-        assertEquals("deserialize", ImmutableSet.of("bit1", "bit2"), codec.deserialize("  bit1 bit2     "));
-        assertEquals("deserialize", Collections.emptySet(), codec.deserialize(""));
+        assertEquals(ImmutableSet.of("bit1", "bit2"), codec.deserialize("  bit1 bit2     "), "deserialize");
+        assertEquals(Collections.emptySet(), codec.deserialize(""), "deserialize");
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "bit1 bit3");
     }

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
@@ -33,8 +33,8 @@ public class StringCodecStringTest {
         StringCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.stringType(),
             StringCodec.class);
 
-        assertEquals("serialize", "foo", codec.serialize("foo"));
-        assertEquals("serialize", "", codec.serialize(""));
+        assertEquals("foo", codec.serialize("foo"), "serialize");
+        assertEquals("", codec.serialize(""), "serialize");
     }
 
     @Test
@@ -42,8 +42,8 @@ public class StringCodecStringTest {
         StringCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.stringType(),
             StringCodec.class);
 
-        assertEquals("deserialize", "bar", codec.deserialize("bar"));
-        assertEquals("deserialize", "", codec.deserialize(""));
+        assertEquals("bar", codec.deserialize("bar"), "deserialize");
+        assertEquals("", codec.deserialize(""), "deserialize");
     }
 
     @Test

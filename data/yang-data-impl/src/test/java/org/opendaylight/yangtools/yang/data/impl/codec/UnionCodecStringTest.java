@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.getCodec;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
@@ -44,10 +44,10 @@ public class UnionCodecStringTest {
                 toUnionTypeDefinition(BaseTypes.int32Type(),BaseTypes.int64Type()), BaseTypes.emptyType()),
                 UnionCodec.class);
 
-        assertEquals("serialize", "enum1", codec.serialize("enum1"));
-        assertEquals("serialize", "123", codec.serialize("123"));
-        assertEquals("serialize", "123", codec.serialize(123));
-        assertEquals("serialize", "", codec.serialize(""));
+        assertEquals("enum1", codec.serialize("enum1"), "serialize");
+        assertEquals("123", codec.serialize("123"), "serialize");
+        assertEquals("123", codec.serialize(123), "serialize");
+        assertEquals("", codec.serialize(""), "serialize");
     }
 
     @SuppressWarnings("unchecked")
@@ -57,11 +57,11 @@ public class UnionCodecStringTest {
                 toUnionTypeDefinition(BaseTypes.int32Type(),BaseTypes.int64Type()), BaseTypes.emptyType()),
                 UnionCodec.class);
 
-        assertEquals("deserialize", "enum1", codec.deserialize("enum1"));
-        assertEquals("deserialize", 123, codec.deserialize("123"));
-        assertEquals("deserialize", -123, codec.deserialize("-123"));
-        assertEquals("deserialize", 41234567890L, codec.deserialize("41234567890"));
-        assertEquals("deserialize", Empty.value(), codec.deserialize(""));
+        assertEquals("enum1", codec.deserialize("enum1"), "deserialize");
+        assertEquals(123, codec.deserialize("123"), "deserialize");
+        assertEquals(-123, codec.deserialize("-123"), "deserialize");
+        assertEquals(41234567890L, codec.deserialize("41234567890"), "deserialize");
+        assertEquals(Empty.value(), codec.deserialize(""), "deserialize");
 
         deserializeWithExpectedIllegalArgEx(codec, "enum3");
         deserializeWithExpectedIllegalArgEx(codec, "123o");

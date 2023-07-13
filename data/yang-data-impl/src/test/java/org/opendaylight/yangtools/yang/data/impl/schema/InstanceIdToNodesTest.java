@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
@@ -106,7 +105,7 @@ public class InstanceIdToNodesTest {
         assertArrayEquals(new Object[] { BAR, FOO }, id.keySet().toArray());
 
         final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of(TWO_KEY_LIST, id));
-        assertThat(filter, isA(MapNode.class));
+        assertInstanceOf(MapNode.class, filter);
         final Collection<MapEntryNode> value = ((MapNode) filter).body();
         assertEquals(1, value.size());
         final MapEntryNode entry = value.iterator().next();
