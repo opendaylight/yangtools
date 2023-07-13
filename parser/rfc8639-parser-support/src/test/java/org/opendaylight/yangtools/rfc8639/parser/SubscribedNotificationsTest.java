@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.rfc8639.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscribedNotificationsConstants;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 public class SubscribedNotificationsTest {
     private static CrossSourceStatementReactor reactor;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -38,7 +38,7 @@ public class SubscribedNotificationsTest {
                 .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         reactor = null;
     }
@@ -69,7 +69,7 @@ public class SubscribedNotificationsTest {
         assertEquals(7, notifications.size());
         for (NotificationEffectiveStatement notif : notifications) {
             final var sub = notif.findFirstEffectiveSubstatement(SubscriptionStateNotificationEffectiveStatement.class);
-            assertTrue("No marker in " + notif.argument(), sub.isPresent());
+            assertTrue(sub.isPresent(), "No marker in " + notif.argument());
         }
     }
 }
