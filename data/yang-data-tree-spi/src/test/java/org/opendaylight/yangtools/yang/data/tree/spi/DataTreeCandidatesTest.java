@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
@@ -22,9 +21,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -36,7 +33,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class DataTreeCandidatesTest {
     private static final NodeIdentifier FOO = new NodeIdentifier(QName.create("foo", "foo"));
 
@@ -46,11 +42,11 @@ public class DataTreeCandidatesTest {
         final DataTreeCandidate dataTreeCandidate = DataTreeCandidates.newDataTreeCandidate(
             YangInstanceIdentifier.of(), mockedDataTreeCandidateNode);
 
-        assertThat(dataTreeCandidate, instanceOf(DefaultDataTreeCandidate.class));
+        assertInstanceOf(DefaultDataTreeCandidate.class, dataTreeCandidate);
         assertSame(YangInstanceIdentifier.of(), dataTreeCandidate.getRootPath());
         assertEquals(mockedDataTreeCandidateNode, dataTreeCandidate.getRootNode());
-        assertThat(dataTreeCandidate.toString(),
-            containsString("DefaultDataTreeCandidate{rootPath=/, rootNode=Mock for DataTreeCandidateNode, hashCode: "));
+        assertTrue(dataTreeCandidate.toString()
+                .contains("DefaultDataTreeCandidate{rootPath=/, rootNode=Mock for DataTreeCandidateNode, hashCode: "));
     }
 
     @Test
@@ -59,9 +55,9 @@ public class DataTreeCandidatesTest {
         final DataTreeCandidate dataTreeCandidate = DataTreeCandidates.fromNormalizedNode(
             YangInstanceIdentifier.of(), mockedNormalizedNode);
 
-        assertThat(dataTreeCandidate, instanceOf(DefaultDataTreeCandidate.class));
+        assertInstanceOf(DefaultDataTreeCandidate.class, dataTreeCandidate);
         assertSame(YangInstanceIdentifier.of(), dataTreeCandidate.getRootPath());
-        assertThat(dataTreeCandidate.getRootNode(), instanceOf(NormalizedNodeDataTreeCandidateNode.class));
+        assertInstanceOf(NormalizedNodeDataTreeCandidateNode.class, dataTreeCandidate.getRootNode());
     }
 
     @Test
@@ -191,6 +187,6 @@ public class DataTreeCandidatesTest {
 
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate));
-        assertThat(ex.getMessage(), containsString("Unsupported modification"));
+        assertTrue(ex.getMessage().contains("Unsupported modification"));
     }
 }
