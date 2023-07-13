@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,7 +66,7 @@ public class ContextReferenceTest {
             .get(FOO);
 
         final DataTreeEffectiveStatement<?> list = foo.findDataTreeNode(QName.create(FOO, "list")).orElseThrow();
-        assertThat(list, instanceOf(ListEffectiveStatement.class));
+        assertInstanceOf(ListEffectiveStatement.class, list);
 
         final ContextInstanceEffectiveStatement listType = list
             .findFirstEffectiveSubstatement(ContextInstanceEffectiveStatement.class).orElseThrow();
