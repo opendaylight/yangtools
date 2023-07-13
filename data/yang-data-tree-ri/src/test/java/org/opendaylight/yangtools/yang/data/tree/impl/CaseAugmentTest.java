@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -36,7 +35,7 @@ public class CaseAugmentTest {
 
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module case-augment-test {
@@ -74,7 +73,7 @@ public class CaseAugmentTest {
             }""");
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         SCHEMA_CONTEXT = null;
     }
@@ -139,6 +138,6 @@ public class CaseAugmentTest {
             .build());
 
         final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, modificationTree::ready);
-        assertThat(e.getMessage(), containsString(" implies non-presence of child "));
+        assertTrue(e.getMessage().contains(" implies non-presence of child "));
     }
 }

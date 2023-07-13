@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -42,7 +44,7 @@ public class YT821Test {
 
     private DataTree dataTree;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYang("""
             module yt821 {
@@ -90,13 +92,13 @@ public class YT821Test {
         leafRefContext = LeafRefContext.create(schemaContext);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         schemaContext = null;
         leafRefContext = null;
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
     }
@@ -112,14 +114,16 @@ public class YT821Test {
         dataTree.commit(writeContributorsCandidate);
     }
 
-    @Test(expected = LeafRefDataValidationFailedException.class)
+    @Test
     public void testInvalidRefFromAugmentation() throws Exception {
-        final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
-        writeModification.write(ROOT_ID, refFromAug("foo2"));
-        writeModification.ready();
-        final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
+        assertThrows(LeafRefDataValidationFailedException.class, () -> {
+            final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
+            writeModification.write(ROOT_ID, refFromAug("foo2"));
+            writeModification.ready();
+            final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
 
-        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
+            LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
+        });
     }
 
     @Test
@@ -133,14 +137,16 @@ public class YT821Test {
         dataTree.commit(writeContributorsCandidate);
     }
 
-    @Test(expected = LeafRefDataValidationFailedException.class)
+    @Test
     public void testInvalidRefInContainerFromAugmentation() throws Exception {
-        final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
-        writeModification.write(ROOT_ID, refInContainer("foo2"));
-        writeModification.ready();
-        final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
+        assertThrows(LeafRefDataValidationFailedException.class, () -> {
+            final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
+            writeModification.write(ROOT_ID, refInContainer("foo2"));
+            writeModification.ready();
+            final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
 
-        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
+            LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
+        });
     }
 
     private static ContainerNode refFromAug(final String refValue) {

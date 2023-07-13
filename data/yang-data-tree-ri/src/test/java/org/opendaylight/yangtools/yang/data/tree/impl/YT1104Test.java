@@ -12,10 +12,10 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.anydataB
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 
 import javax.xml.transform.dom.DOMSource;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -38,7 +38,7 @@ public class YT1104Test {
 
     private DataTree dataTree;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module yt1104 {
@@ -53,12 +53,12 @@ public class YT1104Test {
             }""");
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         SCHEMA_CONTEXT = null;
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
     }

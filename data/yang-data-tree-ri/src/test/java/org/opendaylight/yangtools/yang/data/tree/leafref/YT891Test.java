@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -45,12 +47,12 @@ public class YT891Test {
 
     private DataTree dataTree;
 
-    @Before
+    @BeforeEach
     public void before() {
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYang("""
             module bar {
@@ -118,7 +120,7 @@ public class YT891Test {
         leafRefContext = LeafRefContext.create(schemaContext);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         schemaContext = null;
         leafRefContext = null;
@@ -134,12 +136,14 @@ public class YT891Test {
         dataTree.commit(writeContributorsCandidate);
     }
 
-    @Test(expected = LeafRefDataValidationFailedException.class)
+    @Test
     public void testInvalid() throws Exception {
-        final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
-        writeModification.write(FOO_TOP_ID, fooTopWithList("name2"));
-        writeModification.ready();
-        LeafRefValidation.validate(dataTree.prepare(writeModification), leafRefContext);
+        assertThrows(LeafRefDataValidationFailedException.class, () -> {
+            final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
+            writeModification.write(FOO_TOP_ID, fooTopWithList("name2"));
+            writeModification.ready();
+            LeafRefValidation.validate(dataTree.prepare(writeModification), leafRefContext);
+        });
     }
 
     @Test
@@ -151,13 +155,15 @@ public class YT891Test {
         LeafRefValidation.validate(dataTree.prepare(writeModification), leafRefContext);
     }
 
-    @Test(expected = LeafRefDataValidationFailedException.class)
+    @Test
     public void testGroupingWithLeafrefInvalid() throws Exception {
-        final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
-        writeModification.write(BAZ_TOP_ID, bazTop());
-        writeModification.write(FOO_TOP_ID, fooTopWithRef("name3"));
-        writeModification.ready();
-        LeafRefValidation.validate(dataTree.prepare(writeModification), leafRefContext);
+        assertThrows(LeafRefDataValidationFailedException.class, () -> {
+            final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
+            writeModification.write(BAZ_TOP_ID, bazTop());
+            writeModification.write(FOO_TOP_ID, fooTopWithRef("name3"));
+            writeModification.ready();
+            LeafRefValidation.validate(dataTree.prepare(writeModification), leafRefContext);
+        });
     }
 
     private static ContainerNode fooTopWithList(final String refValue) {

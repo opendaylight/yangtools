@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.function.Consumer;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -46,7 +46,7 @@ public class YT1276Test {
     private final DataTree tree = new InMemoryDataTreeFactory()
         .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL);
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         MODEL = YangParserTestUtils.parseYangResource("/yt1276.yang");
     }
@@ -117,16 +117,18 @@ public class YT1276Test {
         });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBazWithAugmentedCaseWithoutMandatoryLeaf() throws DataValidationFailedException {
-        applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(BAZ))
-                    .withChild(ImmutableNodes.leafNode(BAZ_AUG_CASE_NON_MANDAT_LEAF, "augmentedCaseNonMandatory"))
-                    .build())
-                .build());
+        assertThrows(IllegalArgumentException.class, () -> {
+            applyOperation(mod -> {
+                mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(BAR))
+                    .withChild(Builders.choiceBuilder()
+                        .withNodeIdentifier(new NodeIdentifier(BAZ))
+                        .withChild(ImmutableNodes.leafNode(BAZ_AUG_CASE_NON_MANDAT_LEAF, "augmentedCaseNonMandatory"))
+                        .build())
+                    .build());
+            });
         });
     }
 
@@ -147,19 +149,21 @@ public class YT1276Test {
         });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWithAugmentedNestedBazWithhoutMandatoryLeaf() throws DataValidationFailedException {
-        applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(BAZ))
+        assertThrows(IllegalArgumentException.class, () -> {
+            applyOperation(mod -> {
+                mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(BAR))
                     .withChild(Builders.choiceBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(NESTED_BAZ_CHOICE))
-                        .withChild(ImmutableNodes.leafNode(NESTED_BAZ_XYZ_CASE_NON_MANDATORY, "nestedNonMandatory"))
+                        .withNodeIdentifier(new NodeIdentifier(BAZ))
+                        .withChild(Builders.choiceBuilder()
+                            .withNodeIdentifier(new NodeIdentifier(NESTED_BAZ_CHOICE))
+                            .withChild(ImmutableNodes.leafNode(NESTED_BAZ_XYZ_CASE_NON_MANDATORY, "nestedNonMandatory"))
+                            .build())
                         .build())
-                    .build())
-                .build());
+                    .build());
+            });
         });
     }
 

@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -42,7 +42,7 @@ public class Bug4295Test {
     private QName ileaf;
     private QNameModule foo;
 
-    @Before
+    @BeforeEach
     public void init() {
         foo = QNameModule.create(XMLNamespace.of("foo"));
         root = QName.create(foo, "root");

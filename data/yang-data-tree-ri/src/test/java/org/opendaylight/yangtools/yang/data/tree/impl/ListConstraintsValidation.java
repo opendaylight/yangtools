@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
@@ -77,7 +76,7 @@ public class ListConstraintsValidation {
 
     private DataTree inMemoryDataTree;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYang("""
             module list-constraints-validation-test-model  {
@@ -126,12 +125,12 @@ public class ListConstraintsValidation {
             }""");
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         schemaContext = null;
     }
 
-    @Before
+    @BeforeEach
     public void prepare() throws DataValidationFailedException {
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
             schemaContext);
@@ -170,56 +169,61 @@ public class ListConstraintsValidation {
         assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
     }
 
-    @Test(expected = DataValidationFailedException.class)
+    @Test
     public void minMaxListFail() throws DataValidationFailedException {
-        DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        assertThrows(DataValidationFailedException.class, () -> {
+            DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo");
-        final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar");
-        final MapEntryNode gooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "goo");
-        final MapNode mapNode = ImmutableNodes.mapNodeBuilder()
+            final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
+                    "foo");
+            final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
+                    "bar");
+            final MapEntryNode gooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
+                    "goo");
+            final MapNode mapNode = ImmutableNodes.mapNodeBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(fooEntryNode).build();
 
-        final YangInstanceIdentifier fooPath = MIN_MAX_LIST_PATH.node(fooEntryNode.name());
-        final YangInstanceIdentifier barPath = MIN_MAX_LIST_PATH.node(barEntryNode.name());
-        final YangInstanceIdentifier gooPath = MIN_MAX_LIST_PATH.node(gooEntryNode.name());
+            final YangInstanceIdentifier fooPath = MIN_MAX_LIST_PATH.node(fooEntryNode.name());
+            final YangInstanceIdentifier barPath = MIN_MAX_LIST_PATH.node(barEntryNode.name());
+            final YangInstanceIdentifier gooPath = MIN_MAX_LIST_PATH.node(gooEntryNode.name());
 
-        modificationTree.write(MIN_MAX_LIST_PATH, mapNode);
-        modificationTree.merge(barPath, barEntryNode);
-        modificationTree.write(gooPath, gooEntryNode);
-        modificationTree.delete(gooPath);
-        modificationTree.ready();
+            modificationTree.write(MIN_MAX_LIST_PATH, mapNode);
+            modificationTree.merge(barPath, barEntryNode);
+            modificationTree.write(gooPath, gooEntryNode);
+            modificationTree.delete(gooPath);
+            modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare1);
+            inMemoryDataTree.validate(modificationTree);
+            DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
+            inMemoryDataTree.commit(prepare1);
 
-        DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
-        assertTrue(minMaxListRead.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
+            DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+            Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+            assertTrue(minMaxListRead.isPresent());
+            assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
-        modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(gooPath, gooEntryNode);
-        modificationTree.ready();
+            modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree.write(gooPath, gooEntryNode);
+            modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
-        prepare1 = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare1);
+            inMemoryDataTree.validate(modificationTree);
+            prepare1 = inMemoryDataTree.prepare(modificationTree);
+            inMemoryDataTree.commit(prepare1);
 
-        snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
-        assertTrue(minMaxListRead.isPresent());
-        assertEquals(3, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
+            snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+            minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+            assertTrue(minMaxListRead.isPresent());
+            assertEquals(3, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
-        modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        modificationTree.delete(gooPath);
-        modificationTree.delete(fooPath);
-        modificationTree.ready();
+            modificationTree.delete(gooPath);
+            modificationTree.delete(fooPath);
+            modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
+            inMemoryDataTree.validate(modificationTree);
+        });
     }
 
     @Test
@@ -349,7 +353,7 @@ public class ListConstraintsValidation {
     }
 
     private static void assertOperationFailed(final Exception ex, final String expectedAppTag) {
-        assertThat(ex, instanceOf(YangNetconfErrorAware.class));
+        assertInstanceOf(YangNetconfErrorAware.class, ex);
         final List<YangNetconfError> errors = ((YangNetconfErrorAware) ex).getNetconfErrors();
         assertEquals(1, errors.size());
         final YangNetconfError error = errors.get(0);

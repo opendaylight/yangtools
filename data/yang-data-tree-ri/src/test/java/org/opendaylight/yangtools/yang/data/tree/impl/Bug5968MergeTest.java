@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -44,7 +44,7 @@ public class Bug5968MergeTest {
     private static final QName COMMON_LEAF = QName.create(NS, REV, "common-leaf");
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module bug5968 {
@@ -74,7 +74,7 @@ public class Bug5968MergeTest {
             }""");
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         SCHEMA_CONTEXT = null;
     }

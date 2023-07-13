@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -28,7 +28,7 @@ public class LeafRefContextTest {
     private static QNameModule root;
     private static LeafRefContext rootLeafRefContext;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/correct-modules");
 
@@ -42,7 +42,7 @@ public class LeafRefContextTest {
         rootLeafRefContext = LeafRefContext.create(context);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() {
         context = null;
         root = null;
