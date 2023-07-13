@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedSchemaNode;
@@ -44,7 +45,7 @@ public class IetfYangSmiv2ExtensionPluginTest {
 
     private static CrossSourceStatementReactor reactor;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         reactor = RFC7950Reactors.defaultReactorBuilder()
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -64,7 +65,7 @@ public class IetfYangSmiv2ExtensionPluginTest {
             .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         reactor = null;
     }
@@ -81,7 +82,7 @@ public class IetfYangSmiv2ExtensionPluginTest {
         assertEquals(oidExtEffectStmt.getArgument().toString(), "1.3.6.1.2.1.31.1.1");
 
         final DataSchemaNode dataChildByName = schema.getDataChildByName(QName.create(NS, REV, "root"));
-        assertTrue(dataChildByName instanceof ContainerSchemaNode);
+        assertInstanceOf(ContainerSchemaNode.class, dataChildByName);
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
         assertEquals(1, root.getUnknownSchemaNodes().size());
         OidSchemaNode oid = (OidSchemaNode) root.getUnknownSchemaNodes().iterator().next();
