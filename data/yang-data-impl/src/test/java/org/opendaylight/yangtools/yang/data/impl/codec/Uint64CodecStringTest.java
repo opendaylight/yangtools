@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -19,23 +19,23 @@ import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
  *
  * @author Thomas Pantelis
  */
-public class Uint64CodecStringTest {
+class Uint64CodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
-    public void testSerialize() {
-        Uint64Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.uint64Type(),
+    void testSerialize() {
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.uint64Type(),
             Uint64Codec.class);
         assertEquals("123456789", codec.serialize(Uint64.valueOf(123456789)));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testDeserialize() {
-        final String hexa = "0X75EDC78edCBA";
-        final String octal = "03536670743556272";
-        final String integer = "129664115727546";
+    void testDeserialize() {
+        final var hexa = "0X75EDC78edCBA";
+        final var octal = "03536670743556272";
+        final var integer = "129664115727546";
 
-        Uint64Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.uint64Type(),
+        final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.uint64Type(),
             Uint64Codec.class);
 
         assertEquals(Uint64.valueOf("75EDC78edCBA", 16), codec.deserialize(hexa));
