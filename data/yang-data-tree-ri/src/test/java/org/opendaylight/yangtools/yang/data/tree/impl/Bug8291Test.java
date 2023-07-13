@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +64,7 @@ public class Bug8291Test {
                 }
               }
             }""");
-        assertNotNull("Schema context must not be null.", schemaContext);
+        assertNotNull(schemaContext, "Schema context must not be null.");
     }
 
     private static DataTree initDataTree(final EffectiveModelContext schemaContext)

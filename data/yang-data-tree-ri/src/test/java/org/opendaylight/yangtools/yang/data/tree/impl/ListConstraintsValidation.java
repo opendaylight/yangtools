@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
@@ -349,7 +348,7 @@ public class ListConstraintsValidation {
     }
 
     private static void assertOperationFailed(final Exception ex, final String expectedAppTag) {
-        assertThat(ex, instanceOf(YangNetconfErrorAware.class));
+        assertInstanceOf(YangNetconfErrorAware.class, ex);
         final List<YangNetconfError> errors = ((YangNetconfErrorAware) ex).getNetconfErrors();
         assertEquals(1, errors.size());
         final YangNetconfError error = errors.get(0);

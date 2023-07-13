@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
 import org.junit.AfterClass;
@@ -139,6 +138,6 @@ public class CaseAugmentTest {
             .build());
 
         final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, modificationTree::ready);
-        assertThat(e.getMessage(), containsString(" implies non-presence of child "));
+        assertTrue(e.getMessage().contains(" implies non-presence of child "));
     }
 }

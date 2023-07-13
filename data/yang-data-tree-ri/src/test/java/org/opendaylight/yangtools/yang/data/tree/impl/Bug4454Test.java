@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -294,7 +293,7 @@ public class Bug4454Test {
         minMaxListRead = test3.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertEquals(1, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
-        assertThat(minMaxListRead.orElseThrow().body().toString(), containsString("test2"));
+        assertTrue(minMaxListRead.orElseThrow().body().toString().contains("test2"));
 
         DataTreeModification tempMod3 = test3.newModification();
         tempMod3.merge(MIN_MAX_LIST_PATH, mapNodeBar);
@@ -392,7 +391,7 @@ public class Bug4454Test {
 
         // Empty list should have disappeared, along with the container, as we are not enforcing root
         final NormalizedNode data = inMemoryDataTree.takeSnapshot().readNode(YangInstanceIdentifier.of()).orElseThrow();
-        assertTrue(data instanceof ContainerNode);
+        assertInstanceOf(ContainerNode.class, data);
         assertEquals(0, ((ContainerNode) data).size());
     }
 

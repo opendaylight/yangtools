@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
 import org.junit.AfterClass;

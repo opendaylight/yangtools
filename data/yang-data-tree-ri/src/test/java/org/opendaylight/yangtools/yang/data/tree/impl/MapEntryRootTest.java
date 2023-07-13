@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -25,11 +23,11 @@ public class MapEntryRootTest extends AbstractTestModelTest {
             TestModel.TEST_PATH.node(TestModel.OUTER_LIST_QNAME).node(
                 NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, (short) 12))).build();
         final DataTree dataTree = new InMemoryDataTreeFactory().create(treeConfig, SCHEMA_CONTEXT);
-        assertTrue(dataTree instanceof InMemoryDataTree);
+        assertInstanceOf(InMemoryDataTree.class, dataTree);
 
         final InMemoryDataTree imdt = (InMemoryDataTree) dataTree;
         final InMemoryDataTreeModification mod = imdt.takeSnapshot().newModification();
         final ModificationApplyOperation strategy = mod.getStrategy();
-        assertThat(strategy, instanceOf(MapEntryModificationStrategy.class));
+        assertInstanceOf(MapEntryModificationStrategy.class, strategy);
     }
 }

@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.junit.BeforeClass;
@@ -151,7 +149,7 @@ public class UniqueConstraintTest {
     private static void verifyException(final Exception ex, final String expectedStart,
             final String... expectedLeaves) {
         verifyExceptionMessage(expectedStart, ex.getMessage(), expectedLeaves);
-        assertThat(ex, instanceOf(YangNetconfErrorAware.class));
+        assertInstanceOf(YangNetconfErrorAware.class, ex);
         final List<YangNetconfError> errors = ((YangNetconfErrorAware) ex).getNetconfErrors();
         assertEquals(1, errors.size());
         final YangNetconfError error = errors.get(0);
@@ -163,9 +161,9 @@ public class UniqueConstraintTest {
 
     private static void verifyExceptionMessage(final String expectedStart, final String message,
             final String... leafs) {
-        assertThat(message, startsWith(expectedStart));
+        assertTrue(message.startsWith(expectedStart));
         for (final String leaf : leafs) {
-            assertThat(message, containsString(leaf));
+            assertTrue(message.contains(leaf));
         }
     }
 
