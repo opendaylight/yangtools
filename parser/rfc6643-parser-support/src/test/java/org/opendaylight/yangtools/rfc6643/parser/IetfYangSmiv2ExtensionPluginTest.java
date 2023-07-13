@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import org.junit.AfterClass;
@@ -81,7 +82,7 @@ public class IetfYangSmiv2ExtensionPluginTest {
         assertEquals(oidExtEffectStmt.getArgument().toString(), "1.3.6.1.2.1.31.1.1");
 
         final DataSchemaNode dataChildByName = schema.getDataChildByName(QName.create(NS, REV, "root"));
-        assertTrue(dataChildByName instanceof ContainerSchemaNode);
+        assertInstanceOf(ContainerSchemaNode.class, dataChildByName);
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
         assertEquals(1, root.getUnknownSchemaNodes().size());
         OidSchemaNode oid = (OidSchemaNode) root.getUnknownSchemaNodes().iterator().next();
