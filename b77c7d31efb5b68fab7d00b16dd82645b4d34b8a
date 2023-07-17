@@ -22,6 +22,29 @@
       },
       "revId": "b77c7d31efb5b68fab7d00b16dd82645b4d34b8a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c863d541_dea0b452",
+        "filename": "codec/yang-data-codec-binfmt/src/test/java/org/opendaylight/yangtools/yang/data/codec/binfmt/BitsSerializationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-07-17T08:05:47Z",
+      "side": 1,
+      "message": "does not actually migrate the framework in use.",
+      "range": {
+        "startLine": 16,
+        "startChar": 7,
+        "endLine": 16,
+        "endChar": 21
+      },
+      "revId": "b77c7d31efb5b68fab7d00b16dd82645b4d34b8a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
