@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f18b45b4_90020401",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-07-18T12:07:35Z",
+      "side": 1,
+      "message": "Same goes for this module as for yang-data-codec-binfmt, the recipe necessary for migration from obsolete @RunWith(Parameterized.class) butchers the code and makes some tests fail.",
+      "revId": "5f22307547a40ef2461eb1fdaabf4b45057cf5a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
