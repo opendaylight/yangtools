@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "84213c26_794816f7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9172
+      },
+      "writtenOn": "2023-07-18T11:52:42Z",
+      "side": 1,
+      "message": "Migration of this module is more difficult than I anticipated. Openrewrite\u0027s ParameterizedRunnerToParameterized recipe seemingly refactors the code to the JUnit5 state, but the test are not runnable. I contacted the maintainers or openrewrite once again, will see if they are to any help. I will leave the migration of this module open for now.",
+      "revId": "b77c7d31efb5b68fab7d00b16dd82645b4d34b8a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c9ff47a6_3424b2dd",
