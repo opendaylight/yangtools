@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -62,7 +61,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         YangDataSchemaNode myYangDataANode = null;
         YangDataSchemaNode myYangDataBNode = null;
         for (var unknownSchemaNode : unknownSchemaNodes) {
-            assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
+            assertInstanceOf(YangDataSchemaNode.class, unknownSchemaNode);
             final var yangDataSchemaNode = (YangDataSchemaNode) unknownSchemaNode;
             if ("my-yang-data-a".equals(yangDataSchemaNode.getNodeParameter())) {
                 myYangDataANode = yangDataSchemaNode;
@@ -85,7 +84,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         assertEquals(1, unknownSchemaNodes.size());
 
         final var unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
+        assertInstanceOf(YangDataSchemaNode.class, unknownSchemaNode);
         final var myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
         assertNotNull(myYangDataNode);
 
@@ -93,7 +92,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         assertEquals(1, yangDataChildren.size());
 
         final var childInYangData = yangDataChildren.iterator().next();
-        assertThat(childInYangData, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, childInYangData);
         final var contInYangData = (ContainerSchemaNode) childInYangData;
         assertEquals(Optional.empty(), contInYangData.effectiveConfig());
         final var innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
@@ -119,7 +118,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         assertEquals(1, unknownSchemaNodes.size());
 
         final var unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
+        assertInstanceOf(YangDataSchemaNode.class, unknownSchemaNode);
         final var myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
         assertNotNull(myYangDataNode);
 
@@ -127,7 +126,7 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         assertEquals(1, yangDataChildren.size());
 
         final var childInYangData = yangDataChildren.iterator().next();
-        assertThat(childInYangData, instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, childInYangData);
         final var contInYangData = (ContainerSchemaNode) childInYangData;
         final var innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
                 QName.create(foobar.getQNameModule(), "inner-cont"));
@@ -159,16 +158,16 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
     public void testYangDataWithMissingTopLevelContainer() {
         final var build = REACTOR.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE);
         final var cause = assertThrows(ReactorException.class, () -> build.buildEffective()).getCause();
-        assertThat(cause, instanceOf(MissingSubstatementException.class));
-        assertThat(cause.getMessage(), startsWith("yang-data requires at least one substatement [at "));
+        assertInstanceOf(MissingSubstatementException.class, cause);
+        assertTrue(cause.getMessage().startsWith("yang-data requires at least one substatement [at "));
     }
 
     @Test
     public void testYangDataWithTwoTopLevelContainers() {
         final var build = REACTOR.newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE);
         final var cause = assertThrows(ReactorException.class, () -> build.buildEffective()).getCause();
-        assertThat(cause, instanceOf(InvalidSubstatementException.class));
-        assertThat(cause.getMessage(),
-            startsWith("yang-data requires exactly one container data node definition, found ["));
+        assertInstanceOf(InvalidSubstatementException.class, cause);
+        assertTrue(cause.getMessage().startsWith(
+                "yang-data requires exactly one container data node definition, found ["));
     }
 }

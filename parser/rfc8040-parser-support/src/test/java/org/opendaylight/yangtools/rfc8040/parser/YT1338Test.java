@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,7 +35,7 @@ public class YT1338Test extends AbstractYangDataTest {
             .orElseThrow()
             .findDataTreeNode(QName.create(YangDataConstants.RFC8040_MODULE, "restconf"))
             .orElseThrow();
-        assertThat(restconf, instanceOf(ContainerEffectiveStatement.class));
+        assertInstanceOf(ContainerEffectiveStatement.class, restconf);
 
         final var leaf = ((ContainerEffectiveStatement) restconf)
             .findDataTreeNode(QName.create(YangDataConstants.RFC8040_MODULE, "operations"))

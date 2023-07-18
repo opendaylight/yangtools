@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.rfc8040.parser;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -25,7 +25,7 @@ public abstract class AbstractYangDataTest {
 
     static CrossSourceStatementReactor REACTOR;
 
-    @BeforeClass
+    @BeforeAll
     public static void createReactor() {
         REACTOR = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
@@ -33,7 +33,7 @@ public abstract class AbstractYangDataTest {
                 .build();
     }
 
-    @AfterClass
+    @AfterAll
     public static void freeReactor() {
         REACTOR = null;
     }
