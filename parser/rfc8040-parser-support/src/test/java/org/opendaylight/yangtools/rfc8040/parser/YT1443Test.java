@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.rfc8040.parser;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class YT1443Test extends AbstractYangDataTest {
+class YT1443Test extends AbstractYangDataTest {
     @Test
-    public void buildEffectiveModelTest() throws ReactorException {
+    void buildEffectiveModelTest() throws Exception {
         final var module = REACTOR.newBuild()
             .addSources(IETF_RESTCONF_MODULE, sourceForResource("/yt1443.yang"))
             .buildEffective()

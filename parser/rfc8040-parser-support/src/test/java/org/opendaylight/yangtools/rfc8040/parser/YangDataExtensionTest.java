@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -28,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementExcept
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
-public class YangDataExtensionTest extends AbstractYangDataTest {
+class YangDataExtensionTest extends AbstractYangDataTest {
     private static final StatementStreamSource FOO_MODULE = sourceForResource(
             "/yang-data-extension-test/foo.yang");
     private static final StatementStreamSource FOO_INVALID_1_MODULE = sourceForResource(
@@ -48,35 +49,23 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
     private static final QNameModule FOO_QNAMEMODULE = QNameModule.create(XMLNamespace.of("foo"), REVISION);
 
     @Test
-    public void testYangData() throws Exception {
+    void testYangData() throws Exception {
         final var schemaContext = REACTOR.newBuild().addSources(FOO_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
         final var extensions = schemaContext.getExtensions();
         assertEquals(1, extensions.size());
 
-        final var foo = schemaContext.findModule(FOO_QNAMEMODULE).orElseThrow();
-        final var unknownSchemaNodes = foo.getUnknownSchemaNodes();
+        final var unknownSchemaNodes = schemaContext.findModule(FOO_QNAMEMODULE).orElseThrow().getUnknownSchemaNodes();
         assertEquals(2, unknownSchemaNodes.size());
-
-        YangDataSchemaNode myYangDataANode = null;
-        YangDataSchemaNode myYangDataBNode = null;
-        for (var unknownSchemaNode : unknownSchemaNodes) {
-            assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
-            final var yangDataSchemaNode = (YangDataSchemaNode) unknownSchemaNode;
-            if ("my-yang-data-a".equals(yangDataSchemaNode.getNodeParameter())) {
-                myYangDataANode = yangDataSchemaNode;
-            } else if ("my-yang-data-b".equals(yangDataSchemaNode.getNodeParameter())) {
-                myYangDataBNode = yangDataSchemaNode;
-            }
-        }
-
-        assertNotNull(myYangDataANode);
-        assertNotNull(myYangDataBNode);
+        final var it = unknownSchemaNodes.iterator();
+        assertEquals("my-yang-data-a", assertInstanceOf(YangDataSchemaNode.class, it.next()).getNodeParameter());
+        assertEquals("my-yang-data-b", assertInstanceOf(YangDataSchemaNode.class, it.next()).getNodeParameter());
+        assertFalse(it.hasNext());
     }
 
     @Test
-    public void testConfigStatementBeingIgnoredInYangDataBody() throws Exception {
+    void testConfigStatementBeingIgnoredInYangDataBody() throws Exception {
         final var schemaContext = REACTOR.newBuild().addSources(BAZ_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
@@ -84,30 +73,23 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         final var unknownSchemaNodes = baz.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
-        final var unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
-        final var myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
-        assertNotNull(myYangDataNode);
+        final var myYangDataNode = assertInstanceOf(YangDataSchemaNode.class, unknownSchemaNodes.iterator().next());
 
         final var yangDataChildren = myYangDataNode.getChildNodes();
         assertEquals(1, yangDataChildren.size());
 
-        final var childInYangData = yangDataChildren.iterator().next();
-        assertThat(childInYangData, instanceOf(ContainerSchemaNode.class));
-        final var contInYangData = (ContainerSchemaNode) childInYangData;
+        final var contInYangData = assertInstanceOf(ContainerSchemaNode.class, yangDataChildren.iterator().next());
         assertEquals(Optional.empty(), contInYangData.effectiveConfig());
-        final var innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
-                QName.create(baz.getQNameModule(), "inner-cont"));
-        assertNotNull(innerCont);
+        final var innerCont = assertInstanceOf(ContainerSchemaNode.class,
+            contInYangData.dataChildByName(QName.create(baz.getQNameModule(), "inner-cont")));
         assertEquals(Optional.empty(), innerCont.effectiveConfig());
-        final var grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
-                QName.create(baz.getQNameModule(), "grp-cont"));
-        assertNotNull(grpCont);
+        final var grpCont = assertInstanceOf(ContainerSchemaNode.class,
+            contInYangData.dataChildByName(QName.create(baz.getQNameModule(), "grp-cont")));
         assertEquals(Optional.empty(), grpCont.effectiveConfig());
     }
 
     @Test
-    public void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
+    void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
         final var schemaContext = REACTOR.newBuild()
             .setSupportedFeatures(FeatureSet.of())
             .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE)
@@ -118,35 +100,28 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
         final var unknownSchemaNodes = foobar.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
-        final var unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertThat(unknownSchemaNode, instanceOf(YangDataSchemaNode.class));
-        final var myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
-        assertNotNull(myYangDataNode);
+        final var myYangDataNode = assertInstanceOf(YangDataSchemaNode.class, unknownSchemaNodes.iterator().next());
 
         final var yangDataChildren = myYangDataNode.getChildNodes();
         assertEquals(1, yangDataChildren.size());
 
-        final var childInYangData = yangDataChildren.iterator().next();
-        assertThat(childInYangData, instanceOf(ContainerSchemaNode.class));
-        final var contInYangData = (ContainerSchemaNode) childInYangData;
-        final var innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
-                QName.create(foobar.getQNameModule(), "inner-cont"));
-        assertNotNull(innerCont);
-        final var grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
-                QName.create(foobar.getQNameModule(), "grp-cont"));
-        assertNotNull(grpCont);
+        final var contInYangData = assertInstanceOf(ContainerSchemaNode.class, yangDataChildren.iterator().next());
+        assertInstanceOf(ContainerSchemaNode.class,
+            contInYangData.dataChildByName(QName.create(foobar.getQNameModule(), "inner-cont")));
+        assertInstanceOf(ContainerSchemaNode.class,
+            contInYangData.dataChildByName(QName.create(foobar.getQNameModule(), "grp-cont")));
     }
 
     @Test
-    public void testYangDataBeingIgnored() throws Exception {
+    void testYangDataBeingIgnored() throws Exception {
         // yang-data statement is ignored if it does not appear as a top-level statement
         // i.e., it will not appear in the final SchemaContext
         final var schemaContext = REACTOR.newBuild().addSources(BAR_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
         final var bar = schemaContext.findModule("bar", REVISION).orElseThrow();
-        final var cont = (ContainerSchemaNode) bar.getDataChildByName(QName.create(bar.getQNameModule(), "cont"));
-        assertNotNull(cont);
+        final var cont = assertInstanceOf(ContainerSchemaNode.class,
+            bar.dataChildByName(QName.create(bar.getQNameModule(), "cont")));
 
         final var extensions = schemaContext.getExtensions();
         assertEquals(1, extensions.size());
@@ -156,18 +131,18 @@ public class YangDataExtensionTest extends AbstractYangDataTest {
     }
 
     @Test
-    public void testYangDataWithMissingTopLevelContainer() {
+    void testYangDataWithMissingTopLevelContainer() {
         final var build = REACTOR.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE);
-        final var cause = assertThrows(ReactorException.class, () -> build.buildEffective()).getCause();
-        assertThat(cause, instanceOf(MissingSubstatementException.class));
+        final var ex = assertThrows(ReactorException.class, () -> build.buildEffective());
+        final var cause = assertInstanceOf(MissingSubstatementException.class, ex.getCause());
         assertThat(cause.getMessage(), startsWith("yang-data requires at least one substatement [at "));
     }
 
     @Test
-    public void testYangDataWithTwoTopLevelContainers() {
+    void testYangDataWithTwoTopLevelContainers() {
         final var build = REACTOR.newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE);
-        final var cause = assertThrows(ReactorException.class, () -> build.buildEffective()).getCause();
-        assertThat(cause, instanceOf(InvalidSubstatementException.class));
+        final var ex = assertThrows(ReactorException.class, () -> build.buildEffective());
+        final var cause = assertInstanceOf(InvalidSubstatementException.class, ex.getCause());
         assertThat(cause.getMessage(),
             startsWith("yang-data requires exactly one container data node definition, found ["));
     }

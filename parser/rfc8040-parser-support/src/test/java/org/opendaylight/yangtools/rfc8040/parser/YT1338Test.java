@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,12 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class YT1338Test extends AbstractYangDataTest {
+class YT1338Test extends AbstractYangDataTest {
     @Test
-    public void testAddedLeaves() throws ReactorException {
-        final var restconf = REACTOR.newBuild().addSources(IETF_RESTCONF_MODULE, sourceForResource("/yt1338/foo.yang"))
+    void testAddedLeaves() throws Exception {
+        final var restconf = assertInstanceOf(ContainerEffectiveStatement.class, REACTOR.newBuild()
+            .addSources(IETF_RESTCONF_MODULE, sourceForResource("/yt1338/foo.yang"))
             .buildEffective()
             .findModuleStatement(YangDataConstants.RFC8040_MODULE)
             .orElseThrow()
@@ -35,11 +34,9 @@ public class YT1338Test extends AbstractYangDataTest {
             .findAny()
             .orElseThrow()
             .findDataTreeNode(QName.create(YangDataConstants.RFC8040_MODULE, "restconf"))
-            .orElseThrow();
-        assertThat(restconf, instanceOf(ContainerEffectiveStatement.class));
+            .orElseThrow());
 
-        final var leaf = ((ContainerEffectiveStatement) restconf)
-            .findDataTreeNode(QName.create(YangDataConstants.RFC8040_MODULE, "operations"))
+        final var leaf = restconf.findDataTreeNode(QName.create(YangDataConstants.RFC8040_MODULE, "operations"))
             .orElseThrow()
             .findFirstEffectiveSubstatement(LeafEffectiveStatement.class)
             .orElseThrow();

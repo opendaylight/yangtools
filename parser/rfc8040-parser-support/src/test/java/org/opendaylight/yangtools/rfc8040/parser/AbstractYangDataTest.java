@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.rfc8040.parser;
 
 import java.io.IOException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -19,22 +19,22 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
-public abstract class AbstractYangDataTest {
+abstract class AbstractYangDataTest {
     static final StatementStreamSource IETF_RESTCONF_MODULE = sourceForResource(
         "/yang-data-extension-test/ietf-restconf.yang");
 
     static CrossSourceStatementReactor REACTOR;
 
-    @BeforeClass
-    public static void createReactor() {
+    @BeforeAll
+    static void createReactor() {
         REACTOR = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     new YangDataStatementSupport(YangParserConfiguration.DEFAULT))
                 .build();
     }
 
-    @AfterClass
-    public static void freeReactor() {
+    @AfterAll
+    static void freeReactor() {
         REACTOR = null;
     }
 
