@@ -19,6 +19,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.ReusableStreamRece
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 abstract class ForwardingNormalizedNodeDataInput extends ForwardingDataInput implements NormalizedNodeDataInput {
+    @Override
+    public @NonNull Object readLeafValue() throws IOException {
+        return delegate().readLeafValue();
+    }
 
     @Override
     abstract @NonNull NormalizedNodeDataInput delegate() throws IOException;

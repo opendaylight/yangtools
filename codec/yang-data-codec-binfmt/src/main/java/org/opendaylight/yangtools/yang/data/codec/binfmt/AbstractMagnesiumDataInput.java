@@ -665,7 +665,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractLegacyDataInput {
         }
     }
 
-    private @NonNull Object readLeafValue() throws IOException {
+    public @NonNull Object readLeafValue() throws IOException {
         final byte type = input.readByte();
         switch (type) {
             case MagnesiumValue.BOOLEAN_FALSE:

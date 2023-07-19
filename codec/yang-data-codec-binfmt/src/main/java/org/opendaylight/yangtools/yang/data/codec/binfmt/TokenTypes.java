@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-final class TokenTypes {
-    static final byte SIGNATURE_MARKER = (byte) 0xab;
+public final class TokenTypes {
+    public static final byte SIGNATURE_MARKER = (byte) 0xab;
 
     /**
      * Original stream version. Uses a per-stream dictionary for strings. QNames are serialized as three strings.
@@ -32,7 +32,7 @@ final class TokenTypes {
      * Potassium version. Breaks compatibility from Magnesium in terms of NormalizedNode structure, as AugmentationNodes
      * and AugmentationIdentifiers are not preserved.
      */
-    static final short POTASSIUM_VERSION = 5;
+    public static final short POTASSIUM_VERSION = 5;
 
     private TokenTypes() {
         // Utility class

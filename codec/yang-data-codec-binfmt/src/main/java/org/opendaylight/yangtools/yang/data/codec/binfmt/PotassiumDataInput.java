@@ -602,7 +602,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
         }
     }
 
-    private @NonNull Object readLeafValue() throws IOException {
+    public @NonNull Object readLeafValue() throws IOException {
         final byte type = input.readByte();
         switch (type) {
             case PotassiumValue.BOOLEAN_FALSE:

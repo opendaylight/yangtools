@@ -131,4 +131,6 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
     static @NonNull NormalizedNodeDataInput newDataInputWithoutValidation(final @NonNull DataInput input) {
         return new VersionedNormalizedNodeDataInput(input);
     }
+
+    @NonNull Object readLeafValue() throws IOException;
 }

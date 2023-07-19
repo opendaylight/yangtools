@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import java.io.DataInput;
 import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -26,5 +27,10 @@ abstract class AbstractLegacyDataInput extends AbstractNormalizedNodeDataInput {
             return legacy.getFirst();
         }
         throw new InvalidNormalizedNodeStreamException(legacy.getSecond() + " does not have a representation");
+    }
+
+    @Override
+    public @NonNull Object readLeafValue() throws IOException {
+        throw new UnsupportedOperationException();
     }
 }
