@@ -35,8 +35,7 @@ final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifie
 
     @Override
     public YangInstanceIdentifier parseValue(final NamespaceContext ctx, final String str) {
-        // FIXME: YANGTOOLS-1523: do not trim()
-        return new InstanceIdentifierDeserializer(dataContextTree, codecFactory, ctx).deserialize(str.trim());
+        return new InstanceIdentifierDeserializer(dataContextTree, codecFactory, ctx).deserialize(str);
     }
 
     @Override
