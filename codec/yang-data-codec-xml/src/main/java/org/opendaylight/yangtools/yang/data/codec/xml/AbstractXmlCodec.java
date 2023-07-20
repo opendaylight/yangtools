@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import javax.xml.namespace.NamespaceContext;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 
@@ -33,12 +32,7 @@ abstract class AbstractXmlCodec<T> implements XmlCodec<T> {
 
     @Override
     public final T parseValue(final NamespaceContext namespaceContext, final String str) {
-        return codec.deserialize(trimValue(str));
-    }
-
-    @Deprecated
-    @NonNull String trimValue(final @NonNull String str) {
-        return str;
+        return codec.deserialize(str);
     }
 
     final String serialize(final T input) {
