@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
 import javax.xml.namespace.NamespaceContext;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 
@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
  * @param <T> Deserialized object type
  */
 abstract class AbstractXmlCodec<T> implements XmlCodec<T> {
-
     private final DataStringCodec<T> codec;
 
     protected AbstractXmlCodec(final DataStringCodec<T> codec) {
@@ -34,7 +33,12 @@ abstract class AbstractXmlCodec<T> implements XmlCodec<T> {
 
     @Override
     public final T parseValue(final NamespaceContext namespaceContext, final String str) {
-        return codec.deserialize(str);
+        return codec.deserialize(trimValue(str));
+    }
+
+    @Deprecated
+    @NonNull String trimValue(final @NonNull String str) {
+        return str;
     }
 
     final String serialize(final T input) {

@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 final class IdentityrefXmlCodec implements XmlCodec<QName> {
     private final EffectiveModelContext schemaContext;
@@ -40,7 +38,8 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
     @Override
     public QName parseValue(final NamespaceContext ctx, final String str) {
-        return IdentityCodecUtil.parseIdentity(str, schemaContext, prefix -> {
+        // FIXME: do not trim()
+        return IdentityCodecUtil.parseIdentity(str.trim(), schemaContext, prefix -> {
             if (prefix.isEmpty()) {
                 return parentModule;
             }
@@ -48,8 +47,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             final String prefixedNS = ctx.getNamespaceURI(prefix);
             checkArgument(prefixedNS != null, "Failed to resolve prefix %s", prefix);
 
-            final Iterator<? extends Module> modules =
-                schemaContext.findModules(XMLNamespace.of(prefixedNS)).iterator();
+            final var modules = schemaContext.findModules(XMLNamespace.of(prefixedNS)).iterator();
             checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
             return modules.next().getQNameModule();
         }).getQName();

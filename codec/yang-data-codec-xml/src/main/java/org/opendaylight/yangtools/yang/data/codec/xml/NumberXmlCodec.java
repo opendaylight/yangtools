@@ -21,4 +21,10 @@ final class NumberXmlCodec<T extends Number> extends AbstractXmlCodec<T> {
     public void writeValue(final XMLStreamWriter ctx, final T value) throws XMLStreamException {
         ctx.writeCharacters(String.valueOf(value));
     }
+
+    @Override
+    @Deprecated
+    String trimValue(final String str) {
+        return str.trim();
+    }
 }

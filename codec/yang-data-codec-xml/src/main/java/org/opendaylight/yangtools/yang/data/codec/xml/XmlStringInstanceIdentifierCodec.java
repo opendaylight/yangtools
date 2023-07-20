@@ -38,8 +38,8 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
 
     XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final XmlCodecFactory xmlCodecFactory) {
         this.context = requireNonNull(context);
-        this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = requireNonNull(xmlCodecFactory);
+        dataContextTree = DataSchemaContextTree.from(context);
+        codecFactory = requireNonNull(xmlCodecFactory);
     }
 
     @Override
@@ -85,7 +85,8 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     public YangInstanceIdentifier parseValue(final NamespaceContext ctx, final String str) {
         pushNamespaceContext(ctx);
         try {
-            return deserialize(str);
+            // FIXME: do not trim()
+            return deserialize(str.trim());
         } finally {
             popNamespaceContext();
         }
