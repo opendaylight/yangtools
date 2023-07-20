@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Iterator;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -36,22 +35,22 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     private final @NonNull XmlCodecFactory codecFactory;
     private final @NonNull EffectiveModelContext context;
 
-    XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final XmlCodecFactory xmlCodecFactory) {
+    XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final XmlCodecFactory codecFactory) {
         this.context = requireNonNull(context);
-        this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = requireNonNull(xmlCodecFactory);
+        this.codecFactory = requireNonNull(codecFactory);
+        dataContextTree = DataSchemaContextTree.from(context);
     }
 
     @Override
     protected Module moduleForPrefix(final String prefix) {
-        final String prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
-        final Iterator<? extends Module> modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
+        final var prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
+        final var modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
-        final Iterator<? extends Module> modules = context.findModules(namespace).iterator();
+        final var modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }
 
@@ -85,15 +84,15 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     public YangInstanceIdentifier parseValue(final NamespaceContext ctx, final String str) {
         pushNamespaceContext(ctx);
         try {
-            return deserialize(str);
+            // FIXME: YANGTOOLS-1523: do not trim()
+            return deserialize(str.trim());
         } finally {
             popNamespaceContext();
         }
     }
 
     @Override
-    public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value)
-            throws XMLStreamException {
+    public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value) throws XMLStreamException {
         ctx.writeCharacters(serialize(value));
     }
 
@@ -102,7 +101,7 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     }
 
     private static void popNamespaceContext() {
-        final Deque<NamespaceContext> stack = TL_CONTEXT.get();
+        final var stack = TL_CONTEXT.get();
         stack.pop();
         if (stack.isEmpty()) {
             TL_CONTEXT.set(null);
@@ -110,7 +109,7 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     }
 
     private static void pushNamespaceContext(final NamespaceContext context) {
-        Deque<NamespaceContext> stack = TL_CONTEXT.get();
+        var stack = TL_CONTEXT.get();
         if (stack == null) {
             stack = new ArrayDeque<>(1);
             TL_CONTEXT.set(stack);
