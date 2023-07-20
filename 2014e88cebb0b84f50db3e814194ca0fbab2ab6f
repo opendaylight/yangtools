@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e55108dc_3a59ac22",
+        "filename": "parser/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/impl/YT1193Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-07-20T21:49:17Z",
+      "side": 1,
+      "message": "should\u0027ve been merged with the cast \u0026 assign below",
+      "range": {
+        "startLine": 125,
+        "startChar": 8,
+        "endLine": 125,
+        "endChar": 24
+      },
+      "revId": "2014e88cebb0b84f50db3e814194ca0fbab2ab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
