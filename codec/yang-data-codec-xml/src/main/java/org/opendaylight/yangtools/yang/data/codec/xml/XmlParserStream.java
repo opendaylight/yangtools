@@ -453,7 +453,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         if (parent instanceof LeafNodeDataWithSchema || parent instanceof LeafListEntryNodeDataWithSchema) {
             parent.setAttributes(getElementAttributes(in));
-            setValue((SimpleNodeDataWithSchema<?>) parent, in.getElementText().trim(), in.getNamespaceContext());
+            setValue((SimpleNodeDataWithSchema<?>) parent, in.getElementText(), in.getNamespaceContext());
             if (isNextEndDocument(in)) {
                 return;
             }
