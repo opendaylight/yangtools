@@ -11,13 +11,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
-class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
+final class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
     QuotedXmlCodec(final DataStringCodec<T> codec) {
         super(codec);
     }
 
     @Override
-    public final void writeValue(final XMLStreamWriter ctx, final T value) throws XMLStreamException {
+    public void writeValue(final XMLStreamWriter ctx, final T value) throws XMLStreamException {
         ctx.writeCharacters(serialize(value));
     }
 }

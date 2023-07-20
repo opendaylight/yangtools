@@ -6,6 +6,5 @@
         <regular-leaf>150</regular-leaf>
     </keyed-list>
 
-    <iid-leaf xmlns:zab="zab-ns">
-        /zab:top-cont/zab:keyed-list[zab:identityref-key-leaf='derived-id']/zab:regular-leaf</iid-leaf>
+    <iid-leaf xmlns:zab="zab-ns">/zab:top-cont/zab:keyed-list[zab:identityref-key-leaf='derived-id']/zab:regular-leaf</iid-leaf>
 </top-cont>
