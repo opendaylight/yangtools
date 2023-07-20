@@ -11,25 +11,23 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 final class IdentityrefXmlCodec implements XmlCodec<QName> {
-    private final EffectiveModelContext schemaContext;
-    private final QNameModule parentModule;
+    private final @NonNull EffectiveModelContext context;
+    private final @NonNull QNameModule parentModule;
 
     IdentityrefXmlCodec(final EffectiveModelContext context, final QNameModule parentModule) {
-        schemaContext = requireNonNull(context);
+        this.context = requireNonNull(context);
         this.parentModule = requireNonNull(parentModule);
     }
 
@@ -40,16 +38,16 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
     @Override
     public QName parseValue(final NamespaceContext ctx, final String str) {
-        return IdentityCodecUtil.parseIdentity(str, schemaContext, prefix -> {
+        // FIXME: YANGTOOLS-1523: do not trim()
+        return IdentityCodecUtil.parseIdentity(str.trim(), context, prefix -> {
             if (prefix.isEmpty()) {
                 return parentModule;
             }
 
-            final String prefixedNS = ctx.getNamespaceURI(prefix);
+            final var prefixedNS = ctx.getNamespaceURI(prefix);
             checkArgument(prefixedNS != null, "Failed to resolve prefix %s", prefix);
 
-            final Iterator<? extends Module> modules =
-                schemaContext.findModules(XMLNamespace.of(prefixedNS)).iterator();
+            final var modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
             checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
             return modules.next().getQNameModule();
         }).getQName();
@@ -57,10 +55,10 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
     @Override
     public void writeValue(final XMLStreamWriter ctx, final QName value) throws XMLStreamException {
-        final RandomPrefix prefixes = new RandomPrefix(ctx.getNamespaceContext());
-        final String str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.getNamespace()));
+        final var prefixes = new RandomPrefix(ctx.getNamespaceContext());
+        final var str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.getNamespace()));
 
-        for (Entry<XMLNamespace, String> e : prefixes.getPrefixes()) {
+        for (var e : prefixes.getPrefixes()) {
             ctx.writeNamespace(e.getValue(), e.getKey().toString());
         }
         ctx.writeCharacters(str);
