@@ -5,20 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
-final class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
+class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
     QuotedXmlCodec(final DataStringCodec<T> codec) {
         super(codec);
     }
 
     @Override
-    public void writeValue(final XMLStreamWriter ctx, final T value) throws XMLStreamException {
+    public final void writeValue(final XMLStreamWriter ctx, final T value) throws XMLStreamException {
         ctx.writeCharacters(serialize(value));
     }
 }
