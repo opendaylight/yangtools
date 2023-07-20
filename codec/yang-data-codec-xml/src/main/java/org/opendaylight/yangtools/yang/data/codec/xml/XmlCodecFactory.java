@@ -144,7 +144,8 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<?> stringCodec(final StringTypeDefinition type) {
-        return new QuotedXmlCodec<>(StringStringCodec.from(type));
+        // FIXME: YANGTOOLS-1523: use QuotedXmlCodec
+        return new StringXmlCodec(StringStringCodec.from(type));
     }
 
     @Override
