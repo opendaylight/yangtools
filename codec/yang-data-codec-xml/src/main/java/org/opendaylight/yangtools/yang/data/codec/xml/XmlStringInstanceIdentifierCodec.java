@@ -84,8 +84,7 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     public YangInstanceIdentifier parseValue(final NamespaceContext ctx, final String str) {
         pushNamespaceContext(ctx);
         try {
-            // FIXME: YANGTOOLS-1523: do not trim()
-            return deserialize(str.trim());
+            return deserialize(str);
         } finally {
             popNamespaceContext();
         }

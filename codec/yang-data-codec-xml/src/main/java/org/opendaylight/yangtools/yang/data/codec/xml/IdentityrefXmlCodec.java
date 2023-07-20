@@ -38,8 +38,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
     @Override
     public QName parseValue(final NamespaceContext ctx, final String str) {
-        // FIXME: YANGTOOLS-1523: do not trim()
-        return IdentityCodecUtil.parseIdentity(str.trim(), context, prefix -> {
+        return IdentityCodecUtil.parseIdentity(str, context, prefix -> {
             if (prefix.isEmpty()) {
                 return parentModule;
             }

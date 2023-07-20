@@ -6,7 +6,6 @@
         <regular-leaf>150</regular-leaf>
     </keyed-list>
 
-    <iid-leaf xmlns:foobar="foobar-ns">
-        /foobar:top-cont/foobar:keyed-list[foobar:iid-key-leaf='/foobar:top-cont/foobar:leaf-b']/foobar:regular-leaf</iid-leaf>
+    <iid-leaf xmlns:foobar="foobar-ns">/foobar:top-cont/foobar:keyed-list[foobar:iid-key-leaf='/foobar:top-cont/foobar:leaf-b']/foobar:regular-leaf</iid-leaf>
     <leaf-b>50</leaf-b>
 </top-cont>
