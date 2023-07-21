@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 /**
@@ -180,7 +179,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     protected final QName createQName(final String prefix, final String localName) {
         final var module = moduleForPrefix(prefix);
         if (module != null) {
-            return QName.create(module.localQNameModule(), localName);
+            return QName.create(module, localName);
         }
         throw new IllegalArgumentException("Failed to lookup prefix " + prefix);
     }
@@ -191,7 +190,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
      * @param prefix Prefix
      * @return module mapped to prefix, or null if the module cannot be resolved
      */
-    protected abstract @Nullable ModuleEffectiveStatement moduleForPrefix(@NonNull String prefix);
+    protected abstract @Nullable QNameModule moduleForPrefix(@NonNull String prefix);
 
     // FIXME: YANGTOOLS-1426: this will not be necessary when we have dedicated bits type
     private static @NonNull String checkBitsItem(final Object obj) {
