@@ -50,8 +50,8 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
 
     @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
-        final var modules = context.findModules(namespace).iterator();
-        return modules.hasNext() ? modules.next().getName() : null;
+        final var modules = context.findModuleStatements(namespace).iterator();
+        return modules.hasNext() ? modules.next().argument().getLocalName() : null;
     }
 
     @Override

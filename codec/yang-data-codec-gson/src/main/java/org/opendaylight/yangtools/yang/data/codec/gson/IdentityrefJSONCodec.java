@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 final class IdentityrefJSONCodec implements JSONCodec<QName> {
     private final @NonNull EffectiveModelContext context;
@@ -41,9 +40,9 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
                 return parentModule;
             }
 
-            final var modules = context.findModules(prefix).iterator();
+            final var modules = context.findModuleStatements(prefix).iterator();
             checkArgument(modules.hasNext(), "Could not find module %s", prefix);
-            return modules.next().getQNameModule();
+            return modules.next().localQNameModule();
         }).getQName();
     }
 
@@ -55,8 +54,8 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
      */
     @Override
     public void writeValue(final JsonWriter writer, final QName value) throws IOException {
-        final String str = QNameCodecUtil.encodeQName(value, uri -> context.findModule(uri)
-            .map(Module::getName).orElseThrow(() -> new IllegalArgumentException("Cannot find module for " + uri)));
-        writer.value(str);
+        writer.value(QNameCodecUtil.encodeQName(value, uri -> context.findModuleStatement(uri)
+            .map(module -> module.argument().getLocalName())
+            .orElseThrow(() -> new IllegalArgumentException("Cannot find module for " + uri))));
     }
 }
