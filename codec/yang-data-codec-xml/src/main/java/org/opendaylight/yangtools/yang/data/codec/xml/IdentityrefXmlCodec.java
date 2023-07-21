@@ -47,9 +47,9 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             final var prefixedNS = ctx.getNamespaceURI(prefix);
             checkArgument(prefixedNS != null, "Failed to resolve prefix %s", prefix);
 
-            final var modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
+            final var modules = context.findModuleStatements(XMLNamespace.of(prefixedNS)).iterator();
             checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
-            return modules.next().getQNameModule();
+            return modules.next().localQNameModule();
         }).getQName();
     }
 

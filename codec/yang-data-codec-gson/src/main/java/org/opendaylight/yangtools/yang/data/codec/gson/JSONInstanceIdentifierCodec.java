@@ -70,8 +70,8 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
 
     @Override
     protected final String prefixForNamespace(final XMLNamespace namespace) {
-        final var modules = context.findModules(namespace).iterator();
-        return modules.hasNext() ? modules.next().getName() : null;
+        final var modules = context.findModuleStatements(namespace).iterator();
+        return modules.hasNext() ? modules.next().argument().getLocalName() : null;
     }
 
     @Override

@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import java.util.Iterator;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContextFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,9 +96,9 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
                 checkArgument(value instanceof String, "Unexpected module leaf value %s", value);
                 return (String) value;
             }).orElseThrow(() -> new IllegalArgumentException("Mount module missing in " + entry));
-            final Iterator<? extends Module> it = schemaContext.findModules(moduleName).iterator();
+            final var it = schemaContext.findModuleStatements(moduleName).iterator();
             checkArgument(it.hasNext(), "Failed to find a module named %s", moduleName);
-            final QNameModule module = it.next().getQNameModule();
+            final QNameModule module = it.next().localQNameModule();
 
             return new MountPointDefinition(
                 new MountPointLabel(QName.create(module, entry.findChildByArg(LABEL).map(lbl -> {

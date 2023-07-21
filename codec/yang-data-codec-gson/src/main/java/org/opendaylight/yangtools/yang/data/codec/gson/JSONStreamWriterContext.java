@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
  * Abstract base class for a single level of {@link JSONNormalizedNodeStreamWriter} recursion. Provides the base API
@@ -65,8 +64,8 @@ abstract class JSONStreamWriterContext {
         // Prepend module name if namespaces do not match
         final QNameModule module = qname.getModule();
         if (!module.getNamespace().equals(getNamespace())) {
-            final var name = schema.findModule(module)
-                .map(Module::getName)
+            final var name = schema.findModuleStatement(module)
+                .map(mod -> mod.argument().getLocalName())
                 .orElseThrow(() -> new IllegalArgumentException("Could not find module for namespace " + module));
             sb.append(name).append(':');
         }
