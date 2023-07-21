@@ -11,12 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import javax.xml.namespace.NamespaceContext;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 final class InstanceIdentifierDeserializer extends AbstractInstanceIdentifierCodec {
@@ -31,11 +31,11 @@ final class InstanceIdentifierDeserializer extends AbstractInstanceIdentifierCod
     }
 
     @Override
-    protected ModuleEffectiveStatement moduleForPrefix(final String prefix) {
-        final var prefixedNS = namespaceContext.getNamespaceURI(prefix);
-        final var modules = codecFactory.getEffectiveModelContext().findModuleStatements(XMLNamespace.of(prefixedNS))
+    protected QNameModule moduleForPrefix(final String prefix) {
+        final var modules = codecFactory.getEffectiveModelContext()
+            .findModuleStatements(XMLNamespace.of(namespaceContext.getNamespaceURI(prefix)))
             .iterator();
-        return modules.hasNext() ? modules.next() : null;
+        return modules.hasNext() ? modules.next().localQNameModule() : null;
     }
 
     @Override
