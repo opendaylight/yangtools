@@ -15,6 +15,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
@@ -23,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
@@ -42,10 +42,10 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     }
 
     @Override
-    protected Module moduleForPrefix(final String prefix) {
+    protected QNameModule moduleForPrefix(final String prefix) {
         final var prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
-        final var modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
-        return modules.hasNext() ? modules.next() : null;
+        final var modules = context.findModuleStatements(XMLNamespace.of(prefixedNS)).iterator();
+        return modules.hasNext() ? modules.next().localQNameModule() : null;
     }
 
     @Override

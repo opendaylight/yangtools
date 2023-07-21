@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
@@ -63,9 +62,9 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
     }
 
     @Override
-    protected final Module moduleForPrefix(final String prefix) {
-        final var modules = context.findModules(prefix).iterator();
-        return modules.hasNext() ? modules.next() : null;
+    protected final QNameModule moduleForPrefix(final String prefix) {
+        final var modules = context.findModuleStatements(prefix).iterator();
+        return modules.hasNext() ? modules.next().localQNameModule() : null;
     }
 
     @Override
