@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
@@ -53,13 +52,15 @@ public final class ModuleNameNamespaceContext extends AbstractEffectiveModelCont
 
     @Override
     public QNameModule namespaceForPrefix(final String prefix) {
-        return getEffectiveModelContext().findModules(prefix).stream().findFirst().map(Module::getQNameModule)
-            .orElse(null);
+        final var modules = getEffectiveModelContext().findModuleStatements(prefix).iterator();
+        return modules.hasNext() ? modules.next().localQNameModule() : null;
     }
 
     @Override
     public String prefixForNamespace(final QNameModule namespace) {
-        return getEffectiveModelContext().findModule(namespace).map(Module::getName).orElse(null);
+        return getEffectiveModelContext().findModuleStatement(namespace)
+            .map(module -> module.argument().getLocalName())
+            .orElse(null);
     }
 
     @java.io.Serial

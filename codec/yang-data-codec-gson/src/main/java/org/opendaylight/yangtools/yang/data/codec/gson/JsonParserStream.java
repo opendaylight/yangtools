@@ -24,7 +24,6 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
@@ -49,7 +48,6 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -389,9 +387,8 @@ public final class JsonParserStream implements Closeable, Flushable {
             moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
 
-            final Iterator<? extends Module> m = codecs.getEffectiveModelContext().findModules(moduleNamePart)
-                    .iterator();
-            namespace = m.hasNext() ? m.next().getNamespace() : null;
+            final var m = codecs.getEffectiveModelContext().findModuleStatements(moduleNamePart).iterator();
+            namespace = m.hasNext() ? m.next().localQNameModule().getNamespace() : null;
         } else {
             nodeNamePart = childName;
         }
@@ -416,10 +413,11 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private String toModuleNames(final Set<XMLNamespace> potentialUris) {
         final StringBuilder builder = new StringBuilder();
-        for (final XMLNamespace potentialUri : potentialUris) {
+        for (var potentialUri : potentialUris) {
             builder.append('\n');
-            //FIXME how to get information about revision from JSON input? currently first available is used.
-            builder.append(codecs.getEffectiveModelContext().findModules(potentialUri).iterator().next().getName());
+            // FIXME how to get information about revision from JSON input? currently first available is used.
+            builder.append(codecs.getEffectiveModelContext().findModuleStatements(potentialUri).iterator().next()
+                .argument().getLocalName());
         }
         return builder.toString();
     }

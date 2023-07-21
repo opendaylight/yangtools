@@ -10,13 +10,11 @@ package org.opendaylight.yangtools.yang.data.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
  * Base class for implementing identityref codecs on based on module names.
@@ -24,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 @Beta
 public abstract class ModuleStringIdentityrefCodec extends AbstractModuleStringIdentityrefCodec
         implements EffectiveModelContextProvider {
-    private final EffectiveModelContext context;
-    private final QNameModule parentModule;
+    private final @NonNull EffectiveModelContext context;
+    private final @NonNull QNameModule parentModule;
 
     protected ModuleStringIdentityrefCodec(final @NonNull EffectiveModelContext context,
             final @NonNull QNameModule parentModule) {
@@ -44,7 +42,7 @@ public abstract class ModuleStringIdentityrefCodec extends AbstractModuleStringI
 
     @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
-        final Iterator<? extends Module> modules = context.findModules(namespace).iterator();
-        return modules.hasNext() ? modules.next().getName() : null;
+        final var modules = context.findModuleStatements(namespace).iterator();
+        return modules.hasNext() ? modules.next().argument().getLocalName() : null;
     }
 }
