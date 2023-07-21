@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import java.io.Closeable;
 import java.io.Flushable;
@@ -23,7 +23,6 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -83,7 +82,6 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -383,7 +381,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private ImmutableMap<QName, Object> getElementAttributes(final XMLStreamReader in) {
         checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
-        final Map<QName, Object> attributes = new LinkedHashMap<>();
+        final var attributes = new LinkedHashMap<QName, Object>();
 
         for (int attrIndex = 0; attrIndex < in.getAttributeCount(); attrIndex++) {
             final String attributeNS = in.getAttributeNamespace(attrIndex);
@@ -709,20 +707,22 @@ public final class XmlParserStream implements Closeable, Flushable {
              *        anyxml is not well-defined in JSON.
              */
             return new DOMSource(((Document) value).getDocumentElement());
-        }
-        if (node instanceof AnydataSchemaNode) {
+        } else if (node instanceof AnydataSchemaNode) {
             checkArgument(value instanceof Document);
             return new DOMSourceAnydata(new DOMSource(((Document) value).getDocumentElement()));
+        } else if (node instanceof TypedDataSchemaNode typedNode) {
+            checkArgument(value instanceof String);
+            return codecs.codecFor(typedNode, stack).parseValue(namespaceCtx, (String) value);
+        } else {
+            throw new IllegalStateException("Unhandled schema " + node);
         }
-
-        checkArgument(node instanceof TypedDataSchemaNode);
-        checkArgument(value instanceof String);
-        return codecs.codecFor((TypedDataSchemaNode) node, stack).parseValue(namespaceCtx, (String) value);
     }
 
     private static AbstractNodeDataWithSchema<?> newEntryNode(final AbstractNodeDataWithSchema<?> parent) {
-        verify(parent instanceof MultipleEntryDataWithSchema, "Unexpected parent %s", parent);
-        return ((MultipleEntryDataWithSchema<?>) parent).newChildEntry();
+        if (parent instanceof MultipleEntryDataWithSchema<?> multiEntry) {
+            return multiEntry.newChildEntry();
+        }
+        throw new VerifyException("Unexpected parent " + parent);
     }
 
     @Override
@@ -738,8 +738,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Optional<QNameModule> resolveXmlNamespace(final String xmlNamespace) {
         return resolvedNamespaces.computeIfAbsent(xmlNamespace, nsUri -> {
-            final Iterator<? extends Module> it = codecs.getEffectiveModelContext().findModules(XMLNamespace.of(nsUri))
-                    .iterator();
+            final var it = codecs.getEffectiveModelContext().findModules(XMLNamespace.of(nsUri)).iterator();
             return it.hasNext() ? Optional.of(it.next().getQNameModule()) : Optional.empty();
         });
     }
