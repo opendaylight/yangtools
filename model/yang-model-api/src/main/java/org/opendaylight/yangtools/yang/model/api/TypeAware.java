@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
  * Marker interface for SchemaNodes which store simple data, for which we have type information.
- *
- * @author Robert Varga
  */
 public interface TypeAware {
     /**
@@ -18,5 +18,5 @@ public interface TypeAware {
      *
      * @return type definition.
      */
-    TypeDefinition<? extends TypeDefinition<?>> getType();
+    @NonNull TypeDefinition<? extends TypeDefinition<?>> getType();
 }
