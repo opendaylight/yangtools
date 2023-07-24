@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.data.util.impl.context;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.SimpleValue;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
-public final class LeafContext extends AbstractContext implements SimpleValue {
+public final class LeafContext extends AbstractValueContext {
     LeafContext(final LeafSchemaNode schema) {
         super(NodeIdentifier.create(schema.getQName()), schema);
     }

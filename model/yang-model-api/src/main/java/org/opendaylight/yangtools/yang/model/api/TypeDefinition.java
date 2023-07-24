@@ -27,9 +27,8 @@ import java.util.Optional;
  *            type of the base type (YANG <code>type</code> substatement) which
  *            is included in the instance of this type
  */
-// FIXME: 8.0.0: it seems this construct is mostly used in yang-data-api/codec view of the world. Introduce a dead
-//               ringer interface at that layer, which will not have a SchemaNode implication but (perhaps) is backed
-//               by a TypedefEffectiveStatement (or TypeEffectiveStatement?)
+// FIXME: YANGTOOLS-1528: this construct is mostly used in yang-data-api/codec view of the world. Introduce a dead
+//                         ringer interface, yang.data.api.type.NormalizedType and use it in yang-data-* components.
 public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode {
     /**
      * Returns the base type from which this type is derived. If this is yang built-in type, returns null.

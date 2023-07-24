@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.util.impl.context;
 
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.SimpleValue;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-public final class LeafListItemContext extends AbstractContext implements SimpleValue {
+public final class LeafListItemContext extends AbstractValueContext {
     LeafListItemContext(final LeafListSchemaNode schema) {
         super(null, schema);
     }

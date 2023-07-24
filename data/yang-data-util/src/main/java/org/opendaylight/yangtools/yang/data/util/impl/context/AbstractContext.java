@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * since the mapping is not one-to-one.
  */
 public abstract sealed class AbstractContext implements DataSchemaContext
-        permits AbstractPathMixinContext, AbstractCompositeContext, LeafContext, LeafListItemContext, OpaqueContext {
+        permits AbstractPathMixinContext, AbstractCompositeContext, AbstractValueContext, OpaqueContext {
     private final NodeIdentifier pathStep;
 
     final @NonNull DataSchemaNode dataSchemaNode;
