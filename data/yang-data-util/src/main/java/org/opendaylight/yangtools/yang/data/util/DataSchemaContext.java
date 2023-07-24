@@ -16,23 +16,26 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.SimpleValue;
 import org.opendaylight.yangtools.yang.data.util.impl.context.AbstractCompositeContext;
 import org.opendaylight.yangtools.yang.data.util.impl.context.AbstractContext;
 import org.opendaylight.yangtools.yang.data.util.impl.context.AbstractPathMixinContext;
-import org.opendaylight.yangtools.yang.data.util.impl.context.LeafContext;
-import org.opendaylight.yangtools.yang.data.util.impl.context.LeafListItemContext;
+import org.opendaylight.yangtools.yang.data.util.impl.context.AbstractValueContext;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -147,10 +150,24 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
     }
 
     /**
-     * Marker interface for contexts which boil down to a simple, not-structured value. The
+     * Marker interface for contexts which boil down to a simple, not-structured {@link ValueNode}. This can be one of
+     * <ul>
+    *   <li>{@link LeafNode} backed by a {@link LeafSchemaNode}, or</li>
+    *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}</li>
+     * </ul>
+     *
+     * <p>
+     * This trait interface is exposed for determining that the corresponding {@link TypeDefinition} of the normalized
+     * body.
      */
-    sealed interface SimpleValue extends DataSchemaContext permits LeafContext, LeafListItemContext {
-        // Marker interface
+    sealed interface SimpleValue extends DataSchemaContext permits AbstractValueContext {
+        /**
+         * Return the {@link TypeDefinition} of the type backing this context.
+         *
+         * @return A {@link TypeDefinition}
+         */
+        // FIXME: YANGTOOLS-1528: return yang.data.api.type.NormalizedType
+        @NonNull TypeDefinition<?> type();
     }
 
     /**
