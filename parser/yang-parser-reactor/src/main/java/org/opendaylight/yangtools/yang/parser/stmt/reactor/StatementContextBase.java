@@ -758,7 +758,12 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     @Override
     final ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(final StatementContextBase<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
-        final ReactorStmtCtx<A, D, E> copy = copyAsChildOfImpl(parent, type, targetModule);
+        if (!isSupportedToBuildEffective() || !isSupportedByFeatures()) {
+            // Do not create effective copies, as they cannot be built anyway
+            return null;
+        }
+
+        final var copy = copyAsChildOfImpl(parent, type, targetModule);
         if (copy == null) {
             // The statement fizzled, this should never happen, perhaps a verify()?
             return null;

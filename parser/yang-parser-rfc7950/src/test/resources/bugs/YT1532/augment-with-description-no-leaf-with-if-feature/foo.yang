@@ -1,0 +1,32 @@
+module foo {
+  namespace "urn:foo";
+  prefix "foo";
+
+  feature alpha;
+
+  grouping foo-group {
+    container foo;
+  }
+
+  grouping bar-group {
+    uses foo-group {
+      augment foo {
+        description "augmentation to foo";
+        leaf bar1 {
+          type string;
+        }
+        leaf bar2 {
+          type string;
+        }
+      }
+    }
+  }
+
+  uses bar-group {
+    augment foo {
+      leaf baz {
+        type string;
+      }
+    }
+  }
+}
