@@ -125,6 +125,16 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         }
 
         /**
+         * Return {@code true} if this inference is empty. This is a more efficient alternative to
+         * {@code statementPath().isEmpty()}.
+         *
+         * @return {@code true} if {@link #statementPath()} returns an empty list
+         */
+        public boolean isEmpty() {
+            return deque.isEmpty();
+        }
+
+        /**
          * Convert this inference into a {@link SchemaInferenceStack}.
          *
          * @return A new stack
