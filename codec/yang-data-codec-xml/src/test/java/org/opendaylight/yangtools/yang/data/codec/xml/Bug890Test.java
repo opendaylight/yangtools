@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -36,9 +38,26 @@ public class Bug890Test {
 
     @Test
     public void testinputXml() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYangResource("/bug890/yang/foo.yang");
-        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug890/xml/foo.xml");
-        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
+        final var schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug890");
+        final var reader = UntrustedXML.createXMLStreamReader(new ByteArrayInputStream("""
+            <root xmlns="foo">
+                <outgoing-labels>
+                    <outgoing-labels>
+                        <index>0</index>
+                        <config>
+                            <index>0</index>
+                            <label>103</label>
+                        </config>
+                    </outgoing-labels>
+                    <outgoing-labels>
+                        <index>1</index>
+                        <config>
+                            <index>1</index>
+                            <label>104</label>
+                        </config>
+                    </outgoing-labels>
+                </outgoing-labels>
+            </root>""".getBytes(StandardCharsets.UTF_8)));
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter,
