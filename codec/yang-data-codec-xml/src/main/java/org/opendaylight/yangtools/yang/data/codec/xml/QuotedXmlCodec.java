@@ -12,7 +12,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
 // FIXME: YANGTOOLS-1523: make this class final
-class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
+sealed class QuotedXmlCodec<T> extends AbstractXmlCodec<T> permits StringXmlCodec {
     QuotedXmlCodec(final DataStringCodec<T> codec) {
         super(codec);
     }

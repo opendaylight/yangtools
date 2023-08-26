@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamConstants;
@@ -494,7 +493,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                 // FIXME: 7.0.0: why do we even need this tracker? either document it or remove it.
                 //               it looks like it is a crude duplicate finder, which should really be handled via
                 //               ChildReusePolicy.REJECT
-                final Set<Entry<String, String>> namesakes = new HashSet<>();
+                final var namesakes = new HashSet<Entry<String, String>>();
                 while (in.hasNext()) {
                     final String xmlElementName = in.getLocalName();
                     final DataSchemaNode parentSchema = parent.getSchema();
