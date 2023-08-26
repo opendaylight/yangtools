@@ -72,6 +72,7 @@ import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -548,19 +549,23 @@ public final class XmlParserStream implements Closeable, Flushable {
                     }
 
                     if (parent instanceof AbstractMountPointDataWithSchema<?> mountParent) {
-                        // Parent can potentially hold a mount point, let's see if there is a label present
-                        final Optional<MountPointSchemaNode> optMount;
+                        // Parent can potentially hold a mount point, let's see if there is a label present. We
+                        // explicitly unmask Optional to null so as to not to lead us on to functional programming,
+                        // because ...
+                        final MountPointSchemaNode mount;
                         if (parentSchema instanceof ContainerSchemaNode container) {
-                            optMount = MountPointSchemaNode.streamAll(container).findFirst();
+                            mount = MountPointSchemaNode.streamAll(container).findFirst().orElse(null);
                         } else if (parentSchema instanceof ListSchemaNode list) {
-                            optMount = MountPointSchemaNode.streamAll(list).findFirst();
+                            mount = MountPointSchemaNode.streamAll(list).findFirst().orElse(null);
+                        } else if (parentSchema instanceof ContainerLike) {
+                            mount = null;
                         } else {
                             throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema,
                                 in.getLocation());
                         }
 
-                        if (optMount.isPresent()) {
-                            final var label = optMount.orElseThrow().asEffectiveStatement().argument();
+                        if (mount != null) {
+                            final var label = mount.asEffectiveStatement().argument();
                             LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
                                 nsUri, label);
 
@@ -569,6 +574,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                                 final var mountData = mountParent.getMountPointData(label, optFactory.orElseThrow());
                                 addMountPointChild(mountData, nsUri, xmlElementName,
                                     new DOMSource(readAnyXmlValue(in).getDocumentElement()));
+                                // ... this call does not work with functional programming
                                 continue;
                             }
 
