@@ -11,9 +11,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,10 +26,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -40,16 +38,29 @@ public class Bug890Test {
 
     @Test
     public void testinputXml() throws Exception {
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug890/yang/foo.yang");
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug890/xml/foo.xml");
-
-        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
-        final NormalizedNodeResult result = new NormalizedNodeResult();
-
-        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+        final var schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug890");
+        final var reader = UntrustedXML.createXMLStreamReader(new ByteArrayInputStream("""
+            <root xmlns="foo">
+                <outgoing-labels>
+                    <outgoing-labels>
+                        <index>0</index>
+                        <config>
+                            <index>0</index>
+                            <label>103</label>
+                        </config>
+                    </outgoing-labels>
+                    <outgoing-labels>
+                        <index>1</index>
+                        <config>
+                            <index>1</index>
+                            <label>104</label>
+                        </config>
+                    </outgoing-labels>
+                </outgoing-labels>
+            </root>""".getBytes(StandardCharsets.UTF_8)));
+        final var result = new NormalizedNodeResult();
+        final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final var xmlParser = XmlParserStream.create(streamWriter,
             Inference.ofDataTreePath(schemaContext, QName.create(FOO_MODULE, "root")));
         xmlParser.parse(reader);
 
