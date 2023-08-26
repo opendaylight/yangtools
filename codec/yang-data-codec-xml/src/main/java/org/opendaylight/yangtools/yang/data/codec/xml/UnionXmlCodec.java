@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class UnionXmlCodec<T> implements XmlCodec<T> {
+abstract sealed class UnionXmlCodec<T> implements XmlCodec<T> {
     private static final class Diverse extends UnionXmlCodec<Object> {
         Diverse(final List<XmlCodec<?>> codecs) {
             super(codecs);
