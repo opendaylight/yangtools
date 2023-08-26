@@ -569,20 +569,24 @@ public final class XmlParserStream implements Closeable, Flushable {
                         continue;
                     }
 
-                    if (parent instanceof AbstractMountPointDataWithSchema) {
-                        // Parent can potentially hold a mount point, let's see if there is a label present
-                        final Optional<MountPointSchemaNode> optMount;
-                        if (parentSchema instanceof ContainerSchemaNode) {
-                            optMount = MountPointSchemaNode.streamAll((ContainerSchemaNode) parentSchema).findFirst();
-                        } else if (parentSchema instanceof ListSchemaNode) {
-                            optMount = MountPointSchemaNode.streamAll((ListSchemaNode) parentSchema).findFirst();
+                    if (parent instanceof AbstractMountPointDataWithSchema<?> mountParent) {
+                        // Parent can potentially hold a mount point, let's see if there is a label present. We
+                        // explicitly unmask Optional to null so as to not to lead us on to functional programming,
+                        // because ...
+                        final MountPointSchemaNode mount;
+                        if (parentSchema instanceof ContainerSchemaNode container) {
+                            mount = MountPointSchemaNode.streamAll(container).findFirst().orElse(null);
+                        } else if (parentSchema instanceof ListSchemaNode list) {
+                            mount = MountPointSchemaNode.streamAll(list).findFirst().orElse(null);
+                        } else if (parentSchema instanceof ContainerLike) {
+                            mount = null;
                         } else {
                             throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema,
                                 in.getLocation());
                         }
 
-                        if (optMount.isPresent()) {
-                            final var mountId = MountPointIdentifier.of(optMount.orElseThrow().getQName());
+                        if (mount != null) {
+                            final var mountId = MountPointIdentifier.of(mount.getQName());
                             LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
                                 nsUri, mountId);
 
@@ -593,6 +597,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                                         .getMountPointData(mountId, optFactory.orElseThrow());
                                 addMountPointChild(mountData, nsUri, xmlElementName,
                                     new DOMSource(readAnyXmlValue(in).getDocumentElement()));
+                                // ... this call does not work with functional programming
                                 continue;
                             }
 
