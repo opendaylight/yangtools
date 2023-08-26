@@ -8,12 +8,16 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import com.google.common.annotations.Beta;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
-interface XmlCodec<T> extends TypeAwareCodec<T, NamespaceContext, XMLStreamWriter> {
+@Beta
+public sealed interface XmlCodec<T> extends TypeAwareCodec<T, NamespaceContext, XMLStreamWriter>
+        permits AbstractXmlCodec, EmptyXmlCodec, IdentityrefXmlCodec, NullXmlCodec, UnionXmlCodec,
+                XmlStringInstanceIdentifierCodec {
     @Override
     void writeValue(XMLStreamWriter ctx, T value) throws XMLStreamException;
 }
