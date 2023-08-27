@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableMap;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Deque;
 import java.util.HashMap;
@@ -342,16 +341,13 @@ public final class XmlParserStream implements Closeable, Flushable {
      *              instance of XmlParserStream
      * @throws XMLStreamException
      *              if a well-formedness error or an unexpected processing condition occurs while parsing the XML
-     * @throws URISyntaxException
-     *              if the namespace URI of an XML element contains a syntax error
      * @throws IOException
      *              if an error occurs while parsing the value of an anyxml node
      * @throws SAXException
      *              if an error occurs while parsing the value of an anyxml node
      */
     @Beta
-    public XmlParserStream traverse(final DOMSource src) throws XMLStreamException, URISyntaxException, IOException,
-            SAXException {
+    public XmlParserStream traverse(final DOMSource src) throws XMLStreamException, IOException, SAXException {
         return parse(new DOMSourceXMLStreamReader(src));
     }
 
