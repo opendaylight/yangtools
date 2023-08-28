@@ -16,7 +16,7 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -32,7 +32,7 @@ class YT1533Test {
                 container bar;
               }
             }""");
-        final var result = new NormalizationResultHolder();
+        final var result = new NormalizedNodeResult();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, SchemaInferenceStack.of(context).toInference());
 
