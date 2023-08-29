@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.processing.Generated;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.mdsal.binding.model.api.AnnotationType;
@@ -140,18 +141,17 @@ class JavaFileTemplate {
     /**
      * {@code org.eclipse.jdt.annotation.NonNull} as a JavaTypeName.
      */
-    static final @NonNull JavaTypeName NONNULL = JavaTypeName.create("org.eclipse.jdt.annotation", "NonNull");
+    static final @NonNull JavaTypeName NONNULL = JavaTypeName.create(NonNull.class);
 
     /**
      * {@code org.eclipse.jdt.annotation.NonNullByDefault} as a JavaTypeName.
      */
-    static final @NonNull JavaTypeName NONNULL_BY_DEFAULT =
-        JavaTypeName.create("org.eclipse.jdt.annotation", "NonNullByDefault");
+    static final @NonNull JavaTypeName NONNULL_BY_DEFAULT = JavaTypeName.create(NonNullByDefault.class);
 
     /**
      * {@code org.eclipse.jdt.annotation.Nullable} as a JavaTypeName.
      */
-    static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create("org.eclipse.jdt.annotation", "Nullable");
+    static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
 
     /**
      * {@code org.opendaylight.yangtools.yang.binding.CodeHelpers} as a JavaTypeName.
