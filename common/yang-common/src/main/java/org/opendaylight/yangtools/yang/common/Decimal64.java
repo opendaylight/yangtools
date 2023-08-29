@@ -271,8 +271,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         final byte offset = offsetOf(scale);
         final var conv = CONVERSION[offset];
         if (byteVal < conv.minByte || byteVal > conv.maxByte) {
-            throw new IllegalArgumentException("Value " + byteVal + " is not in range ["
-                + conv.minByte + ".." + conv.maxByte + "] to fit scale " + scale);
+            throw iae(scale, byteVal, conv);
         }
         return byteVal < 0 ? new Decimal64(offset, -byteVal, true) : new Decimal64(offset, byteVal, false);
     }
@@ -281,8 +280,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         final byte offset = offsetOf(scale);
         final var conv = CONVERSION[offset];
         if (shortVal < conv.minShort || shortVal > conv.maxShort) {
-            throw new IllegalArgumentException("Value " + shortVal + " is not in range ["
-                + conv.minShort + ".." + conv.maxShort + "] to fit scale " + scale);
+            throw iae(scale, shortVal, conv);
         }
         return shortVal < 0 ? new Decimal64(offset, -shortVal, true) : new Decimal64(offset, shortVal, false);
     }
@@ -291,8 +289,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         final byte offset = offsetOf(scale);
         final var conv = CONVERSION[offset];
         if (intVal < conv.minInt || intVal > conv.maxInt) {
-            throw new IllegalArgumentException("Value " + intVal + " is not in range ["
-                + conv.minInt + ".." + conv.maxInt + "] to fit scale " + scale);
+            throw iae(scale, intVal, conv);
         }
         return intVal < 0 ? new Decimal64(offset, - (long)intVal, true) : new Decimal64(offset, intVal, false);
     }
@@ -301,11 +298,16 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         final byte offset = offsetOf(scale);
         final var conv = CONVERSION[offset];
         if (longVal < conv.minLong || longVal > conv.maxLong) {
-            throw new IllegalArgumentException("Value " + longVal + " is not in range ["
-                + conv.minLong + ".." + conv.maxLong + "] to fit scale " + scale);
+            throw iae(scale, longVal, conv);
         }
         return longVal < 0 ? new Decimal64(offset, -longVal, true) : new Decimal64(offset, longVal, false);
     }
+
+    private static IllegalArgumentException iae(final int scale, final long longVal, final Decimal64Conversion conv) {
+        return new IllegalArgumentException("Value " + longVal + " is not in range ["
+            + conv.minLong + ".." + conv.maxLong + "] to fit scale " + scale);
+    }
+
     // <<< FIXME
 
     // FIXME: this should take a RoundingMode and perform rounding
