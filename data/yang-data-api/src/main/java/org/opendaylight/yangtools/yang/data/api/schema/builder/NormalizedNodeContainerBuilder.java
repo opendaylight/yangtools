@@ -14,16 +14,16 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 @Beta
-public interface NormalizedNodeContainerBuilder<K extends PathArgument, CK extends PathArgument,
-        CV extends NormalizedNode, P extends NormalizedNode> extends NormalizedNodeBuilder<K, Collection<CV>, P> {
+public interface NormalizedNodeContainerBuilder<I extends PathArgument, K extends PathArgument,
+        V extends NormalizedNode, R extends NormalizedNode> extends NormalizedNodeBuilder<I, Collection<V>, R> {
 
     @Override
-    NormalizedNodeContainerBuilder<K, CK, CV, P> withNodeIdentifier(K nodeIdentifier);
+    NormalizedNodeContainerBuilder<I, K, V, R> withNodeIdentifier(I nodeIdentifier);
 
     @Override
-    NormalizedNodeContainerBuilder<K, CK, CV, P> withValue(Collection<CV> value);
+    NormalizedNodeContainerBuilder<I, K, V, R> withValue(Collection<V> value);
 
-    @NonNull NormalizedNodeContainerBuilder<K, CK, CV, P> addChild(CV child);
+    @NonNull NormalizedNodeContainerBuilder<I, K, V, R> addChild(V child);
 
-    @NonNull NormalizedNodeContainerBuilder<K, CK, CV, P> removeChild(CK key);
+    @NonNull NormalizedNodeContainerBuilder<I, K, V, R> removeChild(K key);
 }
