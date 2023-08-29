@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -293,8 +292,8 @@ public final class EffectiveStatements {
 
     public static ActionEffectiveStatement copyAction(final ActionEffectiveStatement original, final QName argument,
             final int flags) {
-        checkArgument(original instanceof ActionEffectiveStatementImpl, "Unsupported original %s", original);
-        return new ActionEffectiveStatementImpl((ActionEffectiveStatementImpl) original, argument, flags);
+        return new ActionEffectiveStatementImpl(checkCast(ActionEffectiveStatementImpl.class, original), argument,
+            flags);
     }
 
     public static ActionEffectiveStatement createAction(final ActionStatement declared, final QName argument,
@@ -305,10 +304,10 @@ public final class EffectiveStatements {
 
     public static AnydataEffectiveStatement copyAnydata(final AnydataEffectiveStatement original, final QName argument,
             final int flags) {
-        if (original instanceof RegularAnydataEffectiveStatement) {
-            return new RegularAnydataEffectiveStatement((RegularAnydataEffectiveStatement) original, argument, flags);
-        } else if (original instanceof EmptyAnydataEffectiveStatement) {
-            return new EmptyAnydataEffectiveStatement((EmptyAnydataEffectiveStatement) original, argument, flags);
+        if (original instanceof RegularAnydataEffectiveStatement regular) {
+            return new RegularAnydataEffectiveStatement(regular, argument, flags);
+        } else if (original instanceof EmptyAnydataEffectiveStatement empty) {
+            return new EmptyAnydataEffectiveStatement(empty, argument, flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
@@ -322,10 +321,10 @@ public final class EffectiveStatements {
 
     public static AnyxmlEffectiveStatement copyAnyxml(final AnyxmlEffectiveStatement original, final QName argument,
             final int flags) {
-        if (original instanceof RegularAnyxmlEffectiveStatement) {
-            return new RegularAnyxmlEffectiveStatement((RegularAnyxmlEffectiveStatement) original, argument, flags);
-        } else if (original instanceof EmptyAnyxmlEffectiveStatement) {
-            return new EmptyAnyxmlEffectiveStatement((EmptyAnyxmlEffectiveStatement) original, argument, flags);
+        if (original instanceof RegularAnyxmlEffectiveStatement regular) {
+            return new RegularAnyxmlEffectiveStatement(regular, argument, flags);
+        } else if (original instanceof EmptyAnyxmlEffectiveStatement empty) {
+            return new EmptyAnyxmlEffectiveStatement(empty, argument, flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
@@ -370,10 +369,10 @@ public final class EffectiveStatements {
 
     public static CaseEffectiveStatement copyCase(final CaseEffectiveStatement original, final QName argument,
             final int flags) {
-        if (original instanceof DeclaredCaseEffectiveStatement) {
-            return new DeclaredCaseEffectiveStatement((DeclaredCaseEffectiveStatement) original, argument, flags);
-        } else if (original instanceof UndeclaredCaseEffectiveStatement) {
-            return new UndeclaredCaseEffectiveStatement((UndeclaredCaseEffectiveStatement) original, argument, flags);
+        if (original instanceof DeclaredCaseEffectiveStatement declared) {
+            return new DeclaredCaseEffectiveStatement(declared, argument, flags);
+        } else if (original instanceof UndeclaredCaseEffectiveStatement undeclared) {
+            return new UndeclaredCaseEffectiveStatement(undeclared, argument, flags);
         } else {
             throw new IllegalArgumentException("Unsupported origin " + original);
         }
@@ -386,8 +385,7 @@ public final class EffectiveStatements {
 
     public static ChoiceEffectiveStatement copyChoice(final ChoiceEffectiveStatement original,
             final QName argument, final int flags) {
-        checkArgument(original instanceof AbstractChoiceEffectiveStatement, "Unsupported original %s", original);
-        final var orig = (AbstractChoiceEffectiveStatement) original;
+        final var orig = checkCast(AbstractChoiceEffectiveStatement.class, original);
         return argument.equals(orig.getDeclared().argument()) && orig.getDefaultCase().isEmpty()
             ? new EmptyChoiceEffectiveStatement(orig, flags)
                 : new RegularChoiceEffectiveStatement((AbstractChoiceEffectiveStatement) original, argument, flags);
@@ -427,8 +425,7 @@ public final class EffectiveStatements {
 
     public static ContainerEffectiveStatement copyContainer(final ContainerEffectiveStatement original,
             final QName argument, final int flags) {
-        checkArgument(original instanceof AbstractContainerEffectiveStatement, "Unsupported original %s", original);
-        final var orig = (AbstractContainerEffectiveStatement) original;
+        final var orig = checkCast(AbstractContainerEffectiveStatement.class, original);
         return argument.equals(orig.getDeclared().argument()) ? new EmptyContainerEffectiveStatement(orig, flags)
             : new RegularContainerEffectiveStatement(orig, argument, flags);
     }
@@ -539,10 +536,10 @@ public final class EffectiveStatements {
 
     public static InputEffectiveStatement copyInput(final InputEffectiveStatement original, final QName argument,
             final int flags) {
-        if (original instanceof DeclaredInputEffectiveStatement) {
-            return new DeclaredInputEffectiveStatement((DeclaredInputEffectiveStatement) original, argument, flags);
-        } else if (original instanceof UndeclaredInputEffectiveStatement) {
-            return new UndeclaredInputEffectiveStatement((UndeclaredInputEffectiveStatement) original, argument, flags);
+        if (original instanceof DeclaredInputEffectiveStatement declared) {
+            return new DeclaredInputEffectiveStatement(declared, argument, flags);
+        } else if (original instanceof UndeclaredInputEffectiveStatement undeclared) {
+            return new UndeclaredInputEffectiveStatement(undeclared, argument, flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
@@ -569,8 +566,8 @@ public final class EffectiveStatements {
         if (original instanceof AbstractLeafEffectiveStatement orig) {
             return argument.equals(orig.getDeclared().argument()) ? new EmptyLeafEffectiveStatement(orig, flags)
                 : new RegularLeafEffectiveStatement(orig, argument, flags);
-        } else if (original instanceof UndeclaredLeafEffectiveStatement) {
-            return new UndeclaredLeafEffectiveStatement((UndeclaredLeafEffectiveStatement) original, argument, flags);
+        } else if (original instanceof UndeclaredLeafEffectiveStatement undeclared) {
+            return new UndeclaredLeafEffectiveStatement(undeclared, argument, flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
@@ -585,13 +582,13 @@ public final class EffectiveStatements {
 
     public static LeafListEffectiveStatement copyLeafList(final LeafListEffectiveStatement original,
             final QName argument, final int flags) {
-        if (original instanceof RegularLeafListEffectiveStatement) {
-            return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original, argument, flags);
-        } else if (original instanceof SlimLeafListEffectiveStatement) {
-            return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original, argument, flags);
-        } else if (original instanceof EmptyLeafListEffectiveStatement) {
+        if (original instanceof RegularLeafListEffectiveStatement regular) {
+            return new RegularLeafListEffectiveStatement(regular, argument, flags);
+        } else if (original instanceof SlimLeafListEffectiveStatement slim) {
+            return new SlimLeafListEffectiveStatement(slim, argument, flags);
+        } else if (original instanceof EmptyLeafListEffectiveStatement empty) {
             // Promote to slim
-            return new SlimLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original, argument, flags);
+            return new SlimLeafListEffectiveStatement(empty, argument, flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
@@ -620,10 +617,10 @@ public final class EffectiveStatements {
 
     public static ListEffectiveStatement copyList(final ListEffectiveStatement original, final QName argument,
             final int flags) {
-        if (original instanceof RegularListEffectiveStatement) {
-            return new RegularListEffectiveStatement((RegularListEffectiveStatement) original, argument, flags);
-        } else if (original instanceof EmptyListEffectiveStatement) {
-            return new RegularListEffectiveStatement((EmptyListEffectiveStatement) original, argument, flags);
+        if (original instanceof RegularListEffectiveStatement regular) {
+            return new RegularListEffectiveStatement(regular, argument, flags);
+        } else if (original instanceof EmptyListEffectiveStatement empty) {
+            return new RegularListEffectiveStatement(empty, argument, flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
@@ -684,8 +681,8 @@ public final class EffectiveStatements {
 
     public static NotificationEffectiveStatement copyNotification(final NotificationEffectiveStatement original,
             final QName argument, final int flags) {
-        checkArgument(original instanceof NotificationEffectiveStatementImpl, "Unsupported original %s", original);
-        return new NotificationEffectiveStatementImpl((NotificationEffectiveStatementImpl) original, argument, flags);
+        return new NotificationEffectiveStatementImpl(checkCast(NotificationEffectiveStatementImpl.class, original),
+            argument, flags);
     }
 
     public static NotificationEffectiveStatement createNotification(final NotificationStatement declared,
@@ -697,10 +694,10 @@ public final class EffectiveStatements {
 
     public static OutputEffectiveStatement copyOutput(final OutputEffectiveStatement original, final QName argument,
             final int flags) {
-        if (original instanceof DeclaredOutputEffectiveStatement) {
-            return new DeclaredOutputEffectiveStatement((DeclaredOutputEffectiveStatement) original, argument, flags);
-        } else if (original instanceof UndeclaredOutputEffectiveStatement) {
-            return new UndeclaredOutputEffectiveStatement((UndeclaredOutputEffectiveStatement) original, argument,
+        if (original instanceof DeclaredOutputEffectiveStatement declared) {
+            return new DeclaredOutputEffectiveStatement(declared, argument, flags);
+        } else if (original instanceof UndeclaredOutputEffectiveStatement undeclared) {
+            return new UndeclaredOutputEffectiveStatement(undeclared, argument,
                 flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
@@ -907,5 +904,18 @@ public final class EffectiveStatements {
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? createYinElement(declared)
             : new RegularYinElementEffectiveStatement(declared, substatements);
+    }
+
+    private static <T> @NonNull T checkCast(final Class<T> clazz, final Object original) {
+        final T cast;
+        try {
+            cast = clazz.cast(original);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Unsupported original " + original, e);
+        }
+        if (cast == null) {
+            throw new IllegalArgumentException("Unsupported original null");
+        }
+        return cast;
     }
 }
