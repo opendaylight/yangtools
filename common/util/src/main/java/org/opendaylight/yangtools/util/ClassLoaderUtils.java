@@ -140,10 +140,8 @@ public final class ClassLoaderUtils {
         requireNonNull(genericType);
 
         for (var type : subclass.getGenericInterfaces()) {
-            if (type instanceof ParameterizedType ptype) {
-                if (genericType.equals(ptype.getRawType())) {
-                    return Optional.of(ptype);
-                }
+            if (type instanceof ParameterizedType ptype && genericType.equals(ptype.getRawType())) {
+                return Optional.of(ptype);
             }
         }
 
