@@ -61,17 +61,15 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
         @SuppressWarnings("rawtypes")
         final var augCtx = (AugmentationCodecContext<A>) codecContext().streamChild((Class) augmentationType);
-        if (augCtx != null) {
-            // Due to binding specification not representing grouping instantiations we can end up having the same
-            // augmentation applied to a grouping multiple times. While these augmentations have the same shape, they
-            // are still represented by distinct binding classes and therefore we need to make sure the result matches
-            // the augmentation the user is requesting -- otherwise a strict receiver would end up with a cryptic
-            // ClassCastException.
-            if (augmentationType.isAssignableFrom(augCtx.getBindingClass())) {
-                final var augObj = augCtx.filterFrom(codecData());
-                if (augObj != null) {
-                    return augObj;
-                }
+        // Due to binding specification not representing grouping instantiations we can end up having the same
+        // augmentation applied to a grouping multiple times. While these augmentations have the same shape, they are
+        // still represented by distinct binding classes and therefore we need to make sure the result matches
+        // the augmentation the user is requesting -- otherwise a strict receiver would end up with a cryptic
+        // ClassCastException.
+        if (augCtx != null && augmentationType.isAssignableFrom(augCtx.getBindingClass())) {
+            final var augObj = augCtx.filterFrom(codecData());
+            if (augObj != null) {
+                return augObj;
             }
         }
         return null;
