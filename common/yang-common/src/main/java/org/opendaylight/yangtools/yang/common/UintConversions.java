@@ -135,16 +135,6 @@ public final class UintConversions {
         }
     }
 
-    static void throwIAE(final String value, final long max) {
-        // "Invalid range: 65536, expected: [[0..65535]]."
-        throw new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");
-    }
-
-    private static void throwIAE(final int value, final int max) {
-        // "Invalid range: 65536, expected: [[0..65535]]."
-        throw new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");
-    }
-
     private static void throwIAE(final long value, final long max) {
         // "Invalid range: 65536, expected: [[0..65535]]."
         throw new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");

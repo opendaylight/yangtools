@@ -399,7 +399,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      */
     public final Uint8 toUint8() {
         if ((value & 0xFFFFFFFFFFFFFF00L) != 0) {
-            UintConversions.throwIAE(toString(), 255);
+            throw iae(toString(), 255);
         }
         return Uint8.fromByteBits((byte) value);
     }
@@ -412,7 +412,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      */
     public final Uint16 toUint16() {
         if ((value & 0xFFFFFFFFFFFF0000L) != 0) {
-            UintConversions.throwIAE(toString(), 65535);
+            throw iae(toString(), 65535);
         }
         return Uint16.fromShortBits((short) value);
     }
@@ -425,9 +425,14 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      */
     public final Uint32 toUint32() {
         if ((value & 0xFFFFFFFF00000000L) != 0) {
-            UintConversions.throwIAE(toString(), 4294967295L);
+            throw iae(toString(), 4294967295L);
         }
         return Uint32.fromIntBits((int) value);
+    }
+
+    static IllegalArgumentException iae(final String value, final long max) {
+        // "Invalid range: 65536, expected: [[0..65535]]."
+        return new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");
     }
 
     @Override
