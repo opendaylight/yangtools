@@ -84,7 +84,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 bb.cB().newLine();
             }
 
-            appendGetDefaultInstance(bb, archetype, props);
+            appendOfStringValue(bb, archetype, props);
 
             // getters
             for (var propName : props.keySet()) {
@@ -97,10 +97,20 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
             appendValidNamesAndValues(bb, props);
 
-            // hashCode()/equals()/toString()
-            final var override = importedName(OVERRIDE);
             final var arrays = importedName(JU_ARRAYS);
+            final var codeHelpers = importedName(CODEHELPERS);
+            final var override = importedName(OVERRIDE);
             bb
+                .nl()
+                .at().eol(override)
+                .str("public final String stringValue()").oB()
+                    .str("return ").str(codeHelpers).eol(".btoSVB()");
+            for (var entry : props.entrySet()) {
+                bb.str("    .bit(").jStr(entry.getValue().getName()).str(", _").str(entry.getKey()).eol(")");
+            }
+            bb
+                    .eol("    .build();")
+                .cB()
                 .nl()
                 .at().eol(override)
                 .str("public final int hashCode()").oB()
@@ -121,7 +131,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 .nl()
                 .at().eol(override)
                 .str("public final String toString()").oB()
-                    .str("return ").str(importedName(CODEHELPERS)).str(".jcTSB(getClass())");
+                    .str("return ").str(codeHelpers).str(".jcTSB(getClass())");
             for (var entry : props.entrySet()) {
                 bb
                     .nl()
@@ -199,7 +209,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             }
             bb.cB().newLine();
 
-            appendGetDefaultInstance(bb, archetype, props);
+            appendOfStringValue(bb, archetype, props);
 
             if (override != null) {
                 // override getters for invalid bits
@@ -296,11 +306,8 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
     private static void openDefaultCtor(final BlockBuilder bb, final BitsTypeObjectArchetype archetype,
             final Map<String, Bit> props) {
-        final var alphaSorted = new ArrayList<>(props.keySet());
-        alphaSorted.sort(Comparator.naturalOrder());
-
         bb.str("public ").str(archetype.simpleName()).str("(");
-        var it = alphaSorted.iterator();
+        var it = props.keySet().stream().sorted().iterator();
         while (true) {
             bb.str("boolean _").str(it.next());
             if (!it.hasNext()) {
@@ -311,13 +318,12 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         bb.str(")").oB();
     }
 
-    final BlockBuilder appendGetDefaultInstance(final BlockBuilder bb, final BitsTypeObjectArchetype archetype,
+    final BlockBuilder appendOfStringValue(final BlockBuilder bb, final BitsTypeObjectArchetype archetype,
             final Map<String, Bit> props) {
         final var simpleName = archetype.simpleName();
         bb
-            .str("public static ").str(simpleName).str(" getDefaultInstance(String defaultValue)").oB()
-                .str("var values = ").str(importedName(CODEHELPERS))
-                    .eol(".parseBitsDefaultValue(defaultValue, " + VALID_NAMES_NAME + ");")
+            .str("public static ").str(simpleName).str(" ofStringValue(String str)").oB()
+                .str("var values = ").str(importedName(CODEHELPERS)).eol(".btoValues(str, " + VALID_NAMES_NAME + ");")
                 .str("return new ").str(simpleName).eol("(");
 
         // values are ordered by position, the constructor arguments are alpha-sorted, so we need to account for that
