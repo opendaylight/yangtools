@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 
 /**
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
@@ -495,49 +496,6 @@ public final class CodeHelpers {
      */
     public static byte @Nullable [] copyArray(final byte @Nullable [] bytes) {
         return bytes == null ? null : bytes.clone();
-    }
-
-    /**
-     * Check whether a bit is not present.
-     *
-     * @param bit the bit name
-     * @param present the bit value
-     * @throws IllegalArgumentException if {@code present} is {@code true}
-     * @since 16.0.0
-     */
-    @NonNullByDefault
-    public static void checkBit(final String bit, final boolean present) {
-        if (present) {
-            throw new IllegalArgumentException("Invalid bit: " + bit);
-        }
-    }
-
-    /**
-     * Parse a {@link BitsTypeObject} {@code defaultValue} string for the purposes of its generated
-     * {@code getDefaultInstance(String)} method.
-     *
-     * @param defaultValue user-provided value
-     * @param bits bit name strings
-     * @return bit values corresponding to input {@code bits} array with the matching bit set
-     * @throws IllegalArgumentException if {code defaultValue} does not match any of the bits
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    // FIXME: The contract of defaultValue is borderline useless because it allows recovering only a single bit.
-    //        In order to fix this, we actually need to define a string format that the BitsTypeObject gives out
-    //        (by talking to this class). This method would then parse it and set all the present bits.
-    @NonNullByDefault
-    public static boolean[] parseBitsDefaultValue(final String defaultValue, final ImmutableSet<String> bits) {
-        final var checked = requireNonNull(defaultValue);
-        int offset = 0;
-        for (var bit : bits) {
-            if (checked.equals(bit)) {
-                final var ret = new boolean[bits.size()];
-                ret[offset] = true;
-                return ret;
-            }
-            ++offset;
-        }
-        throw new IllegalArgumentException("invalid default parameter");
     }
 
     /**
@@ -1171,6 +1129,79 @@ public final class CodeHelpers {
     @NonNullByDefault
     public static String biTS(final Class<? extends BaseIdentity> clazz, final QName qname) {
         return clazz.getSimpleName() + "{qname=" + qname.toString() + "}";
+    }
+
+    //
+    ////
+    ////// BitsTypeObject implementation methods
+    ////
+    //
+
+    /**
+     * Check whether a bit is not present.
+     *
+     * @param bit the bit name
+     * @param present the bit value
+     * @throws IllegalArgumentException if {@code present} is {@code true}
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static void checkBit(final String bit, final boolean present) {
+        if (present) {
+            throw new IllegalArgumentException("Invalid bit: " + bit);
+        }
+    }
+
+    /**
+     * Parse a {@link BitsTypeObject#stringValue()} string for the purposes of its generated {@code valueOf(String)}
+     * method.
+     *
+     * @param str user-provided value
+     * @param bits bit name strings
+     * @return bit values corresponding to input {@code bits} array with the matching bit set
+     * @throws IllegalArgumentException if {code defaultValue} is not a valid string
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    @NonNullByDefault
+    public static boolean[] btoValues(final String str, final ImmutableSet<String> bits) {
+        final var ret = new boolean[bits.size()];
+
+        for (int begin = 0, length = str.length(); begin < length; ) {
+            final int space = str.indexOf(' ', begin);
+            if (space == -1) {
+                ret[bitOffset(bits, str, begin, length)] = true;
+                break;
+            }
+            if (space != begin) {
+                ret[bitOffset(bits, str, begin, space)] = true;
+            }
+            begin = space + 1;
+        }
+
+        return ret;
+    }
+
+    @NonNullByDefault
+    private static int bitOffset(final ImmutableSet<String> bits, final String str, final int begin, final int end) {
+        int offset = 0;
+        final var bitStr = str.substring(begin, end);
+        if (Unqualified.tryLocalName(bitStr) == null) {
+            throw new IllegalArgumentException('"' + bitStr + "\" is not a valid bit name");
+        }
+        for (var bit : bits) {
+            if (bitStr.equals(bit)) {
+                return offset;
+            }
+            offset++;
+        }
+        throw new IllegalArgumentException(bitStr + " is not one of " + bits);
+    }
+
+    /**
+     * {@return an empty BitsCSBuilder}
+     */
+    public static BitsSVBuilder btoSVB() {
+        return BitsSVBuilder.Empty.INSTANCE;
     }
 
     //

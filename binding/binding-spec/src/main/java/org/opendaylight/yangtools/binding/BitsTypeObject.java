@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.binding;
 
 import com.google.common.collect.ImmutableSet;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Interface implemented by all {@link TypeObject}s generated for {@code type bits}.
  */
+@NonNullByDefault
 public non-sealed interface BitsTypeObject extends TypeObject {
     /**
      * Return the set of strings which are valid {@code bit} names for this type. The iteration order of the returned
@@ -20,7 +22,7 @@ public non-sealed interface BitsTypeObject extends TypeObject {
      *
      * @return The names of valid bits for this type.
      */
-    @NonNull ImmutableSet<String> validNames();
+    ImmutableSet<String> validNames();
 
     /**
      * Return the bit values. Returned array contains all bits from {@link #validNames()} in the interation order of
@@ -28,5 +30,22 @@ public non-sealed interface BitsTypeObject extends TypeObject {
      *
      * @return Array of values.
      */
-    boolean @NonNull [] values();
+    boolean[] values();
+
+    /**
+     * Returns the canonical string representation of this object, as specified in
+     * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-9.7.2">RFC7950, section 9.7.2</a>.
+     *
+     * @return canonical string
+     */
+    String stringValue();
+
+    @Override
+    int hashCode();
+
+    @Override
+    boolean equals(@Nullable Object obj);
+
+    @Override
+    String toString();
 }
