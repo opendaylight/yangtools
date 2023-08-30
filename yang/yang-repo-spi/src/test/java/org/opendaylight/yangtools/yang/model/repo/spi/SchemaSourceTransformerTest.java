@@ -83,8 +83,8 @@ public class SchemaSourceTransformerTest {
         reg.register(sourceIdentifier);
 
         final Consumer c = new Consumer();
-        schema = new SchemaSourceTransformer<>(p,
-                SchemaSourceTransformerTest.SRC_CLASS, c, SchemaSourceTransformerTest.DST_CLASS, function);
+        schema = new SchemaSourceTransformer<>(p, SchemaSourceTransformerTest.SRC_CLASS, c,
+            SchemaSourceTransformerTest.DST_CLASS, function);
 
         final SchemaSourceListener listener = schema;
         p.registerSchemaSourceListener(listener);
@@ -101,22 +101,18 @@ public class SchemaSourceTransformerTest {
     }
 
     private static class Foo<T extends SchemaSourceRepresentation> {
-
         final PotentialSchemaSource<T> src;
 
         Foo(final SourceIdentifier sourceIdentifier, final Class<T> representation, final Costs cost) {
-            this.src = PotentialSchemaSource.create(sourceIdentifier, representation,
-                    cost.getValue());
+            src = PotentialSchemaSource.create(sourceIdentifier, representation, cost.getValue());
         }
 
         public PotentialSchemaSource<T> getPotentialSchemSource() {
-            return this.src;
+            return src;
         }
-
     }
 
     private static class Registrator extends AbstractSchemaSourceCache<YangSchemaSourceRepresentation> {
-
         Registrator(final SchemaSourceRegistry consumer, final Class<YangSchemaSourceRepresentation> srcClass,
                 final Costs cost) {
             super(consumer, srcClass, cost);
@@ -132,10 +128,9 @@ public class SchemaSourceTransformerTest {
                 final SourceIdentifier sourceIdentifier) {
             return SettableFuture.create();
         }
-
     }
 
-    private static class Provider extends AbstractSchemaRepository {
+    private static final class Provider extends AbstractSchemaRepository {
         @Override
         public EffectiveModelContextFactory createEffectiveModelContextFactory(
                 final SchemaContextFactoryConfiguration config) {
@@ -143,7 +138,7 @@ public class SchemaSourceTransformerTest {
         }
     }
 
-    private static class Consumer extends AbstractSchemaRepository {
+    private static final class Consumer extends AbstractSchemaRepository {
         @Override
         public EffectiveModelContextFactory createEffectiveModelContextFactory(
                 final SchemaContextFactoryConfiguration config) {

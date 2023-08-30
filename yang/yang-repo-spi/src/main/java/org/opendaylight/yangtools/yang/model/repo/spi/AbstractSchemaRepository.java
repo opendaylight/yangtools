@@ -195,9 +195,11 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         return ret;
     }
 
-    private static class SchemaProviderCostComparator implements Comparator<AbstractSchemaSourceRegistration<?>>,
+    private static final class SchemaProviderCostComparator implements Comparator<AbstractSchemaSourceRegistration<?>>,
             Serializable {
         static final SchemaProviderCostComparator INSTANCE = new SchemaProviderCostComparator();
+
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -205,6 +207,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             return o1.getInstance().getCost() - o2.getInstance().getCost();
         }
 
+        @java.io.Serial
         private Object readResolve() {
             return INSTANCE;
         }
