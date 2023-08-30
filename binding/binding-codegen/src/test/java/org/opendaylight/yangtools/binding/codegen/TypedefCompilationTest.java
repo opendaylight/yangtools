@@ -18,7 +18,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
@@ -88,10 +87,10 @@ class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(9, bitsExtClass.getDeclaredFields().length);
         CompilationTestUtils.assertContainsConstructor(bitsExtClass, bitsExtClass);
         assertEquals(1, bitsExtClass.getConstructors().length);
-        Method defInst = CompilationTestUtils.assertContainsMethod(bitsExtClass, bitsExtClass, "getDefaultInstance",
+        Method defInst = CompilationTestUtils.assertContainsMethod(bitsExtClass, bitsExtClass, "ofStringValue",
             String.class);
         CompilationTestUtils.assertContainsDefaultMethods(bitsExtClass);
-        assertEquals(13, bitsExtClass.getDeclaredMethods().length);
+        assertEquals(14, bitsExtClass.getDeclaredMethods().length);
 
         Constructor<?> expectedConstructor = CompilationTestUtils.assertContainsConstructor(bitsExtClass, boolean.class,
             boolean.class, boolean.class, boolean.class, boolean.class, boolean.class, boolean.class);
@@ -114,10 +113,9 @@ class TypedefCompilationTest extends BaseCompilationTest {
             String.class);
         assertEquals(7, int32Ext1Class.getDeclaredMethods().length);
 
-        List<Range<Integer>> rangeConstraints = new ArrayList<>();
-        rangeConstraints.add(Range.closed(2, 2147483647));
         Object arg = 1;
-        String expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
+        String expectedMsg = String.format("Invalid range: %s, expected: %s.", arg,
+            List.of(Range.closed(2, 2147483647)));
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(159);
         assertEquals(obj, defInst.invoke(null, "159"));
@@ -136,11 +134,9 @@ class TypedefCompilationTest extends BaseCompilationTest {
             String.class);
         assertEquals(2, int32Ext2Class.getDeclaredMethods().length);
 
-        rangeConstraints.clear();
-        rangeConstraints.add(Range.closed(3, 9));
-        rangeConstraints.add(Range.closed(11, 2147483647));
         arg = Integer.valueOf("10");
-        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
+        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg,
+            List.of(Range.closed(3, 9), Range.closed(11, 2147483647)));
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(2147483647);
         assertEquals(obj, defInst.invoke(null, "2147483647"));
@@ -162,10 +158,8 @@ class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsDefaultMethods(stringExt1Class);
         assertEquals(7, stringExt1Class.getDeclaredMethods().length);
 
-        List<Range<Integer>> lengthConstraints = new ArrayList<>();
-        lengthConstraints.add(Range.closed(5, 11));
         arg = "abcd";
-        expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
+        expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, List.of(Range.closed(5, 11)));
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
 
         obj = expectedConstructor.newInstance("abcde");
@@ -184,10 +178,8 @@ class TypedefCompilationTest extends BaseCompilationTest {
             String.class);
         assertEquals(2, stringExt2Class.getDeclaredMethods().length);
 
-        lengthConstraints.clear();
-        lengthConstraints.add(Range.closed(6, 10));
         arg = "abcde";
-        expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
+        expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, List.of(Range.closed(6, 10)));
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance("abcdef");
         assertEquals(obj, defInst.invoke(null, "abcdef"));

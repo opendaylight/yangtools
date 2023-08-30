@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.file.Files;
@@ -36,13 +37,95 @@ class Mdsal807Test extends BaseCompilationTest {
         final var pmDataType = FileSearchUtil.getFiles(sourcesOutputDir).get("TableConfig.java");
         assertNotNull(pmDataType);
 
-        FileSearchUtil.assertFileContainsConsecutiveLines(pmDataType, Files.readString(pmDataType),
-            "    public static TableConfig getDefaultInstance(String defaultValue) {",
-            "        var values = CodeHelpers.parseBitsDefaultValue(defaultValue, VALID_NAMES);",
-            "        return new TableConfig(",
-            "            values[0]);",
-            "    }"
-        );
+        assertEquals("""
+            package org.opendaylight.yang.gen.v1.foo.norev;
+
+            import com.google.common.collect.ImmutableSet;
+            import java.lang.Override;
+            import java.lang.String;
+            import java.util.Arrays;
+            import org.opendaylight.yangtools.binding.BitsTypeObject;
+            import org.opendaylight.yangtools.binding.lib.CodeHelpers;
+
+            /**
+             *
+             * <p>
+             * This class represents the following YANG schema fragment defined in module <b>foo</b>
+             * <pre>
+             * typedef table-config {
+             *   type bits {
+             *     bit OFPTC_DEPRECATED_MASK {
+             *       position 3;
+             *     }
+             *   }
+             * }
+             * </pre>
+             */
+            @javax.annotation.processing.Generated("mdsal-binding-generator")
+            public class TableConfig implements BitsTypeObject, java.io.Serializable {
+                @java.io.Serial
+                private static final long serialVersionUID = 7965671183838203126L;
+
+                protected static final ImmutableSet<String> VALID_NAMES = ImmutableSet.of("OFPTC_DEPRECATED_MASK");
+
+                private final boolean _oFPTCDEPRECATEDMASK;
+
+                public TableConfig(boolean _oFPTCDEPRECATEDMASK) {
+                    this._oFPTCDEPRECATEDMASK = _oFPTCDEPRECATEDMASK;
+                }
+
+                protected TableConfig(TableConfig source) {
+                    this._oFPTCDEPRECATEDMASK = source._oFPTCDEPRECATEDMASK;
+                }
+
+                public static TableConfig ofStringValue(String str) {
+                    var values = CodeHelpers.btoValues(str, VALID_NAMES);
+                    return new TableConfig(
+                        values[0]);
+                }
+
+                public boolean getOFPTCDEPRECATEDMASK() {
+                    return _oFPTCDEPRECATEDMASK;
+                }
+
+                @Override
+                public ImmutableSet<String> validNames() {
+                    return VALID_NAMES;
+                }
+
+                @Override
+                public boolean[] values() {
+                    return new boolean[] {
+                        getOFPTCDEPRECATEDMASK()
+                    };
+                }
+
+                @Override
+                public final String stringValue() {
+                    return CodeHelpers.btoSVB()
+                        .bit("OFPTC_DEPRECATED_MASK", _oFPTCDEPRECATEDMASK)
+                        .build();
+                }
+
+                @Override
+                public final int hashCode() {
+                    return Arrays.hashCode(values());
+                }
+
+                @Override
+                public final boolean equals(Object obj) {
+                    return this == obj || obj instanceof TableConfig other
+                        && _oFPTCDEPRECATEDMASK == other._oFPTCDEPRECATEDMASK;
+                }
+
+                @Override
+                public final String toString() {
+                    return CodeHelpers.jcTSB(getClass())
+                        .bit("OFPTC_DEPRECATED_MASK", _oFPTCDEPRECATEDMASK)
+                        .build();
+                }
+            }
+            """, Files.readString(pmDataType));
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
     }
 }
