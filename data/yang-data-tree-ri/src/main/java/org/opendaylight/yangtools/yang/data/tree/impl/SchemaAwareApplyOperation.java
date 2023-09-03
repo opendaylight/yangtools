@@ -38,7 +38,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class SchemaAwareApplyOperation<T extends DataSchemaNode> extends ModificationApplyOperation {
+abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extends ModificationApplyOperation
+        permits AbstractNodeContainerModificationStrategy, ListModificationStrategy, ValueNodeModificationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
     static ModificationApplyOperation from(final DataSchemaNode schemaNode,
@@ -61,7 +62,7 @@ abstract class SchemaAwareApplyOperation<T extends DataSchemaNode> extends Modif
         } else if (schemaNode instanceof AnyxmlSchemaNode anyxml) {
             return new ValueNodeModificationStrategy<>(AnyxmlNode.class, anyxml);
         } else if (schemaNode instanceof SchemaContext context) {
-            return new StructuralContainerModificationStrategy(context, treeConfig);
+            return new ContainerModificationStrategy.Structural(context, treeConfig);
         } else {
             throw new IllegalStateException("Unsupported schema " + schemaNode);
         }

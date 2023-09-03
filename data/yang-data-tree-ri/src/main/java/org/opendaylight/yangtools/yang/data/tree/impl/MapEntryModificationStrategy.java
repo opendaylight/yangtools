@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
+sealed class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
     private static final class EnforcingMandatory extends MapEntryModificationStrategy {
         private final MandatoryLeafEnforcer enforcer;
 

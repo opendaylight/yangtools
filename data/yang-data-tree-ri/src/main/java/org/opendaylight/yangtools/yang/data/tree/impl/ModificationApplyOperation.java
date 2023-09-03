@@ -42,7 +42,8 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  *   </li>
  * </ul>
  */
-abstract class ModificationApplyOperation implements StoreTreeNode<ModificationApplyOperation> {
+abstract sealed class ModificationApplyOperation implements StoreTreeNode<ModificationApplyOperation>
+        permits AbstractValidation, SchemaAwareApplyOperation {
     /**
      * Implementation of this operation must be stateless and must not change state of this object.
      *

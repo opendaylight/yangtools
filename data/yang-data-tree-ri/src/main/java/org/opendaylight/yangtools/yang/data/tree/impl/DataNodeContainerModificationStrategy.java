@@ -23,12 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base strategy for applying changes to a ContainerNode, irrespective of its
- * actual type.
+ * Base strategy for applying changes to a ContainerNode, irrespective of its actual type.
  *
  * @param <T> Type of the container node
  */
-class DataNodeContainerModificationStrategy<T extends DataSchemaNode & DataNodeContainer> extends Visible<T> {
+sealed class DataNodeContainerModificationStrategy<T extends DataSchemaNode & DataNodeContainer> extends Visible<T>
+        permits ContainerModificationStrategy, MapEntryModificationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerModificationStrategy.class);
     private static final VarHandle CHILDREN;
 
