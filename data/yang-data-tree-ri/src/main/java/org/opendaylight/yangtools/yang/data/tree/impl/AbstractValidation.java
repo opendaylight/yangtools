@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
  * A forwarding {@link ModificationApplyOperation}. Useful for strategies which do not deal with data layout, but rather
  * perform additional validation.
  */
-abstract class AbstractValidation extends ModificationApplyOperation {
+abstract sealed class AbstractValidation extends ModificationApplyOperation
+        permits MinMaxElementsValidation, UniqueValidation {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractValidation.class);
 
     private final @NonNull ModificationApplyOperation delegate;

@@ -34,9 +34,11 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractNodeContainerModificationStrategy<T extends DataSchemaNode>
+abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSchemaNode>
         extends SchemaAwareApplyOperation<T> {
-    abstract static class Invisible<T extends DataSchemaNode> extends AbstractNodeContainerModificationStrategy<T> {
+    abstract static sealed class Invisible<T extends DataSchemaNode>
+            extends AbstractNodeContainerModificationStrategy<T>
+            permits LeafSetModificationStrategy, MapModificationStrategy {
         private final @NonNull SchemaAwareApplyOperation<T> entryStrategy;
 
         Invisible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
@@ -60,7 +62,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends DataSchemaNod
         }
     }
 
-    abstract static class Visible<T extends DataSchemaNode> extends AbstractNodeContainerModificationStrategy<T> {
+    abstract static sealed class Visible<T extends DataSchemaNode> extends AbstractNodeContainerModificationStrategy<T>
+            permits ChoiceModificationStrategy, DataNodeContainerModificationStrategy {
         private final @NonNull T schema;
 
         Visible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
