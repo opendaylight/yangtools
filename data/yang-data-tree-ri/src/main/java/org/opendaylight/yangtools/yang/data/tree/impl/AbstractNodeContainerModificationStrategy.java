@@ -165,9 +165,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode newValueMeta = TreeNode.of(newValue, version);
-
-        if (modification.getChildren().isEmpty()) {
+        final var newValueMeta = TreeNode.of(newValue, version);
+        if (modification.isEmpty()) {
             return newValueMeta;
         }
 
@@ -185,12 +184,11 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final MutableTreeNode mutable = newValueMeta.mutable();
+        final var mutable = newValueMeta.mutable();
         mutable.setSubtreeVersion(version);
 
-        @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder dataBuilder = support.createBuilder(newValue);
-        final TreeNode result = mutateChildren(mutable, dataBuilder, version, modification.getChildren());
+        final var result = mutateChildren(mutable, support.createBuilder(newValue), version,
+            modification.getChildren());
 
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
@@ -260,7 +258,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     final void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode value,
             final Version version) {
-        final Collection<? extends NormalizedNode> children = ((DistinctNodeContainer<?, ?>)value).body();
+        final var valueChildren = ((DistinctNodeContainer<?, ?>) value).body();
         switch (modification.getOperation()) {
             case NONE:
                 // Fresh node, just record a MERGE with a value
@@ -269,7 +267,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                 return;
             case TOUCH:
 
-                mergeChildrenIntoModification(modification, children, version);
+                mergeChildrenIntoModification(modification, valueChildren, version);
                 // We record empty merge value, since real children merges are already expanded. This is needed to
                 // satisfy non-null for merge original merge value can not be used since it mean different order of
                 // operation - parent changes are always resolved before children ones, and having node in TOUCH means
@@ -279,7 +277,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             case MERGE:
                 // Merging into an existing node. Merge data children modifications (maybe recursively) and mark
                 // as MERGE, invalidating cached snapshot
-                mergeChildrenIntoModification(modification, children, version);
+                mergeChildrenIntoModification(modification, valueChildren, version);
                 modification.updateOperationType(LogicalOperation.MERGE);
                 return;
             case DELETE:
@@ -287,13 +285,12 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                 // we are really performing a write. One thing that ruins that are any child modifications. If there
                 // are any, we will perform a read() to get the current state of affairs, turn this into into a WRITE
                 // and then append any child entries.
-                if (!modification.getChildren().isEmpty()) {
+                if (!modification.isEmpty()) {
                     // Version does not matter here as we'll throw it out
-                    final Optional<? extends TreeNode> current = apply(modification, modification.getOriginal(),
-                        Version.initial());
+                    final var current = apply(modification, modification.getOriginal(), Version.initial());
                     if (current.isPresent()) {
                         modification.updateValue(LogicalOperation.WRITE, current.orElseThrow().getData());
-                        mergeChildrenIntoModification(modification, children, version);
+                        mergeChildrenIntoModification(modification, valueChildren, version);
                         return;
                     }
                 }
@@ -303,7 +300,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             case WRITE:
                 // We are augmenting a previous write. We'll just walk value's children, get the corresponding
                 // ModifiedNode and run recursively on it
-                mergeChildrenIntoModification(modification, children, version);
+                mergeChildrenIntoModification(modification, valueChildren, version);
                 modification.updateOperationType(LogicalOperation.WRITE);
                 return;
             default:
@@ -320,13 +317,12 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
          * - do not collect useless garbage.
          * It also means the ModificationType is UNMODIFIED.
          */
-        final Collection<ModifiedNode> children = modification.getChildren();
-        if (!children.isEmpty()) {
-            @SuppressWarnings("rawtypes")
-            final NormalizedNodeContainerBuilder dataBuilder = support.createBuilder(currentMeta.getData());
-            final MutableTreeNode newMeta = currentMeta.mutable();
+        if (!modification.isEmpty()) {
+            final var dataBuilder = support.createBuilder(currentMeta.getData());
+            final var newMeta = currentMeta.mutable();
             newMeta.setSubtreeVersion(version);
-            final TreeNode ret = mutateChildren(newMeta, dataBuilder, version, children);
+            final var children = modification.getChildren();
+            final var ret = mutateChildren(newMeta, dataBuilder, version, children);
 
             /*
              * It is possible that the only modifications under this node were empty merges, which were turned into
@@ -337,7 +333,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
              *
              * Let's do precisely that, stopping as soon we find a different result.
              */
-            for (final ModifiedNode child : children) {
+            for (var child : children) {
                 if (child.getModificationType() != ModificationType.UNMODIFIED) {
                     modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
                     return ret;
