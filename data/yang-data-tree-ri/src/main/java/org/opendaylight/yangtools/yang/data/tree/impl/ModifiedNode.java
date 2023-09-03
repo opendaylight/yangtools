@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -61,7 +60,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     // Internal cache for TreeNodes created as part of validation
     private ModificationApplyOperation validatedOp;
     private Optional<? extends TreeNode> validatedCurrent;
-    private Optional<? extends TreeNode> validatedNode;
+    private ValidatedTreeNode validatedNode;
 
     private ModifiedNode(final PathArgument identifier, final Optional<? extends TreeNode> original,
             final ChildTrackingPolicy childPolicy) {
@@ -340,7 +339,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             final Optional<? extends TreeNode> node) {
         validatedOp = requireNonNull(op);
         validatedCurrent = requireNonNull(current);
-        validatedNode = requireNonNull(node);
+        validatedNode = new ValidatedTreeNode(node);
     }
 
     /**
@@ -352,9 +351,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return {@code null} if there is a mismatch with previously-validated node (if present) or the result of previous
      *         validation.
      */
-    @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
-            justification = "The contract is package-internal and well documented, we do not need a separate wrapper")
-    @Nullable Optional<? extends TreeNode> getValidatedNode(final ModificationApplyOperation op,
+    @Nullable ValidatedTreeNode validatedNode(final ModificationApplyOperation op,
             final Optional<? extends TreeNode> current) {
         return op.equals(validatedOp) && current.equals(validatedCurrent) ? validatedNode : null;
     }

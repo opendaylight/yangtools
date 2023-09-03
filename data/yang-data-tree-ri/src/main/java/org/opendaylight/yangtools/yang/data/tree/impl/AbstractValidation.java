@@ -62,20 +62,22 @@ abstract class AbstractValidation extends ModificationApplyOperation {
     @Override
     final Optional<? extends TreeNode> apply(final ModifiedNode modification,
             final Optional<? extends TreeNode> storeMeta, final Version version) {
-        Optional<? extends TreeNode> ret = modification.getValidatedNode(this, storeMeta);
-        if (ret == null) {
-            // This might also mean the delegate is maintaining validation
-            if (delegate instanceof AbstractValidation) {
-                ret = modification.getValidatedNode(delegate, storeMeta);
-                if (ret != null) {
-                    return ret;
-                }
-            }
-
-            // Deal with the result moving on us
-            ret = delegate.apply(modification, storeMeta, version);
-            ret.ifPresent(meta -> enforceOnData(meta.getData()));
+        var validated = modification.validatedNode(this, storeMeta);
+        if (validated != null) {
+            return validated.toOptional();
         }
+
+        // This might also mean the delegate is maintaining validation
+        if (delegate instanceof AbstractValidation) {
+            validated = modification.validatedNode(delegate, storeMeta);
+            if (validated != null) {
+                return validated.toOptional();
+            }
+        }
+
+        // Deal with the result moving on us
+        final var ret = delegate.apply(modification, storeMeta, version);
+        ret.ifPresent(meta -> enforceOnData(meta.getData()));
         return ret;
     }
 
@@ -90,7 +92,7 @@ abstract class AbstractValidation extends ModificationApplyOperation {
         }
 
         if (delegate instanceof AbstractValidation) {
-            checkApplicable(path, verifyNotNull(modified.getValidatedNode(delegate, current)));
+            checkApplicable(path, verifyNotNull(modified.validatedNode(delegate, current)).toOptional());
             return;
         }
 
