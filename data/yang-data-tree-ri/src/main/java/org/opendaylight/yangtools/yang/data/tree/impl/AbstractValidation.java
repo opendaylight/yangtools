@@ -83,13 +83,12 @@ abstract class AbstractValidation extends ModificationApplyOperation {
     final void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         delegate.checkApplicable(path, modification, current, version);
-        if (!(modification instanceof ModifiedNode)) {
+        if (!(modification instanceof ModifiedNode modified)) {
             // FIXME: 7.0.0: turn this into a verify?
             LOG.debug("Could not validate {}, does not implement expected class {}", modification, ModifiedNode.class);
             return;
         }
 
-        final ModifiedNode modified = (ModifiedNode) modification;
         if (delegate instanceof AbstractValidation) {
             checkApplicable(path, verifyNotNull(modified.getValidatedNode(delegate, current)));
             return;
