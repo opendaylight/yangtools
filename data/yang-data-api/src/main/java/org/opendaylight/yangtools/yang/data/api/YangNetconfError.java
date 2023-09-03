@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import com.google.common.annotations.Beta;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -26,9 +25,7 @@ import org.opendaylight.yangtools.yang.common.ErrorType;
 @Beta
 @NonNullByDefault
 @Value.Immutable(copy = false)
-@Value.Style(stagedBuilder = true, allowedClasspathAnnotations = {
-    SuppressWarnings.class, Generated.class, SuppressFBWarnings.class,
-})
+@Value.Style(stagedBuilder = true, allowedClasspathAnnotations = { SuppressWarnings.class, Generated.class })
 // FIXME: 8.0.0: Split this interface into two:
 //               - yang.common.NetconfError, which does not have a builder sets up the stage
 //               - data.api.schema.NormalizedNetconfError
