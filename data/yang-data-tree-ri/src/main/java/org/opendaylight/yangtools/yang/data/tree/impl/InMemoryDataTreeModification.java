@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -233,10 +232,9 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     private static void applyChildren(final DataTreeModificationCursor cursor, final ModifiedNode node) {
-        final Collection<ModifiedNode> children = node.getChildren();
-        if (!children.isEmpty()) {
+        if (!node.isEmpty()) {
             cursor.enter(node.getIdentifier());
-            for (final ModifiedNode child : children) {
+            for (var child : node.getChildren()) {
                 applyNode(cursor, child);
             }
             cursor.exit();
@@ -272,7 +270,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public void applyToCursor(final DataTreeModificationCursor cursor) {
-        for (final ModifiedNode child : rootNode.getChildren()) {
+        for (var child : rootNode.getChildren()) {
             applyNode(cursor, child);
         }
     }
