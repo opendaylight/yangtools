@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
 import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
@@ -23,7 +22,7 @@ abstract class AbstractReadyIterator {
             final ModificationApplyOperation operation) {
         this.children = requireNonNull(children);
         this.node = requireNonNull(node);
-        this.op = requireNonNull(operation);
+        op = requireNonNull(operation);
     }
 
     static AbstractReadyIterator create(final ModifiedNode root, final ModificationApplyOperation operation) {
@@ -35,19 +34,19 @@ abstract class AbstractReadyIterator {
         // been modified. If a child has children, we need to iterate
         // through it via re-entering this method on the child iterator.
         while (children.hasNext()) {
-            final ModifiedNode child = children.next();
-            final ModificationApplyOperation childOp = op.childByArg(child.getIdentifier());
-            checkState(childOp != null, "Schema for child %s is not present.", child.getIdentifier());
-            final Collection<ModifiedNode> grandChildren = child.getChildren();
+            final var child = children.next();
+            final var childId = child.getIdentifier();
+            final var childOp = op.childByArg(childId);
+            checkState(childOp != null, "Schema for child %s is not present.", childId);
 
-            if (grandChildren.isEmpty()) {
+            if (child.isEmpty()) {
                 // The child is empty, seal it
                 child.seal(childOp, version);
                 if (child.getOperation() == LogicalOperation.NONE) {
                     children.remove();
                 }
             } else {
-                return new NestedReadyIterator(this, child, grandChildren.iterator(), childOp);
+                return new NestedReadyIterator(this, child, child.getChildren().iterator(), childOp);
             }
         }
 

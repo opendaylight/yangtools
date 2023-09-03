@@ -194,6 +194,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return children.values();
     }
 
+    @Override
+    boolean isEmpty() {
+        return children.isEmpty();
+    }
+
     /**
      * Records a delete for associated node.
      */

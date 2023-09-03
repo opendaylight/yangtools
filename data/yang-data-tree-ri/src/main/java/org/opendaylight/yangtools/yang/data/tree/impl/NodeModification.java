@@ -14,11 +14,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 
 /**
- * Internal interface representing a modification action of a particular node.
- * It is used by the validation code to allow for a read-only view of the
- * modification tree as we should never modify that during validation.
+ * Internal interface representing a modification action of a particular node. It is used by the validation code to
+ * allow for a read-only view of the modification tree as we should never modify that during validation.
  */
-abstract class NodeModification implements Identifiable<PathArgument> {
+abstract sealed class NodeModification implements Identifiable<PathArgument> permits ModifiedNode {
     /**
      * Get the type of modification.
      *
@@ -40,4 +39,11 @@ abstract class NodeModification implements Identifiable<PathArgument> {
      * @return Collection of all children nodes.
      */
     abstract Collection<? extends NodeModification> getChildren();
+
+    /**
+     * A shortcut to {@code getChildren().isEmpty()}.
+     *
+     * @return {@code} if {@link #getChildren()} is empty.
+     */
+    abstract boolean isEmpty();
 }

@@ -49,7 +49,7 @@ final class AutomaticLifecycleMixin {
             final Optional<? extends TreeNode> storeMeta, final Version version) {
         final Optional<? extends TreeNode> ret;
         if (modification.getOperation() == LogicalOperation.DELETE) {
-            if (modification.getChildren().isEmpty()) {
+            if (modification.isEmpty()) {
                 return delegate.apply(modification, storeMeta, version);
             }
             // Delete with children, implies it really is an empty write
