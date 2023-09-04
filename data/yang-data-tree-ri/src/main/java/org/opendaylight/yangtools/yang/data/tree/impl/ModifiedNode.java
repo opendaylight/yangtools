@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  */
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
     private final Map<PathArgument, ModifiedNode> children;
-    private final Optional<? extends TreeNode> original;
+    private final @Nullable TreeNode original;
     private final @NonNull PathArgument identifier;
 
     private LogicalOperation operation = LogicalOperation.NONE;
@@ -57,7 +57,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private Optional<? extends TreeNode> validatedCurrent;
     private ValidatedTreeNode validatedNode;
 
-    private ModifiedNode(final PathArgument identifier, final Optional<? extends TreeNode> original,
+    private ModifiedNode(final PathArgument identifier, final @Nullable TreeNode original,
             final ChildTrackingPolicy childPolicy) {
         this.identifier = requireNonNull(identifier);
         this.original = original;
@@ -75,7 +75,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     @Override
-    Optional<? extends TreeNode> getOriginal() {
+    TreeNode original() {
         return original;
     }
 
@@ -101,11 +101,12 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return children.get(arg);
     }
 
-    private Optional<? extends TreeNode> metadataFromSnapshot(final @NonNull PathArgument child) {
-        return original.isPresent() ? original.orElseThrow().findChildByArg(child) : Optional.empty();
+    private @Nullable TreeNode metadataFromSnapshot(final @NonNull PathArgument child) {
+        final var local = original;
+        return local != null ? local.childByArg(child) : null;
     }
 
-    private Optional<? extends TreeNode> metadataFromData(final @NonNull PathArgument child, final Version modVersion) {
+    private @Nullable TreeNode metadataFromData(final @NonNull PathArgument child, final Version modVersion) {
         if (writtenOriginal == null) {
             // Lazy instantiation, as we do not want do this for all writes. We are using the modification's version
             // here, as that version is what the SchemaAwareApplyOperation will see when dealing with the resulting
@@ -113,7 +114,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             writtenOriginal = TreeNode.of(value, modVersion);
         }
 
-        return writtenOriginal.findChildByArg(child);
+        return writtenOriginal.childByArg(child);
     }
 
     /**
@@ -125,12 +126,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param modVersion Version allocated by the calling {@link InMemoryDataTreeModification}
      * @return Before-image tree node as observed by that child.
      */
-    private Optional<? extends TreeNode> findOriginalMetadata(final @NonNull PathArgument child,
-            final Version modVersion) {
+    private @Nullable TreeNode originalMetadata(final @NonNull PathArgument child, final Version modVersion) {
         return switch (operation) {
             case DELETE ->
                 // DELETE implies non-presence
-                Optional.empty();
+                null;
             case NONE, TOUCH, MERGE -> metadataFromSnapshot(child);
             case WRITE ->
                 // WRITE implies presence based on written data
@@ -155,20 +155,20 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         if (operation == LogicalOperation.NONE) {
             updateOperationType(LogicalOperation.TOUCH);
         }
-        final ModifiedNode potential = children.get(child);
+        final var potential = children.get(child);
         if (potential != null) {
             return potential;
         }
 
-        final Optional<? extends TreeNode> currentMetadata = findOriginalMetadata(child, modVersion);
-        final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childOper.getChildPolicy());
+        final var newlyCreated = new ModifiedNode(child, originalMetadata(child, modVersion),
+            childOper.getChildPolicy());
         if (operation == LogicalOperation.MERGE && value != null) {
             /*
              * We are attempting to modify a previously-unmodified part of a MERGE node. If the
              * value contains this component, we need to materialize it as a MERGE modification.
              */
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final NormalizedNode childData = ((DistinctNodeContainer)value).childByArg(child);
+            final var childData = ((DistinctNodeContainer) value).childByArg(child);
             if (childData != null) {
                 childOper.mergeIntoModifiedNode(newlyCreated, childData, modVersion);
             }
@@ -211,7 +211,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                 //
                 // As documented in BUG-2470, a delete of data introduced in this transaction needs to be turned into
                 // a no-op.
-                original.isPresent() ? LogicalOperation.DELETE : LogicalOperation.NONE;
+                original != null ? LogicalOperation.DELETE : LogicalOperation.NONE;
         };
 
         clearSnapshot();
@@ -327,7 +327,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     public static ModifiedNode createUnmodified(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {
-        return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), childPolicy);
+        return new ModifiedNode(metadataTree.getIdentifier(), requireNonNull(metadataTree), childPolicy);
     }
 
     void setValidatedNode(final ModificationApplyOperation op, final Optional<? extends TreeNode> current,
