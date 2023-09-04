@@ -85,9 +85,9 @@ final class MandatoryLeafEnforcer implements Immutable {
 
     void enforceOnData(final NormalizedNode data) {
         for (var path : mandatoryNodes) {
-            if (!NormalizedNodes.findNode(data, path).isPresent()) {
-                throw new IllegalArgumentException(String.format("Node %s is missing mandatory descendant %s",
-                    data.name(), YangInstanceIdentifier.of(path)));
+            if (NormalizedNodes.findNode(data, path).isEmpty()) {
+                throw new IllegalArgumentException("Node " + data.name() + " is missing mandatory descendant "
+                    + YangInstanceIdentifier.of(path));
             }
         }
     }

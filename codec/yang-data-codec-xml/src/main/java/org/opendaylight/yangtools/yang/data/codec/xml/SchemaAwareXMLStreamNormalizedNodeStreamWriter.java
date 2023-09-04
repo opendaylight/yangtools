@@ -8,7 +8,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
@@ -65,9 +64,13 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
                 qname.getModule());
         }
 
-        checkArgument(!qname.getRevision().isPresent(), "Failed to find bound annotation %s", qname);
-        checkArgument(value instanceof String, "Invalid non-string value %s for unbound annotation %s", value, qname);
-        return (String) value;
+        if (qname.getRevision().isPresent()) {
+            throw new IllegalArgumentException("Failed to find bound annotation " + qname);
+        }
+        if (value instanceof String str) {
+            return str;
+        }
+        throw new IllegalArgumentException("Invalid non-string value " + value + " for unbound annotation " + qname);
     }
 
     @Override
