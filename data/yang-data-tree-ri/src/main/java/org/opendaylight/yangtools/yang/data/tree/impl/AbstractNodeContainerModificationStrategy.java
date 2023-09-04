@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -357,8 +356,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         if (current.isEmpty()) {
             currentNode = defaultTreeNode();
             if (currentNode == null) {
-                if (modification.getOriginal().isEmpty()) {
-                    final YangInstanceIdentifier id = path.toInstanceIdentifier();
+                if (modification.original() == null) {
+                    final var id = path.toInstanceIdentifier();
                     throw new ModifiedNodeDoesNotExistException(id,
                         "Node " + id + " does not exist. Cannot apply modification to its children.");
                 }
