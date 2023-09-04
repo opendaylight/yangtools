@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
     private final Map<PathArgument, ModifiedNode> children;
     private final Optional<? extends TreeNode> original;
-    private final PathArgument identifier;
+    private final @NonNull PathArgument identifier;
 
     private LogicalOperation operation = LogicalOperation.NONE;
     private Optional<TreeNode> snapshotCache;
@@ -59,7 +59,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     private ModifiedNode(final PathArgument identifier, final Optional<? extends TreeNode> original,
             final ChildTrackingPolicy childPolicy) {
-        this.identifier = identifier;
+        this.identifier = requireNonNull(identifier);
         this.original = original;
         children = childPolicy.createMap();
     }
