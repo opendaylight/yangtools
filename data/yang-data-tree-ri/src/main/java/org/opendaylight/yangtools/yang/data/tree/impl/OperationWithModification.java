@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
@@ -61,7 +62,7 @@ final class OperationWithModification {
             Optional<? extends TreeNode> snapshot = childNode.getSnapshot();
             if (snapshot == null) {
                 // Snapshot is not present, force instantiation
-                snapshot = applyOperation.getChildByArg(child).apply(childNode, childNode.getOriginal(), version);
+                snapshot = applyOperation.getChildByArg(child).apply(childNode, childNode.original(), version);
             }
 
             return snapshot.map(TreeNode::getData);
@@ -69,7 +70,7 @@ final class OperationWithModification {
 
         Optional<? extends TreeNode> snapshot = modification.getSnapshot();
         if (snapshot == null) {
-            snapshot = apply(modification.getOriginal(), version);
+            snapshot = apply(modification.original(), version);
         }
 
         if (snapshot.isPresent()) {
@@ -87,7 +88,7 @@ final class OperationWithModification {
         return applyOperation;
     }
 
-    public Optional<? extends TreeNode> apply(final Optional<? extends TreeNode> data, final Version version) {
+    public Optional<? extends TreeNode> apply(final @Nullable TreeNode data, final Version version) {
         return applyOperation.apply(modification, data, version);
     }
 

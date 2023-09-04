@@ -11,12 +11,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -166,7 +165,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
-            final Optional<? extends TreeNode> currentMeta, final Version version) {
+            final TreeNode currentMeta, final Version version) {
         final var newValueMeta = TreeNode.of(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
@@ -211,14 +210,11 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
             final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
-
-        for (final ModifiedNode mod : modifications) {
-            final PathArgument id = mod.getIdentifier();
-            final Optional<? extends TreeNode> cm = meta.findChildByArg(id);
-
-            final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
+        for (var mod : modifications) {
+            final var id = mod.getIdentifier();
+            final var result = resolveChildOperation(id).apply(mod, meta.childByArg(id), nodeVersion);
             if (result.isPresent()) {
-                final TreeNode tn = result.orElseThrow();
+                final var tn = result.orElseThrow();
                 meta.putChild(tn);
                 data.addChild(tn.getData());
             } else {
@@ -238,10 +234,12 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          * we do that, ModifiedNode children will look like this node were a TOUCH and we will let applyTouch() do the
          * heavy lifting of applying the children recursively (either through here or through applyWrite().
          */
-        final NormalizedNode value = modification.getWrittenValue();
+        final var value = modification.getWrittenValue();
+        if (!(value instanceof DistinctNodeContainer<?, ?> containerValue)) {
+            throw new VerifyException("Attempted to merge non-container " + value);
+        }
 
-        Verify.verify(value instanceof DistinctNodeContainer, "Attempted to merge non-container %s", value);
-        for (var c : ((DistinctNodeContainer<?, ?>) value).body()) {
+        for (var c : containerValue.body()) {
             final var id = c.name();
             modification.modifyChild(id, resolveChildOperation(id), version);
         }
@@ -289,7 +287,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
                 // and then append any child entries.
                 if (!modification.isEmpty()) {
                     // Version does not matter here as we'll throw it out
-                    final var current = apply(modification, modification.getOriginal(), Version.initial());
+                    final var current = apply(modification, modification.original(), Version.initial());
                     if (current.isPresent()) {
                         modification.updateValue(LogicalOperation.WRITE, current.orElseThrow().getData());
                         mergeChildrenIntoModification(modification, valueChildren, version);
@@ -351,9 +349,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
 
     @Override
     protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
+            final TreeNode currentMeta, final Version version) throws DataValidationFailedException {
         final TreeNode currentNode;
-        if (current.isEmpty()) {
+        if (currentMeta == null) {
             currentNode = defaultTreeNode();
             if (currentNode == null) {
                 if (modification.original() == null) {
@@ -366,7 +364,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
                     "Node was deleted by other transaction.");
             }
         } else {
-            currentNode = current.orElseThrow();
+            currentNode = currentMeta;
         }
 
         checkChildPreconditions(path, modification, currentNode, version);
@@ -389,9 +387,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
 
     @Override
     protected final void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
-        if (current.isPresent()) {
-            checkChildPreconditions(path, modification, current.orElseThrow(), version);
+            final TreeNode current, final Version version) throws DataValidationFailedException {
+        if (current != null) {
+            checkChildPreconditions(path, modification, current, version);
         }
     }
 
@@ -400,13 +398,13 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      *
      * @param path current node path
      * @param modification current modification
-     * @param current Current data tree node.
+     * @param currentMeta Current data tree node.
      */
     private void checkChildPreconditions(final ModificationPath path, final NodeModification modification,
-            final TreeNode current, final Version version) throws DataValidationFailedException {
-        for (final NodeModification childMod : modification.getChildren()) {
-            final PathArgument childId = childMod.getIdentifier();
-            final Optional<? extends TreeNode> childMeta = current.findChildByArg(childId);
+            final @NonNull TreeNode currentMeta, final Version version) throws DataValidationFailedException {
+        for (var childMod : modification.getChildren()) {
+            final var childId = childMod.getIdentifier();
+            final var childMeta = currentMeta.childByArg(childId);
 
             path.push(childId);
             try {
