@@ -140,7 +140,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         }
 
         try {
-            return resolveModificationStrategy(path).apply(modification, modification.getOriginal(), version);
+            return resolveModificationStrategy(path).apply(modification, modification.original(), version);
         } catch (Exception e) {
             LOG.error("Could not create snapshot for {}:{}", path, modification, e);
             throw e;
@@ -214,11 +214,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * have same version each time this method is called.
          */
         final var originalSnapshotRoot = snapshot.getRootNode();
-        final var tempRoot = getStrategy().apply(rootNode, Optional.of(originalSnapshotRoot), version);
-        checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
-
-        final var tempTree = new InMemoryDataTreeSnapshot(snapshot.getEffectiveModelContext(), tempRoot.orElseThrow(),
-            strategyTree);
+        final var tempRoot = getStrategy().apply(rootNode, originalSnapshotRoot, version)
+            .orElseThrow(() -> new IllegalStateException(
+                "Data tree root is not present, possibly removed by previous modification"));
+        final var tempTree = new InMemoryDataTreeSnapshot(snapshot.getEffectiveModelContext(), tempRoot, strategyTree);
         return tempTree.newModification();
     }
 

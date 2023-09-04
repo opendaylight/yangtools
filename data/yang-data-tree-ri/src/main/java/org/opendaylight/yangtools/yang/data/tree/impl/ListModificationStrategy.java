@@ -44,7 +44,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
+    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode storeMeta,
             final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
             version);
@@ -68,7 +68,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
-            final Optional<? extends TreeNode> currentMeta, final Version version) {
+            final TreeNode currentMeta, final Version version) {
         final var newValueMeta = TreeNode.of(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
@@ -103,12 +103,11 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
             final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
+        for (var mod : modifications) {
+            final var id = mod.getIdentifier();
+            final var cm = meta.childByArg(id);
 
-        for (final ModifiedNode mod : modifications) {
-            final PathArgument id = mod.getIdentifier();
-            final Optional<? extends TreeNode> cm = meta.findChildByArg(id);
-
-            final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
+            final var result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
                 final TreeNode tn = result.orElseThrow();
                 meta.putChild(tn);
@@ -140,7 +139,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
 
     @Override
     protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws IncorrectDataStructureException {
+            final TreeNode current, final Version version) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path.toInstanceIdentifier(), "Subtree modification is not allowed.");
     }
 

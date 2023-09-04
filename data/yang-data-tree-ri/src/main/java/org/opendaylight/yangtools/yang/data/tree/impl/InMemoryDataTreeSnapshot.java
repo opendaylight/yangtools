@@ -35,7 +35,7 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
         this.applyOper = requireNonNull(applyOper);
     }
 
-    TreeNode getRootNode() {
+    @NonNull TreeNode getRootNode() {
         return rootNode;
     }
 
