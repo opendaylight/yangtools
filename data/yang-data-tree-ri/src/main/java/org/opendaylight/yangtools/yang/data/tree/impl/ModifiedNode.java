@@ -15,7 +15,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -41,14 +40,10 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  * the tree.
  */
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
-    static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = input -> switch (input.getOperation()) {
-        case DELETE, MERGE, WRITE -> true;
-        case TOUCH, NONE -> false;
-    };
-
     private final Map<PathArgument, ModifiedNode> children;
     private final Optional<? extends TreeNode> original;
     private final PathArgument identifier;
+
     private LogicalOperation operation = LogicalOperation.NONE;
     private Optional<TreeNode> snapshotCache;
     private NormalizedNode value;
