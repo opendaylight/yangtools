@@ -301,14 +301,20 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public void ready() {
-        // We want a full CAS with setVolatile() memory semantics, as we want to force happen-before
-        // for everything, including whatever user code works.
-        final boolean wasRunning = SEALED.compareAndSet(this, 0, 1);
-        checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
+        // We want a full CAS with setVolatile() memory semantics, as we want to force happen-before for everything,
+        // including whatever user code works.
+        if (!SEALED.compareAndSet(this, 0, 1)) {
+            throw new IllegalStateException("Attempted to seal an already-sealed Data Tree.");
+        }
 
         var current = AbstractReadyIterator.create(rootNode, getStrategy());
         do {
             current = current.process(version);
         } while (current != null);
+
+        // Make sure all affects are visible before returning, as this object may be handed off to another thread, which
+        // needs to see any HashMap.modCount mutations completed. This is needed because isSealed() is now performing
+        // only the equivalent of an acquireFence()
+        VarHandle.releaseFence();
     }
 }
