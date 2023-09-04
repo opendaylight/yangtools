@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.util.Map.Entry;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -44,7 +43,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     static {
         try {
             SEALED = MethodHandles.lookup().findVarHandle(InMemoryDataTreeModification.class, "sealed", int.class);
-        } catch (ReflectiveOperationException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
@@ -76,7 +75,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     ModificationApplyOperation getStrategy() {
-        final ModificationApplyOperation ret = strategyTree.delegate();
+        final var ret = strategyTree.delegate();
         if (ret == null) {
             throw new IllegalStateException("Schema Context is not available.");
         }
@@ -116,15 +115,17 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * the requested path which has been modified. If no such node exists,
          * we use the node itself.
          */
-        final Entry<YangInstanceIdentifier, ModifiedNode> entry = StoreTreeNodes.findClosestsOrFirstMatch(rootNode,
-            path, ModifiedNode.IS_TERMINAL_PREDICATE);
-        final YangInstanceIdentifier key = entry.getKey();
-        final ModifiedNode mod = entry.getValue();
+        final var terminal = StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path,
+            input -> switch (input.getOperation()) {
+                case DELETE, MERGE, WRITE -> true;
+                case TOUCH, NONE -> false;
+            });
+        final var terminalPath = terminal.getKey();
 
-        final Optional<? extends TreeNode> result = resolveSnapshot(key, mod);
+        final var result = resolveSnapshot(terminalPath, terminal.getValue());
         if (result.isPresent()) {
-            final NormalizedNode data = result.orElseThrow().getData();
-            return NormalizedNodes.findNode(key, data, path);
+            final var data = result.orElseThrow().getData();
+            return NormalizedNodes.findNode(terminalPath, data, path);
         }
 
         return Optional.empty();
@@ -133,14 +134,14 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @SuppressWarnings("checkstyle:illegalCatch")
     private Optional<? extends TreeNode> resolveSnapshot(final YangInstanceIdentifier path,
             final ModifiedNode modification) {
-        final Optional<? extends TreeNode> potentialSnapshot = modification.getSnapshot();
+        final var potentialSnapshot = modification.getSnapshot();
         if (potentialSnapshot != null) {
             return potentialSnapshot;
         }
 
         try {
             return resolveModificationStrategy(path).apply(modification, modification.getOriginal(), version);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             LOG.error("Could not create snapshot for {}:{}", path, modification, e);
             throw e;
         }
@@ -172,11 +173,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * That is fine, as we will prune any empty TOUCH nodes in the last phase of the ready
          * process.
          */
-        ModificationApplyOperation operation = getStrategy();
-        ModifiedNode modification = rootNode;
+        var operation = getStrategy();
+        var modification = rootNode;
 
         int depth = 1;
-        for (final PathArgument pathArg : path.getPathArguments()) {
+        for (var pathArg : path.getPathArguments()) {
             operation = operation.childByArg(pathArg);
             if (operation == null) {
                 throw new SchemaValidationFailedException(String.format("Child %s is not present in schema tree.",
@@ -212,13 +213,12 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * We will use preallocated version, this means returned snapshot will
          * have same version each time this method is called.
          */
-        final TreeNode originalSnapshotRoot = snapshot.getRootNode();
-        final Optional<? extends TreeNode> tempRoot = getStrategy().apply(rootNode, Optional.of(originalSnapshotRoot),
-            version);
+        final var originalSnapshotRoot = snapshot.getRootNode();
+        final var tempRoot = getStrategy().apply(rootNode, Optional.of(originalSnapshotRoot), version);
         checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
 
-        final InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getEffectiveModelContext(),
-            tempRoot.orElseThrow(), strategyTree);
+        final var tempTree = new InMemoryDataTreeSnapshot(snapshot.getEffectiveModelContext(), tempRoot.orElseThrow(),
+            strategyTree);
         return tempTree.newModification();
     }
 
@@ -242,29 +242,27 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     private static void applyNode(final DataTreeModificationCursor cursor, final ModifiedNode node) {
-        switch (node.getOperation()) {
-            case NONE:
-                break;
-            case DELETE:
-                cursor.delete(node.getIdentifier());
-                break;
-            case MERGE:
+        final var operation = node.getOperation();
+        switch (operation) {
+            case NONE -> {
+                // No-op
+            }
+            case DELETE -> cursor.delete(node.getIdentifier());
+            case MERGE -> {
                 cursor.merge(node.getIdentifier(), node.getWrittenValue());
                 applyChildren(cursor, node);
-                break;
-            case TOUCH:
-                // TODO: we could improve efficiency of cursor use if we could understand
-                //       nested TOUCH operations. One way of achieving that would be a proxy
-                //       cursor, which would keep track of consecutive enter and exit calls
-                //       and coalesce them.
+            }
+            case TOUCH -> {
+                // TODO: we could improve efficiency of cursor use if we could understand nested TOUCH operations. One
+                //       way of achieving that would be a proxy cursor, which would keep track of consecutive enter and
+                //       exit calls and coalesce them.
                 applyChildren(cursor, node);
-                break;
-            case WRITE:
+            }
+            case WRITE -> {
                 cursor.write(node.getIdentifier(), node.getWrittenValue());
                 applyChildren(cursor, node);
-                break;
-            default:
-                throw new IllegalArgumentException("Unhandled node operation " + node.getOperation());
+            }
+            default -> throw new IllegalArgumentException("Unhandled node operation " + operation);
         }
     }
 
@@ -283,7 +281,6 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     private void checkIdentifierReferencesData(final YangInstanceIdentifier path,
             final NormalizedNode data) {
         final PathArgument arg;
-
         if (!path.isEmpty()) {
             arg = path.getLastPathArgument();
             checkArgument(arg != null, "Instance identifier %s has invalid null path argument", path);
@@ -296,7 +293,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public Optional<DataTreeModificationCursor> openCursor(final YangInstanceIdentifier path) {
-        final OperationWithModification op = resolveModificationFor(path);
+        final var op = resolveModificationFor(path);
         return Optional.of(openCursor(new InMemoryDataTreeModificationCursor(this, path, op)));
     }
 
@@ -307,7 +304,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final boolean wasRunning = SEALED.compareAndSet(this, 0, 1);
         checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
 
-        AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, getStrategy());
+        var current = AbstractReadyIterator.create(rootNode, getStrategy());
         do {
             current = current.process(version);
         } while (current != null);
