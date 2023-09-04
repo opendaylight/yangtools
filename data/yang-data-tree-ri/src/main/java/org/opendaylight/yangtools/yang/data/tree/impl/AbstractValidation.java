@@ -61,8 +61,8 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
     }
 
     @Override
-    final Optional<? extends TreeNode> apply(final ModifiedNode modification,
-            final Optional<? extends TreeNode> storeMeta, final Version version) {
+    final Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode storeMeta,
+            final Version version) {
         var validated = modification.validatedNode(this, storeMeta);
         if (validated != null) {
             return validated.toOptional();
@@ -83,8 +83,8 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
     }
 
     @Override
-    final void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
+    final void checkApplicable(final ModificationPath path, final NodeModification modification, final TreeNode current,
+            final Version version) throws DataValidationFailedException {
         delegate.checkApplicable(path, modification, current, version);
         if (!(modification instanceof ModifiedNode modified)) {
             // FIXME: 7.0.0: turn this into a verify?
@@ -99,7 +99,7 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
 
         // We need to actually perform the operation to deal with merge in a sane manner. We know the modification
         // is immutable, so the result of validation will probably not change. Note we should not be checking number
-        final Optional<? extends TreeNode> applied = delegate.apply(modified, current, version);
+        final var applied = delegate.apply(modified, current, version);
         checkApplicable(path, applied);
 
         // Everything passed. We now have a snapshot of the result node, it would be too bad if we just threw it out.

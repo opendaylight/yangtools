@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
@@ -60,7 +61,7 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      *             If it is not possible to apply Operation on provided Metadata
      *             node
      */
-    abstract Optional<? extends TreeNode> apply(ModifiedNode modification, Optional<? extends TreeNode> storeMeta,
+    abstract Optional<? extends TreeNode> apply(ModifiedNode modification, @Nullable TreeNode storeMeta,
             Version version);
 
     /**
@@ -72,8 +73,8 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      * @param version Metadata version
      * @throws DataValidationFailedException if the modification is not applicable
      */
-    abstract void checkApplicable(ModificationPath path, NodeModification modification,
-            Optional<? extends TreeNode> current, Version version) throws DataValidationFailedException;
+    abstract void checkApplicable(ModificationPath path, NodeModification modification, @Nullable TreeNode current,
+        Version version) throws DataValidationFailedException;
 
     /**
      * Performs a quick structural verification of NodeModification, such as written values / types uses right
