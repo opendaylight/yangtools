@@ -109,7 +109,7 @@ class AugmentTest extends AbstractYangTest {
         AugmentationSchemaNode augment2 = null;
         AugmentationSchemaNode augment3 = null;
         for (final AugmentationSchemaNode as : augmentations) {
-            if (!as.getWhenCondition().isPresent()) {
+            if (as.getWhenCondition().isEmpty()) {
                 augment3 = as;
             } else if ("br:ifType='ds0'".equals(as.getWhenCondition().orElseThrow().toString())) {
                 augment1 = as;

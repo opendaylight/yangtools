@@ -183,7 +183,7 @@ public class Bug4454Test {
 
         DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
-        assertTrue(!minMaxListRead.isPresent());
+        assertFalse(minMaxListRead.isPresent());
 
         modificationTree1.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
         modificationTree1.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
