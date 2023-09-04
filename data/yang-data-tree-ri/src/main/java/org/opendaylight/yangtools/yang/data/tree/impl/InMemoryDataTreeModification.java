@@ -33,24 +33,28 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         EffectiveModelContextProvider {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
-    private final RootApplyStrategy strategyTree;
-    private final InMemoryDataTreeSnapshot snapshot;
-    private final ModifiedNode rootNode;
-    private final Version version;
+    private static final byte STATE_OPEN    = 0;
+    private static final byte STATE_SEALING = 1;
+    private static final byte STATE_SEALED  = 2;
 
-    private static final VarHandle SEALED;
+    private static final VarHandle STATE;
 
     static {
         try {
-            SEALED = MethodHandles.lookup().findVarHandle(InMemoryDataTreeModification.class, "sealed", int.class);
+            STATE = MethodHandles.lookup().findVarHandle(InMemoryDataTreeModification.class, "state", byte.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
-    // All access needs to go through this handle
+    private final RootApplyStrategy strategyTree;
+    private final InMemoryDataTreeSnapshot snapshot;
+    private final ModifiedNode rootNode;
+    private final Version version;
+
+    // All access needs to go through STATE
     @SuppressWarnings("unused")
-    private volatile int sealed;
+    private volatile byte state;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot,
             final RootApplyStrategy resolver) {
@@ -223,12 +227,13 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     boolean isSealed() {
         // a quick check, synchronizes *only* on the sealed field
-        return (int) SEALED.getAcquire(this) != 0;
+        return (byte) STATE.getAcquire(this) == STATE_SEALED;
     }
 
     private void checkOpen() {
-        if (isSealed()) {
-            throw new IllegalStateException("Data Tree is sealed. No further modifications allowed.");
+        final var local = (byte) STATE.getAcquire(this);
+        if (local != STATE_OPEN) {
+            throw new IllegalStateException("Data Tree is sealed. No further modifications allowed in state " + local);
         }
     }
 
@@ -303,7 +308,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     public void ready() {
         // We want a full CAS with setVolatile() memory semantics, as we want to force happen-before for everything,
         // including whatever user code works.
-        if (!SEALED.compareAndSet(this, 0, 1)) {
+        if (!STATE.compareAndSet(this, STATE_OPEN, STATE_SEALING)) {
             throw new IllegalStateException("Attempted to seal an already-sealed Data Tree.");
         }
 
@@ -315,6 +320,6 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         // Make sure all affects are visible before returning, as this object may be handed off to another thread, which
         // needs to see any HashMap.modCount mutations completed. This is needed because isSealed() is now performing
         // only the equivalent of an acquireFence()
-        VarHandle.releaseFence();
+        STATE.setRelease(this, STATE_SEALED);
     }
 }
