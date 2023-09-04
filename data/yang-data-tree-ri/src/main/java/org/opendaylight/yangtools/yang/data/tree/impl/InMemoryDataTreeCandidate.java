@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
@@ -25,12 +28,12 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
         }
     }
 
-    private final RootNode root;
+    private final @NonNull RootNode root;
 
     InMemoryDataTreeCandidate(final YangInstanceIdentifier rootPath, final ModifiedNode modificationRoot,
             final TreeNode beforeRoot, final TreeNode afterRoot) {
         super(rootPath);
-        root = new RootNode(modificationRoot, beforeRoot, afterRoot);
+        root = new RootNode(modificationRoot, requireNonNull(beforeRoot), requireNonNull(afterRoot));
     }
 
     @Override
@@ -49,7 +52,7 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("rootPath", getRootPath())
-                .add("rootNode", getRootNode()).toString();
+        return MoreObjects.toStringHelper(this).add("rootPath", getRootPath()).add("rootNode", getRootNode())
+            .toString();
     }
 }

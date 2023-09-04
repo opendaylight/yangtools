@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
@@ -26,8 +27,8 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  * <b>Implementation notes</b>
  * <ul>
  *   <li>Implementations MUST expose all nested suboperations which operates on child nodes expose via
- *       {@link #findChildByArg(PathArgument)} method.</li>
- *   <li>Same suboperations SHOULD be used when invoked via {@link #apply(ModifiedNode, Optional, Version)},
+ *       {@link #childByArg(PathArgument)} method.</li>
+ *   <li>Same suboperations SHOULD be used when invoked via {@link #apply(ModifiedNode, TreeNode, Version)},
  *       if applicable.</li>
  *   <li>There are exactly two base implementations:
  *     <ul>
@@ -47,20 +48,14 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
     /**
      * Implementation of this operation must be stateless and must not change state of this object.
      *
-     * @param modification
-     *            NodeModification to be applied
-     * @param storeMeta
-     *            Store Metadata Node on which NodeModification should be
-     *            applied
+     * @param modification NodeModification to be applied
+     * @param currentMeta Store Metadata Node on which NodeModification should be applied
      * @param version New subtree version of parent node
-     * @return new {@link TreeNode} if operation resulted in updating
-     *         node, {@link Optional#absent()} if {@link ModifiedNode}
-     *         resulted in deletion of this node.
-     * @throws IllegalArgumentException
-     *             If it is not possible to apply Operation on provided Metadata
-     *             node
+     * @return new {@link TreeNode} if operation resulted in updating node, {@link Optional#empty()} if
+     *         {@link ModifiedNode} resulted in deletion of this node.
+     * @throws IllegalArgumentException If it is not possible to apply Operation on provided Metadata node
      */
-    abstract Optional<? extends TreeNode> apply(ModifiedNode modification, Optional<? extends TreeNode> storeMeta,
+    abstract Optional<? extends TreeNode> apply(ModifiedNode modification, @Nullable TreeNode currentMeta,
             Version version);
 
     /**
@@ -68,12 +63,12 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      *
      * @param path Path to modification
      * @param modification Modification
-     * @param current Metadata Node to which modification should be applied
+     * @param currentMeta Metadata Node to which modification should be applied
      * @param version Metadata version
      * @throws DataValidationFailedException if the modification is not applicable
      */
     abstract void checkApplicable(ModificationPath path, NodeModification modification,
-            Optional<? extends TreeNode> current, Version version) throws DataValidationFailedException;
+        @Nullable TreeNode currentMeta, Version version) throws DataValidationFailedException;
 
     /**
      * Performs a quick structural verification of NodeModification, such as written values / types uses right
@@ -105,7 +100,7 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
 
     /**
      * Stage a merge operation into a {@link ModifiedNode} such that it will be processed correctly by
-     * {@link #apply(ModifiedNode, Optional, Version)}. This method is the context which is introducing this operation,
+     * {@link #apply(ModifiedNode, TreeNode, Version)}. This method is the context which is introducing this operation,
      * and so any overheads are charged to whoever is in control of the access pattern.
      *
      * @param modification Original modification node
