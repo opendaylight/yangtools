@@ -76,7 +76,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
+    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode storeMeta,
             final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
             version);
@@ -127,22 +127,22 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        final TreeNode ret = super.applyMerge(modification, currentMeta, version);
+        final var ret = super.applyMerge(modification, currentMeta, version);
         enforceCases(ret);
         return ret;
     }
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
-            final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
+            final TreeNode currentMeta, final Version version) {
+        final var ret = super.applyWrite(modification, newValue, currentMeta, version);
         enforceCases(ret);
         return ret;
     }
 
     @Override
     protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        final TreeNode ret = super.applyTouch(modification, currentMeta, version);
+        final var ret = super.applyTouch(modification, currentMeta, version);
         enforceCases(ret);
         return ret;
     }

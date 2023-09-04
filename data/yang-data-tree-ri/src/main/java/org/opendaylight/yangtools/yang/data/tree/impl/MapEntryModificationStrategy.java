@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -39,15 +38,15 @@ sealed class MapEntryModificationStrategy extends DataNodeContainerModificationS
         @Override
         protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
                 final Version version) {
-            final TreeNode ret = super.applyMerge(modification, currentMeta, version);
+            final var ret = super.applyMerge(modification, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);
             return ret;
         }
 
         @Override
         protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
-                final Optional<? extends TreeNode> currentMeta, final Version version) {
-            final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
+                final TreeNode currentMeta, final Version version) {
+            final var ret = super.applyWrite(modification, newValue, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);
             return ret;
         }
@@ -55,7 +54,7 @@ sealed class MapEntryModificationStrategy extends DataNodeContainerModificationS
         @Override
         protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
                 final Version version) {
-            final TreeNode ret = super.applyTouch(modification, currentMeta, version);
+            final var ret = super.applyTouch(modification, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);
             return ret;
         }
