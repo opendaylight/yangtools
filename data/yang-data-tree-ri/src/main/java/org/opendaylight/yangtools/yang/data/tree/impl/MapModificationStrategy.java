@@ -61,9 +61,9 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
+    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
+        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
             version);
     }
 

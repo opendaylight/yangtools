@@ -13,6 +13,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -104,12 +105,12 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
 
     @Override
     final void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
+            final TreeNode storeMeta, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
-            case DELETE -> checkDeleteApplicable(modification, current);
-            case TOUCH -> checkTouchApplicable(path, modification, current, version);
-            case WRITE -> checkWriteApplicable(path, modification, current, version);
-            case MERGE -> checkMergeApplicable(path, modification, current, version);
+            case DELETE -> checkDeleteApplicable(modification, storeMeta);
+            case TOUCH -> checkTouchApplicable(path, modification, storeMeta, version);
+            case WRITE -> checkWriteApplicable(path, modification, storeMeta, version);
+            case MERGE -> checkMergeApplicable(path, modification, storeMeta, version);
             case NONE -> {
                 // No-op
             }
@@ -147,17 +148,16 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
     }
 
     protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
+            final TreeNode storeMeta, final Version version) throws DataValidationFailedException {
         final var orig = modification.original();
-        if (orig != null && current.isPresent()) {
+        if (orig != null && storeMeta != null) {
             /*
              * We need to do conflict detection only and only if the value of leaf changed before two transactions. If
              * value of leaf is unchanged between two transactions it should not cause transaction to fail, since result
              * of this merge leads to same data.
              */
-            final var cur = current.orElseThrow();
-            if (!orig.getData().equals(cur.getData())) {
-                checkNotConflicting(path, orig, cur);
+            if (!orig.getData().equals(storeMeta.getData())) {
+                checkNotConflicting(path, orig, storeMeta);
             }
         }
     }
@@ -169,47 +169,47 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      *
      * @param path Path from current node in TreeNode
      * @param modification modification to apply
-     * @param current current node in TreeNode for modification to apply
+     * @param storeMeta current node in TreeNode for modification to apply
      * @throws DataValidationFailedException when a data dependency conflict is detected
      */
     private static void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
+            final TreeNode storeMeta, final Version version) throws DataValidationFailedException {
         final var original = modification.original();
-        if (original != null && current.isPresent()) {
-            checkNotConflicting(path, original, current.orElseThrow());
+        if (original != null && storeMeta != null) {
+            checkNotConflicting(path, original, storeMeta);
         } else {
             checkConflicting(path, original == null, "Node was deleted by other transaction.");
-            checkConflicting(path, current.isEmpty(), "Node was created by other transaction.");
+            checkConflicting(path, storeMeta == null, "Node was created by other transaction.");
         }
     }
 
-    private static void checkDeleteApplicable(final NodeModification modification,
-            final Optional<? extends TreeNode> current) {
+    private static void checkDeleteApplicable(final NodeModification modification, final @Nullable TreeNode storeMeta) {
         // Delete is always applicable, we do not expose it to subclasses
-        if (current.isEmpty()) {
+        if (storeMeta == null) {
             LOG.trace("Delete operation turned to no-op on missing node {}", modification);
         }
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> currentMeta,
+    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         return switch (modification.getOperation()) {
             case DELETE -> {
                 // Deletion of a non-existing node is a no-op, report it as such
-                modification.resolveModificationType(currentMeta.isPresent() ? ModificationType.DELETE
+                modification.resolveModificationType(currentMeta != null ? ModificationType.DELETE
                         : ModificationType.UNMODIFIED);
                 yield modification.setSnapshot(Optional.empty());
             }
             case TOUCH -> {
-                checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s", modification);
-                yield modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.orElseThrow(),
-                    version)));
+                if (currentMeta == null) {
+                    throw new IllegalArgumentException("Metadata not available for modification " + modification);
+                }
+                yield modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta, version)));
             }
             case MERGE -> {
                 final TreeNode result;
 
-                if (currentMeta.isEmpty()) {
+                if (currentMeta == null) {
                     // This is a slight optimization: a merge on a non-existing node equals to a write. Written data
                     // structure is usually verified when the transaction is sealed. To preserve correctness, we have
                     // to run that validation here.
@@ -217,7 +217,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
                     result = applyWrite(modification, modification.getWrittenValue(), currentMeta, version);
                     fullVerifyStructure(result.getData());
                 } else {
-                    result = applyMerge(modification, currentMeta.orElseThrow(), version);
+                    result = applyMerge(modification, currentMeta, version);
                 }
 
                 yield modification.setSnapshot(Optional.of(result));
@@ -229,7 +229,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
             }
             case NONE -> {
                 modification.resolveModificationType(ModificationType.UNMODIFIED);
-                yield currentMeta;
+                yield Optional.ofNullable(currentMeta);
             }
         };
     }
@@ -244,10 +244,10 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @param version New subtree version of parent node
      * @return A sealed TreeNode representing applied operation.
      */
-    protected abstract TreeNode applyMerge(ModifiedNode modification, TreeNode currentMeta, Version version);
+    protected abstract TreeNode applyMerge(ModifiedNode modification, @NonNull TreeNode currentMeta, Version version);
 
     protected abstract TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue,
-            Optional<? extends TreeNode> currentMeta, Version version);
+            @Nullable TreeNode currentMeta, Version version);
 
     /**
      * Apply a nested operation. Since there may not actually be a nested operation
@@ -259,20 +259,20 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @param version New subtree version of parent node
      * @return A sealed TreeNode representing applied operation.
      */
-    protected abstract TreeNode applyTouch(ModifiedNode modification, TreeNode currentMeta, Version version);
+    protected abstract TreeNode applyTouch(ModifiedNode modification, @NonNull TreeNode currentMeta, Version version);
 
     /**
      * Checks is supplied {@link NodeModification} is applicable for Subtree Modification.
      *
      * @param path Path to current node
      * @param modification Node modification which should be applied.
-     * @param current Current state of data tree
+     * @param currentMeta Current state of data tree
      * @throws ConflictingModificationAppliedException If subtree was changed in conflicting way
      * @throws org.opendaylight.yangtools.yang.data.tree.api.IncorrectDataStructureException If subtree
      *         modification is not applicable (e.g. leaf node).
      */
     protected abstract void checkTouchApplicable(ModificationPath path, NodeModification modification,
-            Optional<? extends TreeNode> current, Version version) throws DataValidationFailedException;
+        @Nullable TreeNode currentMeta, Version version) throws DataValidationFailedException;
 
     /**
      * Return the {@link DataSchemaNode}-subclass schema associated with this operation.
