@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateTip;
@@ -29,8 +28,8 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
     @Override
     public final void validate(final DataTreeModification modification) throws DataValidationFailedException {
         final var m = accessMod(modification, "validate");
-        m.getStrategy().checkApplicable(new ModificationPath(getRootPath()), m.getRootModification(),
-            Optional.of(getTipRoot()), m.getVersion());
+        m.getStrategy().checkApplicable(new ModificationPath(getRootPath()), m.getRootModification(), getTipRoot(),
+            m.getVersion());
     }
 
     @Override
@@ -43,9 +42,9 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
             return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), root, currentRoot);
         }
 
-        final var newRoot = m.getStrategy().apply(m.getRootModification(), Optional.of(currentRoot), m.getVersion())
-            .orElseThrow(() -> new IllegalStateException("Apply strategy failed to produce root node for modification "
-                + modification));
+        final var newRoot = m.getStrategy().apply(m.getRootModification(), currentRoot, m.getVersion())
+            .orElseThrow(() -> new IllegalStateException(
+                "Apply strategy failed to produce root node for modification " + modification));
         return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), root, currentRoot, newRoot);
     }
 

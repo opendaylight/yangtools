@@ -14,6 +14,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -54,7 +55,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     // Internal cache for TreeNodes created as part of validation
     private ModificationApplyOperation validatedOp;
-    private Optional<? extends TreeNode> validatedCurrent;
+    private @Nullable TreeNode validatedCurrent;
     private ValidatedTreeNode validatedNode;
 
     private ModifiedNode(final PathArgument identifier, final @Nullable TreeNode original,
@@ -250,7 +251,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             case WRITE -> {
                 // A WRITE can collapse all of its children
                 if (!children.isEmpty()) {
-                    value = schema.apply(this, getOriginal(), version).map(TreeNode::getData).orElse(null);
+                    value = schema.apply(this, original(), version).map(TreeNode::getData).orElse(null);
                     children.clear();
                 }
 
@@ -330,10 +331,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return new ModifiedNode(metadataTree.getIdentifier(), requireNonNull(metadataTree), childPolicy);
     }
 
-    void setValidatedNode(final ModificationApplyOperation op, final Optional<? extends TreeNode> current,
+    void setValidatedNode(final ModificationApplyOperation op, final @Nullable TreeNode currentMeta,
             final Optional<? extends TreeNode> node) {
         validatedOp = requireNonNull(op);
-        validatedCurrent = requireNonNull(current);
+        validatedCurrent = currentMeta;
         validatedNode = new ValidatedTreeNode(node);
     }
 
@@ -342,12 +343,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * {@link #setValidatedNode(ModificationApplyOperation, Optional, Optional)}.
      *
      * @param op Currently-executing operation
-     * @param current Currently-used tree node
+     * @param storeMeta Currently-used tree node
      * @return {@code null} if there is a mismatch with previously-validated node (if present) or the result of previous
      *         validation.
      */
-    @Nullable ValidatedTreeNode validatedNode(final ModificationApplyOperation op,
-            final Optional<? extends TreeNode> current) {
-        return op.equals(validatedOp) && current.equals(validatedCurrent) ? validatedNode : null;
+    @Nullable ValidatedTreeNode validatedNode(final ModificationApplyOperation op, final @Nullable TreeNode storeMeta) {
+        return op.equals(validatedOp) && Objects.equals(storeMeta, validatedCurrent) ? validatedNode : null;
     }
 }

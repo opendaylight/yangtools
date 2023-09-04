@@ -45,15 +45,15 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
         @Override
         protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
                 final Version version) {
-            final TreeNode ret = super.applyMerge(modification, currentMeta, version);
+            final var ret = super.applyMerge(modification, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);
             return ret;
         }
 
         @Override
         protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
-                final Optional<? extends TreeNode> currentMeta, final Version version) {
-            final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
+                final TreeNode currentMeta, final Version version) {
+            final var ret = super.applyWrite(modification, newValue, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);
             return ret;
         }
@@ -61,7 +61,7 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
         @Override
         protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
                 final Version version) {
-            final TreeNode ret = super.applyTouch(modification, currentMeta, version);
+            final var ret = super.applyTouch(modification, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);
             return ret;
         }
@@ -84,9 +84,9 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
         }
 
         @Override
-        Optional<? extends TreeNode> apply(final ModifiedNode modification,
-                final Optional<? extends TreeNode> storeMeta, final Version version) {
-            return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
+        Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
+                final Version version) {
+            return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
                 version);
         }
 
