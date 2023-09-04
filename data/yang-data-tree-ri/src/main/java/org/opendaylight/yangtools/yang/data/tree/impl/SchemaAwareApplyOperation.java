@@ -176,19 +176,19 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      */
     private static void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
-        final Optional<? extends TreeNode> original = modification.getOriginal();
+        final var original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.orElseThrow(), current.orElseThrow());
         } else {
-            checkConflicting(path, !original.isPresent(), "Node was deleted by other transaction.");
-            checkConflicting(path, !current.isPresent(), "Node was created by other transaction.");
+            checkConflicting(path, original.isEmpty(), "Node was deleted by other transaction.");
+            checkConflicting(path, current.isEmpty(), "Node was created by other transaction.");
         }
     }
 
     private static void checkDeleteApplicable(final NodeModification modification,
             final Optional<? extends TreeNode> current) {
         // Delete is always applicable, we do not expose it to subclasses
-        if (!current.isPresent()) {
+        if (current.isEmpty()) {
             LOG.trace("Delete operation turned to no-op on missing node {}", modification);
         }
     }
@@ -211,7 +211,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
             case MERGE -> {
                 final TreeNode result;
 
-                if (!currentMeta.isPresent()) {
+                if (currentMeta.isEmpty()) {
                     // This is a slight optimization: a merge on a non-existing node equals to a write. Written data
                     // structure is usually verified when the transaction is sealed. To preserve correctness, we have
                     // to run that validation here.

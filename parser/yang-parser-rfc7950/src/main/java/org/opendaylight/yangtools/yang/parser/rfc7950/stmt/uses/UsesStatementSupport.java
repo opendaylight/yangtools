@@ -257,7 +257,7 @@ public final class UsesStatementSupport
         // FIXME: this really should be handled via separate inference, i.e. we first instantiate the template and when
         //        it appears, this refine will trigger on it. This reinforces the FIXME below.
         final var optRefineTargetCtx = ParserNamespaces.findSchemaTreeStatement(usesParentCtx, refineDescendant);
-        InferenceException.throwIf(!optRefineTargetCtx.isPresent(), refineStmtCtx, "Refine target node %s not found.",
+        InferenceException.throwIf(optRefineTargetCtx.isEmpty(), refineStmtCtx, "Refine target node %s not found.",
             refineDescendant);
 
         // FIXME: This communicates the looked-up target node to RefineStatementSupport.buildEffective(). We should do

@@ -65,7 +65,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
                 qname.getModule());
         }
 
-        checkArgument(!qname.getRevision().isPresent(), "Failed to find bound annotation %s", qname);
+        checkArgument(qname.getRevision().isEmpty(), "Failed to find bound annotation %s", qname);
         checkArgument(value instanceof String, "Invalid non-string value %s for unbound annotation %s", value, qname);
         return (String) value;
     }
