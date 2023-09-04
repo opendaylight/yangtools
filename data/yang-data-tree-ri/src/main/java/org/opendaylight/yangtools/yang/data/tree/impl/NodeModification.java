@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
@@ -28,10 +29,19 @@ abstract sealed class NodeModification implements Identifiable<PathArgument> per
     /**
      * Get the original tree node to which the modification is to be applied.
      *
-     * @return The original node, or {@link Optional#absent()} if the node is
-     *         a new node.
+     * @return The original node, or {@link Optional#absent()} if the node is a new node.
      */
-    abstract Optional<? extends TreeNode> getOriginal();
+    // FIXME: we should not need this method
+    final Optional<? extends TreeNode> getOriginal() {
+        return Optional.ofNullable(original());
+    }
+
+    /**
+     * Get the original tree node to which the modification is to be applied.
+     *
+     * @return The original node, or {@code null} if the node is a new node.
+     */
+    abstract @Nullable TreeNode original();
 
     /**
      * Get a read-only view of children nodes.

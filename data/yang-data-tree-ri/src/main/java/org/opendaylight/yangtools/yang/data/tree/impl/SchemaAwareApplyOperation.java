@@ -148,16 +148,14 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
 
     protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
-        final Optional<? extends TreeNode> original = modification.getOriginal();
-        if (original.isPresent() && current.isPresent()) {
+        final var orig = modification.original();
+        if (orig != null && current.isPresent()) {
             /*
-             * We need to do conflict detection only and only if the value of leaf changed
-             * before two transactions. If value of leaf is unchanged between two transactions
-             * it should not cause transaction to fail, since result of this merge
-             * leads to same data.
+             * We need to do conflict detection only and only if the value of leaf changed before two transactions. If
+             * value of leaf is unchanged between two transactions it should not cause transaction to fail, since result
+             * of this merge leads to same data.
              */
-            final TreeNode orig = original.orElseThrow();
-            final TreeNode cur = current.orElseThrow();
+            final var cur = current.orElseThrow();
             if (!orig.getData().equals(cur.getData())) {
                 checkNotConflicting(path, orig, cur);
             }
@@ -176,11 +174,11 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      */
     private static void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
-        final var original = modification.getOriginal();
-        if (original.isPresent() && current.isPresent()) {
-            checkNotConflicting(path, original.orElseThrow(), current.orElseThrow());
+        final var original = modification.original();
+        if (original != null && current.isPresent()) {
+            checkNotConflicting(path, original, current.orElseThrow());
         } else {
-            checkConflicting(path, original.isEmpty(), "Node was deleted by other transaction.");
+            checkConflicting(path, original == null, "Node was deleted by other transaction.");
             checkConflicting(path, current.isEmpty(), "Node was created by other transaction.");
         }
     }
