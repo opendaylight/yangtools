@@ -89,22 +89,21 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public void write(final YangInstanceIdentifier path, final NormalizedNode data) {
-        checkSealed();
+        checkNotSealed();
         checkIdentifierReferencesData(path, data);
         resolveModificationFor(path).write(data);
     }
 
     @Override
     public void merge(final YangInstanceIdentifier path, final NormalizedNode data) {
-        checkSealed();
+        checkNotSealed();
         checkIdentifierReferencesData(path, data);
         resolveModificationFor(path).merge(data, version);
     }
 
     @Override
     public void delete(final YangInstanceIdentifier path) {
-        checkSealed();
-
+        checkNotSealed();
         resolveModificationFor(path).delete();
     }
 
@@ -191,8 +190,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return OperationWithModification.from(operation, modification);
     }
 
-    private void checkSealed() {
-        checkState(!isSealed(), "Data Tree is sealed. No further modifications allowed.");
+    private void checkNotSealed() {
+        if (isSealed()) {
+            throw new IllegalStateException("Data Tree is sealed. No further modifications allowed.");
+        }
     }
 
     @Override
