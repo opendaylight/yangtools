@@ -61,8 +61,8 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
     }
 
     @Override
-    final Optional<? extends TreeNode> apply(final ModifiedNode modification,
-            final Optional<? extends TreeNode> storeMeta, final Version version) {
+    final Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode storeMeta,
+            final Version version) {
         var validated = modification.validatedNode(this, storeMeta);
         if (validated != null) {
             return validated.toOptional();
@@ -84,8 +84,8 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
 
     @Override
     final void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
-        delegate.checkApplicable(path, modification, current, version);
+            final TreeNode storeMeta, final Version version) throws DataValidationFailedException {
+        delegate.checkApplicable(path, modification, storeMeta, version);
         if (!(modification instanceof ModifiedNode modified)) {
             // FIXME: 7.0.0: turn this into a verify?
             LOG.debug("Could not validate {}, does not implement expected class {}", modification, ModifiedNode.class);
@@ -93,13 +93,13 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
         }
 
         if (delegate instanceof AbstractValidation) {
-            checkApplicable(path, verifyNotNull(modified.validatedNode(delegate, current)).toOptional());
+            checkApplicable(path, verifyNotNull(modified.validatedNode(delegate, storeMeta)).toOptional());
             return;
         }
 
         // We need to actually perform the operation to deal with merge in a sane manner. We know the modification
         // is immutable, so the result of validation will probably not change. Note we should not be checking number
-        final Optional<? extends TreeNode> applied = delegate.apply(modified, current, version);
+        final var applied = delegate.apply(modified, storeMeta, version);
         checkApplicable(path, applied);
 
         // Everything passed. We now have a snapshot of the result node, it would be too bad if we just threw it out.
@@ -108,7 +108,7 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
         // - the effective model context (therefore, the fact this object is associated with the modification)
         //
         // So let's stash the result. We will pick it up during apply operation.
-        modified.setValidatedNode(this, current, applied);
+        modified.setValidatedNode(this, storeMeta, applied);
     }
 
     private void checkApplicable(final ModificationPath path, final Optional<? extends TreeNode> applied)
