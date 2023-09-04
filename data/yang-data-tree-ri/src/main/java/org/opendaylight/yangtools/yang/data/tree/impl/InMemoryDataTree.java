@@ -110,7 +110,7 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
 
         final DataSchemaContextTree contextTree = DataSchemaContextTree.from(newSchemaContext);
         final Optional<DataSchemaContextNode<?>> rootContextNode = contextTree.findChild(getRootPath());
-        if (!rootContextNode.isPresent()) {
+        if (rootContextNode.isEmpty()) {
             LOG.warn("Could not find root {} in new schema context, not upgrading", getRootPath());
             return;
         }

@@ -54,7 +54,7 @@ final class AutomaticLifecycleMixin {
             }
             // Delete with children, implies it really is an empty write
             ret = Optional.of(writeDelegate.applyWrite(modification, emptyNode, storeMeta, version));
-        } else if (modification.getOperation() == LogicalOperation.TOUCH && !storeMeta.isPresent()) {
+        } else if (modification.getOperation() == LogicalOperation.TOUCH && storeMeta.isEmpty()) {
             ret = applyTouch(delegate, emptyNode, modification, storeMeta, version);
         } else {
             // No special handling required here, run normal apply operation
@@ -85,7 +85,7 @@ final class AutomaticLifecycleMixin {
 
         // We are pulling the 'disappear' trick, but what we report can be three different things
         final ModificationType finalType;
-        if (!storeMeta.isPresent()) {
+        if (storeMeta.isEmpty()) {
             // ... there was nothing in the datastore, no change
             finalType = ModificationType.UNMODIFIED;
         } else if (modification.getModificationType() == ModificationType.WRITE) {

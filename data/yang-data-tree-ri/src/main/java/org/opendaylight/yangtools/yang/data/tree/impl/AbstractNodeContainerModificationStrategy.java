@@ -351,13 +351,13 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         final TreeNode currentNode;
-        if (!current.isPresent()) {
+        if (current.isEmpty()) {
             currentNode = defaultTreeNode();
             if (currentNode == null) {
-                if (!modification.getOriginal().isPresent()) {
+                if (modification.getOriginal().isEmpty()) {
                     final YangInstanceIdentifier id = path.toInstanceIdentifier();
                     throw new ModifiedNodeDoesNotExistException(id,
-                        String.format("Node %s does not exist. Cannot apply modification to its children.", id));
+                        "Node " + id + " does not exist. Cannot apply modification to its children.");
                 }
 
                 throw new ConflictingModificationAppliedException(path.toInstanceIdentifier(),

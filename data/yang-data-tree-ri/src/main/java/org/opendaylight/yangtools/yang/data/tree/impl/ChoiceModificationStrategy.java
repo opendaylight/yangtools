@@ -129,7 +129,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
             for (final CaseEnforcer other : verifyNotNull(exclusions.get(enforcer))) {
                 for (final PathArgument id : other.getAllChildIdentifiers()) {
                     final Optional<NormalizedNode> maybeChild = NormalizedNodes.getDirectChild(normalizedNode, id);
-                    checkArgument(!maybeChild.isPresent(),
+                    checkArgument(maybeChild.isEmpty(),
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
                         firstChild.getIdentifier(), enforcer, id, other, maybeChild.orElse(null));
                 }
