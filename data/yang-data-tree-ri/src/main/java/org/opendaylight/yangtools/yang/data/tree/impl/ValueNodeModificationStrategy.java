@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -65,13 +64,13 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
-            final Optional<? extends TreeNode> currentMeta, final Version version) {
+            final TreeNode currentMeta, final Version version) {
         return TreeNode.of(newValue, version);
     }
 
     @Override
     protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws IncorrectDataStructureException {
+            final TreeNode currentMeta, final Version version) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path.toInstanceIdentifier(), "Subtree modification is not allowed.");
     }
 
