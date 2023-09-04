@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateTip;
@@ -34,8 +32,8 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
         final InMemoryDataTreeModification m = checkedCast(modification);
         checkArgument(m.isSealed(), "Attempted to verify unsealed modification %s", m);
 
-        m.getStrategy().checkApplicable(new ModificationPath(getRootPath()), m.getRootModification(),
-            Optional.of(getTipRoot()), m.getVersion());
+        m.getStrategy().checkApplicable(new ModificationPath(getRootPath()), m.getRootModification(), getTipRoot(),
+            m.getVersion());
     }
 
     @Override
@@ -50,9 +48,10 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
             return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), root, currentRoot);
         }
 
-        final var newRoot = m.getStrategy().apply(m.getRootModification(), Optional.of(currentRoot), m.getVersion());
-        checkState(newRoot.isPresent(), "Apply strategy failed to produce root node for modification %s", modification);
-        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), root, currentRoot, newRoot.orElseThrow());
+        final var newRoot = m.getStrategy().apply(m.getRootModification(), currentRoot, m.getVersion())
+            .orElseThrow(() -> new IllegalStateException(
+                "Apply strategy failed to produce root node for modification " + modification));
+        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), root, currentRoot, newRoot);
     }
 
     private static InMemoryDataTreeModification checkedCast(final DataTreeModification mod) {
