@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -51,12 +50,11 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      * @param modification NodeModification to be applied
      * @param currentMeta Store Metadata Node on which NodeModification should be applied
      * @param version New subtree version of parent node
-     * @return new {@link TreeNode} if operation resulted in updating node, {@link Optional#empty()} if
-     *         {@link ModifiedNode} resulted in deletion of this node.
+     * @return new {@link TreeNode} if operation resulted in updating node, {@code null} if {@link ModifiedNode}
+     *         resulted in deletion of this node.
      * @throws IllegalArgumentException If it is not possible to apply Operation on provided Metadata node
      */
-    abstract Optional<? extends TreeNode> apply(ModifiedNode modification, @Nullable TreeNode currentMeta,
-            Version version);
+    abstract @Nullable TreeNode apply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
 
     /**
      * Checks if provided node modification could be applied to current metadata node.

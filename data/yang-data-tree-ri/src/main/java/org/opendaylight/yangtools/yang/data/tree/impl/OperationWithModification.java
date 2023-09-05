@@ -88,7 +88,7 @@ final class OperationWithModification {
         return applyOperation;
     }
 
-    public Optional<? extends TreeNode> apply(final @Nullable TreeNode data, final Version version) {
+    public @Nullable TreeNode apply(final @Nullable TreeNode data, final Version version) {
         return applyOperation.apply(modification, data, version);
     }
 
