@@ -56,7 +56,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 // binding-java-api-generator project - reorganize compilation tests
 public class YangModuleInfoCompilationTest {
     public static final String FS = File.separator;
-    private static final String BASE_PKG = "org.opendaylight.yang.gen.v1";
+    private static final String BASE_PKG = "org.opendaylight.yang.svc.v1";
 
     private static final String TEST_PATH = "target" + FS + "test";
     private static final File TEST_DIR = new File(TEST_PATH);
@@ -85,10 +85,10 @@ public class YangModuleInfoCompilationTest {
         generateTestSources("/yang-module-info", sourcesOutputDir);
 
         // Test if $YangModuleInfoImpl.java file is generated
-        final String BASE_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1";
+        final String BASE_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "svc" + FS + "v1";
         final String NS_TEST = BASE_PATH + FS + "yang" + FS + "test" + FS + "main" + FS + "rev140630";
         File parent = new File(sourcesOutputDir, NS_TEST);
-        File keyArgs = new File(parent, "$YangModuleInfoImpl.java");
+        File keyArgs = new File(parent, "YangModuleInfoImpl.java");
         assertTrue(keyArgs.exists());
 
         // Test if sources are compilable
@@ -101,8 +101,8 @@ public class YangModuleInfoCompilationTest {
         ClassLoader loader = new URLClassLoader(urls);
 
         // Load class
-        Class<?> yangModuleInfoClass = Class.forName(BASE_PKG + ".yang.test.main.rev140630.$YangModuleInfoImpl", true,
-                loader);
+        Class<?> yangModuleInfoClass =
+            Class.forName(BASE_PKG + ".yang.test.main.rev140630.YangModuleInfoImpl", true, loader);
 
         // Test generated $YangModuleInfoImpl class
         assertFalse(yangModuleInfoClass.isInterface());

@@ -106,8 +106,7 @@ public final class BindingRuntimeHelpers {
     }
 
     public static @NonNull YangModuleInfo getYangModuleInfo(final Class<?> clazz) {
-        // Module info resides in the root package we will use that to ascertain identity
-        final var modelPackage = Naming.getModelRootPackageName(clazz.getPackage().getName());
+        final var modelPackage = Naming.rootToServicePackageName(clazz.getPackage().getName());
 
         for (var bindingProvider : ServiceLoader.load(YangModelBindingProvider.class, clazz.getClassLoader())) {
             var moduleInfo = bindingProvider.getModuleInfo();

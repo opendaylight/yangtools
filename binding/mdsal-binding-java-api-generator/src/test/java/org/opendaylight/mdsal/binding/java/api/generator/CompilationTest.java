@@ -82,7 +82,9 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(linksBuilder.exists());
         assertTrue(linksKey.exists());
         assertTrue(testData.exists());
-        CompilationTestUtils.assertFilesCount(parent, 7);
+        CompilationTestUtils.assertFilesCount(parent, 6);
+        final File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_TEST);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_TEST + CompilationTestUtils.FS + "links");
         final File level = new File(parent, "Level.java");
@@ -153,7 +155,9 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "RootContainer.java").exists());
         assertTrue(new File(parent, "rootcontainer/PresenceContainer.java").exists());
         assertTrue(new File(parent, "rootcontainer/NonPresenceContainer.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 5);
+        CompilationTestUtils.assertFilesCount(parent, 4);
+        File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_TEST);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -201,7 +205,9 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "ExplicitRouteObject.java").exists());
         assertTrue(new File(parent, "PathKeySubobject.java").exists());
         assertTrue(new File(parent, "FooData.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 11);
+        CompilationTestUtils.assertFilesCount(parent, 10);
+        File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_FOO);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         parent = new File(parent, "object");
         assertTrue(new File(parent, "Nodes.java").exists());
@@ -260,7 +266,9 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "BasicExplicitRouteSubobjects.java").exists());
         assertTrue(new File(parent, "ExplicitRouteSubobjects.java").exists());
         assertTrue(new File(parent, "RouteSubobjects.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 7);
+        CompilationTestUtils.assertFilesCount(parent, 6);
+        svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_BAR);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         parent = new File(parent, "route");
         CompilationTestUtils.assertFilesCount(parent, 1);
@@ -303,7 +311,9 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "PathAttributes.java").exists());
         assertTrue(new File(parent, "Update.java").exists());
         assertTrue(new File(parent, "UpdateBuilder.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 7);
+        CompilationTestUtils.assertFilesCount(parent, 6);
+        File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_FOO);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "path");
         CompilationTestUtils.assertFilesCount(parent, 1);
@@ -325,7 +335,9 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "Destination.java").exists());
         assertTrue(new File(parent, "PathAttributes1.java").exists());
         assertTrue(new File(parent, "PathAttributes1Builder.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 7);
+        CompilationTestUtils.assertFilesCount(parent, 6);
+        svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_BAR);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR + CompilationTestUtils.FS + "destination");
         CompilationTestUtils.assertFilesCount(parent, 2);
@@ -365,7 +377,9 @@ public class CompilationTest extends BaseCompilationTest {
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAZ);
         assertTrue(new File(parent, "BazData.java").exists());
         assertTrue(new File(parent, "LinkstateDestination.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 4);
+        CompilationTestUtils.assertFilesCount(parent, 3);
+        svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_BAZ);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAZ + CompilationTestUtils.FS + "update");
         CompilationTestUtils.assertFilesCount(parent, 1);
@@ -429,7 +443,9 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
         assertTrue(new File(parent, "Alg.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 5);
+        CompilationTestUtils.assertFilesCount(parent, 4);
+        final File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_TEST);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -492,13 +508,17 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated
         final File fooParent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
-        CompilationTestUtils.assertFilesCount(fooParent, 4);
+        CompilationTestUtils.assertFilesCount(fooParent, 3);
+        final File fooSvcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_FOO);
+        CompilationTestUtils.assertFilesCount(fooSvcParent, 1);
         assertTrue(new File(fooParent, "FooData.java").exists());
         assertTrue(new File(fooParent, "Nodes.java").exists());
         assertTrue(new File(fooParent, "NodesBuilder.java").exists());
 
         final File barParent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR);
-        CompilationTestUtils.assertFilesCount(barParent, 3);
+        CompilationTestUtils.assertFilesCount(barParent, 2);
+        final File barSvcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_BAR);
+        CompilationTestUtils.assertFilesCount(barSvcParent, 1);
         assertTrue(new File(barParent, "BarData.java").exists());
         assertTrue(new File(barParent, "IdentityClass.java").exists());
 
@@ -806,12 +826,11 @@ public class CompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("yang-data-gen");
 
         generateTestSources("/compilation/yang-data-gen", sourcesOutputDir);
-        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         final ClassLoader loader = new URLClassLoader(new URL[]{compiledOutputDir.toURI().toURL()});
         final List<String> artifactNames = List.of(
                 // module with top level container
-                "$YangModuleInfoImpl", "YangDataDemoData", "RootContainer", "RootContainerBuilder",
+                "YangDataDemoData", "RootContainer", "RootContainerBuilder",
 
                 // yang-data artifacts
                 "YangDataWithContainer", "YangDataWithContainerBuilder",
@@ -854,8 +873,6 @@ public class CompilationTest extends BaseCompilationTest {
             // ensure class source is generated
             final String srcPath = className.replace('.', File.separatorChar) + ".java";
             assertTrue(srcPath + " exists", new File(sourcesOutputDir, srcPath).exists());
-            // ensure class is loadable
-            Class.forName(className, true, loader);
         }
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);

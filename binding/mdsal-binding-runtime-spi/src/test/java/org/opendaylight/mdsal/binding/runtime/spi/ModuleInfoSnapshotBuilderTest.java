@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yang.gen.v1.mdsal767.norev.$YangModuleInfoImpl;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.Mdsal767Data;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.One$F;
+import org.opendaylight.yang.svc.v1.mdsal767.norev.YangModuleInfoImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -23,7 +23,7 @@ class ModuleInfoSnapshotBuilderTest {
     @Test
     void testModuleRegistration() throws Exception {
         final var snapshotBuilder = new ModuleInfoSnapshotBuilder(new DefaultYangParserFactory());
-        snapshotBuilder.add($YangModuleInfoImpl.getInstance());
+        snapshotBuilder.add(YangModuleInfoImpl.getInstance());
         snapshotBuilder.addModuleFeatures(Mdsal767Data.class, Set.of(One$F.VALUE));
 
         final var snapshot = snapshotBuilder.build();

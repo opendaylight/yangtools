@@ -74,6 +74,7 @@ public final class Naming {
     // concrete extensible contracts, for example 'feature', 'identity' and similar
     public static final @NonNull String VALUE_STATIC_FIELD_NAME = "VALUE";
     public static final @NonNull String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
+    public static final @NonNull String SVC_PACKAGE_PREFIX = "org.opendaylight.yang.svc.v1";
     public static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-/").precomputed())
@@ -82,10 +83,10 @@ public final class Naming {
     private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
-    public static final @NonNull String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
+    public static final @NonNull String MODULE_INFO_CLASS_NAME = "YangModuleInfoImpl";
     public static final @NonNull String MODULE_INFO_QNAMEOF_METHOD_NAME = "qnameOf";
     public static final @NonNull String MODULE_INFO_YANGDATANAMEOF_METHOD_NAME = "yangDataNameOf";
-    public static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
+    public static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = "YangModelBindingProviderImpl";
 
     /**
      * Name of {@link Augmentable#augmentation(Class)}.
@@ -156,11 +157,23 @@ public final class Naming {
     private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
     @Regex
     private static final String ROOT_PACKAGE_PATTERN_STRING =
-            "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*?\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
+            "(org.opendaylight.yang.(gen|svc).v1.[a-z0-9_\\.]*?\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
 
     private Naming() {
         // Hidden on purpose
+    }
+
+    /**
+     * Return the package name for placing generated ServiceLoader entities, like {@link #MODULE_INFO_CLASS_NAME} and
+     * {@link #MODEL_BINDING_PROVIDER_CLASS_NAME}.
+     *
+     * @param module module namespace
+     * @return the package name for placing generated ServiceLoader entities
+     */
+    public static @NonNull String getServicePackageName(final QNameModule module) {
+        final StringBuilder packageNameBuilder = new StringBuilder().append(SVC_PACKAGE_PREFIX).append('.');
+        return getRootPackageName(packageNameBuilder, module);
     }
 
     public static @NonNull String getRootPackageName(final QName module) {
@@ -169,7 +182,10 @@ public final class Naming {
 
     public static @NonNull String getRootPackageName(final QNameModule module) {
         final StringBuilder packageNameBuilder = new StringBuilder().append(PACKAGE_PREFIX).append('.');
+        return getRootPackageName(packageNameBuilder, module);
+    }
 
+    private static @NonNull String getRootPackageName(final StringBuilder builder, final QNameModule module) {
         String namespace = module.getNamespace().toString();
         namespace = COLON_SLASH_SLASH.matcher(namespace).replaceAll(QUOTED_DOT);
 
@@ -183,9 +199,9 @@ public final class Naming {
             }
         }
 
-        packageNameBuilder.append(chars);
+        builder.append(chars);
         if (chars[chars.length - 1] != '.') {
-            packageNameBuilder.append('.');
+            builder.append('.');
         }
 
         final Optional<Revision> optRev = module.getRevision();
@@ -194,13 +210,27 @@ public final class Naming {
             // right characters.
             final String rev = optRev.orElseThrow().toString();
             checkArgument(rev.length() == 10, "Unsupported revision %s", rev);
-            packageNameBuilder.append("rev").append(rev, 2, 4).append(rev, 5, 7).append(rev.substring(8));
+            builder.append("rev").append(rev, 2, 4).append(rev, 5, 7).append(rev.substring(8));
         } else {
             // No-revision packages are special
-            packageNameBuilder.append("norev");
+            builder.append("norev");
         }
 
-        return normalizePackageName(packageNameBuilder.toString());
+        return normalizePackageName(builder.toString());
+    }
+
+    /**
+     * Convert the result of {@link #getRootPackageName(QNameModule)} to the corresponding result of
+     * {@link #getServicePackageName(QNameModule)}.
+     *
+     * @param rootPackageName root package name
+     * @return Service root package name
+     */
+    public static @NonNull String rootToServicePackageName(final String rootPackageName) {
+        final var match = ROOT_PACKAGE_PATTERN.matcher(rootPackageName);
+        checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", rootPackageName,
+            ROOT_PACKAGE_PATTERN_STRING);
+        return getModelRootPackageName(rootPackageName.replace(Naming.PACKAGE_PREFIX, Naming.SVC_PACKAGE_PREFIX));
     }
 
     public static @NonNull String normalizePackageName(final String packageName) {
@@ -364,8 +394,8 @@ public final class Naming {
      *                                  not match package name formatting rules
      */
     public static @NonNull String getModelRootPackageName(final String packageName) {
-        checkArgument(packageName.startsWith(PACKAGE_PREFIX), "Package name not starting with %s, is: %s",
-            PACKAGE_PREFIX, packageName);
+        checkArgument(packageName.startsWith(PACKAGE_PREFIX) || packageName.startsWith(SVC_PACKAGE_PREFIX),
+            "Package name not starting with %s, is: %s", PACKAGE_PREFIX, packageName);
         final var match = ROOT_PACKAGE_PATTERN.matcher(packageName);
         checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", packageName,
             ROOT_PACKAGE_PATTERN_STRING);

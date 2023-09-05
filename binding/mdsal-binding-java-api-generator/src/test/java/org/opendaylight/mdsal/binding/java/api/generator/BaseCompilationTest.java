@@ -69,7 +69,7 @@ public abstract class BaseCompilationTest {
                 mod -> Optional.of("fake/" + mod.getName()));
 
             final File file = new File(new File(sourcesOutputDir,
-                Naming.getRootPackageName(module.getQNameModule()).replace('.', File.separatorChar)),
+                Naming.getServicePackageName(module.getQNameModule()).replace('.', File.separatorChar)),
                 Naming.MODULE_INFO_CLASS_NAME + ".java");
             Files.createParentDirs(file);
             Files.asCharSink(file, StandardCharsets.UTF_8).write(template.generate());

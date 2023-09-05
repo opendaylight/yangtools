@@ -51,7 +51,9 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "UnionExt2.java").exists());
         assertTrue(new File(parent, "UnionExt3.java").exists());
         assertTrue(new File(parent, "UnionExt4.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 31);
+        CompilationTestUtils.assertFilesCount(parent, 30);
+        final File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_FOO);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);

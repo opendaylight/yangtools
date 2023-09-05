@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getClassName
-import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getRootPackageName
+import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getServicePackageName
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODEL_BINDING_PROVIDER_CLASS_NAME
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODULE_INFO_CLASS_NAME
 import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME
@@ -81,7 +81,7 @@ final class YangModuleInfoTemplate {
         this.module = module
         this.ctx = ctx
         this.moduleFilePathResolver = moduleFilePathResolver
-        packageName = module.QNameModule.rootPackageName;
+        packageName = module.QNameModule.getServicePackageName;
         modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»'''
         hasYangData = module.unknownSchemaNodes.stream.anyMatch([s | s instanceof YangDataSchemaNode])
     }
@@ -207,9 +207,9 @@ final class YangModuleInfoTemplate {
                                 «sorted.put(module.revision, module)»
                             «ENDIF»
                         «ENDFOR»
-                        set.add(«sorted.lastEntry().value.QNameModule.rootPackageName».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«sorted.lastEntry().value.QNameModule.getServicePackageName».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ELSE»
-                        set.add(«(ctx.findModule(name, rev).orElseThrow.QNameModule).rootPackageName».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«(ctx.findModule(name, rev).orElseThrow.QNameModule).getServicePackageName».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»

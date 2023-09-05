@@ -50,7 +50,8 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     ModuleGenerator(final ModuleEffectiveStatement statement) {
         super(statement);
-        yangModuleInfo = JavaTypeName.create(javaPackage(), Naming.MODULE_INFO_CLASS_NAME);
+        yangModuleInfo = JavaTypeName.create(Naming.getServicePackageName(statement.localQNameModule()),
+            Naming.MODULE_INFO_CLASS_NAME);
         prefixMember = domain().addPrefix(this, new ModuleNamingStrategy(statement.argument()));
     }
 

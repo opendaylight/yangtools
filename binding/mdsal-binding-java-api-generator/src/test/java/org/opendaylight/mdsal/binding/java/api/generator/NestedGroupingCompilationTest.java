@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.BASE_PKG;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.NS_SVC_TEST;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.NS_TEST;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.assertFilesCount;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.assertImplementsIfc;
@@ -42,10 +43,12 @@ public class NestedGroupingCompilationTest extends BaseCompilationTest {
         assertTrue(fooBuilder.exists());
         assertTrue(testData.exists());
         assertTrue(fooDir.exists());
-        assertFilesCount(parent, 5);
+        assertFilesCount(parent, 4);
+        final File svcParent = new File(sourcesOutputDir, NS_SVC_TEST);
+        assertFilesCount(svcParent, 1);
 
         parent = new File(parent, "foo");
-        File bar = new File(parent, "Bar.java");
+        final File bar = new File(parent, "Bar.java");
         assertTrue(bar.exists());
         assertFilesCount(parent, 1);
 

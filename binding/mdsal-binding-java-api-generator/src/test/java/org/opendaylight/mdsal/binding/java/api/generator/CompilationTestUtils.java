@@ -50,10 +50,15 @@ public final class CompilationTestUtils {
 
     static final String AUGMENTATION = "interface org.opendaylight.yangtools.yang.binding.Augmentation";
     static final String BASE_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1";
+    static final String BASE_SVC_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "svc" + FS + "v1";
     static final String NS_TEST = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
+    static final String NS_SVC_TEST = BASE_SVC_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
     static final String NS_FOO = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
+    static final String NS_SVC_FOO = BASE_SVC_PATH + FS + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
     static final String NS_BAR = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "bar" + FS + "rev131008";
+    static final String NS_SVC_BAR = BASE_SVC_PATH + FS + "urn" + FS + "opendaylight" + FS + "bar" + FS + "rev131008";
     static final String NS_BAZ = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "baz" + FS + "rev131008";
+    static final String NS_SVC_BAZ = BASE_SVC_PATH + FS + "urn" + FS + "opendaylight" + FS + "baz" + FS + "rev131008";
     static final String NS_BUG5882 = BASE_PATH + FS + "urn" + FS + "yang" + FS + "foo" + FS + "rev160102";
 
     private CompilationTestUtils() {

@@ -10,6 +10,8 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeFalse;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.BASE_SVC_PATH;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.FS;
 
 import java.io.File;
 import java.util.Map;
@@ -21,6 +23,7 @@ import org.junit.Test;
 public class Bug5151Test extends BaseCompilationTest {
 
     private static final String BUG_ID = "bug5151";
+    private static final String SVC_PATH = BASE_SVC_PATH + FS + "urn" + FS + "test" + FS + "foo" + FS + "rev160706";
 
     @Test
     public void test() throws Exception {
@@ -29,14 +32,14 @@ public class Bug5151Test extends BaseCompilationTest {
         assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput(BUG_ID);
         final File compiledOutputDir = CompilationTestUtils.compilerOutput(BUG_ID);
-        generateTestSources(CompilationTestUtils.FS + "compilation" + CompilationTestUtils.FS + BUG_ID,
+        generateTestSources(FS + "compilation" + FS + BUG_ID,
             sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         final Map<String, File> generatedFiles = FileSearchUtil.getFiles(sourcesOutputDir);
-        assertEquals(13, generatedFiles.size());
+        assertEquals(14, generatedFiles.size());
 
         final File fooContainerFile = generatedFiles.get("FooContainer.java");
         assertNotNull(fooContainerFile);
@@ -47,6 +50,9 @@ public class Bug5151Test extends BaseCompilationTest {
         assertNotNull(fooDataFile);
         FileSearchUtil.assertFileContains(fooDataFile,
             "FooContainer} fooContainer, or {@code null} if it is not present");
+
+        final File svcParent = new File(sourcesOutputDir, SVC_PATH);
+        CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

@@ -73,8 +73,8 @@ public final class BindingReflections {
      * @return Instance of {@link YangModuleInfo} associated with model, from which this class was derived.
      */
     private static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) {
-        final String potentialClassName = Naming.getModelRootPackageName(cls.getPackage().getName()) + "."
-            + Naming.MODULE_INFO_CLASS_NAME;
+        final String potentialClassName = Naming.rootToServicePackageName(cls.getPackage().getName())
+            + '.' + Naming.MODULE_INFO_CLASS_NAME;
         final Class<?> moduleInfoClass;
         try {
             moduleInfoClass = cls.getClassLoader().loadClass(potentialClassName);

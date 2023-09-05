@@ -15,6 +15,9 @@ import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestU
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.NS_BAR;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.NS_BAZ;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.NS_FOO;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.NS_SVC_BAR;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.NS_SVC_BAZ;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.NS_SVC_FOO;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.assertFilesCount;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.assertImplementsIfc;
 import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.cleanUp;
@@ -41,20 +44,26 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
         assertTrue(new File(parent, "FooGr1.java").exists());
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
-        assertFilesCount(parent, 6);
+        assertFilesCount(parent, 5);
+        File svcParent = new File(sourcesOutputDir, NS_SVC_FOO);
+        assertFilesCount(svcParent, 1);
 
         // Test if all sources are generated from module bar
         parent = new File(sourcesOutputDir, NS_BAR);
         assertTrue(new File(parent, "BarData.java").exists());
         assertTrue(new File(parent, "BarGr1.java").exists());
         assertTrue(new File(parent, "BarGr2.java").exists());
-        assertFilesCount(parent, 4);
+        assertFilesCount(parent, 3);
+        svcParent = new File(sourcesOutputDir, NS_SVC_BAR);
+        assertFilesCount(svcParent, 1);
 
         // Test if all sources are generated from module baz
         parent = new File(sourcesOutputDir, NS_BAZ);
         assertTrue(new File(parent, "BazData.java").exists());
         assertTrue(new File(parent, "BazGr1.java").exists());
-        assertFilesCount(parent, 3);
+        assertFilesCount(parent, 2);
+        svcParent = new File(sourcesOutputDir, NS_SVC_BAZ);
+        assertFilesCount(svcParent, 1);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
