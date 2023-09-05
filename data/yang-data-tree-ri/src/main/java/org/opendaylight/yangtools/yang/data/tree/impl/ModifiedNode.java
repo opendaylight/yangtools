@@ -251,7 +251,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             case WRITE -> {
                 // A WRITE can collapse all of its children
                 if (!children.isEmpty()) {
-                    value = schema.apply(this, original(), version).map(TreeNode::getData).orElse(null);
+                    final var applied = schema.apply(this, original(), version);
+                    value = applied != null ? applied.getData() : null;
                     children.clear();
                 }
 
@@ -276,8 +277,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return snapshotCache;
     }
 
-    Optional<TreeNode> setSnapshot(final Optional<TreeNode> snapshot) {
-        snapshotCache = requireNonNull(snapshot);
+    @Nullable TreeNode setSnapshot(final @Nullable TreeNode snapshot) {
+        snapshotCache = Optional.ofNullable(snapshot);
         return snapshot;
     }
 
@@ -332,7 +333,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     void setValidatedNode(final ModificationApplyOperation op, final @Nullable TreeNode currentMeta,
-            final Optional<? extends TreeNode> node) {
+            final @Nullable TreeNode node) {
         validatedOp = requireNonNull(op);
         validatedCurrent = currentMeta;
         validatedNode = new ValidatedTreeNode(node);

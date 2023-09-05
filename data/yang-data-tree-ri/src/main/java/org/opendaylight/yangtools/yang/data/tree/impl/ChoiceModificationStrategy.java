@@ -14,7 +14,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -76,7 +75,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
+    TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
             version);

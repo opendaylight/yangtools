@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -28,7 +27,7 @@ final class AutomaticLifecycleMixin {
      */
     @FunctionalInterface
     interface Apply {
-        Optional<? extends TreeNode> apply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
+        @Nullable TreeNode apply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
     }
 
     /**
@@ -45,16 +44,16 @@ final class AutomaticLifecycleMixin {
         // Hidden on purpose
     }
 
-    static Optional<? extends TreeNode> apply(final Apply delegate, final ApplyWrite writeDelegate,
+    static @Nullable TreeNode apply(final Apply delegate, final ApplyWrite writeDelegate,
             final NormalizedNode emptyNode, final ModifiedNode modification, final @Nullable TreeNode currentMeta,
             final Version version) {
-        final Optional<? extends TreeNode> ret;
+        final @Nullable TreeNode ret;
         if (modification.getOperation() == LogicalOperation.DELETE) {
             if (modification.isEmpty()) {
                 return delegate.apply(modification, currentMeta, version);
             }
             // Delete with children, implies it really is an empty write
-            ret = Optional.of(writeDelegate.applyWrite(modification, emptyNode, currentMeta, version));
+            ret = verifyNotNull(writeDelegate.applyWrite(modification, emptyNode, currentMeta, version));
         } else if (modification.getOperation() == LogicalOperation.TOUCH && currentMeta == null) {
             ret = applyTouch(delegate, emptyNode, modification, null, version);
         } else {
@@ -62,10 +61,10 @@ final class AutomaticLifecycleMixin {
             ret = delegate.apply(modification, currentMeta, version);
         }
 
-        return ret.isPresent() ? disappearResult(modification, ret.orElseThrow(), currentMeta) : ret;
+        return ret != null ? disappearResult(modification, ret, currentMeta) : null;
     }
 
-    private static Optional<? extends TreeNode> applyTouch(final Apply delegate, final NormalizedNode emptyNode,
+    private static @Nullable TreeNode applyTouch(final Apply delegate, final NormalizedNode emptyNode,
             final ModifiedNode modification, final @Nullable TreeNode currentMeta, final Version version) {
         // Container is not present, let's take care of the 'magically appear' part of our job
         final var ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
@@ -77,11 +76,15 @@ final class AutomaticLifecycleMixin {
         return ret;
     }
 
-    private static Optional<? extends TreeNode> disappearResult(final ModifiedNode modification, final TreeNode result,
+    private static @Nullable TreeNode disappearResult(final ModifiedNode modification, final @NonNull TreeNode result,
             final @Nullable TreeNode currentMeta) {
         // Check if the result is in fact empty before pulling any tricks
-        if (!isEmpty(result)) {
-            return Optional.of(result);
+        final var data = result.getData();
+        if (!(data instanceof NormalizedNodeContainer<?> container)) {
+            throw new IllegalStateException("Unhandled data " + data);
+        }
+        if (!container.isEmpty()) {
+            return result;
         }
 
         // We are pulling the 'disappear' trick, but what we report can be three different things
@@ -97,7 +100,7 @@ final class AutomaticLifecycleMixin {
             finalType = ModificationType.DISAPPEARED;
         }
         modification.resolveModificationType(finalType);
-        return Optional.empty();
+        return null;
     }
 
     private static @NonNull TreeNode fakeMeta(final NormalizedNode emptyNode, final Version version) {
@@ -105,8 +108,10 @@ final class AutomaticLifecycleMixin {
     }
 
     private static boolean isEmpty(final TreeNode treeNode) {
-        final NormalizedNode data = treeNode.getData();
-        checkState(data instanceof NormalizedNodeContainer, "Unhandled data %s", data);
-        return ((NormalizedNodeContainer<?>) data).size() == 0;
+        final var data = treeNode.getData();
+        if (data instanceof NormalizedNodeContainer<?> container) {
+            return container.isEmpty();
+        }
+        throw new IllegalStateException("Unhandled data " + data);
     }
 }
