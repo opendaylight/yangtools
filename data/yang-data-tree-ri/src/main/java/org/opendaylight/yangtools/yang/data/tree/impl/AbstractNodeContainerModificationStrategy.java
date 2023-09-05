@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -83,7 +82,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
 
     /**
      * Fake TreeNode version used in
-     * {@link #checkTouchApplicable(ModificationPath, NodeModification, Optional, Version)}
+     * {@link #checkTouchApplicable(ModificationPath, NodeModification, TreeNode, Version)}
      * It is okay to use a global constant, as the delegate will ignore it anyway.
      */
     private static final Version FAKE_VERSION = Version.initial();
@@ -213,10 +212,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         for (var mod : modifications) {
             final var id = mod.getIdentifier();
             final var result = resolveChildOperation(id).apply(mod, meta.childByArg(id), nodeVersion);
-            if (result.isPresent()) {
-                final var tn = result.orElseThrow();
-                meta.putChild(tn);
-                data.addChild(tn.getData());
+            if (result != null) {
+                meta.putChild(result);
+                data.addChild(result.getData());
             } else {
                 meta.removeChild(id);
                 data.removeChild(id);
@@ -288,8 +286,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
                 if (!modification.isEmpty()) {
                     // Version does not matter here as we'll throw it out
                     final var current = apply(modification, modification.original(), Version.initial());
-                    if (current.isPresent()) {
-                        modification.updateValue(LogicalOperation.WRITE, current.orElseThrow().getData());
+                    if (current != null) {
+                        modification.updateValue(LogicalOperation.WRITE, current.getData());
                         mergeChildrenIntoModification(modification, valueChildren, version);
                         return;
                     }
