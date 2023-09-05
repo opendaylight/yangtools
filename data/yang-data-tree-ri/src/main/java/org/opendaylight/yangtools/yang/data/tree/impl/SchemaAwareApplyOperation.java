@@ -192,8 +192,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+    TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         return switch (modification.getOperation()) {
             case DELETE -> {
                 // Deletion of a non-existing node is a no-op, report it as such
@@ -230,7 +229,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
             }
             case NONE -> {
                 modification.resolveModificationType(ModificationType.UNMODIFIED);
-                yield Optional.ofNullable(currentMeta);
+                yield currentMeta;
             }
         };
     }
