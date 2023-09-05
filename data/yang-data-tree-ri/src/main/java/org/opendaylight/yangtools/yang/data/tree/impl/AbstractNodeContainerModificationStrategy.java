@@ -213,10 +213,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         for (var mod : modifications) {
             final var id = mod.getIdentifier();
             final var result = resolveChildOperation(id).apply(mod, meta.childByArg(id), nodeVersion);
-            if (result.isPresent()) {
-                final var tn = result.orElseThrow();
-                meta.putChild(tn);
-                data.addChild(tn.getData());
+            if (result != null) {
+                meta.putChild(result);
+                data.addChild(result.getData());
             } else {
                 meta.removeChild(id);
                 data.removeChild(id);
@@ -288,8 +287,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
                 if (!modification.isEmpty()) {
                     // Version does not matter here as we'll throw it out
                     final var current = apply(modification, modification.original(), Version.initial());
-                    if (current.isPresent()) {
-                        modification.updateValue(LogicalOperation.WRITE, current.orElseThrow().getData());
+                    if (current != null) {
+                        modification.updateValue(LogicalOperation.WRITE, current.getData());
                         mergeChildrenIntoModification(modification, valueChildren, version);
                         return;
                     }
