@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -192,20 +191,19 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+    TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         return switch (modification.getOperation()) {
             case DELETE -> {
                 // Deletion of a non-existing node is a no-op, report it as such
                 modification.resolveModificationType(currentMeta != null ? ModificationType.DELETE
                         : ModificationType.UNMODIFIED);
-                yield modification.setSnapshot(Optional.empty());
+                yield modification.setSnapshot(null);
             }
             case TOUCH -> {
                 if (currentMeta == null) {
                     throw new IllegalArgumentException("Metadata not available for modification " + modification);
                 }
-                yield modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta, version)));
+                yield modification.setSnapshot(applyTouch(modification, currentMeta, version));
             }
             case MERGE -> {
                 final TreeNode result;
@@ -221,16 +219,16 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
                     result = applyMerge(modification, currentMeta, version);
                 }
 
-                yield modification.setSnapshot(Optional.of(result));
+                yield modification.setSnapshot(result);
             }
             case WRITE -> {
                 modification.resolveModificationType(ModificationType.WRITE);
-                yield modification.setSnapshot(Optional.of(applyWrite(modification,
-                    verifyNotNull(modification.getWrittenValue()), currentMeta, version)));
+                yield modification.setSnapshot(applyWrite(modification, verifyNotNull(modification.getWrittenValue()),
+                    currentMeta, version));
             }
             case NONE -> {
                 modification.resolveModificationType(ModificationType.UNMODIFIED);
-                yield Optional.ofNullable(currentMeta);
+                yield currentMeta;
             }
         };
     }
