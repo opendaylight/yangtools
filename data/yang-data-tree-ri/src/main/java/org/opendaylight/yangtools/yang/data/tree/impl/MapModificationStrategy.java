@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -61,8 +60,7 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+    TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
             version);
     }

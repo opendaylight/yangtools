@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -44,8 +43,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+    TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
             version);
     }
@@ -108,10 +106,9 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
             final var cm = meta.childByArg(id);
 
             final var result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
-            if (result.isPresent()) {
-                final TreeNode tn = result.orElseThrow();
-                meta.putChild(tn);
-                data.addChild(tn.getData());
+            if (result != null) {
+                meta.putChild(result);
+                data.addChild(result.getData());
             } else {
                 meta.removeChild(id);
                 data.removeChild(id);
