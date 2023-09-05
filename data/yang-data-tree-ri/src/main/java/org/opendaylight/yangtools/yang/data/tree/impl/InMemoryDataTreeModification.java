@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -122,20 +123,14 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final var terminalPath = terminal.getKey();
 
         final var result = resolveSnapshot(terminalPath, terminal.getValue());
-        if (result.isPresent()) {
-            final var data = result.orElseThrow().getData();
-            return NormalizedNodes.findNode(terminalPath, data, path);
-        }
-
-        return Optional.empty();
+        return result == null ? Optional.empty() : NormalizedNodes.findNode(terminalPath, result.getData(), path);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private Optional<? extends TreeNode> resolveSnapshot(final YangInstanceIdentifier path,
-            final ModifiedNode modification) {
+    private @Nullable TreeNode resolveSnapshot(final YangInstanceIdentifier path, final ModifiedNode modification) {
         final var potentialSnapshot = modification.getSnapshot();
         if (potentialSnapshot != null) {
-            return potentialSnapshot;
+            return potentialSnapshot.orElse(null);
         }
 
         try {
@@ -209,9 +204,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * have same version each time this method is called.
          */
         final var originalSnapshotRoot = snapshot.getRootNode();
-        return new InMemoryDataTreeSnapshot(snapshot.getEffectiveModelContext(),
-            getStrategy().apply(rootNode, originalSnapshotRoot, version).orElseThrow(() -> new IllegalStateException(
-                "Data tree root is not present, possibly removed by previous modification")), strategyTree)
+        final var newRoot = getStrategy().apply(rootNode, originalSnapshotRoot, version);
+        if (newRoot == null) {
+            throw new IllegalStateException("Data tree root is not present, possibly removed by previous modification");
+        }
+        return new InMemoryDataTreeSnapshot(snapshot.getEffectiveModelContext(), newRoot, strategyTree)
             .newModification();
     }
 
