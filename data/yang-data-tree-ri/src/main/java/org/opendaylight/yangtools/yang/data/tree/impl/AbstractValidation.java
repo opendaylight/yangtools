@@ -11,8 +11,8 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -61,24 +61,25 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
     }
 
     @Override
-    final Optional<? extends TreeNode> apply(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+    final TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         var validated = modification.validatedNode(this, currentMeta);
         if (validated != null) {
-            return validated.toOptional();
+            return validated.treeNode();
         }
 
         // This might also mean the delegate is maintaining validation
         if (delegate instanceof AbstractValidation) {
             validated = modification.validatedNode(delegate, currentMeta);
             if (validated != null) {
-                return validated.toOptional();
+                return validated.treeNode();
             }
         }
 
         // Deal with the result moving on us
         final var ret = delegate.apply(modification, currentMeta, version);
-        ret.ifPresent(meta -> enforceOnData(meta.getData()));
+        if (ret != null) {
+            enforceOnData(ret.getData());
+        }
         return ret;
     }
 
@@ -93,7 +94,7 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
         }
 
         if (delegate instanceof AbstractValidation) {
-            checkApplicable(path, verifyNotNull(modified.validatedNode(delegate, currentMeta)).toOptional());
+            checkApplicable(path, verifyNotNull(modified.validatedNode(delegate, currentMeta)).treeNode());
             return;
         }
 
@@ -111,11 +112,11 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
         modified.setValidatedNode(this, currentMeta, applied);
     }
 
-    private void checkApplicable(final ModificationPath path, final Optional<? extends TreeNode> applied)
+    private void checkApplicable(final ModificationPath path, final @Nullable TreeNode applied)
             throws DataValidationFailedException {
-        if (applied.isPresent()) {
+        if (applied != null) {
             // We only enforce min/max on present data and rely on MandatoryLeafEnforcer to take care of the empty case
-            enforceOnData(path, applied.orElseThrow().getData());
+            enforceOnData(path, applied.getData());
         }
     }
 

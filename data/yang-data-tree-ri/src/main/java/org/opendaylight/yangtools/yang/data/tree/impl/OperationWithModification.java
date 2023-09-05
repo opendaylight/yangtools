@@ -59,18 +59,19 @@ final class OperationWithModification {
     Optional<NormalizedNode> read(final PathArgument child, final Version version) {
         final ModifiedNode childNode = modification.childByArg(child);
         if (childNode != null) {
-            Optional<? extends TreeNode> snapshot = childNode.getSnapshot();
+            var snapshot = childNode.getSnapshot();
             if (snapshot == null) {
                 // Snapshot is not present, force instantiation
-                snapshot = applyOperation.getChildByArg(child).apply(childNode, childNode.original(), version);
+                snapshot = Optional.ofNullable(
+                    applyOperation.getChildByArg(child).apply(childNode, childNode.original(), version));
             }
 
             return snapshot.map(TreeNode::getData);
         }
 
-        Optional<? extends TreeNode> snapshot = modification.getSnapshot();
+        var snapshot = modification.getSnapshot();
         if (snapshot == null) {
-            snapshot = apply(modification.original(), version);
+            snapshot = Optional.ofNullable(apply(modification.original(), version));
         }
 
         if (snapshot.isPresent()) {
@@ -88,7 +89,7 @@ final class OperationWithModification {
         return applyOperation;
     }
 
-    public Optional<? extends TreeNode> apply(final @Nullable TreeNode data, final Version version) {
+    public @Nullable TreeNode apply(final @Nullable TreeNode data, final Version version) {
         return applyOperation.apply(modification, data, version);
     }
 
