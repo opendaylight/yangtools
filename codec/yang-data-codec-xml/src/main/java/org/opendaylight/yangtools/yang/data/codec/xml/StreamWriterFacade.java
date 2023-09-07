@@ -82,8 +82,7 @@ final class StreamWriterFacade extends ValueWriter {
 
     private void flushElement() throws XMLStreamException {
         if (openElement != null) {
-            writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, openElement.getLocalName(),
-                openElement.getNamespace().toString());
+            writer.writeStartElement(openElement.getLocalName());
             openElement = null;
         }
     }
