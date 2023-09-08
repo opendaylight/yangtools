@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d3fd024_b260c59f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-09-08T13:09:09Z",
+      "side": 1,
+      "message": "We should resurrect this at some point with ScopedValue",
+      "revId": "65d271cd7a720918e38e4889530e46d321bbc2ee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
