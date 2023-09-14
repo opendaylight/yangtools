@@ -294,6 +294,32 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * close the wrapped writer; the caller must take care of that.
      *
      * @param codecFactory JSON codec factory
+     * @param nodeStreamWriterStack StreamWriter stack
+     * @param initialNs Initial namespace
+     * @param jsonWriter JsonWriter
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
+        final NormalizedNodeStreamWriterStack nodeStreamWriterStack, final XMLNamespace initialNs,
+        final JsonWriter jsonWriter) {
+        return new Nested(codecFactory, nodeStreamWriterStack, jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified output stream.
+     *
+     * <p>
+     * The codec factory can be reused between multiple writers.
+     *
+     * <p>
+     * Returned writer can be used emit multiple top level element,
+     * but does not start / close parent JSON object, which must be done
+     * by user providing {@code jsonWriter} instance in order for
+     * JSON to be valid. Closing this instance <strong>will not</strong>
+     * close the wrapped writer; the caller must take care of that.
+     *
+     * @param codecFactory JSON codec factory
      * @param rootNode Root node inference
      * @param initialNs Initial namespace
      * @param jsonWriter JsonWriter

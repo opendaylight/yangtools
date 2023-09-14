@@ -118,6 +118,19 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
     }
 
     /**
+     * Create a new writer with the specified context and rooted in the specified {@link YangInstanceIdentifier}.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param nodeStreamWriterStack Associated {@link NormalizedNodeStreamWriterStack}
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+        final EffectiveModelContext context, final NormalizedNodeStreamWriterStack nodeStreamWriterStack) {
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, nodeStreamWriterStack);
+    }
+
+    /**
      * Create a new writer with the specified context and rooted in the specified operation's input.
      *
      * @param writer Output {@link XMLStreamWriter}
