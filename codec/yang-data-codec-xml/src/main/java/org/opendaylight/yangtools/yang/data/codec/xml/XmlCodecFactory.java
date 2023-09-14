@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -47,7 +46,6 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 /**
  * A thread-safe factory for instantiating {@link XmlCodec}s.
  */
-@Beta
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     private final MountPointContext mountCtx;
 
@@ -112,6 +110,11 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
+        return instanceIdentifierCodec();
+    }
+
+    @Override
+    public XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
         return new XmlStringInstanceIdentifierCodec(getEffectiveModelContext(), this);
     }
 

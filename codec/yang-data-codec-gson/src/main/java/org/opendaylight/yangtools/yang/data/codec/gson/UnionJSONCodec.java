@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Data representation type
  */
-abstract class UnionJSONCodec<T> implements JSONCodec<T> {
+abstract sealed class UnionJSONCodec<T> implements JSONCodec<T> {
     private static final class Diverse extends UnionJSONCodec<Object> {
         Diverse(final List<JSONCodec<?>> codecs) {
             super(codecs);
