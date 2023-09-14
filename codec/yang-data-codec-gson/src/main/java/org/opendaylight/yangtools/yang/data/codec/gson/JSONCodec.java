@@ -11,7 +11,15 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
-interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWriter> {
+/**
+ * A codec capable of performing normalized value conversion with a {@link JsonWriter}.
+ *
+ * @param <T> Normalized value type
+ */
+public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWriter>
+        permits AbstractJSONCodec, EmptyJSONCodec, IdentityrefJSONCodec, NullJSONCodec, UnionJSONCodec,
+                // FIXME: rename this guy
+                JSONInstanceIdentifierCodec {
     /**
      * {@inheritDoc}.
      *

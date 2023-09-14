@@ -12,7 +12,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
-sealed interface XmlCodec<T> extends TypeAwareCodec<T, NamespaceContext, XMLStreamWriter>
+/**
+ * A codec capable of performing normalized value conversion with a {@link XMLStreamWriter}.
+ *
+ * @param <T> Normalized value type
+ */
+public sealed interface XmlCodec<T> extends TypeAwareCodec<T, NamespaceContext, XMLStreamWriter>
         permits AbstractXmlCodec, EmptyXmlCodec, IdentityrefXmlCodec, NullXmlCodec, UnionXmlCodec,
                 XmlStringInstanceIdentifierCodec {
     @Override

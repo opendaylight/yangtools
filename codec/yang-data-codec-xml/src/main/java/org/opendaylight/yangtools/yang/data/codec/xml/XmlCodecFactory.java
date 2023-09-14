@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.util.EmptyMountPointContext;
@@ -49,7 +48,6 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 /**
  * A thread-safe factory for instantiating {@link XmlCodec}s.
  */
-@Beta
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     private final MountPointContext mountCtx;
 
@@ -114,6 +112,11 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
+        return instanceIdentifierCodec();
+    }
+
+    @Override
+    public XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
         return new XmlStringInstanceIdentifierCodec(getEffectiveModelContext(), this);
     }
 

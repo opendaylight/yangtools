@@ -149,6 +149,11 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     }
 
     @Override
+    public JSONCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
+        return iidCodec;
+    }
+
+    @Override
     protected final JSONCodec<?> int8Codec(final Int8TypeDefinition type) {
         return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
     }

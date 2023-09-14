@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
  *
  * @param <T> Deserialized object type
  */
-abstract class AbstractJSONCodec<T> implements JSONCodec<T> {
+abstract sealed class AbstractJSONCodec<T> implements JSONCodec<T>
+        permits BooleanJSONCodec, NumberJSONCodec, QuotedJSONCodec {
     private final DataStringCodec<T> codec;
 
     AbstractJSONCodec(final DataStringCodec<T> codec) {
