@@ -81,6 +81,11 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     }
 
     @Override
+    public XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
+        return instanceIdentifierCodec();
+    }
+
+    @Override
     protected XmlCodec<?> binaryCodec(final BinaryTypeDefinition type) {
         return new QuotedXmlCodec<>(BinaryStringCodec.from(type));
     }

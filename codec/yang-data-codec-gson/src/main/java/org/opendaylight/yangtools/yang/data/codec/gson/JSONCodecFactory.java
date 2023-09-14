@@ -105,6 +105,17 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
         this.iidCodec = verifyNotNull(iidCodec.apply(context, this));
     }
 
+    /**
+     * Return a {@link JSONCodec} capable of serialization and deserialization of {@link YangInstanceIdentifier}s bound
+     * to this factory.
+     *
+     * @return A codec
+     */
+    @Override
+    public @NonNull JSONCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
+        return iidCodec;
+    }
+
     @Override
     protected final JSONCodec<?> binaryCodec(final BinaryTypeDefinition type) {
         return new QuotedJSONCodec<>(BinaryStringCodec.from(type));

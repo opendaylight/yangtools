@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
@@ -46,10 +47,9 @@ import org.slf4j.LoggerFactory;
 /**
  * A type-to-codec factory base class with logic to efficiently lookup and cache codec instances,
  * also dealing with union type composition. This class is thread-safe as long as its underlying {@link CodecCache}
- * is thread-safe
+ * is thread-safe.
  *
  * @param <T> Codec type
- * @author Robert Varga
  */
 public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         extends AbstractEffectiveModelContextProvider {
@@ -62,6 +62,14 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         super(schemaContext);
         this.cache = requireNonNull(cache);
     }
+
+    /**
+     * Return a {@link TypeAwareCodec} capable of serialization and deserialization of {@link YangInstanceIdentifier}s
+     * bound to this factory.
+     *
+     * @return A codec
+     */
+    public abstract @NonNull TypeAwareCodec<YangInstanceIdentifier, ?, ?> instanceIdentifierCodec();
 
     public final <S extends TypeAware & SchemaNode> @NonNull T codecFor(final S schema,
             final LeafrefResolver resolver) {
