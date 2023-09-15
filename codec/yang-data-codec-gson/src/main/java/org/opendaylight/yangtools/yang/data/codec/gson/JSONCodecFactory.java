@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractInputStreamNormalizer;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
@@ -70,20 +71,24 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormalizer<JSONCodec<?>> {
     @Deprecated(since = "12.0.0", forRemoval = true)
     static final class Lhotka02 extends JSONCodecFactory {
-        Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
-            super(context, cache, InstanceIdentifierJSONCodec.Lhotka02::new);
+        @Deprecated(since = "12.0.0", forRemoval = true)
+        Lhotka02(final @NonNull DataSchemaContextTree dataContextTree, final @NonNull CodecCache<JSONCodec<?>> cache) {
+            super(dataContextTree, cache, InstanceIdentifierJSONCodec.Lhotka02::new);
         }
 
+        @Deprecated(since = "12.0.0", forRemoval = true)
         @Override
         Lhotka02 rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
-            return new Lhotka02(newSchemaContext, newCache);
+            return new Lhotka02(DataSchemaContextTree.from(newSchemaContext), newCache);
         }
 
+        @Deprecated(since = "12.0.0", forRemoval = true)
         @Override
         JSONCodec<?> wrapDecimalCodec(final DecimalStringCodec decimalCodec) {
             return new NumberJSONCodec<>(decimalCodec);
         }
 
+        @Deprecated(since = "12.0.0", forRemoval = true)
         @Override
         JSONCodec<?> wrapIntegerCodec(final AbstractIntegerStringCodec<?, ?> integerCodec) {
             return new NumberJSONCodec<>(integerCodec);
@@ -91,13 +96,13 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     }
 
     static final class RFC7951 extends JSONCodecFactory {
-        RFC7951(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
-            super(context, cache, InstanceIdentifierJSONCodec.RFC7951::new);
+        RFC7951(final @NonNull DataSchemaContextTree dataContextTree, final @NonNull CodecCache<JSONCodec<?>> cache) {
+            super(dataContextTree, cache, InstanceIdentifierJSONCodec.RFC7951::new);
         }
 
         @Override
         RFC7951 rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
-            return new RFC7951(newSchemaContext, newCache);
+            return new RFC7951(DataSchemaContextTree.from(newSchemaContext), newCache);
         }
 
         @Override
@@ -115,11 +120,11 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
 
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
         justification = "https://github.com/spotbugs/spotbugs/issues/1867")
-    private JSONCodecFactory(final @NonNull EffectiveModelContext context,
+    private JSONCodecFactory(final @NonNull DataSchemaContextTree dataContextTree,
             final @NonNull CodecCache<JSONCodec<?>> cache,
-            final BiFunction<EffectiveModelContext, JSONCodecFactory, @NonNull InstanceIdentifierJSONCodec> iidCodec) {
-        super(context, cache);
-        this.iidCodec = verifyNotNull(iidCodec.apply(context, this));
+            final BiFunction<DataSchemaContextTree, JSONCodecFactory, @NonNull InstanceIdentifierJSONCodec> iidCodec) {
+        super(dataContextTree.modelContext(), cache);
+        this.iidCodec = verifyNotNull(iidCodec.apply(dataContextTree, this));
     }
 
     @Override

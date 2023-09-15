@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -52,21 +53,22 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     private final @NonNull MountPointContext mountCtx;
     private final @Nullable PreferredPrefixes pref;
 
-    private XmlCodecFactory(final MountPointContext mountCtx, final boolean modelPrefixes) {
-        super(mountCtx.modelContext(), new SharedCodecCache<>());
+    private XmlCodecFactory(final DataSchemaContextTree schemaTree, final MountPointContext mountCtx,
+            final boolean modelPrefixes) {
+        super(schemaTree.modelContext(), new SharedCodecCache<>());
         this.mountCtx = requireNonNull(mountCtx);
         pref = modelPrefixes ? new PreferredPrefixes.Shared(modelContext()) : null;
         instanceIdentifierCodec = new InstanceIdentifierXmlCodec(this, pref);
     }
 
-    MountPointContext mountPointContext() {
+    @NonNull MountPointContext mountPointContext() {
         return mountCtx;
     }
 
     /**
-     * Instantiate a new codec factory attached to a particular context.
+     * Instantiate a new codec factory attached to a particular {@link MountPointContext}.
      *
-     * @param context MountPointContext to which the factory should be bound
+     * @param mountPointContext MountPointContext to which the factory should be bound
      * @return A codec factory instance.
      */
     public static XmlCodecFactory create(final MountPointContext context) {
@@ -81,13 +83,13 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
      * @return A codec factory instance.
      */
     public static XmlCodecFactory create(final MountPointContext context, final boolean preferPrefixes) {
-        return new XmlCodecFactory(context, preferPrefixes);
+        return new XmlCodecFactory(DataSchemaContextTree.from(context.modelContext()), context, preferPrefixes);
     }
 
     /**
-     * Instantiate a new codec factory attached to a particular context.
+     * Instantiate a new codec factory attached to a particular {@link EffectiveModelContext}.
      *
-     * @param context SchemaContext to which the factory should be bound
+     * @param modelContext EffectiveModelContext to which the factory should be bound
      * @return A codec factory instance.
      */
     public static XmlCodecFactory create(final EffectiveModelContext context) {
@@ -103,6 +105,29 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
      */
     public static XmlCodecFactory create(final EffectiveModelContext context, final boolean preferPrefixes) {
         return create(MountPointContext.of(requireNonNull(context)), preferPrefixes);
+    }
+
+    /**
+     * Instantiate a new codec factory attached to a {@link DataSchemaContextTree}.
+     *
+     * @param dataSchemaContextTree DataSchemaContextTree to which the factory should be bound
+     * @return A codec factory instance.
+     */
+    public static XmlCodecFactory create(final DataSchemaContextTree dataSchemaContextTree) {
+        return create(dataSchemaContextTree, false);
+    }
+
+    /**
+     * Instantiate a new codec factory attached to a {@link DataSchemaContextTree}.
+     *
+     * @param dataSchemaContextTree DataSchemaContextTree to which the factory should be bound
+     * @param preferPrefixes prefer prefixes known to {@code DataSchemaContextTree#modelContext()}
+     * @return A codec factory instance.
+     */
+    public static XmlCodecFactory create(final DataSchemaContextTree dataSchemaContextTree,
+            final boolean preferPrefixes) {
+        return new XmlCodecFactory(dataSchemaContextTree, MountPointContext.of(dataSchemaContextTree.modelContext()),
+            preferPrefixes);
     }
 
     @Override
