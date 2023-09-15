@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -47,35 +49,49 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  * A thread-safe factory for instantiating {@link XmlCodec}s.
  */
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
-    private final MountPointContext mountCtx;
+    private final @NonNull XmlCodec<YangInstanceIdentifier> iidCodec;
+    private final @NonNull MountPointContext mountCtx;
 
-    private XmlCodecFactory(final MountPointContext mountCtx) {
-        super(mountCtx.getEffectiveModelContext(), new SharedCodecCache<>());
+    private XmlCodecFactory(final DataSchemaContextTree schemaTree, final MountPointContext mountCtx) {
+        super(schemaTree.getEffectiveModelContext(), new SharedCodecCache<>());
         this.mountCtx = requireNonNull(mountCtx);
+        iidCodec = new XmlStringInstanceIdentifierCodec(schemaTree, this);
     }
 
-    MountPointContext mountPointContext() {
+    @NonNull MountPointContext mountPointContext() {
         return mountCtx;
     }
 
     /**
-     * Instantiate a new codec factory attached to a particular context.
+     * Instantiate a new codec factory attached to a particular {@link MountPointContext}.
      *
-     * @param context MountPointContext to which the factory should be bound
+     * @param mountPointContext MountPointContext to which the factory should be bound
      * @return A codec factory instance.
      */
-    public static XmlCodecFactory create(final MountPointContext context) {
-        return new XmlCodecFactory(context);
+    public static XmlCodecFactory create(final MountPointContext mountPointContext) {
+        return new XmlCodecFactory(DataSchemaContextTree.from(mountPointContext.getEffectiveModelContext()),
+            mountPointContext);
     }
 
     /**
-     * Instantiate a new codec factory attached to a particular context.
+     * Instantiate a new codec factory attached to a particular {@link EffectiveModelContext}.
      *
-     * @param context SchemaContext to which the factory should be bound
+     * @param modelContext EffectiveModelContext to which the factory should be bound
      * @return A codec factory instance.
      */
-    public static XmlCodecFactory create(final EffectiveModelContext context) {
-        return create(MountPointContext.of(context));
+    public static XmlCodecFactory create(final EffectiveModelContext modelContext) {
+        return create(MountPointContext.of(modelContext));
+    }
+
+    /**
+     * Instantiate a new codec factory attached to a {@link DataSchemaContextTree}.
+     *
+     * @param context DataSchemaContextTree to which the factory should be bound
+     * @return A codec factory instance.
+     */
+    public static XmlCodecFactory create(final DataSchemaContextTree dataSchemaContextTree) {
+        return new XmlCodecFactory(dataSchemaContextTree,
+            MountPointContext.of(dataSchemaContextTree.getEffectiveModelContext()));
     }
 
     @Override
@@ -110,12 +126,12 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
-        return instanceIdentifierCodec();
+        return iidCodec;
     }
 
     @Override
     public XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
-        return new XmlStringInstanceIdentifierCodec(getEffectiveModelContext(), this);
+        return iidCodec;
     }
 
     @Override

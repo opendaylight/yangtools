@@ -22,12 +22,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.NormalizedNodeStreamWriterStack;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
-        extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements EffectiveModelContextProvider {
+        extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> {
     private final NormalizedNodeStreamWriterStack tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
@@ -44,7 +44,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             final NormalizedNodeStreamWriterStack tracker) {
         super(writer);
         this.tracker = requireNonNull(tracker);
-        streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
+        streamUtils = new SchemaAwareXMLStreamWriterUtils(DataSchemaContextTree.from(context));
     }
 
     @Override
@@ -57,7 +57,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value)
             throws XMLStreamException {
-        final var optAnnotation = AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(),
+        final var optAnnotation = AnnotationSchemaNode.find(streamUtils.schemaTree().getEffectiveModelContext(),
             new AnnotationName(qname));
         if (optAnnotation.isPresent()) {
             return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.orElseThrow().getType()), value,
@@ -140,11 +140,6 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             return true;
         }
         return false;
-    }
-
-    @Override
-    public EffectiveModelContext getEffectiveModelContext() {
-        return streamUtils.getEffectiveModelContext();
     }
 
     @Override

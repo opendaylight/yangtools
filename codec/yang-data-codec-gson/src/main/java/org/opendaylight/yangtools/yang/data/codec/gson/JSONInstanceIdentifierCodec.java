@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -29,14 +28,14 @@ import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
     static final class Lhotka02 extends JSONInstanceIdentifierCodec {
-        Lhotka02(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
-            super(context, jsonCodecFactory);
+        Lhotka02(final DataSchemaContextTree dataContextTree, final JSONCodecFactory jsonCodecFactory) {
+            super(dataContextTree, jsonCodecFactory);
         }
     }
 
     static final class RFC7951 extends JSONInstanceIdentifierCodec {
-        RFC7951(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
-            super(context, jsonCodecFactory);
+        RFC7951(final DataSchemaContextTree dataContextTree, final JSONCodecFactory jsonCodecFactory) {
+            super(dataContextTree, jsonCodecFactory);
         }
 
         @Override
@@ -54,23 +53,21 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
 
     private final @NonNull DataSchemaContextTree dataContextTree;
     private final JSONCodecFactory codecFactory;
-    private final EffectiveModelContext context;
 
-    JSONInstanceIdentifierCodec(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
-        this.context = requireNonNull(context);
-        dataContextTree = DataSchemaContextTree.from(context);
+    JSONInstanceIdentifierCodec(final DataSchemaContextTree dataContextTree, final JSONCodecFactory jsonCodecFactory) {
+        this.dataContextTree = requireNonNull(dataContextTree);
         codecFactory = requireNonNull(jsonCodecFactory);
     }
 
     @Override
     protected final Module moduleForPrefix(final String prefix) {
-        final var modules = context.findModules(prefix).iterator();
+        final var modules = dataContextTree.getEffectiveModelContext().findModules(prefix).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected final String prefixForNamespace(final XMLNamespace namespace) {
-        final var modules = context.findModuleStatements(namespace).iterator();
+        final var modules = dataContextTree.getEffectiveModelContext().findModuleStatements(namespace).iterator();
         return modules.hasNext() ? modules.next().argument().getLocalName() : null;
     }
 
