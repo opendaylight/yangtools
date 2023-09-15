@@ -9,37 +9,32 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 
-final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils implements EffectiveModelContextProvider {
-    private final @NonNull EffectiveModelContext schemaContext;
+final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
+    private final @NonNull DataSchemaContextTree schemaTree;
 
-    SchemaAwareXMLStreamWriterUtils(final EffectiveModelContext schemaContext) {
-        this.schemaContext = requireNonNull(schemaContext);
+    SchemaAwareXMLStreamWriterUtils(final DataSchemaContextTree schemaTree) {
+        this.schemaTree = requireNonNull(schemaTree);
+    }
+
+    @NonNull DataSchemaContextTree schemaTree() {
+        return schemaTree;
     }
 
     @Override
     String encodeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
-        RandomPrefixInstanceIdentifierSerializer iiCodec = new RandomPrefixInstanceIdentifierSerializer(schemaContext,
-            writer.getNamespaceContext());
-        String serializedValue = iiCodec.serialize(value);
+        final var iiCodec = new RandomPrefixInstanceIdentifierSerializer(schemaTree, writer.getNamespaceContext());
+        final var str = iiCodec.serialize(value);
 
-        for (Entry<XMLNamespace, String> e : iiCodec.getPrefixes()) {
-            writer.writeNamespace(e.getValue(), e.getKey().toString());
+        for (var entry : iiCodec.getPrefixes()) {
+            writer.writeNamespace(entry.getValue(), entry.getKey().toString());
         }
 
-        return serializedValue;
-    }
-
-    @Override
-    public EffectiveModelContext getEffectiveModelContext() {
-        return schemaContext;
+        return str;
     }
 }
