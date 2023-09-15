@@ -148,8 +148,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
      * <p>This effectively means same input XPath representation of Path Argument may result in different
      * YangInstanceIdentifiers if models are different in uses of choices and cases.
      *
-     * @return DataSchemaContextTree associated with SchemaContext for which
-     *         serialization / deserialization occurs.
+     * @return DataSchemaContextTree associated with SchemaContext for which serialization / deserialization occurs
      */
     protected abstract @NonNull DataSchemaContextTree getDataContextTree();
 
