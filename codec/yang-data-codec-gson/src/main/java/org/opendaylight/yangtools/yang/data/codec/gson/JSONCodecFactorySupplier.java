@@ -18,6 +18,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.NoopCodecCache;
@@ -43,8 +44,9 @@ public enum JSONCodecFactorySupplier {
      */
     RFC7951() {
         @Override
-        JSONCodecFactory createFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {
-            return new JSONCodecFactory.RFC7951(context, cache);
+        JSONCodecFactory createFactory(final DataSchemaContextTree dataContextTree,
+                final CodecCache<JSONCodec<?>> cache) {
+            return new JSONCodecFactory.RFC7951(dataContextTree, cache);
         }
     },
     /**
@@ -55,8 +57,9 @@ public enum JSONCodecFactorySupplier {
     @Deprecated
     DRAFT_LHOTKA_NETMOD_YANG_JSON_02() {
         @Override
-        JSONCodecFactory createFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {
-            return new JSONCodecFactory.Lhotka02(context, cache);
+        JSONCodecFactory createFactory(final DataSchemaContextTree dataContextTree,
+                final CodecCache<JSONCodec<?>> cache) {
+            return new JSONCodecFactory.Lhotka02(dataContextTree, cache);
         }
     };
 
@@ -108,10 +111,10 @@ public enum JSONCodecFactorySupplier {
         }
     }
 
-    // Weak keys to retire the entry when SchemaContext goes away
+    // Weak keys to retire the entry when EffectiveModelContext goes away
     private final LoadingCache<EffectiveModelContext, JSONCodecFactory> precomputed;
 
-    // Weak keys to retire the entry when SchemaContext goes away and to force identity-based lookup
+    // Weak keys to retire the entry when EffectiveModelContext goes away and to force identity-based lookup
     private final LoadingCache<EffectiveModelContext, JSONCodecFactory> shared = CacheBuilder.newBuilder()
         .weakKeys().build(new CacheLoader<EffectiveModelContext, JSONCodecFactory>() {
             @Override
@@ -127,81 +130,82 @@ public enum JSONCodecFactorySupplier {
     }
 
     /**
-     * Get a thread-safe, eagerly-caching {@link JSONCodecFactory} for a SchemaContext. This method can, and will,
-     * return the same instance as long as the associated SchemaContext is present. Returned object can be safely
-     * used by multiple threads concurrently. If the SchemaContext instance does not have a cached instance
-     * of {@link JSONCodecFactory}, it will be completely precomputed before this method will return.
+     * Get a thread-safe, eagerly-caching {@link JSONCodecFactory} for an {@link EffectiveModelContext}. This method
+     * can, and will, return the same instance as long as the associated EffectiveModelContext is present. Returned
+     * object can be safely used by multiple threads concurrently. If the EffectiveModelContext instance does not have a
+     * cached instance of {@link JSONCodecFactory}, it will be completely precomputed before this method will return.
      *
      * <p>
      * Choosing this implementation is appropriate when the memory overhead of keeping a full codec tree is not as
      * great a concern as predictable performance. When compared to the implementation returned by
      * {@link #getShared(EffectiveModelContext)}, this implementation is expected to offer higher performance and have
-     * lower peak memory footprint when most of the SchemaContext is actually in use.
+     * lower peak memory footprint when most of the EffectiveModelContext is actually in use.
      *
      * <p>
      * For call sites which do not want to pay the CPU cost of pre-computing this implementation, but still would like
      * to use it if is available (by being populated by some other caller), you can use
      * {@link #getPrecomputedIfAvailable(EffectiveModelContext)}.
      *
-     * @param context SchemaContext instance
+     * @param modelContext EffectiveModelContext instance
      * @return A sharable {@link JSONCodecFactory}
-     * @throws NullPointerException if context is null
+     * @throws NullPointerException if modelContext is null
      */
-    public @NonNull JSONCodecFactory getPrecomputed(final @NonNull EffectiveModelContext context) {
-        return verifyNotNull(precomputed.getUnchecked(context));
+    public @NonNull JSONCodecFactory getPrecomputed(final @NonNull EffectiveModelContext modelContext) {
+        return verifyNotNull(precomputed.getUnchecked(modelContext));
     }
 
     /**
-     * Get a thread-safe, eagerly-caching {@link JSONCodecFactory} for a SchemaContext, if it is available. This
-     * method is a non-blocking equivalent of {@link #getPrecomputed(EffectiveModelContext)} for use in code paths where
-     * the potential of having to pre-compute the implementation is not acceptable. One such scenario is when the
-     * code base wants to opportunistically take advantage of pre-computed version, but is okay with a fallback to
-     * a different implementation.
+     * Get a thread-safe, eagerly-caching {@link JSONCodecFactory} for an {@link EffectiveModelContext}, if it is
+     * available. This method is a non-blocking equivalent of {@link #getPrecomputed(EffectiveModelContext)} for use in
+     * code paths where the potential of having to pre-compute the implementation is not acceptable. One such scenario
+     * is when the code base wants to opportunistically take advantage of pre-computed version, but is okay with a
+     * fallback to a different implementation.
      *
-     * @param context SchemaContext instance
+     * @param modelContext EffectiveModelContext instance
      * @return A sharable {@link JSONCodecFactory}, or absent if such an implementation is not available.
-     * @throws NullPointerException if context is null
+     * @throws NullPointerException if modelContext is null
      */
-    public @NonNull Optional<JSONCodecFactory> getPrecomputedIfAvailable(final @NonNull EffectiveModelContext context) {
-        return Optional.ofNullable(precomputed.getIfPresent(context));
+    public @NonNull Optional<JSONCodecFactory> getPrecomputedIfAvailable(
+            final @NonNull EffectiveModelContext modelContext) {
+        return Optional.ofNullable(precomputed.getIfPresent(modelContext));
     }
 
     /**
-     * Get a thread-safe, lazily-caching {@link JSONCodecFactory} for a SchemaContext. This method can, and will,
-     * return the same instance as long as the associated EffectiveModelContext is present or the factory is not
-     * invalidated by memory pressure. Returned object can be safely used by multiple threads concurrently.
+     * Get a thread-safe, lazily-caching {@link JSONCodecFactory} for an {@link EffectiveModelContext}. This method can,
+     * and will, return the same instance as long as the associated EffectiveModelContext is present or the factory is
+     * not invalidated by memory pressure. Returned object can be safely used by multiple threads concurrently.
      *
      * <p>
      * Choosing this implementation is a safe default, as it will not incur prohibitive blocking, nor will it tie up
      * memory in face of pressure.
      *
-     * @param context SchemaContext instance
+     * @param modelContext EffectiveModelContext instance
      * @return A sharable {@link JSONCodecFactory}
-     * @throws NullPointerException if context is null
+     * @throws NullPointerException if modelContext is null
      */
-    public @NonNull JSONCodecFactory getShared(final @NonNull EffectiveModelContext context) {
-        return verifyNotNull(shared.getUnchecked(context));
+    public @NonNull JSONCodecFactory getShared(final @NonNull EffectiveModelContext modelContext) {
+        return verifyNotNull(shared.getUnchecked(modelContext));
     }
 
     /**
-     * Create a new thread-unsafe, lazily-caching {@link JSONCodecFactory} for a SchemaContext. This method will
-     * return distinct objects every time it is invoked. Returned object may not be used from multiple threads
-     * concurrently.
+     * Create a new thread-unsafe, lazily-caching {@link JSONCodecFactory} for an {@link EffectiveModelContext}. This
+     * method will return distinct objects every time it is invoked. Returned object may not be used from multiple
+     * threads concurrently.
      *
      * <p>
      * This implementation is appropriate for one-off serialization from a single thread. It will aggressively cache
      * codecs for reuse and will tie them up in memory until the factory is freed.
      *
-     * @param context SchemaContext instance
+     * @param modelContext EffectiveModelContext instance
      * @return A non-sharable {@link JSONCodecFactory}
-     * @throws NullPointerException if context is null
+     * @throws NullPointerException if modelContext is null
      */
-    public @NonNull JSONCodecFactory createLazy(final @NonNull EffectiveModelContext context) {
-        return createFactory(context, new LazyCodecCache<>());
+    public @NonNull JSONCodecFactory createLazy(final @NonNull EffectiveModelContext modelContext) {
+        return createFactory(modelContext, new LazyCodecCache<>());
     }
 
     /**
-     * Create a simplistic, thread-safe {@link JSONCodecFactory} for a {@link EffectiveModelContext}. This method will
+     * Create a simplistic, thread-safe {@link JSONCodecFactory} for an {@link EffectiveModelContext}. This method will
      * return distinct objects every time it is invoked. Returned object may be use from multiple threads concurrently.
      *
      * <p>
@@ -209,13 +213,19 @@ public enum JSONCodecFactorySupplier {
      * is computed every time it is requested. This may be useful in extremely constrained environments, where memory
      * footprint is more critical than performance.
      *
-     * @param context SchemaContext instance
+     * @param modelContext EffectiveModelContext instance
      * @return A non-sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null.
      */
-    public @NonNull JSONCodecFactory createSimple(final @NonNull EffectiveModelContext context) {
-        return createFactory(context, NoopCodecCache.getInstance());
+    public @NonNull JSONCodecFactory createSimple(final @NonNull EffectiveModelContext modelContext) {
+        return createFactory(modelContext, NoopCodecCache.getInstance());
     }
 
-    abstract @NonNull JSONCodecFactory createFactory(EffectiveModelContext context, CodecCache<JSONCodec<?>> cache);
+    final @NonNull JSONCodecFactory createFactory(final @NonNull EffectiveModelContext modelContext,
+            final @NonNull CodecCache<JSONCodec<?>> cache) {
+        return createFactory(DataSchemaContextTree.from(modelContext), cache);
+    }
+
+    abstract @NonNull JSONCodecFactory createFactory(@NonNull DataSchemaContextTree dataContextTree,
+        @NonNull CodecCache<JSONCodec<?>> cache);
 }

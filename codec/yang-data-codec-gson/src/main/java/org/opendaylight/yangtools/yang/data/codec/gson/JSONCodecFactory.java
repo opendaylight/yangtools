@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
@@ -53,13 +54,13 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  */
 public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     static final class Lhotka02 extends JSONCodecFactory {
-        Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
-            super(context, cache, JSONInstanceIdentifierCodec.Lhotka02::new);
+        Lhotka02(final @NonNull DataSchemaContextTree dataContextTree, final @NonNull CodecCache<JSONCodec<?>> cache) {
+            super(dataContextTree, cache, JSONInstanceIdentifierCodec.Lhotka02::new);
         }
 
         @Override
         Lhotka02 rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
-            return new Lhotka02(newSchemaContext, newCache);
+            return new Lhotka02(DataSchemaContextTree.from(newSchemaContext), newCache);
         }
 
         @Override
@@ -74,13 +75,13 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     }
 
     static final class RFC7951 extends JSONCodecFactory {
-        RFC7951(final @NonNull  EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
-            super(context, cache, JSONInstanceIdentifierCodec.RFC7951::new);
+        RFC7951(final @NonNull DataSchemaContextTree dataContextTree, final @NonNull CodecCache<JSONCodec<?>> cache) {
+            super(dataContextTree, cache, JSONInstanceIdentifierCodec.RFC7951::new);
         }
 
         @Override
         RFC7951 rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
-            return new RFC7951(newSchemaContext, newCache);
+            return new RFC7951(DataSchemaContextTree.from(newSchemaContext), newCache);
         }
 
         @Override
@@ -98,11 +99,11 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
 
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
         justification = "https://github.com/spotbugs/spotbugs/issues/1867")
-    private JSONCodecFactory(final @NonNull EffectiveModelContext context,
+    private JSONCodecFactory(final @NonNull DataSchemaContextTree dataContextTree,
             final @NonNull CodecCache<JSONCodec<?>> cache,
-            final BiFunction<EffectiveModelContext, JSONCodecFactory, @NonNull JSONInstanceIdentifierCodec> iidCodec) {
-        super(context, cache);
-        this.iidCodec = verifyNotNull(iidCodec.apply(context, this));
+            final BiFunction<DataSchemaContextTree, JSONCodecFactory, @NonNull JSONInstanceIdentifierCodec> iidCodec) {
+        super(dataContextTree.getEffectiveModelContext(), cache);
+        this.iidCodec = verifyNotNull(iidCodec.apply(dataContextTree, this));
     }
 
     @Override
