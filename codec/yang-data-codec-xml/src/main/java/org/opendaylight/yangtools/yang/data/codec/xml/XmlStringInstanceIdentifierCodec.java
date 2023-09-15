@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -31,32 +30,30 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
 
     private static final ThreadLocal<Deque<NamespaceContext>> TL_CONTEXT = new ThreadLocal<>();
 
-    private final @NonNull DataSchemaContextTree dataContextTree;
+    private final @NonNull DataSchemaContextTree schemaTree;
     private final @NonNull XmlCodecFactory codecFactory;
-    private final @NonNull EffectiveModelContext context;
 
-    XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final XmlCodecFactory codecFactory) {
-        this.context = requireNonNull(context);
+    XmlStringInstanceIdentifierCodec(final DataSchemaContextTree schemaTree, final XmlCodecFactory codecFactory) {
+        this.schemaTree = requireNonNull(schemaTree);
         this.codecFactory = requireNonNull(codecFactory);
-        dataContextTree = DataSchemaContextTree.from(context);
     }
 
     @Override
     protected Module moduleForPrefix(final String prefix) {
         final var prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
-        final var modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
+        final var modules = schemaTree.getEffectiveModelContext().findModules(XMLNamespace.of(prefixedNS)).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
-        final var modules = context.findModuleStatements(namespace).iterator();
+        final var modules = schemaTree.getEffectiveModelContext().findModuleStatements(namespace).iterator();
         return modules.hasNext() ? modules.next().argument().getLocalName() : null;
     }
 
     @Override
     protected DataSchemaContextTree getDataContextTree() {
-        return dataContextTree;
+        return schemaTree;
     }
 
     @Override
