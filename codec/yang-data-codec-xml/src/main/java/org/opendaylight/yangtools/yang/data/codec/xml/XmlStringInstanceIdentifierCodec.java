@@ -32,10 +32,10 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     private static final ThreadLocal<Deque<NamespaceContext>> TL_CONTEXT = new ThreadLocal<>();
 
     private final @NonNull DataSchemaContextTree dataContextTree;
-    private final @NonNull CodecFactory codecFactory;
+    private final @NonNull XmlCodecFactory codecFactory;
     private final @NonNull EffectiveModelContext context;
 
-    XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final CodecFactory codecFactory) {
+    XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final XmlCodecFactory codecFactory) {
         this.context = requireNonNull(context);
         this.codecFactory = requireNonNull(codecFactory);
         dataContextTree = DataSchemaContextTree.from(context);
