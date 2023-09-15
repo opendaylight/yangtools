@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.NormalizedNodeStreamWriterStack;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -40,19 +41,19 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
         extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> {
-    private final NormalizedNodeStreamWriterStack tracker;
-    private final SchemaAwareXMLStreamWriterUtils streamUtils;
+    private final @NonNull NormalizedNodeStreamWriterStack tracker;
+    private final @NonNull SchemaAwareXMLStreamWriterUtils streamUtils;
 
     private SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer,
-            final EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker,
+            final @NonNull EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker,
             final @Nullable PreferredPrefixes pref) {
         super(writer, pref);
         this.tracker = requireNonNull(tracker);
-        streamUtils = new SchemaAwareXMLStreamWriterUtils(modelContext, pref);
+        streamUtils = new SchemaAwareXMLStreamWriterUtils(DataSchemaContextTree.from(modelContext), pref);
     }
 
     SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer,
-            final EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker,
+            final @NonNull EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker,
             final boolean modelPrefixes) {
         this(writer, modelContext, tracker, modelPrefixes ? new PreferredPrefixes.Shared(modelContext) : null);
     }
@@ -67,7 +68,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value)
             throws XMLStreamException {
-        final var annotation = AnnotationEffectiveStatement.lookupIn(streamUtils.modelContext(),
+        final var annotation = AnnotationEffectiveStatement.lookupIn(streamUtils.schemaTree().modelContext(),
             new AnnotationName(qname));
 
         if (annotation != null) {
