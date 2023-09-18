@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
@@ -106,6 +105,11 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     }
 
     @Override
+    public final JSONCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
+        return iidCodec;
+    }
+
+    @Override
     protected final JSONCodec<?> binaryCodec(final BinaryTypeDefinition type) {
         return new QuotedJSONCodec<>(BinaryStringCodec.from(type));
     }
@@ -138,12 +142,6 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     @Override
     protected final JSONCodec<QName> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
         return new IdentityrefJSONCodec(getEffectiveModelContext(), module);
-    }
-
-    @Override
-    protected final JSONCodec<YangInstanceIdentifier> instanceIdentifierCodec(
-            final InstanceIdentifierTypeDefinition type) {
-        return iidCodec;
     }
 
     @Override

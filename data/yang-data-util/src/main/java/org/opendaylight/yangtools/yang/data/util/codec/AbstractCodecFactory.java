@@ -102,6 +102,10 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         return cache.getComplex(schema, ret);
     }
 
+    // FIXME: there really are two favors, as 'require-instance true' needs to be validated. In order to deal
+    //        with that, though, we need access to the current data store.
+    public abstract T instanceIdentifierCodec();
+
     protected abstract T binaryCodec(BinaryTypeDefinition type);
 
     protected abstract T booleanCodec(BooleanTypeDefinition type);
@@ -113,10 +117,6 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
     protected abstract T enumCodec(EnumTypeDefinition type);
 
     protected abstract T identityRefCodec(IdentityrefTypeDefinition type, QNameModule module);
-
-    // FIXME: there really are two favors, as 'require-instance true' needs to be validated. In order to deal
-    //        with that, though, we need access to the current data store.
-    protected abstract T instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
 
     protected abstract T int8Codec(Int8TypeDefinition type);
 
@@ -186,8 +186,8 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
             ret = createSimpleUnion(unionType);
         } else if (type instanceof BinaryTypeDefinition binaryType) {
             ret = binaryCodec(binaryType);
-        } else if (type instanceof InstanceIdentifierTypeDefinition iidType) {
-            return instanceIdentifierCodec(iidType);
+        } else if (type instanceof InstanceIdentifierTypeDefinition) {
+            return instanceIdentifierCodec();
         } else {
             return null;
         }

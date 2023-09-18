@@ -11,7 +11,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
-interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWriter> {
+public interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWriter> {
     /**
      * {@inheritDoc}.
      *

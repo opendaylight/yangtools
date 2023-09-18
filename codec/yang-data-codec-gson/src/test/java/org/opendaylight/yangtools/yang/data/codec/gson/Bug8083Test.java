@@ -256,7 +256,7 @@ public class Bug8083Test {
         final TypeDefinition<? extends TypeDefinition<?>> type = ((LeafSchemaNode) foo).getType();
         assertTrue(type instanceof InstanceIdentifierTypeDefinition);
         return supplier.createSimple(FULL_SCHEMA_CONTEXT)
-                .instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
+                .instanceIdentifierCodec();
     }
 
     private static String writeInstanceIdentifier(final JSONCodecFactorySupplier supplier) throws IOException {

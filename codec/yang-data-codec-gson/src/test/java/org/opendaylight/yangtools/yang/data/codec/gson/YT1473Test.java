@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -25,9 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1473Test {
@@ -128,10 +124,7 @@ class YT1473Test {
                 }
               }
             }""");
-        final var baz = assertInstanceOf(ListSchemaNode.class, modelContext.getDataChildByName(FOO_BAZ));
-        final var id = assertInstanceOf(LeafSchemaNode.class, baz.getDataChildByName(FOO_ID));
-        final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, id.getType());
-        CODEC = JSONCodecFactorySupplier.RFC7951.getShared(modelContext).instanceIdentifierCodec(type);
+        CODEC = JSONCodecFactorySupplier.RFC7951.getShared(modelContext).instanceIdentifierCodec();
     }
 
     @AfterAll

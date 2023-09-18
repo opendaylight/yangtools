@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
@@ -54,6 +53,11 @@ abstract sealed class CodecFactory extends AbstractCodecFactory<XmlCodec<?>> per
 
     final MountPointContext mountPointContext() {
         return mountCtx;
+    }
+
+    @Override
+    public final XmlStringInstanceIdentifierCodec instanceIdentifierCodec() {
+        return new XmlStringInstanceIdentifierCodec(getEffectiveModelContext(), this);
     }
 
     @Override
@@ -85,12 +89,6 @@ abstract sealed class CodecFactory extends AbstractCodecFactory<XmlCodec<?>> per
     protected final IdentityrefXmlCodec identityRefCodec(final IdentityrefTypeDefinition type,
             final QNameModule module) {
         return new IdentityrefXmlCodec(getEffectiveModelContext(), module);
-    }
-
-    @Override
-    protected final XmlStringInstanceIdentifierCodec instanceIdentifierCodec(
-            final InstanceIdentifierTypeDefinition type) {
-        return new XmlStringInstanceIdentifierCodec(getEffectiveModelContext(), this);
     }
 
     @Override
