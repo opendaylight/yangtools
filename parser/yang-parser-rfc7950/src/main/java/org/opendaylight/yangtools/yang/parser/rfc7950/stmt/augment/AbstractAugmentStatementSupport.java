@@ -136,8 +136,7 @@ abstract class AbstractAugmentStatementSupport
                 .toFlags();
 
         try {
-            return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags,
-                stmt.moduleName().getModule(), substatements);
+            return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags, substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

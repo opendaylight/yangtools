@@ -12,10 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.QNameModuleAware;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -29,22 +27,19 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
 
 public final class AugmentEffectiveStatementImpl
         extends DefaultWithSchemaTree<SchemaNodeIdentifier, AugmentStatement>
-        implements AugmentEffectiveStatement, AugmentationSchemaNode, QNameModuleAware,
+        implements AugmentEffectiveStatement, AugmentationSchemaNode,
             DocumentedNodeMixin.WithStatus<SchemaNodeIdentifier, AugmentStatement>,
             DataNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             ActionNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             NotificationNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             WhenConditionMixin<SchemaNodeIdentifier, AugmentStatement> {
     private final @NonNull SchemaNodeIdentifier argument;
-    private final @NonNull QNameModule rootModuleQName;
     private final int flags;
 
     public AugmentEffectiveStatementImpl(final AugmentStatement declared, final SchemaNodeIdentifier argument,
-            final int flags, final QNameModule rootModuleQName,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);
-        this.rootModuleQName = requireNonNull(rootModuleQName);
         this.flags = flags;
     }
 
@@ -61,11 +56,6 @@ public final class AugmentEffectiveStatementImpl
     @Override
     public DataSchemaNode dataChildByName(final QName name) {
         return dataSchemaNode(name);
-    }
-
-    @Override
-    public QNameModule getQNameModule() {
-        return rootModuleQName;
     }
 
     @Override
