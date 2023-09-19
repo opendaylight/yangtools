@@ -51,10 +51,8 @@ abstract class AbstractAugmentStatementSupport
 
     AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
-            (copy, current, substatements) ->
-                copy.getArgument().equals(current.getArgument())
-                && copy.moduleName().getModule().equals(current.moduleName().getModule())
-            ), config, validator);
+            (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
+            config, validator);
     }
 
     @Override
@@ -136,8 +134,7 @@ abstract class AbstractAugmentStatementSupport
                 .toFlags();
 
         try {
-            return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags,
-                stmt.moduleName().getModule(), substatements);
+            return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags, substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
