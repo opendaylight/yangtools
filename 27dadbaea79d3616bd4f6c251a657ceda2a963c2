@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8820e8a6_22bb67f7",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/YT1473Test.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-09-21T10:54:14Z",
+      "side": 1,
+      "message": "id2 is not used",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e854b40_dab99977",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-09-21T10:54:14Z",
+      "side": 1,
+      "message": "private static final Comparator\u003cMap.Entry\u003cString, Integer\u003e\u003e BY_OFFSET \u003d Map.Entry.comparingByValue();",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59168383_9d366c22",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-09-21T10:54:14Z",
+      "side": 1,
+      "message": "requireNonNull(selectedBitNames.forEach(bitName -\u003e validateBitName(offsetMap, bitName)));",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "22a34130_dfecf8c1",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-09-21T10:54:14Z",
+      "side": 1,
+      "message": "bytes cannot be annotated",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b47064b9_fcd0c945",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-09-21T10:54:14Z",
+      "side": 1,
+      "message": "valueMap.forEach((key, value) -\u003e assertEquals(value, bits1.isBitSet(key)));",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad1779d3_5b8f3a37",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-09-21T10:54:14Z",
+      "side": 1,
+      "message": "valueMap.forEach((key, value) -\u003e assertEquals(value, bits1.isBitSet(key)));",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "417e55fd_c2d07c1f",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-09-21T10:54:14Z",
+      "side": 1,
+      "message": "valueMap.forEach((key, value) -\u003e assertEquals(value, bits1.isBitSet(key)));",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d47e3b76_ee27029f",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2023-09-21T10:54:14Z",
+      "side": 1,
+      "message": "testDesc is not used",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
