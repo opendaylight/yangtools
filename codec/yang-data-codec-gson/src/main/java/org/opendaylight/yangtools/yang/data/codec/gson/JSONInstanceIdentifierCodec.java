@@ -104,6 +104,12 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
 
     @Override
     public final void writeValue(final JsonWriter ctx, final YangInstanceIdentifier value) throws IOException {
-        ctx.value(serialize(value));
+        final String str;
+        try {
+            str = serialize(value);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Failed to encode instance-identifier", e);
+        }
+        ctx.value(str);
     }
 }

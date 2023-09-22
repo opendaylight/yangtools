@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2023 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.codec.xml;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import javax.xml.stream.XMLStreamException;
+import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
+
+class YT1542Test {
+    @Test
+    void writeInstanceIdentifierReportsIOException() {
+        final var codec = XmlCodecFactory.create(YangParserTestUtils.parseYang()).instanceIdentifierCodec();
+        final var ex = assertThrows(XMLStreamException.class, () -> codec.writeValue(null,
+            YangInstanceIdentifier.of(QName.create("foo", "bar"))));
+        assertEquals("Failed to encode instance-identifier", ex.getMessage());
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+    }
+}
