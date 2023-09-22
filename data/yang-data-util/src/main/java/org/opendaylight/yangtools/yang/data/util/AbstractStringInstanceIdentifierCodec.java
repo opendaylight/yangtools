@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -50,8 +49,10 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         QNameModule lastModule = null;
         for (var arg : data.getPathArguments()) {
             current = current instanceof Composite composite ? composite.childByArg(arg) : null;
-            checkArgument(current != null, "Invalid input %s: schema for argument %s (after %s) not found", data, arg,
-                    sb);
+            if (current == null) {
+                throw new IllegalArgumentException(
+                    "Invalid input %s: schema for argument %s (after \"%s\") not found".formatted(data, arg, sb));
+            }
 
             if (current instanceof PathMixin) {
                 /*
