@@ -47,23 +47,23 @@ abstract class XMLStreamWriterUtils {
      */
     String encodeValue(final @NonNull ValueWriter writer, final @NonNull TypeDefinition<?> type,
             final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
-        if (type instanceof IdentityrefTypeDefinition) {
-            return encode(writer, (IdentityrefTypeDefinition) type, value, parent);
-        } else if (type instanceof InstanceIdentifierTypeDefinition) {
-            return encode(writer, (InstanceIdentifierTypeDefinition) type, value);
-        } else if (value instanceof QName && isIdentityrefUnion(type)) {
+        if (type instanceof IdentityrefTypeDefinition identityref) {
+            return encode(writer, identityref, value, parent);
+        } else if (type instanceof InstanceIdentifierTypeDefinition instanceIdentifier) {
+            return encode(writer, instanceIdentifier, value);
+        } else if (value instanceof QName qname && isIdentityrefUnion(type)) {
             // Ugly special-case form unions with identityrefs
-            return encode(writer, (QName) value, parent);
-        } else if (value instanceof YangInstanceIdentifier && isInstanceIdentifierUnion(type)) {
-            return encodeInstanceIdentifier(writer, (YangInstanceIdentifier) value);
+            return encode(writer, qname, parent);
+        } else if (value instanceof YangInstanceIdentifier instanceIdentifier && isInstanceIdentifierUnion(type)) {
+            return encodeInstanceIdentifier(writer, instanceIdentifier);
         } else {
             return serialize(type, value);
         }
     }
 
     private static boolean isIdentityrefUnion(final TypeDefinition<?> type) {
-        if (type instanceof UnionTypeDefinition) {
-            for (TypeDefinition<?> subtype : ((UnionTypeDefinition) type).getTypes()) {
+        if (type instanceof UnionTypeDefinition union) {
+            for (var subtype : union.getTypes()) {
                 if (subtype instanceof IdentityrefTypeDefinition || isIdentityrefUnion(subtype)) {
                     return true;
                 }
@@ -73,8 +73,8 @@ abstract class XMLStreamWriterUtils {
     }
 
     private boolean isInstanceIdentifierUnion(final TypeDefinition<?> type) {
-        if (type instanceof UnionTypeDefinition) {
-            for (TypeDefinition<?> subtype : ((UnionTypeDefinition) type).getTypes()) {
+        if (type instanceof UnionTypeDefinition union) {
+            for (var subtype : union.getTypes()) {
                 if (subtype instanceof InstanceIdentifierTypeDefinition || isInstanceIdentifierUnion(subtype)) {
                     return true;
                 }
@@ -84,7 +84,7 @@ abstract class XMLStreamWriterUtils {
     }
 
     private static String serialize(final @NonNull TypeDefinition<?> type, final @NonNull Object value) {
-        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
+        final var codec = TypeDefinitionAwareCodec.from(type);
         if (codec == null) {
             LOG.warn("Failed to find codec for {}, falling back to using stream", type);
             return value.toString();
@@ -107,19 +107,19 @@ abstract class XMLStreamWriterUtils {
             return qname.getLocalName();
         }
 
-        final String ns = qname.getNamespace().toString();
-        final String prefix = "x";
+        final var ns = qname.getNamespace().toString();
+        final var prefix = "x";
         writer.writeNamespace(prefix, ns);
         return prefix + ':' + qname.getLocalName();
     }
 
     private static String encode(final @NonNull ValueWriter writer, final @NonNull IdentityrefTypeDefinition type,
             final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
-        if (value instanceof QName) {
-            return encode(writer, (QName) value, parent);
+        if (value instanceof QName qname) {
+            return encode(writer, qname, parent);
         }
 
-        final QName qname = type.getQName();
+        final var qname = type.getQName();
         if (IDENTITYREF_WARNED.add(qname)) {
             LOG.warn("Value of {}:{} is not a QName but {}. Please the source of this data", qname.getNamespace(),
                 qname.getLocalName(), value.getClass(), new Throwable());
@@ -129,11 +129,11 @@ abstract class XMLStreamWriterUtils {
 
     private String encode(final @NonNull ValueWriter writer, final @NonNull InstanceIdentifierTypeDefinition type,
             final @NonNull Object value) throws XMLStreamException {
-        if (value instanceof YangInstanceIdentifier) {
-            return encodeInstanceIdentifier(writer, (YangInstanceIdentifier)value);
+        if (value instanceof YangInstanceIdentifier instanceIdentifier) {
+            return encodeInstanceIdentifier(writer, instanceIdentifier);
         }
 
-        final QName qname = type.getQName();
+        final var qname = type.getQName();
         LOG.warn("Value of {}:{} is not an InstanceIdentifier but {}", qname.getNamespace(), qname.getLocalName(),
             value.getClass());
         return value.toString();
