@@ -19,9 +19,11 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifier> {
     private final @NonNull XmlCodecFactory codecFactory;
     private final DataSchemaContextTree dataContextTree;
+    private final PreferredPrefixes nidekOprefixes;
 
-    InstanceIdentifierXmlCodec(final XmlCodecFactory codecFactory) {
+    InstanceIdentifierXmlCodec(final XmlCodecFactory codecFactory, final PreferredPrefixes prefixResolver) {
         this.codecFactory = requireNonNull(codecFactory);
+        nidekOprefixes = requireNonNull(prefixResolver);
         dataContextTree = DataSchemaContextTree.from(codecFactory.getEffectiveModelContext());
     }
 
@@ -38,7 +40,8 @@ final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifie
 
     @Override
     public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value) throws XMLStreamException {
-        final var serializer = new InstanceIdentifierSerializer(dataContextTree, ctx.getNamespaceContext());
+        final var serializer = new InstanceIdentifierSerializer(dataContextTree, nidekOprefixes,
+            ctx.getNamespaceContext());
 
         final String str;
         try {
@@ -46,7 +49,7 @@ final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifie
         } catch (IllegalArgumentException e) {
             throw new XMLStreamException("Failed to encode instance-identifier", e);
         }
-        for (var entry : serializer.getPrefixes()) {
+        for (var entry : serializer.emittedPrefixes()) {
             ctx.writeNamespace(entry.getValue(), entry.getKey().toString());
         }
         ctx.writeCharacters(str);
