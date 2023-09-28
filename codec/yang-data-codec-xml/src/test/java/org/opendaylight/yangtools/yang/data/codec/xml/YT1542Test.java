@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.junit.jupiter.api.Test;
@@ -25,10 +27,14 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 class YT1542Test {
     @Mock
     private XMLStreamWriter writer;
+    @Mock
+    private NamespaceContext context;
 
     @Test
-    void writeInstanceIdentifierReportsIOException() {
+    void writeInstanceIdentifierReportsIOException() throws XMLStreamException {
         final var codec = XmlCodecFactory.create(YangParserTestUtils.parseYang()).instanceIdentifierCodec();
+
+        doReturn(context).when(writer).getNamespaceContext();
         final var ex = assertThrows(XMLStreamException.class, () -> codec.writeValue(writer,
             YangInstanceIdentifier.of(QName.create("foo", "bar"))));
         assertEquals("Failed to encode instance-identifier", ex.getMessage());
