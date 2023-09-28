@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -36,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
-        extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements EffectiveModelContextProvider {
+        extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> {
     private final NormalizedNodeStreamWriterStack tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
@@ -140,11 +139,6 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             return true;
         }
         return false;
-    }
-
-    @Override
-    public EffectiveModelContext getEffectiveModelContext() {
-        return streamUtils.getEffectiveModelContext();
     }
 
     @Override
