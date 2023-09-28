@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.util.EmptyMountPointContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -49,13 +49,15 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  * A thread-safe factory for instantiating {@link XmlCodec}s.
  */
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
-    private final MountPointContext mountCtx;
-    private final InstanceIdentifierXmlCodec instanceIdentifierCodec;
+    private final @NonNull MountPointContext mountCtx;
+    private final @NonNull PreferredPrefixes pref;
+    private final @NonNull InstanceIdentifierXmlCodec instanceIdentifierCodec;
 
     private XmlCodecFactory(final MountPointContext mountCtx) {
         super(mountCtx.getEffectiveModelContext(), new SharedCodecCache<>());
         this.mountCtx = requireNonNull(mountCtx);
-        instanceIdentifierCodec = new InstanceIdentifierXmlCodec(this);
+        pref = new PreferredPrefixes.Shared(getEffectiveModelContext());
+        instanceIdentifierCodec = new InstanceIdentifierXmlCodec(this, pref);
     }
 
     MountPointContext mountPointContext() {
@@ -109,7 +111,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
-        return new IdentityrefXmlCodec(getEffectiveModelContext(), module);
+        return new IdentityrefXmlCodec(getEffectiveModelContext(), pref, module);
     }
 
     @Override
