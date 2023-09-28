@@ -48,10 +48,12 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  */
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     private final MountPointContext mountCtx;
+    private final InstanceIdentifierXmlCodec instanceIdentifierCodec;
 
     private XmlCodecFactory(final MountPointContext mountCtx) {
         super(mountCtx.getEffectiveModelContext(), new SharedCodecCache<>());
         this.mountCtx = requireNonNull(mountCtx);
+        instanceIdentifierCodec = new InstanceIdentifierXmlCodec(this);
     }
 
     MountPointContext mountPointContext() {
@@ -110,12 +112,12 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
-        return instanceIdentifierCodec();
+        return instanceIdentifierCodec;
     }
 
     @Override
     public XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
-        return new XmlStringInstanceIdentifierCodec(this);
+        return instanceIdentifierCodec;
     }
 
     @Override
