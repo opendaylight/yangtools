@@ -40,11 +40,16 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     private final NormalizedNodeStreamWriterStack tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
-    SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final EffectiveModelContext context,
-            final NormalizedNodeStreamWriterStack tracker) {
-        super(writer);
+    private SchemaAwareXMLStreamNormalizedNodeStreamWriter(final PreferredPrefixes pref, final XMLStreamWriter writer,
+            final EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker) {
+        super(pref, writer);
         this.tracker = requireNonNull(tracker);
-        streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
+        streamUtils = new SchemaAwareXMLStreamWriterUtils(modelContext, pref);
+    }
+
+    SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer,
+            final EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker) {
+        this(new PreferredPrefixes.Shared(modelContext), writer, modelContext, tracker);
     }
 
     @Override

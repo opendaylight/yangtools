@@ -15,18 +15,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
-class RandomPrefixTest {
+class NamespacePrefixesTest {
     static final int MAX_COUNTER = 4000;
 
     @Test
     void testEncodeDecode() {
         final var allGenerated = new ArrayList<>(MAX_COUNTER);
         for (int i = 0; i < MAX_COUNTER; i++) {
-            final var encoded = RandomPrefix.encode(i);
-            assertEquals(RandomPrefix.decode(encoded), i);
+            final var encoded = NamespacePrefixes.encode(i);
+            assertEquals(decode(encoded), i);
             allGenerated.add(encoded);
         }
 
@@ -38,17 +40,17 @@ class RandomPrefixTest {
 
     @Test
     void testQNameWithPrefix() {
-        final var a = new RandomPrefix(null);
+        final var a = new NamespacePrefixes(PreferredPrefixes.empty(), null);
 
         final var allGenerated = new ArrayList<String>();
         for (int i = 0; i < MAX_COUNTER; i++) {
-            allGenerated.add(a.encodePrefix(XMLNamespace.of("localhost:" + RandomPrefix.encode(i))));
+            allGenerated.add(a.encodePrefix(XMLNamespace.of("localhost:" + NamespacePrefixes.encode(i))));
         }
 
         assertEquals(MAX_COUNTER, allGenerated.size());
         // We are generating MAX_COUNTER_VALUE + 27 prefixes total, so we should encounter a reset in prefix a start
         // from 0 at some point. At the end, there should be only 27 values in RandomPrefix cache
-        assertEquals(MAX_COUNTER, Iterables.size(a.getPrefixes()));
+        assertEquals(MAX_COUNTER, a.emittedPrefixes().size());
         assertThat(allGenerated, not(hasItem("xml")));
         assertThat(allGenerated, not(hasItem("xmla")));
         assertThat(allGenerated, not(hasItem("xmlz")));
@@ -58,20 +60,35 @@ class RandomPrefixTest {
 
     @Test
     void test2QNames1Namespace() {
-        final var a = new RandomPrefix(null);
+        final var a = new NamespacePrefixes(PreferredPrefixes.empty(), null);
 
         final var uri = XMLNamespace.of("localhost");
 
         assertEquals(a.encodePrefix(uri), a.encodePrefix(uri));
+        assertEquals(List.of(Map.entry(uri, "a")), a.emittedPrefixes());
     }
 
     @Test
     void testQNameNoPrefix() {
-        final var a = new RandomPrefix(null);
+        final var a = new NamespacePrefixes(PreferredPrefixes.empty(), null);
 
         final var uri = XMLNamespace.of("localhost");
+        final var second = XMLNamespace.of("second");
         assertEquals("a", a.encodePrefix(uri));
         assertEquals("a", a.encodePrefix(uri));
-        assertEquals("b", a.encodePrefix(XMLNamespace.of("second")));
+        assertEquals("b", a.encodePrefix(second));
+        assertEquals(List.of(Map.entry(uri, "a"), Map.entry(second, "b")), a.emittedPrefixes());
+    }
+
+    private static int decode(final String str) {
+        int ret = 0;
+        for (char c : str.toCharArray()) {
+            int idx = NamespacePrefixes.LOOKUP.indexOf(c);
+            if (idx == -1) {
+                throw new IllegalArgumentException("Invalid string " + str);
+            }
+            ret = (ret << NamespacePrefixes.SHIFT) + idx;
+        }
+        return ret;
     }
 }
