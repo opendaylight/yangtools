@@ -13,7 +13,7 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
  * Extension of {@link AbstractStringInstanceIdentifierCodec}, which instantiates
@@ -28,12 +28,12 @@ public abstract class AbstractModuleStringInstanceIdentifierCodec extends Abstra
      * @param prefix Prefix
      * @return module mapped to prefix, or null if the module cannot be resolved
      */
-    protected abstract @Nullable Module moduleForPrefix(@NonNull String prefix);
+    protected abstract @Nullable ModuleEffectiveStatement moduleForPrefix(@NonNull String prefix);
 
     @Override
     protected final QName createQName(final String prefix, final String localName) {
-        final Module module = moduleForPrefix(prefix);
+        final var module = moduleForPrefix(prefix);
         checkArgument(module != null, "Failed to lookup prefix %s", prefix);
-        return QName.create(module.getQNameModule(), localName);
+        return QName.create(module.localQNameModule(), localName);
     }
 }
