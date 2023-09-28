@@ -60,8 +60,8 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
 
     private final @NonNull StreamWriterFacade facade;
 
-    XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
-        facade = new StreamWriterFacade(writer);
+    XMLStreamNormalizedNodeStreamWriter(final PreferredPrefixes pref, final XMLStreamWriter writer) {
+        facade = new StreamWriterFacade(pref, writer);
     }
 
     /**
