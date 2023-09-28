@@ -12,18 +12,28 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
+@ExtendWith(MockitoExtension.class)
 class YT1542Test {
+    @Mock
+    private XMLStreamWriter writer;
+
     @Test
     void writeInstanceIdentifierReportsIOException() {
         final var codec = XmlCodecFactory.create(YangParserTestUtils.parseYang()).instanceIdentifierCodec();
-        final var ex = assertThrows(XMLStreamException.class, () -> codec.writeValue(null,
+        final var ex = assertThrows(XMLStreamException.class, () -> codec.writeValue(writer,
             YangInstanceIdentifier.of(QName.create("foo", "bar"))));
         assertEquals("Failed to encode instance-identifier", ex.getMessage());
-        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        final var cause = assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertEquals("Invalid input /(foo)bar: schema for argument (foo)bar (after \"\") not found",
+            cause.getMessage());
     }
 }
