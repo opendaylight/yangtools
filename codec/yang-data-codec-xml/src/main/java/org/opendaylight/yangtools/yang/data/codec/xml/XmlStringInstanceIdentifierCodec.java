@@ -92,7 +92,8 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value) throws XMLStreamException {
         final String str;
         try {
-            str = serialize(value);
+            str = new SchemaAwareXMLStreamWriterUtils(modelContext())
+                .encodeInstanceIdentifier(new StreamWriterFacade(ctx), value);
         } catch (IllegalArgumentException e) {
             throw new XMLStreamException("Failed to encode instance-identifier", e);
         }
