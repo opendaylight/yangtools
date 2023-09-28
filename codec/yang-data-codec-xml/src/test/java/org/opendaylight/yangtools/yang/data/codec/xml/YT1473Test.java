@@ -24,8 +24,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -59,7 +57,7 @@ class YT1473Test {
         final var modelContext = YangParserTestUtils.parseYang("""
             module bar {
               namespace barns;
-              prefix bar;
+              prefix b;
 
               import foo {
                 prefix foo;
@@ -93,7 +91,7 @@ class YT1473Test {
             }""", """
             module foo {
               namespace foons;
-              prefix foo;
+              prefix f;
               identity one;
 
               typedef bitz {
@@ -148,112 +146,121 @@ class YT1473Test {
     @Test
     void testSerializeSimple() throws Exception {
         // No escaping needed, use single quotes
-        assertBar("/a:str[.='str\"']", buildYangInstanceIdentifier(BAR_STR, "str\""));
-        assertBar("/a:str[.='str\\']", buildYangInstanceIdentifier(BAR_STR, "str\\"));
-        assertBar("/a:str[.='str\r']", buildYangInstanceIdentifier(BAR_STR, "str\r"));
-        assertBar("/a:str[.='str\n']", buildYangInstanceIdentifier(BAR_STR, "str\n"));
-        assertBar("/a:str[.='str\t']", buildYangInstanceIdentifier(BAR_STR, "str\t"));
+        assertBar("/b:str[.='str\"']", createIdentifier(BAR_STR, "str\""));
+        assertBar("/b:str[.='str\\']", createIdentifier(BAR_STR, "str\\"));
+        assertBar("/b:str[.='str\r']", createIdentifier(BAR_STR, "str\r"));
+        assertBar("/b:str[.='str\n']", createIdentifier(BAR_STR, "str\n"));
+        assertBar("/b:str[.='str\t']", createIdentifier(BAR_STR, "str\t"));
 
-        assertFoo("/a:foo[a:str='str\"\\']", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\"\\"));
-        assertFoo("/a:foo[a:str='str\r\n\t']", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str\r\n\t"));
+        assertFoo("/f:foo[f:str='str\"\\']", createIdentifier(FOO_FOO, FOO_STR, "str\"\\"));
+        assertFoo("/f:foo[f:str='str\r\n\t']", createIdentifier(FOO_FOO, FOO_STR, "str\r\n\t"));
     }
 
     @Test
     void testSerializeEscaped() throws Exception {
         // Escaping is needed, use double quotes and escape
-        assertBar("/a:str[.=\"str'\\\"\"]", buildYangInstanceIdentifier(BAR_STR, "str'\""));
-        assertBar("/a:str[.=\"str'\\n\"]", buildYangInstanceIdentifier(BAR_STR, "str'\n"));
-        assertBar("/a:str[.=\"str'\\t\"]", buildYangInstanceIdentifier(BAR_STR, "str'\t"));
-        assertBar("/a:str[.=\"str'\r\"]", buildYangInstanceIdentifier(BAR_STR, "str'\r"));
+        assertBar("/b:str[.=\"str'\\\"\"]", createIdentifier(BAR_STR, "str'\""));
+        assertBar("/b:str[.=\"str'\\n\"]", createIdentifier(BAR_STR, "str'\n"));
+        assertBar("/b:str[.=\"str'\\t\"]", createIdentifier(BAR_STR, "str'\t"));
+        assertBar("/b:str[.=\"str'\r\"]", createIdentifier(BAR_STR, "str'\r"));
 
-        assertFoo("/a:foo[a:str=\"str'\\\"\\n\"]", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\"\n"));
-        assertFoo("/a:foo[a:str=\"str'\\t\r\"]", buildYangInstanceIdentifier(FOO_FOO, FOO_STR, "str'\t\r"));
+        assertFoo("/f:foo[f:str=\"str'\\\"\\n\"]", createIdentifier(FOO_FOO, FOO_STR, "str'\"\n"));
+        assertFoo("/f:foo[f:str=\"str'\\t\r\"]", createIdentifier(FOO_FOO, FOO_STR, "str'\t\r"));
     }
 
     @Test
     void testSerializeIdentity() throws Exception {
-        assertFoo("/a:bar[a:qname='a:one']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE));
-        assertFooBar("/a:bar[a:qname='b:two']", buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO));
+        assertFoo("/f:bar[f:qname='f:one']", createIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE));
+        assertFooBar("/f:bar[f:qname='b:two']", createIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO));
     }
 
     @Test
     void testSerializeInstanceIdentifierRef() throws Exception {
-        assertFooBar("/a:baz[a:id=\"/a:bar[a:qname='b:two']\"]",
-            buildYangInstanceIdentifier(FOO_BAZ, FOO_ID, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
+        assertFooBar("/f:baz[f:id=\"/f:bar[f:qname='b:two']\"]",
+            createIdentifier(FOO_BAZ, FOO_ID, createIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
     }
 
     @Test
     void testSerializeIdentityValue() throws Exception {
-        assertBarFoo("/a:foo[.='b:one']", buildYangInstanceIdentifier(BAR_FOO, FOO_ONE));
-        assertBar("/a:foo[.='a:two']", buildYangInstanceIdentifier(BAR_FOO, BAR_TWO));
+        assertFooBar("/b:foo[.='f:one']", createIdentifier(BAR_FOO, FOO_ONE));
+        assertBar("/b:foo[.='b:two']", createIdentifier(BAR_FOO, BAR_TWO));
     }
 
     @Test
     void testSerializeInstanceIdentifierValue() throws Exception {
-        assertBarFoo("/a:bar[.=\"/b:bar[b:qname='b:one']\"]",
-            buildYangInstanceIdentifier(BAR_BAR, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)));
-        assertBarFoo("/a:bar[.=\"/b:bar[b:qname='a:two']\"]",
-            buildYangInstanceIdentifier(BAR_BAR, buildYangInstanceIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
+        assertFooBar("/b:bar[.=\"/f:bar[f:qname='f:one']\"]",
+            createIdentifier(BAR_BAR, createIdentifier(FOO_BAR, FOO_QNAME, FOO_ONE)));
+        assertFooBar("/b:bar[.=\"/f:bar[f:qname='b:two']\"]",
+            createIdentifier(BAR_BAR, createIdentifier(FOO_BAR, FOO_QNAME, BAR_TWO)));
     }
 
     @Test
     void testSerializeBits() throws Exception {
-        assertFoo("/a:bee[a:bts='']", buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of()));
-        assertFoo("/a:bee[a:bts='one']", buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("one")));
-        assertFoo("/a:bee[a:bts='two three']",
-            buildYangInstanceIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("two", "three")));
+        assertFoo("/f:bee[f:bts='']", createIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of()));
+        assertFoo("/f:bee[f:bts='one']", createIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("one")));
+        assertFoo("/f:bee[f:bts='two three']",
+            createIdentifier(FOO_BEE, FOO_BTS, ImmutableSet.of("two", "three")));
     }
 
     @Test
     void testSerializeBitsValue() throws Exception {
-        assertBar("/a:bee[.='']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of()));
-        assertBar("/a:bee[.='one']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of("one")));
-        assertBar("/a:bee[.='two three']", buildYangInstanceIdentifier(BAR_BEE, ImmutableSet.of("two", "three")));
-    }
-
-    private static void assertFoo(final String expected, final YangInstanceIdentifier id) throws Exception {
-        final var context = mock(NamespaceContext.class);
-        doReturn("foons").when(context).getNamespaceURI("a");
-        assertSerdes(context, expected, id);
-    }
-
-    private static void assertFooBar(final String expected, final YangInstanceIdentifier id) throws Exception {
-        final var context = mock(NamespaceContext.class);
-        doReturn("foons").when(context).getNamespaceURI("a");
-        doReturn("barns").when(context).getNamespaceURI("b");
-        assertSerdes(context, expected, id);
+        assertBar("/b:bee[.='']", createIdentifier(BAR_BEE, ImmutableSet.of()));
+        assertBar("/b:bee[.='one']", createIdentifier(BAR_BEE, ImmutableSet.of("one")));
+        assertBar("/b:bee[.='two three']", createIdentifier(BAR_BEE, ImmutableSet.of("two", "three")));
     }
 
     private static void assertBar(final String expected, final YangInstanceIdentifier id) throws Exception {
-        final var context = mock(NamespaceContext.class);
-        doReturn("barns").when(context).getNamespaceURI("a");
-        assertSerdes(context, expected, id);
+        final var writer = mockWriter();
+        doNothing().when(writer).writeNamespace("b", "barns");
+
+        final var reader = mock(NamespaceContext.class);
+        doReturn("barns").when(reader).getNamespaceURI("b");
+        assertSerdes(reader, writer, expected, id);
     }
 
-    private static void assertBarFoo(final String expected, final YangInstanceIdentifier id) throws Exception {
-        final var context = mock(NamespaceContext.class);
-        doReturn("barns").when(context).getNamespaceURI("a");
-        doReturn("foons").when(context).getNamespaceURI("b");
-        assertSerdes(context, expected, id);
+    private static void assertFoo(final String expected, final YangInstanceIdentifier id) throws Exception {
+        final var writer = mockWriter();
+        doNothing().when(writer).writeNamespace("f", "foons");
+
+        final var reader = mock(NamespaceContext.class);
+        doReturn("foons").when(reader).getNamespaceURI("f");
+
+        assertSerdes(reader, writer, expected, id);
     }
 
-    private static void assertSerdes(final NamespaceContext context, final String expected,
-            final YangInstanceIdentifier id) throws Exception {
-        final var writer = mock(XMLStreamWriter.class);
+    private static void assertFooBar(final String expected, final YangInstanceIdentifier id) throws Exception {
+        final var writer = mockWriter();
+        doNothing().when(writer).writeNamespace("f", "foons");
+        doNothing().when(writer).writeNamespace("b", "barns");
+
+        final var reader = mock(NamespaceContext.class);
+        doReturn("foons").when(reader).getNamespaceURI("f");
+        doReturn("barns").when(reader).getNamespaceURI("b");
+
+        assertSerdes(reader, writer, expected, id);
+    }
+
+    private static void assertSerdes(final NamespaceContext reader, final XMLStreamWriter writer,
+            final String expected, final YangInstanceIdentifier id) throws Exception {
+        assertEquals(id, CODEC.parseValue(reader, expected));
+
         final var captor = ArgumentCaptor.forClass(String.class);
         doNothing().when(writer).writeCharacters(captor.capture());
         CODEC.writeValue(writer, id);
         assertEquals(expected, captor.getValue());
-
-        assertEquals(id, CODEC.parseValue(context, expected));
     }
 
-    private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final QName key,
-            final Object value) {
-        return YangInstanceIdentifier.of(new NodeIdentifier(node), NodeIdentifierWithPredicates.of(node, key, value));
+    private static XMLStreamWriter mockWriter() {
+        final var writer = mock(XMLStreamWriter.class);
+        doReturn(null).when(writer).getNamespaceContext();
+        return writer;
     }
 
-    private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final Object value) {
-        return YangInstanceIdentifier.of(new NodeIdentifier(node), new NodeWithValue<>(node, value));
+    private static YangInstanceIdentifier createIdentifier(final QName node, final QName key, final Object value) {
+        return YangInstanceIdentifier.builder().node(node).nodeWithKey(node, key, value).build();
+    }
+
+    private static YangInstanceIdentifier createIdentifier(final QName node, final Object value) {
+        return YangInstanceIdentifier.builder().node(node).node(new NodeWithValue<>(node, value)).build();
     }
 }
