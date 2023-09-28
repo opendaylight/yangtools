@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 final class InstanceIdentifierDeserializer extends AbstractInstanceIdentifierCodec {
@@ -31,9 +31,10 @@ final class InstanceIdentifierDeserializer extends AbstractInstanceIdentifierCod
     }
 
     @Override
-    protected Module moduleForPrefix(final String prefix) {
+    protected ModuleEffectiveStatement moduleForPrefix(final String prefix) {
         final var prefixedNS = namespaceContext.getNamespaceURI(prefix);
-        final var modules = codecFactory.getEffectiveModelContext().findModules(XMLNamespace.of(prefixedNS)).iterator();
+        final var modules = codecFactory.getEffectiveModelContext().findModuleStatements(XMLNamespace.of(prefixedNS))
+            .iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
