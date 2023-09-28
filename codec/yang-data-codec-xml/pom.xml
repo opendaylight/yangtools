@@ -42,6 +42,11 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-util</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>mockito-configuration</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-impl</artifactId>
