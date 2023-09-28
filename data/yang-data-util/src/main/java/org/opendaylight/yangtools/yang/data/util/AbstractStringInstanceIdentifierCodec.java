@@ -7,19 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.Splitter;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
+import java.util.Iterator;
 import java.util.Set;
 import javax.xml.XMLConstants;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.codec.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
@@ -31,8 +36,10 @@ import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
  * Abstract utility class for representations which encode {@link YangInstanceIdentifier} as a
  * prefix:name tuple. Typical uses are RESTCONF/JSON (module:name) and XML (prefix:name).
  */
-public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec<YangInstanceIdentifier>
+public abstract class AbstractStringInstanceIdentifierCodec
+        extends AbstractIllegalArgumentCodec<String, YangInstanceIdentifier>
         implements InstanceIdentifierCodec<String> {
+    private static final Splitter COLON_SPLITTER = Splitter.on(':');
     // Escaper as per https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3
     private static final Escaper DQUOT_ESCAPER = Escapers.builder()
         .addEscape('\n', "\\n")
@@ -176,8 +183,16 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         return createQName(XMLConstants.DEFAULT_NS_PREFIX, localName);
     }
 
-    @Override
-    protected final QName createQName(final String prefix, final String localName) {
+    /**
+     * Create a QName for a prefix and local name.
+     *
+     * @param prefix Prefix for namespace
+     * @param localName local name
+     * @return QName
+     * @throws IllegalArgumentException if the {@code prefix} cannot be resolved or if the {@code localName} does not
+     *                                  conform to YANG requirements
+     */
+    final @NonNull QName createQName(final String prefix, final String localName) {
         final var module = moduleForPrefix(prefix);
         if (module != null) {
             return QName.create(module.localQNameModule(), localName);
@@ -199,5 +214,70 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
             return str;
         }
         throw new IllegalArgumentException("Unexpected bits component " + obj);
+    }
+
+    /**
+     * Return string prefix for a particular namespace, allocating a new one if necessary.
+     *
+     * @param namespace Namespace to map
+     * @return Allocated unique prefix, or null if the prefix cannot be mapped.
+     */
+    protected abstract @Nullable String prefixForNamespace(@NonNull XMLNamespace namespace);
+
+    private static String getIdAndPrefixAsStr(final String pathPart) {
+        int predicateStartIndex = pathPart.indexOf('[');
+        return predicateStartIndex == -1 ? pathPart : pathPart.substring(0, predicateStartIndex);
+    }
+
+    private @NonNull StringBuilder appendQName(final StringBuilder sb, final QName qname) {
+        final String prefix = prefixForNamespace(qname.getNamespace());
+        checkArgument(prefix != null, "Failed to map QName %s to prefix", qname);
+        return sb.append(prefix).append(':').append(qname.getLocalName());
+    }
+
+    /**
+     * Append a QName, potentially taking into account last QNameModule encountered in the serialized path.
+     *
+     * @param sb target StringBuilder
+     * @param qname QName to append
+     * @param lastModule last QNameModule encountered, may be null
+     * @return target StringBuilder
+     */
+    protected StringBuilder appendQName(final StringBuilder sb, final QName qname,
+            final @Nullable QNameModule lastModule) {
+        // Covers XML and uncompressed JSON codec
+        return appendQName(sb, qname);
+    }
+
+    protected final QName parseQName(final String str) {
+        final String xPathPartTrimmed = getIdAndPrefixAsStr(str).trim();
+        final Iterator<String> it = COLON_SPLITTER.split(xPathPartTrimmed).iterator();
+
+        // Empty string
+        if (!it.hasNext()) {
+            return null;
+        }
+
+
+        final String first = it.next().trim();
+        if (first.isEmpty()) {
+            return null;
+        }
+
+        final String identifier;
+        final String prefix;
+        if (it.hasNext()) {
+            // It is "prefix:value"
+            prefix = first;
+            identifier = it.next().trim();
+        } else {
+            prefix = "";
+            identifier = first;
+        }
+        if (identifier.isEmpty()) {
+            return null;
+        }
+
+        return createQName(prefix, identifier);
     }
 }
