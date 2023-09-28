@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 
-abstract sealed class AbstractInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
+abstract sealed class AbstractInstanceIdentifierCodec extends AbstractStringInstanceIdentifierCodec
         permits InstanceIdentifierDeserializer, InstanceIdentifierSerializer {
     private final @NonNull DataSchemaContextTree dataContextTree;
 

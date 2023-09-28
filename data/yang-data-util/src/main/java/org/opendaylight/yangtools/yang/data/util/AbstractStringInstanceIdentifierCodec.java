@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
 import java.util.Set;
@@ -25,13 +24,13 @@ import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 /**
  * Abstract utility class for representations which encode {@link YangInstanceIdentifier} as a
  * prefix:name tuple. Typical uses are RESTCONF/JSON (module:name) and XML (prefix:name).
  */
-@Beta
 public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec<YangInstanceIdentifier>
         implements InstanceIdentifierCodec<String> {
     // Escaper as per https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3
@@ -176,6 +175,23 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         // which is the same thing: always encode prefixes
         return createQName(XMLConstants.DEFAULT_NS_PREFIX, localName);
     }
+
+    @Override
+    protected final QName createQName(final String prefix, final String localName) {
+        final var module = moduleForPrefix(prefix);
+        if (module != null) {
+            return QName.create(module.localQNameModule(), localName);
+        }
+        throw new IllegalArgumentException("Failed to lookup prefix " + prefix);
+    }
+
+    /**
+     * Resolve a string prefix into the corresponding module.
+     *
+     * @param prefix Prefix
+     * @return module mapped to prefix, or null if the module cannot be resolved
+     */
+    protected abstract @Nullable ModuleEffectiveStatement moduleForPrefix(@NonNull String prefix);
 
     // FIXME: YANGTOOLS-1426: this will not be necessary when we have dedicated bits type
     private static @NonNull String checkBitsItem(final Object obj) {
