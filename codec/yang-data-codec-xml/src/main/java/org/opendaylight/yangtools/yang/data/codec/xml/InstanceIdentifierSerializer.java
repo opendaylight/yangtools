@@ -11,18 +11,15 @@ import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-final class RandomPrefixInstanceIdentifierSerializer extends AbstractModuleStringInstanceIdentifierCodec {
-    private final @NonNull DataSchemaContextTree schemaTree;
+final class InstanceIdentifierSerializer extends AbstractInstanceIdentifierCodec {
     private final RandomPrefix prefixes;
 
-    RandomPrefixInstanceIdentifierSerializer(final @NonNull EffectiveModelContext schemaContext,
-            final NamespaceContext nsContext) {
-        schemaTree = DataSchemaContextTree.from(schemaContext);
+    InstanceIdentifierSerializer(final @NonNull EffectiveModelContext schemaContext, final NamespaceContext nsContext) {
+        super(DataSchemaContextTree.from(schemaContext));
         prefixes = new RandomPrefix(nsContext);
     }
 
@@ -31,17 +28,13 @@ final class RandomPrefixInstanceIdentifierSerializer extends AbstractModuleStrin
     }
 
     @Override
+    protected Module moduleForPrefix(final String prefix) {
+        // This is deserialize() path, we do not support that in this class
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
         return prefixes.encodePrefix(namespace);
-    }
-
-    @Override
-    protected DataSchemaContextTree getDataContextTree() {
-        return schemaTree;
-    }
-
-    @Override
-    protected Module moduleForPrefix(final String prefix) {
-        throw new UnsupportedOperationException("Not implemented");
     }
 }

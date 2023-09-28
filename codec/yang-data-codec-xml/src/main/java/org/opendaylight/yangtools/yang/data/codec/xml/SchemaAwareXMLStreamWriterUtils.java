@@ -28,7 +28,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     @Override
     String encodeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
-        final var iiCodec = new RandomPrefixInstanceIdentifierSerializer(modelContext, writer.getNamespaceContext());
+        final var iiCodec = new InstanceIdentifierSerializer(modelContext, writer.getNamespaceContext());
         final var serializedValue = iiCodec.serialize(value);
         for (var e : iiCodec.getPrefixes()) {
             writer.writeNamespace(e.getValue(), e.getKey().toString());
