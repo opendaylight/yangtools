@@ -7,29 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
-public class RandomPrefixTest {
+class RandomPrefixTest {
     static final int MAX_COUNTER = 4000;
 
     @Test
-    public void testEncodeDecode() throws Exception {
-
-        final List<String> allGenerated = new ArrayList<>(MAX_COUNTER);
+    void testEncodeDecode() {
+        final var allGenerated = new ArrayList<>(MAX_COUNTER);
         for (int i = 0; i < MAX_COUNTER; i++) {
-            final String encoded = RandomPrefix.encode(i);
+            final var encoded = RandomPrefix.encode(i);
             assertEquals(RandomPrefix.decode(encoded), i);
             allGenerated.add(encoded);
         }
@@ -41,14 +40,14 @@ public class RandomPrefixTest {
     }
 
     @Test
-    public void testQNameWithPrefix() {
-        final RandomPrefix a = new RandomPrefix(null);
+    void testQNameWithPrefix() {
+        final var a = new RandomPrefix(null);
 
-        final List<String> allGenerated = new ArrayList<>();
+        final var allGenerated = new ArrayList<String>();
         for (int i = 0; i < MAX_COUNTER; i++) {
-            final String prefix = RandomPrefix.encode(i);
-            final XMLNamespace uri = XMLNamespace.of("localhost:" + prefix);
-            final QName qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
+            final var prefix = RandomPrefix.encode(i);
+            final var uri = XMLNamespace.of("localhost:" + prefix);
+            final var qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
             allGenerated.add(a.encodePrefix(qname.getNamespace()));
         }
 
@@ -56,35 +55,34 @@ public class RandomPrefixTest {
         // We are generating MAX_COUNTER_VALUE + 27 prefixes total, so we should encounter a reset in prefix a start
         // from 0 at some point. At the end, there should be only 27 values in RandomPrefix cache
         assertEquals(MAX_COUNTER, Iterables.size(a.getPrefixes()));
-        assertThat(allGenerated, CoreMatchers.not(CoreMatchers.hasItem("xml")));
-        assertThat(allGenerated, CoreMatchers.not(CoreMatchers.hasItem("xmla")));
-        assertThat(allGenerated, CoreMatchers.not(CoreMatchers.hasItem("xmlz")));
+        assertThat(allGenerated, not(hasItem("xml")));
+        assertThat(allGenerated, not(hasItem("xmla")));
+        assertThat(allGenerated, not(hasItem("xmlz")));
 
         assertEquals(1, Iterables.frequency(allGenerated, "a"));
     }
 
     @Test
-    public void test2QNames1Namespace() throws Exception {
-        final RandomPrefix a = new RandomPrefix(null);
+    void test2QNames1Namespace() {
+        final var a = new RandomPrefix(null);
 
-        final XMLNamespace uri = XMLNamespace.of("localhost");
-        final QName qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
-        final QName qname2 = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
+        final var uri = XMLNamespace.of("localhost");
+        final var qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
+        final var qname2 = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
 
         assertEquals(a.encodePrefix(qname.getNamespace()), a.encodePrefix(qname2.getNamespace()));
     }
 
     @Test
-    public void testQNameNoPrefix() throws Exception {
-        final RandomPrefix a = new RandomPrefix(null);
+    void testQNameNoPrefix() {
+        final var a = new RandomPrefix(null);
 
-        final XMLNamespace uri = XMLNamespace.of("localhost");
-        QName qname = QName.create(uri, Revision.of("2000-01-01"), "local-name");
+        final var uri = XMLNamespace.of("localhost");
+        var qname = QName.create(uri, Revision.of("2000-01-01"), "local-name");
         assertEquals("a", a.encodePrefix(qname.getNamespace()));
         qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
         assertEquals("a", a.encodePrefix(qname.getNamespace()));
         qname = QName.create(QNameModule.create(XMLNamespace.of("second"), Revision.of("2000-01-01")), "local-name");
         assertEquals("b", a.encodePrefix(qname.getNamespace()));
-
     }
 }
