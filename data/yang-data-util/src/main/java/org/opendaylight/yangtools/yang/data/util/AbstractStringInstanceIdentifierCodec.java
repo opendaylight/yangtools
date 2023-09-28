@@ -155,10 +155,8 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
      */
     protected abstract @NonNull DataSchemaContextTree getDataContextTree();
 
-    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
-            final String value) {
-        return value;
-    }
+    protected abstract @NonNull Object deserializeKeyValue(@NonNull DataSchemaNode schemaNode,
+        @NonNull LeafrefResolver resolver, String value);
 
     @Override
     protected final YangInstanceIdentifier deserializeImpl(final String data) {
