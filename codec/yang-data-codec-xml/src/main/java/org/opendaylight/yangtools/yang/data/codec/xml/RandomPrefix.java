@@ -17,7 +17,7 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
-class RandomPrefix {
+final class RandomPrefix {
     // 32 characters, carefully chosen
     private static final String LOOKUP = "abcdefghiknoprstABCDEFGHIKNOPRST";
     private static final int MASK = 0x1f;
@@ -31,6 +31,10 @@ class RandomPrefix {
 
     RandomPrefix(final NamespaceContext context) {
         this.context = context;
+    }
+
+    NamespaceContext context() {
+        return context;
     }
 
     Iterable<Entry<XMLNamespace, String>> getPrefixes() {

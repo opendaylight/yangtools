@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
@@ -28,11 +29,12 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     @Override
     String encodeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
-        final var iiCodec = new RandomPrefixInstanceIdentifierSerializer(modelContext, writer.getNamespaceContext());
-        final var serializedValue = iiCodec.serialize(value);
-        for (var e : iiCodec.getPrefixes()) {
-            writer.writeNamespace(e.getValue(), e.getKey().toString());
+        final var serializer = new InstanceIdentifierSerializer(DataSchemaContextTree.from(modelContext),
+            writer.getNamespaceContext());
+        final var str = serializer.serialize(value);
+        for (var entry : serializer.getPrefixes()) {
+            writer.writeNamespace(entry.getValue(), entry.getKey().toString());
         }
-        return serializedValue;
+        return str;
     }
 }
