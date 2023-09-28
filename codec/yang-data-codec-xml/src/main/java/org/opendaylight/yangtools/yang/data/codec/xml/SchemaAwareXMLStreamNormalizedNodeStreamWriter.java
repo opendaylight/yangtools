@@ -155,8 +155,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
-        if (current instanceof TypedDataSchemaNode) {
-            writeValue(value, (TypedDataSchemaNode) current);
+        if (current instanceof TypedDataSchemaNode typedSchema) {
+            writeValue(value, typedSchema);
         } else if (current instanceof AnydataSchemaNode) {
             anydataValue(value);
         } else {
@@ -177,9 +177,9 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     }
 
     private @NonNull TypeDefinition<?> resolveType(final @NonNull TypeDefinition<?> type) throws XMLStreamException {
-        if (type instanceof LeafrefTypeDefinition) {
+        if (type instanceof LeafrefTypeDefinition leafref) {
             try {
-                return tracker.resolveLeafref((LeafrefTypeDefinition) type);
+                return tracker.resolveLeafref(leafref);
             } catch (IllegalArgumentException e) {
                 throw new XMLStreamException("Cannot resolve type " + type, e);
             }
