@@ -36,7 +36,7 @@ class YT1543Test {
         MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module foo {
               namespace foons;
-              prefix foop;
+              prefix fo;
 
               container foo {
                 leaf leaf {
@@ -46,7 +46,7 @@ class YT1543Test {
             }""", """
             module bar {
               namespace barns;
-              prefix barp;
+              prefix br;
 
               list bar {
                 key key;
@@ -57,7 +57,7 @@ class YT1543Test {
             }""", """
             module baz {
               namespace bazns;
-              prefix bazp;
+              prefix bz;
 
               container baz;
             }""");
@@ -79,7 +79,7 @@ class YT1543Test {
         }
 
         assertEquals("""
-            <foo xmlns="foons"><leaf xmlns:a="barns" xmlns:b="bazns">/a:bar[a:key='/b:baz']</leaf></foo>""",
+            <foo xmlns="foons"><leaf xmlns:br="barns" xmlns:bz="bazns">/br:bar[br:key='/bz:baz']</leaf></foo>""",
             stringWriter.toString());
     }
 
@@ -97,7 +97,7 @@ class YT1543Test {
         xmlWriter.close();
 
         assertEquals("""
-            <foo xmlns="foons"><leaf xmlns:a="barns" xmlns:b="bazns">/a:bar[a:key='/b:baz']</leaf></foo>""",
+            <foo xmlns="foons"><leaf xmlns:br="barns" xmlns:bz="bazns">/br:bar[br:key='/bz:baz']</leaf></foo>""",
             stringWriter.toString());
     }
 }
