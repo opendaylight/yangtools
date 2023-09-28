@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
-abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
+abstract sealed class JSONInstanceIdentifierCodec extends AbstractStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
     static final class Lhotka02 extends JSONInstanceIdentifierCodec {
         Lhotka02(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
