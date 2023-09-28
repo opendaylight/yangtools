@@ -43,15 +43,15 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
 
     @Override
     protected Module moduleForPrefix(final String prefix) {
-        final var prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
+        final var nsContext = getNamespaceContext();
+        final var prefixedNS = nsContext.getNamespaceURI(prefix);
         final var modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
-        final var modules = context.findModuleStatements(namespace).iterator();
-        return modules.hasNext() ? modules.next().argument().getLocalName() : null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -95,7 +95,8 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value) throws XMLStreamException {
         final String str;
         try {
-            str = serialize(value);
+            str = new SchemaAwareXMLStreamWriterUtils(context)
+                .encodeInstanceIdentifier(new StreamWriterFacade(ctx), value);
         } catch (IllegalArgumentException e) {
             throw new XMLStreamException("Failed to encode instance-identifier", e);
         }
