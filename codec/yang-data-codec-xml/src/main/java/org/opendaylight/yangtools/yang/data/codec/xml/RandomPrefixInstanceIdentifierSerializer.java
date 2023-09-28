@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.Module;
 
-final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInstanceIdentifierCodec {
+final class RandomPrefixInstanceIdentifierSerializer extends AbstractModuleStringInstanceIdentifierCodec {
     private final @NonNull DataSchemaContextTree schemaTree;
     private final RandomPrefix prefixes;
 
@@ -36,12 +36,12 @@ final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInsta
     }
 
     @Override
-    protected QName createQName(final String prefix, final String localName) {
-        throw new UnsupportedOperationException("Not implemented");
+    protected DataSchemaContextTree getDataContextTree() {
+        return schemaTree;
     }
 
     @Override
-    protected DataSchemaContextTree getDataContextTree() {
-        return schemaTree;
+    protected Module moduleForPrefix(final String prefix) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 }
