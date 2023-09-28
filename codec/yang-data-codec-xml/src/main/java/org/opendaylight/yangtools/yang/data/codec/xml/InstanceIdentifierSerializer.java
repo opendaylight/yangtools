@@ -13,7 +13,9 @@ import javax.xml.namespace.NamespaceContext;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 final class InstanceIdentifierSerializer extends AbstractInstanceIdentifierCodec {
     private final NamespacePrefixes prefixes;
@@ -37,5 +39,12 @@ final class InstanceIdentifierSerializer extends AbstractInstanceIdentifierCodec
     @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
         return prefixes.encodePrefix(namespace);
+    }
+
+    @Override
+    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
+            final String value) {
+        // This is deserialize() path, we do not support that in this class
+        throw new UnsupportedOperationException("Not implemented");
     }
 }
