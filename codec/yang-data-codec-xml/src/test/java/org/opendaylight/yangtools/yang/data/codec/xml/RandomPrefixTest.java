@@ -48,7 +48,7 @@ class RandomPrefixTest {
         assertEquals(MAX_COUNTER, allGenerated.size());
         // We are generating MAX_COUNTER_VALUE + 27 prefixes total, so we should encounter a reset in prefix a start
         // from 0 at some point. At the end, there should be only 27 values in RandomPrefix cache
-        assertEquals(MAX_COUNTER, Iterables.size(a.getPrefixes()));
+        assertEquals(MAX_COUNTER, Iterables.size(a.emittedPrefixes()));
         assertThat(allGenerated, not(hasItem("xml")));
         assertThat(allGenerated, not(hasItem("xmla")));
         assertThat(allGenerated, not(hasItem("xmlz")));

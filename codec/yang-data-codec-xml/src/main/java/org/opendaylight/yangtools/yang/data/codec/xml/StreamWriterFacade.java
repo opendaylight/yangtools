@@ -37,15 +37,15 @@ final class StreamWriterFacade extends ValueWriter {
     private static final Set<String> LEGACY_ATTRIBUTES = ConcurrentHashMap.newKeySet();
 
     private final XMLStreamWriter writer;
-    private final RandomPrefix prefixes;
+    private final RandomPrefix assigner;
 
     // QName of an element we delayed emitting. This only happens if it is a naked element, without any attributes,
     // namespace declarations or value.
     private QName openElement;
 
-    StreamWriterFacade(final XMLStreamWriter writer) {
+    StreamWriterFacade(final XMLStreamWriter writer, final ModelContextPrefixes prefixes) {
         this.writer = requireNonNull(writer);
-        prefixes = new RandomPrefix(writer.getNamespaceContext());
+        assigner = new RandomPrefix(prefixes, writer.getNamespaceContext());
     }
 
     void writeCharacters(final String text) throws XMLStreamException {
@@ -131,7 +131,7 @@ final class StreamWriterFacade extends ValueWriter {
             LOG.info("Namespace {} was not bound, please fix the caller", str, new Throwable());
         }
 
-        return prefixes.encodePrefix(uri);
+        return assigner.encodePrefix(uri);
     }
 
     void close() throws XMLStreamException {

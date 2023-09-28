@@ -17,9 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     private final @NonNull EffectiveModelContext modelContext;
+    private final @NonNull ModelContextPrefixes prefixes;
 
     SchemaAwareXMLStreamWriterUtils(final EffectiveModelContext modelContext) {
         this.modelContext = requireNonNull(modelContext);
+        prefixes = new ModelContextPrefixes(modelContext);
     }
 
     @NonNull EffectiveModelContext modelContext() {
@@ -29,7 +31,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     @Override
     String encodeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
-        final var serializer = new InstanceIdentifierSerializer(DataSchemaContextTree.from(modelContext),
+        final var serializer = new InstanceIdentifierSerializer(DataSchemaContextTree.from(modelContext), prefixes,
             writer.getNamespaceContext());
         final var str = serializer.serialize(value);
         for (var entry : serializer.getPrefixes()) {

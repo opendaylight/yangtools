@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.BiMap;
@@ -15,6 +16,7 @@ import com.google.common.collect.HashBiMap;
 import java.util.Map.Entry;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 final class RandomPrefix {
@@ -26,10 +28,12 @@ final class RandomPrefix {
     private int counter = 0;
 
     // BiMap to make values lookup faster
-    private final BiMap<XMLNamespace, String> prefixes = HashBiMap.create();
+    private final BiMap<XMLNamespace, String> emittedPrefixes = HashBiMap.create();
+    private final @NonNull ModelContextPrefixes prefixes;
     private final NamespaceContext context;
 
-    RandomPrefix(final NamespaceContext context) {
+    RandomPrefix(final ModelContextPrefixes prefixes, final NamespaceContext context) {
+        this.prefixes = requireNonNull(prefixes);
         this.context = context;
     }
 
@@ -37,12 +41,12 @@ final class RandomPrefix {
         return context;
     }
 
-    Iterable<Entry<XMLNamespace, String>> getPrefixes() {
-        return prefixes.entrySet();
+    Iterable<Entry<XMLNamespace, String>> emittedPrefixes() {
+        return emittedPrefixes.entrySet();
     }
 
     String encodePrefix(final XMLNamespace namespace) {
-        String prefix = prefixes.get(namespace);
+        var prefix = emittedPrefixes.get(namespace);
         if (prefix != null) {
             return prefix;
         }
@@ -54,12 +58,17 @@ final class RandomPrefix {
             }
         }
 
-        do {
-            prefix = encode(counter);
-            counter++;
-        } while (alreadyUsedPrefix(prefix));
+        prefix = prefixes.prefixForNamespace(namespace);
+        if (prefix == null) {
+            prefix = encode(counter++);
+        }
 
-        prefixes.put(namespace, prefix);
+        while (alreadyUsedPrefix(prefix)) {
+            prefix = encode(counter++);
+            counter++;
+        }
+
+        emittedPrefixes.put(namespace, prefix);
         return prefix;
     }
 

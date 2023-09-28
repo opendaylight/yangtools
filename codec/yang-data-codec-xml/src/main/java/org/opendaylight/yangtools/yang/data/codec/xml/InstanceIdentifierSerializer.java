@@ -14,15 +14,16 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 final class InstanceIdentifierSerializer extends AbstractInstanceIdentifierCodec {
-    private final RandomPrefix prefixes;
+    private final RandomPrefix assigner;
 
-    InstanceIdentifierSerializer(final DataSchemaContextTree dataContextTree, final NamespaceContext nsContext) {
+    InstanceIdentifierSerializer(final DataSchemaContextTree dataContextTree, final ModelContextPrefixes prefixes,
+            final NamespaceContext nsContext) {
         super(dataContextTree);
-        prefixes = new RandomPrefix(nsContext);
+        assigner = new RandomPrefix(prefixes, nsContext);
     }
 
     Iterable<Entry<XMLNamespace, String>> getPrefixes() {
-        return prefixes.getPrefixes();
+        return assigner.emittedPrefixes();
     }
 
     @Override
@@ -33,6 +34,6 @@ final class InstanceIdentifierSerializer extends AbstractInstanceIdentifierCodec
 
     @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
-        return prefixes.encodePrefix(namespace);
+        return assigner.encodePrefix(namespace);
     }
 }

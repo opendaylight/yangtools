@@ -19,9 +19,11 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifier> {
     private final @NonNull XmlCodecFactory codecFactory;
     private final DataSchemaContextTree dataContextTree;
+    private final ModelContextPrefixes prefixes;
 
-    InstanceIdentifierXmlCodec(final XmlCodecFactory codecFactory) {
+    InstanceIdentifierXmlCodec(final XmlCodecFactory codecFactory, final ModelContextPrefixes prefixResolver) {
         this.codecFactory = requireNonNull(codecFactory);
+        prefixes = requireNonNull(prefixResolver);
         dataContextTree = DataSchemaContextTree.from(codecFactory.getEffectiveModelContext());
     }
 
@@ -38,7 +40,7 @@ final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifie
 
     @Override
     public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value) throws XMLStreamException {
-        final var serializer = new InstanceIdentifierSerializer(dataContextTree, ctx.getNamespaceContext());
+        final var serializer = new InstanceIdentifierSerializer(dataContextTree, prefixes, ctx.getNamespaceContext());
 
         final String str;
         try {
