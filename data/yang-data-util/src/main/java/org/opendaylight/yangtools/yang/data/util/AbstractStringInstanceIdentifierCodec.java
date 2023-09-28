@@ -170,7 +170,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
      * @param localName Local name string
      * @return A newly-created QName
      */
-    protected QName createQName(final @Nullable QNameModule lastModule, final String localName) {
+    protected @NonNull QName createQName(final @Nullable QNameModule lastModule, final String localName) {
         // This implementation handles both XML encoding, where we follow XML namespace rules and old JSON encoding,
         // which is the same thing: always encode prefixes
         return createQName(XMLConstants.DEFAULT_NS_PREFIX, localName);

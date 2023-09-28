@@ -208,7 +208,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      *
      * @return following QName.
      */
-    private QName nextQName() {
+    private @NonNull QName nextQName() {
         // Consume prefix or identifier
         final String maybePrefix = nextIdentifier();
         if (!allCharactersConsumed() && COLON == currentChar()) {
