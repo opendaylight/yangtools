@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -50,9 +51,18 @@ public class YT1107Test {
                 }
               }
             }""");
-        final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/yt1107/yt1107.xml");
-        final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
-
+        final var reader = UntrustedXML.createXMLStreamReader(new StringReader("""
+            <parent xmlns="yt1107">
+                <user>
+                    <name>Freud</name>
+                </user>
+                <admin>
+                    <name>John</name>
+                </admin>
+                <user>
+                <name>Bob</name>
+                </user>
+            </parent>"""));
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, Inference.ofDataTreePath(schemaContext, PARENT));
