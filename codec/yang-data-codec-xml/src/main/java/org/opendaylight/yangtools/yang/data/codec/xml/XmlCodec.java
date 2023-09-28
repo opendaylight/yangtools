@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
  * @param <T> Normalized value type
  */
 public sealed interface XmlCodec<T> extends TypeAwareCodec<T, NamespaceContext, XMLStreamWriter>
-        permits AbstractXmlCodec, EmptyXmlCodec, IdentityrefXmlCodec, NullXmlCodec, UnionXmlCodec,
-                XmlStringInstanceIdentifierCodec {
+        permits AbstractXmlCodec, EmptyXmlCodec, IdentityrefXmlCodec, InstanceIdentifierXmlCodec, NullXmlCodec,
+                UnionXmlCodec {
     @Override
     void writeValue(XMLStreamWriter ctx, T value) throws XMLStreamException;
 }
