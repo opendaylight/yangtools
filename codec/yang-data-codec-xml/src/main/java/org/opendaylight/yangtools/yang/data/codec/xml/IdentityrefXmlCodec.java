@@ -24,10 +24,13 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class IdentityrefXmlCodec implements XmlCodec<QName> {
     private final @NonNull EffectiveModelContext context;
+    private final @NonNull PreferredPrefixes pref;
     private final @NonNull QNameModule parentModule;
 
-    IdentityrefXmlCodec(final EffectiveModelContext context, final QNameModule parentModule) {
+    IdentityrefXmlCodec(final EffectiveModelContext context, final PreferredPrefixes pref,
+            final QNameModule parentModule) {
         this.context = requireNonNull(context);
+        this.pref = requireNonNull(pref);
         this.parentModule = requireNonNull(parentModule);
     }
 
@@ -55,10 +58,10 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
     @Override
     public void writeValue(final XMLStreamWriter ctx, final QName value) throws XMLStreamException {
-        final var prefixes = new RandomPrefix(ctx.getNamespaceContext());
+        final var prefixes = new NamespacePrefixes(pref, ctx.getNamespaceContext());
         final var str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.getNamespace()));
 
-        for (var e : prefixes.getPrefixes()) {
+        for (var e : prefixes.emittedPrefixes()) {
             ctx.writeNamespace(e.getValue(), e.getKey().toString());
         }
         ctx.writeCharacters(str);
