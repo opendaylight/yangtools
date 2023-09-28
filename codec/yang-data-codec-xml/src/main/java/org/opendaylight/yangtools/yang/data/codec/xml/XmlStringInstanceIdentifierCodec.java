@@ -28,30 +28,27 @@ import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements XmlCodec<YangInstanceIdentifier> {
-
     private static final ThreadLocal<Deque<NamespaceContext>> TL_CONTEXT = new ThreadLocal<>();
 
     private final @NonNull DataSchemaContextTree dataContextTree;
     private final @NonNull XmlCodecFactory codecFactory;
-    private final @NonNull EffectiveModelContext context;
 
-    XmlStringInstanceIdentifierCodec(final EffectiveModelContext context, final XmlCodecFactory codecFactory) {
-        this.context = requireNonNull(context);
+    XmlStringInstanceIdentifierCodec(final XmlCodecFactory codecFactory) {
         this.codecFactory = requireNonNull(codecFactory);
-        dataContextTree = DataSchemaContextTree.from(context);
+        dataContextTree = DataSchemaContextTree.from(codecFactory.getEffectiveModelContext());
     }
 
     @Override
     protected Module moduleForPrefix(final String prefix) {
         final var prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
-        final var modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
+        final var modules = modelContext().findModules(XMLNamespace.of(prefixedNS)).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected String prefixForNamespace(final XMLNamespace namespace) {
-        final var modules = context.findModules(namespace).iterator();
-        return modules.hasNext() ? modules.next().getName() : null;
+        final var modules = modelContext().findModuleStatements(namespace).iterator();
+        return modules.hasNext() ? modules.next().argument().getLocalName() : null;
     }
 
     @Override
@@ -100,6 +97,10 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
             throw new XMLStreamException("Failed to encode instance-identifier", e);
         }
         ctx.writeCharacters(str);
+    }
+
+    private @NonNull EffectiveModelContext modelContext() {
+        return codecFactory.getEffectiveModelContext();
     }
 
     private static NamespaceContext getNamespaceContext() {
