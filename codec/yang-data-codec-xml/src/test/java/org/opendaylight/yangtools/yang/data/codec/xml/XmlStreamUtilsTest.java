@@ -47,22 +47,24 @@ public class XmlStreamUtilsTest {
         void accept(XMLStreamWriter writer) throws XMLStreamException;
     }
 
-    private static EffectiveModelContext schemaContext;
+    private static EffectiveModelContext modelContext;
     private static Module leafRefModule;
+    private static PreferredPrefixes pref;
 
     @BeforeClass
     public static void initialize() {
-        schemaContext = YangParserTestUtils.parseYangResource("/leafref-test.yang");
-        assertNotNull(schemaContext);
-        assertEquals(1, schemaContext.getModules().size());
-        leafRefModule = schemaContext.getModules().iterator().next();
+        modelContext = YangParserTestUtils.parseYangResource("/leafref-test.yang");
+        assertNotNull(modelContext);
+        assertEquals(1, modelContext.getModules().size());
+        leafRefModule = modelContext.getModules().iterator().next();
         assertNotNull(leafRefModule);
+        pref = new PreferredPrefixes.Shared(modelContext);
     }
 
     @AfterClass
     public static void cleanup() {
         leafRefModule = null;
-        schemaContext = null;
+        modelContext = null;
     }
 
     @Test
@@ -71,7 +73,7 @@ public class XmlStreamUtilsTest {
 
         String xmlAsString = createXml(writer -> {
             writer.writeStartElement("element");
-            final StreamWriterFacade facade = new StreamWriterFacade(writer);
+            final var facade = new StreamWriterFacade(pref, writer);
             facade.writeCharacters(XMLStreamWriterUtils.encode(facade, QName.create(parent, "identity"), parent));
             facade.flush();
             writer.writeEndElement();
@@ -81,7 +83,7 @@ public class XmlStreamUtilsTest {
 
         xmlAsString = createXml(writer -> {
             writer.writeStartElement("elementDifferent");
-            final StreamWriterFacade facade = new StreamWriterFacade(writer);
+            final var facade = new StreamWriterFacade(pref, writer);
             facade.writeCharacters(XMLStreamWriterUtils.encode(facade, QName.create("different:namespace", "identity"),
                 parent));
             facade.flush();
@@ -140,7 +142,7 @@ public class XmlStreamUtilsTest {
     }
 
     private static TypeDefinition<?> getTargetNodeForLeafRef(final Class<?> clas, final String... names) {
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(schemaContext);
+        final SchemaInferenceStack stack = SchemaInferenceStack.of(modelContext);
         stack.enterDataTree(QName.create(leafRefModule.getQNameModule(), "cont2"));
         for (String name : names) {
             stack.enterDataTree(QName.create(leafRefModule.getQNameModule(), name));
