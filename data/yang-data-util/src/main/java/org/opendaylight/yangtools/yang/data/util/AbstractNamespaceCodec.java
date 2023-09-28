@@ -35,10 +35,10 @@ abstract class AbstractNamespaceCodec<T> extends AbstractIllegalArgumentCodec<St
      * @param prefix Prefix for namespace
      * @param localName local name
      * @return QName
-     * @throws IllegalArgumentException if the prefix cannot be resolved
+     * @throws IllegalArgumentException if the {@code prefix} cannot be resolved or if the {@code localName} does not
+     *                                  conform to YANG requirements
      */
-    // FIXME: 9.0.0: this should really be @NonNull, right? we can also throw if localName is not valid
-    protected abstract @Nullable QName createQName(@NonNull String prefix, @NonNull String localName);
+    protected abstract @NonNull QName createQName(@NonNull String prefix, @NonNull String localName);
 
     private static String getIdAndPrefixAsStr(final String pathPart) {
         int predicateStartIndex = pathPart.indexOf('[');
