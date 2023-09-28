@@ -37,7 +37,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     private final Deque<NodeType> nodeTypeStack = new ArrayDeque<>();
 
     SchemalessXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
-        super(writer);
+        super(PreferredPrefixes.empty(), writer);
     }
 
     @Override
