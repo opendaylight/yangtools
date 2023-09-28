@@ -117,7 +117,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     public XmlCodec<YangInstanceIdentifier> instanceIdentifierCodec() {
-        return new XmlStringInstanceIdentifierCodec(getEffectiveModelContext(), this);
+        return new XmlStringInstanceIdentifierCodec(this);
     }
 
     @Override
