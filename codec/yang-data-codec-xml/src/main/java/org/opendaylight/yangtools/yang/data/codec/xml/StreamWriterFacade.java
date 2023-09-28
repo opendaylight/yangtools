@@ -37,15 +37,15 @@ final class StreamWriterFacade extends ValueWriter {
     private static final Set<String> LEGACY_ATTRIBUTES = ConcurrentHashMap.newKeySet();
 
     private final XMLStreamWriter writer;
-    private final RandomPrefix prefixes;
+    private final NamespacePrefixes prefixes;
 
     // QName of an element we delayed emitting. This only happens if it is a naked element, without any attributes,
     // namespace declarations or value.
     private QName openElement;
 
-    StreamWriterFacade(final XMLStreamWriter writer) {
+    StreamWriterFacade(final PreferredPrefixes pref, final XMLStreamWriter writer) {
         this.writer = requireNonNull(writer);
-        prefixes = new RandomPrefix(writer.getNamespaceContext());
+        prefixes = new NamespacePrefixes(pref, writer.getNamespaceContext());
     }
 
     void writeCharacters(final String text) throws XMLStreamException {
