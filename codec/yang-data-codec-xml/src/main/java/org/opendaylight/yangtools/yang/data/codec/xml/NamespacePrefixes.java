@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.BiMap;
@@ -15,30 +15,39 @@ import com.google.common.collect.HashBiMap;
 import java.util.Map.Entry;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
-class RandomPrefix {
+/**
+ * Interface to prefix assignment based on a {@link NamespaceContext} and advice from {@link PreferredPrefixes}.
+ */
+final class NamespacePrefixes implements Mutable {
     // 32 characters, carefully chosen
-    private static final String LOOKUP = "abcdefghiknoprstABCDEFGHIKNOPRST";
+    @VisibleForTesting
+    static final String LOOKUP = "abcdefghiknoprstABCDEFGHIKNOPRST";
+    @VisibleForTesting
+    static final int SHIFT = 5;
     private static final int MASK = 0x1f;
-    private static final int SHIFT = 5;
 
     private int counter = 0;
 
     // BiMap to make values lookup faster
-    private final BiMap<XMLNamespace, String> prefixes = HashBiMap.create();
+    private final BiMap<XMLNamespace, String> emittedPrefixes = HashBiMap.create();
+    private final PreferredPrefixes pref;
     private final NamespaceContext context;
 
-    RandomPrefix(final NamespaceContext context) {
+    NamespacePrefixes(final PreferredPrefixes pref, final NamespaceContext context) {
+        this.pref = requireNonNull(pref);
         this.context = context;
     }
 
-    Iterable<Entry<XMLNamespace, String>> getPrefixes() {
-        return prefixes.entrySet();
+    Iterable<Entry<XMLNamespace, String>> emittedPrefixes() {
+        return emittedPrefixes.entrySet();
     }
 
-    String encodePrefix(final XMLNamespace namespace) {
-        String prefix = prefixes.get(namespace);
+    @NonNull String encodePrefix(final XMLNamespace namespace) {
+        var prefix = emittedPrefixes.get(namespace);
         if (prefix != null) {
             return prefix;
         }
@@ -50,12 +59,16 @@ class RandomPrefix {
             }
         }
 
-        do {
-            prefix = encode(counter);
-            counter++;
-        } while (alreadyUsedPrefix(prefix));
+        prefix = pref.prefixForNamespace(namespace);
+        if (prefix == null) {
+            prefix = encode(counter++);
+        }
 
-        prefixes.put(namespace, prefix);
+        while (alreadyUsedPrefix(prefix)) {
+            prefix = encode(counter++);
+        }
+
+        emittedPrefixes.put(namespace, prefix);
         return prefix;
     }
 
@@ -66,25 +79,13 @@ class RandomPrefix {
 
         // It seems JDK8 is violating the API contract of NamespaceContext by returning null for unbound prefixes,
         // rather than specified NULL_NS_URI. Work this around by checking explicitly for null.
-        final String str = context.getNamespaceURI(prefix);
+        final var str = context.getNamespaceURI(prefix);
         return str != null && !XMLConstants.NULL_NS_URI.equals(str);
     }
 
     @VisibleForTesting
-    static int decode(final String str) {
-        int ret = 0;
-        for (char c : str.toCharArray()) {
-            int idx = LOOKUP.indexOf(c);
-            checkArgument(idx != -1, "Invalid string %s", str);
-            ret = (ret << SHIFT) + idx;
-        }
-
-        return ret;
-    }
-
-    @VisibleForTesting
-    static String encode(int num) {
-        final StringBuilder sb = new StringBuilder();
+    static @NonNull String encode(int num) {
+        final var sb = new StringBuilder();
 
         do {
             sb.append(LOOKUP.charAt(num & MASK));
