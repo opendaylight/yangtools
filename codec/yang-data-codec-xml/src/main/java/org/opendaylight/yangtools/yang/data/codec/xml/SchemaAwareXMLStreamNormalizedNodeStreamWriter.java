@@ -57,7 +57,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value)
             throws XMLStreamException {
-        final var optAnnotation = AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
+        final var optAnnotation = AnnotationSchemaNode.find(streamUtils.modelContext(), qname);
         if (optAnnotation.isPresent()) {
             return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.orElseThrow().getType()), value,
                 qname.getModule());
