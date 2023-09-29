@@ -7,33 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaOrderedNormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.xml.sax.SAXException;
+import org.xmlunit.builder.DiffBuilder;
 
 @RunWith(Parameterized.class)
 public class SchemaOrderedNormalizedNodeWriterTest {
@@ -41,37 +34,6 @@ public class SchemaOrderedNormalizedNodeWriterTest {
     public static Collection<Object[]> data() {
         return TestFactories.junitParameters();
     }
-
-    private static final String EXPECTED_1 = ""
-        + "<root xmlns=\"foo\">\n"
-        + "    <policy>\n"
-        + "        <name>policy1</name>\n"
-        + "        <rule>\n"
-        + "            <name>rule1</name>\n"
-        + "        </rule>\n"
-        + "        <rule>\n"
-        + "            <name>rule2</name>\n"
-        + "        </rule>\n"
-        + "        <rule>\n"
-        + "            <name>rule3</name>\n"
-        + "        </rule>\n"
-        + "        <rule>\n"
-        + "            <name>rule4</name>\n"
-        + "        </rule>\n"
-        + "    </policy>\n"
-        + "    <policy>\n"
-        + "        <name>policy2</name>\n"
-        + "    </policy>\n"
-        + "</root>\n";
-
-
-    private static final String EXPECTED_2 = ""
-        + "<root xmlns=\"order\">\n"
-        + "    <id>id1</id>\n"
-        + "    <cont>\n"
-        + "        <content>content1</content>\n"
-        + "    </cont>\n"
-        + "</root>";
 
     private static final String FOO_NAMESPACE = "foo";
     private static final String RULE_NODE = "rule";
@@ -83,15 +45,14 @@ public class SchemaOrderedNormalizedNodeWriterTest {
 
     public SchemaOrderedNormalizedNodeWriterTest(final String factoryMode, final XMLOutputFactory factory) {
         this.factory = factory;
-        XMLUnit.setIgnoreWhitespace(true);
     }
 
     @Test
-    public void testWrite() throws XMLStreamException, IOException, SAXException {
-        final StringWriter stringWriter = new StringWriter();
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
+    public void testWrite() throws Exception {
+        final var stringWriter = new StringWriter();
+        final var xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
 
-        EffectiveModelContext schemaContext = getSchemaContext("""
+        final var schemaContext = YangParserTestUtils.parseYang("""
             module foo {
               namespace "foo";
               prefix "foo";
@@ -112,65 +73,88 @@ public class SchemaOrderedNormalizedNodeWriterTest {
                 }
               }
             }""");
-        NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
+        var writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
-        try (SchemaOrderedNormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext)) {
+        try (var nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext)) {
 
-            List<MapEntryNode> rule1Names = new ArrayList<>();
+            final var rule1Names = new ArrayList<MapEntryNode>();
             rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
                 createQName(FOO_NAMESPACE, NAME_NODE), "rule1"));
             rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
                 createQName(FOO_NAMESPACE, NAME_NODE), "rule2"));
 
-            List<MapEntryNode> rule2Names = new ArrayList<>();
+            final var rule2Names = new ArrayList<MapEntryNode>();
             rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
                 createQName(FOO_NAMESPACE, NAME_NODE), "rule3"));
             rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
                 createQName(FOO_NAMESPACE, NAME_NODE), "rule4"));
 
-            UserMapNode rules1 = Builders.orderedMapBuilder()
+            final var rules1 = Builders.orderedMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
                     .withValue(rule1Names)
                     .build();
-            UserMapNode rules2 = Builders.orderedMapBuilder()
+            final var rules2 = Builders.orderedMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
                     .withValue(rule2Names)
                     .build();
 
-            List<MapEntryNode> policyNodes = new ArrayList<>();
+            final var policyNodes = new ArrayList<MapEntryNode>();
 
 
-            final MapEntryNode pn1 = ImmutableNodes
-                    .mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE),
+            final var pn1 = ImmutableNodes.mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE),
                         createQName(FOO_NAMESPACE, NAME_NODE), "policy1")
                     .withChild(rules1)
                     .build();
-            final MapEntryNode pn2 = ImmutableNodes
-                    .mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE),
+            final var pn2 = ImmutableNodes.mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE),
                         createQName(FOO_NAMESPACE, NAME_NODE), "policy2")
                     .withChild(rules2)
                     .build();
             policyNodes.add(pn1);
             policyNodes.add(pn2);
 
-            UserMapNode policy = Builders.orderedMapBuilder()
+            final var policy = Builders.orderedMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, POLICY_NODE))
                     .withValue(policyNodes)
                     .build();
-            ContainerNode root = Builders.containerBuilder()
+            final var root = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, "root"))
                     .withChild(policy).build();
             nnw.write(root);
         }
 
-        XMLAssert.assertXMLIdentical(new Diff(EXPECTED_1, stringWriter.toString()), true);
+        final var diff = DiffBuilder.compare(stringWriter.toString())
+            .withTest("""
+                <root xmlns="foo">
+                    <policy>
+                        <name>policy1</name>
+                        <rule>
+                            <name>rule1</name>
+                        </rule>
+                        <rule>
+                            <name>rule2</name>
+                        </rule>
+                        <rule>
+                            <name>rule3</name>
+                        </rule>
+                        <rule>
+                            <name>rule4</name>
+                        </rule>
+                    </policy>
+                    <policy>
+                        <name>policy2</name>
+                    </policy>
+                </root>""")
+            .ignoreWhitespace()
+            .checkForIdentical()
+            .build();
+        assertFalse(diff.toString(), diff.hasDifferences());
     }
 
     @Test
-    public void testWriteOrder() throws XMLStreamException, IOException, SAXException {
+    public void testWriteOrder() throws Exception {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
-        EffectiveModelContext schemaContext = getSchemaContext("""
+        EffectiveModelContext schemaContext = YangParserTestUtils.parseYang("""
             module order {
               namespace "order";
               prefix "order";
@@ -187,16 +171,16 @@ public class SchemaOrderedNormalizedNodeWriterTest {
                 }
               }
             }""");
-        NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
+        var writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
-        try (NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext)) {
+        try (var nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext)) {
 
-            ContainerNode cont = Builders.containerBuilder()
+            final var cont = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "cont"))
                     .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "content"), "content1"))
                     .build();
 
-            ContainerNode root = Builders.containerBuilder()
+            final var root = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
                     .withChild(cont)
                     .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "id"), "id1"))
@@ -205,19 +189,16 @@ public class SchemaOrderedNormalizedNodeWriterTest {
             nnw.write(root);
         }
 
-        XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
+        assertEquals("""
+            <root xmlns="order"><id>id1</id><cont><content>content1</content></cont></root>""",
+            stringWriter.toString());
     }
 
-    private static EffectiveModelContext getSchemaContext(final String literalYang) {
-        return YangParserTestUtils.parseYang(literalYang);
-    }
-
-    private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String ns, final String name) {
-        return YangInstanceIdentifier.NodeIdentifier.create(createQName(ns, name));
+    private static NodeIdentifier getNodeIdentifier(final String ns, final String name) {
+        return NodeIdentifier.create(createQName(ns, name));
     }
 
     private static QName createQName(final String ns, final String name) {
         return QName.create(ns, "2016-02-17", name);
     }
-
 }
