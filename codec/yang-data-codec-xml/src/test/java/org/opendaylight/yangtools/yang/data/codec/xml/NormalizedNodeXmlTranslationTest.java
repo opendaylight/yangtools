@@ -298,13 +298,13 @@ public class NormalizedNodeXmlTranslationTest {
         diff.overrideDifferenceListener(new IgnoreTextAndAttributeValuesDifferenceListener());
         diff.overrideElementQualifier(new ElementNameAndTextQualifier());
 
-        // FIXME the comparison cannot be performed, since the qualifiers supplied by XMlUnit do not work correctly in
+        // FIXME the comparison cannot be performed, since the qualifiers supplied by XMLUnit do not work correctly in
         // this case
         // We need to implement custom qualifier so that the element ordering does not mess the DIFF
         // dd.overrideElementQualifier(new MultiLevelElementNameAndTextQualifier(100, true));
         // assertTrue(dd.toString(), dd.similar());
 
-        //new XMLTestCase() {}.assertXMLEqual(diff, true);
+        // XMLAssert.assertXMLEqual(diff, true);
     }
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {

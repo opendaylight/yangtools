@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +26,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -46,7 +49,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-public class Bug5446Test extends XMLTestCase {
+public class Bug5446Test {
     private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2015-11-05"));
     private static final QName ROOT_QNAME = QName.create(FOO_MODULE, "root");
     private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
@@ -58,8 +61,8 @@ public class Bug5446Test extends XMLTestCase {
 
         final ContainerNode docNode = createDocNode();
 
-        DataContainerChild root = docNode.childByArg(new NodeIdentifier(ROOT_QNAME));
-        DataContainerChild child = ((ContainerNode) root).childByArg(new NodeIdentifier(IP_ADDRESS_QNAME));
+        DataContainerChild root = docNode.getChildByArg(new NodeIdentifier(ROOT_QNAME));
+        DataContainerChild child = ((ContainerNode) root).getChildByArg(new NodeIdentifier(IP_ADDRESS_QNAME));
         LeafNode<?> ipAdress = (LeafNode<?>) child;
 
         Object value = ipAdress.body();
@@ -77,7 +80,7 @@ public class Bug5446Test extends XMLTestCase {
         String expectedXMLString = toString(doc.getDocumentElement());
         String serializationResultXMLString = toString(serializationResult.getNode());
 
-        assertXMLEqual(expectedXMLString, serializationResultXMLString);
+        XMLAssert.assertXMLEqual(expectedXMLString, serializationResultXMLString);
     }
 
     private static ContainerNode createDocNode() {
