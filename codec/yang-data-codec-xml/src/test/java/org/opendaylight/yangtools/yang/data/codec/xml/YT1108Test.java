@@ -7,47 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static java.util.Objects.requireNonNull;
+import static org.junit.Assert.assertFalse;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+import org.xmlunit.builder.DiffBuilder;
 
 @RunWith(Parameterized.class)
 public class YT1108Test {
@@ -56,13 +33,12 @@ public class YT1108Test {
         return TestFactories.junitParameters();
     }
 
-    private QNameModule fooModule;
-    private QName fooLeafContainer;
-    private QName fooIdentity;
-    private QName fooUnionIdentityRefLeaf;
-    private QName fooIdentityRefLeaf;
+    private static final QName IDENT_ONE = QName.create("foo-namespace", "ident-one");
+    private static final QName IDENTITYREF_LEAF = QName.create("foo-namespace", "identityref-leaf");
+    private static final QName LEAF_CONTAINER = QName.create("foo-namespace", "leaf-container");
+    private static final QName UNION_IDENTITYREF_LEAF = QName.create("foo-namespace", "union-identityref-leaf");
 
-    private static EffectiveModelContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
     private final XMLOutputFactory factory;
 
@@ -72,7 +48,7 @@ public class YT1108Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+        MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module foo {
               namespace "foo-namespace";
               prefix "f";
@@ -107,111 +83,58 @@ public class YT1108Test {
 
     @AfterClass
     public static void afterClass() {
-        SCHEMA_CONTEXT = null;
-    }
-
-    @Before
-    public void setup() {
-        fooModule = QNameModule.create(XMLNamespace.of("foo-namespace"));
-        fooLeafContainer = QName.create(fooModule, "leaf-container");
-
-        fooIdentity = QName.create(fooModule, "ident-one");
-        fooUnionIdentityRefLeaf = QName.create(fooModule, "union-identityref-leaf");
-        fooIdentityRefLeaf = QName.create(fooModule, "identityref-leaf");
+        MODEL_CONTEXT = null;
     }
 
     @Test
-    public void testLeafOfIdentityRefTypeNNToXmlSerialization()
-            throws XMLStreamException, IOException, SAXException {
-        final Document doc = loadDocument("/yt1108/xml/foo-leaf-of-identity-ref-type.xml");
-        final DOMResult domResult = convertNormalizedNodeToXml(buildLeafContainerNodeWithIdentityRefLeaf());
+    public void testLeafOfIdentityRefTypeNNToXmlSerialization() throws Exception {
+        final var diff = DiffBuilder
+            .compare(serializeToXml(Builders.containerBuilder()
+                .withNodeIdentifier(NodeIdentifier.create(LEAF_CONTAINER))
+                .withChild(Builders.leafBuilder()
+                    .withNodeIdentifier(NodeIdentifier.create(IDENTITYREF_LEAF))
+                    .withValue(IDENT_ONE)
+                    .build())
+                .build()))
+            .withTest("""
+                <?xml version="1.0" encoding="UTF-8"?>
 
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setNormalize(true);
-
-        final String expectedXml = toString(doc.getDocumentElement());
-        final String serializedXml = toString(domResult.getNode());
-        final Diff diff = new Diff(expectedXml, serializedXml);
-
-        XMLAssert.assertXMLEqual(diff, true);
+                <leaf-container xmlns="foo-namespace">
+                    <identityref-leaf xmlns:prefix="foo-namespace">ident-one</identityref-leaf>
+                </leaf-container>""")
+            .ignoreWhitespace()
+            .checkForIdentical()
+            .build();
+        assertFalse(diff.toString(), diff.hasDifferences());
     }
 
     @Test
-    public void testLeafOfUnionWithIdentityRefNNToXmlSerialization()
-            throws XMLStreamException, IOException, SAXException {
-        final Document doc = loadDocument("/yt1108/xml/foo-leaf-of-union-with-identity-ref-type.xml");
-        final DOMResult domResult = convertNormalizedNodeToXml(buildLeafContainerNodeWithUnionIdentityRefLeaf());
-
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setNormalize(true);
-
-        final String expectedXml = toString(doc.getDocumentElement());
-        final String serializedXml = toString(domResult.getNode());
-        final Diff diff = new Diff(expectedXml, serializedXml);
-
-        XMLAssert.assertXMLEqual(diff, true);
-    }
-
-    private DOMResult convertNormalizedNodeToXml(final NormalizedNode normalizedNode)
-            throws XMLStreamException, IOException {
-        final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
-
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
-
-        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-                xmlStreamWriter, SCHEMA_CONTEXT);
-
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-                xmlNormalizedNodeStreamWriter);
-
-        normalizedNodeWriter.write(normalizedNode);
-        return domResult;
-    }
-
-    private NormalizedNode buildLeafContainerNodeWithIdentityRefLeaf() {
-        return Builders.containerBuilder()
-                .withNodeIdentifier(NodeIdentifier.create(fooLeafContainer))
+    public void testLeafOfUnionWithIdentityRefNNToXmlSerialization() throws Exception {
+        final var diff = DiffBuilder
+            .compare(serializeToXml(Builders.containerBuilder()
+                .withNodeIdentifier(NodeIdentifier.create(LEAF_CONTAINER))
                 .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(NodeIdentifier.create(fooIdentityRefLeaf))
-                        .withValue(fooIdentity)
-                        .build())
-                .build();
+                    .withNodeIdentifier(NodeIdentifier.create(UNION_IDENTITYREF_LEAF))
+                    .withValue(IDENT_ONE)
+                    .build())
+                .build()))
+            .withTest("""
+                <?xml version="1.0" encoding="UTF-8"?>
+
+                <leaf-container xmlns="foo-namespace">
+                    <union-identityref-leaf xmlns:prefix="foo-namespace">ident-one</union-identityref-leaf>
+                </leaf-container>""")
+            .ignoreWhitespace()
+            .checkForIdentical()
+            .build();
+        assertFalse(diff.toString(), diff.hasDifferences());
     }
 
-    private NormalizedNode buildLeafContainerNodeWithUnionIdentityRefLeaf() {
-        return Builders.containerBuilder()
-                .withNodeIdentifier(NodeIdentifier.create(fooLeafContainer))
-                .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(YangInstanceIdentifier.NodeIdentifier.create(fooUnionIdentityRefLeaf))
-                        .withValue(fooIdentity)
-                        .build())
-                .build();
-    }
-
-    private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
-        final InputStream resourceAsStream = NormalizedNodesToXmlTest.class.getResourceAsStream(xmlPath);
-        return requireNonNull(readXmlToDocument(resourceAsStream));
-    }
-
-    private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
-        doc.getDocumentElement().normalize();
-        return doc;
-    }
-
-    private static String toString(final Node xml) {
-        try {
-            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-            final StreamResult result = new StreamResult(new StringWriter());
-            final DOMSource source = new DOMSource(xml);
-            transformer.transform(source, result);
-
-            return result.getWriter().toString();
-        } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
-            throw new RuntimeException("Unable to serialize xml element " + xml, e);
+    private String serializeToXml(final ContainerNode normalizedNode) throws Exception {
+        final var sw = new StringWriter();
+        try (var nnsw = XMLStreamNormalizedNodeStreamWriter.create(factory.createXMLStreamWriter(sw), MODEL_CONTEXT)) {
+            NormalizedNodeWriter.forStreamWriter(nnsw).write(normalizedNode);
         }
+        return sw.toString();
     }
 }
