@@ -7,26 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import javax.xml.stream.XMLStreamException;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
+import javax.xml.transform.stream.StreamSource;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.ElementSelectors;
 
 abstract class AbstractYinExportTest {
-    final void exportYinModules(final String yangDir, final String yinDir) throws IOException, SAXException,
-            XMLStreamException {
+    final void exportYinModules(final String yangDir, final String yinDir) throws XMLStreamException {
         final var schemaContext = YangParserTestUtils.parseYangResourceDirectory(yangDir);
         final var modules = schemaContext.getModules();
         assertNotEquals(0, modules.size());
@@ -40,49 +38,46 @@ abstract class AbstractYinExportTest {
         }
     }
 
-    void validateOutput(final String yinDir, final String fileName, final String fileBody) throws IOException,
-            SAXException {
+    void validateOutput(final String yinDir, final String fileName, final String fileBody) {
         assertNotEquals(0, fileBody.length());
         if (yinDir != null) {
-            final Document doc = YinExportTestUtils.loadDocument(yinDir + "/" + fileName);
-            assertXMLEquals(fileName, doc, fileBody);
+            assertXMLEquals(fileName,
+                AbstractYinExportTest.class.getResourceAsStream(yinDir + "/" + fileName),
+                fileBody);
         }
     }
 
     private void readAndValidateModule(final EffectiveModelContext schemaContext, final Module module,
-            final String yinDir) throws XMLStreamException, IOException, SAXException {
+            final String yinDir) throws XMLStreamException {
         final String fileName = YinExportUtils.wellFormedYinName(module.getName(), module.getRevision());
         validateOutput(yinDir, fileName, export(module));
     }
 
     private void readAndValidateSubmodule(final EffectiveModelContext schemaContext, final Module module,
-            final Submodule submodule, final String yinDir) throws XMLStreamException, IOException, SAXException {
-        final String fileName = YinExportUtils.wellFormedYinName(submodule.getName(), submodule.getRevision());
+            final Submodule submodule, final String yinDir) throws XMLStreamException {
+        final var fileName = YinExportUtils.wellFormedYinName(submodule.getName(), submodule.getRevision());
         validateOutput(yinDir, fileName, export(module, submodule));
     }
 
     private static String export(final Module module) throws XMLStreamException {
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final var bos = new ByteArrayOutputStream();
         YinExportUtils.writeModuleAsYinText(module.asEffectiveStatement(), bos);
         return bos.toString(StandardCharsets.UTF_8);
     }
 
     private static String export(final Module module, final Submodule submodule) throws XMLStreamException {
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final var bos = new ByteArrayOutputStream();
         YinExportUtils.writeSubmoduleAsYinText(module.asEffectiveStatement(), submodule.asEffectiveStatement(), bos);
         return bos.toString(StandardCharsets.UTF_8);
     }
 
-    private static void assertXMLEquals(final String fileName, final Document expectedXMLDoc, final String output)
-            throws SAXException, IOException {
-        final String expected = YinExportTestUtils.toString(expectedXMLDoc.getDocumentElement());
-
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setNormalize(true);
-        XMLUnit.setNormalizeWhitespace(true);
-
-        final Diff diff = new Diff(expected, output);
-        diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        XMLAssert.assertXMLEqual(fileName, diff, true);
+    private static void assertXMLEquals(final String fileName, final InputStream expectedDoc, final String output) {
+        final var diff = DiffBuilder.compare(output)
+            .withTest(new StreamSource(expectedDoc))
+            .normalizeWhitespace()
+            .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+            .checkForIdentical()
+            .build();
+        assertFalse(diff.hasDifferences(), diff.toString());
     }
 }
