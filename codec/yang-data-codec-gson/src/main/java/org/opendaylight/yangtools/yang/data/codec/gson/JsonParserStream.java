@@ -354,7 +354,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         throw new IllegalStateException("Found an unexpected array nested under " + parent.getSchema().getQName());
     }
 
-    private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value) {
+    private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value) throws IOException {
         checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
                 parent.getSchema().getQName());
         final SimpleNodeDataWithSchema<?> parentSimpleNode = (SimpleNodeDataWithSchema<?>) parent;
@@ -365,7 +365,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         parentSimpleNode.setValue(translatedValue);
     }
 
-    private Object translateValueByType(final String value, final DataSchemaNode node) {
+    private Object translateValueByType(final String value, final DataSchemaNode node) throws IOException {
         checkArgument(node instanceof TypedDataSchemaNode);
         return codecs.codecFor((TypedDataSchemaNode) node, stack).parseValue(null, value);
     }

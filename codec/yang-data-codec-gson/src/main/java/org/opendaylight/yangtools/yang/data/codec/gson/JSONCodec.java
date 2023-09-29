@@ -26,5 +26,13 @@ public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWrite
      * @throws IOException if the write fails
      */
     @Override
+    T parseValue(Object ctx, String value) throws IOException;
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @throws IOException if the write fails
+     */
+    @Override
     void writeValue(JsonWriter ctx, T value) throws IOException;
 }

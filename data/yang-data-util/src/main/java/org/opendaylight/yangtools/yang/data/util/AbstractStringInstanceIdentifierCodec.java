@@ -156,7 +156,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     protected abstract @NonNull DataSchemaContextTree getDataContextTree();
 
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
-            final String value) {
+            final String value) throws Exception {
         return value;
     }
 

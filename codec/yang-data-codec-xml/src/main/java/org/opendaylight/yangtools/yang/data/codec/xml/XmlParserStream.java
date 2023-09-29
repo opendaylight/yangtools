@@ -348,7 +348,8 @@ public final class XmlParserStream implements Closeable, Flushable {
         return parse(new DOMSourceXMLStreamReader(src));
     }
 
-    private ImmutableMap<QName, Object> getElementAttributes(final XMLStreamReader in) {
+    private ImmutableMap<QName, Object> getElementAttributes(final XMLStreamReader in)
+            throws XMLStreamException {
         checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
         final var attributes = new LinkedHashMap<QName, Object>();
 
@@ -664,7 +665,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private void setValue(final SimpleNodeDataWithSchema<?> parent, final Object value,
-            final NamespaceContext nsContext) {
+            final NamespaceContext nsContext) throws XMLStreamException {
         final DataSchemaNode schema = parent.getSchema();
         final Object prev = parent.getValue();
         checkArgument(prev == null, "Node '%s' has already set its value to '%s'", schema.getQName(), prev);
@@ -672,7 +673,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private Object translateValueByType(final Object value, final DataSchemaNode node,
-            final NamespaceContext namespaceCtx) {
+            final NamespaceContext namespaceCtx) throws XMLStreamException {
         if (node instanceof AnyxmlSchemaNode) {
             checkArgument(value instanceof Document);
             /*

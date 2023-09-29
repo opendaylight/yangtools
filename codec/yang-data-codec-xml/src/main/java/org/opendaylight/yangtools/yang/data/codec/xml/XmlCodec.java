@@ -21,5 +21,8 @@ public sealed interface XmlCodec<T> extends TypeAwareCodec<T, NamespaceContext, 
         permits AbstractXmlCodec, EmptyXmlCodec, IdentityrefXmlCodec, InstanceIdentifierXmlCodec, NullXmlCodec,
                 UnionXmlCodec {
     @Override
+    T parseValue(NamespaceContext namespaceContext, String str) throws XMLStreamException;
+
+    @Override
     void writeValue(XMLStreamWriter ctx, T value) throws XMLStreamException;
 }

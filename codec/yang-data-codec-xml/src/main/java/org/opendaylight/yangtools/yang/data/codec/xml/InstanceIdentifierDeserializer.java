@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -45,7 +46,7 @@ final class InstanceIdentifierDeserializer extends AbstractInstanceIdentifierCod
 
     @Override
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
-            final String value) {
+            final String value) throws XMLStreamException {
         requireNonNull(schemaNode, "schemaNode cannot be null");
         final XmlCodec<?> objectXmlCodec;
         if (schemaNode instanceof LeafSchemaNode leafSchemaNode) {

@@ -79,12 +79,12 @@ abstract sealed class UnionJSONCodec<T> implements JSONCodec<T> {
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public final T parseValue(final Object ctx, final String str) {
+    public final T parseValue(final Object ctx, final String str) throws IOException {
         for (JSONCodec<?> codec : codecs) {
             final Object ret;
             try {
                 ret = codec.parseValue(ctx, str);
-            } catch (RuntimeException e) {
+            } catch (IOException | RuntimeException e) {
                 LOG.debug("Codec {} did not accept input '{}'", codec, str, e);
                 continue;
             }
@@ -92,7 +92,7 @@ abstract sealed class UnionJSONCodec<T> implements JSONCodec<T> {
             return getDataType().cast(ret);
         }
 
-        throw new IllegalArgumentException("Invalid value \"" + str + "\" for union type.");
+        throw new IOException("Invalid value \"" + str + "\" for union type.");
     }
 
     @Override

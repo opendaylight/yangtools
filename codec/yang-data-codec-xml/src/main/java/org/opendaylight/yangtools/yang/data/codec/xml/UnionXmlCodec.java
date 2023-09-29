@@ -74,14 +74,14 @@ abstract sealed class UnionXmlCodec<T> implements XmlCodec<T> {
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public final T parseValue(final NamespaceContext ctx, final String str) {
-        final var suppressed = new ArrayList<RuntimeException>();
+    public final T parseValue(final NamespaceContext ctx, final String str) throws XMLStreamException {
+        final var suppressed = new ArrayList<Exception>();
 
         for (XmlCodec<?> codec : codecs) {
             final Object ret;
             try {
                 ret = codec.parseValue(ctx, str);
-            } catch (RuntimeException e) {
+            } catch (XMLStreamException | RuntimeException e) {
                 LOG.debug("Codec {} did not accept input '{}'", codec, str, e);
                 suppressed.add(e);
                 continue;
@@ -90,7 +90,7 @@ abstract sealed class UnionXmlCodec<T> implements XmlCodec<T> {
             return getDataType().cast(ret);
         }
 
-        final var ex = new IllegalArgumentException("Invalid value \"" + str + "\" for union type.");
+        final var ex = new XMLStreamException("Invalid value \"" + str + "\" for union type.");
         suppressed.forEach(ex::addSuppressed);
         throw ex;
     }

@@ -81,7 +81,7 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
 
     @Override
     protected final Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
-            final String value) {
+            final String value) throws IOException {
         requireNonNull(schemaNode, "schemaNode cannot be null");
         if (schemaNode instanceof LeafSchemaNode leafSchemaNode) {
             return codecFactory.codecFor(leafSchemaNode, resolver).parseValue(null, value);

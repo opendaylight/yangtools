@@ -93,12 +93,18 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      */
     @NonNull List<PathArgument> build() {
         while (!allCharactersConsumed()) {
-            product.add(computeNextArgument());
+            final PathArgument arg;
+            try {
+                arg = computeNextArgument();
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
+            }
+            product.add(arg);
         }
         return ImmutableList.copyOf(product);
     }
 
-    private PathArgument computeNextArgument() {
+    private PathArgument computeNextArgument() throws Exception {
         checkValid(SLASH == currentChar(), "Identifier must start with '/'.");
         skipCurrentChar();
         checkValid(!allCharactersConsumed(), "Identifier cannot end with '/'.");
@@ -143,7 +149,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      * @param name QName of node, for which predicates are computed.
      * @return PathArgument representing node selection with predictes
      */
-    private PathArgument computeIdentifierWithPredicate(final QName name) {
+    private PathArgument computeIdentifierWithPredicate(final QName name) throws Exception {
         final var currentNode = nextContextNode(name);
         if (currentNode.pathStep() != null) {
             throw iae("Entry %s does not allow specifying predicates.", name);

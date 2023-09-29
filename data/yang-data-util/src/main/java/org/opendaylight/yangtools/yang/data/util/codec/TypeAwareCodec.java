@@ -36,7 +36,7 @@ public interface TypeAwareCodec<T, I, O> {
      * @return Value in native format
      * @throws IllegalArgumentException if the value does not parse or pass type validation
      */
-    T parseValue(I ctx, String str);
+    T parseValue(I ctx, String str) throws Exception;
 
     /**
      * Serialize specified value with specified JsonWriter.
