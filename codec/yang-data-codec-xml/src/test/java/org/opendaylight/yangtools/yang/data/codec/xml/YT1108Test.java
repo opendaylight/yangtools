@@ -25,7 +25,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -103,7 +103,7 @@ public class YT1108Test {
         final String serializedXml = toString(domResult.getNode());
         final Diff diff = new Diff(expectedXml, serializedXml);
 
-        new XMLTestCase() {}.assertXMLEqual(diff, true);
+        XMLAssert.assertXMLEqual(diff, true);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class YT1108Test {
         final String serializedXml = toString(domResult.getNode());
         final Diff diff = new Diff(expectedXml, serializedXml);
 
-        new XMLTestCase() {}.assertXMLEqual(diff, true);
+        XMLAssert.assertXMLEqual(diff, true);
     }
 
     private DOMResult convertNormalizedNodeToXml(final NormalizedNode normalizedNode)
