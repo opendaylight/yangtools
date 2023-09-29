@@ -64,10 +64,10 @@
     </rpc>
     <notification name="test-notification">
         <uses name="test-grouping-2">
-            <refine target-node="test-choice-2">
+            <refine target-node="test-anyxml-2">
                 <config value="false"/>
             </refine>
-            <refine target-node="test-anyxml-2">
+            <refine target-node="test-choice-2">
                 <config value="false"/>
             </refine>
         </uses>
@@ -123,14 +123,14 @@
     </augment>
     <augment target-node="/test-container-1">
         <uses name="test-grouping-1">
-            <refine target-node="test-list">
-                <min-elements value="5"/>
+            <refine target-node="test-leaf-1">
+                <default value="def-val"/>
             </refine>
             <refine target-node="test-leaf-list">
                 <config value="false"/>
             </refine>
-            <refine target-node="test-leaf-1">
-                <default value="def-val"/>
+            <refine target-node="test-list">
+                <min-elements value="5"/>
             </refine>
             <refine target-node="test-container-2">
                 <config value="false"/>
