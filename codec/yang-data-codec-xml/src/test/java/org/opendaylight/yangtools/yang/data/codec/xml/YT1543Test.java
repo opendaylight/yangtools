@@ -67,7 +67,7 @@ class YT1543Test {
     void nestedInstanceIdentifierInDocument() throws Exception {
         final var stringWriter = new StringWriter();
         try (var xmlWriter = XMLStreamNormalizedNodeStreamWriter.create(
-                TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(stringWriter), MODEL_CONTEXT)) {
+                TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(stringWriter), MODEL_CONTEXT, true)) {
             try (var nnWriter = NormalizedNodeWriter.forStreamWriter(xmlWriter)) {
                 // Contrived: we have a document for foo's 'foo' container, with 'leaf' pointing to an instance of bar's
                 //            'bar' list item, whose key points to baz's 'baz' container.
@@ -91,7 +91,7 @@ class YT1543Test {
         xmlWriter.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, "foo", "foons");
         xmlWriter.writeDefaultNamespace("foons");
         xmlWriter.writeStartElement("leaf");
-        XmlCodecFactory.create(MODEL_CONTEXT).instanceIdentifierCodec().writeValue(xmlWriter, IID);
+        XmlCodecFactory.create(MODEL_CONTEXT, true).instanceIdentifierCodec().writeValue(xmlWriter, IID);
         xmlWriter.writeEndElement();
         xmlWriter.writeEndElement();
         xmlWriter.close();

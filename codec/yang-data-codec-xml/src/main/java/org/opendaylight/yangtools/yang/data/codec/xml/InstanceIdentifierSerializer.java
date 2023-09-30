@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import java.util.List;
 import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -17,10 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 final class InstanceIdentifierSerializer extends AbstractInstanceIdentifierCodec {
     private final NamespacePrefixes prefixes;
 
-    InstanceIdentifierSerializer(final DataSchemaContextTree dataContextTree, final PreferredPrefixes pref,
-            final NamespaceContext nsContext) {
+    InstanceIdentifierSerializer(final DataSchemaContextTree dataContextTree,  final NamespaceContext nsContext,
+            final @Nullable PreferredPrefixes pref) {
         super(dataContextTree);
-        prefixes = new NamespacePrefixes(pref, nsContext);
+        prefixes = new NamespacePrefixes(nsContext, pref);
     }
 
     List<Entry<XMLNamespace, String>> emittedPrefixes() {
