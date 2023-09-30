@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.util.EmptyMountPointContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -49,14 +50,14 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  * A thread-safe factory for instantiating {@link XmlCodec}s.
  */
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
-    private final @NonNull MountPointContext mountCtx;
-    private final @NonNull PreferredPrefixes pref;
     private final @NonNull InstanceIdentifierXmlCodec instanceIdentifierCodec;
+    private final @NonNull MountPointContext mountCtx;
+    private final @Nullable PreferredPrefixes pref;
 
-    private XmlCodecFactory(final MountPointContext mountCtx) {
+    private XmlCodecFactory(final MountPointContext mountCtx, final boolean modelPrefixes) {
         super(mountCtx.getEffectiveModelContext(), new SharedCodecCache<>());
         this.mountCtx = requireNonNull(mountCtx);
-        pref = new PreferredPrefixes.Shared(getEffectiveModelContext());
+        pref = modelPrefixes ? new PreferredPrefixes.Shared(getEffectiveModelContext()) : null;
         instanceIdentifierCodec = new InstanceIdentifierXmlCodec(this, pref);
     }
 
@@ -71,7 +72,18 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
      * @return A codec factory instance.
      */
     public static XmlCodecFactory create(final MountPointContext context) {
-        return new XmlCodecFactory(context);
+        return create(context, false);
+    }
+
+    /**
+     * Instantiate a new codec factory attached to a particular context.
+     *
+     * @param context MountPointContext to which the factory should be bound
+     * @param preferPrefixes prefer prefixes known to {@code context}
+     * @return A codec factory instance.
+     */
+    public static XmlCodecFactory create(final MountPointContext context, final boolean preferPrefixes) {
+        return new XmlCodecFactory(context, preferPrefixes);
     }
 
     /**
@@ -81,7 +93,18 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
      * @return A codec factory instance.
      */
     public static XmlCodecFactory create(final EffectiveModelContext context) {
-        return create(new EmptyMountPointContext(context));
+        return create(context, false);
+    }
+
+    /**
+     * Instantiate a new codec factory attached to a particular context.
+     *
+     * @param context SchemaContext to which the factory should be bound
+     * @param preferPrefixes prefer prefixes known to {@code context}
+     * @return A codec factory instance.
+     */
+    public static XmlCodecFactory create(final EffectiveModelContext context, final boolean preferPrefixes) {
+        return create(new EmptyMountPointContext(context), preferPrefixes);
     }
 
     @Override
@@ -111,7 +134,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
-        return new IdentityrefXmlCodec(getEffectiveModelContext(), pref, module);
+        return new IdentityrefXmlCodec(getEffectiveModelContext(), module, pref);
     }
 
     @Override

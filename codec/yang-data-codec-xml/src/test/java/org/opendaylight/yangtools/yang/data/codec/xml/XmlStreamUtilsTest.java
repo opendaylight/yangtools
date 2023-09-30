@@ -73,7 +73,7 @@ public class XmlStreamUtilsTest {
 
         String xmlAsString = createXml(writer -> {
             writer.writeStartElement("element");
-            final var facade = new StreamWriterFacade(pref, writer);
+            final var facade = new StreamWriterFacade(writer, pref);
             facade.writeCharacters(XMLStreamWriterUtils.encode(facade, QName.create(parent, "identity"), parent));
             facade.flush();
             writer.writeEndElement();
@@ -83,7 +83,7 @@ public class XmlStreamUtilsTest {
 
         xmlAsString = createXml(writer -> {
             writer.writeStartElement("elementDifferent");
-            final var facade = new StreamWriterFacade(pref, writer);
+            final var facade = new StreamWriterFacade(writer, pref);
             facade.writeCharacters(XMLStreamWriterUtils.encode(facade, QName.create("different:namespace", "identity"),
                 parent));
             facade.flush();
