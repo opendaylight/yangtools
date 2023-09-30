@@ -41,7 +41,7 @@ class NamespacePrefixesTest {
 
     @Test
     void testQNameWithPrefix() {
-        final var a = new NamespacePrefixes(PreferredPrefixes.empty(), null);
+        final var a = new NamespacePrefixes(null, null);
 
         final var allGenerated = new ArrayList<String>();
         for (int i = 0; i < MAX_COUNTER; i++) {
@@ -61,7 +61,7 @@ class NamespacePrefixesTest {
 
     @Test
     void test2QNames1Namespace() {
-        final var a = new NamespacePrefixes(PreferredPrefixes.empty(), null);
+        final var a = new NamespacePrefixes(null, null);
 
         final var uri = XMLNamespace.of("localhost");
 
@@ -71,7 +71,7 @@ class NamespacePrefixesTest {
 
     @Test
     void testQNameNoPrefix() {
-        final var a = new NamespacePrefixes(PreferredPrefixes.empty(), null);
+        final var a = new NamespacePrefixes(null, new PreferredPrefixes.Precomputed(Map.of()));
 
         final var uri = XMLNamespace.of("localhost");
         final var second = XMLNamespace.of("second");

@@ -16,6 +16,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -39,16 +40,18 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     private final NormalizedNodeStreamWriterStack tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
-    private SchemaAwareXMLStreamNormalizedNodeStreamWriter(final PreferredPrefixes pref, final XMLStreamWriter writer,
-            final EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker) {
-        super(pref, writer);
+    private SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer,
+            final EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker,
+            final @Nullable PreferredPrefixes pref) {
+        super(writer, pref);
         this.tracker = requireNonNull(tracker);
         streamUtils = new SchemaAwareXMLStreamWriterUtils(modelContext, pref);
     }
 
     SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer,
-            final EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker) {
-        this(new PreferredPrefixes.Shared(modelContext), writer, modelContext, tracker);
+            final EffectiveModelContext modelContext, final NormalizedNodeStreamWriterStack tracker,
+            final boolean modelPrefixes) {
+        this(writer, modelContext, tracker, modelPrefixes ? new PreferredPrefixes.Shared(modelContext) : null);
     }
 
     @Override
