@@ -11,17 +11,18 @@ import static java.util.Objects.requireNonNull;
 
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     private final @NonNull EffectiveModelContext modelContext;
-    private final @NonNull PreferredPrefixes pref;
+    private final @Nullable PreferredPrefixes pref;
 
-    SchemaAwareXMLStreamWriterUtils(final EffectiveModelContext modelContext, final PreferredPrefixes pref) {
+    SchemaAwareXMLStreamWriterUtils(final EffectiveModelContext modelContext, final @Nullable PreferredPrefixes pref) {
         this.modelContext = requireNonNull(modelContext);
-        this.pref = requireNonNull(pref);
+        this.pref = pref;
     }
 
     @NonNull EffectiveModelContext modelContext() {
@@ -31,8 +32,8 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     @Override
     String encodeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
-        final var serializer = new InstanceIdentifierSerializer(DataSchemaContextTree.from(modelContext), pref,
-            writer.getNamespaceContext());
+        final var serializer = new InstanceIdentifierSerializer(DataSchemaContextTree.from(modelContext),
+            writer.getNamespaceContext(), pref);
         final var str = serializer.serialize(value);
         for (var entry : serializer.emittedPrefixes()) {
             writer.writeNamespace(entry.getValue(), entry.getKey().toString());

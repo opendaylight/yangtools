@@ -60,8 +60,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     private final @NonNull StreamWriterFacade facade;
 
-    XMLStreamNormalizedNodeStreamWriter(final PreferredPrefixes pref, final XMLStreamWriter writer) {
-        facade = new StreamWriterFacade(pref, writer);
+    XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final @Nullable PreferredPrefixes pref) {
+        facade = new StreamWriterFacade(writer, pref);
     }
 
     /**
@@ -73,8 +73,21 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context) {
+        return create(writer, context, false);
+    }
+
+    /**
+     * Create a new writer with the specified context as its root.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param preferPrefixes prefer prefixes known to {@code context}
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final boolean preferPrefixes) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
-            NormalizedNodeStreamWriterStack.of(context));
+            NormalizedNodeStreamWriterStack.of(context), preferPrefixes);
     }
 
     /**
@@ -86,8 +99,21 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveStatementInference inference) {
+        return create(writer, inference, false);
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted at the specified node.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param inference root node inference
+     * @param preferPrefixes prefer prefixes known to {@code context}
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+            final EffectiveStatementInference inference, final boolean preferPrefixes) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, inference.getEffectiveModelContext(),
-            NormalizedNodeStreamWriterStack.of(inference));
+            NormalizedNodeStreamWriterStack.of(inference), preferPrefixes);
     }
 
     /**
@@ -116,9 +142,23 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context, final @Nullable Absolute path) {
+        return create(writer, context, path, false);
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified schema path.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param path path
+     * @param preferPrefixes prefer prefixes known to {@code context}
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final @Nullable Absolute path, final boolean preferPrefixes) {
         return path == null ? create(writer, context)
             : new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
-                NormalizedNodeStreamWriterStack.of(context, path));
+                NormalizedNodeStreamWriterStack.of(context, path), preferPrefixes);
     }
 
     /**
@@ -131,8 +171,22 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context, final YangInstanceIdentifier path) {
+        return create(writer, context, path, false);
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified {@link YangInstanceIdentifier}.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param path path
+     * @param preferPrefixes prefer prefixes known to {@code context}
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final YangInstanceIdentifier path, final boolean preferPrefixes) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
-            NormalizedNodeStreamWriterStack.of(context, path));
+            NormalizedNodeStreamWriterStack.of(context, path), preferPrefixes);
     }
 
     /**
@@ -145,8 +199,22 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter forInputOf(final XMLStreamWriter writer,
             final EffectiveModelContext context, final Absolute operationPath) {
+        return forInputOf(writer, context, operationPath, false);
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified operation's input.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param operationPath Parent operation (RPC or action) path.
+     * @param preferPrefixes prefer prefixes known to {@code context}
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter forInputOf(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final Absolute operationPath, final boolean preferPrefixes) {
         return forOperation(writer, context, operationPath,
-            YangConstants.operationInputQName(operationPath.lastNodeIdentifier().getModule()));
+            YangConstants.operationInputQName(operationPath.lastNodeIdentifier().getModule()), preferPrefixes);
     }
 
     /**
@@ -159,14 +227,30 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter forOutputOf(final XMLStreamWriter writer,
             final EffectiveModelContext context, final Absolute operationPath) {
+        return forOutputOf(writer, context, operationPath, false);
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified operation's output.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param operationPath Parent operation (RPC or action) path.
+     * @param preferPrefixes prefer prefixes known to {@code context}
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter forOutputOf(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final Absolute operationPath, final boolean preferPrefixes) {
         return forOperation(writer, context, operationPath,
-            YangConstants.operationOutputQName(operationPath.lastNodeIdentifier().getModule()));
+            YangConstants.operationOutputQName(operationPath.lastNodeIdentifier().getModule()),
+            preferPrefixes);
     }
 
     private static @NonNull NormalizedNodeStreamWriter forOperation(final XMLStreamWriter writer,
-            final EffectiveModelContext context, final Absolute operationPath, final QName qname) {
+            final EffectiveModelContext context, final Absolute operationPath, final QName qname,
+            final boolean preferPrefixes) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
-            NormalizedNodeStreamWriterStack.ofOperation(context, operationPath, qname));
+            NormalizedNodeStreamWriterStack.ofOperation(context, operationPath, qname), preferPrefixes);
     }
 
     /**
