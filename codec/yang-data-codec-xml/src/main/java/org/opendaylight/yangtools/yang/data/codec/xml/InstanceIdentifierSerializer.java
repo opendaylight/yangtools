@@ -20,7 +20,7 @@ final class InstanceIdentifierSerializer extends AbstractInstanceIdentifierCodec
     InstanceIdentifierSerializer(final DataSchemaContextTree dataContextTree, final PreferredPrefixes pref,
             final NamespaceContext nsContext) {
         super(dataContextTree);
-        prefixes = new NamespacePrefixes(pref, nsContext);
+        prefixes = new NamespacePrefixes(nsContext, pref);
     }
 
     List<Entry<XMLNamespace, String>> emittedPrefixes() {
