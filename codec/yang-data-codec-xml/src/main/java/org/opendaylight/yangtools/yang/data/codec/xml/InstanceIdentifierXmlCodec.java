@@ -13,17 +13,18 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 
 final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifier> {
     private final @NonNull XmlCodecFactory codecFactory;
-    private final DataSchemaContextTree dataContextTree;
-    private final PreferredPrefixes pref;
+    private final @NonNull DataSchemaContextTree dataContextTree;
+    private final @Nullable PreferredPrefixes pref;
 
-    InstanceIdentifierXmlCodec(final XmlCodecFactory codecFactory, final PreferredPrefixes pref) {
+    InstanceIdentifierXmlCodec(final XmlCodecFactory codecFactory, final @Nullable PreferredPrefixes pref) {
         this.codecFactory = requireNonNull(codecFactory);
-        this.pref = requireNonNull(pref);
+        this.pref = pref;
         dataContextTree = DataSchemaContextTree.from(codecFactory.getEffectiveModelContext());
     }
 
@@ -40,7 +41,7 @@ final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifie
 
     @Override
     public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value) throws XMLStreamException {
-        final var serializer = new InstanceIdentifierSerializer(dataContextTree, pref, ctx.getNamespaceContext());
+        final var serializer = new InstanceIdentifierSerializer(dataContextTree, ctx.getNamespaceContext(), pref);
 
         final String str;
         try {

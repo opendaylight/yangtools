@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +57,10 @@ class PreferredPrefixesTest {
         final var prefixes = new PreferredPrefixes.Shared(context);
         assertEquals("f", prefixes.prefixForNamespace(FOONS));
         assertEquals("Shared{mappings={foons=Optional[f]}}", prefixes.toString());
-        assertEquals("Precomputed{mappings={foons=f}}", prefixes.toPrecomputed().toString());
+
+        final var precomputed = prefixes.toPrecomputed();
+        assertEquals("f", precomputed.prefixForNamespace(FOONS));
+        assertEquals("Precomputed{mappings={foons=f}}", precomputed.toString());
     }
 
     @Test
@@ -86,5 +90,19 @@ class PreferredPrefixesTest {
             XMLNamespace.of("bazns"), "xlx",
             XMLNamespace.of("quxns"), "xmx",
             XMLNamespace.of("xyzzyns"), "xyz"), new PreferredPrefixes.Shared(context).toPrecomputed().mappings());
+    }
+
+    @Test
+    void ignorePrefixesStartingWithXML() {
+        final var prefixes = new PreferredPrefixes.Shared(YangParserTestUtils.parseYang("""
+            module foo {
+              namespace foons;
+              prefix a;
+            }"""));
+        assertTrue(prefixes.isUsed("a"));
+        assertEquals("Shared{mappings={}}", prefixes.toString());
+        final var precomputed = prefixes.toPrecomputed();
+        assertTrue(precomputed.isUsed("a"));
+        assertEquals("Precomputed{mappings={foons=a}}", precomputed.toString());
     }
 }

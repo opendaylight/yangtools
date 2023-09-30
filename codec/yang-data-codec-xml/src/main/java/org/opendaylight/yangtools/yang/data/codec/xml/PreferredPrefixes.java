@@ -10,15 +10,18 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
  * Prefixes preferred by an {@link EffectiveModelContext}. This acts as an advisory to {@link NamespacePrefixes} for
@@ -27,18 +30,21 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  * with those ambiguities.
  */
 abstract sealed class PreferredPrefixes {
-    private static final class Precomputed extends PreferredPrefixes {
-        static final @NonNull Precomputed EMPTY = new Precomputed(Map.of());
-
-        private final Map<XMLNamespace, String> mappings;
+    static final class Precomputed extends PreferredPrefixes {
+        private final ImmutableBiMap<XMLNamespace, String> mappings;
 
         Precomputed(final Map<XMLNamespace, String> mappings) {
-            this.mappings = requireNonNull(mappings);
+            this.mappings = ImmutableBiMap.copyOf(mappings);
         }
 
         @Override
         String prefixForNamespace(final XMLNamespace namespace) {
             return mappings.get(namespace);
+        }
+
+        @Override
+        boolean isUsed(final String prefix) {
+            return mappings.inverse().containsKey(prefix);
         }
 
         @Override
@@ -67,6 +73,11 @@ abstract sealed class PreferredPrefixes {
             return modules.hasNext() ? loadPrefix(namespace, modules.next().getPrefix()) : null;
         }
 
+        @Override
+        boolean isUsed(final String prefix) {
+            return modulesForPrefix(prefix).findAny().isPresent();
+        }
+
         /**
          * Completely populate known mappings and return an optimized version equivalent of this object.
          *
@@ -76,8 +87,8 @@ abstract sealed class PreferredPrefixes {
             for (var module : modelContext.getModules()) {
                 prefixForNamespace(module.getNamespace());
             }
-            return new Precomputed(Map.copyOf(
-                Maps.transformValues(Maps.filterValues(mappings, Optional::isPresent), Optional::orElseThrow)));
+            return new Precomputed(
+                Maps.transformValues(Maps.filterValues(mappings, Optional::isPresent), Optional::orElseThrow));
         }
 
         @Override
@@ -93,15 +104,12 @@ abstract sealed class PreferredPrefixes {
 
         // Validate that all modules which have the same prefix have also the name namespace
         private boolean isValidMapping(final XMLNamespace namespace, final String prefix) {
-            if (startsWithXml(prefix)) {
-                return false;
-            }
-            for (var module : modelContext.getModules()) {
-                if (prefix.equals(module.getPrefix()) && !namespace.equals(module.getNamespace())) {
-                    return false;
-                }
-            }
-            return true;
+            return !startsWithXml(prefix) && modulesForPrefix(prefix)
+                .allMatch(module -> namespace.equals(module.getNamespace()));
+        }
+
+        private Stream<? extends Module> modulesForPrefix(final String prefix) {
+            return modelContext.getModules().stream().filter(module -> prefix.equals(module.getPrefix()));
         }
 
         // https://www.w3.org/TR/xml-names/#xmlReserved
@@ -126,11 +134,9 @@ abstract sealed class PreferredPrefixes {
         // Hidden on purpose
     }
 
-    static @NonNull PreferredPrefixes empty() {
-        return Precomputed.EMPTY;
-    }
-
     abstract @Nullable String prefixForNamespace(@NonNull XMLNamespace namespace);
+
+    abstract boolean isUsed(String prefix);
 
     @Override
     public final String toString() {
@@ -138,4 +144,5 @@ abstract sealed class PreferredPrefixes {
     }
 
     abstract Map<XMLNamespace, ?> mappings();
+
 }
