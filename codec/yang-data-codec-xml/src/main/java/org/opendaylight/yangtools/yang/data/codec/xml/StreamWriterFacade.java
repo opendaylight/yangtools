@@ -20,6 +20,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
@@ -43,9 +44,9 @@ final class StreamWriterFacade extends ValueWriter {
     // namespace declarations or value.
     private QName openElement;
 
-    StreamWriterFacade(final PreferredPrefixes pref, final XMLStreamWriter writer) {
+    StreamWriterFacade(final XMLStreamWriter writer, final @Nullable PreferredPrefixes pref) {
         this.writer = requireNonNull(writer);
-        prefixes = new NamespacePrefixes(pref, writer.getNamespaceContext());
+        prefixes = new NamespacePrefixes(writer.getNamespaceContext(), pref);
     }
 
     void writeCharacters(final String text) throws XMLStreamException {
