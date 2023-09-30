@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -19,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
@@ -40,9 +39,9 @@ final class NamespacePrefixes implements Mutable {
     private final PreferredPrefixes pref;
     private final NamespaceContext context;
 
-    NamespacePrefixes(final PreferredPrefixes pref, final NamespaceContext context) {
-        this.pref = requireNonNull(pref);
+    NamespacePrefixes(final NamespaceContext context, final @Nullable PreferredPrefixes pref) {
         this.context = context;
+        this.pref = pref;
     }
 
     List<Entry<XMLNamespace, String>> emittedPrefixes() {
@@ -65,20 +64,30 @@ final class NamespacePrefixes implements Mutable {
             }
         }
 
-        prefix = pref.prefixForNamespace(namespace);
-        if (prefix == null) {
-            prefix = encode(counter++);
-        }
-
-        while (alreadyUsedPrefix(prefix)) {
-            prefix = encode(counter++);
-        }
-
+        prefix = createPrefix(namespace);
         emittedPrefixes.put(namespace, prefix);
         return prefix;
     }
 
+    private @NonNull String createPrefix(final @NonNull XMLNamespace namespace) {
+        if (pref != null) {
+            final var prefix = pref.prefixForNamespace(namespace);
+            if (prefix != null) {
+                return prefix;
+            }
+        }
+
+        String prefix;
+        do {
+            prefix = encode(counter++);
+        } while (alreadyUsedPrefix(prefix));
+        return prefix;
+    }
+
     private boolean alreadyUsedPrefix(final String prefix) {
+        if (pref != null && pref.isUsed(prefix)) {
+            return true;
+        }
         if (context == null) {
             return false;
         }

@@ -15,6 +15,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -24,14 +25,14 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class IdentityrefXmlCodec implements XmlCodec<QName> {
     private final @NonNull EffectiveModelContext context;
-    private final @NonNull PreferredPrefixes pref;
     private final @NonNull QNameModule parentModule;
+    private final @Nullable PreferredPrefixes pref;
 
-    IdentityrefXmlCodec(final EffectiveModelContext context, final PreferredPrefixes pref,
-            final QNameModule parentModule) {
+    IdentityrefXmlCodec(final EffectiveModelContext context, final QNameModule parentModule,
+            final @Nullable PreferredPrefixes pref) {
         this.context = requireNonNull(context);
-        this.pref = requireNonNull(pref);
         this.parentModule = requireNonNull(parentModule);
+        this.pref = pref;
     }
 
     @Override
@@ -58,11 +59,11 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
     @Override
     public void writeValue(final XMLStreamWriter ctx, final QName value) throws XMLStreamException {
-        final var prefixes = new NamespacePrefixes(pref, ctx.getNamespaceContext());
+        final var prefixes = new NamespacePrefixes(ctx.getNamespaceContext(), pref);
         final var str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.getNamespace()));
 
-        for (var e : prefixes.emittedPrefixes()) {
-            ctx.writeNamespace(e.getValue(), e.getKey().toString());
+        for (var entry : prefixes.emittedPrefixes()) {
+            ctx.writeNamespace(entry.getValue(), entry.getKey().toString());
         }
         ctx.writeCharacters(str);
     }
