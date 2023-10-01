@@ -35,9 +35,11 @@ class AnnotationTest {
                 new AnnotationStatementSupport(YangParserConfiguration.DEFAULT))
             .build();
         final var context = reactor.newBuild()
-            .addSources(YangStatementStreamSource.create(
-                    YangTextSchemaSource.forResource("/ietf-yang-metadata@2016-08-05.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/example-last-modified.yang")))
+            .addSources(
+                YangStatementStreamSource.create(
+                    YangTextSchemaSource.forResource(AnnotationTest.class, "/ietf-yang-metadata@2016-08-05.yang")),
+                YangStatementStreamSource.create(
+                    YangTextSchemaSource.forResource(AnnotationTest.class, "/example-last-modified.yang")))
             .buildEffective();
 
         final var annotations = AnnotationSchemaNode.findAll(context);

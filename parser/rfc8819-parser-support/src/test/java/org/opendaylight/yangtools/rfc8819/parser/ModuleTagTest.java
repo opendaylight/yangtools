@@ -89,7 +89,8 @@ public class ModuleTagTest {
 
     private static YangStatementStreamSource moduleFromResources(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(YangTextSchemaSource.forResource(resourceName));
+            return YangStatementStreamSource.create(
+                YangTextSchemaSource.forResource(ModuleTagTest.class, resourceName));
         } catch (final YangSyntaxErrorException | IOException e) {
             throw new IllegalStateException("Failed to find resource " + resourceName, e);
         }

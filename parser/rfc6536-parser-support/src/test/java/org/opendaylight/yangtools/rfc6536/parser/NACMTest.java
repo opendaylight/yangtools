@@ -33,8 +33,10 @@ class NACMTest {
 
         final var context = reactor.newBuild()
             .addSources(
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-netconf-acm@2012-02-22.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-yang-types@2013-07-15.yang")))
+                YangStatementStreamSource.create(
+                    YangTextSchemaSource.forResource(NACMTest.class, "/ietf-netconf-acm@2012-02-22.yang")),
+                YangStatementStreamSource.create(
+                    YangTextSchemaSource.forResource(NACMTest.class, "/ietf-yang-types@2013-07-15.yang")))
             .buildEffective();
 
         final var module = context.findModule(NACMConstants.RFC6536_MODULE).orElseThrow();

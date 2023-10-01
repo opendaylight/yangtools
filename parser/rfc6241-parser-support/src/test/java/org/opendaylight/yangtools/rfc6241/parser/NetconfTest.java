@@ -34,9 +34,9 @@ class NetconfTest {
             .build();
         final var context = reactor.newBuild()
             .addLibSources(YangStatementStreamSource.create(
-                YangTextSchemaSource.forResource("/ietf-inet-types@2013-07-15.yang")))
+                YangTextSchemaSource.forResource(NetconfTest.class, "/ietf-inet-types@2013-07-15.yang")))
             .addSource(YangStatementStreamSource.create(
-                YangTextSchemaSource.forResource("/ietf-netconf@2011-06-01.yang")))
+                YangTextSchemaSource.forResource(NetconfTest.class, "/ietf-netconf@2011-06-01.yang")))
             .buildEffective();
 
         final var module = context.findModule(NetconfConstants.RFC6241_MODULE).orElseThrow();

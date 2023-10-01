@@ -40,10 +40,10 @@ abstract class AbstractYangDataTest {
 
     static StatementStreamSource sourceForResource(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(YangTextSchemaSource.forResource(resourceName));
+            return YangStatementStreamSource.create(
+                YangTextSchemaSource.forResource(AbstractYangDataTest.class, resourceName));
         } catch (IOException | YangSyntaxErrorException e) {
             throw new IllegalArgumentException("Failed to create source", e);
         }
     }
-
 }
