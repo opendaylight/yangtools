@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ class NamespacePrefixesTest {
         final var allGenerated = new ArrayList<>(MAX_COUNTER);
         for (int i = 0; i < MAX_COUNTER; i++) {
             final var encoded = NamespacePrefixes.encode(i);
-            assertEquals(decode(encoded), i);
+            assertDecodesTo(i, encoded);
             allGenerated.add(encoded);
         }
 
@@ -80,15 +81,13 @@ class NamespacePrefixesTest {
         assertEquals(List.of(Map.entry(uri, "a"), Map.entry(second, "b")), a.emittedPrefixes());
     }
 
-    private static int decode(final String str) {
-        int ret = 0;
+    private static void assertDecodesTo(final int expected, final String str) {
+        int actual = 0;
         for (char c : str.toCharArray()) {
             int idx = NamespacePrefixes.LOOKUP.indexOf(c);
-            if (idx == -1) {
-                throw new IllegalArgumentException("Invalid string " + str);
-            }
-            ret = (ret << NamespacePrefixes.SHIFT) + idx;
+            assertNotEquals(-1, idx, () -> "Invalid string " + str);
+            actual = (actual << NamespacePrefixes.SHIFT) + idx;
         }
-        return ret;
+        assertEquals(expected, actual);
     }
 }
