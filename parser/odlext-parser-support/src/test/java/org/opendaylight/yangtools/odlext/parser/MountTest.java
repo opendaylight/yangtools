@@ -30,8 +30,10 @@ class MountTest {
                 new MountStatementSupport(YangParserConfiguration.DEFAULT))
             .build();
         final var foo = reactor.newBuild()
-            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/yang-ext.yang")))
-            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/mount.yang")))
+            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                MountTest.class, "/yang-ext.yang")))
+            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                MountTest.class, "/mount.yang")))
             .buildEffective()
             .getModuleStatements()
             .get(FOO);

@@ -47,19 +47,25 @@ public class SubscribedNotificationsTest {
     public void testSubscribedNotifications() throws ReactorException, IOException, YangSyntaxErrorException {
         final var context = reactor.newBuild()
             .addLibSources(
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-inet-types@2013-07-15.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-interfaces@2018-02-20.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-ip@2018-02-22.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-netconf-acm@2018-02-14.yang")),
                 YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                    "/ietf-network-instance@2019-01-21.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-restconf@2017-01-26.yang")),
+                    SubscribedNotificationsTest.class, "/ietf-inet-types@2013-07-15.yang")),
                 YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                    "/ietf-yang-schema-mount@2019-01-14.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ietf-yang-types@2013-07-15.yang")))
+                    SubscribedNotificationsTest.class, "/ietf-interfaces@2018-02-20.yang")),
+                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                    SubscribedNotificationsTest.class, "/ietf-ip@2018-02-22.yang")),
+                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                    SubscribedNotificationsTest.class, "/ietf-netconf-acm@2018-02-14.yang")),
+                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                    SubscribedNotificationsTest.class, "/ietf-network-instance@2019-01-21.yang")),
+                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                    SubscribedNotificationsTest.class, "/ietf-restconf@2017-01-26.yang")),
+                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                    SubscribedNotificationsTest.class, "/ietf-yang-schema-mount@2019-01-14.yang")),
+                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                    SubscribedNotificationsTest.class, "/ietf-yang-types@2013-07-15.yang")))
             .addSources(
                 YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                    "/ietf-subscribed-notifications@2019-09-09.yang")))
+                    SubscribedNotificationsTest.class, "/ietf-subscribed-notifications@2019-09-09.yang")))
             .buildEffective();
 
         final var notifications = context.getModuleStatement(SubscribedNotificationsConstants.RFC8639_MODULE)

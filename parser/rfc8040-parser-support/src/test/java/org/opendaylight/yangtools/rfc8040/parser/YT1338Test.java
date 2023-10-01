@@ -25,7 +25,7 @@ class YT1338Test extends AbstractYangDataTest {
     @Test
     void testAddedLeaves() throws Exception {
         final var restconf = assertInstanceOf(ContainerEffectiveStatement.class, REACTOR.newBuild()
-            .addSources(IETF_RESTCONF_MODULE, sourceForResource("/yt1338/foo.yang"))
+            .addSources(IETF_RESTCONF_MODULE, sourceForResource("/yt1338.yang"))
             .buildEffective()
             .findModuleStatement(YangDataConstants.RFC8040_MODULE)
             .orElseThrow()
@@ -40,7 +40,7 @@ class YT1338Test extends AbstractYangDataTest {
             .orElseThrow()
             .findFirstEffectiveSubstatement(LeafEffectiveStatement.class)
             .orElseThrow();
-        assertEquals(QName.create("foo", "foo"), leaf.argument());
+        assertEquals(QName.create("yt1338", "foo"), leaf.argument());
         assertEquals(StatementOrigin.CONTEXT, leaf.statementOrigin());
         assertNull(leaf.getDeclared());
 

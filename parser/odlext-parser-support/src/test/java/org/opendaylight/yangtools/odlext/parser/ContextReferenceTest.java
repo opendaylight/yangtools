@@ -42,8 +42,10 @@ class ContextReferenceTest {
             .build();
 
         final var foo = reactor.newBuild()
-            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/yang-ext.yang")))
-            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/ctxref.yang")))
+            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                ContextReferenceTest.class, "/yang-ext.yang")))
+            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                ContextReferenceTest.class, "/ctxref.yang")))
             .buildEffective()
             .getModuleStatements()
             .get(FOO);
