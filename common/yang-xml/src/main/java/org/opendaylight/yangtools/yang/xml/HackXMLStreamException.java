@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2024 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.xml;
+
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.base.Throwables;
+import com.google.common.base.VerifyException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamException;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
+/**
+ * A hack to instantiate {@link XMLStreamException}s without them mucking with the message string. We subclass
+ * {@link XMLStreamException} to get the credentials to access its protected {@code location} field. We then
+ * instantiate plain {@link XMLStreamException} and set its location via a MethodHandle.
+ */
+abstract class HackXMLStreamException extends XMLStreamException {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
+    private static final MethodHandle SET_LOCATION;
+
+    static {
+        try {
+            SET_LOCATION = MethodHandles.lookup().findSetter(XMLStreamException.class, "location", Location.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    private HackXMLStreamException() {
+        // Hidden on purpose
+    }
+
+    @NonNullByDefault
+    static XMLStreamException of(final String message, final @Nullable Location location) {
+        final var msg = requireNonNull(message);
+        if (location == null) {
+            return new XMLStreamException(msg);
+        }
+
+        final var ret = new XMLStreamException(
+            msg + " [at " + location.getLineNumber() + ":" + location.getColumnNumber() + "]");
+        setLocation(ret, location);
+        return ret;
+    }
+
+    @SuppressWarnings("checkstyle:illegalCatch")
+    private static void setLocation(final XMLStreamException obj, final Location location) {
+        try {
+            SET_LOCATION.invokeExact(obj, location);
+        } catch (Throwable e) {
+            Throwables.throwIfUnchecked(e);
+            throw new VerifyException("Unexpected failure", e);
+        }
+    }
+}
