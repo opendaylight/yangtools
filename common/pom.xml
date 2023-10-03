@@ -34,5 +34,6 @@
         <module>testutils</module>
         <module>yang-common</module>
         <module>yang-common-netty</module>
+        <module>yang-xml</module>
     </modules>
 </project>
