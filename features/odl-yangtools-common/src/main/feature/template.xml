@@ -4,5 +4,6 @@
     <feature name="odl-yangtools-common">
         <feature version="{{semVerRange}}">odl-yangtools-util</feature>
         <bundle>mvn:org.opendaylight.yangtools/yang-common/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-xml/{{versionAsInProject}}</bundle>
     </feature>
 </features>
