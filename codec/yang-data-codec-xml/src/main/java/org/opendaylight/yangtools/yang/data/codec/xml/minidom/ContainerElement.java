@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2023 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.codec.xml.minidom;
+
+import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
+/**
+ * An XML element containing other elements.
+ */
+@NonNullByDefault
+public non-sealed interface ContainerElement extends Element {
+    /**
+     * Return the list of child elements. Note that implementations may be lazy and hence may require significant amount
+     * of work to arrive at {@link List#size()}.
+     *
+     * @return contained child elements
+     */
+    List<Element> children();
+}

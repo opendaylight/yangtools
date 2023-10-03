@@ -23,5 +23,6 @@ module org.opendaylight.yangtools.yang.data.codec.xml {
     requires org.slf4j;
 
     // Annotations
+    requires static com.google.errorprone.annotations;
     requires static org.eclipse.jdt.annotation;
 }
