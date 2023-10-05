@@ -19,10 +19,5 @@ public interface ConfigStatement extends DeclaredStatement<Boolean> {
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.CONFIG;
     }
-
-    @Deprecated(since = "10.0.0", forRemoval = true)
-    default boolean getValue() {
-        return argument().booleanValue();
-    }
 }
 

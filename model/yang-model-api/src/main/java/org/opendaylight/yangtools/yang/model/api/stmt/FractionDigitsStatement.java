@@ -19,9 +19,4 @@ public interface FractionDigitsStatement extends DeclaredStatement<Integer> {
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.FRACTION_DIGITS;
     }
-
-    @Deprecated(since = "10.0.0", forRemoval = true)
-    default int getValue() {
-        return argument().intValue();
-    }
 }

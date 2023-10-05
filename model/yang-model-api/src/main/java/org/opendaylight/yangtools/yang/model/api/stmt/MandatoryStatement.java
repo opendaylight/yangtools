@@ -19,9 +19,4 @@ public interface MandatoryStatement extends DeclaredStatement<Boolean> {
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.MANDATORY;
     }
-
-    @Deprecated(since = "10.0.0", forRemoval = true)
-    default boolean getValue() {
-        return argument().booleanValue();
-    }
 }

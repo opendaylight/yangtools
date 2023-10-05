@@ -19,9 +19,4 @@ public interface YinElementStatement extends DeclaredStatement<Boolean> {
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.YIN_ELEMENT;
     }
-
-    @Deprecated(since = "10.0.0", forRemoval = true)
-    default boolean getValue() {
-        return argument().booleanValue();
-    }
 }
