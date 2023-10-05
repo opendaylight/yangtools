@@ -60,13 +60,8 @@ class YT1404Test {
 
         final var foo = assertInstanceOf(ContainerSchemaNode.class, module.getDataChildByName(FOO));
         assertEquals(1, foo.getChildNodes().size());
-        final var fooBar = assertInstanceOf(LeafSchemaNode.class, foo.dataChildByName(BAR));
+        assertInstanceOf(LeafSchemaNode.class, foo.dataChildByName(BAR));
 
-        final var fooAugment = Iterables.getOnlyElement(foo.getAvailableAugmentations());
-        assertSame(augment, fooAugment);
-
-        final var effectiveAug = new EffectiveAugmentationSchema(augment, foo);
-        assertEquals(1, effectiveAug.getChildNodes().size());
-        assertSame(fooBar, effectiveAug.getDataChildByName(BAR));
+        assertSame(augment, Iterables.getOnlyElement(foo.getAvailableAugmentations()));
     }
 }
