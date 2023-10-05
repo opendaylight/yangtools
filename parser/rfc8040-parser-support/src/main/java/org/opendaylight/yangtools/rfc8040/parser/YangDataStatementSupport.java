@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
@@ -33,6 +34,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -42,6 +45,13 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class YangDataStatementSupport
         extends AbstractStatementSupport<YangDataName, YangDataStatement, YangDataEffectiveStatement> {
+    private static final @NonNull ParserNamespace<YangDataName,
+        StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> NAMESPACE =
+        new ParserNamespace<>("yang-data");
+    public static final @NonNull NamespaceBehaviour<YangDataName,
+        StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> BEHAVIOUR =
+        NamespaceBehaviour.global(NAMESPACE);
+
     // As per RFC8040 page 81:
     //
     //    The substatements of this extension MUST follow the
@@ -88,12 +98,23 @@ public final class YangDataStatementSupport
     }
 
     @Override
-    public void onStatementAdded(final Mutable<YangDataName, YangDataStatement, YangDataEffectiveStatement> ctx) {
+    public void onStatementAdded(final Mutable<YangDataName, YangDataStatement, YangDataEffectiveStatement> stmt) {
         // as per https://www.rfc-editor.org/rfc/rfc8040#section-8,
         // yang-data is ignored unless it appears as a top-level statement
-        if (ctx.coerceParentContext().getParentContext() != null) {
-            ctx.setUnsupported();
+        final var parent = stmt.coerceParentContext();
+        if (parent.getParentContext() != null) {
+            stmt.setUnsupported();
+            return;
         }
+
+        final var name = stmt.argument();
+        final var prev = parent.namespaceItem(NAMESPACE, name);
+        if (prev != null) {
+            throw new SourceException(stmt,
+                "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
+                stmt.getRoot().rawArgument(), name, prev.argument(), prev.sourceReference());
+        }
+        parent.addToNs(NAMESPACE, stmt.argument(), stmt);
     }
 
     @Override

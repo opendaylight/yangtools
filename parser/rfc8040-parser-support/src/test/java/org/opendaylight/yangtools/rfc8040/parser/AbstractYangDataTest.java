@@ -30,6 +30,7 @@ abstract class AbstractYangDataTest {
         REACTOR = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     new YangDataStatementSupport(YangParserConfiguration.DEFAULT))
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.BEHAVIOUR)
                 .build();
     }
 
