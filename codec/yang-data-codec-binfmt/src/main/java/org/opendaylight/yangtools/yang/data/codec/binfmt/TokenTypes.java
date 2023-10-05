@@ -10,19 +10,16 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 final class TokenTypes {
     static final byte SIGNATURE_MARKER = (byte) 0xab;
 
-    /**
-     * Original stream version. Uses a per-stream dictionary for strings. QNames are serialized as three strings.
-     */
-    static final short LITHIUM_VERSION = 1;
-    /**
-     * Revised stream version. Unlike {@link #LITHIUM_VERSION}, QNames and QNameModules are using a per-stream
-     * dictionary, too.
-     */
-    static final short NEON_SR2_VERSION = 2;
-    /**
-     * From-scratch designed version shipping in Sodium SR1.
-     */
-    static final short SODIUM_SR1_VERSION = 3;
+    // Original stream version. Uses a per-stream dictionary for strings. QNames are serialized as three strings.
+    // LITHIUM_VERSION = 1;
+    //
+    // Revised stream version. Unlike {@link #LITHIUM_VERSION}, QNames and QNameModules are using a per-stream
+    // dictionary, too.
+    // NEON_SR2_VERSION = 2;
+    //
+    // From-scratch designed version shipping in Sodium SR1.
+    // SODIUM_SR1_VERSION = 3;
+
     /**
      * Magnesium version. Structurally matches {@link #SODIUM_SR1_VERSION}, but does not allow BigIntegers to be
      * present.
