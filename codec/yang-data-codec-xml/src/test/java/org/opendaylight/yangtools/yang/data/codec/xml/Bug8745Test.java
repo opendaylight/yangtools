@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -25,23 +23,11 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xmlunit.builder.DiffBuilder;
 
-@RunWith(Parameterized.class)
-public class Bug8745Test extends AbstractXmlTest {
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return TestFactories.junitParameters();
-    }
-
+class Bug8745Test extends AbstractXmlTest {
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
-    private final XMLOutputFactory factory;
-
-    public Bug8745Test(final String factoryMode, final XMLOutputFactory factory) {
-        this.factory = factory;
-    }
-
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module foo {
               namespace foo;
@@ -64,13 +50,14 @@ public class Bug8745Test extends AbstractXmlTest {
             }""");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         SCHEMA_CONTEXT = null;
     }
 
-    @Test
-    public void testParsingAttributes() throws Exception {
+    @MethodSource("data")
+    @ArgumentsSource(TestFactories.class)
+    void testParsingAttributes(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         final var doc = loadDocument("/bug8745/foo.xml");
         final var domSource = new DOMSource(doc.getDocumentElement());
         final var domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
@@ -87,6 +74,6 @@ public class Bug8745Test extends AbstractXmlTest {
             .ignoreWhitespace()
             .checkForIdentical()
             .build();
-        assertFalse(diff.toString(), diff.hasDifferences());
+        assertFalse(diff.hasDifferences(), diff.toString());
     }
 }

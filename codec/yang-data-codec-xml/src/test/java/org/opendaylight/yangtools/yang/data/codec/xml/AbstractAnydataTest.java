@@ -16,8 +16,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public abstract class AbstractAnydataTest extends AbstractXmlTest {
+abstract class AbstractAnydataTest extends AbstractXmlTest {
     static final QName FOO_QNAME = QName.create("test-anydata", "foo");
     static final QName CONT_QNAME = QName.create(FOO_QNAME, "cont");
     static final QName CONT_ANY_QNAME = QName.create(FOO_QNAME, "cont-any");
@@ -40,8 +40,8 @@ public abstract class AbstractAnydataTest extends AbstractXmlTest {
 
     static EffectiveModelContext SCHEMA_CONTEXT;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    @BeforeAll
+    static final void beforeAll() throws Exception {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module test-anydata {
               yang-version 1.1;
@@ -76,8 +76,8 @@ public abstract class AbstractAnydataTest extends AbstractXmlTest {
             }""");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static final void afterAll() {
         SCHEMA_CONTEXT = null;
     }
 

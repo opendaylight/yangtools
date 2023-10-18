@@ -7,22 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.dom.DOMResult;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -36,15 +32,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.xml.sax.SAXException;
 
-@RunWith(Parameterized.class)
 public class NormalizedNodesToXmlTest extends AbstractXmlTest {
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return TestFactories.junitParameters();
-    }
-
     private QNameModule bazModule;
 
     private QName outerContainer;
@@ -72,24 +61,18 @@ public class NormalizedNodesToXmlTest extends AbstractXmlTest {
 
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
-    private final XMLOutputFactory factory;
-
-    public NormalizedNodesToXmlTest(final String factoryMode, final XMLOutputFactory factory) {
-        this.factory = factory;
-    }
-
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/baz.yang");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         SCHEMA_CONTEXT = null;
     }
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"));
 
         outerContainer = QName.create(bazModule, "outer-container");
@@ -116,8 +99,10 @@ public class NormalizedNodesToXmlTest extends AbstractXmlTest {
         myLeafInList3 = QName.create(bazModule, "my-leaf-in-list-3");
     }
 
-    @Test
-    public void testNormalizedNodeToXmlSerialization() throws XMLStreamException, IOException, SAXException {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    void testNormalizedNodeToXmlSerialization(final String factoryMode, final XMLOutputFactory factory)
+            throws Exception {
         final var doc = loadDocument("/baz.xml");
         final var domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
         final var xmlStreamWriter = factory.createXMLStreamWriter(domResult);

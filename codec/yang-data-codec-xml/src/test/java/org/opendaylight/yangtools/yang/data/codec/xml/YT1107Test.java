@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.StringReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -22,14 +22,14 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolde
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1107Test {
+class YT1107Test {
     private static final QName PARENT = QName.create("yt1107", "parent");
     private static final QName ADMIN = QName.create(PARENT, "admin");
     private static final QName NAME = QName.create(PARENT, "name");
     private static final QName USER = QName.create(PARENT, "user");
 
     @Test
-    public void testInterleavingLists() throws Exception {
+    void testInterleavingLists() throws Exception {
         final var schemaContext = YangParserTestUtils.parseYang("""
             module yt1107 {
               namespace "yt1107";

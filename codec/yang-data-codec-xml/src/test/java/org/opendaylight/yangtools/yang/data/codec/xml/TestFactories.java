@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.stream.Stream;
 import javax.xml.stream.XMLOutputFactory;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-final class TestFactories {
+final class TestFactories implements ArgumentsProvider {
     /**
      * Non-repairing XMLOutputFactory.
      */
@@ -28,14 +30,10 @@ final class TestFactories {
         REPAIRING_OUTPUT_FACTORY = f;
     }
 
-    private TestFactories() {
-        // Hidden on purpose
-    }
-
-    static Collection<Object[]> junitParameters() {
-        return List.of(new Object[][] {
-            { "default", DEFAULT_OUTPUT_FACTORY },
-            { "repairing", REPAIRING_OUTPUT_FACTORY },
-        });
+    @Override
+    public Stream<? extends Arguments> provideArguments(final ExtensionContext context) throws Exception {
+        return Stream.of(
+            Arguments.of("default", DEFAULT_OUTPUT_FACTORY),
+            Arguments.of("repairing", REPAIRING_OUTPUT_FACTORY));
     }
 }

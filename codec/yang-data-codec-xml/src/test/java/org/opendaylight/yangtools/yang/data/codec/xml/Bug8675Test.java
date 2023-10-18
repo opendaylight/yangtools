@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -23,13 +23,13 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug8675Test {
+class Bug8675Test {
     private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2017-06-13"));
 
     private static EffectiveModelContext schemaContext;
 
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    static void setup() {
         schemaContext = YangParserTestUtils.parseYang("""
             module foo {
               namespace foo;
@@ -75,13 +75,13 @@ public class Bug8675Test {
             }""");
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         schemaContext = null;
     }
 
     @Test
-    public void testParsingEmptyElements() throws Exception {
+    void testParsingEmptyElements() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/bug8675/foo.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -96,7 +96,7 @@ public class Bug8675Test {
     }
 
     @Test
-    public void testParsingEmptyRootElement() throws Exception {
+    void testParsingEmptyRootElement() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-2.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -110,7 +110,7 @@ public class Bug8675Test {
     }
 
     @Test
-    public void testListAsRootElement() throws Exception {
+    void testListAsRootElement() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-3.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -124,7 +124,7 @@ public class Bug8675Test {
     }
 
     @Test
-    public void testAnyXmlAsRootElement() throws Exception {
+    void testAnyXmlAsRootElement() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-4.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -138,7 +138,7 @@ public class Bug8675Test {
     }
 
     @Test
-    public void testLeafAsRootElement() throws Exception {
+    void testLeafAsRootElement() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-5.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -152,7 +152,7 @@ public class Bug8675Test {
     }
 
     @Test
-    public void testLeafListAsRootElement() throws Exception {
+    void testLeafListAsRootElement() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-6.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();

@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collection;
 import java.util.List;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -18,9 +17,9 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -36,27 +35,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-@RunWith(Parameterized.class)
 public class NormalizedNodeXmlTranslationTest extends AbstractXmlTest {
-    private final EffectiveModelContext schema;
-
-    @Parameterized.Parameters()
-    public static Collection<Object[]> data() {
-        return List.of(new Object[][] {
-                { "/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok.xml", augmentChoiceHell() },
-                { "/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok2.xml", null },
-                { "/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok3.xml", augmentChoiceHell2() },
-                { "/schema/test.yang", "/schema/simple.xml", null },
-                { "/schema/test.yang", "/schema/simple2.xml", null },
-                // TODO check attributes
-                { "/schema/test.yang", "/schema/simple_xml_with_attributes.xml", withAttributes() }
-        });
-    }
-
     private static final QNameModule MODULE = QNameModule.create(
         XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:controller:test"), Revision.of("2014-03-13"));
 
@@ -162,27 +144,23 @@ public class NormalizedNodeXmlTranslationTest extends AbstractXmlTest {
         return new NodeIdentifier(QName.create(MODULE, localName));
     }
 
-    private final ContainerNode expectedNode;
-    private final String xmlPath;
-
-    public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath,
-            final ContainerNode expectedNode) {
-        schema = YangParserTestUtils.parseYangResource(yangPath);
-        this.xmlPath = xmlPath;
-        this.expectedNode = expectedNode;
+    @ParameterizedTest
+    @MethodSource("data")
+    void testTranslationRepairing(final String yangPath, final String xmlPath, final ContainerNode expectedNode)
+            throws Exception {
+        testTranslation(TestFactories.REPAIRING_OUTPUT_FACTORY, yangPath, xmlPath, expectedNode);
     }
 
-    @Test
-    public void testTranslationRepairing() throws Exception {
-        testTranslation(TestFactories.REPAIRING_OUTPUT_FACTORY);
+    @ParameterizedTest
+    @MethodSource("data")
+    void testTranslation(final String yangPath, final String xmlPath, final ContainerNode expectedNode)
+            throws Exception {
+        testTranslation(TestFactories.DEFAULT_OUTPUT_FACTORY, yangPath, xmlPath, expectedNode);
     }
 
-    @Test
-    public void testTranslation() throws Exception {
-        testTranslation(TestFactories.DEFAULT_OUTPUT_FACTORY);
-    }
-
-    private void testTranslation(final XMLOutputFactory factory) throws Exception {
+    private static void testTranslation(final XMLOutputFactory factory, final String yangPath, final String xmlPath,
+            final ContainerNode expectedNode) throws Exception {
+        final var schema = YangParserTestUtils.parseYangResource(yangPath);
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
 
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -228,5 +206,17 @@ public class NormalizedNodeXmlTranslationTest extends AbstractXmlTest {
         // assertTrue(dd.toString(), dd.similar());
 
         // XMLAssert.assertXMLEqual(diff, true);
+    }
+
+    static List<Arguments> data() {
+        return List.of(
+            Arguments.of("/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok.xml", augmentChoiceHell()),
+            Arguments.of("/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok2.xml", null),
+            Arguments.of("/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok3.xml",
+                augmentChoiceHell2()),
+            Arguments.of("/schema/test.yang", "/schema/simple.xml", null),
+            Arguments.of("/schema/test.yang", "/schema/simple2.xml", null),
+            // TODO check attributes
+            Arguments.of("/schema/test.yang", "/schema/simple_xml_with_attributes.xml", withAttributes()));
     }
 }

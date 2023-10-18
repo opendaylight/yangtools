@@ -11,16 +11,16 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import javax.xml.stream.XMLStreamReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
-public class AnydataParseTest extends AbstractAnydataTest {
+class AnydataParseTest extends AbstractAnydataTest {
     @Test
-    public void testAnydata() throws Exception {
+    void testAnydata() throws Exception {
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(
             toInputStream("<foo xmlns=\"test-anydata\"><bar/></foo>"));
 

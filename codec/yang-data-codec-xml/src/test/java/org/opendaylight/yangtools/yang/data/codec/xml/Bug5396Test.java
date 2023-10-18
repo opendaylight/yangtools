@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -19,7 +21,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
@@ -27,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug5396Test {
+class Bug5396Test {
     private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2016-03-22"));
 
     private final EffectiveModelContext schemaContext = YangParserTestUtils.parseYang("""
@@ -65,19 +66,16 @@ public class Bug5396Test {
         }""");
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         testInputXML("/bug5396/xml/foo.xml", "dp1o34");
         testInputXML("/bug5396/xml/foo2.xml", "dp0s3f9");
         testInputXML("/bug5396/xml/foo3.xml", "dp09P1p2s3");
         testInputXML("/bug5396/xml/foo4.xml", "dp0p3p1");
         testInputXML("/bug5396/xml/foo5.xml", "dp0s3");
 
-        try {
-            testInputXML("/bug5396/xml/invalid-foo.xml", null);
-            fail("Test should fail due to invalid input string");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Invalid value \"dp09P1p2s1234\" for union type."));
-        }
+        final var ex = assertThrows(IllegalArgumentException.class,
+            () -> testInputXML("/bug5396/xml/invalid-foo.xml", null));
+        assertThat(ex.getMessage(), startsWith("Invalid value \"dp09P1p2s1234\" for union type."));
     }
 
     private void testInputXML(final String xmlPath, final String expectedValue) throws Exception {
@@ -89,12 +87,9 @@ public class Bug5396Test {
             Inference.ofDataTreePath(schemaContext, QName.create(FOO, "root")));
         xmlParser.parse(reader);
 
-        final var data = result.getResult().data();
-        assertTrue(data instanceof ContainerNode);
-        final ContainerNode rootContainer = (ContainerNode) data;
-
-        DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(QName.create(FOO, "my-leaf")));
-        assertTrue(myLeaf instanceof LeafNode);
+        final var rootContainer = assertInstanceOf(ContainerNode.class, result.getResult().data());
+        final var myLeaf = assertInstanceOf(LeafNode.class,
+            rootContainer.childByArg(new NodeIdentifier(QName.create(FOO, "my-leaf"))));
         assertEquals(expectedValue, myLeaf.body());
     }
 }

@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.xml.stream.XMLStreamException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
@@ -24,11 +24,11 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class StrictParsingModeTest {
+class StrictParsingModeTest {
     private static EffectiveModelContext schemaContext;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYang("""
             module foo {
               namespace foo;
@@ -40,14 +40,14 @@ public class StrictParsingModeTest {
             }""");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         schemaContext = null;
     }
 
-    @Test
     // unknown child nodes in the top-level-container node will be skipped when the strictParsing is set to false
-    public void testLenientParsing() throws Exception {
+    @Test
+    void testLenientParsing() throws Exception {
         final var resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
 
@@ -64,10 +64,10 @@ public class StrictParsingModeTest {
         assertNotNull(transformedInput);
     }
 
-    @Test
     // should fail because strictParsing is switched on and the top-level-container node contains child nodes
     // which are not defined in the provided YANG model
-    public void testStrictParsing() throws Exception {
+    @Test
+    void testStrictParsing() throws Exception {
         final var resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
 

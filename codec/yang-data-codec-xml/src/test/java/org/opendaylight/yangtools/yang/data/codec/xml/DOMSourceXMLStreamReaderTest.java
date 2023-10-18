@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -28,23 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-@RunWith(Parameterized.class)
-public class DOMSourceXMLStreamReaderTest extends AbstractXmlTest {
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return TestFactories.junitParameters();
-    }
-
+class DOMSourceXMLStreamReaderTest extends AbstractXmlTest {
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
-    private final XMLOutputFactory factory;
-
-    public DOMSourceXMLStreamReaderTest(final String factoryMode, final XMLOutputFactory factory) {
-        this.factory = factory;
-    }
-
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module bar {
               namespace bar-ns;
@@ -138,13 +124,14 @@ public class DOMSourceXMLStreamReaderTest extends AbstractXmlTest {
             }""");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         SCHEMA_CONTEXT = null;
     }
 
-    @Test
-    public void test() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    void test(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         // deserialization
         final var doc = loadDocument("/dom-reader-test/foo.xml");
         final var inputXml = new DOMSource(doc.getDocumentElement());

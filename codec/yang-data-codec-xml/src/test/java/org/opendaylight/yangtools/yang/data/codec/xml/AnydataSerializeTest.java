@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.io.StringWriter;
-import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
@@ -21,9 +20,8 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
@@ -35,21 +33,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
-@RunWith(Parameterized.class)
-public class AnydataSerializeTest extends AbstractAnydataTest {
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return TestFactories.junitParameters();
-    }
-
-    private final XMLOutputFactory factory;
-
-    public AnydataSerializeTest(final String factoryMode, final XMLOutputFactory factory) {
-        this.factory = factory;
-    }
-
-    @Test
-    public void testDOMAnydata() throws Exception {
+class AnydataSerializeTest extends AbstractAnydataTest {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    public void testDOMAnydata(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         final var writer = new StringWriter();
         final var xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
@@ -66,8 +53,9 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         assertEquals("<foo xmlns=\"test-anydata\"><bar xmlns=\"test-anydata\"></bar></foo>", serializedXml);
     }
 
-    @Test
-    public void testXmlParseAnydata() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    public void testXmlParseAnydata(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         // deserialization
         final var reader = UntrustedXML.createXMLStreamReader(
             AnydataSerializeTest.class.getResourceAsStream("/test-anydata.xml"));
@@ -103,8 +91,9 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         XMLAssert.assertXMLEqual(diff, true);
     }
 
-    @Test
-    public void testAnydataLoadFromXML() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    public void testAnydataLoadFromXML(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         // Load XML file
         final var doc = loadDocument("/test-anydata.xml");
         final var domSource = new DOMSource(doc.getDocumentElement());
@@ -132,8 +121,9 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         XMLAssert.assertXMLEqual(diff, true);
     }
 
-    @Test
-    public void testAnydataSerialization() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    public void testAnydataSerialization(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         //Get XML Data.
         final var doc = loadDocument("/test-anydata.xml");
         final var domSource = new DOMSource(doc.getDocumentElement());
@@ -165,8 +155,9 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         XMLAssert.assertXMLEqual(diff, true);
     }
 
-    @Test
-    public void testSiblingSerialize() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    public void testSiblingSerialize(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         final var writer = new StringWriter();
         final var xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
@@ -188,8 +179,9 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
                 + "<cont-leaf>abc</cont-leaf></cont>", serializedXml);
     }
 
-    @Test
-    public void testNormalizedSerialize() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    public void testNormalizedSerialize(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         final var writer = new StringWriter();
         final var xmlStreamWriter = factory.createXMLStreamWriter(writer);
 

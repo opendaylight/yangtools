@@ -33,7 +33,7 @@ class NamespacePrefixesTest {
             allGenerated.add(encoded);
         }
 
-        assertEquals(allGenerated.size(), MAX_COUNTER);
+        assertEquals(MAX_COUNTER, allGenerated.size());
         assertEquals("dPT", allGenerated.get(MAX_COUNTER - 1));
         assertEquals("a", allGenerated.get(0));
         assertEquals(allGenerated.size(), new HashSet<>(allGenerated).size());

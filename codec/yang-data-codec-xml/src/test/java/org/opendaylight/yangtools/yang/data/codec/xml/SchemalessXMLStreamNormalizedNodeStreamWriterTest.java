@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import java.util.Collection;
 import java.util.Map;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -15,10 +14,9 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -27,20 +25,12 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
-@RunWith(Parameterized.class)
 public class SchemalessXMLStreamNormalizedNodeStreamWriterTest extends AbstractXmlTest {
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return TestFactories.junitParameters();
-    }
-
-    private final XMLOutputFactory factory;
-
     private QNameModule foobarModule;
 
     private QName outerContainer;
@@ -73,12 +63,8 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest extends AbstractX
     private QName mySecondKeyLeaf;
     private QName myLeafInList3;
 
-    public SchemalessXMLStreamNormalizedNodeStreamWriterTest(final String factoryMode, final XMLOutputFactory factory) {
-        this.factory = factory;
-    }
-
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         foobarModule = QNameModule.create(XMLNamespace.of("foobar-namespace"), Revision.of("2016-09-19"));
 
         outerContainer = QName.create(foobarModule, "outer-container");
@@ -112,8 +98,9 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest extends AbstractX
         myLeafInList3 = QName.create(foobarModule, "my-leaf-in-list-3");
     }
 
-    @Test
-    public void testWrite() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    void testWrite(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         final var doc = loadDocument("/foobar.xml");
         final var domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
         final var xmlStreamWriter = factory.createXMLStreamWriter(domResult);
@@ -134,7 +121,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest extends AbstractX
         XMLAssert.assertXMLEqual(diff, true);
     }
 
-    private NormalizedNode buildOuterContainerNode() {
+    private ContainerNode buildOuterContainerNode() {
         return Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(outerContainer))
             .withChild(Builders.containerBuilder()

@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,10 +21,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class XmlStreamUtilsTest {
+class XmlStreamUtilsTest {
     @FunctionalInterface
     interface XMLStreamWriterConsumer {
         void accept(XMLStreamWriter writer) throws XMLStreamException;
@@ -51,8 +51,8 @@ public class XmlStreamUtilsTest {
     private static Module leafRefModule;
     private static PreferredPrefixes pref;
 
-    @BeforeClass
-    public static void initialize() {
+    @BeforeAll
+    static void initialize() {
         modelContext = YangParserTestUtils.parseYangResource("/leafref-test.yang");
         assertNotNull(modelContext);
         assertEquals(1, modelContext.getModules().size());
@@ -61,14 +61,14 @@ public class XmlStreamUtilsTest {
         pref = new PreferredPrefixes.Shared(modelContext);
     }
 
-    @AfterClass
-    public static void cleanup() {
+    @AfterAll
+    static void cleanup() {
         leafRefModule = null;
         modelContext = null;
     }
 
     @Test
-    public void testWriteIdentityRef() throws Exception {
+    void testWriteIdentityRef() throws Exception {
         final QNameModule parent = QNameModule.create(XMLNamespace.of("parent:uri"), Revision.of("2000-01-01"));
 
         String xmlAsString = createXml(writer -> {
@@ -92,7 +92,7 @@ public class XmlStreamUtilsTest {
 
         final Pattern prefixedIdentityPattern = Pattern.compile(".*\"different:namespace\">(.*):identity.*");
         final Matcher matcher = prefixedIdentityPattern.matcher(xmlAsString);
-        assertTrue("Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern, matcher.matches());
+        assertTrue(matcher.matches(), "Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern);
     }
 
     private static String createXml(final XMLStreamWriterConsumer consumer) throws XMLStreamException, IOException {
@@ -111,17 +111,17 @@ public class XmlStreamUtilsTest {
      * One leafref reference to other leafref via relative references.
      */
     @Test
-    public void testLeafRefRelativeChaining() {
+    void testLeafRefRelativeChaining() {
         getTargetNodeForLeafRef(StringTypeDefinition.class, "cont3", "leafname3");
     }
 
     @Test
-    public void testLeafRefRelative() {
+    void testLeafRefRelative() {
         getTargetNodeForLeafRef(StringTypeDefinition.class, "pointToStringLeaf");
     }
 
     @Test
-    public void testLeafRefAbsoluteWithSameTarget() {
+    void testLeafRefAbsoluteWithSameTarget() {
         getTargetNodeForLeafRef(InstanceIdentifierTypeDefinition.class, "absname");
     }
 
@@ -129,14 +129,14 @@ public class XmlStreamUtilsTest {
      * Tests relative path with double point inside path (e. g. "../../lf:interface/../lf:cont2/lf:stringleaf")
      */
     // ignored because this isn't implemented
-    @Ignore
+    @Disabled
     @Test
-    public void testLeafRefWithDoublePointInPath() {
+    void testLeafRefWithDoublePointInPath() {
         getTargetNodeForLeafRef(StringTypeDefinition.class, "lf-with-double-point-inside");
     }
 
     @Test
-    public void testLeafRefRelativeAndAbsoluteWithSameTarget() {
+    void testLeafRefRelativeAndAbsoluteWithSameTarget() {
         assertSame(getTargetNodeForLeafRef(InstanceIdentifierTypeDefinition.class, "absname"),
             getTargetNodeForLeafRef(InstanceIdentifierTypeDefinition.class, "relname"));
     }

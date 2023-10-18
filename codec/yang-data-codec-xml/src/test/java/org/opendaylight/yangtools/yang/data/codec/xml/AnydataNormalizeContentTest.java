@@ -11,9 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.stream.Stream;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -33,7 +31,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolde
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 class AnydataNormalizeContentTest extends AbstractAnydataTest {
-
     private static final QName BAR_QNAME = QName.create(FOO_QNAME, "bar"); // container level 2
     private static final QName LIST_QNAME = QName.create(FOO_QNAME, "lst"); // list
     private static final QName LEAF_LIST_QNAME = QName.create(FOO_QNAME, "my-leafs"); // leaf-list of type string
@@ -47,18 +44,8 @@ class AnydataNormalizeContentTest extends AbstractAnydataTest {
     private static final String ANYDATA_XML = "<foo xmlns=\"test-anydata\"><cont-leaf>test</cont-leaf></foo>";
     private static final String ANYDATA_EMPTY_XML = "<foo xmlns=\"test-anydata\" />";
 
-    @BeforeAll
-    static void beforeAll() throws Exception {
-        beforeClass(); // junit 4
-    }
-
-    @AfterAll
-    static void afterAll() {
-        afterClass(); // junit 4
-    }
-
     @ParameterizedTest(name = "Anydata normalize to {0}")
-    @MethodSource("normalizeArgs")
+    @MethodSource
     void anydataNormalize(final String testDesc, final String xml, final Inference inference,
             final NormalizedNode expectedData) throws Exception {
 
@@ -76,42 +63,53 @@ class AnydataNormalizeContentTest extends AbstractAnydataTest {
         assertEquals(expectedData, normalizedAnydata.getData());
     }
 
-    private static Stream<Arguments> normalizeArgs() {
+    private static List<Arguments> anydataNormalize() {
         // test case descriptor, xml, inference, expected normalized data
-        return Stream.of(
-                Arguments.of("container (root level)",
-                        ANYDATA_XML,
-                        Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME),
-                        Builders.containerBuilder().withNodeIdentifier(CONT_NODEID).withChild(LEAF_NODE).build()),
-                Arguments.of("container (level 2)",
-                        ANYDATA_XML,
-                        Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME, BAR_QNAME),
-                        Builders.containerBuilder().withNodeIdentifier(BAR_NODEID).withChild(LEAF_NODE).build()),
-                Arguments.of("empty container",
-                        ANYDATA_EMPTY_XML,
-                        Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME, BAR_QNAME),
-                        ImmutableNodes.containerNode(BAR_NODEID)),
-                Arguments.of("single list element",
-                        ANYDATA_XML,
-                        Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME),
-                        Builders.unkeyedListBuilder().withNodeIdentifier(LIST_NODEID).withChild(
-                                Builders.unkeyedListEntryBuilder().withNodeIdentifier(LIST_NODEID)
-                                        .withChild(LEAF_NODE).build()).build()),
-                Arguments.of("single empty list element",
-                        ANYDATA_EMPTY_XML,
-                        Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME),
-                        Builders.unkeyedListBuilder().withNodeIdentifier(LIST_NODEID).withChild(
-                                Builders.unkeyedListEntryBuilder().withNodeIdentifier(LIST_NODEID).build()).build()),
-                Arguments.of("single empty leaf-list element",
-                        ANYDATA_EMPTY_XML,
-                        Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME, LEAF_LIST_QNAME),
-                        Builders.leafSetBuilder().withNodeIdentifier(LEAF_LIST_NODEID).withChild(
-                                Builders.leafSetEntryBuilder()
-                                        .withNodeIdentifier(new NodeWithValue<>(LEAF_LIST_QNAME, ""))
-                                        .withValue("").build()).build()),
-                Arguments.of("leaf of type empty",
-                        ANYDATA_EMPTY_XML,
-                        Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME, LEAF_EMPTY_QNAME),
-                        ImmutableNodes.leafNode(LEAF_EMPTY_NODEID, Empty.value())));
+        return List.of(
+            Arguments.of("container (root level)",
+                ANYDATA_XML,
+                Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME),
+                Builders.containerBuilder().withNodeIdentifier(CONT_NODEID).withChild(LEAF_NODE).build()),
+            Arguments.of("container (level 2)",
+                ANYDATA_XML,
+                Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME, BAR_QNAME),
+                Builders.containerBuilder().withNodeIdentifier(BAR_NODEID).withChild(LEAF_NODE).build()),
+            Arguments.of("empty container",
+                ANYDATA_EMPTY_XML,
+                Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME, BAR_QNAME),
+                ImmutableNodes.containerNode(BAR_NODEID)),
+            Arguments.of("single list element",
+                ANYDATA_XML,
+                Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME),
+                Builders.unkeyedListBuilder()
+                    .withNodeIdentifier(LIST_NODEID)
+                    .withChild(Builders.unkeyedListEntryBuilder()
+                        .withNodeIdentifier(LIST_NODEID)
+                        .withChild(LEAF_NODE)
+                        .build())
+                    .build()),
+            Arguments.of("single empty list element",
+                ANYDATA_EMPTY_XML,
+                Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME),
+                Builders.unkeyedListBuilder()
+                    .withNodeIdentifier(LIST_NODEID)
+                    .withChild(Builders.unkeyedListEntryBuilder()
+                        .withNodeIdentifier(LIST_NODEID)
+                        .build())
+                    .build()),
+            Arguments.of("single empty leaf-list element",
+                ANYDATA_EMPTY_XML,
+                Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME, LEAF_LIST_QNAME),
+                Builders.leafSetBuilder()
+                    .withNodeIdentifier(LEAF_LIST_NODEID)
+                    .withChild(Builders.leafSetEntryBuilder()
+                        .withNodeIdentifier(new NodeWithValue<>(LEAF_LIST_QNAME, ""))
+                        .withValue("")
+                        .build())
+                    .build()),
+            Arguments.of("leaf of type empty",
+                ANYDATA_EMPTY_XML,
+                Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME, LEAF_EMPTY_QNAME),
+                ImmutableNodes.leafNode(LEAF_EMPTY_NODEID, Empty.value())));
     }
 }

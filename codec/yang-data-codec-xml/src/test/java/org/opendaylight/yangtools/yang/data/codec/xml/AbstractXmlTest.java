@@ -28,7 +28,6 @@ import org.xml.sax.SAXException;
 abstract class AbstractXmlTest {
     private static final TransformerFactory TF = TransformerFactory.newInstance();
 
-
     static final Document loadDocument(final String resourcePath) {
         return requireNonNull(readXmlToDocument(Bug5446Test.class.getResourceAsStream(resourcePath)));
     }

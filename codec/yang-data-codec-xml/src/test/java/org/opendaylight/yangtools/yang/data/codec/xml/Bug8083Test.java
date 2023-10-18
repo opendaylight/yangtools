@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -20,13 +20,13 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolde
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug8083Test {
+class Bug8083Test {
     private static final QNameModule FOOBAR = QNameModule.create(XMLNamespace.of("foobar-ns"));
     private static final QNameModule BAZ = QNameModule.create(XMLNamespace.of("baz-ns"));
     private static final QNameModule ZAB = QNameModule.create(XMLNamespace.of("zab-ns"));
 
     @Test
-    public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
+    void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
         final var schemaContext = YangParserTestUtils.parseYang("""
             module baz {
               namespace baz-ns;
@@ -63,7 +63,7 @@ public class Bug8083Test {
     }
 
     @Test
-    public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
+    void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
         final var schemaContext = YangParserTestUtils.parseYang("""
             module zab {
               namespace zab-ns;
@@ -108,7 +108,7 @@ public class Bug8083Test {
     }
 
     @Test
-    public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
+    void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
         final var schemaContext = YangParserTestUtils.parseYang("""
             module foobar {
               namespace foobar-ns;

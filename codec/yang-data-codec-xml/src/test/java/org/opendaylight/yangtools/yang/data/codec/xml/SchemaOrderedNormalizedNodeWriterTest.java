@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -28,27 +26,16 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xmlunit.builder.DiffBuilder;
 
-@RunWith(Parameterized.class)
-public class SchemaOrderedNormalizedNodeWriterTest {
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return TestFactories.junitParameters();
-    }
-
+class SchemaOrderedNormalizedNodeWriterTest {
     private static final String FOO_NAMESPACE = "foo";
     private static final String RULE_NODE = "rule";
     private static final String NAME_NODE = "name";
     private static final String POLICY_NODE = "policy";
     private static final String ORDER_NAMESPACE = "order";
 
-    private final XMLOutputFactory factory;
-
-    public SchemaOrderedNormalizedNodeWriterTest(final String factoryMode, final XMLOutputFactory factory) {
-        this.factory = factory;
-    }
-
-    @Test
-    public void testWrite() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    void testWrite(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         final var stringWriter = new StringWriter();
         final var xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
 
@@ -147,11 +134,12 @@ public class SchemaOrderedNormalizedNodeWriterTest {
             .ignoreWhitespace()
             .checkForIdentical()
             .build();
-        assertFalse(diff.toString(), diff.hasDifferences());
+        assertFalse(diff.hasDifferences(), diff.toString());
     }
 
-    @Test
-    public void testWriteOrder() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    void testWriteOrder(final String factoryMode, final XMLOutputFactory factory) throws Exception {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
         EffectiveModelContext schemaContext = YangParserTestUtils.parseYang("""
@@ -174,19 +162,14 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         var writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
         try (var nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext)) {
-
-            final var cont = Builders.containerBuilder()
+            nnw.write(Builders.containerBuilder()
+                .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
+                .withChild(Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "cont"))
                     .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "content"), "content1"))
-                    .build();
-
-            final var root = Builders.containerBuilder()
-                    .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
-                    .withChild(cont)
-                    .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "id"), "id1"))
-                    .build();
-
-            nnw.write(root);
+                    .build())
+                .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "id"), "id1"))
+                .build());
         }
 
         assertEquals("""

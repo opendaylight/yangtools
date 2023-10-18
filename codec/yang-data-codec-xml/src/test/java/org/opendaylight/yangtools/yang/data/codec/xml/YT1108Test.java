@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.StringWriter;
-import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -26,13 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xmlunit.builder.DiffBuilder;
 
-@RunWith(Parameterized.class)
-public class YT1108Test {
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<Object[]> data() {
-        return TestFactories.junitParameters();
-    }
-
+class YT1108Test {
     private static final QName IDENT_ONE = QName.create("foo-namespace", "ident-one");
     private static final QName IDENTITYREF_LEAF = QName.create("foo-namespace", "identityref-leaf");
     private static final QName LEAF_CONTAINER = QName.create("foo-namespace", "leaf-container");
@@ -40,14 +32,8 @@ public class YT1108Test {
 
     private static EffectiveModelContext MODEL_CONTEXT;
 
-    private final XMLOutputFactory factory;
-
-    public YT1108Test(final String factoryMode, final XMLOutputFactory factory) {
-        this.factory = factory;
-    }
-
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module foo {
               namespace "foo-namespace";
@@ -81,15 +67,17 @@ public class YT1108Test {
             }""");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         MODEL_CONTEXT = null;
     }
 
-    @Test
-    public void testLeafOfIdentityRefTypeNNToXmlSerialization() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    void testLeafOfIdentityRefTypeNNToXmlSerialization(final String factoryMode, final XMLOutputFactory factory)
+            throws Exception {
         final var diff = DiffBuilder
-            .compare(serializeToXml(Builders.containerBuilder()
+            .compare(serializeToXml(factory, Builders.containerBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(LEAF_CONTAINER))
                 .withChild(Builders.leafBuilder()
                     .withNodeIdentifier(NodeIdentifier.create(IDENTITYREF_LEAF))
@@ -105,13 +93,15 @@ public class YT1108Test {
             .ignoreWhitespace()
             .checkForIdentical()
             .build();
-        assertFalse(diff.toString(), diff.hasDifferences());
+        assertFalse(diff.hasDifferences(), diff.toString());
     }
 
-    @Test
-    public void testLeafOfUnionWithIdentityRefNNToXmlSerialization() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @ArgumentsSource(TestFactories.class)
+    void testLeafOfUnionWithIdentityRefNNToXmlSerialization(final String factoryMode, final XMLOutputFactory factory)
+            throws Exception {
         final var diff = DiffBuilder
-            .compare(serializeToXml(Builders.containerBuilder()
+            .compare(serializeToXml(factory, Builders.containerBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(LEAF_CONTAINER))
                 .withChild(Builders.leafBuilder()
                     .withNodeIdentifier(NodeIdentifier.create(UNION_IDENTITYREF_LEAF))
@@ -127,10 +117,11 @@ public class YT1108Test {
             .ignoreWhitespace()
             .checkForIdentical()
             .build();
-        assertFalse(diff.toString(), diff.hasDifferences());
+        assertFalse(diff.hasDifferences(), diff.toString());
     }
 
-    private String serializeToXml(final ContainerNode normalizedNode) throws Exception {
+    private static String serializeToXml(final XMLOutputFactory factory, final ContainerNode normalizedNode)
+            throws Exception {
         final var sw = new StringWriter();
         try (var nnsw = XMLStreamNormalizedNodeStreamWriter.create(factory.createXMLStreamWriter(sw), MODEL_CONTEXT)) {
             NormalizedNodeWriter.forStreamWriter(nnsw).write(normalizedNode);
