@@ -7,23 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 
-public class QNameFactoryTest {
+class QNameFactoryTest {
     @Test
-    public void testBasic() {
-        QName expected = TestModel.AUG_NAME_QNAME;
-        QName created = lookup(expected);
+    void testBasic() {
+        var expected = TestModel.AUG_NAME_QNAME;
+        var created = lookup(expected);
         assertNotSame(expected, created);
         assertEquals(expected, created);
 
-        QName cached = lookup(expected);
+        var cached = lookup(expected);
         assertSame(created, cached);
     }
 

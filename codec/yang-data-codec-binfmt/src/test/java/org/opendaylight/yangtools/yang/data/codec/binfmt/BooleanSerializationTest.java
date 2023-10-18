@@ -7,31 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import java.util.Collections;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-public class BooleanSerializationTest extends AbstractSerializationTest {
-    @Parameters(name = "{0}")
-    public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96 });
+class BooleanSerializationTest extends AbstractSerializationTest {
+    @ParameterizedTest
+    @MethodSource("parameters")
+    void testTrue(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, Boolean.TRUE, size);
     }
 
-    @Parameter(1)
-    public int size;
-
-    @Test
-    public void testTrue() {
-        assertEquals(Boolean.TRUE, size);
+    @ParameterizedTest
+    @MethodSource("parameters")
+    void testFalse(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, Boolean.FALSE, size);
     }
 
-    @Test
-    public void testFalse() {
-        assertEquals(Boolean.FALSE, size);
+    private static List<Arguments> parameters() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 96));
     }
 }

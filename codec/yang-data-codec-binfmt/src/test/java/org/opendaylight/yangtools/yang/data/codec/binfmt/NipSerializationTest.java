@@ -11,76 +11,83 @@ import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
-@RunWith(Parameterized.class)
-public class NipSerializationTest extends AbstractSerializationTest {
-    @Parameters(name = "{0}")
-    public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 95, 107, 155, 252, 3_409, 982_867, 1_443_164 });
+class NipSerializationTest extends AbstractSerializationTest {
+    @ParameterizedTest
+    @MethodSource
+    void testEmptyIdentifier(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, createIdentifier(0), size);
     }
 
-    @Parameter(1)
-    public int emptySize;
-    @Parameter(2)
-    public int oneSize;
-    @Parameter(3)
-    public int size5;
-    @Parameter(4)
-    public int size13;
-    @Parameter(5)
-    public int size256;
-    @Parameter(6)
-    public int size65792;
-    @Parameter(7)
-    public int twiceSize65792;
-
-    @Test
-    public void testEmptyIdentifier() {
-        assertEquals(createIdentifier(0), emptySize);
+    static List<Arguments> testEmptyIdentifier() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 95));
     }
 
-    @Test
-    public void testOneIdentifier() {
-        assertEquals(createIdentifier(1), oneSize);
+    @ParameterizedTest
+    @MethodSource
+    void testOneIdentifier(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, createIdentifier(1), size);
     }
 
-    @Test
-    public void test5() {
-        assertEquals(createIdentifier(5), size5);
+    static List<Arguments> testOneIdentifier() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 107));
     }
 
-    @Test
-    public void test13() {
-        assertEquals(createIdentifier(13), size13);
+    @ParameterizedTest
+    @MethodSource
+    void test5(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, createIdentifier(5), size);
     }
 
-    @Test
-    public void test256() {
-        assertEquals(createIdentifier(256), size256);
+    static List<Arguments> test5() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 155));
     }
 
-    @Test
-    public void test65536() {
-        assertEquals(createIdentifier(65792), size65792);
+    @ParameterizedTest
+    @MethodSource
+    void test13(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, createIdentifier(13), size);
     }
 
-    @Test
-    public void testTwice65792() {
-        final NodeIdentifierWithPredicates nip = createIdentifier(65792);
+    static List<Arguments> test13() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 252));
+    }
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(baos))) {
+    @ParameterizedTest
+    @MethodSource
+    void test256(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, createIdentifier(256), size);
+    }
+
+
+    static List<Arguments> test256() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 3_409));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void test65792(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, createIdentifier(65792), size);
+    }
+
+    static List<Arguments> test65792() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 982_867));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testTwice65792(final NormalizedNodeStreamVersion version, final int size) {
+        final var nip = createIdentifier(65792);
+
+        final var baos = new ByteArrayOutputStream();
+        try (var nnout = version.newDataOutput(ByteStreams.newDataOutput(baos))) {
             nnout.writePathArgument(nip);
             nnout.writePathArgument(nip);
         } catch (IOException e) {
@@ -88,20 +95,24 @@ public class NipSerializationTest extends AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(twiceSize65792, bytes.length);
+        Assertions.assertEquals(size, bytes.length);
 
         try {
-            final NormalizedNodeDataInput input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-            Assert.assertEquals(nip, input.readPathArgument());
-            Assert.assertEquals(nip, input.readPathArgument());
+            final var input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+            Assertions.assertEquals(nip, input.readPathArgument());
+            Assertions.assertEquals(nip, input.readPathArgument());
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }
     }
 
+    static List<Arguments> testTwice65792() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 1_443_164));
+    }
+
     private static NodeIdentifierWithPredicates createIdentifier(final int size) {
-        final Map<QName, Object> predicates = Maps.newHashMapWithExpectedSize(size);
-        for (QName qname : generateQNames(size)) {
+        final var predicates = Maps.<QName, Object>newHashMapWithExpectedSize(size);
+        for (var qname : generateQNames(size)) {
             predicates.put(qname, "a");
         }
         return NodeIdentifierWithPredicates.of(TestModel.TEST_QNAME, predicates);

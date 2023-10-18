@@ -7,48 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import java.util.Collections;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
 
-@RunWith(Parameterized.class)
-public class UintSerializationTest extends AbstractSerializationTest {
-    @Parameters(name = "{0}")
-    public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM });
+class UintSerializationTest extends AbstractSerializationTest {
+    @ParameterizedTest
+    @MethodSource("versions")
+    void testUint8(final NormalizedNodeStreamVersion version) {
+        assertSame(version, Uint8.ZERO, 96);
+        assertSame(version, Uint8.ONE, 97);
     }
 
-    @Test
-    public void testUint8() {
-        assertSame(Uint8.ZERO, 96);
-        assertSame(Uint8.ONE, 97);
+    @ParameterizedTest
+    @MethodSource("versions")
+    void testUint16(final NormalizedNodeStreamVersion version) {
+        assertSame(version, Uint16.ZERO, 96);
+        assertSame(version, Uint16.ONE, 98);
     }
 
-    @Test
-    public void testUint16() {
-        assertSame(Uint16.ZERO, 96);
-        assertSame(Uint16.ONE, 98);
+    @ParameterizedTest
+    @MethodSource("versions")
+    void testUint32(final NormalizedNodeStreamVersion version) {
+        assertSame(version, Uint32.ZERO, 96);
+        assertSame(version, Uint32.ONE, 98);
+        assertEquals(version, Uint32.MAX_VALUE, 100);
     }
 
-    @Test
-    public void testUint32() {
-        assertSame(Uint32.ZERO, 96);
-        assertSame(Uint32.ONE, 98);
-        assertEquals(Uint32.MAX_VALUE, 100);
+    @ParameterizedTest
+    @MethodSource("versions")
+    void testUint64(final NormalizedNodeStreamVersion version) {
+        assertSame(version, Uint64.ZERO, 96);
+        assertSame(version, Uint64.ONE, 100);
+        assertEquals(version, Uint64.MAX_VALUE, 104);
     }
 
-    @Test
-    public void testUint64() {
-        assertSame(Uint64.ZERO, 96);
-        assertSame(Uint64.ONE, 100);
-        assertEquals(Uint64.MAX_VALUE, 104);
+    static List<Arguments> versions() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM));
     }
-
 }

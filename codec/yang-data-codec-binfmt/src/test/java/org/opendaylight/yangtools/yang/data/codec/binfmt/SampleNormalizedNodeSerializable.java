@@ -15,28 +15,30 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public class SampleNormalizedNodeSerializable implements Serializable {
+class SampleNormalizedNodeSerializable implements Serializable {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private transient NormalizedNodeStreamVersion version;
     private NormalizedNode input;
 
-    public SampleNormalizedNodeSerializable(final NormalizedNodeStreamVersion version,
-            final NormalizedNode input) {
+    SampleNormalizedNodeSerializable(final NormalizedNodeStreamVersion version, final NormalizedNode input) {
         this.version = requireNonNull(version);
         this.input = input;
     }
 
-    public NormalizedNode getInput() {
+    NormalizedNode getInput() {
         return input;
     }
 
+    @java.io.Serial
     private void readObject(final ObjectInputStream stream) throws IOException {
-        final NormalizedNodeDataInput in = NormalizedNodeDataInput.newDataInput(stream);
-        this.input = in.readNormalizedNode();
-        this.version = in.getVersion();
+        final var in = NormalizedNodeDataInput.newDataInput(stream);
+        input = in.readNormalizedNode();
+        version = in.getVersion();
     }
 
+    @java.io.Serial
     private void writeObject(final ObjectOutputStream stream) throws IOException {
         version.newDataOutput(stream).writeNormalizedNode(input);
     }

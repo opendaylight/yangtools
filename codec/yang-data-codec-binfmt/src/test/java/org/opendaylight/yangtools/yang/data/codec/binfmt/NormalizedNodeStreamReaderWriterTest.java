@@ -19,19 +19,16 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -40,67 +37,44 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
-@RunWith(Parameterized.class)
-public class NormalizedNodeStreamReaderWriterTest {
-    @Parameters(name = "{0} {1}")
-    public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 1_049_587, 2_289_103, 139, 794, 103, 229, 99 });
-    }
+class NormalizedNodeStreamReaderWriterTest {
+    @ParameterizedTest
+    @MethodSource
+    void testNormalizedNodeStreaming(final NormalizedNodeStreamVersion version, final int size) throws Exception {
+        final var bos = new ByteArrayOutputStream();
+        final var nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
 
-    @Parameter(0)
-    public NormalizedNodeStreamVersion version;
-    @Parameter(1)
-    public int normalizedNodeStreamingSize;
-    @Parameter(2)
-    public int hugeEntriesSize;
-    @Parameter(3)
-    public int yiidStreamingSize;
-    @Parameter(4)
-    public int nnYiidStreamingSize;
-    @Parameter(5)
-    public int writePathArgumentSize;
-    @Parameter(6)
-    public int anyxmlStreamingSize;
-    @Parameter(7)
-    public int schemaPathSize;
-
-    @Test
-    public void testNormalizedNodeStreaming() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
-
-        ContainerNode testContainer = createTestContainer();
+        final var testContainer = createTestContainer();
         nnout.writeNormalizedNode(testContainer);
 
-        QName toaster = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","toaster");
-        QName darknessFactor = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","darknessFactor");
-        QName description = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","description");
-        ContainerNode toasterNode = Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(toaster))
+        final var toaster = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","toaster");
+        final var darknessFactor = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","darknessFactor");
+        final var description = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","description");
+        final var toasterNode = Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(toaster))
                 .withChild(ImmutableNodes.leafNode(darknessFactor, "1000"))
                 .withChild(ImmutableNodes.leafNode(description, largeString(20))).build();
 
-        ContainerNode toasterContainer = Builders.containerBuilder()
+        final var toasterContainer = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME)).withChild(toasterNode).build();
         nnout.writeNormalizedNode(toasterContainer);
 
         final byte[] bytes = bos.toByteArray();
-        assertEquals(normalizedNodeStreamingSize, bytes.length);
+        assertEquals(size, bytes.length);
 
-        NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        final var nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
 
         assertEquals(testContainer, nnin.readNormalizedNode());
         assertEquals(toasterContainer, nnin.readNormalizedNode());
+    }
+
+    static List<Arguments> testNormalizedNodeStreaming() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 1_049_587));
     }
 
     private static ContainerNode createTestContainer() {
@@ -128,73 +102,90 @@ public class NormalizedNodeStreamReaderWriterTest {
             .build();
     }
 
-    @Test
-    public void testYangInstanceIdentifierStreaming() throws IOException  {
-        YangInstanceIdentifier path = YangInstanceIdentifier.builder(TestModel.TEST_PATH)
-                .node(TestModel.OUTER_LIST_QNAME).nodeWithKey(
-                        TestModel.INNER_LIST_QNAME, TestModel.ID_QNAME, 10).build();
+    @ParameterizedTest
+    @MethodSource
+    void testYangInstanceIdentifierStreaming(final NormalizedNodeStreamVersion version, final int size)
+            throws Exception {
+        final var path = YangInstanceIdentifier.builder(TestModel.TEST_PATH).node(TestModel.OUTER_LIST_QNAME)
+            .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.ID_QNAME, 10).build();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
+        final var bos = new ByteArrayOutputStream();
+        final var nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
 
         nnout.writeYangInstanceIdentifier(path);
 
         final byte[] bytes = bos.toByteArray();
-        assertEquals(yiidStreamingSize, bytes.length);
+        assertEquals(size, bytes.length);
 
-        NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        final var nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
         assertEquals(path, nnin.readYangInstanceIdentifier());
     }
 
-    @Test
-    public void testNormalizedNodeAndYangInstanceIdentifierStreaming() throws IOException {
-        final NormalizedNode testContainer = TestModel.createBaseTestContainerBuilder().build();
-        final YangInstanceIdentifier path = YangInstanceIdentifier.builder(TestModel.TEST_PATH)
+    static List<Arguments> testYangInstanceIdentifierStreaming() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 139));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testNormalizedNodeAndYangInstanceIdentifierStreaming(final NormalizedNodeStreamVersion version, final int size)
+            throws Exception {
+        final var testContainer = TestModel.createBaseTestContainerBuilder().build();
+        final var path = YangInstanceIdentifier.builder(TestModel.TEST_PATH)
             .node(TestModel.OUTER_LIST_QNAME)
             .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.ID_QNAME, 10)
             .build();
 
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (NormalizedNodeDataOutput writer = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
+        final var bos = new ByteArrayOutputStream();
+        try (var writer = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
             writer.writeNormalizedNode(testContainer);
             writer.writeYangInstanceIdentifier(path);
         }
 
         final byte[] bytes = bos.toByteArray();
-        assertEquals(nnYiidStreamingSize, bytes.length);
+        assertEquals(size, bytes.length);
 
-        final NormalizedNodeDataInput reader = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        final var reader = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
         assertEquals(testContainer, reader.readNormalizedNode());
         assertEquals(path, reader.readYangInstanceIdentifier());
     }
 
+    static List<Arguments> testNormalizedNodeAndYangInstanceIdentifierStreaming() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 794));
+    }
+
     @Test
-    public void testInvalidNormalizedNodeStream() throws IOException {
-        final InvalidNormalizedNodeStreamException ex = assertThrows(InvalidNormalizedNodeStreamException.class,
+    void testInvalidNormalizedNodeStream() throws Exception {
+        final var ex = assertThrows(InvalidNormalizedNodeStreamException.class,
             () -> NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(new byte[] { 1, 2, 3})));
         assertEquals("Invalid signature marker: 1", ex.getMessage());
     }
 
-    @Test
-    public void testWithSerializable() {
-        NormalizedNode input = TestModel.createTestContainer();
-        SampleNormalizedNodeSerializable serializable = new SampleNormalizedNodeSerializable(version, input);
-        SampleNormalizedNodeSerializable clone = clone(serializable);
+    @ParameterizedTest
+    @MethodSource
+    void testWithSerializable(final NormalizedNodeStreamVersion version) {
+        var input = TestModel.createTestContainer();
+        var serializable = new SampleNormalizedNodeSerializable(version, input);
+        var clone = clone(serializable);
         assertEquals(input, clone.getInput());
     }
 
-    @Test
-    public void testAnyXmlStreaming() throws Exception {
-        String xml = "<foo xmlns=\"http://www.w3.org/TR/html4/\" x=\"123\"><bar>one</bar><bar>two</bar></foo>";
+    static List<Arguments> testWithSerializable() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testAnyXmlStreaming(final NormalizedNodeStreamVersion version, final int size) throws Exception {
+        var xml = "<foo xmlns=\"http://www.w3.org/TR/html4/\" x=\"123\"><bar>one</bar><bar>two</bar></foo>";
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
 
-        Node xmlNode = factory.newDocumentBuilder().parse(
+        final var xmlNode = factory.newDocumentBuilder().parse(
                 new InputSource(new StringReader(xml))).getDocumentElement();
 
         assertEquals("http://www.w3.org/TR/html4/", xmlNode.getNamespaceURI());
 
-        ContainerNode anyXmlContainer = Builders.containerBuilder()
+        final var anyXmlContainer = Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
             .withChild(Builders.anyXmlBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.ANY_XML_QNAME))
@@ -202,23 +193,23 @@ public class NormalizedNodeStreamReaderWriterTest {
                 .build())
             .build();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
+        final var bos = new ByteArrayOutputStream();
+        final var nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
 
         nnout.writeNormalizedNode(anyXmlContainer);
 
         final byte[] bytes = bos.toByteArray();
-        assertEquals(anyxmlStreamingSize, bytes.length);
+        assertEquals(size, bytes.length);
 
-        NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        final var nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
 
-        ContainerNode deserialized = (ContainerNode)nnin.readNormalizedNode();
+        final var deserialized = (ContainerNode)nnin.readNormalizedNode();
 
-        Optional<DataContainerChild> child = deserialized.findChildByArg(new NodeIdentifier(TestModel.ANY_XML_QNAME));
+        final var child = deserialized.findChildByArg(new NodeIdentifier(TestModel.ANY_XML_QNAME));
         assertEquals("AnyXml child present", true, child.isPresent());
 
-        StreamResult xmlOutput = new StreamResult(new StringWriter());
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        final var xmlOutput = new StreamResult(new StringWriter());
+        final var transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(((DOMSourceAnyxmlNode)child.orElseThrow()).body(), xmlOutput);
 
@@ -227,45 +218,58 @@ public class NormalizedNodeStreamReaderWriterTest {
             ((DOMSourceAnyxmlNode)child.orElseThrow()).body().getNode().getNamespaceURI());
     }
 
-    @Test
-    public void testSchemaPathSerialization() throws IOException {
-        final Absolute expected = Absolute.of(TestModel.ANY_XML_QNAME);
+    static List<Arguments> testAnyXmlStreaming() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 229));
+    }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
+    @ParameterizedTest
+    @MethodSource
+    void testSchemaPathSerialization(final NormalizedNodeStreamVersion version, final int size) throws Exception {
+        final var expected = Absolute.of(TestModel.ANY_XML_QNAME);
+
+        final var bos = new ByteArrayOutputStream();
+        try (var nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
             nnout.writeSchemaNodeIdentifier(expected);
         }
 
         final byte[] bytes = bos.toByteArray();
-        assertEquals(schemaPathSize, bytes.length);
+        assertEquals(size, bytes.length);
 
-        NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        var nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
         assertEquals(expected, nnin.readSchemaNodeIdentifier());
     }
 
-    @Test
-    public void testWritePathArgument() throws IOException {
-        final NodeIdentifier expected = new NodeIdentifier(TestModel.BOOLEAN_LEAF_QNAME);
+    static List<Arguments> testSchemaPathSerialization() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 99));
+    }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
+    @ParameterizedTest
+    @MethodSource
+    void testWritePathArgument(final NormalizedNodeStreamVersion version, final int size) throws Exception {
+        final var expected = new NodeIdentifier(TestModel.BOOLEAN_LEAF_QNAME);
+        final var bos = new ByteArrayOutputStream();
+        try (var nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
             nnout.writePathArgument(expected);
         }
 
         final byte[] bytes = bos.toByteArray();
-        assertEquals(writePathArgumentSize, bytes.length);
+        assertEquals(size, bytes.length);
 
-        NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        final var nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
         assertEquals(expected, nnin.readPathArgument());
+    }
+
+    static List<Arguments> testWritePathArgument() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 103));
     }
 
     /*
      * This tests the encoding of a MapNode with a lot of entries, each of them having the key leaf (a string)
      * and an integer.
      */
-    @Test
-    public void testHugeEntries() throws IOException {
+    @ParameterizedTest
+    @MethodSource
+    void testHugeEntries(final NormalizedNodeStreamVersion version, final int size) throws Exception {
         final var mapBuilder = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME));
         final var entryBuilder = Builders.mapEntryBuilder()
             .withChild(ImmutableNodes.leafNode(TestModel.DESC_QNAME, (byte) 42));
@@ -279,30 +283,34 @@ public class NormalizedNodeStreamReaderWriterTest {
                 .build());
         }
 
-        final SystemMapNode expected = mapBuilder.build();
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final var expected = mapBuilder.build();
+        final var bos = new ByteArrayOutputStream();
 
-        try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
+        try (var nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
             nnout.writeNormalizedNode(expected);
         }
 
         final byte[] bytes = bos.toByteArray();
-        assertEquals(hugeEntriesSize, bytes.length);
+        assertEquals(size, bytes.length);
 
-        NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        var nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
         assertEquals(expected, nnin.readNormalizedNode());
     }
 
+    static List<Arguments> testHugeEntries() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 2_289_103));
+    }
+
     private static <T extends Serializable> T clone(final T obj) {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
-        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+        final var baos = new ByteArrayOutputStream(512);
+        try (var oos = new ObjectOutputStream(baos)) {
             oos.writeObject(obj);
         } catch (IOException e) {
             throw new AssertionError("Failed to serialize object", e);
         }
 
         final byte[] bytes = baos.toByteArray();
-        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+        try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
             return (T) ois.readObject();
         } catch (ClassNotFoundException | IOException e) {
             throw new AssertionError("Failed to deserialize object", e);
@@ -310,7 +318,7 @@ public class NormalizedNodeStreamReaderWriterTest {
     }
 
     private static String largeString(final int pow) {
-        StringBuilder sb = new StringBuilder("X");
+        final var sb = new StringBuilder("X");
         for (int i = 0; i < pow; i++) {
             sb.append(sb);
         }

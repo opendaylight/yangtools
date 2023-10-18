@@ -10,90 +10,86 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.InstanceIdentifierBuilder;
 
-@RunWith(Parameterized.class)
-public class YiidSerializationTest extends AbstractSerializationTest {
-    @Parameters(name = "{0}")
-    public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM,
-                96, 98, 158, 359, 164, 372, 612, 2_388, 131_684, 719_700, 916_815
-            });
+class YiidSerializationTest extends AbstractSerializationTest {
+    @ParameterizedTest
+    @MethodSource
+    void testEmptyIdentifier(final NormalizedNodeStreamVersion version, final int size) {
+        assertSame(version, YangInstanceIdentifier.of(), size);
     }
 
-    @Parameter(1)
-    public int emptySize;
-    @Parameter(2)
-    public int oneSize;
-    @Parameter(3)
-    public int size31;
-    @Parameter(4)
-    public int uniqueSize31;
-    @Parameter(5)
-    public int size32;
-    @Parameter(6)
-    public int uniqueSize32;
-    @Parameter(7)
-    public int size256;
-    @Parameter(8)
-    public int uniqueSize256;
-    @Parameter(9)
-    public int size65792;
-    @Parameter(10)
-    public int uniqueSize65792;
-    @Parameter(11)
-    public int twiceSize65792;
-
-    @Test
-    public void testEmptyIdentifier() {
-        assertSame(YangInstanceIdentifier.of(), emptySize);
+    static List<Arguments> testEmptyIdentifier() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 96));
     }
 
-    @Test
-    public void testOneIdentifier() {
-        assertEquals(YangInstanceIdentifier.of(TestModel.TEST_QNAME), oneSize);
+    @ParameterizedTest
+    @MethodSource
+    void testOneIdentifier(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, YangInstanceIdentifier.of(TestModel.TEST_QNAME), size);
     }
 
-    @Test
-    public void test31() {
-        assertEquals(fillIdentifier(31), size31);
-        assertEquals(fillUniqueIdentifier(31), uniqueSize31);
+    static List<Arguments> testOneIdentifier() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 98));
     }
 
-    @Test
-    public void test32() {
-        assertEquals(fillIdentifier(32), size32);
-        assertEquals(fillUniqueIdentifier(32), uniqueSize32);
+    @ParameterizedTest
+    @MethodSource
+    void test31(final NormalizedNodeStreamVersion version, final int size, final int uniqueSize) {
+        assertEquals(version, fillIdentifier(31), size);
+        assertEquals(version, fillUniqueIdentifier(31), uniqueSize);
     }
 
-    @Test
-    public void test256() {
-        assertEquals(fillIdentifier(256), size256);
-        assertEquals(fillUniqueIdentifier(256), uniqueSize256);
+    static List<Arguments> test31() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 158, 359));
     }
 
-    @Test
-    public void test65792() {
-        assertEquals(fillIdentifier(65792), size65792);
-        assertEquals(fillUniqueIdentifier(65792), uniqueSize65792);
+    @ParameterizedTest
+    @MethodSource
+    void test32(final NormalizedNodeStreamVersion version, final int size, final int uniqueSize) {
+        assertEquals(version, fillIdentifier(32), size);
+        assertEquals(version, fillUniqueIdentifier(32), uniqueSize);
     }
 
-    @Test
-    public void testTwice65536() {
-        final YangInstanceIdentifier yiid = fillUniqueIdentifier(65792);
+    static List<Arguments> test32() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 164, 372));
+    }
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(baos))) {
+    @ParameterizedTest
+    @MethodSource
+    void test256(final NormalizedNodeStreamVersion version, final int size, final int uniqueSize) {
+        assertEquals(version, fillIdentifier(256), size);
+        assertEquals(version, fillUniqueIdentifier(256), uniqueSize);
+    }
+
+    static List<Arguments> test256() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 612, 2_388));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void test65792(final NormalizedNodeStreamVersion version, final int size, final int uniqueSize) {
+        assertEquals(version, fillIdentifier(65792), size);
+        assertEquals(version, fillUniqueIdentifier(65792), uniqueSize);
+    }
+
+    static List<Arguments> test65792() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 131_684, 719_700));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testTwice65536(final NormalizedNodeStreamVersion version, final int size) {
+        final var yiid = fillUniqueIdentifier(65792);
+
+        final var baos = new ByteArrayOutputStream();
+        try (var nnout = version.newDataOutput(ByteStreams.newDataOutput(baos))) {
             nnout.writeYangInstanceIdentifier(yiid);
             nnout.writeYangInstanceIdentifier(yiid);
         } catch (IOException e) {
@@ -101,34 +97,38 @@ public class YiidSerializationTest extends AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(twiceSize65792, bytes.length);
+        Assertions.assertEquals(size, bytes.length);
 
         try {
-            final NormalizedNodeDataInput input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-            Assert.assertEquals(yiid, input.readYangInstanceIdentifier());
-            Assert.assertEquals(yiid, input.readYangInstanceIdentifier());
+            final var input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+            Assertions.assertEquals(yiid, input.readYangInstanceIdentifier());
+            Assertions.assertEquals(yiid, input.readYangInstanceIdentifier());
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }
     }
 
+    static List<Arguments> testTwice65536() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 916_815));
+    }
+
     private static YangInstanceIdentifier fillIdentifier(final int size) {
-        final InstanceIdentifierBuilder builder = YangInstanceIdentifier.builder();
+        final var builder = YangInstanceIdentifier.builder();
         for (int i = 0; i < size; ++i) {
             builder.node(TestModel.TEST_QNAME);
         }
-        final YangInstanceIdentifier ret = builder.build();
-        Assert.assertEquals(size, ret.getPathArguments().size());
+        final var ret = builder.build();
+        Assertions.assertEquals(size, ret.getPathArguments().size());
         return ret;
     }
 
     private static YangInstanceIdentifier fillUniqueIdentifier(final int size) {
-        final InstanceIdentifierBuilder builder = YangInstanceIdentifier.builder();
+        final var builder = YangInstanceIdentifier.builder();
         for (int i = 0; i < size; ++i) {
             builder.node(QName.create(TestModel.TEST_QNAME, "a" + Integer.toHexString(i)));
         }
-        final YangInstanceIdentifier ret = builder.build();
-        Assert.assertEquals(size, ret.getPathArguments().size());
+        final var ret = builder.build();
+        Assertions.assertEquals(size, ret.getPathArguments().size());
         return ret;
     }
 }

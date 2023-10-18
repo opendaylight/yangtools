@@ -7,20 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.function.Consumer;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -36,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class DataTreeCandidateInputOutputTest {
+class DataTreeCandidateInputOutputTest {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create(FOO, "bar");
     private static final QName BAZ = QName.create(FOO, "baz");
@@ -49,10 +44,11 @@ public class DataTreeCandidateInputOutputTest {
 
     private static EffectiveModelContext CONTEXT;
 
-    private DataTree dataTree;
+    private final DataTree dataTree = new InMemoryDataTreeFactory()
+        .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, CONTEXT);
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeAll() {
         CONTEXT = YangParserTestUtils.parseYang("""
             module foo {
               namespace foo;
@@ -71,47 +67,42 @@ public class DataTreeCandidateInputOutputTest {
             }""");
     }
 
-    @Before
-    public void before() {
-        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, CONTEXT);
-    }
-
     @Test
-    public void testWriteRoot() throws IOException {
+    void testWriteRoot() throws Exception {
         assertSerialization(createCandidate(mod -> mod.write(YangInstanceIdentifier.of(),
             ImmutableNodes.containerNode(SchemaContext.NAME))));
     }
 
     @Test
-    public void testWrite() throws IOException {
+    void testWrite() throws Exception {
         assertSerialization(createCandidate(mod -> mod.write(BAR_PATH, ImmutableNodes.containerNode(BAR))));
     }
 
     @Test
-    public void testDelete() throws IOException {
+    void testDelete() throws Exception {
         createCandidate(mod -> mod.write(BAR_PATH, ImmutableNodes.containerNode(BAR)));
         assertSerialization(createCandidate(mod -> mod.delete(BAR_PATH)));
     }
 
     @Test
-    public void testWriteAppear() throws IOException {
+    void testWriteAppear() throws Exception {
         assertSerialization(createCandidate(mod -> mod.write(FOO_BAR_PATH, ImmutableNodes.leafNode(BAR, "value"))));
     }
 
     @Test
-    public void testDeleteDisappear() throws IOException {
+    void testDeleteDisappear() throws Exception {
         createCandidate(mod -> mod.write(FOO_BAR_PATH, ImmutableNodes.leafNode(BAR, "value")));
         assertSerialization(createCandidate(mod -> mod.delete(FOO_BAR_PATH)));
     }
 
     @Test
-    public void testUnmodifiedRoot() throws IOException {
+    void testUnmodifiedRoot() throws Exception {
         assertSerialization(createCandidate(mod -> mod.merge(YangInstanceIdentifier.of(),
             ImmutableNodes.containerNode(SchemaContext.NAME))));
     }
 
     @Test
-    public void testUnmodifiedFoo() throws IOException {
+    void testUnmodifiedFoo() throws Exception {
         assertSerialization(createCandidate(mod -> {
             mod.write(FOO_BAR_PATH, ImmutableNodes.leafNode(BAR, "value"));
             mod.delete(FOO_BAR_PATH);
@@ -119,7 +110,7 @@ public class DataTreeCandidateInputOutputTest {
     }
 
     private DataTreeCandidate createCandidate(final Consumer<DataTreeModification> function) {
-        final DataTreeModification mod = dataTree.takeSnapshot().newModification();
+        final var mod = dataTree.takeSnapshot().newModification();
         function.accept(mod);
         mod.ready();
 
@@ -133,15 +124,13 @@ public class DataTreeCandidateInputOutputTest {
         return ret;
     }
 
-    private static void assertSerialization(final DataTreeCandidate orig) throws IOException {
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        final DataOutput dos = new DataOutputStream(bos);
-
-        try (NormalizedNodeDataOutput out = NormalizedNodeStreamVersion.current().newDataOutput(dos)) {
+    private static void assertSerialization(final DataTreeCandidate orig) throws Exception {
+        final var bos = new ByteArrayOutputStream();
+        try (var out = NormalizedNodeStreamVersion.current().newDataOutput( new DataOutputStream(bos))) {
             DataTreeCandidateInputOutput.writeDataTreeCandidate(out, orig);
         }
 
-        final DataTreeCandidate read = DataTreeCandidateInputOutput.readDataTreeCandidate(
+        final var read = DataTreeCandidateInputOutput.readDataTreeCandidate(
             NormalizedNodeDataInput.newDataInput(new DataInputStream(new ByteArrayInputStream(bos.toByteArray()))));
         assertEquals(orig.getRootPath(), read.getRootPath());
         assertEqualMod(orig.getRootNode(), read.getRootNode());
@@ -156,13 +145,12 @@ public class DataTreeCandidateInputOutputTest {
                 // No children to verify
                 break;
             default:
-                final Collection<DataTreeCandidateNode> expectedChildren = expected.childNodes();
-                final Collection<DataTreeCandidateNode> actualChildren = actual.childNodes();
+                final var expectedChildren = expected.childNodes();
+                final var actualChildren = actual.childNodes();
                 assertEquals(expectedChildren.size(), actualChildren.size());
 
-                final Iterator<DataTreeCandidateNode> ait = actualChildren.iterator();
-
-                for (DataTreeCandidateNode expectedChild : expectedChildren) {
+                final var ait = actualChildren.iterator();
+                for (var expectedChild : expectedChildren) {
                     assertEqualNodes(expectedChild, ait.next());
                 }
         }
