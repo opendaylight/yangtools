@@ -7,60 +7,61 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-public class BytesSerializationTest extends AbstractSerializationTest {
-    private static final byte[] BINARY_128 = randomBytes(128);
-    private static final byte[] BINARY_384 = randomBytes(384);
-    private static final byte[] BINARY_65920 = randomBytes(65920);
-
-    @Parameters(name = "{0}")
-    public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96, 97, 225, 482, 66_020 });
+class BytesSerializationTest extends AbstractSerializationTest {
+    @ParameterizedTest
+    @MethodSource
+    void testEmptyBytes(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, new byte[0], size);
     }
 
-    @Parameter(1)
-    public int emptySize;
-    @Parameter(2)
-    public int oneSize;
-    @Parameter(3)
-    public int size128;
-    @Parameter(4)
-    public int size384;
-    @Parameter(5)
-    public int size65920;
-
-    @Test
-    public void testEmptyBytes() {
-        assertEquals(new byte[0], emptySize);
+    static List<Arguments> testEmptyBytes() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 96));
     }
 
-    @Test
-    public void testOne() {
-        assertEquals(randomBytes(1), oneSize);
+    @ParameterizedTest
+    @MethodSource
+    void testOne(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, randomBytes(1), size);
     }
 
-    @Test
-    public void test128() {
-        assertEquals(BINARY_128, size128);
+    static List<Arguments> testOne() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 97));
     }
 
-    @Test
-    public void test384() {
-        assertEquals(BINARY_384, size384);
+    @ParameterizedTest
+    @MethodSource
+    void test128(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, randomBytes(128), size);
     }
 
-    @Test
-    public void test65920() {
-        assertEquals(BINARY_65920, size65920);
+    static List<Arguments> test128() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 225));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void test384(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, randomBytes(384), size);
+    }
+
+    static List<Arguments> test384() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 482));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void test65920(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, randomBytes(65920), size);
+    }
+
+    static List<Arguments> test65920() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 66_020));
     }
 
     private static byte[] randomBytes(final int size) {

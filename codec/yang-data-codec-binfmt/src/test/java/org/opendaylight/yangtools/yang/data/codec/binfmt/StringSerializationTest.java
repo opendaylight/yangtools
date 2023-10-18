@@ -7,50 +7,52 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import java.util.Collections;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-public class StringSerializationTest extends AbstractSerializationTest {
+class StringSerializationTest extends AbstractSerializationTest {
     private static final String STR_MEDIUM = "a".repeat(32767);
     private static final String STR_HUGE = "©".repeat(16777216);
 
-    @Parameters(name = "{0}")
-    public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96, 99, 32_865, 33_554_532 });
+    @ParameterizedTest
+    @MethodSource
+    void testEmptySame(final NormalizedNodeStreamVersion version, final int size) {
+        assertSame(version, "", size);
     }
 
-    @Parameter(1)
-    public int emptySize;
-    @Parameter(2)
-    public int oneSize;
-    @Parameter(3)
-    public int mediumSize;
-    @Parameter(4)
-    public int hugeSize;
-
-    @Test
-    public void testEmptySame() {
-        assertSame("", emptySize);
+    static List<Arguments> testEmptySame() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 96));
     }
 
-    @Test
-    public void testOne() {
-        assertEquals("a", oneSize);
+    @ParameterizedTest
+    @MethodSource
+    public void testOne(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, "a", size);
     }
 
-    @Test
-    public void testMedium() {
-        assertEquals(STR_MEDIUM, mediumSize);
+    static List<Arguments> testOne() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 99));
     }
 
-    @Test
-    public void testHuge() {
-        assertEquals(STR_HUGE, hugeSize);
+    @ParameterizedTest
+    @MethodSource
+    void testMedium(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, STR_MEDIUM, size);
+    }
+
+    static List<Arguments> testMedium() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 32_865));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testHuge(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, STR_HUGE, size);
+    }
+
+    static List<Arguments> testHuge() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 33_554_532));
     }
 }

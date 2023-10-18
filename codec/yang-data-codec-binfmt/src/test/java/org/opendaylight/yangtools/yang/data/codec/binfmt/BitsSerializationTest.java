@@ -8,72 +8,74 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
-@RunWith(Parameterized.class)
-public class BitsSerializationTest extends AbstractSerializationTest {
-    @Parameters(name = "{0}")
-    public static Iterable<Object[]> data() {
-        return Collections.singletonList(
-            new Object[] { NormalizedNodeStreamVersion.POTASSIUM, 96, 100, 226, 1_536, 456_764, 654_045 });
+class BitsSerializationTest extends AbstractSerializationTest {
+    @ParameterizedTest
+    @MethodSource
+    void testEmptyBytes(final NormalizedNodeStreamVersion version, final int size) {
+        assertSame(version, ImmutableSet.of(), size);
     }
 
-    @Parameter(1)
-    public int emptySize;
-    @Parameter(2)
-    public int oneSize;
-    @Parameter(3)
-    public int size29;
-    @Parameter(4)
-    public int size285;
-    @Parameter(5)
-    public int size65821;
-    @Parameter(6)
-    public int twiceSize65821;
-
-    @Test
-    public void testEmptyBytes() {
-        assertSame(ImmutableSet.of(), emptySize);
+    static List<Arguments> testEmptyBytes() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 96));
     }
 
-    @Test
-    public void testOne() {
-        assertEquals(ImmutableSet.of("a"), oneSize);
+    @ParameterizedTest
+    @MethodSource
+    void testOne(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, ImmutableSet.of("a"), size);
     }
 
-    @Test
-    public void test29() {
-        assertEquals(fillBits(29), size29);
+    static List<Arguments> testOne() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 100));
     }
 
-    @Test
-    public void test285() {
-        assertEquals(fillBits(285), size285);
+    @ParameterizedTest
+    @MethodSource
+    void test29(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, fillBits(29), size);
     }
 
-    @Test
-    public void test65821() {
-        assertEquals(fillBits(65821), size65821);
+    static List<Arguments> test29() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 226));
     }
 
-    @Test
-    public void testTwice65536() {
-        final LeafNode<ImmutableSet<String>> leaf = ImmutableNodes.leafNode(TestModel.TEST_QNAME, fillBits(65821));
+    @ParameterizedTest
+    @MethodSource
+    void test285(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, fillBits(285), size);
+    }
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(baos))) {
+    static List<Arguments> test285() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 1_536));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void test65821(final NormalizedNodeStreamVersion version, final int size) {
+        assertEquals(version, fillBits(65821), size);
+    }
+
+    static List<Arguments> test65821() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 456_764));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testTwice65536(final NormalizedNodeStreamVersion version, final int size) {
+        final var leaf = ImmutableNodes.leafNode(TestModel.TEST_QNAME, fillBits(65821));
+
+        final var baos = new ByteArrayOutputStream();
+        try (var nnout = version.newDataOutput(ByteStreams.newDataOutput(baos))) {
             nnout.writeNormalizedNode(leaf);
             nnout.writeNormalizedNode(leaf);
         } catch (IOException e) {
@@ -81,24 +83,28 @@ public class BitsSerializationTest extends AbstractSerializationTest {
         }
 
         final byte[] bytes = baos.toByteArray();
-        Assert.assertEquals(twiceSize65821, bytes.length);
+        Assertions.assertEquals(size, bytes.length);
 
         try {
-            final NormalizedNodeDataInput input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-            Assert.assertEquals(leaf, input.readNormalizedNode());
-            Assert.assertEquals(leaf, input.readNormalizedNode());
+            final var input = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+            Assertions.assertEquals(leaf, input.readNormalizedNode());
+            Assertions.assertEquals(leaf, input.readNormalizedNode());
         } catch (IOException e) {
             throw new AssertionError("Failed to deserialize", e);
         }
     }
 
+    static List<Arguments> testTwice65536() {
+        return List.of(Arguments.of(NormalizedNodeStreamVersion.POTASSIUM, 654_045));
+    }
+
     private static ImmutableSet<String> fillBits(final int size) {
-        final Builder<String> builder = ImmutableSet.builderWithExpectedSize(size);
+        final var builder = ImmutableSet.<String>builderWithExpectedSize(size);
         for (int i = 0; i < size; ++i) {
             builder.add(Integer.toHexString(i));
         }
-        final ImmutableSet<String> ret = builder.build();
-        Assert.assertEquals(size, ret.size());
+        final var ret = builder.build();
+        Assertions.assertEquals(size, ret.size());
         return ret;
     }
 }
