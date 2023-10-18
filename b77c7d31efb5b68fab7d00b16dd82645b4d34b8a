@@ -65,6 +65,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd3e78cb_89a8a2a2",
+        "filename": "codec/yang-data-codec-binfmt/src/test/java/org/opendaylight/yangtools/yang/data/codec/binfmt/AbstractSerializationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-10-18T12:34:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e9266dd_88c8bb64",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 31
+      },
+      "revId": "b77c7d31efb5b68fab7d00b16dd82645b4d34b8a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c863d541_dea0b452",
@@ -102,6 +126,30 @@
       "side": 1,
       "message": "I am redoing it. Forgot about this",
       "parentUuid": "c863d541_dea0b452",
+      "range": {
+        "startLine": 16,
+        "startChar": 7,
+        "endLine": 16,
+        "endChar": 21
+      },
+      "revId": "b77c7d31efb5b68fab7d00b16dd82645b4d34b8a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db605e50_a68b7d51",
+        "filename": "codec/yang-data-codec-binfmt/src/test/java/org/opendaylight/yangtools/yang/data/codec/binfmt/BitsSerializationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-10-18T12:34:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "027c4931_326ba12c",
       "range": {
         "startLine": 16,
         "startChar": 7,
