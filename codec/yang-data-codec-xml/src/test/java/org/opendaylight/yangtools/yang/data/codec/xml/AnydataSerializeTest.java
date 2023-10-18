@@ -15,12 +15,9 @@ import static org.junit.Assert.assertFalse;
 import java.io.StringWriter;
 import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -30,7 +27,6 @@ import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
@@ -38,11 +34,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolde
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
-import org.w3c.dom.Document;
 
 @RunWith(Parameterized.class)
 public class AnydataSerializeTest extends AbstractAnydataTest {
-
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return TestFactories.junitParameters();
@@ -56,13 +50,12 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
 
     @Test
     public void testDOMAnydata() throws Exception {
-        final StringWriter writer = new StringWriter();
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
+        final var writer = new StringWriter();
+        final var xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
-        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-            xmlStreamWriter, SCHEMA_CONTEXT);
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-            xmlNormalizedNodeStreamWriter);
+        final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter,
+            SCHEMA_CONTEXT);
+        final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(Builders.anydataBuilder(DOMSourceAnydata.class)
             .withNodeIdentifier(FOO_NODEID)
             .withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>"))
@@ -76,8 +69,8 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     @Test
     public void testXmlParseAnydata() throws Exception {
         // deserialization
-        final XMLStreamReader reader
-                = UntrustedXML.createXMLStreamReader(loadResourcesAsInputStream("/test-anydata.xml"));
+        final var reader = UntrustedXML.createXMLStreamReader(
+            AnydataSerializeTest.class.getResourceAsStream("/test-anydata.xml"));
 
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -86,15 +79,14 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
 
         final var transformedInput = result.getResult().data();
         assertThat(transformedInput, instanceOf(AnydataNode.class));
-        AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
+        final var anydataNode = (AnydataNode<?>) transformedInput;
 
         // serialization
-        final StringWriter writer = new StringWriter();
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
-        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-                xmlStreamWriter, SCHEMA_CONTEXT);
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-                xmlNormalizedNodeStreamWriter);
+        final var writer = new StringWriter();
+        final var xmlStreamWriter = factory.createXMLStreamWriter(writer);
+        final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter,
+            SCHEMA_CONTEXT);
+        final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(transformedInput);
         normalizedNodeWriter.flush();
 
@@ -106,8 +98,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setNormalize(true);
         final Diff diff = new Diff(deserializeXml, serializedXml);
-        final DifferenceListener differenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
-        diff.overrideDifferenceListener(differenceListener);
+        diff.overrideDifferenceListener(new IgnoreTextAndAttributeValuesDifferenceListener());
 
         XMLAssert.assertXMLEqual(diff, true);
     }
@@ -115,17 +106,15 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     @Test
     public void testAnydataLoadFromXML() throws Exception {
         // Load XML file
-        Document doc = loadXmlDocument("/test-anydata.xml");
-        final DOMSource domSource = new DOMSource(doc.getDocumentElement());
+        final var doc = loadDocument("/test-anydata.xml");
+        final var domSource = new DOMSource(doc.getDocumentElement());
 
         //Load XML from file and write it with xmlParseStream
-        final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
-        final NormalizedNodeStreamWriter streamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-                xmlStreamWriter, SCHEMA_CONTEXT);
-        final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
-            Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
+        final var domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
+        final var xmlStreamWriter = factory.createXMLStreamWriter(domResult);
+        final var streamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, SCHEMA_CONTEXT);
+        final var reader = new DOMSourceXMLStreamReader(domSource);
+        final var xmlParser = XmlParserStream.create(streamWriter, Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
 
         xmlParser.parse(reader);
         xmlParser.flush();
@@ -138,8 +127,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         final String expectedXml = toString(doc.getDocumentElement());
         final String serializedXml = toString(domResult.getNode());
         final Diff diff = new Diff(expectedXml, serializedXml);
-        final DifferenceListener differenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
-        diff.overrideDifferenceListener(differenceListener);
+        diff.overrideDifferenceListener(new IgnoreTextAndAttributeValuesDifferenceListener());
 
         XMLAssert.assertXMLEqual(diff, true);
     }
@@ -147,24 +135,23 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     @Test
     public void testAnydataSerialization() throws Exception {
         //Get XML Data.
-        Document doc = loadXmlDocument("/test-anydata.xml");
-        final DOMSource domSource = new DOMSource(doc.getDocumentElement());
+        final var doc = loadDocument("/test-anydata.xml");
+        final var domSource = new DOMSource(doc.getDocumentElement());
 
         //Create NormalizedNodeResult
         final var normalizedResult = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(normalizedResult);
 
         //Initialize Reader with XML file
-        final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
-            Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
+        final var reader = new DOMSourceXMLStreamReader(domSource);
+        final var xmlParser = XmlParserStream.create(streamWriter, Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
         xmlParser.parse(reader);
         xmlParser.flush();
 
         //Get Result
         final var node = normalizedResult.getResult().data();
         assertThat(node, instanceOf(AnydataNode.class));
-        final AnydataNode<?> anydataResult = (AnydataNode<?>) node;
+        final var anydataResult = (AnydataNode<?>) node;
 
         //Get Result in formatted String
         assertThat(anydataResult.body(), instanceOf(DOMSourceAnydata.class));
@@ -173,21 +160,19 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
 
         //Looking for difference in Serialized xml and in Loaded XML
         final Diff diff = new Diff(expectedXml, serializedXml);
-        final DifferenceListener differenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
-        diff.overrideDifferenceListener(differenceListener);
+        diff.overrideDifferenceListener(new IgnoreTextAndAttributeValuesDifferenceListener());
 
         XMLAssert.assertXMLEqual(diff, true);
     }
 
     @Test
     public void testSiblingSerialize() throws Exception {
-        final StringWriter writer = new StringWriter();
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
+        final var writer = new StringWriter();
+        final var xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
-        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-            xmlStreamWriter, SCHEMA_CONTEXT);
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-            xmlNormalizedNodeStreamWriter);
+        final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter,
+            SCHEMA_CONTEXT);
+        final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(Builders.containerBuilder()
             .withNodeIdentifier(CONT_NODEID)
             .withChild(Builders.anydataBuilder(DOMSourceAnydata.class)
@@ -205,13 +190,12 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
 
     @Test
     public void testNormalizedSerialize() throws Exception {
-        final StringWriter writer = new StringWriter();
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
+        final var writer = new StringWriter();
+        final var xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
-        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-            xmlStreamWriter, SCHEMA_CONTEXT);
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-            xmlNormalizedNodeStreamWriter);
+        final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter,
+            SCHEMA_CONTEXT);
+        final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(Builders.containerBuilder()
             .withNodeIdentifier(CONT_NODEID)
             .withChild(Builders.anydataBuilder(NormalizedAnydata.class)

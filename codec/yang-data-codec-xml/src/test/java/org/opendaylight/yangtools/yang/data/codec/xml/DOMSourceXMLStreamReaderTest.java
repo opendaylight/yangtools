@@ -7,23 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,12 +27,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolde
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
-public class DOMSourceXMLStreamReaderTest {
+public class DOMSourceXMLStreamReaderTest extends AbstractXmlTest {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() {
         return TestFactories.junitParameters();
@@ -158,9 +145,8 @@ public class DOMSourceXMLStreamReaderTest {
 
     @Test
     public void test() throws Exception {
-
         // deserialization
-        final Document doc = loadDocument("/dom-reader-test/foo.xml");
+        final var doc = loadDocument("/dom-reader-test/foo.xml");
         final var inputXml = new DOMSource(doc.getDocumentElement());
         var domXMLReader = new DOMSourceXMLStreamReader(inputXml);
 
@@ -186,32 +172,5 @@ public class DOMSourceXMLStreamReaderTest {
         //final String serializedXml = writer.toString();
         final String serializedXml = toString(domResult.getNode());
         assertFalse(serializedXml.isEmpty());
-    }
-
-    private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
-        final InputStream resourceAsStream = NormalizedNodesToXmlTest.class.getResourceAsStream(xmlPath);
-        return requireNonNull(readXmlToDocument(resourceAsStream));
-    }
-
-    private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
-        doc.getDocumentElement().normalize();
-        return doc;
-    }
-
-    private static String toString(final Node xml) {
-        try {
-            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-            final StreamResult result = new StreamResult(new StringWriter());
-            final DOMSource source = new DOMSource(xml);
-            transformer.transform(source, result);
-
-            return result.getWriter().toString();
-        } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
-            throw new RuntimeException("Unable to serialize xml element " + xml, e);
-        }
     }
 }

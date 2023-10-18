@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import javax.xml.stream.XMLOutputFactory;
 
 final class TestFactories {
@@ -23,18 +23,19 @@ final class TestFactories {
     static final XMLOutputFactory REPAIRING_OUTPUT_FACTORY;
 
     static {
-        REPAIRING_OUTPUT_FACTORY = XMLOutputFactory.newFactory();
-        REPAIRING_OUTPUT_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
-    }
-
-    static Collection<Object[]> junitParameters() {
-        return Arrays.asList(new Object[][] {
-            { "default", DEFAULT_OUTPUT_FACTORY },
-            { "repairing", REPAIRING_OUTPUT_FACTORY },
-        });
+        final var f = XMLOutputFactory.newFactory();
+        f.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
+        REPAIRING_OUTPUT_FACTORY = f;
     }
 
     private TestFactories() {
+        // Hidden on purpose
+    }
 
+    static Collection<Object[]> junitParameters() {
+        return List.of(new Object[][] {
+            { "default", DEFAULT_OUTPUT_FACTORY },
+            { "repairing", REPAIRING_OUTPUT_FACTORY },
+        });
     }
 }

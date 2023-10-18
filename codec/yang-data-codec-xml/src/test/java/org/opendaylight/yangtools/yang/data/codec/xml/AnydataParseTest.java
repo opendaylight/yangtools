@@ -10,9 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -20,11 +17,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
-import org.xml.sax.SAXException;
 
 public class AnydataParseTest extends AbstractAnydataTest {
     @Test
-    public void testAnydata() throws XMLStreamException, IOException, URISyntaxException, SAXException {
+    public void testAnydata() throws Exception {
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(
             toInputStream("<foo xmlns=\"test-anydata\"><bar/></foo>"));
 

@@ -7,28 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
@@ -46,34 +31,22 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
-public class NormalizedNodeXmlTranslationTest {
+public class NormalizedNodeXmlTranslationTest extends AbstractXmlTest {
     private final EffectiveModelContext schema;
 
     @Parameterized.Parameters()
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return List.of(new Object[][] {
                 { "/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok.xml", augmentChoiceHell() },
                 { "/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok2.xml", null },
                 { "/schema/augment_choice_hell.yang", "/schema/augment_choice_hell_ok3.xml", augmentChoiceHell2() },
@@ -88,21 +61,21 @@ public class NormalizedNodeXmlTranslationTest {
         XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:controller:test"), Revision.of("2014-03-13"));
 
     private static ContainerNode augmentChoiceHell2() {
-        final NodeIdentifier container = getNodeIdentifier("container");
-        final QName augmentChoice1QName = QName.create(container.getNodeType(), "augment-choice1");
-        final QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
-        final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
-        final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
+        final var container = getNodeIdentifier("container");
+        final var augmentChoice1QName = QName.create(container.getNodeType(), "augment-choice1");
+        final var augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
+        final var containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
+        final var leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final NodeIdentifier augmentChoice1Id = new NodeIdentifier(augmentChoice1QName);
-        final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
-        final NodeIdentifier containerId = new NodeIdentifier(containerQName);
-
-        return containerBuilder().withNodeIdentifier(container)
-            .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
-                .withChild(choiceBuilder().withNodeIdentifier(augmentChoice2Id)
-                    .withChild(containerBuilder().withNodeIdentifier(containerId)
-                        .withChild(leafNode(leafQName, "leaf-value"))
+        return Builders.containerBuilder()
+            .withNodeIdentifier(container)
+            .withChild(Builders.choiceBuilder()
+                .withNodeIdentifier(new NodeIdentifier(augmentChoice1QName))
+                .withChild(Builders.choiceBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(augmentChoice2QName))
+                    .withChild(Builders.containerBuilder()
+                        .withNodeIdentifier(new NodeIdentifier(containerQName))
+                        .withChild(ImmutableNodes.leafNode(leafQName, "leaf-value"))
                         .build())
                     .build())
                 .build())
@@ -110,83 +83,79 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static ContainerNode withAttributes() {
-        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> b = containerBuilder();
-        b.withNodeIdentifier(getNodeIdentifier("container"));
-
-        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> listBuilder =
-                Builders.mapBuilder().withNodeIdentifier(getNodeIdentifier("list"));
-
-        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
-                .mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
-                                getNodeIdentifier("list").getNodeType(),
-                                getNodeIdentifier("uint32InList").getNodeType(), Uint32.valueOf(3)));
-        final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> uint32InListBuilder = Builders
-                .leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
-
-        list1Builder.withChild(uint32InListBuilder.withValue(Uint32.valueOf(3)).build());
-
-        listBuilder.withChild(list1Builder.build());
-        b.withChild(listBuilder.build());
-
-        final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> booleanBuilder = Builders
-                .leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
-        booleanBuilder.withValue(Boolean.FALSE);
-        b.withChild(booleanBuilder.build());
-
-        final ListNodeBuilder<Object, SystemLeafSetNode<Object>> leafListBuilder = Builders.leafSetBuilder()
-                .withNodeIdentifier(getNodeIdentifier("leafList"));
-
-        final NormalizedNodeBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder = Builders
-                .leafSetEntryBuilder().withNodeIdentifier(
-                        new NodeWithValue(getNodeIdentifier("leafList").getNodeType(), "a"));
-
-        leafList1Builder.withValue("a");
-
-        leafListBuilder.withChild(leafList1Builder.build());
-        b.withChild(leafListBuilder.build());
-
-        return b.build();
+        return Builders.containerBuilder()
+            .withNodeIdentifier(getNodeIdentifier("container"))
+            .withChild(Builders.mapBuilder()
+                .withNodeIdentifier(getNodeIdentifier("list"))
+                .withChild(Builders.mapEntryBuilder()
+                    .withNodeIdentifier(NodeIdentifierWithPredicates.of(getNodeIdentifier("list").getNodeType(),
+                        getNodeIdentifier("uint32InList").getNodeType(), Uint32.valueOf(3)))
+                    .withChild(Builders.leafBuilder()
+                        .withNodeIdentifier(getNodeIdentifier("uint32InList"))
+                        .withValue(Uint32.valueOf(3))
+                        .build())
+                    .build())
+                .build())
+            .withChild(Builders.leafBuilder()
+                .withNodeIdentifier(getNodeIdentifier("boolean"))
+                .withValue(Boolean.FALSE)
+                .build())
+            .withChild(Builders.leafSetBuilder()
+                .withNodeIdentifier(getNodeIdentifier("leafList"))
+                .withChild(Builders.leafSetEntryBuilder()
+                    .withNodeIdentifier(new NodeWithValue<>(getNodeIdentifier("leafList").getNodeType(), "a"))
+                    .withValue("a")
+                    .build())
+                .build())
+            .build();
     }
 
     private static ContainerNode augmentChoiceHell() {
-
-        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> b = containerBuilder();
-        b.withNodeIdentifier(getNodeIdentifier("container"));
-
-        b.withChild(choiceBuilder()
+        return Builders.containerBuilder()
+            .withNodeIdentifier(getNodeIdentifier("container"))
+            .withChild(Builders.choiceBuilder()
                 .withNodeIdentifier(getNodeIdentifier("ch2"))
-                .withChild(
-                        Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c2Leaf")).withValue("2").build())
-                .withChild(
-                        choiceBuilder()
-                                .withNodeIdentifier(getNodeIdentifier("c2DeepChoice"))
-                                .withChild(
-                                        Builders.leafBuilder()
-                                                .withNodeIdentifier(getNodeIdentifier("c2DeepChoiceCase1Leaf2"))
-                                                .withValue("2").build()).build()).build());
-
-        b.withChild(choiceBuilder()
-                .withNodeIdentifier(getNodeIdentifier("ch3"))
-                .withChild(
-                        Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c3Leaf")).withValue("3").build())
-                .build());
-
-        b.withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("augLeaf")).withValue("augment")
-                                .build());
-
-        b.withChild(choiceBuilder()
-            .withNodeIdentifier(getNodeIdentifier("ch"))
-            .withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c1Leaf")).withValue("1").build())
-            .withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c1Leaf_AnotherAugment"))
-                .withValue("1").build())
-            .withChild(choiceBuilder()
-                .withNodeIdentifier(getNodeIdentifier("deepChoice"))
                 .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(getNodeIdentifier("deepLeafc1"))
-                    .withValue("1").build()).build())
-            .build());
-
-        return b.build();
+                    .withNodeIdentifier(getNodeIdentifier("c2Leaf"))
+                    .withValue("2")
+                    .build())
+                .withChild(Builders.choiceBuilder()
+                    .withNodeIdentifier(getNodeIdentifier("c2DeepChoice"))
+                    .withChild(Builders.leafBuilder()
+                        .withNodeIdentifier(getNodeIdentifier("c2DeepChoiceCase1Leaf2"))
+                        .withValue("2")
+                        .build())
+                    .build())
+                .build())
+            .withChild(Builders.choiceBuilder()
+                .withNodeIdentifier(getNodeIdentifier("ch3"))
+                .withChild(Builders.leafBuilder()
+                    .withNodeIdentifier(getNodeIdentifier("c3Leaf"))
+                    .withValue("3")
+                    .build())
+                .build())
+            .withChild(Builders.leafBuilder()
+                .withNodeIdentifier(getNodeIdentifier("augLeaf"))
+                .withValue("augment")
+                .build())
+            .withChild(Builders.choiceBuilder()
+                .withNodeIdentifier(getNodeIdentifier("ch"))
+                .withChild(Builders.leafBuilder()
+                    .withNodeIdentifier(getNodeIdentifier("c1Leaf")).withValue("1")
+                    .build())
+                .withChild(Builders.leafBuilder()
+                    .withNodeIdentifier(getNodeIdentifier("c1Leaf_AnotherAugment"))
+                    .withValue("1")
+                    .build())
+                .withChild(Builders.choiceBuilder()
+                    .withNodeIdentifier(getNodeIdentifier("deepChoice"))
+                    .withChild(Builders.leafBuilder()
+                        .withNodeIdentifier(getNodeIdentifier("deepLeafc1"))
+                        .withValue("1")
+                        .build())
+                    .build())
+                .build())
+            .build();
     }
 
     private static NodeIdentifier getNodeIdentifier(final String localName) {
@@ -231,20 +200,14 @@ public class NormalizedNodeXmlTranslationTest {
             assertEquals(expectedNode, built);
         }
 
-        final Document document = UntrustedXML.newDocumentBuilder().newDocument();
-        final DOMResult domResult = new DOMResult(document);
-
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
-
-        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter
-                .create(xmlStreamWriter, schema);
-
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-                xmlNormalizedNodeStreamWriter);
-
+        final var document = UntrustedXML.newDocumentBuilder().newDocument();
+        final var domResult = new DOMResult(document);
+        final var xmlStreamWriter = factory.createXMLStreamWriter(domResult);
+        final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schema);
+        final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(built);
 
-        final Document doc = loadDocument(xmlPath);
+        final var doc = loadDocument(xmlPath);
 
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setIgnoreComments(true);
@@ -265,32 +228,5 @@ public class NormalizedNodeXmlTranslationTest {
         // assertTrue(dd.toString(), dd.similar());
 
         // XMLAssert.assertXMLEqual(diff, true);
-    }
-
-    private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
-        final InputStream resourceAsStream = NormalizedNodeXmlTranslationTest.class.getResourceAsStream(xmlPath);
-        return requireNonNull(readXmlToDocument(resourceAsStream));
-    }
-
-    private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
-        doc.getDocumentElement().normalize();
-        return doc;
-    }
-
-    private static String toString(final Node xml) {
-        try {
-            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-            final StreamResult result = new StreamResult(new StringWriter());
-            final DOMSource source = new DOMSource(xml);
-            transformer.transform(source, result);
-
-            return result.getWriter().toString();
-        } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
-            throw new RuntimeException("Unable to serialize xml element " + xml, e);
-        }
     }
 }
