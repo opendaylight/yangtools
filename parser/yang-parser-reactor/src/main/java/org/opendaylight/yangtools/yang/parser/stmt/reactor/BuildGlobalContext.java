@@ -89,7 +89,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         }
 
         supportedVersions = ImmutableSet.copyOf(
-            verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions());
+            verifyNotNull(supports.get(ModelProcessingPhase.INIT)).supportedVersions());
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
@@ -136,9 +136,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
-        StatementDefinitionContext<?, ?, ?> potential = definitions.get(version, name);
+        var potential = definitions.get(version, name);
         if (potential == null) {
-            final var potentialRaw = verifyNotNull(supports.get(currentPhase)).getStatementDefinition(version, name);
+            final var potentialRaw = verifyNotNull(supports.get(currentPhase)).statementDefinition(version, name);
             if (potentialRaw != null) {
                 potential = new StatementDefinitionContext<>(potentialRaw);
                 definitions.put(version, name, potential);

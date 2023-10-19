@@ -12,11 +12,9 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -78,16 +76,16 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
 
     public @NonNull CustomCrossSourceStatementReactorBuilder addAllSupports(final ModelProcessingPhase phase,
             final StatementSupportBundle stmtSupportBundle) {
-        addAllCommonStatementSupports(phase, stmtSupportBundle.getCommonDefinitions().values());
-        addAllVersionSpecificSupports(phase, stmtSupportBundle.getAllVersionSpecificDefinitions());
-        addAllNamespaceSupports(phase, stmtSupportBundle.getNamespaceDefinitions().values());
+        addAllCommonStatementSupports(phase, stmtSupportBundle.commonDefinitions().values());
+        addAllVersionSpecificSupports(phase, stmtSupportBundle.versionSpecificDefinitions());
+        addAllNamespaceSupports(phase, stmtSupportBundle.namespaceDefinitions().values());
         return this;
     }
 
     public @NonNull CustomCrossSourceStatementReactorBuilder addAllNamespaceSupports(final ModelProcessingPhase phase,
             final Collection<NamespaceBehaviour<?, ?>> namespaceSupports) {
-        final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
-        for (final NamespaceBehaviour<?, ?> namespaceSupport : namespaceSupports) {
+        final var stmtBundleBuilder = reactorSupportBundles.get(phase);
+        for (var namespaceSupport : namespaceSupports) {
             stmtBundleBuilder.addSupport(namespaceSupport);
         }
         return this;
@@ -95,8 +93,8 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
 
     public @NonNull CustomCrossSourceStatementReactorBuilder addAllCommonStatementSupports(
             final ModelProcessingPhase phase, final Collection<StatementSupport<?, ?, ?>> statementSupports) {
-        final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
-        for (final StatementSupport<?, ?, ?> statementSupport : statementSupports) {
+        final var stmtBundleBuilder = reactorSupportBundles.get(phase);
+        for (var statementSupport : statementSupports) {
             stmtBundleBuilder.addSupport(statementSupport);
         }
         return this;
@@ -105,8 +103,8 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
     public @NonNull CustomCrossSourceStatementReactorBuilder addAllVersionSpecificSupports(
             final ModelProcessingPhase phase,
             final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificSupports) {
-        final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
-        for (final Cell<YangVersion, QName, StatementSupport<?, ?, ?>> cell : versionSpecificSupports.cellSet()) {
+        final var stmtBundleBuilder = reactorSupportBundles.get(phase);
+        for (var cell : versionSpecificSupports.cellSet()) {
             stmtBundleBuilder.addVersionSpecificSupport(cell.getRowKey(), cell.getValue());
         }
         return this;
@@ -118,19 +116,16 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
      * @return A CrossSourceStatementReactor
      */
     public @NonNull CrossSourceStatementReactor build() {
-        final StatementSupportBundle initBundle = getBuilder(ModelProcessingPhase.INIT).build();
-        final StatementSupportBundle preLinkageBundle = getBuilder(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
-            .setParent(initBundle).build();
-        final StatementSupportBundle linkageBundle = getBuilder(ModelProcessingPhase.SOURCE_LINKAGE)
-            .setParent(preLinkageBundle).build();
-        final StatementSupportBundle stmtDefBundle = getBuilder(ModelProcessingPhase.STATEMENT_DEFINITION)
-            .setParent(linkageBundle).build();
-        final StatementSupportBundle fullDeclBundle = getBuilder(ModelProcessingPhase.FULL_DECLARATION)
-            .setParent(stmtDefBundle).build();
-        final StatementSupportBundle effectiveBundle = getBuilder(ModelProcessingPhase.EFFECTIVE_MODEL)
-            .setParent(fullDeclBundle).build();
+        final var initBundle = getBuilder(ModelProcessingPhase.INIT).build();
+        final var preLinkageBundle = getBuilder(ModelProcessingPhase.SOURCE_PRE_LINKAGE).setParent(initBundle).build();
+        final var linkageBundle = getBuilder(ModelProcessingPhase.SOURCE_LINKAGE).setParent(preLinkageBundle).build();
+        final var stmtDefBundle = getBuilder(ModelProcessingPhase.STATEMENT_DEFINITION)
+            .setParent(linkageBundle)
+            .build();
+        final var fullDeclBundle = getBuilder(ModelProcessingPhase.FULL_DECLARATION).setParent(stmtDefBundle).build();
+        final var effectiveBundle = getBuilder(ModelProcessingPhase.EFFECTIVE_MODEL).setParent(fullDeclBundle).build();
 
-        final CrossSourceStatementReactor.Builder reactorBuilder = CrossSourceStatementReactor.builder()
+        final var reactorBuilder = CrossSourceStatementReactor.builder()
                 .setBundle(ModelProcessingPhase.INIT, initBundle)
                 .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, preLinkageBundle)
                 .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle)
@@ -138,7 +133,7 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
                 .setBundle(ModelProcessingPhase.FULL_DECLARATION, fullDeclBundle)
                 .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, effectiveBundle);
 
-        for (Entry<ValidationBundleType, Collection<StatementDefinition>> entry : reactorValidationBundles.entrySet()) {
+        for (var entry : reactorValidationBundles.entrySet()) {
             reactorBuilder.setValidationBundle(entry.getKey(), entry.getValue());
         }
 

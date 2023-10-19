@@ -488,7 +488,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
         final StatementSupportBundle supportsForPhase = globalContext.getSupportsForPhase(inProgressPhase);
-        qnameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());
+        qnameToStmtDefMap.putAll(supportsForPhase.commonDefinitions());
         qnameToStmtDefMap.putAll(supportsForPhase.getDefinitionsSpecificForVersion(getRootVersion()));
 
         // No further actions needed
