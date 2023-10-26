@@ -30,8 +30,10 @@ class YT1414Test {
 
     @Test
     void testToFromSchemaTreeInference() {
-        final var stack = SchemaInferenceStack.of(
-                YangParserTestUtils.parseYangResourceDirectory("/schema-context-util"));
+        final var stack = SchemaInferenceStack.of(SchemaInferenceStackTest.CONTEXT);
+        final var ex = assertThrows(IllegalStateException.class, stack::toSchemaTreeInference);
+        assertEquals("Cannot convert uninstantiated context SchemaInferenceStack{path=[]}", ex.getMessage());
+
         stack.enterSchemaTree(MY_LIST_ID);
         final var inference = assertInstanceOf(DefaultSchemaTreeInference.class, stack.toSchemaTreeInference());
         assertEquals(MY_LIST_ID, inference.toSchemaNodeIdentifier());
