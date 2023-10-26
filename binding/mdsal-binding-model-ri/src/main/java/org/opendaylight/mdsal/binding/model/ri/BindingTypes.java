@@ -44,7 +44,6 @@ import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
-import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.binding.UnionTypeObject;
 import org.opendaylight.yangtools.yang.binding.YangData;
@@ -66,8 +65,6 @@ public final class BindingTypes {
     public static final ConcreteType QNAME = typeForClass(QName.class);
     public static final ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    public static final ConcreteType RPC_SERVICE = typeForClass(RpcService.class);
     public static final ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
     public static final ConcreteType BITS_TYPE_OBJECT = typeForClass(BitsTypeObject.class);
     public static final ConcreteType UNION_TYPE_OBJECT = typeForClass(UnionTypeObject.class);

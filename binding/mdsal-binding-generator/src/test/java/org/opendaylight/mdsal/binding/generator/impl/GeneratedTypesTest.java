@@ -11,12 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -31,15 +27,15 @@ public class GeneratedTypesTest {
 
     @Test
     public void testContainerResolving() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-container-demo.yang"));
 
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        GeneratedType simpleContainer = genTypes.get(1);
-        GeneratedType nestedContainer = genTypes.get(2);
-        for (GeneratedType t : genTypes) {
+        var simpleContainer = genTypes.get(1);
+        var nestedContainer = genTypes.get(2);
+        for (var t : genTypes) {
             if ("SimpleContainer".equals(t.getName())) {
                 simpleContainer = t;
             } else if ("NestedContainer".equals(t.getName())) {
@@ -60,7 +56,7 @@ public class GeneratedTypesTest {
         String getFooMethodReturnTypeName = "";
         String getBarMethodReturnTypeName = "";
         String getNestedContainerReturnTypeName = "";
-        for (final MethodSignature method : simpleContainer.getMethodDefinitions()) {
+        for (var method : simpleContainer.getMethodDefinitions()) {
             if (method.getName().equals("getFoo")) {
                 getFooMethodCounter++;
                 getFooMethodReturnTypeName = method.getReturnType().getName();
@@ -92,8 +88,7 @@ public class GeneratedTypesTest {
         getFooMethodReturnTypeName = "";
         getBarMethodReturnTypeName = "";
 
-        for (final MethodSignature method : nestedContainer.getMethodDefinitions()) {
-
+        for (var method : nestedContainer.getMethodDefinitions()) {
             if (method.getName().equals("getFoo")) {
                 getFooMethodCounter++;
                 getFooMethodReturnTypeName = method.getReturnType().getName();
@@ -114,15 +109,15 @@ public class GeneratedTypesTest {
 
     @Test
     public void testLeafListResolving() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-leaf-list-demo.yang"));
 
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        GeneratedType simpleContainer = genTypes.get(1);
-        GeneratedType nestedContainer = genTypes.get(2);
-        for (GeneratedType t : genTypes) {
+        var simpleContainer = genTypes.get(1);
+        var nestedContainer = genTypes.get(2);
+        for (var t : genTypes) {
             if ("SimpleContainer".equals(t.getName())) {
                 simpleContainer = t;
             } else if ("NestedContainer".equals(t.getName())) {
@@ -143,7 +138,7 @@ public class GeneratedTypesTest {
         String getFooMethodReturnTypeName = "";
         String getBarMethodReturnTypeName = "";
         String getNestedContainerReturnTypeName = "";
-        for (final MethodSignature method : simpleContainer.getMethodDefinitions()) {
+        for (var method : simpleContainer.getMethodDefinitions()) {
             if (method.isDefault()) {
                 continue;
             }
@@ -178,7 +173,7 @@ public class GeneratedTypesTest {
         getFooMethodReturnTypeName = "";
         getBarMethodReturnTypeName = "";
 
-        for (final MethodSignature method : nestedContainer.getMethodDefinitions()) {
+        for (var method : nestedContainer.getMethodDefinitions()) {
             if (method.getName().equals("getFoo")) {
                 getFooMethodCounter++;
                 getFooMethodReturnTypeName = method.getReturnType().getName();
@@ -199,7 +194,7 @@ public class GeneratedTypesTest {
 
     @Test
     public void testListResolving() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-list-demo.yang"));
 
         assertNotNull(genTypes);
@@ -221,14 +216,13 @@ public class GeneratedTypesTest {
         String getSimpleListKeyMethodReturnTypeName = "";
         String getListChildContainerMethodReturnTypeName = "";
 
-        for (final GeneratedType genType : genTypes) {
+        for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject genTO)) {
                 if (genType.getName().equals("ListParentContainer")) {
                     listParentContainerMethodsCount = genType.getMethodDefinitions().size();
                 } else if (genType.getName().equals("SimpleList")) {
                     simpleListMethodsCount = genType.getMethodDefinitions().size();
-                    final List<MethodSignature> methods = genType.getMethodDefinitions();
-                    for (final MethodSignature method : methods) {
+                    for (var method : genType.getMethodDefinitions()) {
                         switch (method.getName()) {
                             case Naming.KEY_AWARE_KEY_NAME:
                                 getSimpleListKeyMethodCount++;
@@ -260,9 +254,9 @@ public class GeneratedTypesTest {
                     listChildContainerMethodsCount = genType.getMethodDefinitions().size();
                 }
             } else {
-                final List<GeneratedProperty> properties = genTO.getProperties();
-                final List<GeneratedProperty> hashProps = genTO.getHashCodeIdentifiers();
-                final List<GeneratedProperty> equalProps = genTO.getEqualsIdentifiers();
+                final var properties = genTO.getProperties();
+                final var hashProps = genTO.getHashCodeIdentifiers();
+                final var equalProps = genTO.getEqualsIdentifiers();
 
                 assertEquals("Unexpected key", 0, listKeyClassCount++);
                 assertEquals(1, properties.size());
@@ -303,7 +297,7 @@ public class GeneratedTypesTest {
 
     @Test
     public void testListCompositeKeyResolving() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/list-composite-key.yang"));
 
         assertNotNull(genTypes);
@@ -316,21 +310,19 @@ public class GeneratedTypesTest {
         int compositeKeyListKeyCount = 0;
         int innerListKeyPropertyCount = 0;
 
-        for (final GeneratedType type : genTypes) {
+        for (var type : genTypes) {
             if (!(type instanceof GeneratedTransferObject genTO)) {
                 genTypesCount++;
             } else if (genTO.getName().equals("CompositeKeyListKey")) {
                 compositeKeyListKeyCount++;
-                final List<GeneratedProperty> properties = genTO.getProperties();
-                for (final GeneratedProperty prop : properties) {
+                for (var prop : genTO.getProperties()) {
                     if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
                         compositeKeyListKeyPropertyCount++;
                     }
                 }
                 genTOsCount++;
             } else if (genTO.getName().equals("InnerListKey")) {
-                final List<GeneratedProperty> properties = genTO.getProperties();
-                innerListKeyPropertyCount = properties.size();
+                innerListKeyPropertyCount =  genTO.getProperties().size();
                 genTOsCount++;
             }
         }
@@ -345,7 +337,7 @@ public class GeneratedTypesTest {
 
     @Test
     public void testGeneratedTypes() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/demo-topology.yang"));
 
         assertNotNull(genTypes);
@@ -353,7 +345,7 @@ public class GeneratedTypesTest {
 
         int genTypesCount = 0;
         int genTOsCount = 0;
-        for (final GeneratedType type : genTypes) {
+        for (var type : genTypes) {
             if (type instanceof GeneratedTransferObject) {
                 genTOsCount++;
             } else {
@@ -367,8 +359,8 @@ public class GeneratedTypesTest {
 
     @Test
     public void testAugmentRpcInput() {
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+        final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/augment-rpc-input.yang"));
-        assertEquals(7, genTypes.size());
+        assertEquals(6, genTypes.size());
     }
 }

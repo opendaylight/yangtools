@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.NotificationListener;
-import org.opendaylight.yangtools.yang.binding.RpcService;
 
 /**
  * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.2.1">YANG statement namespaces</a> which we process.
@@ -106,24 +105,7 @@ enum StatementNamespace {
      */
     // FIXME: MDSAL-497: remove this value
     @Deprecated
-    NOTIFICATION_LISTENER("$LL", true),
-    /**
-     * The namespace for combined {@link RpcService} interface. This typically does not conflict, but could in case of
-     * <code>
-     *   <pre>
-     *     module foo {
-     *       container foo-service; // results in FooService
-     *       rpc bar; // Triggers FooService generation for module
-     *     }
-     *   </pre>
-     * </code>
-     * In this case the module-derived FooService gets shifted to {@code $LR}.
-     *
-     * @deprecated This will be removed once {@link RpcServiceGenerator} is gone.
-     */
-    // FIXME: MDSAL-497: remove this value
-    @Deprecated
-    RPC_SERVICE("$LR", true);
+    NOTIFICATION_LISTENER("$LL", true);
 
     private final @NonNull String suffix;
     private final boolean resistant;

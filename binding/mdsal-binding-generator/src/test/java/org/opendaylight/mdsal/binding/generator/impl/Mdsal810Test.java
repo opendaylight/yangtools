@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.generator.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -43,11 +43,10 @@ public class Mdsal810Test {
     public void testServiceConflict() {
         assertGeneratedNames("service-conflict.yang",
             "org.opendaylight.yang.gen.v1.service.conflict.norev.ServiceConflictData",
-            "org.opendaylight.yang.gen.v1.service.conflict.norev.ServiceConflictService$CO",
+            "org.opendaylight.yang.gen.v1.service.conflict.norev.ServiceConflictService",
             "org.opendaylight.yang.gen.v1.service.conflict.norev.Bar",
             "org.opendaylight.yang.gen.v1.service.conflict.norev.BarInput",
-            "org.opendaylight.yang.gen.v1.service.conflict.norev.BarOutput",
-            "org.opendaylight.yang.gen.v1.service.conflict.norev.ServiceConflictService");
+            "org.opendaylight.yang.gen.v1.service.conflict.norev.BarOutput");
     }
 
     @Test
@@ -58,8 +57,7 @@ public class Mdsal810Test {
             "org.opendaylight.yang.gen.v1.io.conflict.norev.Foo$RPInput",
             "org.opendaylight.yang.gen.v1.io.conflict.norev.Foo$RPOutput",
             "org.opendaylight.yang.gen.v1.io.conflict.norev.FooInput",
-            "org.opendaylight.yang.gen.v1.io.conflict.norev.FooOutput",
-            "org.opendaylight.yang.gen.v1.io.conflict.norev.IoConflictService");
+            "org.opendaylight.yang.gen.v1.io.conflict.norev.FooOutput");
     }
 
     @Test
@@ -74,12 +72,11 @@ public class Mdsal810Test {
             "org.opendaylight.yang.gen.v1.schema.conflict.norev.FooBar$RP",
             "org.opendaylight.yang.gen.v1.schema.conflict.norev.FooBar$RPInput",
             "org.opendaylight.yang.gen.v1.schema.conflict.norev.FooBar$RPOutput",
-            "org.opendaylight.yang.gen.v1.schema.conflict.norev.SchemaConflictListener",
-            "org.opendaylight.yang.gen.v1.schema.conflict.norev.SchemaConflictService");
+            "org.opendaylight.yang.gen.v1.schema.conflict.norev.SchemaConflictListener");
     }
 
     private static void assertGeneratedNames(final String yangFile, final String... fqcns) {
-        assertEquals(Arrays.asList(fqcns),
+        assertEquals(List.of(fqcns),
             DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/mdsal-810/" + yangFile))
                 .stream().map(type -> type.getIdentifier().toString()).toList());
     }

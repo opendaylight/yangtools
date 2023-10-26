@@ -27,7 +27,7 @@ public class Mdsal666Test {
         final var generatedNames = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal666.yang")).stream().map(GeneratedType::getIdentifier)
             .collect(Collectors.toUnmodifiableList());
-        assertEquals(11, generatedNames.size());
+        assertEquals(10, generatedNames.size());
 
         // 'rpc foo' ...
         assertTrue(generatedNames.stream().anyMatch(FOO::equals));

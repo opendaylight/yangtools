@@ -18,6 +18,6 @@ public class Mdsal302Test {
     public void testRpcUsesAugment() {
         final var types = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/mdsal302.yang"));
         assertNotNull(types);
-        assertEquals(16, types.size());
+        assertEquals(15, types.size());
     }
 }

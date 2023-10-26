@@ -573,20 +573,12 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
 
         // Compatibility FooService and FooListener interfaces, only generated for modules.
         if (this instanceof ModuleGenerator moduleGen) {
-            final List<NotificationGenerator> notifs = tmp.stream()
+            final var notifs = tmp.stream()
                 .filter(NotificationGenerator.class::isInstance)
                 .map(NotificationGenerator.class::cast)
                 .collect(Collectors.toUnmodifiableList());
             if (!notifs.isEmpty()) {
                 tmp.add(new NotificationServiceGenerator(moduleGen, notifs));
-            }
-
-            final List<RpcGenerator> rpcs = tmp.stream()
-                .filter(RpcGenerator.class::isInstance)
-                .map(RpcGenerator.class::cast)
-                .collect(Collectors.toUnmodifiableList());
-            if (!rpcs.isEmpty()) {
-                tmp.add(new RpcServiceGenerator(moduleGen, rpcs));
             }
         }
 

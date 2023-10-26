@@ -359,18 +359,6 @@ public final class Naming {
     }
 
     /**
-     * Returns the {@link String} {@code s} with a '$' character as suffix.
-     *
-     * @param qname RPC QName
-     * @return The RPC method name as determined by considering the localname against the JLS.
-     * @throws NullPointerException if {@code qname} is null
-     */
-    public static @NonNull String getRpcMethodName(final @NonNull QName qname) {
-        final String methodName = getMethodName(qname);
-        return JAVA_RESERVED_WORDS.contains(methodName) ? methodName + "$" : methodName;
-    }
-
-    /**
      * Returns root package name for supplied package name.
      *
      * @param packageName Package for which find model root package.

@@ -10,11 +10,8 @@ package org.opendaylight.mdsal.binding.generator.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Mdsal552Test {
@@ -27,23 +24,22 @@ public class Mdsal552Test {
 
     @Test
     public void enumLeafrefTest() {
-        final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
-                YangParserTestUtils.parseYangResource("/mdsal552.yang"));
+        final var types = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/mdsal552.yang"));
         assertNotNull(types);
-        assertEquals(6, types.size());
+        assertEquals(5, types.size());
 
-        final GeneratedType baz = types.stream()
+        final var baz = types.stream()
                 .filter(type -> BAZ.equals(type.getIdentifier()))
                 .findFirst().orElseThrow();
-        final MethodSignature bazGetRef = baz.getMethodDefinitions().stream()
+        final var bazGetRef = baz.getMethodDefinitions().stream()
                 .filter(method -> method.getName().equals("getRef"))
                 .findFirst().orElseThrow();
         assertEquals(ENUMERATION, bazGetRef.getReturnType().getIdentifier());
 
-        final GeneratedType input = types.stream()
+        final var input = types.stream()
                 .filter(type -> BAR_INPUT.equals(type.getIdentifier()))
                 .findFirst().orElseThrow();
-        final MethodSignature inputGetRef = input.getMethodDefinitions().stream()
+        final var inputGetRef = input.getMethodDefinitions().stream()
                 .filter(method -> method.getName().equals("getRef"))
                 .findFirst().orElseThrow();
         assertEquals(ENUMERATION, inputGetRef.getReturnType().getIdentifier());

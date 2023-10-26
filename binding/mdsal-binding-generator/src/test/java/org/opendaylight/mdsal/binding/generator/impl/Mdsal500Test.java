@@ -10,26 +10,14 @@ package org.opendaylight.mdsal.binding.generator.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Mdsal500Test {
     @Test
     public void testAugmentedAction() {
-        final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
-                YangParserTestUtils.parseYangResource("/mdsal500.yang"));
+        final var types = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/mdsal500.yang"));
         assertNotNull(types);
-        assertEquals(5, types.size());
-
-        final GeneratedType rpcService = types.get(4);
-        assertEquals("Mdsal500Service", rpcService.getName());
-        final List<MethodSignature> methods = rpcService.getMethodDefinitions();
-        assertEquals(1, methods.size());
-
-        final MethodSignature signature = methods.get(0);
-        assertEquals("switch$", signature.getName());
+        assertEquals(4, types.size());
     }
 }
