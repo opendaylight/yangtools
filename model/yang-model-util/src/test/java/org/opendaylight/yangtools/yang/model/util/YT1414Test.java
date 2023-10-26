@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-class YT1414Test {
+class YT1414Test extends AbstractSchemaInferenceStackTest {
     private static final QName MY_CONTAINER = QName.create("uri:my-module", "2014-10-07", "my-container");
     private static final QName MY_LIST = QName.create(MY_CONTAINER, "my-list");
     private static final Absolute MY_LIST_ID = Absolute.of(MY_CONTAINER, MY_LIST);
@@ -30,8 +30,10 @@ class YT1414Test {
 
     @Test
     void testToFromSchemaTreeInference() {
-        final var stack = SchemaInferenceStack.of(
-                YangParserTestUtils.parseYangResourceDirectory("/schema-context-util"));
+        final var stack = SchemaInferenceStack.of(CONTEXT);
+        final var ex = assertThrows(IllegalStateException.class, stack::toSchemaTreeInference);
+        assertEquals("Cannot convert uninstantiated context SchemaInferenceStack{path=[]}", ex.getMessage());
+
         stack.enterSchemaTree(MY_LIST_ID);
         final var inference = assertInstanceOf(DefaultSchemaTreeInference.class, stack.toSchemaTreeInference());
         assertEquals(MY_LIST_ID, inference.toSchemaNodeIdentifier());
