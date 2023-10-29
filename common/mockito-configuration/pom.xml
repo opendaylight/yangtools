@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>mockito-configuration</artifactId>
-    <version>9.0.9</version>
+    <version>9.0.10-SNAPSHOT</version>
     <description>Default mockito configuration</description>
     <packaging>jar</packaging><!-- not needed in OSGi -->
     <name>${project.artifactId}</name>
