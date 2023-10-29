@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-xpath</artifactId>
-    <version>9.0.9</version>
+    <version>9.0.10-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: XPath support</name>
     <description>YANG XPath support</description>

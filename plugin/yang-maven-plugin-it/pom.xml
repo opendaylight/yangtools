@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-maven-plugin-it</artifactId>
-    <version>9.0.9</version>
+    <version>9.0.10-SNAPSHOT</version>
 
     <properties>
         <!-- We are doing abhorrent things here unpacking our dependencies, which confuses analysis, just skip it -->
