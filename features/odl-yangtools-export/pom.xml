@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-export</artifactId>
-    <version>11.0.4</version>
+    <version>11.0.5-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Export</name>
     <description>YANG model export</description>
