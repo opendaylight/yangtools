@@ -18,14 +18,14 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-validation-tool</artifactId>
-    <version>11.0.4-SNAPSHOT</version>
+    <version>11.0.4</version>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>11.0.4-SNAPSHOT</version>
+                <version>11.0.4</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

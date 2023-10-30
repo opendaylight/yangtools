@@ -19,7 +19,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>parser-aggregator</artifactId>
-    <version>11.0.4-SNAPSHOT</version>
+    <version>11.0.4</version>
     <packaging>pom</packaging>
 
     <properties>
