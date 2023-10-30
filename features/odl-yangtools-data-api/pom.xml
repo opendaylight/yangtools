@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-data-api</artifactId>
-    <version>9.0.10</version>
+    <version>9.0.11-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Data API</name>
     <description>YANG modeled data APIs</description>

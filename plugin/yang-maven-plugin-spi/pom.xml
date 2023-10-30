@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-maven-plugin-spi</artifactId>
-    <version>9.0.10</version>
+    <version>9.0.11-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>9.0.10</version>
+                <version>9.0.11-SNAPSHOT</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

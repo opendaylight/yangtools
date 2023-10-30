@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-codec</artifactId>
-    <version>9.0.10</version>
+    <version>9.0.11-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Data Codecs</name>
     <description>Serialization/deserialization support for various formats</description>
