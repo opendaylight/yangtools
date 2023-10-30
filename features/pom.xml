@@ -19,7 +19,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>features</artifactId>
-    <version>9.0.10-SNAPSHOT</version>
+    <version>9.0.10</version>
     <packaging>pom</packaging>
 
     <properties>

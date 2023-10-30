@@ -12,12 +12,12 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>bnd-parent</artifactId>
-        <version>9.0.10-SNAPSHOT</version>
+        <version>9.0.10</version>
         <relativePath>../../bnd-parent</relativePath>
     </parent>
 
     <artifactId>yang-xpath-api</artifactId>
-    <version>9.0.10-SNAPSHOT</version>
+    <version>9.0.10</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>YANG XPath ${project.artifactId}</description>

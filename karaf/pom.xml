@@ -15,7 +15,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>distribution-karaf</artifactId>
-    <version>9.0.10-SNAPSHOT</version>
+    <version>9.0.10</version>
     <packaging>pom</packaging>
 
     <!-- DO NOT install or deploy the karaf artifact -->
