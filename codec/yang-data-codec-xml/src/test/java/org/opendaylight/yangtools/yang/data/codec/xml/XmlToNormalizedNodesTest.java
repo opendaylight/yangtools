@@ -84,7 +84,8 @@ public class XmlToNormalizedNodesTest {
 
     @BeforeClass
     public static void setup() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/");
+        schemaContext = YangParserTestUtils.parseYangResources(XmlToNormalizedNodesTest.class,
+            "/foo.yang", "/baz.yang");
         parentContainerSchema = Inference.ofDataTreePath(schemaContext, PARENT_CONTAINER);
         outerContainerSchema = Inference.ofDataTreePath(schemaContext, OUTER_CONTAINER);
     }
