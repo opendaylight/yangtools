@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -54,12 +55,19 @@ public final class NormalizedNodes {
 
     public static Optional<NormalizedNode> findNode(final Optional<NormalizedNode> parent,
             final Iterable<PathArgument> relativePath) {
-        final var pathIterator = requireNonNull(relativePath, "Relative path must not be null").iterator();
-        var currentNode = requireNonNull(parent, "Parent must not be null");
-        while (currentNode.isPresent() && pathIterator.hasNext()) {
-            currentNode = getDirectChild(currentNode.orElseThrow(), pathIterator.next());
+        return findNode(parent, relativePath.iterator());
+    }
+
+    public static Optional<NormalizedNode> findNode(final Optional<NormalizedNode> parent,
+            final Iterator<PathArgument> it) {
+        if (parent.isEmpty()) {
+            return parent;
         }
-        return currentNode;
+        var currentNode = parent.orElseThrow();
+        while (currentNode != null && it.hasNext()) {
+            currentNode = directChild(currentNode, it.next());
+        }
+        return Optional.ofNullable(currentNode);
     }
 
     public static Optional<NormalizedNode> findNode(final Optional<NormalizedNode> parent,
@@ -98,20 +106,22 @@ public final class NormalizedNodes {
             requireNonNull(path, "Path must not be null").getPathArguments());
     }
 
-    public static Optional<NormalizedNode> getDirectChild(final NormalizedNode node,
-            final PathArgument pathArg) {
-        final NormalizedNode child;
-        if (node instanceof DataContainerNode dataContainer && pathArg instanceof NodeIdentifier nid) {
-            child = dataContainer.childByArg(nid);
-        } else if (node instanceof MapNode map && pathArg instanceof NodeIdentifierWithPredicates nip) {
-            child = map.childByArg(nip);
-        } else if (node instanceof LeafSetNode<?> leafSet && pathArg instanceof NodeWithValue<?> nwv) {
-            child = leafSet.childByArg(nwv);
+    public static @Nullable NormalizedNode directChild(final NormalizedNode parent, final PathArgument pathArg) {
+        if (parent instanceof DataContainerNode dataContainer && pathArg instanceof NodeIdentifier nid) {
+            return dataContainer.childByArg(nid);
+        } else if (parent instanceof MapNode map && pathArg instanceof NodeIdentifierWithPredicates nip) {
+            return map.childByArg(nip);
+        } else if (parent instanceof LeafSetNode<?> leafSet && pathArg instanceof NodeWithValue<?> nwv) {
+            return leafSet.childByArg(nwv);
         } else {
             // Anything else, including ValueNode
-            child = null;
+            return null;
         }
-        return Optional.ofNullable(child);
+    }
+
+    public static Optional<NormalizedNode> getDirectChild(final NormalizedNode node,
+            final PathArgument pathArg) {
+        return Optional.ofNullable(directChild(node, pathArg));
     }
 
     /**
