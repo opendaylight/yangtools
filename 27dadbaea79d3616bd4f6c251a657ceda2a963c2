@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2094d440_70014c1c",
+        "filename": "codec/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/YT1473Test.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-11-13T10:33:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8820e8a6_22bb67f7",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3e854b40_dab99977",
@@ -31,6 +49,24 @@
       "writtenOn": "2023-09-21T10:54:14Z",
       "side": 1,
       "message": "private static final Comparator\u003cMap.Entry\u003cString, Integer\u003e\u003e BY_OFFSET \u003d Map.Entry.comparingByValue();",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b62ed19_192800a4",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-11-13T10:33:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e854b40_dab99977",
       "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d128168b_962301ac",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-11-13T10:33:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59168383_9d366c22",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "22a34130_dfecf8c1",
@@ -65,6 +119,24 @@
       "writtenOn": "2023-09-21T10:54:14Z",
       "side": 1,
       "message": "bytes cannot be annotated",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0675425_f3a0b4f3",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-11-13T10:33:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22a34130_dfecf8c1",
       "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -86,6 +158,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e70e7e80_74952eff",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-11-13T10:33:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b47064b9_fcd0c945",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ad1779d3_5b8f3a37",
@@ -99,6 +189,24 @@
       "writtenOn": "2023-09-21T10:54:14Z",
       "side": 1,
       "message": "valueMap.forEach((key, value) -\u003e assertEquals(value, bits1.isBitSet(key)));",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3393529_758d43e2",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-11-13T10:33:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ad1779d3_5b8f3a37",
       "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -120,6 +228,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9a4b6db_e2b031a7",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-11-13T10:33:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "417e55fd_c2d07c1f",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d47e3b76_ee27029f",
@@ -133,6 +259,24 @@
       "writtenOn": "2023-09-21T10:54:14Z",
       "side": 1,
       "message": "testDesc is not used",
+      "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a74c519_ab159695",
+        "filename": "common/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/BitsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 8894
+      },
+      "writtenOn": "2023-11-13T10:33:53Z",
+      "side": 1,
+      "message": "it\u0027s used in test name here\n`@ParameterizedTest(name \u003d \"Bits instantiation failure: {0}\")`\nwhere\n`{0}` points to first arg value of the annotated method",
+      "parentUuid": "d47e3b76_ee27029f",
       "revId": "27dadbaea79d3616bd4f6c251a657ceda2a963c2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
