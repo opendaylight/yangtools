@@ -52,7 +52,7 @@ public enum JSONCodecFactorySupplier {
      *
      * @deprecated This is a historic implementation, retained for compatibility. Please migrate to {@link #RFC7951}.
      */
-    @Deprecated
+    @Deprecated(since = "11.0.0", forRemoval = true)
     DRAFT_LHOTKA_NETMOD_YANG_JSON_02() {
         @Override
         JSONCodecFactory createFactory(final EffectiveModelContext context, final CodecCache<JSONCodec<?>> cache) {

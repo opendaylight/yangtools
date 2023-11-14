@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  * a particular {@link EffectiveModelContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
 public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
+    @Deprecated(since = "12.0.0", forRemoval = true)
     static final class Lhotka02 extends JSONCodecFactory {
         Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
             super(context, cache, JSONInstanceIdentifierCodec.Lhotka02::new);
