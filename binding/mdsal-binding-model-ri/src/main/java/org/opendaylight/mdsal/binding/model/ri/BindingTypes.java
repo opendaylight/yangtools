@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.KeyedListAction;
 import org.opendaylight.yangtools.yang.binding.KeyedListNotification;
 import org.opendaylight.yangtools.yang.binding.Notification;
-import org.opendaylight.yangtools.yang.binding.NotificationListener;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.Rpc;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
@@ -60,8 +59,6 @@ public final class BindingTypes {
     public static final ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
     public static final ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
     public static final ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
-    @Deprecated(since = "10.0.0", forRemoval = true)
-    public static final ConcreteType NOTIFICATION_LISTENER = typeForClass(NotificationListener.class);
     public static final ConcreteType QNAME = typeForClass(QName.class);
     public static final ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);

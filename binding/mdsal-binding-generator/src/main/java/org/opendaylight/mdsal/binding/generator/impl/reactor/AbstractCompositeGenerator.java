@@ -570,18 +570,6 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         // substatements to establish this order.
         tmpAug.sort(AbstractAugmentGenerator.COMPARATOR);
         tmp.addAll(tmpAug);
-
-        // Compatibility FooService and FooListener interfaces, only generated for modules.
-        if (this instanceof ModuleGenerator moduleGen) {
-            final var notifs = tmp.stream()
-                .filter(NotificationGenerator.class::isInstance)
-                .map(NotificationGenerator.class::cast)
-                .collect(Collectors.toUnmodifiableList());
-            if (!notifs.isEmpty()) {
-                tmp.add(new NotificationServiceGenerator(moduleGen, notifs));
-            }
-        }
-
         return List.copyOf(tmp);
     }
 

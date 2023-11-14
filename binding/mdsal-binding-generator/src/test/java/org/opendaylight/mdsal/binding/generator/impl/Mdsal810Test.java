@@ -27,9 +27,8 @@ public class Mdsal810Test {
     public void testListenerConflict() {
         assertGeneratedNames("listener-conflict.yang",
             "org.opendaylight.yang.gen.v1.listener.conflict.norev.ListenerConflictData",
-            "org.opendaylight.yang.gen.v1.listener.conflict.norev.ListenerConflictListener$CO",
-            "org.opendaylight.yang.gen.v1.listener.conflict.norev.Bar",
-            "org.opendaylight.yang.gen.v1.listener.conflict.norev.ListenerConflictListener");
+            "org.opendaylight.yang.gen.v1.listener.conflict.norev.ListenerConflictListener",
+            "org.opendaylight.yang.gen.v1.listener.conflict.norev.Bar");
     }
 
     @Test
@@ -71,8 +70,7 @@ public class Mdsal810Test {
             "org.opendaylight.yang.gen.v1.schema.conflict.norev.FooBar$NO",
             "org.opendaylight.yang.gen.v1.schema.conflict.norev.FooBar$RP",
             "org.opendaylight.yang.gen.v1.schema.conflict.norev.FooBar$RPInput",
-            "org.opendaylight.yang.gen.v1.schema.conflict.norev.FooBar$RPOutput",
-            "org.opendaylight.yang.gen.v1.schema.conflict.norev.SchemaConflictListener");
+            "org.opendaylight.yang.gen.v1.schema.conflict.norev.FooBar$RPOutput");
     }
 
     private static void assertGeneratedNames(final String yangFile, final String... fqcns) {

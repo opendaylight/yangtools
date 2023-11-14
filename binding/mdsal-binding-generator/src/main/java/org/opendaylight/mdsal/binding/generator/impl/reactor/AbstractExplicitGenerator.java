@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An explicit {@link Generator}, associated with a particular {@link EffectiveStatement}.
  */
+// FIXME: unify this with Generator
 public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
         extends Generator implements CopyableNode, StatementRepresentation<S> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractExplicitGenerator.class);

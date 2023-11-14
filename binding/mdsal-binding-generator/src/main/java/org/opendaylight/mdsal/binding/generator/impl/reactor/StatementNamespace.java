@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.NotificationListener;
 
 /**
  * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.2.1">YANG statement namespaces</a> which we process.
@@ -87,25 +86,7 @@ enum StatementNamespace {
      * </code>
      * In this case the module-derived FooData gets shifted to {@code $D}.
      */
-    DATA_ROOT("$D", true),
-    /**
-     * The namespace for combined {@link NotificationListener} interface. This typically does not conflict, but could in
-     * case of
-     * <code>
-     *   <pre>
-     *     module foo {
-     *       container foo-listener; // results in FooListener
-     *       notification bar; // Triggers FooListener generation for module
-     *     }
-     *   </pre>
-     * </code>
-     * In this case the module-derived FooListener gets shifted to {@code $LL}.
-     *
-     * @deprecated This will be removed once {@link NotificationServiceGenerator} is gone.
-     */
-    // FIXME: MDSAL-497: remove this value
-    @Deprecated
-    NOTIFICATION_LISTENER("$LL", true);
+    DATA_ROOT("$D", true);
 
     private final @NonNull String suffix;
     private final boolean resistant;

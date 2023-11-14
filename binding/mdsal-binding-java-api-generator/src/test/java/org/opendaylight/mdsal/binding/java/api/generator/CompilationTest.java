@@ -300,11 +300,10 @@ public class CompilationTest extends BaseCompilationTest {
         // Test if all sources were generated from 'module foo'
         File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
         assertTrue(new File(parent, "FooData.java").exists());
-        assertTrue(new File(parent, "FooListener.java").exists());
         assertTrue(new File(parent, "PathAttributes.java").exists());
         assertTrue(new File(parent, "Update.java").exists());
         assertTrue(new File(parent, "UpdateBuilder.java").exists());
-        CompilationTestUtils.assertFilesCount(parent, 8);
+        CompilationTestUtils.assertFilesCount(parent, 7);
 
         parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "path");
         CompilationTestUtils.assertFilesCount(parent, 1);
