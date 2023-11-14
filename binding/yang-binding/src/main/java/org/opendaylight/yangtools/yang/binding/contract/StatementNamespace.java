@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.generator.impl.reactor;
+package org.opendaylight.yangtools.yang.binding.contract;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
@@ -15,8 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.2.1">YANG statement namespaces</a> which we process.
  */
-// FIXME: move this to 'BindingNamespace' in binding-spec-util
-enum StatementNamespace {
+public enum StatementNamespace {
     /**
      * The namespace of all {@code feature} statements, bullet 3.
      */
@@ -55,20 +54,18 @@ enum StatementNamespace {
     LEAF_LIST("$LL", true),
     /**
      * The namespace for a {@code list}'s {@code key} statement. This typically does not conflict, but could in case of
-     * <code>
-     *   <pre>
-     *     module foo {
-     *       list foo { // results Foo
-     *         key bar;  // triggers FooKey as a sibling to Foo
-     *         leaf bar {
-     *           type string;
-     *         }
+     * <pre>{@code
+     *   module foo {
+     *     list foo { // results Foo
+     *       key bar;  // triggers FooKey as a sibling to Foo
+     *       leaf bar {
+     *         type string;
      *       }
-     *
-     *       container foo-key; // results in FooKey
      *     }
-     *   </pre>
-     * </code>
+     *
+     *     container foo-key; // results in FooKey
+     *   }
+     * }</pre>
      * In this case the key-derived FooKey gets shifted to {@code $KE}.
      */
     KEY("$KE", true),
@@ -77,13 +74,11 @@ enum StatementNamespace {
     RPC("$RP", true),
     /**
      * The namespace for a {@code module}'s data root interface. This typically does not conflict, but could in case of
-     * <code>
-     *   <pre>
+     * <pre>{@code
      *     module foo { // results in FooData
      *       container foo-data; // results in FooData as well
      *     }
-     *   </pre>
-     * </code>
+     * }</pre>
      * In this case the module-derived FooData gets shifted to {@code $D}.
      */
     DATA_ROOT("$D", true);
@@ -101,11 +96,11 @@ enum StatementNamespace {
         this.resistant = resistant;
     }
 
-    @NonNull String suffix() {
+    public @NonNull String suffix() {
         return suffix;
     }
 
-    boolean resistant() {
+    public boolean resistant() {
         return resistant;
     }
 }

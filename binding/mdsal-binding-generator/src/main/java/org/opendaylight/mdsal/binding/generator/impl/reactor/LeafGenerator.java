@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultLeafRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.LeafRuntimeType;
+import org.opendaylight.yangtools.yang.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 
 /**

@@ -19,6 +19,7 @@ import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.AnydataRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.AnyxmlRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.OpaqueRuntimeType;
+import org.opendaylight.yangtools.yang.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
