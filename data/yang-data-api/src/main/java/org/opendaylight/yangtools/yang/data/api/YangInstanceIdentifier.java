@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -34,7 +33,7 @@ import java.util.Set;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
+import org.opendaylight.yangtools.concepts.AbstractHierarchicalIdentifier;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
@@ -67,7 +66,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://www.rfc-editor.org/rfc/rfc6020#section-9.13">RFC6020</a>
  */
-public abstract sealed class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier>
+public abstract sealed class YangInstanceIdentifier extends AbstractHierarchicalIdentifier<YangInstanceIdentifier>
         permits FixedYangInstanceIdentifier, StackedYangInstanceIdentifier {
     @java.io.Serial
     private static final long serialVersionUID = 4L;
@@ -384,10 +383,10 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
             return Optional.of(this);
         }
 
-        final Iterator<PathArgument> lit = getPathArguments().iterator();
+        final var lit = getPathArguments().iterator();
         int common = 0;
 
-        for (PathArgument element : ancestor.getPathArguments()) {
+        for (var element : ancestor.getPathArguments()) {
             // Ancestor is not really an ancestor
             if (!lit.hasNext() || !lit.next().equals(element)) {
                 return Optional.empty();
@@ -407,25 +406,13 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
     }
 
     @Override
-    public final boolean contains(final YangInstanceIdentifier other) {
-        if (this == other) {
-            return true;
-        }
+    protected final Iterator<PathArgument> itemIterator() {
+        return getPathArguments().iterator();
+    }
 
-        checkArgument(other != null, "other should not be null");
-        final Iterator<PathArgument> oit = other.getPathArguments().iterator();
-
-        for (PathArgument element : getPathArguments()) {
-            if (!oit.hasNext()) {
-                return false;
-            }
-
-            if (!element.equals(oit.next())) {
-                return false;
-            }
-        }
-
-        return true;
+    @Override
+    protected final Object writeReplace() {
+        return new YIDv1(this);
     }
 
     @Override
@@ -501,11 +488,6 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
     }
 
     abstract int computeHashCode();
-
-    @java.io.Serial
-    final Object writeReplace() {
-        return new YIDv1(this);
-    }
 
     /**
      * Returns new builder for InstanceIdentifier with empty path arguments.
