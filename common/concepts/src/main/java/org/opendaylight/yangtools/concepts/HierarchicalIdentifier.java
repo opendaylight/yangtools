@@ -21,9 +21,9 @@ public interface HierarchicalIdentifier<T extends HierarchicalIdentifier<T>> ext
      * Check if this identifier contains some other identifier. If we take HierarchicalIdentifier to be similar to a
      * {@link java.nio.file.Path}, this is method is the equivalent of {@code other.startsWith(this)}.
      *
-     * @param other Other identifier, may not be null
+     * @param other Other identifier, may not be {@code null}
      * @return True if this identifier contains the other identifier
-     * @throws NullPointerException if {@code other} is null
+     * @throws NullPointerException if {@code other} is {@code null}
      */
     boolean contains(T other);
 }

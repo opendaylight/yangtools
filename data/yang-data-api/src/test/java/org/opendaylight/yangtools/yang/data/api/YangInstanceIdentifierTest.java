@@ -136,7 +136,7 @@ public class YangInstanceIdentifierTest {
     @Test
     public void testContainsNull() {
         final var id = YangInstanceIdentifier.of(NODENAME1);
-        assertThrows(IllegalArgumentException.class, () -> id.contains(null));
+        assertThrows(NullPointerException.class, () -> id.contains(null));
     }
 
     @Test
