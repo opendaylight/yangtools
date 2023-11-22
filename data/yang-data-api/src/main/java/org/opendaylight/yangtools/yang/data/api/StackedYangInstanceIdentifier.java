@@ -95,7 +95,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     public List<PathArgument> getPathArguments() {
         StackedPathArguments ret = tryPathArguments();
         if (ret == null) {
-            final List<PathArgument> stack = new ArrayList<>();
+            final var stack = new ArrayList<PathArgument>();
             YangInstanceIdentifier current = this;
             do {
                 verify(current instanceof StackedYangInstanceIdentifier);
