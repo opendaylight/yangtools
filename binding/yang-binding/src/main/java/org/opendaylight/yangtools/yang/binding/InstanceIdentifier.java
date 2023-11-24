@@ -17,9 +17,11 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
@@ -64,14 +66,13 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  */
 public class InstanceIdentifier<T extends DataObject>
         implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>> {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 3L;
 
     /*
      * Protected to differentiate internal and external access. Internal access is required never to modify
      * the contents. References passed to outside entities have to be wrapped in an unmodifiable view.
      */
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Handled through Externalizable proxy")
     final Iterable<PathArgument> pathArguments;
 
     private final @NonNull Class<T> targetType;
@@ -416,9 +417,28 @@ public class InstanceIdentifier<T extends DataObject>
         return childIdentifier(Item.of(container));
     }
 
-    @Serial
+    @java.io.Serial
     private Object writeReplace() throws ObjectStreamException {
         return new InstanceIdentifierV3<>(this);
+    }
+
+    @java.io.Serial
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        throwNSE();
+    }
+
+    @java.io.Serial
+    private void readObjectNoData() throws ObjectStreamException {
+        throwNSE();
+    }
+
+    @java.io.Serial
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        throwNSE();
+    }
+
+    private void throwNSE() throws NotSerializableException {
+        throw new NotSerializableException(getClass().getName());
     }
 
     /**
@@ -659,7 +679,7 @@ public class InstanceIdentifier<T extends DataObject>
     }
 
     private abstract static class AbstractPathArgument<T extends DataObject> implements PathArgument, Serializable {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final @NonNull Class<T> type;
@@ -714,7 +734,7 @@ public class InstanceIdentifier<T extends DataObject>
      * @param <T> Item type
      */
     public static class Item<T extends DataObject> extends AbstractPathArgument<T> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Item(final Class<T> type) {
@@ -764,7 +784,7 @@ public class InstanceIdentifier<T extends DataObject>
      */
     public static class IdentifiableItem<I extends KeyAware<T> & DataObject, T extends Key<I>>
             extends AbstractPathArgument<I> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final @NonNull T key;
@@ -825,7 +845,7 @@ public class InstanceIdentifier<T extends DataObject>
 
     private static final class CaseItem<C extends ChoiceIn<?> & DataObject, T extends ChildOf<? super C>>
             extends Item<T> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final Class<C> caseType;
@@ -843,7 +863,7 @@ public class InstanceIdentifier<T extends DataObject>
 
     private static final class CaseIdentifiableItem<C extends ChoiceIn<?> & DataObject,
             T extends ChildOf<? super C> & KeyAware<K>, K extends Key<T>> extends IdentifiableItem<T, K> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final Class<C> caseType;
