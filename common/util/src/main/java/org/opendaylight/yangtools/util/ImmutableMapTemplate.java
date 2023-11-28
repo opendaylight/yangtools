@@ -113,4 +113,10 @@ public abstract sealed class ImmutableMapTemplate<K> implements Immutable
         checkArgument(value != null, "Transformer returned null for input %s at key %s", input, key);
         return value;
     }
+
+    static void checkSize(final int expected, final int encountered) {
+        if (expected != encountered) {
+            throw new IllegalArgumentException("Expected " + expected + " items, " + encountered + " encountered");
+        }
+    }
 }

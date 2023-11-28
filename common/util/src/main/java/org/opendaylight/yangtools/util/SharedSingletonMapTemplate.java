@@ -7,12 +7,8 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.MoreObjects;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -49,7 +45,7 @@ public abstract sealed class SharedSingletonMapTemplate<K> extends ImmutableMapT
     private final @NonNull SingletonSet<K> keySet;
 
     private SharedSingletonMapTemplate(final K key) {
-        this.keySet = SharedSingletonMap.cachedSet(key);
+        keySet = SharedSingletonMap.cachedSet(key);
     }
 
     /**
@@ -86,23 +82,29 @@ public abstract sealed class SharedSingletonMapTemplate<K> extends ImmutableMapT
     @Override
     public final <T, V> @NonNull SharedSingletonMap<K, V> instantiateTransformed(final Map<K, T> fromMap,
             final BiFunction<K, T, V> valueTransformer) {
-        final Iterator<Entry<K, T>> it = fromMap.entrySet().iterator();
-        checkArgument(it.hasNext(), "Input is empty while expecting 1 item");
+        final var it = fromMap.entrySet().iterator();
+        if (!it.hasNext()) {
+            throw new IllegalArgumentException("Input is empty while expecting 1 item");
+        }
 
-        final Entry<K, T> entry = it.next();
-        final K expected = keySet.getElement();
-        final K actual = entry.getKey();
-        checkArgument(expected.equals(actual), "Unexpected key %s, expecting %s", actual, expected);
+        final var entry = it.next();
+        final var expected = keySet.getElement();
+        final var actual = entry.getKey();
+        if (!expected.equals(actual)) {
+            throw new IllegalArgumentException("Unexpected key " + actual + ", expecting " + expected);
+        }
 
-        final V value = transformValue(actual, entry.getValue(), valueTransformer);
-        checkArgument(!it.hasNext(), "Input has more than one item");
+        final var value = transformValue(actual, entry.getValue(), valueTransformer);
+        if (it.hasNext()) {
+            throw new IllegalArgumentException("Input has more than one item");
+        }
         return instantiateWithValue(value);
     }
 
     @Override
     @SafeVarargs
     public final <V> @NonNull SharedSingletonMap<K, V> instantiateWithValues(final V... values) {
-        checkArgument(values.length == 1);
+        checkSize(1, values.length);
         return instantiateWithValue(values[0]);
     }
 
