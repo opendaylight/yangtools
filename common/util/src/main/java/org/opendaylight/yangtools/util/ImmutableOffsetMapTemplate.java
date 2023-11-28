@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -71,7 +68,7 @@ public abstract sealed class ImmutableOffsetMapTemplate<K> extends ImmutableMapT
      * @throws IllegalArgumentException if {@code keys} is does not have at least two keys
      */
     public static <K> @NonNull ImmutableOffsetMapTemplate<K> ordered(final Collection<K> keys) {
-        checkArgument(keys.size() > 1);
+        checkTwoKeys(keys);
         return new Ordered<>(keys);
     }
 
@@ -87,7 +84,7 @@ public abstract sealed class ImmutableOffsetMapTemplate<K> extends ImmutableMapT
      * @throws IllegalArgumentException if {@code keys} is does not have at least two keys
      */
     public static <K> @NonNull ImmutableOffsetMapTemplate<K> unordered(final Collection<K> keys) {
-        checkArgument(keys.size() > 1);
+        checkTwoKeys(keys);
         return new Unordered<>(keys);
     }
 
@@ -100,31 +97,31 @@ public abstract sealed class ImmutableOffsetMapTemplate<K> extends ImmutableMapT
     public final <T, V> @NonNull ImmutableOffsetMap<K, V> instantiateTransformed(final Map<K, T> fromMap,
             final BiFunction<K, T, V> valueTransformer) {
         final int size = offsets.size();
-        checkArgument(fromMap.size() == size);
+        checkSize(size, fromMap.size());
 
         @SuppressWarnings("unchecked")
-        final V[] objects = (V[]) new Object[size];
-        for (Entry<K, T> entry : fromMap.entrySet()) {
-            final K key = requireNonNull(entry.getKey());
+        final var objects = (V[]) new Object[size];
+        for (var entry : fromMap.entrySet()) {
+            final var key = requireNonNull(entry.getKey());
             objects[offsetOf(key)] = transformValue(key, entry.getValue(), valueTransformer);
         }
 
         return createMap(offsets, objects);
     }
 
-    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-        justification = "SpotBugs does not grok checkArgument()")
     private int offsetOf(final K key) {
-        final Integer offset = offsets.get(key);
-        checkArgument(offset != null, "Key %s present in input, but not in offsets %s", key, offsets);
+        final var offset = offsets.get(key);
+        if (offset == null) {
+            throw new IllegalArgumentException("Key " + key + " present in input, but not in offsets " + offsets);
+        }
         return offset;
     }
 
     @Override
     @SafeVarargs
-    public final <V> @NonNull ImmutableOffsetMap<K, V> instantiateWithValues(final V... values) {
-        checkArgument(values.length == offsets.size());
-        final V[] copy = values.clone();
+    public final <V> ImmutableOffsetMap<K, V> instantiateWithValues(final V... values) {
+        checkSize(offsets.size(), values.length);
+        final var copy = values.clone();
         Arrays.stream(copy).forEach(Objects::requireNonNull);
         return createMap(offsets, values);
     }
@@ -135,4 +132,11 @@ public abstract sealed class ImmutableOffsetMapTemplate<K> extends ImmutableMapT
     }
 
     abstract <V> @NonNull ImmutableOffsetMap<K, V> createMap(ImmutableMap<K, Integer> offsets, V[] objects);
+
+    private static void checkTwoKeys(final Collection<?> keys) {
+        final var size = keys.size();
+        if (size < 2) {
+            throw new IllegalArgumentException("Expected at least 2 keys, " + size + " supplied");
+        }
+    }
 }
