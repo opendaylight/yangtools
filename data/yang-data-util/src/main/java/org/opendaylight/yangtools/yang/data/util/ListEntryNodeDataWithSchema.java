@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -43,12 +41,14 @@ public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPo
 
         @Override
         void addChild(final AbstractNodeDataWithSchema<?> newChild) {
-            final DataSchemaNode childSchema = newChild.getSchema();
-            if (childSchema instanceof LeafSchemaNode) {
-                final QName childName = childSchema.getQName();
+            if (newChild.getSchema() instanceof LeafSchemaNode leaf) {
+                final var childName = leaf.getQName();
                 if (predicateTemplate.keySet().contains(childName)) {
-                    verify(newChild instanceof SimpleNodeDataWithSchema);
-                    keyValues.put(childName, (SimpleNodeDataWithSchema<?>)newChild);
+                    if (newChild instanceof SimpleNodeDataWithSchema<?> simpleChild) {
+                        keyValues.put(childName, simpleChild);
+                    } else {
+                        throw new VerifyException("Unexpected child " + newChild);
+                    }
                 }
             }
             super.addChild(newChild);
@@ -57,11 +57,25 @@ public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPo
         @Override
         public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter)
                 throws IOException {
-            writer.nextDataSchemaNode(getSchema());
-            final NodeIdentifierWithPredicates identifier = NodeIdentifierWithPredicates.of(getSchema().getQName(),
-                predicateTemplate.instantiateTransformed(keyValues, (key, node) -> node.getValue()));
+            final var schema = getSchema();
+            writer.nextDataSchemaNode(schema);
 
-            writer.startMapEntryNode(identifier, childSizeHint());
+            final var nodeType = schema.getQName();
+            final Map<QName, Object> predicates;
+            try {
+                predicates = predicateTemplate.instantiateTransformed(keyValues, (key, node) -> node.getValue());
+            } catch (IllegalArgumentException e) {
+                final var present = keyValues.keySet();
+                final var module = nodeType.getModule();
+                final var missing = predicateTemplate.keySet().stream()
+                    .filter(key -> !present.contains(key))
+                    .map(key -> module.equals(key.getModule()) ? key.getLocalName() : key)
+                    .distinct()
+                    .toList();
+                throw new IOException("List entry " + nodeType + " is missing leaf values for " + missing, e);
+            }
+
+            writer.startMapEntryNode(NodeIdentifierWithPredicates.of(nodeType, predicates), childSizeHint());
             writeMetadata(metaWriter);
             super.write(writer, metaWriter);
             writer.endNode();
@@ -88,7 +102,7 @@ public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPo
     }
 
     static @NonNull ListEntryNodeDataWithSchema forSchema(final ListSchemaNode schema) {
-        final List<QName> keyDef = schema.getKeyDefinition();
-        return keyDef.isEmpty() ? new Unkeyed(schema) :  new Keyed(schema, keyDef);
+        final var keyDef = schema.getKeyDefinition();
+        return keyDef.isEmpty() ? new Unkeyed(schema) : new Keyed(schema, keyDef);
     }
 }
