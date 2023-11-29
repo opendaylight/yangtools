@@ -11,11 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.MalformedJsonException;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.Flushable;
@@ -176,7 +174,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return new JsonParserStream(writer, codecFactory, SchemaInferenceStack.ofInference(parentNode), true);
     }
 
-    public JsonParserStream parse(final JsonReader reader) {
+    public JsonParserStream parse(final JsonReader reader) throws IOException {
         // code copied from gson's JsonParser and Stream classes
 
         final boolean readerLenient = reader.isLenient();
@@ -192,18 +190,15 @@ public final class JsonParserStream implements Closeable, Flushable {
             compositeNodeDataWithSchema.write(writer);
 
             return this;
-        } catch (final EOFException e) {
+        } catch (EOFException e) {
             if (isEmpty) {
                 return this;
             }
-            // The stream ended prematurely so it is likely a syntax error.
-            throw new JsonSyntaxException(e);
-        } catch (final MalformedJsonException | NumberFormatException e) {
-            throw new JsonSyntaxException(e);
-        } catch (final IOException e) {
-            throw new JsonIOException(e);
+            throw e;
+        } catch (IllegalArgumentException | JsonParseException e) {
+            throw new IOException(e);
         } catch (StackOverflowError | OutOfMemoryError e) {
-            throw new JsonParseException("Failed parsing JSON source: " + reader + " to Json", e);
+            throw new IOException("Failed parsing JSON source: " + reader + " to Json", e);
         } finally {
             reader.setLenient(readerLenient);
         }
