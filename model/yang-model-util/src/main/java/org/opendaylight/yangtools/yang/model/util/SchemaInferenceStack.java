@@ -96,17 +96,29 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         }
 
         /**
-         * Create a new stack backed by an effective model and set up to point and specified data tree node.
+         * Create a new {@link Inference} backed by an effective model.
          *
-         * @param effectiveModel EffectiveModelContext to which this stack is attached
+         * @param modelContext {@link EffectiveModelContext} to which the inference is attached
+         * @return A new @link Inference}
+         * @throws NullPointerException if {@code modelContext} is {@code null}
+         */
+        public static @NonNull Inference of(final EffectiveModelContext modelContext) {
+            return new Inference(modelContext, new ArrayDeque<>(), null, 0, true);
+        }
+
+        /**
+         * Create a new {@link Inference} backed by an effective model and set up to point and specified data tree node.
+         *
+         * @param modelContext {@link EffectiveModelContext} to which the inference is attached
          * @param qnames Data tree path qnames
-         * @return A new stack
+         * @return A new @link Inference}
          * @throws NullPointerException if any argument is {@code null} or path contains a {@code null} element
          * @throws IllegalArgumentException if a path element cannot be found
          */
-        public static @NonNull Inference ofDataTreePath(final EffectiveModelContext effectiveModel,
+        public static @NonNull Inference ofDataTreePath(final EffectiveModelContext modelContext,
                 final QName... qnames) {
-            return SchemaInferenceStack.ofDataTreePath(effectiveModel, qnames).toInference();
+            return qnames.length == 0 ? of(modelContext)
+                : SchemaInferenceStack.ofDataTreePath(modelContext, qnames).toInference();
         }
 
         @Override
