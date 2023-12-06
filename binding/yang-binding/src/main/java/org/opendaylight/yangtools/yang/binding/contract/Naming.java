@@ -65,8 +65,6 @@ public final class Naming {
         "record");
 
     public static final @NonNull String DATA_ROOT_SUFFIX = "Data";
-    @Deprecated(since = "10.0.3", forRemoval = true)
-    public static final @NonNull String NOTIFICATION_LISTENER_SUFFIX = "Listener";
     public static final @NonNull String BUILDER_SUFFIX = "Builder";
     public static final @NonNull String KEY_SUFFIX = "Key";
     // ietf-restconf:yang-data, i.e. YangDataName
