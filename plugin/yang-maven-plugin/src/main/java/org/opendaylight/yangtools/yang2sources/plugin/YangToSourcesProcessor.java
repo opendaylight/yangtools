@@ -347,17 +347,17 @@ class YangToSourcesProcessor {
         }
     }
 
-    private List<GeneratorTask> instantiateGenerators() throws MojoExecutionException {
+    private ImmutableList<@NonNull GeneratorTask> instantiateGenerators() throws MojoExecutionException {
         // Search for available FileGenerator implementations
-        final Map<String, FileGeneratorFactory> factories = Maps.uniqueIndex(
+        final var factories = Maps.uniqueIndex(
             ServiceLoader.load(FileGeneratorFactory.class), FileGeneratorFactory::getIdentifier);
 
         // FIXME: iterate over fileGeneratorArg instances (configuration), not factories (environment)
         // Assign instantiate FileGenerators with appropriate configuration
-        final var generators = new ArrayList<GeneratorTask>(factories.size());
-        for (Entry<String, FileGeneratorFactory> entry : factories.entrySet()) {
+        final var builder = ImmutableList.<@NonNull GeneratorTask>builderWithExpectedSize(factories.size());
+        for (var entry : factories.entrySet()) {
             final String id = entry.getKey();
-            FileGeneratorArg arg = fileGeneratorArgs.get(id);
+            var arg = fileGeneratorArgs.get(id);
             if (arg == null) {
                 LOG.debug("{} No configuration for {}, using empty", LOG_PREFIX, id);
                 arg = new FileGeneratorArg(id);
@@ -369,7 +369,7 @@ class YangToSourcesProcessor {
             } catch (FileGeneratorException e) {
                 throw new MojoExecutionException("File generator " + id + " failed", e);
             }
-            generators.add(task);
+            builder.add(task);
             LOG.info("{} Code generator {} instantiated", LOG_PREFIX, id);
         }
 
@@ -382,7 +382,7 @@ class YangToSourcesProcessor {
             }
         );
 
-        return generators;
+        return builder.build();
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
