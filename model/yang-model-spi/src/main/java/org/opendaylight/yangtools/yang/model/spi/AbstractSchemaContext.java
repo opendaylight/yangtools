@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
@@ -85,6 +86,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     // Accessed via DERIVED_IDENTITIES
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> derivedIdentities = null;
 
     /**

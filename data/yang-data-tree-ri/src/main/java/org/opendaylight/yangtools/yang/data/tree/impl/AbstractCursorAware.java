@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ abstract class AbstractCursorAware {
     }
 
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile AbstractCursor<?> cursor;
 
     protected <T extends AbstractCursor<?>> T openCursor(final T cursorToOpen) {

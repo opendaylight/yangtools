@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.concepts;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
@@ -21,6 +22,7 @@ public abstract class AbstractRegistration implements Registration {
 
     // All access needs to go through this handle
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile byte closed;
 
     static {
