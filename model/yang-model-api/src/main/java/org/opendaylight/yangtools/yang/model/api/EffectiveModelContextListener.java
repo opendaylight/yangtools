@@ -8,18 +8,18 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import java.util.EventListener;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Interface for listeners interested in updates of an EffectiveModelContext.
+ * Interface for listeners interested in updates of an {@link EffectiveModelContext}.
  */
 @Beta
-public interface EffectiveModelContextListener extends EventListener {
+@NonNullByDefault
+public interface EffectiveModelContextListener {
     /**
      * Invoked when the model context changes.
      *
      * @param newModelContext New model context being installed
      */
-    void onModelContextUpdated(@NonNull EffectiveModelContext newModelContext);
+    void onModelContextUpdated(EffectiveModelContext newModelContext);
 }
