@@ -15,6 +15,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -64,6 +65,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
 
+    @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "statement indexing")
     protected AbstractEffectiveModule(final Current<Unqualified, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final String prefix) {
         super(stmt.declared(), substatements);

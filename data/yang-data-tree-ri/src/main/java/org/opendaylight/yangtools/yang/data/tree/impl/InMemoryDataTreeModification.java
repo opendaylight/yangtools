@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Optional;
@@ -55,6 +56,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     // All access needs to go through STATE
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile byte state;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot,

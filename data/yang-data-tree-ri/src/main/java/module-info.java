@@ -28,5 +28,6 @@ module org.opendaylight.yangtools.yang.data.tree {
     requires static org.eclipse.jdt.annotation;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.service.component.annotations;
+    requires static com.github.spotbugs.annotations;
     requires static javax.inject;
 }

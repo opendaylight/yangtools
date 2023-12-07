@@ -83,6 +83,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
     void failModifier() {
         removeSatisfied();
+        checkState(action != null);
         action.prerequisiteFailed(unsatisfied);
         action = null;
     }
@@ -299,7 +300,7 @@ final class ModifierImpl implements ModelActionBuilder {
         @SuppressWarnings("checkstyle:hiddenField")
         final boolean resolvePrereq(final T value) {
             this.value = value;
-            this.done = true;
+            done = true;
             return modifier.isApplied();
         }
 
@@ -346,6 +347,7 @@ final class ModifierImpl implements ModelActionBuilder {
                 } else {
                     LOG.debug("Key {} in {} is not supported", key, keys);
                     resolvePrereq(null);
+                    checkState(modifier.action != null);
                     modifier.action.prerequisiteUnavailable(this);
                 }
 
@@ -456,7 +458,7 @@ final class ModifierImpl implements ModelActionBuilder {
         PhaseModificationInNamespace(final ModifierImpl modifier, final ModelProcessingPhase phase) {
             super(modifier);
             checkArgument(phase != null, "Model processing phase must not be null");
-            this.modPhase = phase;
+            modPhase = phase;
         }
 
         @SuppressWarnings("unchecked")
