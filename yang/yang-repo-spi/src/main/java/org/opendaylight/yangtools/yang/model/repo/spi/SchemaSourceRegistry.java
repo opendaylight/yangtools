@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -35,7 +36,7 @@ public interface SchemaSourceRegistry {
      * available, subject to the provided filter.
      *
      * @param listener Schema source listener
-     * @return A registration handle. Invoking {@link SchemaListenerRegistration#close()} will cancel the registration.
+     * @return A registration handle. Invoking {@link Registration#close()} will cancel the registration.
      */
-    SchemaListenerRegistration registerSchemaSourceListener(SchemaSourceListener listener);
+    Registration registerSchemaSourceListener(SchemaSourceListener listener);
 }
