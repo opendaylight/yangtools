@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.util;
 
 import com.google.common.primitives.UnsignedLong;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
@@ -37,7 +38,9 @@ class ConcurrentDurationStatisticsTracker extends DurationStatisticsTracker {
 
     private volatile long sum;
     private volatile long count;
+    @SuppressFBWarnings(value = "UWF_NULL_FIELD", justification = "")
     private volatile DurationWithTime longest;
+    @SuppressFBWarnings(value = "UWF_NULL_FIELD", justification = "")
     private volatile DurationWithTime shortest;
 
     ConcurrentDurationStatisticsTracker() {
