@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Arrays;
@@ -97,6 +98,7 @@ public abstract class LeafRefPath implements Immutable {
      * Cached legacy path, filled-in when {@link #getPathFromRoot()} is invoked.
      */
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableList<QNameWithPredicate> legacyPath;
 
     protected LeafRefPath(final LeafRefPath parent, final QNameWithPredicate qname) {

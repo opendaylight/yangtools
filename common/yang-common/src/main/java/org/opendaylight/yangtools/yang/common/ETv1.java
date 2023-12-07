@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -37,6 +38,8 @@ final class ETv1 implements Externalizable {
     }
 
     @Override
+    @SuppressFBWarnings(value = "SE_PREVENT_EXT_OBJ_OVERWRITE",
+        justification = "https://github.com/spotbugs/spotbugs/issues/2750")
     public void readExternal(final ObjectInput in) throws IOException {
         elementBody = in.readUTF();
     }

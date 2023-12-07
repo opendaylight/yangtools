@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -40,6 +41,8 @@ final class QNv1 implements Externalizable {
     }
 
     @Override
+    @SuppressFBWarnings(value = "SE_PREVENT_EXT_OBJ_OVERWRITE",
+        justification = "https://github.com/spotbugs/spotbugs/issues/2750")
     public void readExternal(final ObjectInput in) throws IOException {
         qname = QName.readFrom(in);
     }

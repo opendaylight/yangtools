@@ -11,18 +11,18 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Base class for {@link ImmutableOffsetMap} serialization proxies. Implements most of the serialization form at logic.
  */
 abstract sealed class IOMv1<T extends ImmutableOffsetMap<?, ?>> implements Externalizable permits OIOMv1, UIOMv1 {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1;
 
     private ImmutableOffsetMap<?, ?> map;
@@ -46,7 +46,13 @@ abstract sealed class IOMv1<T extends ImmutableOffsetMap<?, ?>> implements Exter
     }
 
     @Override
+    @SuppressFBWarnings(value = "SE_PREVENT_EXT_OBJ_OVERWRITE",
+        justification = "https://github.com/spotbugs/spotbugs/issues/2750")
     public final void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        if (map != null) {
+            throw new IllegalStateException("already deserialized");
+        }
+
         // TODO: optimize for size == 1? what can we gain?
         final int size = in.readInt();
         final var keysBuilder = ImmutableList.builderWithExpectedSize(size);
@@ -61,7 +67,7 @@ abstract sealed class IOMv1<T extends ImmutableOffsetMap<?, ?>> implements Exter
 
     abstract @NonNull T createInstance(@NonNull ImmutableList<Object> keys, @NonNull Object[] values);
 
-    @Serial
+    @java.io.Serial
     final Object readResolve() {
         return verifyNotNull(map);
     }
