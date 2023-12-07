@@ -50,7 +50,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.GuavaSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -70,9 +69,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
     private final GuavaSchemaSourceCache<YangIRSchemaSource> cache;
-    private final SchemaListenerRegistration transReg;
     private final SchemaSourceRegistry registry;
     private final SchemaRepository repository;
+    private final Registration transReg;
 
     private volatile Object version = new Object();
     private volatile Object contextVersion = version;
