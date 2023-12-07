@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -52,6 +53,7 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
      * Current data store state generation. All accesses need to go through {@link #STATE}
      */
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile DataTreeState state;
 
     public InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,

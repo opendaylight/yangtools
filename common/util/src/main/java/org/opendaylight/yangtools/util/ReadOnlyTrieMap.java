@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ForwardingMap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
 
     // Used via the varhandle
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableTrieMap<K, V> readOnly;
 
     ReadOnlyTrieMap(final MutableTrieMap<K, V> map, final int size) {
