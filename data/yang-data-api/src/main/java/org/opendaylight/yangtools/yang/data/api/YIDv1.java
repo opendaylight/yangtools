@@ -10,18 +10,18 @@ package org.opendaylight.yangtools.yang.data.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serial;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Externalizable proxy for {@link YangInstanceIdentifier}.
  */
 final class YIDv1 implements Externalizable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private YangInstanceIdentifier yid;
@@ -47,6 +47,8 @@ final class YIDv1 implements Externalizable {
     }
 
     @Override
+    @SuppressFBWarnings(value = "SE_PREVENT_EXT_OBJ_OVERWRITE",
+        justification = "https://github.com/spotbugs/spotbugs/issues/2750")
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final int size = in.readInt();
         final var builder = ImmutableList.<PathArgument>builderWithExpectedSize(size);
@@ -56,7 +58,7 @@ final class YIDv1 implements Externalizable {
         yid = YangInstanceIdentifier.of(builder.build());
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return yid;
     }

@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.ref.Cleaner;
@@ -76,6 +77,8 @@ final class SharedEffectiveModelContextFactory implements EffectiveModelContextF
         // - SettableFuture, in which case the model is being computed
         // - Reference, in which case the model is available through the reference (unless cleared)
         @SuppressWarnings("unused")
+        @SuppressFBWarnings(value = "URF_UNREAD_FIELD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/2749")
         private volatile Object state = SettableFuture.create();
 
         @SuppressWarnings("unchecked")
