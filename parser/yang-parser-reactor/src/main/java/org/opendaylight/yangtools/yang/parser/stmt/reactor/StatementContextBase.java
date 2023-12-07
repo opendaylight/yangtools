@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +64,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     /**
      * Event listener when an item is added to model namespace.
      */
-    interface OnNamespaceItemAdded extends EventListener {
+    interface OnNamespaceItemAdded {
         /**
          * Invoked whenever a new item is added to a namespace.
          */
@@ -76,7 +75,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     /**
      * Event listener when a parsing {@link ModelProcessingPhase} is completed.
      */
-    interface OnPhaseFinished extends EventListener {
+    interface OnPhaseFinished {
         /**
          * Invoked whenever a processing phase has finished.
          */
