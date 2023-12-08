@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.concepts;
 import java.util.EventListener;
 import org.eclipse.jdt.annotation.NonNull;
 
+@Deprecated(since = "12.0.0", forRemoval = true)
 public abstract class AbstractListenerRegistration<T extends EventListener> extends AbstractObjectRegistration<T>
         implements ListenerRegistration<T> {
-
     protected AbstractListenerRegistration(final @NonNull T listener) {
         super(listener);
     }

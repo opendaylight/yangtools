@@ -14,7 +14,9 @@ import java.util.EventListener;
  * guarantee that the process of unregistration cannot fail for predictable reasons.
  *
  * @param <T> Type of registered listener
+ * @deprecated Use {@link ObjectRegistration} instead
  */
+@Deprecated(since = "12.0.0", forRemoval = true)
 public interface ListenerRegistration<T extends EventListener> extends ObjectRegistration<T> {
     /**
      * Unregister the listener. Note that invocations enqueued to the listener are not subject to synchronization

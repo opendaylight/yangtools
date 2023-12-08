@@ -14,8 +14,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * Implementation of {@link ListenerRegistration} which does nothing in its {@link #close()} method.
  *
  * @param <T> Type of registered listener
+ * @deprecated Use {@link NoOpObjectRegistration} instead
  */
 @NonNullByDefault
+@Deprecated(since = "12.0.0", forRemoval = true)
 public final class NoOpListenerRegistration<T extends EventListener> extends NoOpObjectRegistration<T>
         implements ListenerRegistration<T> {
     private NoOpListenerRegistration(final T instance) {
