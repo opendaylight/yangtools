@@ -10,13 +10,10 @@ package org.opendaylight.yangtools.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.EventListener;
 import org.junit.jupiter.api.Test;
 
-@Deprecated(since = "12.0.0", forRemoval = true)
-class ListenerRegistryTest {
-    private final ExtendedTestEventListener extendedTestEventListener = new ExtendedTestEventListener() {};
-    private final ListenerRegistry<TestEventListener> registry = ListenerRegistry.create();
+class ObjectRegistryTest {
+    private final ObjectRegistry<TestEventListener> registry = ObjectRegistry.createSimple("testName");
 
     @Test
     void testCreateNewInstance() {
@@ -25,20 +22,23 @@ class ListenerRegistryTest {
 
     @Test
     void testGetListenersMethod() {
-        assertEquals(0, registry.streamListeners().count(), "Listener registry should not have any listeners.");
+        assertEquals(0, registry.streamObjects().count(), "Listener registry should not have any listeners.");
     }
 
     @Test
     void testRegisterMethod() {
+        final var extendedTestEventListener = new ExtendedTestEventListener() {
+            // Nothing else
+        };
         final var listenerRegistration = registry.register(extendedTestEventListener);
         assertEquals(extendedTestEventListener, listenerRegistration.getInstance(), "Listeners should be the same.");
     }
 
-    interface TestEventListener extends EventListener {
-
+    interface TestEventListener {
+        // Nothing else
     }
 
     interface ExtendedTestEventListener extends TestEventListener {
-
+        // Nothing else
     }
 }
