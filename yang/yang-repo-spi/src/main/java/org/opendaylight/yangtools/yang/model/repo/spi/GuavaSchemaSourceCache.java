@@ -83,7 +83,7 @@ public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> 
         cache.put(srcId, source);
         final var reg = register(srcId);
 
-        final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<>(source, queue) {
+        final var ref = new FinalizablePhantomReference<>(source, queue) {
             @Override
             public void finalizeReferent() {
                 reg.close();

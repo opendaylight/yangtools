@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static java.util.Objects.requireNonNull;
 
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 
 /**
- * Abstract base class for cache-type SchemaSourceListeners. It needs to be
- * registered with a {@link SchemaSourceRegistry}, where it gets notifications
- * from. It performs filtering and {@link #offer(SchemaSourceRepresentation)}s
- * conforming sources to the subclass.
+ * Abstract base class for cache-type SchemaSourceListeners. It needs to be registered with a
+ * {@link SchemaSourceRegistry}, where it gets notifications from. It performs filtering and
+ * {@link #offer(SchemaSourceRepresentation)}s conforming sources to the subclass.
  *
  * @param <T> Cached schema source type.
  */
@@ -44,20 +44,17 @@ public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresenta
     protected abstract void offer(T source);
 
     /**
-     * Register the presence of a cached schema source with the consumer. Subclasses
-     * need to call this method once they have cached a schema source representation,
-     * or when they have determined they have a schema source is available -- like
-     * when a persistent cache reads its cache index.
+     * Register the presence of a cached schema source with the consumer. Subclasses need to call this method once they
+     * have cached a schema source representation, or when they have determined they have a schema source is available
+     * -- like when a persistent cache reads its cache index.
      *
      * @param sourceIdentifier Source identifier
-     * @return schema source registration, which the subclass needs to
-     *         {@link SchemaSourceRegistration#close()} once it expunges the source
-     *         from the cache.
+     * @return schema source registration, which the subclass needs to {@link Registration#close()} once it expunges the
+     *         source from the cache.
      */
-    protected final SchemaSourceRegistration<T> register(final SourceIdentifier sourceIdentifier) {
-        final PotentialSchemaSource<T> src = PotentialSchemaSource.create(sourceIdentifier, representation,
-                cost.getValue());
-        return consumer.registerSchemaSource(this, src);
+    protected final Registration register(final SourceIdentifier sourceIdentifier) {
+        return consumer.registerSchemaSource(this, PotentialSchemaSource.create(sourceIdentifier, representation,
+            cost.getValue()));
     }
 
     @Override

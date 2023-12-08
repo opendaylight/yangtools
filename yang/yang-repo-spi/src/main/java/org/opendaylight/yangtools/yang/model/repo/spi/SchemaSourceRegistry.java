@@ -26,10 +26,10 @@ public interface SchemaSourceRegistry {
      * @param <T> schema source representation type
      * @param provider Resolver which can potentially resolve the identifier
      * @param source Schema source details
-     * @return A registration handle. Invoking {@link SchemaSourceRegistration#close()} will cancel the registration.
+     * @return A registration handle. Invoking {@link Registration#close()} will cancel the registration.
      */
-    <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(
-            SchemaSourceProvider<? super T> provider, PotentialSchemaSource<T> source);
+    <T extends SchemaSourceRepresentation> Registration registerSchemaSource(SchemaSourceProvider<? super T> provider,
+        PotentialSchemaSource<T> source);
 
     /**
      * Register a schema source listener. The listener will be notified as new sources and their representations become

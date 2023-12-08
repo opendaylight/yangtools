@@ -15,11 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.concepts.Registration;
 
 @ExtendWith(MockitoExtension.class)
 class RefcountedRegistrationTest {
     @Mock
-    private SchemaSourceRegistration<?> reg;
+    private Registration reg;
 
     @Test
     void refcountDecTrue() {
