@@ -24,7 +24,9 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * A registry of EventListeners, maintaining a set of registrations. This class is thread-safe.
  *
  * @param <T> Type of listeners this registry handles
+ * @deprecated Use {@link ObjectRegistry} instead
  */
+@Deprecated(since = "12.0.0", forRemoval = true)
 public final class ListenerRegistry<T extends EventListener> implements Mutable {
     private final Set<RegistrationImpl<? extends T>> listeners = ConcurrentHashMap.newKeySet();
     private final String name;
