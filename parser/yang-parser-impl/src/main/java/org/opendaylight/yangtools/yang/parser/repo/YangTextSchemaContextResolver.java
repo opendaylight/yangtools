@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -100,15 +99,14 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * Register a {@link YangTextSchemaSource}.
      *
      * @param source YANG text source
-     * @return a YangTextSchemaSourceRegistration
+     * @return a {@link Registration}
      * @throws YangSyntaxErrorException When the YANG file is syntactically invalid
      * @throws IOException when the URL is not readable
      * @throws SchemaSourceException When parsing encounters general error
+     * @throws NullPointerException if {@code source} is {@code null}
      */
-    public @NonNull YangTextSchemaSourceRegistration registerSource(final @NonNull YangTextSchemaSource source)
+    public @NonNull Registration registerSource(final @NonNull YangTextSchemaSource source)
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
-        checkArgument(source != null);
-
         final var ast = TextToIRTransformer.transformText(source);
         LOG.trace("Resolved source {} to source {}", source, ast);
 
@@ -149,7 +147,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             LOG.debug("Added source {} to schema context requirements", parsedId);
             version = new Object();
 
-            return new AbstractYangTextSchemaSourceRegistration(text) {
+            return new AbstractRegistration() {
                 @Override
                 protected void removeRegistration() {
                     synchronized (YangTextSchemaContextResolver.this) {
@@ -172,11 +170,10 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * @throws YangSyntaxErrorException When the YANG file is syntactically invalid
      * @throws IOException when the URL is not readable
      * @throws SchemaSourceException When parsing encounters general error
+     * @throws NullPointerException if {@code url} is {@code null}
      */
-    public @NonNull YangTextSchemaSourceRegistration registerSource(final @NonNull URL url)
+    public @NonNull Registration registerSource(final @NonNull URL url)
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
-        checkArgument(url != null, "Supplied URL must not be null");
-
         final String path = url.getPath();
         final String fileName = path.substring(path.lastIndexOf('/') + 1);
         return registerSource(YangTextSchemaSource.forURL(url, guessSourceIdentifier(fileName)));
