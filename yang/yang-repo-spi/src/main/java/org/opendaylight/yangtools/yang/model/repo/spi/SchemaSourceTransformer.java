@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
         implements SchemaSourceListener, SchemaSourceProvider<D> {
-
     @FunctionalInterface
     public interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
             extends AsyncFunction<S, D> {
@@ -58,8 +57,8 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
 
     @Override
     public final void schemaSourceRegistered(final Iterable<PotentialSchemaSource<?>> sources) {
-        for (PotentialSchemaSource<?> src : sources) {
-            final Class<?> rep = src.getRepresentation();
+        for (var src : sources) {
+            final var rep = src.getRepresentation();
             if (srcClass.isAssignableFrom(rep) && dstClass != rep) {
                 registerSource(src);
             }
@@ -68,24 +67,22 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
 
     @Override
     public final void schemaSourceUnregistered(final PotentialSchemaSource<?> source) {
-        final Class<?> rep = source.getRepresentation();
+        final var rep = source.getRepresentation();
         if (srcClass.isAssignableFrom(rep) && dstClass != rep) {
             unregisterSource(source);
         }
     }
 
     private void registerSource(final PotentialSchemaSource<?> src) {
-        RefcountedRegistration reg = availableSources.get(src);
+        final var reg = availableSources.get(src);
         if (reg != null) {
             reg.incRef();
             return;
         }
 
-        final PotentialSchemaSource<D> newSrc = PotentialSchemaSource.create(src.getSourceIdentifier(), dstClass,
-                src.getCost() + PotentialSchemaSource.Costs.COMPUTATION.getValue());
-
-        final SchemaSourceRegistration<D> r = consumer.registerSchemaSource(this, newSrc);
-        availableSources.put(src, new RefcountedRegistration(r));
+        final var newSrc = PotentialSchemaSource.create(src.getSourceIdentifier(), dstClass,
+            src.getCost() + PotentialSchemaSource.Costs.COMPUTATION.getValue());
+        availableSources.put(src, new RefcountedRegistration(consumer.registerSchemaSource(this, newSrc)));
     }
 
     private void unregisterSource(final PotentialSchemaSource<?> src) {
