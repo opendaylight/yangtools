@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
 
 import com.google.common.annotations.Beta;
@@ -25,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.checkerframework.checker.lock.qual.GuardedBy;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -48,7 +50,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
      */
     @GuardedBy("this")
     private final Map<SourceIdentifier, ListMultimap<Class<? extends SchemaSourceRepresentation>,
-            AbstractSchemaSourceRegistration<?>>> sources = new HashMap<>();
+            SchemaSourceRegistration>> sources = new HashMap<>();
 
     /*
      * Schema source listeners.
@@ -56,27 +58,25 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     @GuardedBy("this")
     private final List<SchemaListenerRegistration> listeners = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
-    private static <T extends SchemaSourceRepresentation> ListenableFuture<T> fetchSource(
-            final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration<?>> it) {
-        final AbstractSchemaSourceRegistration<?> reg = it.next();
+    private static <T extends SchemaSourceRepresentation> ListenableFuture<T> fetchSource(final SourceIdentifier id,
+            final Iterator<SchemaSourceRegistration> it) {
+        final var reg = it.next();
+        @SuppressWarnings("unchecked")
+        final var provider = (SchemaSourceProvider<T>) reg.provider();
 
-        return Futures.catchingAsync(((SchemaSourceProvider<T>)reg.getProvider()).getSource(id), Throwable.class,
-            input -> {
-                LOG.debug("Failed to acquire source from {}", reg, input);
-
-                if (it.hasNext()) {
-                    return fetchSource(id, it);
-                }
-
-                throw new MissingSchemaSourceException("All available providers exhausted", id, input);
-            }, MoreExecutors.directExecutor());
+        return Futures.catchingAsync(provider.getSource(id), Throwable.class, input -> {
+            LOG.debug("Failed to acquire source from {}", reg, input);
+            if (it.hasNext()) {
+                return fetchSource(id, it);
+            }
+            throw new MissingSchemaSourceException("All available providers exhausted", id, input);
+        }, MoreExecutors.directExecutor());
     }
 
     @Override
     public <T extends SchemaSourceRepresentation> ListenableFuture<T> getSchemaSource(final SourceIdentifier id,
             final Class<T> representation) {
-        final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations;
+        final ArrayList<SchemaSourceRegistration> sortedSchemaSourceRegistrations;
 
         synchronized (this) {
             final var srcs = sources.get(id);
@@ -117,8 +117,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         return fetchSourceFuture;
     }
 
-    private synchronized <T extends SchemaSourceRepresentation> void addSource(final PotentialSchemaSource<T> source,
-            final AbstractSchemaSourceRegistration<T> reg) {
+    private synchronized void addSource(final SchemaSourceRegistration reg) {
+        final var source = reg.getInstance();
         sources.computeIfAbsent(source.getSourceIdentifier(), ignored -> ArrayListMultimap.create())
             .put(source.getRepresentation(), reg);
 
@@ -128,8 +128,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         }
     }
 
-    private synchronized <T extends SchemaSourceRepresentation> void removeSource(final PotentialSchemaSource<?> source,
-            final SchemaSourceRegistration<?> reg) {
+    private synchronized void removeSource(final SchemaSourceRegistration reg) {
+        final var source = reg.getInstance();
         final var m = sources.get(source.getSourceIdentifier());
         if (m != null) {
             m.remove(source.getRepresentation(), reg);
@@ -145,23 +145,16 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(
+    public <T extends SchemaSourceRepresentation> Registration registerSchemaSource(
             final SchemaSourceProvider<? super T> provider, final PotentialSchemaSource<T> source) {
-        final var src = source.cachedReference();
-        final var ret = new AbstractSchemaSourceRegistration<>(provider, src) {
-            @Override
-            protected void removeRegistration() {
-                removeSource(src, this);
-            }
-        };
-
-        addSource(src, ret);
+        final var ret = new SchemaSourceRegistration(source.cachedReference(), provider);
+        addSource(ret);
         return ret;
     }
 
     @Override
     public Registration registerSchemaSourceListener(final SchemaSourceListener listener) {
-        final SchemaListenerRegistration ret = new SchemaListenerRegistration(listener);
+        final var ret = new SchemaListenerRegistration(listener);
 
         synchronized (this) {
             final var col = new ArrayList<PotentialSchemaSource<?>>();
@@ -180,8 +173,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     private final class SchemaListenerRegistration extends AbstractObjectRegistration<SchemaSourceListener> {
-        SchemaListenerRegistration(final SchemaSourceListener instance) {
-            super(instance);
+        SchemaListenerRegistration(final SchemaSourceListener listener) {
+            super(listener);
         }
 
         @Override
@@ -190,15 +183,33 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         }
     }
 
-    private static final class SchemaProviderCostComparator implements Comparator<AbstractSchemaSourceRegistration<?>>,
-            Serializable {
+    private final class SchemaSourceRegistration extends AbstractObjectRegistration<PotentialSchemaSource<?>> {
+        private final @NonNull SchemaSourceProvider<?> provider;
+
+        SchemaSourceRegistration(final PotentialSchemaSource<?> source, final SchemaSourceProvider<?> provider) {
+            super(source);
+            this.provider = requireNonNull(provider);
+        }
+
+        @NonNull SchemaSourceProvider<?> provider() {
+            return provider;
+        }
+
+        @Override
+        protected void removeRegistration() {
+            removeSource(this);
+        }
+    }
+
+    private static final class SchemaProviderCostComparator
+            implements Comparator<SchemaSourceRegistration>, Serializable {
         static final SchemaProviderCostComparator INSTANCE = new SchemaProviderCostComparator();
 
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         @Override
-        public int compare(final AbstractSchemaSourceRegistration<?> o1, final AbstractSchemaSourceRegistration<?> o2) {
+        public int compare(final SchemaSourceRegistration o1, final SchemaSourceRegistration o2) {
             return o1.getInstance().getCost() - o2.getInstance().getCost();
         }
 

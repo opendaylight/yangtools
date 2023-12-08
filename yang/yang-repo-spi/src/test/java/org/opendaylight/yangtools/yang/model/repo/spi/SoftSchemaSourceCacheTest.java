@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -33,7 +34,7 @@ class SoftSchemaSourceCacheTest {
     @Mock
     private SchemaSourceRegistry registry;
     @Mock
-    private SchemaSourceRegistration<?> registration;
+    private Registration registration;
 
     @Test
     void inMemorySchemaSourceCacheTest() {
