@@ -29,9 +29,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
-import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
+import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Mutable;
-import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.YangFeature;
@@ -113,9 +112,8 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         return ctxResolver.registerSupportedFeatures(BindingReflections.getQNameModule(module), features);
     }
 
-    public synchronized List<ObjectRegistration<YangModuleInfo>> registerModuleInfos(
-            final Iterable<? extends YangModuleInfo> moduleInfos) {
-        final var ret = new ArrayList<ObjectRegistration<YangModuleInfo>>();
+    public synchronized List<Registration> registerModuleInfos(final Iterable<? extends YangModuleInfo> moduleInfos) {
+        final var ret = new ArrayList<Registration>();
         for (var moduleInfo : moduleInfos) {
             ret.add(register(requireNonNull(moduleInfo)));
         }
@@ -123,12 +121,12 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     }
 
     @Holding("this")
-    private ObjectRegistration<YangModuleInfo> register(final @NonNull YangModuleInfo moduleInfo) {
+    private Registration register(final @NonNull YangModuleInfo moduleInfo) {
         final var regInfos = flatDependencies(moduleInfo).stream()
             .map(this::registerModuleInfo)
             .collect(ImmutableList.toImmutableList());
 
-        return new AbstractObjectRegistration<>(moduleInfo) {
+        return new AbstractRegistration() {
             @Override
             protected void removeRegistration() {
                 unregister(regInfos);
