@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.UnmodifiableIterator;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +26,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <E> the type of elements in this list
  */
 final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final E @NonNull[] array;

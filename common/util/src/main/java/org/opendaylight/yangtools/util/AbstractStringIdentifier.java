@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.util;
 
-import java.io.Serial;
 import java.util.UUID;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -17,7 +16,7 @@ import org.opendaylight.yangtools.concepts.Identifier;
  */
 public abstract class AbstractStringIdentifier<T extends AbstractStringIdentifier<T>>
         extends AbstractIdentifier<String> implements Comparable<T> {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     protected AbstractStringIdentifier(final @NonNull String string) {

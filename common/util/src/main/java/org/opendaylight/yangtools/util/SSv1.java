@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.util;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * Serialization proxy for {@link SingletonSet}.
  */
 final class SSv1 implements Serializable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1;
 
     private final Object element;
@@ -23,7 +22,7 @@ final class SSv1 implements Serializable {
         this.element = element;
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return SingletonSet.of(element);
     }

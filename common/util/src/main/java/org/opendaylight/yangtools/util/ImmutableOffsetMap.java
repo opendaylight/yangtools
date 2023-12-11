@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.AbstractSet;
@@ -39,7 +38,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
     static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
@@ -58,7 +57,7 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
     }
 
     static final class Unordered<K, V> extends ImmutableOffsetMap<K, V> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
@@ -76,7 +75,7 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
         }
     }
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final @NonNull ImmutableMap<K, Integer> offsets;
@@ -357,6 +356,6 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
         }
     }
 
-    @Serial
+    @java.io.Serial
     abstract Object writeReplace();
 }

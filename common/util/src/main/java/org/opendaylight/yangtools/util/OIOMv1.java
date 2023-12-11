@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.util;
 
 import com.google.common.collect.ImmutableList;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap.Ordered;
 
@@ -16,7 +15,7 @@ import org.opendaylight.yangtools.util.ImmutableOffsetMap.Ordered;
  * Serialization proxy for {@link Ordered}.
  */
 final class OIOMv1 extends IOMv1<Ordered<?, ?>> {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1;
 
     @SuppressWarnings("checkstyle:RedundantModifier")

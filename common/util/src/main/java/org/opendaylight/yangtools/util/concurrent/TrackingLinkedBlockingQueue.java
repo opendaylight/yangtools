@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.annotations.Beta;
-import java.io.Serial;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Collection;
@@ -24,7 +23,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <E> the element t.ype
  */
 public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private static final VarHandle LARGEST_QUEUE_SIZE;

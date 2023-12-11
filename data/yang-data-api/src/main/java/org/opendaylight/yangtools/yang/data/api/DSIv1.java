@@ -13,12 +13,11 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 final class DSIv1 implements Externalizable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private QName qname;
@@ -42,7 +41,7 @@ final class DSIv1 implements Externalizable {
         qname = QName.readFrom(in);
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return DatastoreIdentifier.create(qname);
     }

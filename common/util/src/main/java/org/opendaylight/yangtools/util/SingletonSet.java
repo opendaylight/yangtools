@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Iterators;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -142,7 +141,7 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
     }
 
     private static final class NullElement<E> extends SingletonSet<E> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
         static final @NonNull NullElement<?> INSTANCE = new NullElement<>();
 
@@ -176,7 +175,7 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
 
     @NonNullByDefault
     private static final class Regular<E> extends SingletonSet<E> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final @NonNull E element;
