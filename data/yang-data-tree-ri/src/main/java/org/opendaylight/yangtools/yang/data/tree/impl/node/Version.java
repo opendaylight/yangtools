@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -32,7 +33,7 @@ public final class Version implements Immutable {
      * @return a new version.
      */
     @SuppressWarnings("static-method")
-    public Version next() {
+    public @NonNull Version next() {
         return new Version();
     }
 
@@ -41,7 +42,7 @@ public final class Version implements Immutable {
      *
      * @return a new version.
      */
-    public static Version initial() {
+    public static @NonNull Version initial() {
         return new Version();
     }
 }
