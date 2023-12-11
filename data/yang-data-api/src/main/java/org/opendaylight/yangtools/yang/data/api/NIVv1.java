@@ -13,7 +13,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serial;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  * Externalizable proxy for {@link NodeWithValue}.
  */
 final class NIVv1 implements Externalizable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private NodeWithValue<?> niv;
@@ -46,7 +45,7 @@ final class NIVv1 implements Externalizable {
         niv = new NodeWithValue<>(QName.readFrom(in), in.readObject());
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return niv;
     }

@@ -13,10 +13,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -33,7 +31,7 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public abstract sealed class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
     static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Ordered(final K key, final V value) {
@@ -51,7 +49,7 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
     }
 
     static final class Unordered<K, V> extends SharedSingletonMap<K, V> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Unordered(final K key, final V value) {
@@ -68,7 +66,7 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
         }
     }
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final LoadingCache<Object, SingletonSet<Object>> CACHE = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<Object, SingletonSet<Object>>() {
@@ -222,15 +220,8 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
 
     @Override
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Map)) {
-            return false;
-        }
-
-        final Map<?, ?> m = (Map<?, ?>)obj;
-        return m.size() == 1 && value.equals(m.get(keySet.getElement()));
+        return this == obj || obj instanceof Map<?, ?> other && other.size() == 1
+            && value.equals(other.get(keySet.getElement()));
     }
 
     @Override
@@ -244,9 +235,9 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
     }
 
     private static <K, V> Entry<K, V> singleEntry(final Map<K, V> map) {
-        final Iterator<Entry<K, V>> it = map.entrySet().iterator();
+        final var it = map.entrySet().iterator();
         checkArgument(it.hasNext(), "Input map is empty");
-        final Entry<K, V> ret = it.next();
+        final var ret = it.next();
         checkArgument(!it.hasNext(), "Input map has more than one entry");
         return ret;
     }

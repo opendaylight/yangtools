@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.Serial;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -130,7 +129,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
      * threads are busy.
      */
     private static class ExecutorQueue extends SynchronousQueue<Runnable> {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private static final long POLL_WAIT_TIME_IN_MS = 300;

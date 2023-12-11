@@ -14,14 +14,13 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serial;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Externalizable proxy for {@link YangInstanceIdentifier}.
  */
 final class YIDv1 implements Externalizable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private YangInstanceIdentifier yid;
@@ -56,7 +55,7 @@ final class YIDv1 implements Externalizable {
         yid = YangInstanceIdentifier.of(builder.build());
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return yid;
     }

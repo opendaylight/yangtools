@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifier;
 
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.concepts.Identifier;
  * @param <T> Object type
  */
 public abstract class AbstractIdentifier<T> implements Identifier {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final @NonNull T value;
@@ -44,11 +43,7 @@ public abstract class AbstractIdentifier<T> implements Identifier {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-
-        return getClass().equals(obj.getClass()) && value.equals(((AbstractIdentifier<?>)obj).value);
+        return obj != null && getClass().equals(obj.getClass()) && value.equals(((AbstractIdentifier<?>)obj).value);
     }
 
     @Override
