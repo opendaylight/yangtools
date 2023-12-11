@@ -49,13 +49,15 @@ public class DataTreeConfiguration implements Immutable {
     private final @NonNull YangInstanceIdentifier rootPath;
     private final boolean uniqueIndexes;
     private final boolean mandatoryNodesValidation;
+    private final boolean commitMetadata;
 
     DataTreeConfiguration(final TreeType treeType, final YangInstanceIdentifier rootPath, final boolean uniqueIndexes,
-            final boolean mandatoryNodesValidation) {
+            final boolean mandatoryNodesValidation, final boolean commitMetadata) {
         this.treeType = requireNonNull(treeType);
         this.rootPath = requireNonNull(rootPath);
         this.uniqueIndexes = uniqueIndexes;
         this.mandatoryNodesValidation = mandatoryNodesValidation;
+        this.commitMetadata = commitMetadata;
     }
 
     public @NonNull YangInstanceIdentifier getRootPath() {
@@ -74,11 +76,17 @@ public class DataTreeConfiguration implements Immutable {
         return mandatoryNodesValidation;
     }
 
+    public boolean isCommitMetadataEnabled() {
+        return commitMetadata;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("type", treeType).add("root", rootPath)
-                .add("mandatory", mandatoryNodesValidation)
-                .add("unique", uniqueIndexes).toString();
+            .add("commit-meta", commitMetadata)
+            .add("mandatory", mandatoryNodesValidation)
+            .add("unique", uniqueIndexes)
+            .toString();
     }
 
     public static DataTreeConfiguration getDefault(final TreeType treeType) {
@@ -105,6 +113,7 @@ public class DataTreeConfiguration implements Immutable {
         private YangInstanceIdentifier rootPath;
         private boolean uniqueIndexes;
         private boolean mandatoryNodesValidation;
+        private boolean commitMetadata;
 
         public Builder(final TreeType treeType) {
             this.treeType = requireNonNull(treeType);
@@ -126,13 +135,19 @@ public class DataTreeConfiguration implements Immutable {
             return this;
         }
 
+        public @NonNull Builder setCommitMetadata(final boolean commitMetadata) {
+            this.commitMetadata = commitMetadata;
+            return this;
+        }
+
         /**
          * Return {@link DataTreeConfiguration} as defined by this builder's current state.
          *
          * @return A DataTreeConfiguration
          */
         public @NonNull DataTreeConfiguration build() {
-            return new DataTreeConfiguration(treeType, rootPath, uniqueIndexes, mandatoryNodesValidation);
+            return new DataTreeConfiguration(treeType, rootPath, uniqueIndexes, mandatoryNodesValidation,
+                commitMetadata);
         }
     }
 }

@@ -66,7 +66,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig) {
         return new InMemoryDataTree(TreeNode.of(createRoot(treeConfig.getRootPath()),
-            Version.initial()), treeConfig, null);
+            Version.initial(treeConfig.isCommitMetadataEnabled())), treeConfig, null);
     }
 
     @Override
@@ -106,8 +106,9 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final DataSchemaNode rootSchemaNode = getRootSchemaNode(initialSchemaContext, treeConfig.getRootPath());
         final NormalizedNode rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
             treeConfig.getRootPath());
-        return new InMemoryDataTree(TreeNode.of(rootDataNode, Version.initial()), treeConfig,
-            initialSchemaContext, rootSchemaNode, maskMandatory);
+        return new InMemoryDataTree(TreeNode.of(rootDataNode,
+            Version.initial(treeConfig.isCommitMetadataEnabled())), treeConfig, initialSchemaContext, rootSchemaNode,
+            maskMandatory);
     }
 
     private static @NonNull NormalizedNode createRoot(final DataNodeContainer schemaNode,
