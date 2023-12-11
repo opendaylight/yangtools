@@ -18,40 +18,36 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 
 class TreeNodeFactoryTest {
-
-    private static void checkTreeNode(final TreeNode node, final NormalizedNode data, final Version version) {
-        assertSame(data, node.getData());
-        assertSame(version, node.getSubtreeVersion());
-        assertSame(version, node.getVersion());
-    }
-
     @Test
     void testNormalizedNodeContainer() {
         final var data = Mockito.mock(ContainerNode.class);
-        final var version = Version.initial();
+        final var version = Version.initial(false);
         final var node = TreeNode.of(data, version);
 
-        assertInstanceOf(SimpleContainerNode.class, node);
-        checkTreeNode(node, data, version);
+        assertSameTreeNode(assertInstanceOf(SimpleContainerNode.class, node), data, version);
     }
 
     @Test
     void testOrderedNodeContainer() {
         final var data = Mockito.mock(UserMapNode.class);
-        final var version = Version.initial();
+        final var version = Version.initial(false);
         final var node = TreeNode.of(data, version);
 
-        assertInstanceOf(SimpleContainerNode.class, node);
-        checkTreeNode(node, data, version);
+        assertSameTreeNode(assertInstanceOf(SimpleContainerNode.class, node), data, version);
     }
 
     @Test
     void testLeaf() {
         final var data = Mockito.mock(LeafNode.class);
-        final var version = Version.initial();
+        final var version = Version.initial(false);
         final var node = TreeNode.of(data, version);
 
-        assertInstanceOf(ValueNode.class, node);
-        checkTreeNode(node, data, version);
+        assertSameTreeNode(assertInstanceOf(ValueNode.class, node), data, version);
+    }
+
+    private static void assertSameTreeNode(final TreeNode node, final NormalizedNode data, final Version version) {
+        assertSame(data, node.getData());
+        assertSame(version, node.getSubtreeVersion());
+        assertSame(version, node.getVersion());
     }
 }

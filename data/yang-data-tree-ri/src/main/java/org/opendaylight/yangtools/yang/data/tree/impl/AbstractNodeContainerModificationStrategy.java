@@ -85,7 +85,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      * {@link #checkTouchApplicable(ModificationPath, NodeModification, TreeNode, Version)}
      * It is okay to use a global constant, as the delegate will ignore it anyway.
      */
-    private static final Version FAKE_VERSION = Version.initial();
+    private static final Version FAKE_VERSION = Version.initial(false);
 
     private final NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
@@ -285,7 +285,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
                 // and then append any child entries.
                 if (!modification.isEmpty()) {
                     // Version does not matter here as we'll throw it out
-                    final var current = apply(modification, modification.original(), Version.initial());
+                    final var current = apply(modification, modification.original(), Version.initial(false));
                     if (current != null) {
                         modification.updateValue(LogicalOperation.WRITE, current.getData());
                         mergeChildrenIntoModification(modification, valueChildren, version);

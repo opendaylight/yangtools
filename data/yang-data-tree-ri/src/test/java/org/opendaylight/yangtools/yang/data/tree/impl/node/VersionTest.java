@@ -9,27 +9,34 @@ package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class VersionTest {
-
-    @Test
-    void testInitial() {
-        final var v1 = Version.initial();
-        final var v2 = Version.initial();
+    @ParameterizedTest
+    void testInitial(final boolean tracking) {
+        final var v1 = Version.initial(tracking);
+        final var v2 = Version.initial(tracking);
 
         assertNotEquals(v1, v2);
         assertNotEquals(v2, v1);
     }
 
-    @Test
-    void testNext() {
-        final var v1 = Version.initial();
+    @ParameterizedTest
+    @MethodSource("versionTypes")
+    void testNext(final boolean tracking) {
+        final var v1 = Version.initial(tracking);
         final var v2 = v1.next();
         final var v3 = v2.next();
         final var v4 = v1.next();
 
         assertNotEquals(v3, v4);
         assertNotEquals(v4, v3);
+    }
+
+    private static List<Arguments> versionTypes() {
+        return List.of(Arguments.of(false), Arguments.of(true));
     }
 }
