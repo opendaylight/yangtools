@@ -10,13 +10,13 @@ module org.opendaylight.yangtools.yang.data.codec.gson {
 
     requires transitive com.google.gson;
     requires transitive org.opendaylight.yangtools.yang.data.api;
+    requires transitive org.opendaylight.yangtools.yang.data.util;
 
     requires com.google.common;
     requires java.xml;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.impl;
-    requires org.opendaylight.yangtools.yang.data.util;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.slf4j;
