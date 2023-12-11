@@ -14,7 +14,6 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serial;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -23,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * Externalizable proxy for {@link NodeIdentifierWithPredicates}.
  */
 final class NIPv2 implements Externalizable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private NodeIdentifierWithPredicates nip;
@@ -65,7 +64,7 @@ final class NIPv2 implements Externalizable {
         };
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return nip;
     }
