@@ -9,12 +9,20 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -22,9 +30,13 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
-import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractNormalizedNodeParsingCodecFactory;
+import org.opendaylight.yangtools.yang.data.util.codec.NormalizedNodeParserException;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -44,11 +56,12 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * A thread-safe factory for instantiating {@link XmlCodec}s.
  */
-public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
+public final class XmlCodecFactory extends AbstractNormalizedNodeParsingCodecFactory<XmlCodec<?>> {
     private final @NonNull InstanceIdentifierXmlCodec instanceIdentifierCodec;
     private final @NonNull MountPointContext mountCtx;
     private final @Nullable PreferredPrefixes pref;
@@ -204,5 +217,51 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     @Override
     protected XmlCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullXmlCodec.INSTANCE;
+    }
+
+    @Override
+    protected ContainerNode parseDatastoreImpl(final QNameModule rootNamespace, final Qualified rootName,
+            final InputStream stream) throws IOException, NormalizedNodeParserException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected NormalizedNode parseDataImpl(final SchemaInferenceStack stack, final InputStream stream)
+            throws IOException, NormalizedNodeParserException {
+        return parseStream(stack.toInference(), stream);
+    }
+
+    @Override
+    protected NormalizedNode parseChildDataImpl(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException, NormalizedNodeParserException {
+        return parseStream(inference, stream);
+    }
+
+    @Override
+    protected NormalizedNode parseInputOutput(final SchemaInferenceStack stack, final QName expected,
+            final InputStream stream) throws IOException, NormalizedNodeParserException {
+        stack.enterSchemaTree(expected);
+        return parseStream(stack.toInference(), stream);
+    }
+
+    private @NonNull NormalizedNode parseStream(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException, NormalizedNodeParserException {
+        try {
+            final var reader = UntrustedXML.createXMLStreamReader(stream);
+            try {
+                final var holder = new NormalizationResultHolder();
+                try (var writer = ImmutableNormalizedNodeStreamWriter.from(holder)) {
+                    try (var parser = XmlParserStream.create(writer, this, inference)) {
+                        parser.parse(reader);
+                    }
+                }
+                return holder.getResult().data();
+            } finally {
+                reader.close();
+            }
+        } catch (XMLStreamException e) {
+            throw NormalizedNodeParserException.ofCause(e);
+        }
     }
 }

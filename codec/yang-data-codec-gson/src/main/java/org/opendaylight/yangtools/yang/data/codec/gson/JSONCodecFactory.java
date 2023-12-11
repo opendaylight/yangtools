@@ -9,13 +9,24 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.gson.JsonParseException;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -23,10 +34,15 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
-import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractNormalizedNodeParsingCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
+import org.opendaylight.yangtools.yang.data.util.codec.NormalizedNodeParserException;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -46,12 +62,13 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Factory for creating JSON equivalents of codecs. Each instance of this object is bound to
  * a particular {@link EffectiveModelContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
-public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
+public abstract sealed class JSONCodecFactory extends AbstractNormalizedNodeParsingCodecFactory<JSONCodec<?>> {
     @Deprecated(since = "12.0.0", forRemoval = true)
     static final class Lhotka02 extends JSONCodecFactory {
         Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
@@ -225,4 +242,99 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     abstract JSONCodec<?> wrapDecimalCodec(DecimalStringCodec decimalCodec);
 
     abstract JSONCodec<?> wrapIntegerCodec(AbstractIntegerStringCodec<?, ?> integerCodec);
+
+    @Override
+    protected final ContainerNode parseDatastoreImpl(final QNameModule rootNamespace,  final Qualified rootName,
+            final InputStream stream) throws IOException, NormalizedNodeParserException {
+        // This is bit more involved: given this example document:
+        //
+        //          {
+        //            "ietf-restconf:data" : {
+        //              "foo:foo" : {
+        //                "str" : "str"
+        //              }
+        //            }
+        //          }
+        //
+        // we need to first peel this part:
+        //
+        //          {
+        //            "ietf-restconf:data" :
+        //
+        // validating it really the name matches rootName and that it is followed by '{', i.e. it really is an object.
+        //
+        // We then need to essentially do the equivalent of parseStream() on the EffectiveModelContext, but the receiver
+        // should be the builder for our resulting node -- we cannot and do not want to use a holder, as can legally
+        // more than one child.
+        //
+        // Then we need to take care of the last closing brace, raising an error if there is any other content -- i.e.
+        // we need to reach the end of JsonReader.
+        //
+        // And then it's just a matter of returning the built container.
+        try (var reader = new JsonReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            reader.beginObject();
+            final var name = reader.nextName();
+            final var expected = rootName.getPrefix() + ':' + rootName.getLocalName();
+            if (!expected.equals(name)) {
+                throw NormalizedNodeParserException.ofMessage("Expected name '" + expected + "', got '" + name + "'");
+            }
+
+            final var builder = Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(rootName.bindTo(rootNamespace)));
+
+            if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+                try (var writer = ImmutableNormalizedNodeStreamWriter.from(builder)) {
+                    try (var parser = JsonParserStream.create(writer, this)) {
+                        parser.parse(reader);
+                    } catch (JsonParseException e) {
+                        throw NormalizedNodeParserException.ofCause(e);
+                    }
+                }
+            }
+
+            reader.endObject();
+            final var nextToken = reader.peek();
+            if (nextToken != JsonToken.END_DOCUMENT) {
+                throw NormalizedNodeParserException.ofMessage("Expected end of JSON document, got " + nextToken);
+            }
+            return builder.build();
+        } catch (IllegalStateException e) {
+            throw NormalizedNodeParserException.ofCause(e);
+        }
+    }
+
+    @Override
+    protected final NormalizedNode parseDataImpl(final SchemaInferenceStack stack, final InputStream stream)
+            throws IOException, NormalizedNodeParserException {
+        // Point to parent node
+        stack.exit();
+        return parseStream(stack.toInference(), stream);
+    }
+
+    @Override
+    protected final NormalizedNode parseChildDataImpl(final EffectiveStatementInference inference,
+            final InputStream stream) throws IOException, NormalizedNodeParserException {
+        return parseStream(inference, stream);
+    }
+
+    @Override
+    protected final NormalizedNode parseInputOutput(final SchemaInferenceStack stack, final QName expected,
+            final InputStream stream) throws IOException, NormalizedNodeParserException {
+        return checkNodeName(parseStream(stack.toInference(), stream), expected);
+    }
+
+    private @NonNull NormalizedNode parseStream(final @NonNull EffectiveStatementInference inference,
+            final @NonNull InputStream stream) throws IOException, NormalizedNodeParserException {
+        try (var reader = new JsonReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            final var holder = new NormalizationResultHolder();
+            try (var writer = ImmutableNormalizedNodeStreamWriter.from(holder)) {
+                try (var parser = JsonParserStream.create(writer, this, inference)) {
+                    parser.parse(reader);
+                } catch (JsonParseException e) {
+                    throw NormalizedNodeParserException.ofCause(e);
+                }
+            }
+            return holder.getResult().data();
+        }
+    }
 }
