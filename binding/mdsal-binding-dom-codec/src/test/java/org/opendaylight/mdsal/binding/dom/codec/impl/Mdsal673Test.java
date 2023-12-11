@@ -21,7 +21,7 @@ import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.BarBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 public class Mdsal673Test extends AbstractBindingCodecTest {
     private static final NodeIdentifier FOO = new NodeIdentifier(Foo.QNAME);
@@ -33,7 +33,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
     @Test
     public void testNonnullContainer() {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO),
-            Builders.containerBuilder().withNodeIdentifier(FOO).build());
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(FOO).build());
         assertNotNull(entry);
         assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
 
@@ -52,9 +52,9 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
     @Test
     public void testEmptyContainer() {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO),
-            Builders.containerBuilder()
+            ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(FOO)
-                .withChild(Builders.containerBuilder().withNodeIdentifier(BAR).build())
+                .withChild(ImmutableNodes.newContainerBuilder().withNodeIdentifier(BAR).build())
                 .build());
         assertNotNull(entry);
         assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
@@ -73,14 +73,13 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
     @Test
     public void testNotEmptyContainer() {
         // FIXME: MDSAL-670: these should get translated to YangInstanceIdentifier.of(FOO)
-        final var identifier = new YangInstanceIdentifier.NodeWithValue<>(Bar.QNAME, FOO);
-        final var data = Builders.containerBuilder()
+        final var data = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(FOO)
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(BAR)
-                .withChild(Builders.leafSetBuilder()
+                .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                     .withNodeIdentifier(BAR)
-                    .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(identifier).withValue(FOO).build())
+                    .withChild(ImmutableNodes.leafSetEntry(Bar.QNAME, FOO))
                     .build())
                 .build())
             .build();

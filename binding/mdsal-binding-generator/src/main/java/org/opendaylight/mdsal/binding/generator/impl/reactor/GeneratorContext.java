@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -14,14 +16,19 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
  * Abstract view on generation tree as viewed by a particular {@link Generator}.
  */
-abstract class GeneratorContext extends AbstractEffectiveModelContextProvider {
+abstract class GeneratorContext {
+    private final @NonNull EffectiveModelContext modelContext;
+
     GeneratorContext(final EffectiveModelContext modelContext) {
-        super(modelContext);
+        this.modelContext = requireNonNull(modelContext);
+    }
+
+    final @NonNull EffectiveModelContext modelContext() {
+        return modelContext;
     }
 
     /**

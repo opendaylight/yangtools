@@ -37,18 +37,18 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  * The result of BindingGenerator run. Contains mapping between Types and SchemaNodes.
  */
 public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
-    private final @NonNull EffectiveModelContext context;
+    private final @NonNull EffectiveModelContext modelContext;
     private final ImmutableSetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases;
     private final ImmutableMap<QNameModule, ModuleRuntimeType> modulesByNamespace;
     private final ImmutableSortedMap<String, ModuleRuntimeType> modulesByPackage;
     private final ImmutableMap<QName, IdentityRuntimeType> identities;
     private final ImmutableMap<JavaTypeName, RuntimeType> types;
 
-    public DefaultBindingRuntimeTypes(final EffectiveModelContext context,
+    public DefaultBindingRuntimeTypes(final EffectiveModelContext modelContext,
             final Map<QNameModule, ModuleRuntimeType> modules, final Map<JavaTypeName, RuntimeType> types,
             final Map<QName, IdentityRuntimeType> identities,
             final SetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases) {
-        this.context = requireNonNull(context);
+        this.modelContext = requireNonNull(modelContext);
         this.identities = ImmutableMap.copyOf(identities);
         this.types = ImmutableMap.copyOf(types);
         this.choiceToCases = ImmutableSetMultimap.copyOf(choiceToCases);
@@ -59,8 +59,8 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     }
 
     @Override
-    public EffectiveModelContext getEffectiveModelContext() {
-        return context;
+    public EffectiveModelContext modelContext() {
+        return modelContext;
     }
 
     @Override

@@ -185,7 +185,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 final var child = type.schemaTreeChild(qname);
                 if (child == null) {
                     final var module = qname.getModule();
-                    if (context.getEffectiveModelContext().findModule(module).isEmpty()) {
+                    if (context.modelContext().findModule(module).isEmpty()) {
                         throw new MissingSchemaException(
                             "Module " + module + " is not present in current schema context.");
                     }
@@ -649,7 +649,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     final Class<?> valueType = method.getReturnType();
                     final ValueCodec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
                     valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
-                        context.getEffectiveModelContext());
+                        context.modelContext());
                 } else if (schema instanceof LeafListSchemaNode leafListSchema) {
                     final Optional<Type> optType = ClassLoaderUtils.getFirstGenericParameter(
                         method.getGenericReturnType());

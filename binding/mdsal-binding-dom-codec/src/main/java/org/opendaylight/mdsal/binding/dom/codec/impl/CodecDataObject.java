@@ -45,8 +45,8 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     private final @NonNull DataContainerNode data;
 
     // Accessed via a VarHandle
-    @SuppressWarnings("unused")
     // FIXME: consider using a primitive int-based cache (with 0 being uninit)
+    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile Integer cachedHashcode;
 

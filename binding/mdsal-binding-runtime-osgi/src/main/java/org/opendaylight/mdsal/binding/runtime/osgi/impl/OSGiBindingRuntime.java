@@ -19,9 +19,7 @@ import java.util.Set;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.mdsal.binding.runtime.api.DefaultBindingRuntimeContext;
-import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.mdsal.dom.schema.osgi.OSGiModuleInfoSnapshot;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
@@ -101,12 +99,12 @@ public final class OSGiBindingRuntime {
 
         @Override
         void add(final OSGiModuleInfoSnapshot snapshot) {
-            final ModuleInfoSnapshot context = snapshot.getService();
-            final BindingRuntimeTypes types = generator.generateTypeMapping(context.getEffectiveModelContext());
+            final var infoSnapshot = snapshot.getService();
+            final var types = generator.generateTypeMapping(infoSnapshot.modelContext());
 
             instances.put(snapshot, factory.newInstance(OSGiBindingRuntimeContextImpl.props(
                 snapshot.getGeneration(), snapshot.getServiceRanking(),
-                new DefaultBindingRuntimeContext(types, context))));
+                new DefaultBindingRuntimeContext(types, infoSnapshot))));
         }
 
         @Override

@@ -26,8 +26,8 @@ public class DefaultBindingRuntimeGenerator implements BindingRuntimeGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBindingRuntimeGenerator.class);
 
     @Override
-    public BindingRuntimeTypes generateTypeMapping(final EffectiveModelContext context) {
-        return BindingRuntimeTypesFactory.createTypes(context);
+    public BindingRuntimeTypes generateTypeMapping(final EffectiveModelContext modelContext) {
+        return BindingRuntimeTypesFactory.createTypes(modelContext);
     }
 
     @Activate

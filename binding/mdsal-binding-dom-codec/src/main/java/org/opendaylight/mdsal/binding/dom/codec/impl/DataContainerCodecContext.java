@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -194,8 +193,8 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
 
     @CheckReturnValue
     private IllegalArgumentException childNullException(final QName child, final String message, final Object... args) {
-        final QNameModule module = child.getModule();
-        if (!factory().getRuntimeContext().getEffectiveModelContext().findModule(module).isPresent()) {
+        final var module = child.getModule();
+        if (!factory().getRuntimeContext().modelContext().findModule(module).isPresent()) {
             return new MissingSchemaException("Module " + module + " is not present in current schema context.");
         }
         return new IncorrectNestingException(message, args);

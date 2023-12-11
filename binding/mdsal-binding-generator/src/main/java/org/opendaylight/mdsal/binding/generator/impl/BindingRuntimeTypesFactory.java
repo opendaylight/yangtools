@@ -52,15 +52,15 @@ final class BindingRuntimeTypesFactory implements Mutable {
         // Hidden on purpose
     }
 
-    static @NonNull BindingRuntimeTypes createTypes(final @NonNull EffectiveModelContext context) {
-        final var moduleGens = new GeneratorReactor(context).execute(TypeBuilderFactory.runtime());
+    static @NonNull BindingRuntimeTypes createTypes(final @NonNull EffectiveModelContext modelContext) {
+        final var moduleGens = new GeneratorReactor(modelContext).execute(TypeBuilderFactory.runtime());
 
         final var sw = Stopwatch.createStarted();
         final var factory = new BindingRuntimeTypesFactory();
         factory.indexModules(moduleGens);
         LOG.debug("Indexed {} generators in {}", moduleGens.size(), sw);
 
-        return new DefaultBindingRuntimeTypes(context, factory.modules, factory.allTypes, factory.identities,
+        return new DefaultBindingRuntimeTypes(modelContext, factory.modules, factory.allTypes, factory.identities,
             factory.choiceToCases);
     }
 

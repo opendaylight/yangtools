@@ -29,8 +29,8 @@ import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -107,7 +107,7 @@ public final class ModuleInfoSnapshotBuilder {
 
         for (var info : moduleInfos) {
             final var source = ModuleInfoSnapshotResolver.toYangTextSource(info);
-            mappedInfos.put(source.getIdentifier(), info);
+            mappedInfos.put(source.sourceId(), info);
 
             final Class<?> infoClass = info.getClass();
             final String infoRoot = Naming.getModelRootPackageName(infoClass.getPackage().getName());

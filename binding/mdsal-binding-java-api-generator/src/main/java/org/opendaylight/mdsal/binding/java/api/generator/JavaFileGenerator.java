@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ final class JavaFileGenerator implements FileGenerator {
         final Builder<String> bindingProviders = ImmutableSet.builder();
         for (Module module : localModules) {
             final YangModuleInfoTemplate template = new YangModuleInfoTemplate(module, context,
-                mod -> moduleResourcePathResolver.findModuleResourcePath(mod, YangTextSchemaSource.class));
+                mod -> moduleResourcePathResolver.findModuleResourcePath(mod, YangTextSource.class));
             final String path = DOT_MATCHER.replaceFrom(template.getPackageName(), '/') + "/";
 
             result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofPath(path + MODULE_INFO),

@@ -55,7 +55,7 @@ public final class BindingRuntimeHelpers {
 
     public static @NonNull EffectiveModelContext createEffectiveModel(final YangParserFactory parserFactory,
             final Iterable<? extends YangModuleInfo> moduleInfos) throws YangParserException {
-        return prepareContext(parserFactory, moduleInfos).getEffectiveModelContext();
+        return prepareContext(parserFactory, moduleInfos).modelContext();
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext() {
@@ -66,7 +66,7 @@ public final class BindingRuntimeHelpers {
             throw new IllegalStateException("Failed to parse models", e);
         }
         return new DefaultBindingRuntimeContext(ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(
-            infos.getEffectiveModelContext()), infos);
+            infos.modelContext()), infos);
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final Class<?>... classes) {
@@ -89,7 +89,7 @@ public final class BindingRuntimeHelpers {
         }
 
         return new DefaultBindingRuntimeContext(
-            ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(snapshot.getEffectiveModelContext()), snapshot);
+            ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(snapshot.modelContext()), snapshot);
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
@@ -99,10 +99,10 @@ public final class BindingRuntimeHelpers {
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
             final BindingRuntimeGenerator generator, final Collection<Class<?>> classes) throws YangParserException {
-        final ModuleInfoSnapshot infos = prepareContext(parserFactory, classes.stream()
+        final var infos = prepareContext(parserFactory, classes.stream()
             .map(BindingRuntimeHelpers::getYangModuleInfo)
             .collect(Collectors.toList()));
-        return new DefaultBindingRuntimeContext(generator.generateTypeMapping(infos.getEffectiveModelContext()), infos);
+        return new DefaultBindingRuntimeContext(generator.generateTypeMapping(infos.modelContext()), infos);
     }
 
     public static @NonNull YangModuleInfo getYangModuleInfo(final Class<?> clazz) {

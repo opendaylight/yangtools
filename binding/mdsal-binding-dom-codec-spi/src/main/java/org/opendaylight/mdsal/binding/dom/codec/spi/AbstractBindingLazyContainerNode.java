@@ -55,12 +55,6 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     }
 
     @Override
-    @Deprecated(since = "12.0.0", forRemoval = true)
-    public final NodeIdentifier getIdentifier() {
-        return identifier;
-    }
-
-    @Override
     public final ContainerNode getDelegate() {
         return delegate();
     }

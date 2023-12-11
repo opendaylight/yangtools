@@ -23,8 +23,8 @@ public interface BindingRuntimeGenerator {
      * The EffectiveModelContext MUST contain all of the sub modules otherwise the there is no guarantee that result
      * List of Generated Types will contain correct Generated Types.
      *
-     * @param context Schema Context
+     * @param modelContext effective model context
      * @return Generated type mapping.
      */
-    BindingRuntimeTypes generateTypeMapping(EffectiveModelContext context);
+    BindingRuntimeTypes generateTypeMapping(EffectiveModelContext modelContext);
 }

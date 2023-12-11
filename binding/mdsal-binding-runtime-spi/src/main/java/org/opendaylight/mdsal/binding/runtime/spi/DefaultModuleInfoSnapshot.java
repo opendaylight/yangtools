@@ -18,47 +18,45 @@ import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 
 final class DefaultModuleInfoSnapshot implements ModuleInfoSnapshot {
     private final ImmutableMap<SourceIdentifier, YangModuleInfo> moduleInfos;
     private final ImmutableMap<String, ClassLoader> classLoaders;
-    private final @NonNull EffectiveModelContext effectiveModel;
+    private final @NonNull EffectiveModelContext modelContext;
 
-    DefaultModuleInfoSnapshot(final EffectiveModelContext effectiveModel,
+    DefaultModuleInfoSnapshot(final EffectiveModelContext modelContext,
             final Map<SourceIdentifier, YangModuleInfo> moduleInfos, final Map<String, ClassLoader> classLoaders) {
-        this.effectiveModel = requireNonNull(effectiveModel);
+        this.modelContext = requireNonNull(modelContext);
         this.moduleInfos = ImmutableMap.copyOf(moduleInfos);
         this.classLoaders = ImmutableMap.copyOf(classLoaders);
     }
 
     @Override
-    public EffectiveModelContext getEffectiveModelContext() {
-        return effectiveModel;
+    public EffectiveModelContext modelContext() {
+        return modelContext;
     }
 
     @Override
-    public ListenableFuture<? extends YangTextSchemaSource> getSource(final SourceIdentifier sourceIdentifier) {
-        final YangModuleInfo info = moduleInfos.get(sourceIdentifier);
-        if (info == null) {
-            return Futures.immediateFailedFuture(
-                new MissingSchemaSourceException("No source registered", sourceIdentifier));
-        }
-        return Futures.immediateFuture(YangTextSchemaSource.delegateForCharSource(sourceIdentifier,
-                    info.getYangTextCharSource()));
+    public ListenableFuture<? extends YangTextSource> getSource(final SourceIdentifier sourceId) {
+        final var info = moduleInfos.get(sourceId);
+        return info == null
+            ? Futures.immediateFailedFuture(new MissingSchemaSourceException(sourceId, "No source registered"))
+                : Futures.immediateFuture(new DelegatedYangTextSource(sourceId, info.getYangTextCharSource()));
     }
 
     @Override
     public <T> Class<T> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
-        final String packageName = Naming.getModelRootPackageName(fullyQualifiedName);
-        final ClassLoader loader = classLoaders.get(packageName);
+        final var packageName = Naming.getModelRootPackageName(fullyQualifiedName);
+        final var loader = classLoaders.get(packageName);
         if (loader == null) {
             throw new ClassNotFoundException("Package " + packageName + " not found");
         }
         @SuppressWarnings("unchecked")
-        final Class<T> loaded = (Class<T>) loader.loadClass(fullyQualifiedName);
+        final var loaded = (Class<T>) loader.loadClass(fullyQualifiedName);
         return loaded;
     }
 }

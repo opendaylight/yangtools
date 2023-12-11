@@ -17,14 +17,21 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
  * The result of BindingGenerator run. Contains mapping between Types and SchemaNodes.
  */
 @Beta
-public interface BindingRuntimeTypes extends EffectiveModelContextProvider, RuntimeTypeContainer, Immutable {
+public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
+    /**
+     * Return the {@link EffectiveModelContext} underlying this object.
+     *
+     * @return the {@link EffectiveModelContext} underlying this object
+     */
+    @NonNull EffectiveModelContext modelContext();
+
     /**
      * Lookup {@link IdentityRuntimeType} by its QNamme.
      *

@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
@@ -35,7 +34,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  */
 @Beta
 // FIXME: refactor return to follow foo()/getFoo()/findFoo() naming
-public interface BindingRuntimeContext extends EffectiveModelContextProvider, Immutable {
+public interface BindingRuntimeContext extends Immutable {
+
     @NonNull BindingRuntimeTypes getTypes();
 
     @NonNull <T> Class<T> loadClass(JavaTypeName type) throws ClassNotFoundException;
@@ -44,9 +44,8 @@ public interface BindingRuntimeContext extends EffectiveModelContextProvider, Im
         return loadClass(type.getIdentifier());
     }
 
-    @Override
-    default EffectiveModelContext getEffectiveModelContext() {
-        return getTypes().getEffectiveModelContext();
+    default @NonNull EffectiveModelContext modelContext() {
+        return getTypes().modelContext();
     }
 
     /**

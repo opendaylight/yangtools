@@ -17,14 +17,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class NonCachingCodecTest {
     @Mock
     public BindingNormalizedNodeCodec<DataObject> codec;
     @Mock
-    public NormalizedNode node;
+    public ContainerNode node;
     @Mock
     public DataObject object;
 

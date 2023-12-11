@@ -7,40 +7,31 @@
  */
 package org.opendaylight.mdsal.binding.runtime.spi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Map;
 import java.util.Set;
-import org.junit.Test;
-import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.$YangModuleInfoImpl;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.Mdsal767Data;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.One$F;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 
-public class ModuleInfoSnapshotBuilderTest {
-    private static final YangParserFactory PARSER_FACTORY = new DefaultYangParserFactory();
-
+class ModuleInfoSnapshotBuilderTest {
     @Test
-    public void testModuleRegistration() throws YangParserException {
-        final ModuleInfoSnapshotBuilder snapshotBuilder = new ModuleInfoSnapshotBuilder(PARSER_FACTORY);
+    void testModuleRegistration() throws Exception {
+        final var snapshotBuilder = new ModuleInfoSnapshotBuilder(new DefaultYangParserFactory());
         snapshotBuilder.add($YangModuleInfoImpl.getInstance());
         snapshotBuilder.addModuleFeatures(Mdsal767Data.class, Set.of(One$F.VALUE));
 
-        final ModuleInfoSnapshot snapshot = snapshotBuilder.build();
-        final EffectiveModelContext modelContext = snapshot.getEffectiveModelContext();
-        final Map<QNameModule, ModuleEffectiveStatement> modules = modelContext.getModuleStatements();
-        final ModuleEffectiveStatement module = modules.get(QNameModule.create(XMLNamespace.of("mdsal767")));
+        final var snapshot = snapshotBuilder.build();
+        final var modelContext = snapshot.modelContext();
+        final var modules = modelContext.getModuleStatements();
+        final var module = modules.get(QNameModule.create(XMLNamespace.of("mdsal767")));
         assertEquals(1, module.features().size());
-        final FeatureEffectiveStatement feature = module.features().stream().findAny().orElseThrow();
+        final var feature = module.features().stream().findAny().orElseThrow();
         assertEquals(QName.create("mdsal767", "one"), feature.argument());
     }
 }

@@ -13,8 +13,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
 @Beta
 public abstract class ForwardingModuleInfoSnapshot extends ForwardingObject implements ModuleInfoSnapshot {
@@ -27,12 +27,12 @@ public abstract class ForwardingModuleInfoSnapshot extends ForwardingObject impl
     }
 
     @Override
-    public @NonNull EffectiveModelContext getEffectiveModelContext() {
-        return delegate().getEffectiveModelContext();
+    public @NonNull EffectiveModelContext modelContext() {
+        return delegate().modelContext();
     }
 
     @Override
-    public ListenableFuture<? extends YangTextSchemaSource> getSource(final SourceIdentifier sourceIdentifier) {
+    public ListenableFuture<? extends YangTextSource> getSource(final SourceIdentifier sourceIdentifier) {
         return delegate().getSource(sourceIdentifier);
     }
 }
