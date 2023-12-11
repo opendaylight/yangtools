@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -108,7 +109,7 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
      *
      * @return a test document
      */
-    public ContainerNode createDocumentOne() {
+    public @NonNull ContainerNode createDocumentOne() {
         return Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
             .withChild(createTestContainer())
@@ -128,7 +129,7 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
     void basicReadWrites() {
         final var modificationTree = new InMemoryDataTreeModification(
             new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial()), rootOper), rootOper);
+                TreeNode.of(createDocumentOne(), Version.initial(false)), rootOper), rootOper);
         final var originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
         assertSame(BAR_NODE, originalBarNode.orElseThrow());

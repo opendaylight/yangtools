@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.data.tree.api.CommitMetadata;
 
 /**
  * The concept of a version, either node version, or a subtree version. The only interface contract this class has is
@@ -22,9 +23,23 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * From data management perspective, this concept serves as JVM-level MVCC
  * <a href="https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation">timestamp (TS)</a>.
  */
-public final class Version implements Immutable {
-    private Version() {
-        // Hidden on purpose
+public abstract sealed class Version permits SimpleVersion, TrackingVersion {
+
+    /**
+     * Create an initial version.
+     *
+     * @return trackMetadata {@code true} if the version should track metadata
+     * @return a new {@link Version}
+     */
+    public static final @NonNull Version initial(final boolean trackMetadata) {
+        final Version ret;
+        if (trackMetadata) {
+            ret = new TrackingVersion();
+            ret.commit();
+        } else {
+            ret = new SimpleVersion();
+        }
+        return ret;
     }
 
     /**
@@ -32,17 +47,11 @@ public final class Version implements Immutable {
      *
      * @return a new version.
      */
-    @SuppressWarnings("static-method")
-    public @NonNull Version next() {
-        return new Version();
-    }
+    public abstract @NonNull Version next();
 
-    /**
-     * Create an initial version.
-     *
-     * @return a new version.
-     */
-    public static @NonNull Version initial() {
-        return new Version();
-    }
+    public abstract void commit();
+
+    public abstract void commit(@NonNull CommitMetadata metadata);
+
+    public abstract @Nullable CommitMetadata commitMetadata();
 }
