@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "117d8753_2cd86d76",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-12-11T19:03:13Z",
+      "side": 1,
+      "message": "\u0027chained\u0027",
+      "range": {
+        "startLine": 12,
+        "startChar": 38,
+        "endLine": 12,
+        "endChar": 45
+      },
+      "revId": "1677176b0580ac9fd6b7eea0943fc7497f1716a6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
