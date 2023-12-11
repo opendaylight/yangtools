@@ -9,12 +9,17 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -23,8 +28,10 @@ import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
+import org.opendaylight.yangtools.yang.data.util.codec.NormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -47,8 +54,11 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
 /**
  * A thread-safe factory for instantiating {@link XmlCodec}s.
+ *
+ * <p>
+ * It implements {@link NormalizedNodeParser} as a convenient way of parsing payloads.
  */
-public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
+public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> implements NormalizedNodeParser {
     private final @NonNull InstanceIdentifierXmlCodec instanceIdentifierCodec;
     private final @NonNull MountPointContext mountCtx;
     private final @Nullable PreferredPrefixes pref;
@@ -104,6 +114,41 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
      */
     public static XmlCodecFactory create(final EffectiveModelContext context, final boolean preferPrefixes) {
         return create(MountPointContext.of(requireNonNull(context)), preferPrefixes);
+    }
+
+    @Override
+    public ContainerNode parseDatastore(final NodeIdentifier containerName, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public NormalizedNode parseData(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SuffixAndData parseChildData(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ContainerNode parseInput(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ContainerNode parseOutput(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override

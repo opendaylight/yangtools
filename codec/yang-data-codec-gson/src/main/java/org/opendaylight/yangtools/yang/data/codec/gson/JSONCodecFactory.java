@@ -10,12 +10,17 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -26,7 +31,9 @@ import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
+import org.opendaylight.yangtools.yang.data.util.codec.NormalizedNodeParser;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -50,8 +57,12 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 /**
  * Factory for creating JSON equivalents of codecs. Each instance of this object is bound to
  * a particular {@link EffectiveModelContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
+ *
+ * <p>
+ * It implements {@link NormalizedNodeParser} as a convenient way of parsing payloads.
  */
-public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
+public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>>
+        implements NormalizedNodeParser {
     @Deprecated(since = "12.0.0", forRemoval = true)
     static final class Lhotka02 extends JSONCodecFactory {
         Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
@@ -104,6 +115,42 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
             final BiFunction<EffectiveModelContext, JSONCodecFactory, @NonNull JSONInstanceIdentifierCodec> iidCodec) {
         super(context, cache);
         this.iidCodec = verifyNotNull(iidCodec.apply(context, this));
+    }
+
+
+    @Override
+    public final ContainerNode parseDatastore(final NodeIdentifier containerName, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public final NormalizedNode parseData(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public final SuffixAndData parseChildData(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public final ContainerNode parseInput(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public final ContainerNode parseOutput(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
