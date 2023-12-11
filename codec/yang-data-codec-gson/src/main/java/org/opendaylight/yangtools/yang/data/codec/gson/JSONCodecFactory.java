@@ -9,13 +9,22 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.gson.JsonParseException;
+import com.google.gson.stream.JsonReader;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -23,10 +32,14 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
-import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractNormalizedNodeParsingCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
+import org.opendaylight.yangtools.yang.data.util.codec.NormalizedNodeParserException;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -46,12 +59,14 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 /**
  * Factory for creating JSON equivalents of codecs. Each instance of this object is bound to
  * a particular {@link EffectiveModelContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
-public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
+public abstract sealed class JSONCodecFactory extends AbstractNormalizedNodeParsingCodecFactory<JSONCodec<?>> {
     @Deprecated(since = "12.0.0", forRemoval = true)
     static final class Lhotka02 extends JSONCodecFactory {
         Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
@@ -225,4 +240,49 @@ public abstract sealed class JSONCodecFactory extends AbstractCodecFactory<JSONC
     abstract JSONCodec<?> wrapDecimalCodec(DecimalStringCodec decimalCodec);
 
     abstract JSONCodec<?> wrapIntegerCodec(AbstractIntegerStringCodec<?, ?> integerCodec);
+
+
+    @Override
+    protected final NormalizedNode parseDatastoreImpl(final XMLNamespace rootNamespace,  final Qualified rootName,
+            final InputStream stream) throws IOException, NormalizedNodeParserException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected final NormalizedNode parseDataImpl(final SchemaInferenceStack stack, final InputStream stream)
+            throws IOException, NormalizedNodeParserException {
+        // Point to parent node
+        stack.exit();
+
+        final var holder = new NormalizationResultHolder();
+        try (var writer = ImmutableNormalizedNodeStreamWriter.from(holder)) {
+            try (var parser = JsonParserStream.create(writer, this, stack.toInference())) {
+                try (var reader = newJsonReader(stream)) {
+                    parser.parse(reader);
+                } catch (JsonParseException e) {
+                    throw NormalizedNodeParserException.ofCause(e);
+                }
+            }
+        }
+        return holder.getResult().data();
+    }
+
+    @Override
+    protected NormalizedNode parseChildDataImpl(final EffectiveStatementInference inference, final InputStream stream)
+            throws IOException, NormalizedNodeParserException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected NormalizedNode parseInputOutput(final Inference inference, final InputStream stream)
+            throws IOException, NormalizedNodeParserException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private static JsonReader newJsonReader(final InputStream stream) {
+        return new JsonReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+    }
 }

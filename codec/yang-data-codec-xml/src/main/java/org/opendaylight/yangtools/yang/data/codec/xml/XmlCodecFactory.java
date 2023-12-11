@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
-import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractNormalizedNodeParsingCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -48,7 +48,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 /**
  * A thread-safe factory for instantiating {@link XmlCodec}s.
  */
-public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
+public final class XmlCodecFactory extends AbstractNormalizedNodeParsingCodecFactory<XmlCodec<?>> {
     private final @NonNull InstanceIdentifierXmlCodec instanceIdentifierCodec;
     private final @NonNull MountPointContext mountCtx;
     private final @Nullable PreferredPrefixes pref;
