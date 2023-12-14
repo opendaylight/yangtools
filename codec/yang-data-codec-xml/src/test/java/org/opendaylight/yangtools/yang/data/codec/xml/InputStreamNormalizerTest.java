@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.codec.gson;
+package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,7 +91,7 @@ class InputStreamNormalizerTest {
                 }
               }
             }""");
-    private static final InputStreamNormalizer PARSER = JSONCodecFactorySupplier.RFC7951.getShared(MODEL_CONTEXT);
+    private static final InputStreamNormalizer PARSER = XmlCodecFactory.create(MODEL_CONTEXT);
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
@@ -120,16 +120,15 @@ class InputStreamNormalizerTest {
                 .build())
             .build(),
             PARSER.parseDatastore(DATA_NID, RESTCONF_MODULE, stream("""
-                {
-                  "ietf-restconf:data" : {
-                    "foo:foo" : {
-                      "str" : "str"
-                    },
-                    "foo:bar" : {
-                      "uint" : 2
-                    }
+                <data xmlns="urn:ietf:params:xml:ns:yang:ietf-restconf">
+                    <foo xmlns="foo">
+                      <str>str</str>
+                    </foo>
+                    <bar xmlns="foo">
+                      <uint>2</uint>
+                    </bar>
                   }
-                }""")).data());
+                </data>""")).data());
     }
 
     @Test
@@ -139,21 +138,17 @@ class InputStreamNormalizerTest {
             .withChild(ImmutableNodes.leafNode(STR, "str"))
             .build(),
             PARSER.parseData(Inference.ofDataTreePath(MODEL_CONTEXT, FOO), stream("""
-                {
-                  "foo:foo" : {
-                    "str" : "str"
-                  }
-                }""")).data());
+                <foo xmlns="foo">
+                  <str>str</str>
+                </foo>""")).data());
     }
 
     @Test
     void parseDataBadType() throws Exception {
         final var error = assertError(() -> PARSER.parseData(Inference.ofDataTreePath(MODEL_CONTEXT, FOO), stream("""
-            {
-              "foo:foo" : {
-                "str" : "too long"
-              }
-            }""")));
+            <foo xmlns="foo">
+              <str>too long</str>
+            </foo>""")));
         assertEquals(ErrorType.APPLICATION, error.type());
         assertEquals(ErrorTag.INVALID_VALUE, error.tag());
     }
@@ -162,11 +157,9 @@ class InputStreamNormalizerTest {
     void parseDataBadRootElement() throws Exception {
         assertMismatchedError("(foo)foo", "(foo)bar",
             () -> PARSER.parseData(Inference.ofDataTreePath(MODEL_CONTEXT, FOO), stream("""
-                {
-                  "foo:bar" : {
-                    "uint" : 23
-                  }
-                }""")));
+                <bar xmlns="foo">
+                  <uint>23</uint>
+                </bar>""")));
     }
 
     @Test
@@ -190,11 +183,9 @@ class InputStreamNormalizerTest {
     @Test
     void parseChildData() throws Exception {
         final var prefixAndNode = PARSER.parseChildData(Inference.of(MODEL_CONTEXT), stream("""
-            {
-              "foo:foo" : {
-                "str" : "str"
-              }
-            }"""));
+            <foo xmlns="foo">
+              <str>str</str>
+            </foo>"""));
 
         assertEquals(List.of(), prefixAndNode.prefix());
         assertEquals(ImmutableNodes.newContainerBuilder()
@@ -206,9 +197,7 @@ class InputStreamNormalizerTest {
     @Test
     void parseChildDataChoices() throws Exception {
         final var prefixAndNode = PARSER.parseChildData(Inference.of(MODEL_CONTEXT), stream("""
-            {
-              "foo:str" : "str"
-            }"""));
+            <str xmlns="foo">str</str>"""));
         assertEquals(List.of(
             new NodeIdentifier(QName.create("foo", "ch1")),
             new NodeIdentifier(QName.create("foo", "ch2"))), prefixAndNode.prefix());
@@ -218,14 +207,10 @@ class InputStreamNormalizerTest {
     @Test
     void parseChildDataListEntry() throws Exception {
         final var prefixAndNode = PARSER.parseChildData(Inference.of(MODEL_CONTEXT), stream("""
-            {
-              "foo:baz" : [
-                {
-                  "one" : true,
-                  "two" : "two"
-                }
-              ]
-            }"""));
+            <baz xmlns="foo">
+              <one>true</one>
+              <two>two</two>
+            </baz>"""));
         assertEquals(List.of(new NodeIdentifier(BAZ)), prefixAndNode.prefix());
         assertEquals(ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAZ, Map.of(ONE, Boolean.TRUE, TWO, "two")))
@@ -276,38 +261,6 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseChildDataListEntryNone() throws Exception {
-        final var error = assertError(() -> PARSER.parseChildData(Inference.of(MODEL_CONTEXT), stream("""
-            {
-              "foo:baz" : [
-              ]
-            }""")));
-        assertEquals(ErrorType.PROTOCOL, error.type());
-        assertEquals(ErrorTag.MALFORMED_MESSAGE, error.tag());
-        assertEquals("Exactly one instance of (foo)baz is required, 0 supplied", error.message());
-    }
-
-    @Test
-    void parseChildDataListEntryTwo() throws Exception {
-        final var error = assertError(() -> PARSER.parseChildData(Inference.of(MODEL_CONTEXT), stream("""
-            {
-              "foo:baz" : [
-                {
-                  "one" : false,
-                  "two" : "two"
-                },
-                {
-                  "one" : true,
-                  "two" : "two"
-                }
-              ]
-            }""")));
-        assertEquals(ErrorType.PROTOCOL, error.type());
-        assertEquals(ErrorTag.MALFORMED_MESSAGE, error.tag());
-        assertEquals("Exactly one instance of (foo)baz is required, 2 supplied", error.message());
-    }
-
-    @Test
     void parseInputRpc() throws Exception {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterSchemaTree(THUD);
@@ -317,11 +270,9 @@ class InputStreamNormalizerTest {
             .withChild(ImmutableNodes.leafNode(UINT, Uint32.TWO))
             .build(),
             PARSER.parseInput(stack.toInference(), stream("""
-                {
-                  "foo:input" : {
-                    "uint" : 2
-                  }
-                }""")).data());
+                <input xmlns="foo">
+                  <uint>2</uint>
+                </input>""")).data());
     }
 
     @Test
@@ -330,10 +281,7 @@ class InputStreamNormalizerTest {
         stack.enterSchemaTree(THUD);
 
         assertMismatchedError("(foo)input", "(foo)output", () -> PARSER.parseInput(stack.toInference(), stream("""
-            {
-              "foo:output" : {
-              }
-            }""")));
+            <output xmlns="foo"/>""")));
     }
 
     @Test
@@ -347,11 +295,9 @@ class InputStreamNormalizerTest {
             .withChild(ImmutableNodes.leafNode(STR, "str"))
             .build(),
             PARSER.parseInput(stack.toInference(), stream("""
-                {
-                  "foo:input" : {
-                    "str" : "str"
-                  }
-                }""")).data());
+                <input xmlns="foo">
+                  <str>str</str>
+                </input>""")).data());
     }
 
     @Test
@@ -373,10 +319,7 @@ class InputStreamNormalizerTest {
             .withNodeIdentifier(new NodeIdentifier(QName.create("foo", "output")))
             .build(),
             PARSER.parseOutput(stack.toInference(), stream("""
-                {
-                  "foo:output" : {
-                  }
-                }""")).data());
+                <output xmlns="foo"/>""")).data());
     }
 
     @Test
@@ -385,10 +328,7 @@ class InputStreamNormalizerTest {
         stack.enterSchemaTree(THUD);
 
         assertMismatchedError("(foo)output", "(foo)input", () -> PARSER.parseOutput(stack.toInference(), stream("""
-            {
-              "foo:input" : {
-              }
-            }""")));
+            <input xmlns="foo"/>""")));
     }
 
     @Test
@@ -401,10 +341,7 @@ class InputStreamNormalizerTest {
             .withNodeIdentifier(new NodeIdentifier(QName.create("foo", "output")))
             .build(),
             PARSER.parseOutput(stack.toInference(), stream("""
-                {
-                  "foo:output" : {
-                  }
-                }""")).data());
+                <output xmlns="foo"/>""")).data());
     }
 
     @Test
