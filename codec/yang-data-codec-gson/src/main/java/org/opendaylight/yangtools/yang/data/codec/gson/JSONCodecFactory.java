@@ -305,11 +305,11 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     }
 
     @Override
-    protected final NormalizationResult<?> parseData(final SchemaInferenceStack stack, final InputStream stream)
-            throws IOException, NormalizationException {
+    protected final NormalizationResult<?> parseData(final SchemaInferenceStack stack, QName nodeName,
+            final InputStream stream) throws IOException, NormalizationException {
         // Point to parent node
         stack.exit();
-        return parseStream(stack.toInference(), stream);
+        return checkNodeName(parseStream(stack.toInference(), stream), nodeName);
     }
 
     @Override

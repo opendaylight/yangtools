@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.codec.gson;
+package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,7 +91,7 @@ class InputStreamNormalizerTest {
                 }
               }
             }""");
-    private static final InputStreamNormalizer PARSER = JSONCodecFactorySupplier.RFC7951.getShared(MODEL_CONTEXT);
+    private static final InputStreamNormalizer PARSER = XmlCodecFactory.create(MODEL_CONTEXT);
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
@@ -120,16 +120,15 @@ class InputStreamNormalizerTest {
                 .build())
             .build(),
             PARSER.parseDatastore(DATA_NID, RESTCONF_MODULE, stream("""
-                {
-                  "ietf-restconf:data" : {
-                    "foo:foo" : {
-                      "str" : "str"
-                    },
-                    "foo:bar" : {
-                      "uint" : 2
-                    }
+                <data xmlns="urn:ietf:params:xml:ns:yang:ietf-restconf">
+                    <foo xmlns="foo">
+                      <str>str</str>
+                    </foo>
+                    <bar xmlns="foo">
+                      <uint>2</uint>
+                    </bar>
                   }
-                }""")).data());
+                </data>""")).data());
     }
 
     @Test
@@ -139,21 +138,17 @@ class InputStreamNormalizerTest {
             .withChild(ImmutableNodes.leafNode(STR, "str"))
             .build(),
             PARSER.parseData(Inference.ofDataTreePath(MODEL_CONTEXT, FOO), stream("""
-                {
-                  "foo:foo" : {
-                    "str" : "str"
-                  }
-                }""")).data());
+                <foo xmlns="foo">
+                  <str>str</str>
+                </foo>""")).data());
     }
 
     @Test
     void parseDataBadType() throws Exception {
         final var error = assertError(() -> PARSER.parseData(Inference.ofDataTreePath(MODEL_CONTEXT, FOO), stream("""
-            {
-              "foo:foo" : {
-                "str" : "too long"
-              }
-            }""")));
+            <foo xmlns="foo">
+              <str>too long</str>
+            </foo>""")));
         assertEquals(ErrorType.APPLICATION, error.type());
         assertEquals(ErrorTag.INVALID_VALUE, error.tag());
     }
@@ -162,11 +157,9 @@ class InputStreamNormalizerTest {
     void parseDataBadRootElement() throws Exception {
         assertMismatchedError("(foo)foo", "(foo)bar",
             () -> PARSER.parseData(Inference.ofDataTreePath(MODEL_CONTEXT, FOO), stream("""
-                {
-                  "foo:bar" : {
-                    "uint" : 23
-                  }
-                }""")));
+                <bar xmlns="foo">
+                  <uint>23</uint>
+                </bar>""")));
     }
 
     @Test
@@ -317,11 +310,9 @@ class InputStreamNormalizerTest {
             .withChild(ImmutableNodes.leafNode(UINT, Uint32.TWO))
             .build(),
             PARSER.parseInput(stack.toInference(), stream("""
-                {
-                  "foo:input" : {
-                    "uint" : 2
-                  }
-                }""")).data());
+                <input xmlns="foo">
+                  <uint>2</uint>
+                </input>""")).data());
     }
 
     @Test
@@ -330,10 +321,7 @@ class InputStreamNormalizerTest {
         stack.enterSchemaTree(THUD);
 
         assertMismatchedError("(foo)input", "(foo)output", () -> PARSER.parseInput(stack.toInference(), stream("""
-            {
-              "foo:output" : {
-              }
-            }""")));
+            <output xmlns="foo"/>""")));
     }
 
     @Test
@@ -347,11 +335,9 @@ class InputStreamNormalizerTest {
             .withChild(ImmutableNodes.leafNode(STR, "str"))
             .build(),
             PARSER.parseInput(stack.toInference(), stream("""
-                {
-                  "foo:input" : {
-                    "str" : "str"
-                  }
-                }""")).data());
+                <input xmlns="foo">
+                  <str>str</str>
+                </input>""")).data());
     }
 
     @Test
@@ -373,10 +359,7 @@ class InputStreamNormalizerTest {
             .withNodeIdentifier(new NodeIdentifier(QName.create("foo", "output")))
             .build(),
             PARSER.parseOutput(stack.toInference(), stream("""
-                {
-                  "foo:output" : {
-                  }
-                }""")).data());
+                <output xmlns="foo"/>""")).data());
     }
 
     @Test
@@ -385,10 +368,7 @@ class InputStreamNormalizerTest {
         stack.enterSchemaTree(THUD);
 
         assertMismatchedError("(foo)output", "(foo)input", () -> PARSER.parseOutput(stack.toInference(), stream("""
-            {
-              "foo:input" : {
-              }
-            }""")));
+            <input xmlns="foo"/>""")));
     }
 
     @Test
@@ -401,10 +381,7 @@ class InputStreamNormalizerTest {
             .withNodeIdentifier(new NodeIdentifier(QName.create("foo", "output")))
             .build(),
             PARSER.parseOutput(stack.toInference(), stream("""
-                {
-                  "foo:output" : {
-                  }
-                }""")).data());
+                <output xmlns="foo"/>""")).data());
     }
 
     @Test

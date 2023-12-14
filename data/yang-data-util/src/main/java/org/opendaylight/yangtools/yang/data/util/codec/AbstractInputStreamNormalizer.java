@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -71,17 +72,16 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
             throw new IllegalArgumentException("Invalid inference statement " + stmt);
         }
 
-        final NormalizationResult<?> data;
         try {
-            data = parseData(stack, requireNonNull(stream));
+            return parseData(stack, dataStmt.argument(), requireNonNull(stream));
         } catch (IOException | IllegalArgumentException e) {
             throw NormalizationException.ofCause(e);
         }
-        return checkNodeName(data, dataStmt.argument());
     }
 
-    protected abstract @NonNull NormalizationResult<?> parseData(@NonNull SchemaInferenceStack stack,
-        @NonNull InputStream stream) throws IOException, NormalizationException;
+    @NonNullByDefault
+    protected abstract NormalizationResult<?> parseData(SchemaInferenceStack stack, QName nodeName, InputStream stream)
+        throws IOException, NormalizationException;
 
     @Override
     public final PrefixAndResult parseChildData(final EffectiveStatementInference inference, final InputStream stream)
