@@ -99,6 +99,13 @@ public interface InputStreamNormalizer {
      * @param data parsed data
      */
     record PrefixAndData(List<PathArgument> prefix, NormalizedNode data) {
+        /**
+         * Default constructor.
+         *
+         * @param prefix {@link YangInstanceIdentifier} steps that need to be concatenated to the request path to form
+         *               a {@link YangInstanceIdentifier} pointing to the immediate parent of {@link #data}.
+         * @param data parsed data
+         */
         public PrefixAndData {
             prefix = List.copyOf(prefix);
             requireNonNull(data);
