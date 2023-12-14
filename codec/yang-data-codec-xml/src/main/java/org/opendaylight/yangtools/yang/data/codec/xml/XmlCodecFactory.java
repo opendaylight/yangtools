@@ -9,12 +9,23 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationException;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -22,9 +33,11 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
-import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractInputStreamNormalizer;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -44,11 +57,12 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * A thread-safe factory for instantiating {@link XmlCodec}s.
  */
-public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
+public final class XmlCodecFactory extends AbstractInputStreamNormalizer<XmlCodec<?>> {
     private final @NonNull InstanceIdentifierXmlCodec instanceIdentifierCodec;
     private final @NonNull MountPointContext mountCtx;
     private final @Nullable PreferredPrefixes pref;
@@ -204,5 +218,63 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     @Override
     protected XmlCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullXmlCodec.INSTANCE;
+    }
+
+    @Override
+    protected NormalizationResult<ContainerNode> parseDatastore(final InputStream stream,
+            final NodeIdentifier containerName, final Unqualified moduleName)
+                throws IOException, NormalizationException {
+        final var reader = openStream(stream);
+        checkExpectedElement(reader, containerName);
+        final var builder = Builders.containerBuilder().withNodeIdentifier(containerName);
+
+
+        throw new UnsupportedOperationException("FIXME: not implemented");
+    }
+
+    private static void checkExpectedElement(final XMLStreamReader reader, final NodeIdentifier containerName)
+            throws NormalizationException {
+        final var qname = containerName.getNodeType();
+        final var expLocalName = qname.getLocalName();
+        final var actLocalName = reader.getLocalName();
+        final var expNamespace = qname.getNamespace().toString();
+        final var actNamespace = reader.getNamespaceURI();
+        if (!expLocalName.equals(actLocalName) || !expNamespace.equals(actNamespace)) {
+            throw NormalizationException.ofMessage(
+                "Expected name (" + expNamespace + ')' + expLocalName + ", got (" + actNamespace + ')' + actLocalName);
+        }
+    }
+
+    @Override
+    protected NormalizationResult<?> parseData(final SchemaInferenceStack stack, final InputStream stream)
+            throws IOException, NormalizationException {
+        throw new UnsupportedOperationException("FIXME: not implemented");
+    }
+
+    @Override
+    protected NormalizationResult<?> parseChildData(final InputStream stream,
+            final EffectiveStatementInference inference) throws IOException, NormalizationException {
+        throw new UnsupportedOperationException("FIXME: not implemented");
+    }
+
+    @Override
+    protected NormalizationResult<ContainerNode> parseInputOutput(final SchemaInferenceStack stack,
+            final QName expected, final InputStream stream) throws IOException, NormalizationException {
+        throw new UnsupportedOperationException("FIXME: not implemented");
+    }
+
+    private static @NonNull XMLStreamReader openStream(final InputStream stream) throws NormalizationException {
+        try {
+            final var reader = UntrustedXML.createXMLStreamReader(stream);
+            while (!reader.isStartElement()) {
+                if (!reader.hasNext()) {
+                    throw NormalizationException.ofMessage("Missing documented element start");
+                }
+                reader.next();
+            }
+            return reader;
+        } catch (XMLStreamException e) {
+            throw NormalizationException.ofCause(e);
+        }
     }
 }
