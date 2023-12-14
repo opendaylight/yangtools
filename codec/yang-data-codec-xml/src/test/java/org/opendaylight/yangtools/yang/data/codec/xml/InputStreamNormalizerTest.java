@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.codec.gson;
+package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,7 +91,7 @@ class InputStreamNormalizerTest {
                 }
               }
             }""");
-    private static final InputStreamNormalizer PARSER = JSONCodecFactorySupplier.RFC7951.getShared(MODEL_CONTEXT);
+    private static final InputStreamNormalizer PARSER = XmlCodecFactory.create(MODEL_CONTEXT);
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
     private static final QName BAZ = QName.create("foo", "baz");
