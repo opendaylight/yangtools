@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
+// Note: this class has a mirror in yang-data-codec-xml. Every modification should be reflected there as well.
 class InputStreamNormalizerTest {
     private static final EffectiveModelContext MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module foo {

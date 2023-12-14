@@ -99,6 +99,13 @@ public interface InputStreamNormalizer {
      * @param data parsed data
      */
     record PrefixAndData(List<PathArgument> prefix, NormalizedNode data) {
+        /**
+         * Default constructor.
+         *
+         * @param prefix {@link YangInstanceIdentifier} steps that need to be concatenated to the request path to form
+         *               a {@link YangInstanceIdentifier} pointing to the immediate parent of {@link #data}.
+         * @param data parsed data
+         */
         public PrefixAndData {
             prefix = List.copyOf(prefix);
             requireNonNull(data);
@@ -160,7 +167,7 @@ public interface InputStreamNormalizer {
     /**
      * Parse the contents of an {@link InputStream} as a child data resource.
      *
-     * @param inference pointer to the parent of the data resource
+     * @param parentInference pointer to the parent of the data resource
      * @param stream the {@link InputStream} to parse
      * @return A {@link PrefixAndData} containing parsed resource data and any {@link YangInstanceIdentifier} steps that
      *         need to be appended between {@code inference} and the parsed {@link NormalizedNode}
@@ -174,7 +181,7 @@ public interface InputStreamNormalizer {
     /**
      * Parse the contents of an {@link InputStream} as an operation {@code input}.
      *
-     * @param inference pointer to the operation
+     * @param operationInference pointer to the operation
      * @param stream the {@link InputStream} to parse
      * @return Parsed {@link ContainerNode} corresponding to the operation input
      * @throws NullPointerException if any argument is {@code null}
@@ -187,7 +194,7 @@ public interface InputStreamNormalizer {
     /**
      * Parse the contents of an {@link InputStream} as on operation {@code output}.
      *
-     * @param inference pointer to the operation
+     * @param operationInference pointer to the operation
      * @param stream the {@link InputStream} to parse
      * @return Parsed {@link ContainerNode} corresponding to the operation output
      * @throws NullPointerException if any argument is {@code null}
