@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.common.MountPointLabel;
  * corresponding {@link #context()}. Furthermore {@link #data()} is guaranteed to point at a {@link ContainerNode}.
  */
 @NonNullByDefault
-public interface NormalizedMountPoint extends NormalizedTuple {
+public interface NormalizedMountPoint extends NormalizedTuple<ContainerNode> {
     /**
      * Return the {@code mount-point} label.
      *
@@ -29,9 +29,6 @@ public interface NormalizedMountPoint extends NormalizedTuple {
      * @return Underlying mount point context
      */
     MountPointContext context();
-
-    @Override
-    ContainerNode data();
 
     /*
      * FIXME: consider whether this interface should contain some information based on 'parent-reference':

@@ -26,17 +26,17 @@ public final class NormalizationResultHolder implements Mutable {
     private NormalizedMetadata metadata;
     private NormalizedMountpoints mountPoints;
 
-    public @Nullable NormalizationResult result() {
+    public @Nullable NormalizationResult<?> result() {
         final var localData = data;
-        return localData == null ? null : new NormalizationResult(localData, metadata, mountPoints);
+        return localData == null ? null : new NormalizationResult<>(localData, metadata, mountPoints);
     }
 
-    public @NonNull NormalizationResult getResult() {
+    public @NonNull NormalizationResult<?> getResult() {
         final var localData = data;
         if (localData == null) {
             throw new IllegalStateException("Holder " + this + " has not been completed");
         }
-        return new NormalizationResult(localData, metadata, mountPoints);
+        return new NormalizationResult<>(localData, metadata, mountPoints);
     }
 
     void setData(final NormalizedNode data) {

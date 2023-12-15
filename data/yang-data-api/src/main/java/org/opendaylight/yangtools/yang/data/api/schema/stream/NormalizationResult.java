@@ -20,23 +20,23 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedTuple;
  * The result of a {@link NormalizedNodeStreamWriter} stream, i.e. of a normalization operation. It really is just an
  * implementation of {@link NormalizedTuple}.
  */
-public record NormalizationResult(
-        @NonNull NormalizedNode data,
+public record NormalizationResult<T extends NormalizedNode>(
+        @NonNull T data,
         @Nullable NormalizedMetadata metadata,
-        @Nullable NormalizedMountpoints mountPoints) implements NormalizedTuple {
+        @Nullable NormalizedMountpoints mountPoints) implements NormalizedTuple<T> {
     public NormalizationResult {
         requireNonNull(data);
     }
 
-    public NormalizationResult(final @NonNull NormalizedNode data) {
+    public NormalizationResult(final @NonNull T data) {
         this(data, null, null);
     }
 
-    public NormalizationResult(final @NonNull NormalizedNode data, final @Nullable NormalizedMetadata metadata) {
+    public NormalizationResult(final @NonNull T data, final @Nullable NormalizedMetadata metadata) {
         this(data, metadata, null);
     }
 
-    public NormalizationResult(final @NonNull NormalizedNode data, final @Nullable NormalizedMountpoints mountPoints) {
+    public NormalizationResult(final @NonNull T data, final @Nullable NormalizedMountpoints mountPoints) {
         this(data, null, mountPoints);
     }
 }

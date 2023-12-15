@@ -44,7 +44,7 @@ public final class ReusableImmutableNormalizedNodeStreamWriter extends Immutable
     }
 
     @Override
-    public NormalizationResult result() {
+    public NormalizationResult<?> result() {
         return builder.result();
     }
 
