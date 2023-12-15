@@ -22,13 +22,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
 //        the corresponding metadata and/or mount points. Most notably mount points are only defined for ContainerNode
 //        and MapEntryNode.
 @Beta
-public interface NormalizedTuple extends Immutable {
+public interface NormalizedTuple<T extends NormalizedNode> extends Immutable {
     /**
      * Return the data portion of this tree.
      *
      * @return Data portion of this tree.
      */
-    @NonNull NormalizedNode data();
+    @NonNull T data();
 
     /**
      * Return the metadata portion of this tree. This portion is optional.

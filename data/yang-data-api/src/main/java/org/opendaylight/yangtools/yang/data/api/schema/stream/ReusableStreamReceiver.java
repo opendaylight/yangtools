@@ -41,7 +41,7 @@ public interface ReusableStreamReceiver extends NormalizedNodeStreamWriter {
      *
      * @return Result of streaming, or {@code null} if not result is present.
      */
-    @Nullable NormalizationResult result();
+    @Nullable NormalizationResult<?> result();
 
     /**
      * Reset this writer to initial state.
