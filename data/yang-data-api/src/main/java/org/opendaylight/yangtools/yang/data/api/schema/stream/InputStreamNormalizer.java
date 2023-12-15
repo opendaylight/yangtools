@@ -98,7 +98,7 @@ public interface InputStreamNormalizer {
      *               a {@link YangInstanceIdentifier} pointing to the immediate parent of {@link #data}.
      * @param data parsed data
      */
-    record PrefixAndData(List<PathArgument> prefix, NormalizedNode data) {
+    record PrefixAndData(List<PathArgument> prefix, NormalizationResult<?> data) {
         /**
          * Default constructor.
          *
@@ -148,8 +148,8 @@ public interface InputStreamNormalizer {
      * @throws NullPointerException if any argument is {@code null}
      * @throws NormalizationException if an error occurs
      */
-    ContainerNode parseDatastore(NodeIdentifier containerName, Unqualified moduleName, InputStream stream)
-        throws NormalizationException;
+    NormalizationResult<ContainerNode> parseDatastore(NodeIdentifier containerName, Unqualified moduleName,
+        InputStream stream) throws NormalizationException;
 
     /**
      * Parse the contents of an {@link InputStream} as a data resource.
@@ -161,7 +161,8 @@ public interface InputStreamNormalizer {
      * @throws IllegalArgumentException if {@code inference} does not to point to a resource recognized by this parser
      * @throws NormalizationException if an error occurs
      */
-    NormalizedNode parseData(EffectiveStatementInference inference, InputStream stream) throws NormalizationException;
+    NormalizationResult<?> parseData(EffectiveStatementInference inference, InputStream stream)
+        throws NormalizationException;
 
     /**
      * Parse the contents of an {@link InputStream} as a child data resource.
@@ -187,7 +188,7 @@ public interface InputStreamNormalizer {
      * @throws IllegalArgumentException if {@code inference} does not to point to an operation recognized by this parser
      * @throws NormalizationException if an error occurs
      */
-    ContainerNode parseInput(EffectiveStatementInference operationInference, InputStream stream)
+    NormalizationResult<ContainerNode> parseInput(EffectiveStatementInference operationInference, InputStream stream)
         throws NormalizationException;
 
     /**
@@ -200,6 +201,6 @@ public interface InputStreamNormalizer {
      * @throws IllegalArgumentException if {@code inference} does not to point to an operation recognized by this parser
      * @throws NormalizationException if an error occurs
      */
-    ContainerNode parseOutput(EffectiveStatementInference operationInference, InputStream stream)
+    NormalizationResult<ContainerNode> parseOutput(EffectiveStatementInference operationInference, InputStream stream)
         throws NormalizationException;
 }

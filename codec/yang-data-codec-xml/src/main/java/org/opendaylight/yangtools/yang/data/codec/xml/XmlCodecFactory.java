@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationException;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -221,8 +221,8 @@ public final class XmlCodecFactory extends AbstractInputStreamNormalizer<XmlCode
     }
 
     @Override
-    protected ContainerNode parseDatastoreImpl(final NodeIdentifier containerName, final Unqualified moduleName,
-            final InputStream stream) throws IOException, NormalizationException {
+    protected NormalizationResult<ContainerNode> parseDatastoreImpl(final NodeIdentifier containerName,
+            final Unqualified moduleName, final InputStream stream) throws IOException, NormalizationException {
         final var reader = openStream(stream);
         checkExpectedElement(reader, containerName);
         final var builder = Builders.containerBuilder().withNodeIdentifier(containerName);
@@ -245,20 +245,20 @@ public final class XmlCodecFactory extends AbstractInputStreamNormalizer<XmlCode
     }
 
     @Override
-    protected NormalizedNode parseDataImpl(final SchemaInferenceStack stack, final InputStream stream)
+    protected NormalizationResult<?> parseDataImpl(final SchemaInferenceStack stack, final InputStream stream)
             throws IOException, NormalizationException {
         throw new UnsupportedOperationException("FIXME: not implemented");
     }
 
     @Override
-    protected NormalizedNode parseChildDataImpl(final EffectiveStatementInference inference, final InputStream stream)
-            throws IOException, NormalizationException {
-        throw new UnsupportedOperationException("FIXME: not implemented");
-    }
-
-    @Override
-    protected NormalizedNode parseInputOutput(final SchemaInferenceStack stack, final QName expected,
+    protected NormalizationResult<?> parseChildDataImpl(final EffectiveStatementInference inference,
             final InputStream stream) throws IOException, NormalizationException {
+        throw new UnsupportedOperationException("FIXME: not implemented");
+    }
+
+    @Override
+    protected NormalizationResult<ContainerNode> parseInputOutput(final SchemaInferenceStack stack,
+            final QName expected, final InputStream stream) throws IOException, NormalizationException {
         throw new UnsupportedOperationException("FIXME: not implemented");
     }
 
