@@ -21,11 +21,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.InputStreamNormalizer;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationException;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
@@ -49,8 +49,8 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
     }
 
     @Override
-    public final ContainerNode parseDatastore(final NodeIdentifier containerName, final Unqualified moduleName,
-            final InputStream stream) throws NormalizationException {
+    public final NormalizationResult<ContainerNode> parseDatastore(final NodeIdentifier containerName,
+            final Unqualified moduleName, final InputStream stream) throws NormalizationException {
         try {
             return parseDatastoreImpl(requireNonNull(containerName), requireNonNull(moduleName),
                 requireNonNull(stream));
@@ -59,11 +59,12 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         }
     }
 
-    protected abstract @NonNull ContainerNode parseDatastoreImpl(@NonNull NodeIdentifier containerName,
-        @NonNull Unqualified moduleName, @NonNull InputStream stream) throws IOException, NormalizationException;
+    protected abstract @NonNull NormalizationResult<ContainerNode> parseDatastoreImpl(
+        @NonNull NodeIdentifier containerName, @NonNull Unqualified moduleName, @NonNull InputStream stream)
+            throws IOException, NormalizationException;
 
     @Override
-    public final NormalizedNode parseData(final EffectiveStatementInference inference, final InputStream stream)
+    public final NormalizationResult<?> parseData(final EffectiveStatementInference inference, final InputStream stream)
             throws NormalizationException {
         final var stack = checkInferenceNotEmpty(inference);
         final var stmt = stack.currentStatement();
@@ -71,7 +72,7 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
             throw new IllegalArgumentException("Invalid inference statement " + stmt);
         }
 
-        final NormalizedNode data;
+        final NormalizationResult<?> data;
         try {
             data = parseDataImpl(stack, requireNonNull(stream));
         } catch (IOException | IllegalArgumentException e) {
@@ -80,7 +81,7 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         return checkNodeName(data, dataStmt.argument());
     }
 
-    protected abstract @NonNull NormalizedNode parseDataImpl(@NonNull SchemaInferenceStack stack,
+    protected abstract @NonNull NormalizationResult<?> parseDataImpl(@NonNull SchemaInferenceStack stack,
         @NonNull InputStream stream) throws IOException, NormalizationException;
 
     @Override
@@ -88,15 +89,17 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
             throws NormalizationException {
         checkInference(inference);
 
-        final NormalizedNode data;
+        final NormalizationResult<?> normalized;
         try {
-            data = parseChildDataImpl(inference, requireNonNull(stream));
+            normalized = parseChildDataImpl(inference, requireNonNull(stream));
         } catch (IOException | IllegalArgumentException e) {
             throw NormalizationException.ofCause(e);
         }
 
         final var prefix = new ArrayList<@NonNull PathArgument>();
-        var result = data;
+        var data = normalized.data();
+        var metadata = normalized.metadata();
+        var mountPoints = normalized.mountPoints();
 
         // Deal with the semantic differences of what "child" means in NormalizedNode versus in YANG data tree
         // structure.
@@ -106,10 +109,9 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         //
         // Therefore we need to peel any ChoiceNode from the result and shift them to the prefix. Since each choice was
         // created implicitly to contain the element mentioned in the stream.
-        while (result instanceof ChoiceNode choice) {
-            final var childNode = choice.body().iterator().next();
-            prefix.add(result.name());
-            result = childNode;
+        while (data instanceof ChoiceNode choice) {
+            prefix.add(choice.name());
+            data = choice.body().iterator().next();
         }
 
         // NormalizedNode structure has 'list' and 'leaf-list' statements visible and addressable, whereas YANG data
@@ -124,26 +126,36 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         // Therefore we need to peel any UnkeyedListNode, MapNode and LeafSetNodes from the top-level and shift them
         // to the prefix. Note that from the parser perspective, each such node can legally contain zero, one or more
         // entries, but this method is restricted to allowing only a single entry.
-        if (result instanceof MapNode || result instanceof LeafSetNode || result instanceof UnkeyedListNode) {
-            final var body = ((NormalizedNodeContainer<?>) result).body();
+        if (data instanceof MapNode || data instanceof LeafSetNode || data instanceof UnkeyedListNode) {
+            final var dataName = data.name();
+            final var body = ((NormalizedNodeContainer<?>) data).body();
             final var size = body.size();
             if (body.size() != 1) {
                 throw NormalizationException.ofMessage(
-                    "Exactly one instance of " + result.name().getNodeType() + " is required, " + size + " supplied");
+                    "Exactly one instance of " + dataName.getNodeType() + " is required, " + size + " supplied");
             }
-            prefix.add(result.name());
-            result = body.iterator().next();
+
+
+            prefix.add(dataName);
+            data = body.iterator().next();
+            if (metadata != null) {
+                metadata = metadata.getChildren().get(dataName);
+            }
+            if (mountPoints != null) {
+                mountPoints = mountPoints.getChildren().get(dataName);
+            }
         }
 
-        return new PrefixAndData(prefix, result);
+        return new PrefixAndData(prefix, new NormalizationResult<>(data, metadata, mountPoints));
     }
 
-    protected abstract @NonNull NormalizedNode parseChildDataImpl(@NonNull EffectiveStatementInference inference,
-            @NonNull InputStream stream) throws IOException, NormalizationException;
+    protected abstract @NonNull NormalizationResult<?> parseChildDataImpl(
+        @NonNull EffectiveStatementInference inference, @NonNull InputStream stream)
+            throws IOException, NormalizationException;
 
     @Override
-    public final ContainerNode parseInput(final EffectiveStatementInference inference, final InputStream stream)
-            throws NormalizationException {
+    public final NormalizationResult<ContainerNode> parseInput(final EffectiveStatementInference inference,
+            final InputStream stream) throws NormalizationException {
         final var stack = checkInferenceNotEmpty(inference);
         final var stmt = stack.currentStatement();
         final QName expected;
@@ -158,8 +170,8 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
     }
 
     @Override
-    public final ContainerNode parseOutput(final EffectiveStatementInference inference, final InputStream stream)
-            throws NormalizationException {
+    public final NormalizationResult<ContainerNode> parseOutput(final EffectiveStatementInference inference,
+            final InputStream stream) throws NormalizationException {
         final var stack = checkInferenceNotEmpty(inference);
         final var stmt = stack.currentStatement();
         final QName expected;
@@ -173,9 +185,9 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         return doParseInputOutput(stack, expected, requireNonNull(stream));
     }
 
-    private @NonNull ContainerNode doParseInputOutput(final @NonNull SchemaInferenceStack stack,
+    private @NonNull NormalizationResult<ContainerNode> doParseInputOutput(final @NonNull SchemaInferenceStack stack,
             final @NonNull QName expected, final @NonNull InputStream stream) throws NormalizationException {
-        final NormalizedNode data;
+        final NormalizationResult<?> data;
         try {
             data = parseInputOutput(stack, expected, stream);
         } catch (IOException | IllegalArgumentException e) {
@@ -184,7 +196,7 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         return checkNodeContainer(data);
     }
 
-    protected abstract @NonNull NormalizedNode parseInputOutput(@NonNull SchemaInferenceStack stack,
+    protected abstract @NonNull NormalizationResult<?> parseInputOutput(@NonNull SchemaInferenceStack stack,
         @NonNull QName expected, @NonNull InputStream stream) throws IOException, NormalizationException;
 
     private void checkInference(final EffectiveStatementInference inference) {
@@ -204,19 +216,21 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         return stack;
     }
 
-    protected static final @NonNull ContainerNode checkNodeContainer(final NormalizedNode node)
-            throws NormalizationException {
-        if (node instanceof ContainerNode container) {
-            return container;
+    @SuppressWarnings("unchecked")
+    protected static final @NonNull NormalizationResult<ContainerNode> checkNodeContainer(
+            final NormalizationResult<?> result) throws NormalizationException {
+        final var data = result.data();
+        if (data instanceof ContainerNode) {
+            return (NormalizationResult<ContainerNode>) result;
         }
-        throw NormalizationException.ofMessage("Unexpected payload type " + node.contract());
+        throw NormalizationException.ofMessage("Unexpected payload type " + data.contract());
     }
 
-    protected static final @NonNull NormalizedNode checkNodeName(final NormalizedNode node, final QName expected)
-            throws NormalizationException {
-        final var qname = node.name().getNodeType();
+    protected static final @NonNull NormalizationResult<?> checkNodeName(final NormalizationResult<?> result,
+            final QName expected) throws NormalizationException {
+        final var qname = result.data().name().getNodeType();
         if (qname.equals(expected)) {
-            return node;
+            return result;
         }
         throw NormalizationException.ofMessage(
             "Payload name " + qname + " is different from identifier name " + expected);
