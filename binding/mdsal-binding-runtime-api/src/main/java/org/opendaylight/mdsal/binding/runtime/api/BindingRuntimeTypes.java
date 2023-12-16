@@ -25,8 +25,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  */
 @Beta
 public interface BindingRuntimeTypes extends EffectiveModelContextProvider, RuntimeTypeContainer, Immutable {
-
-    Optional<IdentityRuntimeType> findIdentity(QName qname);
+    /**
+     * Lookup {@link IdentityRuntimeType} by its QNamme.
+     *
+     * @param qname Identity name
+     * @return {@link IdentityRuntimeType} or {@code null}
+     * @throws NullPointerException if {@code qname} is {@code null}
+     */
+    @Nullable IdentityRuntimeType identityChild(@NonNull QName qname);
 
     Optional<RuntimeType> findSchema(JavaTypeName typeName);
 

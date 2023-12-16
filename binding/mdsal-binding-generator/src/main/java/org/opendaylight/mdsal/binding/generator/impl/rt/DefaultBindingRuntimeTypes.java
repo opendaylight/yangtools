@@ -71,8 +71,8 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     }
 
     @Override
-    public Optional<IdentityRuntimeType> findIdentity(final QName qname) {
-        return Optional.ofNullable(identities.get(requireNonNull(qname)));
+    public IdentityRuntimeType identityChild(final QName qname) {
+        return identities.get(requireNonNull(qname));
     }
 
     @Override

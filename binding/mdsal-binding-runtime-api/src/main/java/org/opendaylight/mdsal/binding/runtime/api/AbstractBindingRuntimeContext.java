@@ -40,8 +40,10 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         CacheBuilder.newBuilder().weakValues().build(new CacheLoader<>() {
             @Override
             public Class<? extends BaseIdentity> load(final QName key) {
-                final var type = getTypes().findIdentity(key).orElseThrow(
-                    () -> new IllegalArgumentException("Supplied QName " + key + " is not a valid identity"));
+                final var type = getTypes().identityChild(key);
+                if (type == null) {
+                    throw new IllegalArgumentException("Supplied QName " + key + " is not a valid identity");
+                }
                 try {
                     return loadClass(type.getIdentifier()).asSubclass(BaseIdentity.class);
                 } catch (ClassNotFoundException e) {
