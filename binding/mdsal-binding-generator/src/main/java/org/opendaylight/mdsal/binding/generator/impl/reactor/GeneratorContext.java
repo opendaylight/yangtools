@@ -7,8 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -53,8 +53,7 @@ abstract class GeneratorContext extends AbstractEffectiveModelContextProvider {
 
     final @NonNull IdentityGenerator resolveIdentity(final @NonNull QName name) {
         for (Generator gen : resolveModule(name.getModule())) {
-            if (gen instanceof IdentityGenerator) {
-                final IdentityGenerator idgen = (IdentityGenerator) gen;
+            if (gen instanceof final IdentityGenerator idgen) {
                 if (name.equals(idgen.statement().argument())) {
                     return idgen;
                 }
