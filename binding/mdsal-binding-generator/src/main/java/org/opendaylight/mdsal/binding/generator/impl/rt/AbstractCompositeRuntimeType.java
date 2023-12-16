@@ -7,13 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 import com.google.common.base.Functions;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +33,6 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
     private final ImmutableMap<JavaTypeName, GeneratedRuntimeType> byClass;
     private final Object bySchemaTree;
 
-    @SuppressFBWarnings(value = "SE_COMPARATOR_SHOULD_BE_SERIALIZABLE",
-        justification = "https://github.com/spotbugs/spotbugs/issues/1985")
     AbstractCompositeRuntimeType(final GeneratedType bindingType, final S statement, final List<RuntimeType> children) {
         super(bindingType, statement);
 
@@ -53,7 +50,9 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
             default -> {
                 Arrays.sort(tmp, (o1, o2) -> {
                     final int cmp = extractQName(o1).compareTo(extractQName(o2));
-                    verify(cmp != 0, "Type %s conflicts with %s on schema tree", o1, o2);
+                    if (cmp == 0) {
+                        throw new VerifyException("Type " + o1 + " conflicts with " + o2 + " on schema tree");
+                    }
                     return cmp;
                 });
                 yield tmp;
@@ -68,15 +67,13 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
         }
 
         final var tmp = (RuntimeType[]) bySchemaTree;
-        @SuppressFBWarnings(value = "SE_COMPARATOR_SHOULD_BE_SERIALIZABLE",
-            justification = "https://github.com/spotbugs/spotbugs/issues/1985")
-        final int offset = Arrays.binarySearch(tmp, null, (o1, o2) -> {
-            // We make assumptions about how Arrays.binarySearch() is implemented: o2 is expected to be the provided
-            // key -- which is null. This helps CHA by not introducing a fake RuntimeType class and the
-            // corresponding instanceof checks.
-            verify(o2 == null, "Unexpected key %s", o2);
-            return extractQName(o1).compareTo(qname);
-        });
+        // Here we are assuming that Arrays.binarySearch() accepts a null object, so as to help CHA by not introducing
+        // a fake RuntimeType class and the corresponding instanceof checks to side-step the statement lookup (which
+        // would need more faking).
+        // We make a slight assumption that o2 is the what we specify as a key, but can recover if it is the other way
+        // around.
+        final int offset = Arrays.binarySearch(tmp, null,
+            (o1, o2) -> extractQName(requireNonNullElse(o1, o2)).compareTo(qname));
         return offset < 0 ? null : tmp[offset];
     }
 
@@ -94,7 +91,9 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
 
         final var tmp = (RuntimeType[]) bySchemaTree;
         for (var item : tmp) {
-            verify(expectedType.isInstance(item), "Unexpected schema tree child %s", item);
+            if (!expectedType.isInstance(item)) {
+                throw new VerifyException("Unexpected schema tree child " + item);
+            }
         }
         return (List<T>) Collections.unmodifiableList(Arrays.asList(tmp));
     }
