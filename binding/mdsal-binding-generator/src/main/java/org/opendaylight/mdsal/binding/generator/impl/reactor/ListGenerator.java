@@ -89,7 +89,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
     private @Nullable KeyRuntimeType keyRuntimeType() {
         final var local = keyGen;
-        return local != null ? local.runtimeType().orElseThrow() : null;
+        return local != null ? local.getRuntimeType() : null;
     }
 
     @Override

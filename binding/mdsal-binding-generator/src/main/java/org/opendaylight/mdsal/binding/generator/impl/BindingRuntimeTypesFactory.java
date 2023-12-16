@@ -55,8 +55,8 @@ final class BindingRuntimeTypesFactory implements Mutable {
     static @NonNull BindingRuntimeTypes createTypes(final @NonNull EffectiveModelContext context) {
         final var moduleGens = new GeneratorReactor(context).execute(TypeBuilderFactory.runtime());
 
-        final Stopwatch sw = Stopwatch.createStarted();
-        final BindingRuntimeTypesFactory factory = new BindingRuntimeTypesFactory();
+        final var sw = Stopwatch.createStarted();
+        final var factory = new BindingRuntimeTypesFactory();
         factory.indexModules(moduleGens);
         LOG.debug("Indexed {} generators in {}", moduleGens.size(), sw);
 
@@ -69,14 +69,12 @@ final class BindingRuntimeTypesFactory implements Mutable {
             final var modGen = entry.getValue();
 
             // index the module's runtime type
-            safePut(modules, "modules", entry.getKey(), modGen.runtimeType().orElseThrow());
+            safePut(modules, "modules", entry.getKey(), modGen.getRuntimeType());
 
             // index module's identities and RPC input/outputs
             for (var gen : modGen) {
                 if (gen instanceof IdentityGenerator idGen) {
-                    idGen.runtimeType().ifPresent(identity -> {
-                        safePut(identities, "identities", identity.statement().argument(), identity);
-                    });
+                    safePut(identities, "identities", idGen.statement().argument(), idGen.getRuntimeType());
                 }
             }
         }
@@ -85,18 +83,18 @@ final class BindingRuntimeTypesFactory implements Mutable {
     }
 
     private void indexRuntimeTypes(final Iterable<? extends Generator> generators) {
-        for (Generator gen : generators) {
-            if (gen instanceof AbstractExplicitGenerator<?, ?> explicitGen && gen.generatedType().isPresent()) {
-                final var type = explicitGen.runtimeType().orElseThrow();
-                if (type.javaType() instanceof GeneratedType genType) {
+        for (var gen : generators) {
+            if (gen instanceof AbstractExplicitGenerator<?, ?> explicit) {
+                final var type = explicit.generatedRuntimeType();
+                if (type != null && type.javaType() instanceof GeneratedType genType) {
                     final var name = genType.getIdentifier();
                     final var prev = allTypes.put(name, type);
                     verify(prev == null || prev == type, "Conflict on runtime type mapping of %s between %s and %s",
                         name, prev, type);
 
                     // Global indexing of cases generated for a particular choice. We look at the Generated type
-                    // and make assumptions about its shape -- which works just fine without touching the
-                    // ChoiceRuntimeType for cases.
+                    // and make assumptions about its shape -- which works just fine without touching
+                    // the ChoiceRuntimeType for cases.
                     if (type instanceof CaseRuntimeType caseType) {
                         final var ifaces = genType.getImplements();
                         // The appropriate choice and DataObject at the very least. The choice interface is the first

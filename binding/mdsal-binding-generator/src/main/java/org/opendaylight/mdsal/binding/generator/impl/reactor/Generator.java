@@ -76,8 +76,8 @@ public abstract class Generator implements Iterable<Generator> {
         this.parent = requireNonNull(parent);
     }
 
-    public final @NonNull Optional<GeneratedType> generatedType() {
-        return Optional.ofNullable(result.generatedType());
+    public final @Nullable GeneratedType generatedType() {
+        return result.generatedType();
     }
 
     public @NonNull List<GeneratedType> auxiliaryGeneratedTypes() {

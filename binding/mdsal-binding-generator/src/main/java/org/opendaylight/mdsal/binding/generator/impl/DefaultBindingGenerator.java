@@ -11,20 +11,17 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.mdsal.binding.generator.BindingGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.Generator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.GeneratorReactor;
-import org.opendaylight.mdsal.binding.generator.impl.reactor.ModuleGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.TypeBuilderFactory;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
  * Default implementation of {@link BindingGenerator}.
@@ -61,11 +58,11 @@ public final class DefaultBindingGenerator implements BindingGenerator {
     @VisibleForTesting
     static @NonNull List<GeneratedType> generateFor(final EffectiveModelContext context,
             final Collection<? extends Module> modules) {
-        final Set<ModuleEffectiveStatement> filter = modules.stream().map(Module::asEffectiveStatement)
+        final var filter = modules.stream().map(Module::asEffectiveStatement)
             .collect(Collectors.toUnmodifiableSet());
 
-        final List<GeneratedType> result = new ArrayList<>();
-        for (ModuleGenerator gen : new GeneratorReactor(context).execute(TypeBuilderFactory.codegen()).values()) {
+        final var result = new ArrayList<GeneratedType>();
+        for (var gen : new GeneratorReactor(context).execute(TypeBuilderFactory.codegen()).values()) {
             if (filter.contains(gen.statement())) {
                 addTypes(result, gen);
             }
@@ -75,11 +72,15 @@ public final class DefaultBindingGenerator implements BindingGenerator {
     }
 
     private static void addTypes(final List<GeneratedType> result, final Generator gen) {
-        gen.generatedType()
-            .filter(type -> type.getIdentifier().immediatelyEnclosingClass().isEmpty())
-            .ifPresent(result::add);
+        final var type = gen.generatedType();
+        if (type != null) {
+            if (type.getIdentifier().immediatelyEnclosingClass().isEmpty()) {
+                result.add(type);
+            }
+        }
+
         result.addAll(gen.auxiliaryGeneratedTypes());
-        for (Generator child : gen) {
+        for (var child : gen) {
             addTypes(result, child);
         }
     }

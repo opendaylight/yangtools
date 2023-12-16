@@ -472,8 +472,8 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return methodReturnTypeElement;
         }
         final var genType = generatedType();
-        if (genType.isPresent()) {
-            return genType.orElseThrow();
+        if (genType != null) {
+            return genType;
         }
         final var prev = verifyNotNull(previous(), "No previous generator for %s", this);
         return prev.runtimeJavaType();

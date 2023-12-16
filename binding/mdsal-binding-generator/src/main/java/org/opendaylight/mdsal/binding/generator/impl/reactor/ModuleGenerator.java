@@ -18,7 +18,6 @@ import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Mem
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultModuleRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
@@ -92,7 +91,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         builder.setModuleName(statement().argument().getLocalName());
         builder.addImplementsType(BindingTypes.DATA_ROOT);
 
@@ -135,7 +134,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
                 final var yangDataChildren = new ArrayList<YangDataRuntimeType>();
                 for (var child : ModuleGenerator.this) {
                     if (child instanceof YangDataGenerator yangDataGen) {
-                        yangDataGen.runtimeType().ifPresent(yangDataChildren::add);
+                        yangDataChildren.add(yangDataGen.getRuntimeType());
                     }
                 }
 
