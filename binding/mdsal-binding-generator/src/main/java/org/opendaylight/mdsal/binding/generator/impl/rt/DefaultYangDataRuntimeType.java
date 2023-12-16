@@ -7,14 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.YangDataRuntimeType;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
-@Beta
 public final class DefaultYangDataRuntimeType extends AbstractCompositeRuntimeType<YangDataEffectiveStatement>
         implements YangDataRuntimeType {
     public DefaultYangDataRuntimeType(final GeneratedType bindingType, final YangDataEffectiveStatement statement,

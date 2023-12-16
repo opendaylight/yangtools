@@ -7,12 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.FeatureRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
-@Beta
 public final class DefaultFeatureRuntimeType extends AbstractGeneratedRuntimeType<FeatureEffectiveStatement>
         implements FeatureRuntimeType {
     public DefaultFeatureRuntimeType(final GeneratedType bindingType, final FeatureEffectiveStatement statement) {

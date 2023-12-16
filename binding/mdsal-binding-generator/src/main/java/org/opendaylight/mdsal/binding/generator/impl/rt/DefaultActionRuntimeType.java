@@ -7,14 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
-@Beta
 public final class DefaultActionRuntimeType extends AbstractInvokableRuntimeType<ActionEffectiveStatement>
         implements ActionRuntimeType {
     public DefaultActionRuntimeType(final GeneratedType bindingType, final ActionEffectiveStatement statement,

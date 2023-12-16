@@ -7,12 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.AnyxmlRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 
-@Beta
 public final class DefaultAnyxmlRuntimeType extends AbstractGeneratedRuntimeType<AnyxmlEffectiveStatement>
         implements AnyxmlRuntimeType {
     public DefaultAnyxmlRuntimeType(final GeneratedType bindingType, final AnyxmlEffectiveStatement statement) {

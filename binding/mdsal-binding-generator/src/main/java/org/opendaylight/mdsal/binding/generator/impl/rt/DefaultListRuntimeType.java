@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -17,7 +16,6 @@ import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
-@Beta
 public final class DefaultListRuntimeType extends AbstractAugmentableRuntimeType<ListEffectiveStatement>
         implements ListRuntimeType {
     private final @Nullable KeyRuntimeType keyType;

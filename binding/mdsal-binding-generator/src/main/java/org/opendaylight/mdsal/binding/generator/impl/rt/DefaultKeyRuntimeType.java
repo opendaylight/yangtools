@@ -7,12 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
-@Beta
 public final class DefaultKeyRuntimeType extends AbstractObjectRuntimeType<KeyEffectiveStatement>
         implements KeyRuntimeType {
     public DefaultKeyRuntimeType(final GeneratedTransferObject bindingType, final KeyEffectiveStatement statement) {
