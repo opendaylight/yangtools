@@ -32,6 +32,6 @@ public final class DefaultChoiceRuntimeType extends AbstractCompositeRuntimeType
     @Override
     public CaseRuntimeType bindingCaseChild(final JavaTypeName typeName) {
         final var child = bindingChild(typeName);
-        return child instanceof CaseRuntimeType ? (CaseRuntimeType) child : null;
+        return child instanceof CaseRuntimeType caseChild ? caseChild : null;
     }
 }
