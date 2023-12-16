@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
@@ -172,16 +171,14 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
 
     @Override
     final R createExternalRuntimeType(final Type type) {
-        verify(type instanceof GeneratedType, "Unexpected type %s", type);
-        return createBuilder(statement()).populate(new AugmentResolver(), this).build((GeneratedType) type);
+        return createBuilder(statement()).populate(new AugmentResolver(), this).build(verifyGeneratedType(type));
     }
 
     abstract @NonNull CompositeRuntimeTypeBuilder<S, R> createBuilder(S statement);
 
     @Override
     final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {
-        verify(type instanceof GeneratedType, "Unexpected type %s", type);
-        return createBuilder(statement).populate(resolver, this).build((GeneratedType) type);
+        return createBuilder(statement).populate(resolver, this).build(verifyGeneratedType(type));
     }
 
     @Override

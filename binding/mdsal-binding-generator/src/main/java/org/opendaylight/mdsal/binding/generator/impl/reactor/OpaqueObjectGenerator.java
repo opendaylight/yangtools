@@ -7,8 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
@@ -107,17 +105,15 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
     }
 
     @Override
-    final @NonNull R createExternalRuntimeType(final Type type) {
-        verify(type instanceof GeneratedType, "Unexpected type %s", type);
-        return createExternalRuntimeType((GeneratedType) type);
+    final R createExternalRuntimeType(final Type type) {
+        return createExternalRuntimeType(verifyGeneratedType(type));
     }
 
     abstract @NonNull R createExternalRuntimeType(@NonNull GeneratedType type);
 
     @Override
     final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {
-        verify(type instanceof GeneratedType, "Unexpected type %s", type);
-        return createInternalRuntimeType(statement, (GeneratedType) type);
+        return createInternalRuntimeType(statement, verifyGeneratedType(type));
     }
 
     abstract @NonNull R createInternalRuntimeType(@NonNull S statement, @NonNull GeneratedType type);

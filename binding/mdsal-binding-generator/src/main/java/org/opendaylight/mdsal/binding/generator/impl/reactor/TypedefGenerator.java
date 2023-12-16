@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultTypedefRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
@@ -64,7 +62,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     void bindDerivedGenerators(final TypeReference reference) {
         // Trigger any derived resolvers ...
         if (derivedGenerators != null) {
-            for (AbstractTypeObjectGenerator<?, ?> derived : derivedGenerators) {
+            for (var derived : derivedGenerators) {
                 derived.bindTypeDefinition(reference);
             }
         }
@@ -85,14 +83,14 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     @Override
     GeneratedTransferObject createDerivedType(final TypeBuilderFactory builderFactory,
             final GeneratedTransferObject baseType) {
-        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTOBuilder(typeName());
         builder.setTypedef(true);
         builder.setExtendsType(baseType);
         builder.setIsUnion(baseType.isUnionType());
         builder.setRestrictions(computeRestrictions());
         YangSourceDefinition.of(currentModule().statement(), statement()).ifPresent(builder::setYangSourceDefinition);
 
-        final TypeDefinition<?> typedef = statement().getTypeDefinition();
+        final var typedef = statement().getTypeDefinition();
         annotateDeprecatedIfNecessary(typedef, builder);
         addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
         addUnits(builder, typedef);
@@ -130,8 +128,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
 
     @Override
     TypedefRuntimeType createExternalRuntimeType(final Type type) {
-        verify(type instanceof GeneratedType, "Unexpected type %s", type);
-        return new DefaultTypedefRuntimeType((GeneratedType) type, statement());
+        return new DefaultTypedefRuntimeType(verifyGeneratedType(type), statement());
     }
 
     @Override

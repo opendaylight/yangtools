@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.BASE_IDENTITY;
 
 import java.util.List;
@@ -68,7 +67,7 @@ public final class IdentityGenerator
 
         narrowImplementedInterface(builder);
 
-        final ModuleGenerator module = currentModule();
+        final var module = currentModule();
         module.addQNameConstant(builder, localName());
 
         // Constant implementation
@@ -83,8 +82,7 @@ public final class IdentityGenerator
 
     @Override
     IdentityRuntimeType createExternalRuntimeType(final Type type) {
-        verify(type instanceof GeneratedType, "Unexpected type %s", type);
-        return new DefaultIdentityRuntimeType((GeneratedType) type, statement());
+        return new DefaultIdentityRuntimeType(verifyGeneratedType(type), statement());
     }
 
     @Override

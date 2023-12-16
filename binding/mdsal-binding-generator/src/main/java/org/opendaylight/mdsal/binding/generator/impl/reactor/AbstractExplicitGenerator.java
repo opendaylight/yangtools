@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.mdsal.binding.generator.impl.tree.StatementRepresentation;
+import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.TypeMemberComment;
@@ -365,5 +366,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             helper.addValue("augmenting");
         }
         return helper;
+    }
+
+    static final @NonNull GeneratedType verifyGeneratedType(final Type type) {
+        if (type instanceof GeneratedType ret) {
+            return ret;
+        }
+        throw new VerifyException("Unexpected type " + type);
     }
 }
