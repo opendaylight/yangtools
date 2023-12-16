@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Functions;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
@@ -100,7 +101,9 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
 
     private static @NonNull QName extractQName(final RuntimeType type) {
         final var stmt = type.statement();
-        verify(stmt instanceof SchemaTreeEffectiveStatement, "Unexpected statement %s in %s", stmt, type);
-        return ((SchemaTreeEffectiveStatement<?>) stmt).argument();
+        if (stmt instanceof SchemaTreeEffectiveStatement<?> schemaTreeStmt) {
+            return schemaTreeStmt.argument();
+        }
+        throw new VerifyException("Unexpected statement " + stmt + " in " + type);
     }
 }
