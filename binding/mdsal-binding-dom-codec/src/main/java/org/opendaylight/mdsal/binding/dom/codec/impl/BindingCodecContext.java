@@ -38,7 +38,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.kohsuke.MetaInfServices;
@@ -59,13 +59,13 @@ import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.DataRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.RpcRuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -303,11 +303,11 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public ContainerLikeCodecContext<?> load(final Class<?> key) {
-                final BiFunction<BindingRuntimeTypes, QName, Optional<? extends ContainerLikeRuntimeType<?, ?>>> lookup;
+                final Function<RpcRuntimeType, ContainerLikeRuntimeType<?, ?>> lookup;
                 if (RpcInput.class.isAssignableFrom(key)) {
-                    lookup = BindingRuntimeTypes::findRpcInput;
+                    lookup = RpcRuntimeType::input;
                 } else if (RpcOutput.class.isAssignableFrom(key)) {
-                    lookup = BindingRuntimeTypes::findRpcOutput;
+                    lookup = RpcRuntimeType::output;
                 } else {
                     throw new IllegalArgumentException(key + " does not represent an RPC container");
                 }
@@ -331,11 +331,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                         final ContainerLike schema = getRpcDataSchema(potential, qname);
                         checkArgument(schema != null, "Schema for %s does not define input / output.", potentialQName);
 
-                        final var type = lookup.apply(context.getTypes(), potentialQName)
-                            .orElseThrow(() -> new IllegalArgumentException("Cannot find runtime type for " + key));
-
-                        // FIXME: accurate type
-                        return new ContainerLikeCodecContext(key, type, BindingCodecContext.this);
+                        final var runtimeType = context.getTypes().schemaTreeChild(potentialQName);
+                        if (runtimeType instanceof RpcRuntimeType rpcType) {
+                            // FIXME: accurate type
+                            return new ContainerLikeCodecContext(key, lookup.apply(rpcType), BindingCodecContext.this);
+                        }
+                        throw new IllegalArgumentException("Cannot find runtime type for " + key);
                     }
                 }
 

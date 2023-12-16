@@ -105,16 +105,19 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     @Override
     public final Class<? extends RpcInput> getRpcInput(final QName rpcName) {
-        return loadClass(getTypes().findRpcInput(rpcName)
-            .orElseThrow(() -> new IllegalArgumentException("Failed to find RpcInput for " + rpcName)))
-            .asSubclass(RpcInput.class);
+        return loadClass(getRpc(rpcName).input()).asSubclass(RpcInput.class);
     }
 
     @Override
     public final Class<? extends RpcOutput> getRpcOutput(final QName rpcName) {
-        return loadClass(getTypes().findRpcOutput(rpcName)
-            .orElseThrow(() -> new IllegalArgumentException("Failed to find RpcOutput for " + rpcName)))
-            .asSubclass(RpcOutput.class);
+        return loadClass(getRpc(rpcName).output()).asSubclass(RpcOutput.class);
+    }
+
+    private @NonNull RpcRuntimeType getRpc(final QName rpcName) {
+        if (getTypes().schemaTreeChild(rpcName) instanceof RpcRuntimeType rpc) {
+            return rpc;
+        }
+        throw new IllegalArgumentException("Failed to find RPC for " + rpcName);
     }
 
     @Override
