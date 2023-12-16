@@ -15,7 +15,6 @@ import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultListRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.Types;
@@ -59,18 +58,19 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         addImplementsChildOf(builder);
         addAugmentable(builder);
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
 
-        final ModuleGenerator module = currentModule();
+        final var module = currentModule();
         module.addQNameConstant(builder, localName());
 
-        if (keyGen != null) {
+        final var local = keyGen;
+        if (local != null) {
             // Add yang.binding.Identifiable and its key() method
-            final GeneratedType keyType = keyGen.getGeneratedType(builderFactory);
+            final var keyType = local.getGeneratedType(builderFactory);
             builder.addImplementsType(keyAware(keyType));
             builder.addMethod(Naming.KEY_AWARE_KEY_NAME)
                 .setReturnType(keyType)
@@ -88,16 +88,17 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     }
 
     private @Nullable KeyRuntimeType keyRuntimeType() {
-        final var gen = keyGen;
-        return gen != null ? gen.runtimeType().orElseThrow() : null;
+        final var local = keyGen;
+        return local != null ? local.runtimeType().orElseThrow() : null;
     }
 
     @Override
     Type methodReturnType(final TypeBuilderFactory builderFactory) {
-        final Type generatedType = super.methodReturnType(builderFactory);
+        final var generatedType = super.methodReturnType(builderFactory);
         // We are wrapping the generated type in either a List or a Map based on presence of the key
-        if (keyGen != null && statement().ordering() == Ordering.SYSTEM) {
-            return Types.mapTypeFor(keyGen.getGeneratedType(builderFactory), generatedType);
+        final var local = keyGen;
+        if (local != null && statement().ordering() == Ordering.SYSTEM) {
+            return Types.mapTypeFor(local.getGeneratedType(builderFactory), generatedType);
         }
 
         return Types.listTypeFor(generatedType);
@@ -105,10 +106,9 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
     @Override
     MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
-        final MethodSignatureBuilder ret = super.constructGetter(builder, returnType)
-            .setMechanics(ValueMechanics.NULLIFY_EMPTY);
+        final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
-        final MethodSignatureBuilder nonnull = builder
+        final var nonnull = builder
             .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
             .setReturnType(returnType)
             .setDefault(true);
