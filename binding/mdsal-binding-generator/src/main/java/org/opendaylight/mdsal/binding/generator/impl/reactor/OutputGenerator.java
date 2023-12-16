@@ -21,8 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 /**
  * Generator corresponding to an {@code output} statement.
  */
-// FIXME: hide this once we have RpcRuntimeType
-public final class OutputGenerator extends OperationContainerGenerator<OutputEffectiveStatement, OutputRuntimeType> {
+final class OutputGenerator extends OperationContainerGenerator<OutputEffectiveStatement, OutputRuntimeType> {
     OutputGenerator(final OutputEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent, BindingTypes.RPC_OUTPUT);
     }

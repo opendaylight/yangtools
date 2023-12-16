@@ -36,10 +36,6 @@ public interface BindingRuntimeTypes extends EffectiveModelContextProvider, Runt
 
     Optional<RuntimeType> findSchema(JavaTypeName typeName);
 
-    Optional<InputRuntimeType> findRpcInput(QName rpcName);
-
-    Optional<OutputRuntimeType> findRpcOutput(QName rpcName);
-
     Optional<YangDataRuntimeType> findYangData(YangDataName templateName);
 
     default @Nullable RuntimeType schemaTreeChild(final Absolute path) {

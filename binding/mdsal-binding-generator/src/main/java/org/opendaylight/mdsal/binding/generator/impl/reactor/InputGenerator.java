@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  * as the name. This makes it easier to support multiple RPCs/actions in one source file, as we can import them without
  * a conflict.
  */
-// FIXME: hide this once we have RpcRuntimeType
-public final class InputGenerator extends OperationContainerGenerator<InputEffectiveStatement, InputRuntimeType> {
+final class InputGenerator extends OperationContainerGenerator<InputEffectiveStatement, InputRuntimeType> {
     InputGenerator(final InputEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent, BindingTypes.RPC_INPUT);
     }

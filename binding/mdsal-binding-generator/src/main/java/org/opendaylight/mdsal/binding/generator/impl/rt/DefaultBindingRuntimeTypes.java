@@ -25,9 +25,7 @@ import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.GeneratedRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.IdentityRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.YangDataRuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,20 +42,15 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     private final ImmutableMap<QNameModule, ModuleRuntimeType> modulesByNamespace;
     private final ImmutableSortedMap<String, ModuleRuntimeType> modulesByPackage;
     private final ImmutableMap<QName, IdentityRuntimeType> identities;
-    private final ImmutableMap<QName, OutputRuntimeType> rpcOutputs;
-    private final ImmutableMap<QName, InputRuntimeType> rpcInputs;
     private final ImmutableMap<JavaTypeName, RuntimeType> types;
 
     public DefaultBindingRuntimeTypes(final EffectiveModelContext context,
             final Map<QNameModule, ModuleRuntimeType> modules, final Map<JavaTypeName, RuntimeType> types,
-            final Map<QName, IdentityRuntimeType> identities, final Map<QName, InputRuntimeType> rpcInputs,
-            final Map<QName, OutputRuntimeType> rpcOutputs,
+            final Map<QName, IdentityRuntimeType> identities,
             final SetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases) {
         this.context = requireNonNull(context);
         this.identities = ImmutableMap.copyOf(identities);
         this.types = ImmutableMap.copyOf(types);
-        this.rpcInputs = ImmutableMap.copyOf(rpcInputs);
-        this.rpcOutputs = ImmutableMap.copyOf(rpcOutputs);
         this.choiceToCases = ImmutableSetMultimap.copyOf(choiceToCases);
 
         modulesByNamespace = ImmutableMap.copyOf(modules);
@@ -91,16 +84,6 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     public RuntimeType schemaTreeChild(final QName qname) {
         final var module = modulesByNamespace.get(qname.getModule());
         return module == null ? null : module.schemaTreeChild(qname);
-    }
-
-    @Override
-    public Optional<InputRuntimeType> findRpcInput(final QName rpcName) {
-        return Optional.ofNullable(rpcInputs.get(requireNonNull(rpcName)));
-    }
-
-    @Override
-    public Optional<OutputRuntimeType> findRpcOutput(final QName rpcName) {
-        return Optional.ofNullable(rpcOutputs.get(requireNonNull(rpcName)));
     }
 
     @Override

@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 /**
  * Generator corresponding to a {@code rpc} statement.
  */
-// FIXME: hide this once we have RpcRuntimeType
-public final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatement, RpcRuntimeType> {
+final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatement, RpcRuntimeType> {
     RpcGenerator(final RpcEffectiveStatement statement, final ModuleGenerator parent) {
         super(statement, parent);
     }
