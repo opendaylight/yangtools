@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -79,10 +80,8 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         // AugmentGenerators without having forward references.
         // FIXME: migrate to new ModuleDependencySort when it is available, which streamline things here
         children = ModuleDependencySort.sort(context.getModules()).stream()
-            .map(module -> {
-                verify(module instanceof ModuleEffectiveStatement, "Unexpected module %s", module);
-                return new ModuleGenerator((ModuleEffectiveStatement) module);
-            })
+            .map(Module::asEffectiveStatement)
+            .map(ModuleGenerator::new)
             .collect(Collectors.toUnmodifiableList());
         generators = Maps.uniqueIndex(children, gen -> gen.statement().localQNameModule());
     }
