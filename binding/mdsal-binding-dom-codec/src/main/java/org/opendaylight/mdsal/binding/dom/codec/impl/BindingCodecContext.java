@@ -275,15 +275,13 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         .build(new CacheLoader<>() {
             @Override
             public NotificationCodecContext<?> load(final Class<?> key) {
-                // FIXME: sharpen check to an Notification.class
-                checkArgument(key.isInterface(), "Supplied class must be interface.");
-
-                // TODO: we should be able to work with bindingChild() instead of schemaTreeChild() here
-                final var qname = BindingReflections.findQName(key);
-                if (context.getTypes().schemaTreeChild(qname) instanceof NotificationRuntimeType type) {
-                    return new NotificationCodecContext<>(key, type, BindingCodecContext.this);
+                final var runtimeType = context.getTypes().bindingChild(JavaTypeName.create(key));
+                if (runtimeType instanceof NotificationRuntimeType notification) {
+                    return new NotificationCodecContext<>(key, notification, BindingCodecContext.this);
+                } if (runtimeType != null) {
+                    throw new IllegalArgumentException(key + " maps to unexpected " + runtimeType);
                 }
-                throw new IllegalArgumentException("Supplied " + key + " is not valid notification");
+                throw new IllegalArgumentException(key + " is not a known class");
             }
         });
     private final LoadingCache<Absolute, NotificationCodecContext<?>> notificationsByPath =
