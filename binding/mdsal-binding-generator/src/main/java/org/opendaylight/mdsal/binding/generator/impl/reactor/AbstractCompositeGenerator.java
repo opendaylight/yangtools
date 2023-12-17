@@ -574,7 +574,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     // CopyableNode and AddedByUsesAware
     private static boolean isOriginalDeclaration(final EffectiveStatement<?, ?> stmt) {
         if (stmt instanceof AddedByUsesAware aware
-            && (aware.isAddedByUses() || stmt instanceof CopyableNode copyable && copyable.isAugmenting())) {
+            && (aware.isAddedByUses() || aware instanceof CopyableNode copyable && copyable.isAugmenting())) {
             return false;
         }
         return true;
