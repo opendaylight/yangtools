@@ -38,7 +38,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.kohsuke.MetaInfServices;
@@ -63,9 +62,10 @@ import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.DataRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.RpcRuntimeType;
+import org.opendaylight.mdsal.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -85,9 +85,7 @@ import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.binding.YangData;
-import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -106,13 +104,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolde
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -301,62 +296,17 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public ContainerLikeCodecContext<?> load(final Class<?> key) {
-                final Function<RpcRuntimeType, ContainerLikeRuntimeType<?, ?>> lookup;
-                if (RpcInput.class.isAssignableFrom(key)) {
-                    lookup = RpcRuntimeType::input;
-                } else if (RpcOutput.class.isAssignableFrom(key)) {
-                    lookup = RpcRuntimeType::output;
+                final var runtimeType = context.getTypes().findSchema(JavaTypeName.create(key))
+                    .orElseThrow(() -> new IllegalArgumentException(key + " is not a known class"));
+                if (RpcInput.class.isAssignableFrom(key) && runtimeType instanceof InputRuntimeType input) {
+                    // FIXME: accurate type
+                    return new ContainerLikeCodecContext(key, input, BindingCodecContext.this);
+                } else if (RpcOutput.class.isAssignableFrom(key) && runtimeType instanceof OutputRuntimeType output) {
+                    // FIXME: accurate type
+                    return new ContainerLikeCodecContext(key, output, BindingCodecContext.this);
                 } else {
-                    throw new IllegalArgumentException(key + " does not represent an RPC container");
+                    throw new IllegalArgumentException(key + " maps to unexpected " + runtimeType);
                 }
-
-                final QName qname = BindingReflections.findQName(key);
-                final QNameModule qnameModule = qname.getModule();
-                final Module module = context.getEffectiveModelContext().findModule(qnameModule)
-                    .orElseThrow(() -> new IllegalArgumentException("Failed to find module for " + qnameModule));
-                final String className = Naming.getClassName(qname);
-
-                for (var potential : module.getRpcs()) {
-                    final QName potentialQName = potential.getQName();
-                    /*
-                     * Check if rpc and class represents data from same module and then checks if rpc local name
-                     * produces same class name as class name appended with Input/Output based on QName associated
-                     * with binding class.
-                     *
-                     * FIXME: Rework this to have more precise logic regarding Binding Specification.
-                     */
-                    if (key.getSimpleName().equals(Naming.getClassName(potentialQName) + className)) {
-                        final ContainerLike schema = getRpcDataSchema(potential, qname);
-                        checkArgument(schema != null, "Schema for %s does not define input / output.", potentialQName);
-
-                        final var runtimeType = context.getTypes().schemaTreeChild(potentialQName);
-                        if (runtimeType instanceof RpcRuntimeType rpcType) {
-                            // FIXME: accurate type
-                            return new ContainerLikeCodecContext(key, lookup.apply(rpcType), BindingCodecContext.this);
-                        }
-                        throw new IllegalArgumentException("Cannot find runtime type for " + key);
-                    }
-                }
-
-                throw new IllegalArgumentException("Supplied class " + key + " is not valid RPC class.");
-            }
-
-            /**
-             * Returns RPC input or output schema based on supplied QName.
-             *
-             * @param rpc RPC Definition
-             * @param qname input or output QName with namespace same as RPC
-             * @return input or output schema. Returns null if RPC does not have input/output specified.
-             */
-            private static @Nullable ContainerLike getRpcDataSchema(final @NonNull RpcDefinition rpc,
-                    final @NonNull QName qname) {
-                requireNonNull(rpc, "Rpc Schema must not be null");
-                return switch (requireNonNull(qname, "QName must not be null").getLocalName()) {
-                    case "input" -> rpc.getInput();
-                    case "output" -> rpc.getOutput();
-                    default -> throw new IllegalArgumentException(
-                        "Supplied qname " + qname + " does not represent rpc input or output.");
-                };
             }
         });
     private final LoadingCache<Absolute, RpcInputCodec<?>> rpcDataByPath =
