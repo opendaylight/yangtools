@@ -26,7 +26,8 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  * @param name template name
  */
 @NonNullByDefault
-public record YangDataName(QNameModule module, String name) implements Identifier, WritableObject {
+public record YangDataName(QNameModule module, String name)
+        implements Comparable<YangDataName>, Identifier, WritableObject {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final Interner<YangDataName> INTERNER = Interners.newWeakInterner();
@@ -60,5 +61,11 @@ public record YangDataName(QNameModule module, String name) implements Identifie
     public void writeTo(final DataOutput out) throws IOException {
         module.writeTo(out);
         out.writeUTF(name);
+    }
+
+    @Override
+    public int compareTo(final YangDataName o) {
+        var cmp = name.compareTo(o.name);
+        return cmp != 0 ? cmp : module.compareTo(o.module);
     }
 }
