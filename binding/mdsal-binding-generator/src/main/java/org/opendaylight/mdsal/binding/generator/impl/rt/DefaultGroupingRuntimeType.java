@@ -20,30 +20,21 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 
 public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeType<GroupingEffectiveStatement>
         implements GroupingRuntimeType {
-    /**
-     * These are vectors towards concrete instantiations of this type -- i.e. the manifestation in the effective data
-     * tree. Each item in this list represents either:
-     * <ul>
-     *   <li>a concrete instantiation, or<li>
-     *   <li>another {@link GroupingRuntimeType}</li>
-     * </ul>
-     * We use these vectors to create {@link #instantiations()}.
-     */
-    private final @Nullable Object instantiationVectors;
+    private final @Nullable Object directUsers;
 
     public DefaultGroupingRuntimeType(final GeneratedType bindingType, final GroupingEffectiveStatement statement,
-            final List<RuntimeType> children, final List<? extends CompositeRuntimeType> instantiationVectors) {
+            final List<RuntimeType> children, final List<? extends CompositeRuntimeType> directUsers) {
         super(bindingType, statement, children);
-        this.instantiationVectors = switch (instantiationVectors.size()) {
+        this.directUsers = switch (directUsers.size()) {
             case 0 -> null;
-            case 1 -> Objects.requireNonNull(instantiationVectors.get(0));
-            default -> instantiationVectors.stream().map(Objects::requireNonNull).toArray(CompositeRuntimeType[]::new);
+            case 1 -> Objects.requireNonNull(directUsers.get(0));
+            default -> directUsers.stream().map(Objects::requireNonNull).toArray(CompositeRuntimeType[]::new);
         };
     }
 
     @Override
     public List<CompositeRuntimeType> directUsers() {
-        final var local = instantiationVectors;
+        final var local = directUsers;
         if (local == null) {
             return List.of();
         } else if (local instanceof CompositeRuntimeType[] array) {
