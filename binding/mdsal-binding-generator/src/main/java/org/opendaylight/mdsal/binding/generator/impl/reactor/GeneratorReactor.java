@@ -438,13 +438,13 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
 
         // Secondary passes: if any unprocessed groupings have been marked as used, process their children, potentially
         //                   adding more work
+        final var found = new HashSet<GroupingGenerator>();
         int passes = 2;
         int processed;
         do {
             // Do not process groupings again unless we make some progress
             processed = 0;
 
-            final var found = new HashSet<GroupingGenerator>();
             final var it = remaining.iterator();
             while (it.hasNext()) {
                 final var next = it.next();
@@ -462,6 +462,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
             if (foundSize != 0) {
                 // we have some more groupings to process, shove them into the next iteration
                 remaining.addAll(found);
+                remaining.clear();
             }
 
             passes++;
