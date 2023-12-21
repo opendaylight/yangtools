@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
+
 /**
  * Node representing data instance of <code>choice</code>.
  *
@@ -27,5 +30,12 @@ public non-sealed interface ChoiceNode extends DataContainerNode, DataContainerC
     @Override
     default Class<ChoiceNode> contract() {
         return ChoiceNode.class;
+    }
+
+    /**
+     * A builder of {@link ChoiceNode}s.
+     */
+    interface Builder extends DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> {
+        // Just a specialization
     }
 }

@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import javax.xml.transform.dom.DOMSource;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
@@ -24,10 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
@@ -47,113 +42,107 @@ public final class Builders {
         // Hidden on purpose
     }
 
-    public static <T> NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder() {
-        return ImmutableLeafNodeBuilder.create();
+    public static <T> LeafNode.@NonNull Builder<T> leafBuilder() {
+        return new ImmutableLeafNodeBuilder<>();
     }
 
-    // FIXME: 7.0.0: add generic arguments
-    public static <T> NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
-        return ImmutableLeafSetEntryNodeBuilder.create();
+    public static <T> LeafSetEntryNode.@NonNull Builder<T> leafSetEntryBuilder() {
+        return new ImmutableLeafSetEntryNodeBuilder<>();
     }
 
-    public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> anyXmlBuilder() {
-        return ImmutableAnyXmlNodeBuilder.create();
+    public static AnyxmlNode.@NonNull Builder<DOMSource, DOMSourceAnyxmlNode> anyXmlBuilder() {
+        return new ImmutableAnyXmlNodeBuilder();
     }
 
-    public static <T> NormalizedNodeBuilder<NodeIdentifier, T, AnydataNode<T>> anydataBuilder(
-            final Class<T> objectModel) {
-        return ImmutableAnydataNodeBuilder.create(objectModel);
+    public static <T> AnydataNode.@NonNull Builder<T> anydataBuilder(final Class<T> objectModel) {
+        return new ImmutableAnydataNodeBuilder<>(objectModel);
     }
 
-    public static <T> ListNodeBuilder<T, UserLeafSetNode<T>> orderedLeafSetBuilder() {
-        return ImmutableUserLeafSetNodeBuilder.create();
+    public static <T> UserLeafSetNode.@NonNull Builder<T> orderedLeafSetBuilder() {
+        return new ImmutableUserLeafSetNodeBuilder<>();
     }
 
-    public static <T> ListNodeBuilder<T, UserLeafSetNode<T>> orderedLeafSetBuilder(final UserLeafSetNode<T> node) {
+    public static <T> UserLeafSetNode.@NonNull Builder<T> orderedLeafSetBuilder(final UserLeafSetNode<T> node) {
         return ImmutableUserLeafSetNodeBuilder.create(node);
     }
 
-    public static <T> ListNodeBuilder<T, SystemLeafSetNode<T>> leafSetBuilder() {
-        return ImmutableLeafSetNodeBuilder.create();
+    public static <T> SystemLeafSetNode.@NonNull Builder<T> leafSetBuilder() {
+        return new ImmutableLeafSetNodeBuilder<>();
     }
 
-    public static <T> ListNodeBuilder<T, SystemLeafSetNode<T>> leafSetBuilder(final SystemLeafSetNode<T> node) {
+    public static <T> SystemLeafSetNode.@NonNull Builder<T> leafSetBuilder(final int sizeHint) {
+        return new ImmutableLeafSetNodeBuilder<>(sizeHint);
+    }
+
+    public static <T> SystemLeafSetNode.@NonNull Builder<T> leafSetBuilder(final SystemLeafSetNode<T> node) {
         return ImmutableLeafSetNodeBuilder.create(node);
     }
 
-    public static <T> ListNodeBuilder<T, SystemLeafSetNode<T>> leafSetBuilder(final int sizeHint) {
-        return ImmutableLeafSetNodeBuilder.create(sizeHint);
+    public static ContainerNode.@NonNull Builder containerBuilder() {
+        return new ImmutableContainerNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder() {
-        return ImmutableContainerNodeBuilder.create();
+    public static ContainerNode.@NonNull Builder containerBuilder(final int sizeHint) {
+        return new ImmutableContainerNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(
-            final ContainerNode node) {
+    public static ContainerNode.@NonNull Builder containerBuilder(final ContainerNode node) {
         return ImmutableContainerNodeBuilder.create(node);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(final int sizeHint) {
-        return ImmutableContainerNodeBuilder.create(sizeHint);
+    public static MapEntryNode.@NonNull Builder mapEntryBuilder() {
+        return new ImmutableMapEntryNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
-        return ImmutableMapEntryNodeBuilder.create();
+    public static MapEntryNode.@NonNull Builder mapEntryBuilder(final int sizeHint) {
+        return new ImmutableMapEntryNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
-            final MapEntryNode mapEntryNode) {
+    public static MapEntryNode.@NonNull Builder mapEntryBuilder(final MapEntryNode mapEntryNode) {
         return ImmutableMapEntryNodeBuilder.create(mapEntryNode);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
-            final int sizeHint) {
-        return ImmutableMapEntryNodeBuilder.create(sizeHint);
+    public static UserMapNode.@NonNull Builder orderedMapBuilder() {
+        return new ImmutableUserMapNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, UserMapNode> orderedMapBuilder() {
-        return ImmutableUserMapNodeBuilder.create();
+    public static UserMapNode.@NonNull Builder orderedMapBuilder(final int sizeHint) {
+        return new ImmutableUserMapNodeBuilder(sizeHint);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, UserMapNode> orderedMapBuilder(final int sizeHint) {
-        return ImmutableUserMapNodeBuilder.create(sizeHint);
+    public static UnkeyedListNode.@NonNull Builder unkeyedListBuilder() {
+        return new ImmutableUnkeyedListNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> unkeyedListBuilder() {
-        return ImmutableUnkeyedListNodeBuilder.create();
+    public static UnkeyedListNode.@NonNull Builder unkeyedListBuilder(final int sizeHint) {
+        return new ImmutableUnkeyedListNodeBuilder(sizeHint);
     }
 
-    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> unkeyedListBuilder(final int sizeHint) {
-        return ImmutableUnkeyedListNodeBuilder.create(sizeHint);
+    public static SystemMapNode.@NonNull Builder mapBuilder() {
+        return new ImmutableMapNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder() {
-        return ImmutableMapNodeBuilder.create();
+    public static SystemMapNode.@NonNull Builder mapBuilder(final int sizeHint) {
+        return new ImmutableMapNodeBuilder(sizeHint);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder(final SystemMapNode node) {
+    public static SystemMapNode.@NonNull Builder mapBuilder(final SystemMapNode node) {
         return ImmutableMapNodeBuilder.create(node);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder(final int sizeHint) {
-        return ImmutableMapNodeBuilder.create(sizeHint);
+    public static ChoiceNode.@NonNull Builder choiceBuilder() {
+        return new ImmutableChoiceNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder() {
-        return ImmutableChoiceNodeBuilder.create();
+    public static ChoiceNode.@NonNull Builder choiceBuilder(final int sizeHint) {
+        return new ImmutableChoiceNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder(final int sizeHint) {
-        return ImmutableChoiceNodeBuilder.create(sizeHint);
+    public static UnkeyedListEntryNode.@NonNull Builder unkeyedListEntryBuilder() {
+        return new ImmutableUnkeyedListEntryNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {
-        return ImmutableUnkeyedListEntryNodeBuilder.create();
-    }
-
-    public static DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder(
-            final int sizeHint) {
-        return ImmutableUnkeyedListEntryNodeBuilder.create(sizeHint);
+    public static UnkeyedListEntryNode.@NonNull Builder unkeyedListEntryBuilder(final int sizeHint) {
+        return new ImmutableUnkeyedListEntryNodeBuilder(sizeHint);
     }
 }

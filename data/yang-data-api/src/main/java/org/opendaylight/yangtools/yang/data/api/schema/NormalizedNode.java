@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -49,4 +51,17 @@ public interface NormalizedNode extends NormalizedData, PrettyTreeAware {
 
     @Override
     PathArgument name();
+
+    /**
+     * A builder of {@link NormalizedNode}s.
+     */
+    interface Builder extends Mutable {
+        /**
+         * Return a builder {@link NormalizedNode} contract.
+         *
+         * @return a built NormalizedNode
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull NormalizedNode build();
+    }
 }

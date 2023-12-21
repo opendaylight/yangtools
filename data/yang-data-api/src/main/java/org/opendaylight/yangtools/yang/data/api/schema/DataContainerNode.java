@@ -24,5 +24,4 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 public non-sealed interface DataContainerNode
         extends DataContainer, DistinctNodeContainer<NodeIdentifier, DataContainerChild> {
-    // Just a composition of DataContainer and DistingNodeContainer
 }
