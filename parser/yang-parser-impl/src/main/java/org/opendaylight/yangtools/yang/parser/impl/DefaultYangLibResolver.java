@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Collection;
@@ -32,10 +31,9 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * Reference {@link YangLibResolver} implementation.
  */
-@Beta
 @Singleton
+@Component
 @MetaInfServices
-@Component(immediate = true)
 public final class DefaultYangLibResolver implements YangLibResolver {
     private final CrossSourceStatementReactor reactor;
 
@@ -45,7 +43,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
 
     @Inject
     @Activate
-    public DefaultYangLibResolver(final @Reference YangXPathParserFactory xpathFactory) {
+    public DefaultYangLibResolver(@Reference final YangXPathParserFactory xpathFactory) {
         reactor = DefaultReactors.defaultReactorBuilder(xpathFactory).build();
     }
 
