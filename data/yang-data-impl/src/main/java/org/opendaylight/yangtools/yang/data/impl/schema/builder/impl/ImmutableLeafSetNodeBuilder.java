@@ -19,21 +19,20 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 
-public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, SystemLeafSetNode<T>> {
+public final class ImmutableLeafSetNodeBuilder<T> implements SystemLeafSetNode.Builder<T> {
     private static final int DEFAULT_CAPACITY = 4;
 
     private final Map<NodeWithValue<?>, LeafSetEntryNode<T>> value;
 
     private NodeIdentifier nodeIdentifier;
 
-    protected ImmutableLeafSetNodeBuilder() {
+    public ImmutableLeafSetNodeBuilder() {
         value = new HashMap<>(DEFAULT_CAPACITY);
     }
 
-    protected ImmutableLeafSetNodeBuilder(final int sizeHint) {
+    public ImmutableLeafSetNodeBuilder(final int sizeHint) {
         if (sizeHint >= 0) {
             value = Maps.newHashMapWithExpectedSize(sizeHint);
         } else {
@@ -41,20 +40,12 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
         }
     }
 
-    protected ImmutableLeafSetNodeBuilder(final ImmutableLeafSetNode<T> node) {
+    private ImmutableLeafSetNodeBuilder(final ImmutableLeafSetNode<T> node) {
         nodeIdentifier = node.name();
         value = MapAdaptor.getDefaultInstance().takeSnapshot(node.children);
     }
 
-    public static <T> @NonNull ListNodeBuilder<T, SystemLeafSetNode<T>> create() {
-        return new ImmutableLeafSetNodeBuilder<>();
-    }
-
-    public static <T> @NonNull ListNodeBuilder<T, SystemLeafSetNode<T>> create(final int sizeHint) {
-        return new ImmutableLeafSetNodeBuilder<>(sizeHint);
-    }
-
-    public static <T> @NonNull ListNodeBuilder<T, SystemLeafSetNode<T>> create(final SystemLeafSetNode<T> node) {
+    public static <T> SystemLeafSetNode.@NonNull Builder<T> create(final SystemLeafSetNode<T> node) {
         if (node instanceof ImmutableLeafSetNode) {
             return new ImmutableLeafSetNodeBuilder<>((ImmutableLeafSetNode<T>) node);
         }
@@ -94,7 +85,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
 
     @Override
     public ImmutableLeafSetNodeBuilder<T> withChildValue(final T childValue) {
-        return withChild(ImmutableLeafSetEntryNodeBuilder.<T>create()
+        return withChild(new ImmutableLeafSetEntryNodeBuilder<T>()
             .withNodeIdentifier(new NodeWithValue<>(nodeIdentifier.getNodeType(), childValue))
             .withValue(childValue).build());
     }

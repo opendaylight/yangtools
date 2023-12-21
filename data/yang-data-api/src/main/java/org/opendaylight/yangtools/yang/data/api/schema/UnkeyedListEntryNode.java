@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 
 /**
  * List entry node, which does not have value, but child nodes. Represents an instance of data, which schema is instance
@@ -25,4 +26,11 @@ public interface UnkeyedListEntryNode extends DataContainerNode {
 
     @Override
     NodeIdentifier name();
+
+    /**
+     * A builder of {@link UnkeyedListNode}s.
+     */
+    interface Builder extends DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> {
+        // Just a specialization
+    }
 }

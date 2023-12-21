@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
+
 /**
  * Containment node, which contains {@link UnkeyedListEntryNode} of the same type, which may be quickly retrieved using
  * key. This node maps to the <code>list</code> statement in YANG schema, which did not define {@code key} substatement.
@@ -20,5 +22,12 @@ public non-sealed interface UnkeyedListNode
     @Override
     default Class<UnkeyedListNode> contract() {
         return UnkeyedListNode.class;
+    }
+
+    /**
+     * A builder of {@link UnkeyedListNode}s.
+     */
+    interface Builder extends CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
+        // Just a specialization
     }
 }
