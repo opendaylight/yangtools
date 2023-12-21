@@ -23,13 +23,13 @@ final class LeafSetModificationStrategy extends Invisible<LeafListSchemaNode> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UserLeafSetNode<?>> ORDERED_SUPPORT =
             new NormalizedNodeContainerSupport(UserLeafSetNode.class, ChildTrackingPolicy.ORDERED,
-                foo -> ImmutableUserLeafSetNodeBuilder.create((UserLeafSetNode<?>)foo),
-                ImmutableUserLeafSetNodeBuilder::create);
+                foo -> ImmutableUserLeafSetNodeBuilder.create((UserLeafSetNode<?>) foo),
+                ImmutableUserLeafSetNodeBuilder::new);
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static final NormalizedNodeContainerSupport<NodeIdentifier, SystemLeafSetNode<?>> UNORDERED_SUPPORT =
             new NormalizedNodeContainerSupport(SystemLeafSetNode.class,
-                foo -> ImmutableLeafSetNodeBuilder.create((SystemLeafSetNode<?>)foo),
-                ImmutableLeafSetNodeBuilder::create);
+                foo -> ImmutableLeafSetNodeBuilder.create((SystemLeafSetNode<?>) foo),
+                ImmutableLeafSetNodeBuilder::new);
 
     LeafSetModificationStrategy(final LeafListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(schema.isUserOrdered() ? ORDERED_SUPPORT : UNORDERED_SUPPORT, treeConfig,

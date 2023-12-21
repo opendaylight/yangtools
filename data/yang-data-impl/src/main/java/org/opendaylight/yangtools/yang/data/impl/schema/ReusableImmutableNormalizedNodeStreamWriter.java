@@ -25,7 +25,7 @@ public final class ReusableImmutableNormalizedNodeStreamWriter extends Immutable
         implements ReusableStreamReceiver {
     private final NormalizationResultBuilder builder;
 
-    private final ImmutableLeafSetEntryNodeBuilder<?> leafsetEntryBuilder = ImmutableLeafSetEntryNodeBuilder.create();
+    private final ImmutableLeafSetEntryNodeBuilder<?> leafsetEntryBuilder = new ImmutableLeafSetEntryNodeBuilder<>();
     private final ImmutableLeafNodeBuilder<?> leafNodeBuilder = new ImmutableLeafNodeBuilder<>();
 
     private ReusableImmutableNormalizedNodeStreamWriter(final NormalizationResultBuilder builder) {

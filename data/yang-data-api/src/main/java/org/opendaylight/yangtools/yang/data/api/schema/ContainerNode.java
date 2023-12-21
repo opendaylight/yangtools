@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
+
 /**
  * Data subtree with cardinality 0..1 in the context of parent node.
  *
@@ -21,5 +24,12 @@ public non-sealed interface ContainerNode extends DataContainerNode, DataContain
     @Override
     default Class<ContainerNode> contract() {
         return ContainerNode.class;
+    }
+
+    /**
+     * A builder of {@link ContainerNode}s.
+     */
+    interface Builder extends DataContainerNodeBuilder<NodeIdentifier, ContainerNode> {
+        // Just a specialization
     }
 }

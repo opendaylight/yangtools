@@ -20,19 +20,21 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.util.LeafInterner;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 /**
  * Implementation of {@link NormalizedNodeStreamWriter}, which constructs immutable instances of
@@ -50,13 +52,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * This class is not final for purposes of customization, normal users should not need to subclass it.
  */
 public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
-    @SuppressWarnings("rawtypes")
-    private final Deque<NormalizedNodeBuilder> builders = new ArrayDeque<>();
+    private final Deque<NormalizedNode.Builder> builders = new ArrayDeque<>();
 
     private DataSchemaNode nextSchema;
 
-    @SuppressWarnings("rawtypes")
-    protected ImmutableNormalizedNodeStreamWriter(final NormalizedNodeBuilder topLevelBuilder) {
+    protected ImmutableNormalizedNodeStreamWriter(final NormalizedNode.Builder topLevelBuilder) {
         builders.push(topLevelBuilder);
     }
 
@@ -117,7 +117,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startLeafSetEntryNode(final NodeWithValue<?> name) {
-        final NormalizedNodeBuilder<?, ?, ?> current = current();
+        final var current = current();
         checkArgument(current instanceof ImmutableLeafSetNodeBuilder
             || current instanceof ImmutableUserLeafSetNodeBuilder || current instanceof NormalizationResultBuilder,
             "LeafSetEntryNode is not valid for parent %s", current);
@@ -158,7 +158,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
-        final NormalizedNodeBuilder<?, ?, ?> current = current();
+        final var current = current();
         checkArgument(current instanceof ImmutableUnkeyedListNodeBuilder
             || current instanceof NormalizationResultBuilder);
         enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.unkeyedListEntryBuilder()
@@ -173,7 +173,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
-        final NormalizedNodeBuilder<?, ?, ?> current = current();
+        final var current = current();
         checkArgument(current instanceof ImmutableMapNodeBuilder || current instanceof ImmutableUserMapNodeBuilder
             || current instanceof NormalizationResultBuilder);
 
@@ -211,20 +211,22 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void scalarValue(final Object value) {
+        // FIXME: tighten to concrete NormalizedNode.Builder interfaces
         currentScalar().withValue(value);
     }
 
     @Override
     public void domSourceValue(final DOMSource value) {
+        // FIXME: tighten to concrete NormalizedNode.Builder interfaces
         currentScalar().withValue(value);
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public void endNode() {
-        final NormalizedNodeBuilder finishedBuilder = builders.poll();
+        final var finishedBuilder = builders.poll();
         checkState(finishedBuilder != null, "Node which should be closed does not exists.");
-        final NormalizedNode product = finishedBuilder.build();
+        final var product = finishedBuilder.build();
         nextSchema = null;
 
         writeChild(product);
@@ -260,7 +262,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     // Exposed for ImmutableMetadataNormalizedNodeStreamWriter
-    protected final NormalizedNodeBuilder popBuilder() {
+    protected final NormalizedNode.Builder popBuilder() {
         return builders.pop();
     }
 
@@ -270,17 +272,23 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         builders.push(builder);
     }
 
-    private <T> ImmutableLeafNodeBuilder<T> leafNodeBuilder(final DataSchemaNode schema) {
-        final InterningLeafNodeBuilder<T> interning = InterningLeafNodeBuilder.forSchema(schema);
-        return interning != null ? interning : leafNodeBuilder();
+    private <T> LeafNode.Builder<T> leafNodeBuilder(final DataSchemaNode schema) {
+        final var builder = this.<T>leafNodeBuilder();
+        if (schema instanceof LeafSchemaNode leafSchema) {
+            final var interner = LeafInterner.<LeafNode<T>>forSchema(leafSchema);
+            if (interner.isPresent()) {
+                return new InterningLeafNodeBuilder<>(builder, interner.orElseThrow());
+            }
+        }
+        return builder;
     }
 
-    <T> ImmutableLeafNodeBuilder<T> leafNodeBuilder() {
-        return new ImmutableLeafNodeBuilder<>();
+    <T> LeafNode.@NonNull Builder<T> leafNodeBuilder() {
+        return Builders.leafBuilder();
     }
 
-    <T> ImmutableLeafSetEntryNodeBuilder<T> leafsetEntryNodeBuilder() {
-        return ImmutableLeafSetEntryNodeBuilder.create();
+    <T> LeafSetEntryNode.@NonNull Builder<T> leafsetEntryNodeBuilder() {
+        return Builders.leafSetEntryBuilder();
     }
 
     private void checkDataNodeContainer() {
@@ -291,25 +299,31 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    private NormalizedNodeBuilder current() {
+    private NormalizedNode.Builder current() {
         return builders.peek();
     }
 
     @SuppressWarnings("rawtypes")
     private NormalizedNodeContainerBuilder currentContainer() {
-        final NormalizedNodeBuilder current = current();
-        if (current == null) {
-            return null;
+        final var current = current();
+        if (current instanceof NormalizedNodeContainerBuilder builder) {
+            return builder;
         }
-        checkState(current instanceof NormalizedNodeContainerBuilder, "%s is not a node container", current);
-        return (NormalizedNodeContainerBuilder) current;
+        if (current != null) {
+            throw new IllegalStateException(current + " is not a node container");
+        }
+        return null;
     }
 
     @SuppressWarnings("rawtypes")
     private NormalizedNodeBuilder currentScalar() {
-        final NormalizedNodeBuilder current = current();
-        checkState(!(current instanceof NormalizedNodeContainerBuilder), "Unexpected node container %s", current);
-        return current;
+        final var current = current();
+        if (current instanceof NormalizedNodeContainerBuilder) {
+            throw new IllegalStateException("Unexpected node container " + current);
+        }
+        if (current instanceof NormalizedNodeBuilder builder) {
+            return builder;
+        }
+        throw new IllegalStateException("Unexpected non-scalar " + current);
     }
 }

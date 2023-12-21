@@ -22,8 +22,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.YangInstanceIdentifierWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -37,17 +35,19 @@ public final class ImmutableNodes {
         // Hidden on purpose
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder() {
+    public static SystemMapNode.@NonNull Builder mapNodeBuilder() {
         return Builders.mapBuilder();
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder(final QName name) {
+    public static SystemMapNode.@NonNull Builder mapNodeBuilder(final QName name) {
         return mapNodeBuilder(NodeIdentifier.create(name));
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder(
-            final NodeIdentifier name) {
-        return Builders.mapBuilder().withNodeIdentifier(name);
+    public static SystemMapNode.@NonNull Builder mapNodeBuilder(final NodeIdentifier name) {
+        final var ret = Builders.mapBuilder();
+        // FIXME: use fluent once we have specialized enough
+        ret.withNodeIdentifier(name);
+        return ret;
     }
 
     /**
@@ -114,14 +114,17 @@ public final class ImmutableNodes {
         return leafNode(NodeIdentifier.create(name), value);
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
-            final QName nodeName, final QName keyName, final Object keyValue) {
-        return Builders.mapEntryBuilder()
-                .withNodeIdentifier(NodeIdentifierWithPredicates.of(nodeName, keyName, keyValue))
-                .withChild(leafNode(keyName, keyValue));
+    public static MapEntryNode.@NonNull Builder mapEntryBuilder(final QName nodeName, final QName keyName,
+            final Object keyValue) {
+        final var ret = Builders.mapEntryBuilder();
+        // FIXME: use fluent once we have specialized enough
+        ret.withNodeIdentifier(NodeIdentifierWithPredicates.of(nodeName, keyName, keyValue))
+            .withChild(leafNode(keyName, keyValue));
+        return ret;
+
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
+    public static MapEntryNode.@NonNull Builder mapEntryBuilder() {
         return Builders.mapEntryBuilder();
     }
 

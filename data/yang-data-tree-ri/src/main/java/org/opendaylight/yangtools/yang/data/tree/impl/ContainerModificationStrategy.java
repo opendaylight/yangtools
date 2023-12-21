@@ -96,7 +96,7 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
 
     private static final NormalizedNodeContainerSupport<NodeIdentifier, ContainerNode> SUPPORT =
             new NormalizedNodeContainerSupport<>(ContainerNode.class, ImmutableContainerNodeBuilder::create,
-                    ImmutableContainerNodeBuilder::create);
+                    ImmutableContainerNodeBuilder::new);
 
     ContainerModificationStrategy(final ContainerLike schemaNode, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, schemaNode, treeConfig);

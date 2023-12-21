@@ -308,10 +308,10 @@ class Bug4454Test {
         final var barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
         final var gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
-        final var barLeafSetEntry = Builders.leafSetEntryBuilder()
+        final var barLeafSetEntry = Builders.<String>leafSetEntryBuilder()
                 .withNodeIdentifier(barPath)
                 .withValue("bar").build();
-        final var gooLeafSetEntry = Builders.leafSetEntryBuilder()
+        final var gooLeafSetEntry = Builders.<String>leafSetEntryBuilder()
                 .withNodeIdentifier(gooPath)
                 .withValue("goo").build();
 

@@ -62,7 +62,7 @@ sealed class MapEntryModificationStrategy extends DataNodeContainerModificationS
 
     private static final NormalizedNodeContainerSupport<NodeIdentifierWithPredicates, MapEntryNode> SUPPORT =
             new NormalizedNodeContainerSupport<>(MapEntryNode.class, ImmutableMapEntryNodeBuilder::create,
-                    ImmutableMapEntryNodeBuilder::create);
+                    ImmutableMapEntryNodeBuilder::new);
 
     MapEntryModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, schema, treeConfig);

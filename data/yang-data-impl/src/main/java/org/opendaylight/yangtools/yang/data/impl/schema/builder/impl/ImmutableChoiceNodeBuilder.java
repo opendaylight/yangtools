@@ -11,35 +11,28 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode> {
-    protected ImmutableChoiceNodeBuilder() {
+public final class ImmutableChoiceNodeBuilder
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode>
+        implements ChoiceNode.Builder {
+    public ImmutableChoiceNodeBuilder() {
 
     }
 
-    protected ImmutableChoiceNodeBuilder(final int sizeHint) {
+    public ImmutableChoiceNodeBuilder(final int sizeHint) {
         super(sizeHint);
     }
 
-    protected ImmutableChoiceNodeBuilder(final ImmutableChoiceNode node) {
+    private ImmutableChoiceNodeBuilder(final ImmutableChoiceNode node) {
         super(node);
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create() {
-        return new ImmutableChoiceNodeBuilder();
-    }
-
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final int sizeHint) {
-        return new ImmutableChoiceNodeBuilder(sizeHint);
-    }
-
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceNode node) {
-        if (!(node instanceof ImmutableChoiceNode immutableNode)) {
-            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
+    public static ChoiceNode.@NonNull Builder create(final ChoiceNode node) {
+        if (node instanceof ImmutableChoiceNode immutableNode) {
+            return new ImmutableChoiceNodeBuilder(immutableNode);
         }
-        return new ImmutableChoiceNodeBuilder(immutableNode);
+        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     @Override

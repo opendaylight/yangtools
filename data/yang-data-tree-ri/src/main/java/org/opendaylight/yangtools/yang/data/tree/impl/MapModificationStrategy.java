@@ -28,10 +28,10 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 final class MapModificationStrategy extends Invisible<ListSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UserMapNode> ORDERED_SUPPORT =
             new NormalizedNodeContainerSupport<>(UserMapNode.class, ChildTrackingPolicy.ORDERED,
-                    ImmutableUserMapNodeBuilder::create, ImmutableUserMapNodeBuilder::create);
+                    ImmutableUserMapNodeBuilder::create, ImmutableUserMapNodeBuilder::new);
     private static final NormalizedNodeContainerSupport<NodeIdentifier, SystemMapNode> UNORDERED_SUPPORT =
             new NormalizedNodeContainerSupport<>(SystemMapNode.class, ImmutableMapNodeBuilder::create,
-                    ImmutableMapNodeBuilder::create);
+                    ImmutableMapNodeBuilder::new);
 
     private final @NonNull MapNode emptyNode;
 

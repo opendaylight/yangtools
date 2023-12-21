@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, ChoiceNode> SUPPORT =
             new NormalizedNodeContainerSupport<>(ChoiceNode.class, ImmutableChoiceNodeBuilder::create,
-                    ImmutableChoiceNodeBuilder::create);
+                    ImmutableChoiceNodeBuilder::new);
 
     private final ImmutableMap<PathArgument, ModificationApplyOperation> childNodes;
     // FIXME: enforce leaves not coming from two case statements at the same time

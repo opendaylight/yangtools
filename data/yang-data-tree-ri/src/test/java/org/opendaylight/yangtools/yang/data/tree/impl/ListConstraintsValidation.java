@@ -229,11 +229,11 @@ class ListConstraintsValidation {
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
             .withChildValue("foo")
             .build());
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), Builders.leafSetEntryBuilder()
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), Builders.<String>leafSetEntryBuilder()
             .withNodeIdentifier(barPath)
             .withValue("bar")
             .build());
-        modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), Builders.leafSetEntryBuilder()
+        modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), Builders.<String>leafSetEntryBuilder()
             .withNodeIdentifier(gooPath)
             .withValue("goo")
             .build());
@@ -266,15 +266,15 @@ class ListConstraintsValidation {
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
             .withChildValue("foo")
             .build());
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), Builders.leafSetEntryBuilder()
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), Builders.<String>leafSetEntryBuilder()
             .withNodeIdentifier(barPath)
             .withValue("bar")
             .build());
-        modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), Builders.leafSetEntryBuilder()
+        modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), Builders.<String>leafSetEntryBuilder()
             .withNodeIdentifier(gooPath)
             .withValue("goo")
             .build());
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(fuuPath), Builders.leafSetEntryBuilder()
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(fuuPath), Builders.<String>leafSetEntryBuilder()
             .withNodeIdentifier(fuuPath)
             .withValue("fuu")
             .build());

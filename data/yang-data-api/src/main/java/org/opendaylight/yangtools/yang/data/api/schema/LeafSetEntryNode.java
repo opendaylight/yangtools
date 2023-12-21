@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 
 /**
  * Leaf node with multiplicity 0...n. Leaf node has a value, but no child nodes in the data tree, schema for leaf node
@@ -33,4 +34,11 @@ public non-sealed interface LeafSetEntryNode<T> extends ValueNode<T> {
      */
     @Override
     NodeWithValue<T> name();
+
+    /**
+     * A builder of {@link LeafSetEntryNode}s.
+     */
+    interface Builder<T> extends NormalizedNodeBuilder<NodeWithValue<T>, T, LeafSetEntryNode<T>> {
+        // Just a specialization
+    }
 }

@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
             new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
-                    ImmutableUnkeyedListEntryNodeBuilder::create, ImmutableUnkeyedListEntryNodeBuilder::create);
+                    ImmutableUnkeyedListEntryNodeBuilder::create, ImmutableUnkeyedListEntryNodeBuilder::new);
 
     private final DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
     private final UnkeyedListNode emptyNode;
