@@ -20,19 +20,21 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.util.LeafInterner;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 /**
  * Implementation of {@link NormalizedNodeStreamWriter}, which constructs immutable instances of
@@ -270,17 +272,23 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         builders.push(builder);
     }
 
-    private <T> ImmutableLeafNodeBuilder<T> leafNodeBuilder(final DataSchemaNode schema) {
-        final InterningLeafNodeBuilder<T> interning = InterningLeafNodeBuilder.forSchema(schema);
-        return interning != null ? interning : leafNodeBuilder();
+    private <T> LeafNode.Builder<T> leafNodeBuilder(final DataSchemaNode schema) {
+        final var builder = this.<T>leafNodeBuilder();
+        if (schema instanceof LeafSchemaNode leafSchema) {
+            final var interner = LeafInterner.<LeafNode<T>>forSchema(leafSchema);
+            if (interner.isPresent()) {
+                return new InterningLeafNodeBuilder<>(builder, interner.orElseThrow());
+            }
+        }
+        return builder;
     }
 
-    <T> ImmutableLeafNodeBuilder<T> leafNodeBuilder() {
-        return new ImmutableLeafNodeBuilder<>();
+    <T> LeafNode.@NonNull Builder<T> leafNodeBuilder() {
+        return Builders.leafBuilder();
     }
 
-    <T> ImmutableLeafSetEntryNodeBuilder<T> leafsetEntryNodeBuilder() {
-        return ImmutableLeafSetEntryNodeBuilder.create();
+    <T> LeafSetEntryNode.@NonNull Builder<T> leafsetEntryNodeBuilder() {
+        return Builders.leafSetEntryBuilder();
     }
 
     private void checkDataNodeContainer() {

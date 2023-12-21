@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 
 /*
 * Schema structure of document is:
@@ -87,7 +86,7 @@ class NormalizedNodeUtilsTest {
      * @return A test document
      */
     private static NormalizedNode createDocumentOne() {
-        return ImmutableContainerNodeBuilder.create()
+        return Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
             .withChild(mapNodeBuilder(LIST_A_QNAME)
                 .withChild(mapEntry(LIST_A_QNAME, LEAF_A_QNAME, FOO))
