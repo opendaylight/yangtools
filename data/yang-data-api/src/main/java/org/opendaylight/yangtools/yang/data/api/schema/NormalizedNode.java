@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -50,15 +49,4 @@ public interface NormalizedNode extends NormalizedData, PrettyTreeAware {
 
     @Override
     PathArgument name();
-
-    /**
-     * Return the name of this node.
-     *
-     * @return Name of this node.
-     * @deprecated Use {@link #name()} instead.
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default @NonNull PathArgument getIdentifier() {
-        return name();
-    }
 }
