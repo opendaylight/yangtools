@@ -32,21 +32,4 @@ public interface MapEntryNode extends DataContainerNode {
      */
     @Override
     NodeIdentifierWithPredicates name();
-
-    /**
-     * Returns identifier of this node in parent map node
-     *
-     * <p>
-     * Contents of identifier is defined by <code>key</code> (
-     * {@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode#getKeyDefinition()}
-     * ) statement in YANG schema for associated list item and child {@link LeafNode}s
-     * values with {@link NodeIdentifier} as defined in the schema.
-     *
-     * @return identifier of this node in the context of parent node
-     */
-    @Override
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    default NodeIdentifierWithPredicates getIdentifier() {
-        return name();
-    }
 }
