@@ -23,42 +23,33 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImmutableMapEntryNodeBuilder
-        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> {
+public final class ImmutableMapEntryNodeBuilder
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode>
+        implements MapEntryNode.Builder {
     private static final Logger LOG = LoggerFactory.getLogger(ImmutableMapEntryNodeBuilder.class);
 
     protected final Map<QName, NodeIdentifier> childrenQNamesToPaths;
 
-    protected ImmutableMapEntryNodeBuilder() {
+    public ImmutableMapEntryNodeBuilder() {
         childrenQNamesToPaths = new LinkedHashMap<>();
     }
 
-    protected ImmutableMapEntryNodeBuilder(final int sizeHint) {
+    public ImmutableMapEntryNodeBuilder(final int sizeHint) {
         super(sizeHint);
         childrenQNamesToPaths = new LinkedHashMap<>(sizeHint);
     }
 
-    protected ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
+    private ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
         super(node);
         childrenQNamesToPaths = new LinkedHashMap<>();
         fillQNames(node.body(), childrenQNamesToPaths);
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create() {
-        return new ImmutableMapEntryNodeBuilder();
-    }
-
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
-            final int sizeHint) {
-        return new ImmutableMapEntryNodeBuilder(sizeHint);
-    }
-
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
-            final MapEntryNode node) {
-        if (!(node instanceof ImmutableMapEntryNode immutableNode)) {
-            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
+    public static MapEntryNode.@NonNull Builder create(final MapEntryNode node) {
+        if (node instanceof ImmutableMapEntryNode immutableNode) {
+            return new ImmutableMapEntryNodeBuilder(immutableNode);
         }
-        return new ImmutableMapEntryNodeBuilder(immutableNode);
+        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     private static void fillQNames(final Iterable<DataContainerChild> iterable, final Map<QName, NodeIdentifier> out) {

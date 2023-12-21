@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
+
 /**
  * Leaf node with multiplicity 0..1.
  *
@@ -21,5 +25,18 @@ public non-sealed interface LeafNode<T> extends ValueNode<T>, DataContainerChild
     @SuppressWarnings("rawtypes")
     default Class<LeafNode> contract() {
         return LeafNode.class;
+    }
+
+    /**
+     * A builder of {@link LeafNode}s.
+     */
+    interface Builder<V> extends NormalizedNodeBuilder<NodeIdentifier, V, LeafNode<V>> {
+        /**
+         * Return the resulting {@link LeafNode}.
+         *
+         * @return resulting {@link LeafNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull LeafNode build();
     }
 }

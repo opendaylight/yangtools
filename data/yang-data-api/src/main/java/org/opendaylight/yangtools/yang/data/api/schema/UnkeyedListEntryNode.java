@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 
 /**
  * List entry node, which does not have value, but child nodes. Represents an instance of data, which schema is instance
@@ -30,5 +32,18 @@ public interface UnkeyedListEntryNode extends DataContainerNode {
     @Deprecated(since = "11.0.0", forRemoval = true)
     default NodeIdentifier getIdentifier() {
         return name();
+    }
+
+    /**
+     * A builder of {@link UnkeyedListNode}s.
+     */
+    interface Builder extends DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> {
+        /**
+         * Return the resulting {@link UnkeyedListEntryNode}.
+         *
+         * @return resulting {@link UnkeyedListEntryNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull UnkeyedListEntryNode build();
     }
 }

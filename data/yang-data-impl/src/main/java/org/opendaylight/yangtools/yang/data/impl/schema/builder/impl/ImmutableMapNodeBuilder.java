@@ -22,21 +22,20 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
-public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, SystemMapNode> {
+public final class ImmutableMapNodeBuilder implements SystemMapNode.Builder {
     private static final int DEFAULT_CAPACITY = 4;
 
     private final Map<NodeIdentifierWithPredicates, MapEntryNode> value;
 
     private @Nullable NodeIdentifier nodeIdentifier = null;
 
-    protected ImmutableMapNodeBuilder() {
+    public ImmutableMapNodeBuilder() {
         value = new HashMap<>(DEFAULT_CAPACITY);
     }
 
-    protected ImmutableMapNodeBuilder(final int sizeHint) {
+    public ImmutableMapNodeBuilder(final int sizeHint) {
         if (sizeHint >= 0) {
             value = Maps.newHashMapWithExpectedSize(sizeHint);
         } else {
@@ -44,20 +43,12 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         }
     }
 
-    protected ImmutableMapNodeBuilder(final SystemMapNode node) {
+    private ImmutableMapNodeBuilder(final SystemMapNode node) {
         nodeIdentifier = node.name();
         value = MapAdaptor.getDefaultInstance().takeSnapshot(accessChildren(node));
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create() {
-        return new ImmutableMapNodeBuilder();
-    }
-
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create(final int sizeHint) {
-        return new ImmutableMapNodeBuilder(sizeHint);
-    }
-
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create(final SystemMapNode node) {
+    public static SystemMapNode.@NonNull Builder create(final SystemMapNode node) {
         return new ImmutableMapNodeBuilder(node);
     }
 

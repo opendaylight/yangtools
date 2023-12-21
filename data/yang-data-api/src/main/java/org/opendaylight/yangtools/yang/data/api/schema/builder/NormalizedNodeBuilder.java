@@ -19,12 +19,4 @@ public interface NormalizedNodeBuilder<I extends PathArgument, V, R extends Norm
     @NonNull NormalizedNodeBuilder<I, V, R> withValue(V value);
 
     @NonNull NormalizedNodeBuilder<I, V, R> withNodeIdentifier(I nodeIdentifier);
-
-    /**
-     * Return an implementation of the {@link R} NormalizedNode contract.
-     *
-     * @return A built NormalizedNode
-     * @throws IllegalStateException if this builder does not have sufficient state
-     */
-    @NonNull R build();
 }
