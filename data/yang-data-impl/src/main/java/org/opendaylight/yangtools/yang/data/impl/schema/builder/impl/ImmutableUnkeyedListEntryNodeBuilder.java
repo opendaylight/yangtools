@@ -14,36 +14,27 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableUnkeyedListEntryNodeBuilder
-        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> {
-
-    protected ImmutableUnkeyedListEntryNodeBuilder() {
+public final class ImmutableUnkeyedListEntryNodeBuilder
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode>
+        implements UnkeyedListEntryNode.Builder {
+    public ImmutableUnkeyedListEntryNodeBuilder() {
 
     }
 
-    protected ImmutableUnkeyedListEntryNodeBuilder(final int sizeHint) {
+    public ImmutableUnkeyedListEntryNodeBuilder(final int sizeHint) {
         super(sizeHint);
     }
 
-    protected ImmutableUnkeyedListEntryNodeBuilder(final ImmutableUnkeyedListEntryNode node) {
+    private ImmutableUnkeyedListEntryNodeBuilder(final ImmutableUnkeyedListEntryNode node) {
         super(node);
-    }
-
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create() {
-        return new ImmutableUnkeyedListEntryNodeBuilder();
-    }
-
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
-            final int sizeHint) {
-        return new ImmutableUnkeyedListEntryNodeBuilder(sizeHint);
     }
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
             final UnkeyedListEntryNode node) {
-        if (!(node instanceof ImmutableUnkeyedListEntryNode immutableNode)) {
-            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
+        if (node instanceof ImmutableUnkeyedListEntryNode immutableNode) {
+            return new ImmutableUnkeyedListEntryNodeBuilder(immutableNode);
         }
-        return new ImmutableUnkeyedListEntryNodeBuilder(immutableNode);
+        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     @Override

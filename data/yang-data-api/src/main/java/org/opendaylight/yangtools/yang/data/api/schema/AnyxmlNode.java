@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 
 /**
  * A NormalizedNode holding the contents of an {@code anyxml} node in some object model. This interface is a common
@@ -21,5 +24,18 @@ public non-sealed interface AnyxmlNode<V> extends ForeignDataNode<V> {
     @SuppressWarnings("rawtypes")
     default Class<AnyxmlNode> contract() {
         return AnyxmlNode.class;
+    }
+
+    /**
+     * A builder of {@link AnyxmlNode}s.
+     */
+    interface Builder<V, N extends AnyxmlNode<V>> extends NormalizedNodeBuilder<NodeIdentifier, V, N> {
+        /**
+         * Return the resulting {@link AnyxmlNode}.
+         *
+         * @return resulting {@link AnyxmlNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull N build();
     }
 }

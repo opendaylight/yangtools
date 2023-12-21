@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 
 /**
  * Leaf node with multiplicity 0...n. Leaf node has a value, but no child nodes in the data tree, schema for leaf node
@@ -47,5 +49,18 @@ public non-sealed interface LeafSetEntryNode<T> extends ValueNode<T> {
     @Deprecated(since = "11.0.0", forRemoval = true)
     default NodeWithValue<T> getIdentifier() {
         return name();
+    }
+
+    /**
+     * A builder of {@link LeafSetEntryNode}s.
+     */
+    interface Builder<T> extends NormalizedNodeBuilder<NodeWithValue<T>, T, LeafSetEntryNode<T>> {
+        /**
+         * Return the resulting {@link MapEntryNode}.
+         *
+         * @return resulting {@link MapEntryNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull LeafSetEntryNode<T> build();
     }
 }

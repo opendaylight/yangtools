@@ -22,15 +22,20 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeCon
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
-public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
+public final class ImmutableUnkeyedListNodeBuilder implements UnkeyedListNode.Builder {
     private List<UnkeyedListEntryNode> value;
     private NodeIdentifier nodeIdentifier;
     private boolean dirty;
 
-    protected ImmutableUnkeyedListNodeBuilder() {
+    public ImmutableUnkeyedListNodeBuilder() {
         value = new LinkedList<>();
         dirty = false;
     }
+
+    public ImmutableUnkeyedListNodeBuilder(final int sizeHint) {
+        this();
+    }
+
 
     protected ImmutableUnkeyedListNodeBuilder(final ImmutableUnkeyedListNode node) {
         nodeIdentifier = node.name();
@@ -40,16 +45,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         dirty = true;
     }
 
-    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
-        return new ImmutableUnkeyedListNodeBuilder();
-    }
-
-    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
-        return new ImmutableUnkeyedListNodeBuilder();
-    }
-
-    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(
-            final UnkeyedListNode node) {
+    public static UnkeyedListNode.@NonNull Builder create(final UnkeyedListNode node) {
         if (!(node instanceof ImmutableUnkeyedListNode immutableNode)) {
             throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }

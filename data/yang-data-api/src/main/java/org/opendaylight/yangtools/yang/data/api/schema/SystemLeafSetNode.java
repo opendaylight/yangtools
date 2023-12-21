@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
+
 /**
  * {@link LeafSetNode} which does not preserve user-supplied ordering. This node represents a data instance of
  * a {@code leaf-list} without a {@code ordered-by user;} substatement, i.e. when the {@code leaf-list} is effectively
@@ -28,4 +31,17 @@ public non-sealed interface SystemLeafSetNode<T> extends LeafSetNode<T>, Orderin
 
     @Override
     boolean equals(Object obj);
+
+    /**
+     * A builder of {@link SystemLeafSetNode}s.
+     */
+    interface Builder<T> extends ListNodeBuilder<T, SystemLeafSetNode<T>> {
+        /**
+         * Return the resulting {@link SystemLeafSetNode}.
+         *
+         * @return resulting {@link SystemLeafSetNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull SystemLeafSetNode<T> build();
+    }
 }

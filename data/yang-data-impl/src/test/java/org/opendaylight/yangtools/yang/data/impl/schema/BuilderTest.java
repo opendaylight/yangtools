@@ -26,8 +26,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCh
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
@@ -107,7 +105,7 @@ class BuilderTest {
 
     @Test
     void immutableMapNodeBuilderTest() {
-        final var mapNode = ImmutableMapNodeBuilder.create(1)
+        final var mapNode = Builders.mapBuilder(1)
             .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
             .withValue(List.of(LIST_MAIN_CHILD_3))
             .build();
@@ -155,8 +153,7 @@ class BuilderTest {
 
     @Test
     void immutableChoiceNodeBuilderTest() {
-        final var choiceNode = ImmutableChoiceNodeBuilder.create(1).withNodeIdentifier(NODE_IDENTIFIER_LIST)
-                .build();
+        final var choiceNode = Builders.choiceBuilder(1).withNodeIdentifier(NODE_IDENTIFIER_LIST).build();
         final var choiceNodeCreated = ImmutableChoiceNodeBuilder.create(choiceNode).build();
         assertEquals(choiceNodeCreated.name(), choiceNode.name());
     }
@@ -179,7 +176,7 @@ class BuilderTest {
 
     @Test
     void immutableMapEntryNodeBuilderExceptionTest() {
-        final var builder = ImmutableMapEntryNodeBuilder.create(1);
+        final var builder = Builders.mapEntryBuilder(1);
         assertThrows(NullPointerException.class, builder::build);
     }
 
@@ -190,7 +187,7 @@ class BuilderTest {
     }
 
     private static UserMapNode getImmutableUserMapNode() {
-        return ImmutableUserMapNodeBuilder.create()
+        return Builders.mapBuilder()
             .withNodeIdentifier(NODE_IDENTIFIER_LIST)
             .withChild(LIST_MAIN_CHILD_1)
             .build();

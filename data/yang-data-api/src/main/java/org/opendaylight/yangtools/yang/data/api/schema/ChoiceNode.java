@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
+
 /**
  * Node representing data instance of <code>choice</code>.
  *
@@ -27,5 +31,18 @@ public non-sealed interface ChoiceNode extends DataContainerNode, DataContainerC
     @Override
     default Class<ChoiceNode> contract() {
         return ChoiceNode.class;
+    }
+
+    /**
+     * A builder of {@link ChoiceNode}s.
+     */
+    interface Builder extends DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> {
+        /**
+         * Return the resulting {@link ChoiceNode}.
+         *
+         * @return resulting {@link ChoiceNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull ChoiceNode build();
     }
 }

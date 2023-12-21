@@ -19,15 +19,15 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
-public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, UserLeafSetNode<T>> {
-    private Map<NodeWithValue, LeafSetEntryNode<T>> value;
+public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode.Builder<T> {
+    private Map<NodeWithValue<T>, LeafSetEntryNode<T>> value;
     private NodeIdentifier nodeIdentifier;
     private boolean dirty;
 
-    ImmutableUserLeafSetNodeBuilder() {
+    public ImmutableUserLeafSetNodeBuilder() {
         value = new LinkedHashMap<>();
         dirty = false;
     }
@@ -38,17 +38,11 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
         dirty = true;
     }
 
-    public static <T> @NonNull ListNodeBuilder<T, UserLeafSetNode<T>> create() {
-        return new ImmutableUserLeafSetNodeBuilder<>();
-    }
-
-    public static <T> @NonNull ListNodeBuilder<T, UserLeafSetNode<T>> create(
-            final UserLeafSetNode<T> node) {
-        if (!(node instanceof ImmutableUserLeafSetNode<?>)) {
-            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
+    public static <T> UserLeafSetNode.@NonNull Builder<T> create(final UserLeafSetNode<T> node) {
+        if (node instanceof ImmutableUserLeafSetNode<?>) {
+            return new ImmutableUserLeafSetNodeBuilder<>((ImmutableUserLeafSetNode<T>) node);
         }
-
-        return new ImmutableUserLeafSetNodeBuilder<>((ImmutableUserLeafSetNode<T>) node);
+        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     private void checkDirty() {
@@ -75,7 +69,7 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
     @Override
     public UserLeafSetNode<T> build() {
         dirty = true;
-        return new ImmutableUserLeafSetNode<>(nodeIdentifier, value);
+        return new ImmutableUserLeafSetNode<T>(nodeIdentifier, value);
     }
 
     @Override
@@ -95,7 +89,7 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
 
     @Override
     public ImmutableUserLeafSetNodeBuilder<T> withChildValue(final T childValue) {
-        return withChild(ImmutableLeafSetEntryNodeBuilder.<T>create()
+        return withChild(Builders.<T>leafSetEntryBuilder()
             .withNodeIdentifier(new NodeWithValue<>(nodeIdentifier.getNodeType(), childValue))
             .withValue(childValue).build());
     }
@@ -150,7 +144,7 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
             return Iterables.elementsEqual(children.values(), other.body());
         }
 
-        private Map<NodeWithValue, LeafSetEntryNode<T>> getChildren() {
+        private Map<NodeWithValue<T>, LeafSetEntryNode<T>> getChildren() {
             return Collections.unmodifiableMap(children);
         }
     }

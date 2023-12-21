@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 
 /**
  * {@link MapNode} which additionally preserves user-supplied ordering. This node represents a data instance of
@@ -28,4 +30,17 @@ public non-sealed interface UserMapNode extends MapNode, OrderedNodeContainer<Ma
      */
     @Override
     Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();
+
+    /**
+     * A builder of {@link SystemMapNode}s.
+     */
+    interface Builder extends CollectionNodeBuilder<MapEntryNode, UserMapNode> {
+        /**
+         * Return the resulting {@link UserMapNode}.
+         *
+         * @return resulting {@link UserMapNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull UserMapNode build();
+    }
 }
