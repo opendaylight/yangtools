@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Interner;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.LeafInterner;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
-final class InterningLeafNodeBuilder<T> extends ImmutableLeafNodeBuilder<T> {
+final class InterningLeafNodeBuilder<T> implements LeafNode.Builder<T> {
+    private final LeafNode.Builder<T> delegate = Builders.leafBuilder();
     private final Interner<LeafNode<T>> interner;
 
     private InterningLeafNodeBuilder(final Interner<LeafNode<T>> interner) {
@@ -27,7 +27,7 @@ final class InterningLeafNodeBuilder<T> extends ImmutableLeafNodeBuilder<T> {
 
     static <T> @Nullable InterningLeafNodeBuilder<T> forSchema(final @Nullable DataSchemaNode schema) {
         if (schema instanceof LeafSchemaNode leafSchema) {
-            final Optional<Interner<LeafNode<T>>> interner = LeafInterner.forSchema(leafSchema);
+            final var interner = LeafInterner.<LeafNode<T>>forSchema(leafSchema);
             if (interner.isPresent()) {
                 return new InterningLeafNodeBuilder<>(interner.orElseThrow());
             }
@@ -36,7 +36,19 @@ final class InterningLeafNodeBuilder<T> extends ImmutableLeafNodeBuilder<T> {
     }
 
     @Override
+    public LeafNode.Builder<T> withValue(final T value) {
+        delegate.withValue(value);
+        return this;
+    }
+
+    @Override
+    public LeafNode.Builder<T> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+        delegate.withNodeIdentifier(nodeIdentifier);
+        return this;
+    }
+
+    @Override
     public LeafNode<T> build() {
-        return interner.intern(super.build());
+        return interner.intern(delegate.build());
     }
 }

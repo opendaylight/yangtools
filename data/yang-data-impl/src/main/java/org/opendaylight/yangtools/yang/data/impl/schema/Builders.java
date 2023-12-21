@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -47,8 +47,8 @@ public final class Builders {
         // Hidden on purpose
     }
 
-    public static <T> NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder() {
-        return ImmutableLeafNodeBuilder.create();
+    public static <T> LeafNode.@NonNull Builder<T> leafBuilder() {
+        return new ImmutableLeafNodeBuilder<>();
     }
 
     // FIXME: 7.0.0: add generic arguments
@@ -85,39 +85,36 @@ public final class Builders {
         return ImmutableLeafSetNodeBuilder.create(sizeHint);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder() {
-        return ImmutableContainerNodeBuilder.create();
+    public static ContainerNode.@NonNull Builder containerBuilder() {
+        return new ImmutableContainerNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(
-            final ContainerNode node) {
+    public static ContainerNode.@NonNull Builder containerBuilder(final ContainerNode node) {
         return ImmutableContainerNodeBuilder.create(node);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(final int sizeHint) {
-        return ImmutableContainerNodeBuilder.create(sizeHint);
+    public static ContainerNode.@NonNull Builder containerBuilder(final int sizeHint) {
+        return new ImmutableContainerNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
-        return ImmutableMapEntryNodeBuilder.create();
+    public static MapEntryNode.@NonNull Builder mapEntryBuilder() {
+        return new ImmutableMapEntryNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
-            final MapEntryNode mapEntryNode) {
+    public static MapEntryNode.@NonNull Builder mapEntryBuilder(final MapEntryNode mapEntryNode) {
         return ImmutableMapEntryNodeBuilder.create(mapEntryNode);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
-            final int sizeHint) {
-        return ImmutableMapEntryNodeBuilder.create(sizeHint);
+    public static MapEntryNode.@NonNull Builder mapEntryBuilder(final int sizeHint) {
+        return new ImmutableMapEntryNodeBuilder(sizeHint);
     }
 
     public static CollectionNodeBuilder<MapEntryNode, UserMapNode> orderedMapBuilder() {
-        return ImmutableUserMapNodeBuilder.create();
+        return new ImmutableUserMapNodeBuilder();
     }
 
     public static CollectionNodeBuilder<MapEntryNode, UserMapNode> orderedMapBuilder(final int sizeHint) {
-        return ImmutableUserMapNodeBuilder.create(sizeHint);
+        return new ImmutableUserMapNodeBuilder(sizeHint);
     }
 
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> unkeyedListBuilder() {
@@ -128,24 +125,24 @@ public final class Builders {
         return ImmutableUnkeyedListNodeBuilder.create(sizeHint);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder() {
-        return ImmutableMapNodeBuilder.create();
+    public static SystemMapNode.@NonNull Builder mapBuilder() {
+        return new ImmutableMapNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder(final SystemMapNode node) {
+    public static SystemMapNode.@NonNull Builder mapBuilder(final int sizeHint) {
+        return new ImmutableMapNodeBuilder(sizeHint);
+    }
+
+    public static SystemMapNode.@NonNull Builder mapBuilder(final SystemMapNode node) {
         return ImmutableMapNodeBuilder.create(node);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder(final int sizeHint) {
-        return ImmutableMapNodeBuilder.create(sizeHint);
+    public static ChoiceNode.@NonNull Builder choiceBuilder() {
+        return new ImmutableChoiceNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder() {
-        return ImmutableChoiceNodeBuilder.create();
-    }
-
-    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder(final int sizeHint) {
-        return ImmutableChoiceNodeBuilder.create(sizeHint);
+    public static ChoiceNode.@NonNull Builder choiceBuilder(final int sizeHint) {
+        return new ImmutableChoiceNodeBuilder(sizeHint);
     }
 
     public static DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {

@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 
 /**
  * Instance of Map entry, this node does not contains value, but child nodes.
@@ -48,5 +50,18 @@ public interface MapEntryNode extends DataContainerNode {
     @Deprecated(since = "11.0.0", forRemoval = true)
     default NodeIdentifierWithPredicates getIdentifier() {
         return name();
+    }
+
+    /**
+     * A builder of {@link MapEntryNode}s.
+     */
+    interface Builder extends DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> {
+        /**
+         * Return the resulting {@link MapEntryNode}.
+         *
+         * @return resulting {@link MapEntryNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull MapEntryNode build();
     }
 }

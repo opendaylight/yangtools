@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
+
 /**
  * Data subtree with cardinality 0..1 in the context of parent node.
  *
@@ -21,5 +25,18 @@ public non-sealed interface ContainerNode extends DataContainerNode, DataContain
     @Override
     default Class<ContainerNode> contract() {
         return ContainerNode.class;
+    }
+
+    /**
+     * A builder of {@link ContainerNode}s.
+     */
+    interface Builder extends DataContainerNodeBuilder<NodeIdentifier, ContainerNode> {
+        /**
+         * Return the resulting {@link ContainerNode}.
+         *
+         * @return resulting {@link ContainerNode}
+         * @throws IllegalStateException if this builder does not have sufficient state
+         */
+        @NonNull ContainerNode build();
     }
 }
