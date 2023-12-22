@@ -13,6 +13,9 @@ module org.opendaylight.yangtools.yang.data.impl {
     exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
     exports org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+    provides org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeBuilderFactory
+        with org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeBuilderFactory;
+
     requires transitive java.xml;
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
@@ -30,4 +33,7 @@ module org.opendaylight.yangtools.yang.data.impl {
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
+    requires static javax.inject;
+    requires static org.kohsuke.metainf_services;
+    requires static org.osgi.service.component.annotations;
 }
