@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -19,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode.Builder<T> {
@@ -29,6 +29,11 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
 
     public ImmutableUserLeafSetNodeBuilder() {
         value = new LinkedHashMap<>();
+        dirty = false;
+    }
+
+    public ImmutableUserLeafSetNodeBuilder(final int sizeHint) {
+        value = Maps.newLinkedHashMapWithExpectedSize(sizeHint);
         dirty = false;
     }
 
@@ -89,7 +94,7 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
 
     @Override
     public ImmutableUserLeafSetNodeBuilder<T> withChildValue(final T childValue) {
-        return withChild(Builders.<T>leafSetEntryBuilder()
+        return withChild(new ImmutableLeafSetEntryNodeBuilder<T>()
             .withNodeIdentifier(new NodeWithValue<>(nodeIdentifier.getNodeType(), childValue))
             .withValue(childValue).build());
     }
