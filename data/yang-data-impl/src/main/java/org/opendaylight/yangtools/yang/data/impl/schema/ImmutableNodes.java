@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
@@ -28,6 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public final class ImmutableNodes {
+    private static final @NonNull ImmutableBuilderFactory BUILDER_FACTORY =
+        new ImmutableBuilderFactory();
+
     // FIXME: YANGTOOLS-1074: we do not want this name
     private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
 
@@ -35,8 +39,12 @@ public final class ImmutableNodes {
         // Hidden on purpose
     }
 
+    public static @NonNull BuilderFactory builderFactory() {
+        return BUILDER_FACTORY;
+    }
+
     public static SystemMapNode.@NonNull Builder mapNodeBuilder() {
-        return Builders.mapBuilder();
+        return BUILDER_FACTORY.newSystemMapBuilder();
     }
 
     public static SystemMapNode.@NonNull Builder mapNodeBuilder(final QName name) {
@@ -44,7 +52,7 @@ public final class ImmutableNodes {
     }
 
     public static SystemMapNode.@NonNull Builder mapNodeBuilder(final NodeIdentifier name) {
-        final var ret = Builders.mapBuilder();
+        final var ret = mapNodeBuilder();
         // FIXME: use fluent once we have specialized enough
         ret.withNodeIdentifier(name);
         return ret;
@@ -87,7 +95,7 @@ public final class ImmutableNodes {
      * @return An ordered Map node
      */
     public static @NonNull UserMapNode orderedMapNode(final NodeIdentifier name) {
-        return Builders.orderedMapBuilder().withNodeIdentifier(name).build();
+        return BUILDER_FACTORY.newUserMapBuilder().withNodeIdentifier(name).build();
     }
 
     /**
@@ -116,16 +124,15 @@ public final class ImmutableNodes {
 
     public static MapEntryNode.@NonNull Builder mapEntryBuilder(final QName nodeName, final QName keyName,
             final Object keyValue) {
-        final var ret = Builders.mapEntryBuilder();
+        final var ret = mapEntryBuilder();
         // FIXME: use fluent once we have specialized enough
         ret.withNodeIdentifier(NodeIdentifierWithPredicates.of(nodeName, keyName, keyValue))
             .withChild(leafNode(keyName, keyValue));
         return ret;
-
     }
 
     public static MapEntryNode.@NonNull Builder mapEntryBuilder() {
-        return Builders.mapEntryBuilder();
+        return BUILDER_FACTORY.newMapEntryBuilder();
     }
 
     public static @NonNull MapEntryNode mapEntry(final QName nodeName, final QName keyName, final Object keyValue) {
@@ -149,7 +156,7 @@ public final class ImmutableNodes {
      * @return A container node
      */
     public static @NonNull ContainerNode containerNode(final NodeIdentifier name) {
-        return Builders.containerBuilder().withNodeIdentifier(name).build();
+        return BUILDER_FACTORY.newContainerBuilder().withNodeIdentifier(name).build();
     }
 
     /**
@@ -169,7 +176,7 @@ public final class ImmutableNodes {
      * @return A choice node
      */
     public static @NonNull ChoiceNode choiceNode(final NodeIdentifier name) {
-        return Builders.choiceBuilder().withNodeIdentifier(name).build();
+        return BUILDER_FACTORY.newChoiceBuilder().withNodeIdentifier(name).build();
     }
 
     /**
@@ -189,7 +196,7 @@ public final class ImmutableNodes {
      * @return An unkeyed list node
      */
     public static @NonNull UnkeyedListNode listNode(final NodeIdentifier name) {
-        return Builders.unkeyedListBuilder().withNodeIdentifier(name).build();
+        return BUILDER_FACTORY.newUnkeyedListBuilder().withNodeIdentifier(name).build();
     }
 
     /**
