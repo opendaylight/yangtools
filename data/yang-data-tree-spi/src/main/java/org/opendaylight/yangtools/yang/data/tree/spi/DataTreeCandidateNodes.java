@@ -75,8 +75,8 @@ public final class DataTreeCandidateNodes {
      * @return Collection of changes
      */
     public static @NonNull Collection<DataTreeCandidateNode> containerDelta(
-            final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> oldData,
-            final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> newData) {
+            final @Nullable DistinctNodeContainer<?, ?> oldData,
+            final @Nullable DistinctNodeContainer<?, ?> newData) {
         if (newData == null) {
             return oldData == null ? ImmutableList.of()
                     : Collections2.transform(oldData.body(), DataTreeCandidateNodes::deleteNode);
@@ -93,10 +93,13 @@ public final class DataTreeCandidateNodes {
          * in old data. Based on that we construct replaced/written nodes. We then proceed to
          * iterate over old data and looking up each child in new data.
          */
-        final Collection<DataTreeCandidateNode> result = new ArrayList<>();
-        for (NormalizedNode child : newData.body()) {
+
+        final var result = new ArrayList<DataTreeCandidateNode>();
+        @SuppressWarnings("unchecked")
+        final var oldCast = (DistinctNodeContainer<PathArgument, ?>) oldData;
+        for (var child : newData.body()) {
             final DataTreeCandidateNode node;
-            final NormalizedNode oldChild = oldData.childByArg(child.name());
+            final NormalizedNode oldChild = oldCast.childByArg(child.name());
             if (oldChild != null) {
                 // This does not find children which have not in fact been modified, as doing that
                 // reliably would require us running a full equals() on the two nodes.
@@ -109,8 +112,10 @@ public final class DataTreeCandidateNodes {
         }
 
         // Process removals next, looking into new data to see if we processed it
-        for (NormalizedNode child : oldData.body()) {
-            if (newData.childByArg(child.name()) == null) {
+        @SuppressWarnings("unchecked")
+        final var newCast = (DistinctNodeContainer<PathArgument, ?>) newData;
+        for (var child : oldData.body()) {
+            if (newCast.childByArg(child.name()) == null) {
                 result.add(deleteNode(child));
             }
         }

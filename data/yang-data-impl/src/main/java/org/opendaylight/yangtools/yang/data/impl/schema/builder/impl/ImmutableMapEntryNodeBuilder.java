@@ -7,19 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractMapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +45,7 @@ public final class ImmutableMapEntryNodeBuilder
     }
 
     private ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
-        super(node);
+        super(node.name, node.children);
         childrenQNamesToPaths = new LinkedHashMap<>();
         fillQNames(node.body(), childrenQNamesToPaths);
     }
@@ -96,18 +101,45 @@ public final class ImmutableMapEntryNodeBuilder
         return new ImmutableMapEntryNode(getNodeIdentifier(), buildValue());
     }
 
-    private static final class ImmutableMapEntryNode
-            extends AbstractImmutableDataContainerNode<NodeIdentifierWithPredicates, MapEntryNode>
-            implements MapEntryNode {
+    private static final class ImmutableMapEntryNode extends AbstractMapEntryNode {
+        private final @NonNull NodeIdentifierWithPredicates name;
+        private final @NonNull Map<NodeIdentifier, Object> children;
 
-        ImmutableMapEntryNode(final NodeIdentifierWithPredicates nodeIdentifier,
-                final Map<NodeIdentifier, Object> children) {
-            super(children, nodeIdentifier);
+        ImmutableMapEntryNode(final NodeIdentifierWithPredicates name, final Map<NodeIdentifier, Object> children) {
+            this.name = requireNonNull(name);
+            // FIXME: move this to caller
+            this.children = ImmutableOffsetMap.unorderedCopyOf(children);
         }
 
         @Override
-        protected Class<MapEntryNode> implementedType() {
-            return MapEntryNode.class;
+        public NodeIdentifierWithPredicates name() {
+            return name;
+        }
+
+        @Override
+        public DataContainerChild childByArg(final NodeIdentifier child) {
+            return LazyLeafOperations.getChild(children, child);
+        }
+
+        @Override
+        public Collection<DataContainerChild> body() {
+            return new LazyValues(children);
+        }
+
+        @Override
+        public int size() {
+            return children.size();
+        }
+
+        @Override
+        protected int valueHashCode() {
+            return children.hashCode();
+        }
+
+        @Override
+        protected boolean valueEquals(final MapEntryNode other) {
+            return other instanceof ImmutableMapEntryNode immutable ? children.equals(immutable.children)
+                : ImmutableNormalizedNodeMethods.bodyEquals(this, other);
         }
     }
 }

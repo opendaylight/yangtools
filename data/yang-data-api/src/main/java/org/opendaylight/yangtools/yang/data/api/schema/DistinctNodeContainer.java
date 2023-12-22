@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * @param <K> Child path argument type
  * @param <V> Child Node type
  */
-public non-sealed interface DistinctNodeContainer<K extends PathArgument, V extends NormalizedNode>
-        extends DistinctContainer<K, V>, NormalizedNodeContainer<V> {
+public sealed interface DistinctNodeContainer<K extends PathArgument, V extends NormalizedNode>
+        extends DistinctContainer<K, V>, NormalizedNodeContainer<V>
+        permits DataContainerNode, LeafSetNode, MapNode {
     // Composition of DistinctContainer and NormalizedNodeContainer
 }

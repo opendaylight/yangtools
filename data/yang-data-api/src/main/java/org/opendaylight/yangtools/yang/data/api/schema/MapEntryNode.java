@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 /**
  * Instance of Map entry, this node does not contains value, but child nodes.
  */
-public interface MapEntryNode extends DataContainerNode {
+public non-sealed interface MapEntryNode extends DataContainerNode {
     @Override
     default Class<MapEntryNode> contract() {
         return MapEntryNode.class;

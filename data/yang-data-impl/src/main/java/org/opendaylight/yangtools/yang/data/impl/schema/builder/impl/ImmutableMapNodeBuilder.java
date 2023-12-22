@@ -16,13 +16,14 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.MapAdaptor;
+import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.util.UnmodifiableMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractSystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public final class ImmutableMapNodeBuilder implements SystemMapNode.Builder {
     private static final int DEFAULT_CAPACITY = 4;
@@ -95,15 +96,18 @@ public final class ImmutableMapNodeBuilder implements SystemMapNode.Builder {
         return withoutChild(key);
     }
 
-    protected static final class ImmutableMapNode extends AbstractNormalizedNode<NodeIdentifier, SystemMapNode>
-            implements SystemMapNode {
-
+    protected static final class ImmutableMapNode extends AbstractSystemMapNode {
+        private final @NonNull NodeIdentifier name;
         private final @NonNull Map<NodeIdentifierWithPredicates, MapEntryNode> children;
 
-        ImmutableMapNode(final NodeIdentifier nodeIdentifier,
-                         final Map<NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier);
+        ImmutableMapNode(final NodeIdentifier name, final Map<NodeIdentifierWithPredicates, MapEntryNode> children) {
+            this.name = requireNonNull(name);
             this.children = requireNonNull(children);
+        }
+
+        @Override
+        public NodeIdentifier name() {
+            return name;
         }
 
         @Override
@@ -122,8 +126,13 @@ public final class ImmutableMapNodeBuilder implements SystemMapNode.Builder {
         }
 
         @Override
-        protected Class<SystemMapNode> implementedType() {
-            return SystemMapNode.class;
+        public Collection<MapEntryNode> value() {
+            return children.values();
+        }
+
+        @Override
+        public Collection<MapEntryNode> wrappedValue() {
+            return UnmodifiableCollection.create(value());
         }
 
         @Override
