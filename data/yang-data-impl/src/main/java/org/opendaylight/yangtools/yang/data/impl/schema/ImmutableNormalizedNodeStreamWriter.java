@@ -11,11 +11,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -23,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode.Builder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
@@ -33,9 +37,14 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUn
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.InterningLeafNodeBuilder;
+import org.opendaylight.yangtools.yang.data.spi.node.InterningLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.LeafInterner;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 /**
  * Implementation of {@link NormalizedNodeStreamWriter}, which constructs immutable instances of
@@ -53,6 +62,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
  * This class is not final for purposes of customization, normal users should not need to subclass it.
  */
 public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+    private static final Interner<LeafSetEntryNode<?>> ENTRY_INTERNER = Interners.newWeakInterner();
+
     private final Deque<NormalizedNode.Builder> builders = new ArrayDeque<>();
 
     private DataSchemaNode nextSchema;
@@ -112,8 +123,20 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? InterningLeafSetNodeBuilder.create(nextSchema)
-                : InterningLeafSetNodeBuilder.create(nextSchema, childSizeHint));
+        final var builder = UNKNOWN_SIZE == childSizeHint ? Builders.leafSetBuilder()
+            : Builders.leafSetBuilder(childSizeHint);
+        enter(name, leafSetNodeBuilder(builder, nextSchema));
+    }
+
+    private static <T> Builder<T> leafSetNodeBuilder(final Builder<T> delegate, final @Nullable DataSchemaNode schema) {
+        if (schema instanceof LeafListSchemaNode leafListSchema) {
+            final var type = leafListSchema.getType();
+            if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition
+                    || type instanceof IdentityrefTypeDefinition) {
+                return new InterningLeafSetNodeBuilder<>(delegate, (Interner) ENTRY_INTERNER);
+            }
+        }
+        return delegate;
     }
 
     @Override
