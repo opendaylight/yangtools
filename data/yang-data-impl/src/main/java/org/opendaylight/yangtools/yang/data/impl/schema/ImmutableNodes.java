@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeBuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
@@ -28,6 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public final class ImmutableNodes {
+    private static final @NonNull ImmutableNormalizedNodeBuilderFactory BUILDER_FACTORY =
+        new ImmutableNormalizedNodeBuilderFactory();
+
     // FIXME: YANGTOOLS-1074: we do not want this name
     private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
 
@@ -35,8 +39,12 @@ public final class ImmutableNodes {
         // Hidden on purpose
     }
 
+    public static @NonNull NormalizedNodeBuilderFactory builderFactory() {
+        return BUILDER_FACTORY;
+    }
+
     public static SystemMapNode.@NonNull Builder mapNodeBuilder() {
-        return Builders.mapBuilder();
+        return BUILDER_FACTORY.newSystemMapBuilder();
     }
 
     public static SystemMapNode.@NonNull Builder mapNodeBuilder(final QName name) {
@@ -44,7 +52,7 @@ public final class ImmutableNodes {
     }
 
     public static SystemMapNode.@NonNull Builder mapNodeBuilder(final NodeIdentifier name) {
-        final var ret = Builders.mapBuilder();
+        final var ret = mapNodeBuilder();
         // FIXME: use fluent once we have specialized enough
         ret.withNodeIdentifier(name);
         return ret;
