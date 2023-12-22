@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
@@ -35,7 +36,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractInputStreamNormalizer;
@@ -111,6 +112,8 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
             return new QuotedJSONCodec<>(integerCodec);
         }
     }
+
+    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
     private final @NonNull JSONInstanceIdentifierCodec iidCodec;
 
@@ -280,7 +283,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
                 throw NormalizationException.ofMessage("Expected name '" + expected + "', got '" + name + "'");
             }
 
-            final var builder = Builders.containerBuilder().withNodeIdentifier(containerName);
+            final var builder = BUILDER_FACTORY.newContainerBuilder().withNodeIdentifier(containerName);
 
             if (reader.peek() == JsonToken.BEGIN_OBJECT) {
                 try (var writer = ImmutableNormalizedNodeStreamWriter.from(builder)) {

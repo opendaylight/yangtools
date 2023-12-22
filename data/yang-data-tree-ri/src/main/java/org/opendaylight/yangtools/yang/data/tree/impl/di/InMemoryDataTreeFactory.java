@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
 @RequireServiceComponentRuntime
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeFactory.class);
+    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
     // FIXME: YANGTOOLS-1074: we do not want this name
     private static final @NonNull NormalizedNode ROOT_CONTAINER =
             ImmutableNodes.containerNode(SchemaContext.NAME);
@@ -121,14 +122,16 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final PathArgument arg = path.getLastPathArgument();
         if (schemaNode instanceof ContainerSchemaNode) {
             checkArgument(arg instanceof NodeIdentifier, "Mismatched container %s path %s", schemaNode, path);
-            return Builders.containerBuilder().withNodeIdentifier((NodeIdentifier) arg).build();
-        } else if (schemaNode instanceof ListSchemaNode) {
+            return BUILDER_FACTORY.newContainerBuilder().withNodeIdentifier((NodeIdentifier) arg).build();
+        } else if (schemaNode instanceof ListSchemaNode listSchema) {
             // This can either be a top-level list or its individual entry
-            if (arg instanceof NodeIdentifierWithPredicates) {
-                return ImmutableNodes.mapEntryBuilder().withNodeIdentifier((NodeIdentifierWithPredicates) arg).build();
+            if (arg instanceof NodeIdentifierWithPredicates nip) {
+                return BUILDER_FACTORY.newMapEntryBuilder().withNodeIdentifier(nip).build();
             }
             checkArgument(arg instanceof NodeIdentifier, "Mismatched list %s path %s", schemaNode, path);
-            return ImmutableNodes.mapNodeBuilder().withNodeIdentifier((NodeIdentifier) arg).build();
+            final var builder = listSchema.isUserOrdered() ? BUILDER_FACTORY.newUserMapBuilder()
+                : BUILDER_FACTORY.newSystemMapBuilder();
+            return builder.withNodeIdentifier((NodeIdentifier) arg).build();
         } else {
             throw new IllegalArgumentException("Unsupported root schema " + schemaNode);
         }
@@ -140,11 +143,11 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         }
 
         final PathArgument arg = path.getLastPathArgument();
-        if (arg instanceof NodeIdentifier) {
-            return Builders.containerBuilder().withNodeIdentifier((NodeIdentifier) arg).build();
+        if (arg instanceof NodeIdentifier nodeId) {
+            return BUILDER_FACTORY.newContainerBuilder().withNodeIdentifier(nodeId).build();
         }
-        if (arg instanceof NodeIdentifierWithPredicates) {
-            return ImmutableNodes.mapEntryBuilder().withNodeIdentifier((NodeIdentifierWithPredicates) arg).build();
+        if (arg instanceof NodeIdentifierWithPredicates nip) {
+            return BUILDER_FACTORY.newMapEntryBuilder().withNodeIdentifier(nip).build();
         }
 
         // FIXME: implement augmentations and leaf-lists
