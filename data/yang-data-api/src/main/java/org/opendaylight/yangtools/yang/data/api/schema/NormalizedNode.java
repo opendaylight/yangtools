@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -63,5 +64,56 @@ public interface NormalizedNode extends NormalizedData, PrettyTreeAware {
          * @throws IllegalStateException if this builder does not have sufficient state
          */
         @NonNull NormalizedNode build();
+    }
+
+    /**
+     * A factory for concrete {@link Builder}s.
+     */
+    @NonNullByDefault
+    interface BuilderFactory {
+
+        <T> AnydataNode.Builder<T> newAnydataBuilder(Class<T> objectModel);
+
+        <T> AnyxmlNode.Builder<T, AnyxmlNode<T>> newAnyxmlBuilder(Class<T> objectModel);
+
+        ChoiceNode.Builder newChoiceBuilder();
+
+        ChoiceNode.Builder newChoiceBuilder(int sizeHint);
+
+        ContainerNode.Builder newContainerBuilder();
+
+        ContainerNode.Builder newContainerBuilder(int sizeHint);
+
+        MapEntryNode.Builder newMapEntryBuilder();
+
+        MapEntryNode.Builder newMapEntryBuilder(int sizeHint);
+
+        SystemMapNode.Builder newSystemMapBuilder();
+
+        SystemMapNode.Builder newSystemMapBuilder(int sizeHint);
+
+        UserMapNode.Builder newUserMapBuilder();
+
+        UserMapNode.Builder newUserMapBuilder(int sizeHint);
+
+        UnkeyedListEntryNode.Builder newUnkeyedListEntryBuilder();
+
+        UnkeyedListEntryNode.Builder newUnkeyedListEntryBuilder(int sizeHint);
+
+        UnkeyedListNode.Builder newUnkeyedListBuilder();
+
+        UnkeyedListNode.Builder newUnkeyedListBuilder(int sizeHint);
+
+        <T> LeafNode.Builder<T> newLeafBuilder();
+
+        <T> LeafSetEntryNode.Builder<T> newLeafSetEntryBuilder();
+
+        <T> SystemLeafSetNode.Builder<T> newSystemLeafSetBuilder();
+
+        <T> SystemLeafSetNode.Builder<T> newSystemLeafSetBuilder(int sizeHint);
+
+        <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder();
+
+        <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder(int sizeHint);
     }
 }

@@ -11,10 +11,11 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ReusableStreamReceiver;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 
 /**
  * A reusable variant of {@link ImmutableNormalizedNodeStreamWriter}. It can be reset into its base state and used for
@@ -23,10 +24,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 @Beta
 public final class ReusableImmutableNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
         implements ReusableStreamReceiver {
+    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
+
     private final NormalizationResultBuilder builder;
 
-    private final ImmutableLeafSetEntryNodeBuilder<?> leafsetEntryBuilder = new ImmutableLeafSetEntryNodeBuilder<>();
-    private final ImmutableLeafNodeBuilder<?> leafNodeBuilder = new ImmutableLeafNodeBuilder<>();
+    private final LeafSetEntryNode.Builder<?> leafsetEntryBuilder = BUILDER_FACTORY.newLeafSetEntryBuilder();
+    private final LeafNode.Builder<?> leafNodeBuilder = BUILDER_FACTORY.newLeafBuilder();
 
     private ReusableImmutableNormalizedNodeStreamWriter(final NormalizationResultBuilder builder) {
         super(builder);
@@ -50,13 +53,13 @@ public final class ReusableImmutableNormalizedNodeStreamWriter extends Immutable
 
     @Override
     @SuppressWarnings("unchecked")
-    <T> ImmutableLeafNodeBuilder<T> leafNodeBuilder() {
-        return (ImmutableLeafNodeBuilder<T>) leafNodeBuilder;
+    <T> LeafNode.Builder<T> leafNodeBuilder() {
+        return (LeafNode.Builder<T>) leafNodeBuilder;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    <T> ImmutableLeafSetEntryNodeBuilder<T> leafsetEntryNodeBuilder() {
-        return (ImmutableLeafSetEntryNodeBuilder<T>) leafsetEntryBuilder;
+    <T> LeafSetEntryNode.Builder<T> leafsetEntryNodeBuilder() {
+        return (LeafSetEntryNode.Builder<T>) leafsetEntryBuilder;
     }
 }
