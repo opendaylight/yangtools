@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.spi.node;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
 import static java.util.Objects.requireNonNull;
 
@@ -21,10 +21,6 @@ import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 
 @Beta
 public final class NormalizedNodePrettyTree extends PrettyTree implements Immutable {
