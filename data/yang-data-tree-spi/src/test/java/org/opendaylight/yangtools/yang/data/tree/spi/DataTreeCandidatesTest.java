@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
@@ -51,7 +52,7 @@ class DataTreeCandidatesTest {
 
     @Test
     void testFromNormalizedNode() {
-        final var mockedNormalizedNode = mock(NormalizedNode.class);
+        final var mockedNormalizedNode = mock(LeafNode.class);
         final var dataTreeCandidate = DataTreeCandidates.fromNormalizedNode(
             YangInstanceIdentifier.of(), mockedNormalizedNode);
 
@@ -128,7 +129,7 @@ class DataTreeCandidatesTest {
         final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
         doReturn(YangInstanceIdentifier.of()).when(mockedDataTreeCandidate).getRootPath();
-        final var mockedNormalizedNode = mock(NormalizedNode.class);
+        final var mockedNormalizedNode = mock(LeafNode.class);
         doReturn(mockedNormalizedNode).when(mockedDataTreeCandidateNode).dataAfter();
 
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).modificationType();
@@ -154,7 +155,7 @@ class DataTreeCandidatesTest {
 
         final var mockedChildNode2 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.WRITE).when(mockedChildNode2).modificationType();
-        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
+        final var mockedNormalizedNode = mock(LeafNode.class);
         doReturn(mockedNormalizedNode).when(mockedChildNode2).dataAfter();
         doReturn(new NodeIdentifier(QName.create("test", "test2"))).when(mockedChildNode2).name();
 

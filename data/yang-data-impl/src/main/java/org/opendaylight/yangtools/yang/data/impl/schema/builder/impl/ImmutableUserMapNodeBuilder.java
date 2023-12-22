@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -17,11 +19,11 @@ import org.opendaylight.yangtools.util.UnmodifiableMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractUserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public final class ImmutableUserMapNodeBuilder implements UserMapNode.Builder {
     private static final int DEFAULT_CAPACITY = 4;
@@ -102,8 +104,7 @@ public final class ImmutableUserMapNodeBuilder implements UserMapNode.Builder {
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, UserMapNode> addChild(
-            final MapEntryNode child) {
+    public CollectionNodeBuilder<MapEntryNode, UserMapNode> addChild(final MapEntryNode child) {
         return withChild(child);
     }
 
@@ -114,14 +115,19 @@ public final class ImmutableUserMapNodeBuilder implements UserMapNode.Builder {
         return withoutChild(key);
     }
 
-    protected static final class ImmutableUserMapNode
-            extends AbstractNormalizedNode<NodeIdentifier, UserMapNode> implements UserMapNode {
-        private final Map<NodeIdentifierWithPredicates, MapEntryNode> children;
+    protected static final class ImmutableUserMapNode extends AbstractUserMapNode {
+        private final @NonNull NodeIdentifier name;
+        private final @NonNull Map<NodeIdentifierWithPredicates, MapEntryNode> children;
 
-        ImmutableUserMapNode(final NodeIdentifier nodeIdentifier,
-                         final Map<NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier);
-            this.children = children;
+        ImmutableUserMapNode(final NodeIdentifier name,
+                final Map<NodeIdentifierWithPredicates, MapEntryNode> children) {
+            this.name = requireNonNull(name);
+            this.children = requireNonNull(children);
+        }
+
+        @Override
+        public NodeIdentifier name() {
+            return name;
         }
 
         @Override
@@ -140,8 +146,13 @@ public final class ImmutableUserMapNodeBuilder implements UserMapNode.Builder {
         }
 
         @Override
-        public Collection<MapEntryNode> body() {
-            return UnmodifiableCollection.create(children.values());
+        public Collection<MapEntryNode> value() {
+            return children.values();
+        }
+
+        @Override
+        public Collection<MapEntryNode> wrappedValue() {
+            return UnmodifiableCollection.create(value());
         }
 
         @Override
@@ -150,15 +161,10 @@ public final class ImmutableUserMapNodeBuilder implements UserMapNode.Builder {
         }
 
         @Override
-        protected Class<UserMapNode> implementedType() {
-            return UserMapNode.class;
-        }
-
-        @Override
         protected int valueHashCode() {
             // Order is important
             int hashCode = 1;
-            for (MapEntryNode child : children.values()) {
+            for (var child : children.values()) {
                 hashCode = 31 * hashCode + child.hashCode();
             }
             return hashCode;
@@ -166,7 +172,7 @@ public final class ImmutableUserMapNodeBuilder implements UserMapNode.Builder {
 
         @Override
         protected boolean valueEquals(final UserMapNode other) {
-            final var otherChildren = other instanceof ImmutableUserMapNode immutableOther ? immutableOther.children
+            final var otherChildren = other instanceof ImmutableUserMapNode immutable ? immutable.children
                 : other.asMap();
             return Iterables.elementsEqual(children.values(), otherChildren.values());
         }

@@ -18,18 +18,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
 @ExtendWith(MockitoExtension.class)
 class YT1455Test {
     @Mock
-    public DistinctNodeContainer<PathArgument, NormalizedNode> oldData;
+    public ContainerNode oldData;
     @Mock
-    public DistinctNodeContainer<PathArgument, NormalizedNode> newData;
+    public ContainerNode newData;
     @Mock
     public UnkeyedListNode child;
 

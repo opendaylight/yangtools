@@ -5,18 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Objects;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public abstract class AbstractImmutableNormalizedSimpleValueNode<K extends PathArgument, N extends NormalizedNode, V>
-        extends AbstractImmutableNormalizedValueNode<K, N, V> {
-    protected AbstractImmutableNormalizedSimpleValueNode(final K nodeIdentifier, final V value) {
-        super(nodeIdentifier, value);
-    }
-
+abstract sealed class AbstractNormalizedSimpleValueNode<N extends NormalizedNode, V>
+        extends AbstractNormalizedValueNode<N, V>
+        permits AbstractAnydataNode, AbstractAnyxmlNode, AbstractLeafNode, AbstractLeafSetEntryNode {
     @Override
     protected final int valueHashCode() {
         return value().hashCode();

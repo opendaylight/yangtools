@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractAnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
 @Beta
 public final class ImmutableAnydataNodeBuilder<V>
@@ -30,14 +30,20 @@ public final class ImmutableAnydataNodeBuilder<V>
         return new ImmutableAnydataNode<>(getNodeIdentifier(), getValue(), objectModel);
     }
 
-    private static final class ImmutableAnydataNode<V>
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, AnydataNode<?>, V>
-            implements AnydataNode<V> {
+    private static final class ImmutableAnydataNode<V> extends AbstractAnydataNode<V> {
+        private final @NonNull NodeIdentifier name;
+        private final @NonNull V body;
         private final @NonNull Class<V> objectModel;
 
-        protected ImmutableAnydataNode(final NodeIdentifier nodeIdentifier, final V value, final Class<V> objectModel) {
-            super(nodeIdentifier, value);
+        protected ImmutableAnydataNode(final NodeIdentifier name, final V body, final Class<V> objectModel) {
+            this.name = requireNonNull(name);
+            this.body = requireNonNull(body);
             this.objectModel = requireNonNull(objectModel);
+        }
+
+        @Override
+        public NodeIdentifier name() {
+            return name;
         }
 
         @Override
@@ -46,8 +52,13 @@ public final class ImmutableAnydataNodeBuilder<V>
         }
 
         @Override
-        protected Class<AnydataNode<?>> implementedType() {
-            return (Class) AnydataNode.class;
+        protected V value() {
+            return body;
+        }
+
+        @Override
+        protected V wrappedValue() {
+            return body;
         }
     }
 }

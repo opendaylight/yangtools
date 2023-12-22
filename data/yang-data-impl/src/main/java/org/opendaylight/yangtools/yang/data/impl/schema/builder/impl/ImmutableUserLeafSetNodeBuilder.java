@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import java.util.Collection;
@@ -18,9 +20,9 @@ import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractUserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
-import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode.Builder<T> {
     private Map<NodeWithValue<T>, LeafSetEntryNode<T>> value;
@@ -39,7 +41,7 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
 
     ImmutableUserLeafSetNodeBuilder(final ImmutableUserLeafSetNode<T> node) {
         nodeIdentifier = node.name();
-        value = node.getChildren();
+        value = Collections.unmodifiableMap(node.children);
         dirty = true;
     }
 
@@ -99,19 +101,22 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
             .withValue(childValue).build());
     }
 
-    protected static final class ImmutableUserLeafSetNode<T>
-            extends AbstractNormalizedNode<NodeIdentifier, UserLeafSetNode<?>>
-            implements UserLeafSetNode<T> {
-        private final Map<NodeWithValue<T>, LeafSetEntryNode<T>> children;
+    protected static final class ImmutableUserLeafSetNode<T> extends AbstractUserLeafSetNode<T> {
+        private final @NonNull NodeIdentifier name;
+        private final @NonNull Map<NodeWithValue<T>, LeafSetEntryNode<T>> children;
 
-        ImmutableUserLeafSetNode(final NodeIdentifier nodeIdentifier,
-                final Map<NodeWithValue<T>, LeafSetEntryNode<T>> children) {
-            super(nodeIdentifier);
-            this.children = children;
+        ImmutableUserLeafSetNode(final NodeIdentifier name, final Map<NodeWithValue<T>, LeafSetEntryNode<T>> children) {
+            this.name = requireNonNull(name);
+            this.children = requireNonNull(children);
         }
 
         @Override
-        public LeafSetEntryNode<T> childByArg(final NodeWithValue child) {
+        public NodeIdentifier name() {
+            return name;
+        }
+
+        @Override
+        public LeafSetEntryNode<T> childByArg(final NodeWithValue<?> child) {
             return children.get(child);
         }
 
@@ -126,31 +131,26 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
         }
 
         @Override
-        public Collection<LeafSetEntryNode<T>> body() {
-            return UnmodifiableCollection.create(children.values());
-        }
-
-        @Override
-        protected Class<UserLeafSetNode<?>> implementedType() {
-            return (Class) UserLeafSetNode.class;
-        }
-
-        @Override
         protected int valueHashCode() {
             return children.hashCode();
         }
 
         @Override
-        protected boolean valueEquals(final UserLeafSetNode<?> other) {
-            if (other instanceof ImmutableUserLeafSetNode<?> immutableOther) {
-                return children.equals(immutableOther.children);
-            }
-            // Note: performs a size() check first
-            return Iterables.elementsEqual(children.values(), other.body());
+        protected boolean valueEquals(final UserLeafSetNode<T> other) {
+            return other instanceof ImmutableUserLeafSetNode<?> immutableOther
+                ? children.equals(immutableOther.children)
+                    // Note: performs a size() check first
+                    : Iterables.elementsEqual(children.values(), other.body());
         }
 
-        private Map<NodeWithValue<T>, LeafSetEntryNode<T>> getChildren() {
-            return Collections.unmodifiableMap(children);
+        @Override
+        protected Collection<LeafSetEntryNode<T>> value() {
+            return children.values();
+        }
+
+        @Override
+        protected Collection<LeafSetEntryNode<T>> wrappedValue() {
+            return UnmodifiableCollection.create(value());
         }
     }
 

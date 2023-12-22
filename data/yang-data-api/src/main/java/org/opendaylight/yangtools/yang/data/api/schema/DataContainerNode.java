@@ -22,7 +22,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  *   <li>{@link UnkeyedListEntryNode}</li>
  * </ul>
  */
-public non-sealed interface DataContainerNode
-        extends DataContainer, DistinctNodeContainer<NodeIdentifier, DataContainerChild> {
+public sealed interface DataContainerNode
+        extends DataContainer, DistinctNodeContainer<NodeIdentifier, DataContainerChild>
+        permits ChoiceNode, ContainerNode, MapEntryNode, UnkeyedListEntryNode {
     // Just a composition of DataContainer and DistingNodeContainer
 }

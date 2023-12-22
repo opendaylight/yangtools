@@ -21,7 +21,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 class DataTreeCandidateNodesTest {
     @Test
     void testFromNormalizedNode() {
-        assertNotNull(DataTreeCandidateNodes.written(mock(NormalizedNode.class)));
+        assertNotNull(DataTreeCandidateNodes.written(mock(LeafNode.class)));
     }
 
     @Test
@@ -38,9 +38,9 @@ class DataTreeCandidateNodesTest {
         final var mockedCursor = mock(DataTreeModificationCursor.class);
 
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).modificationType();
-        doReturn(mock(NormalizedNode.class)).when(mockedDataTreeCandidateNode).dataAfter();
+        doReturn(mock(LeafNode.class)).when(mockedDataTreeCandidateNode).dataAfter();
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
+        verify(mockedCursor, times(1)).write(isNull(), any());
     }
 
     @Test
@@ -65,7 +65,7 @@ class DataTreeCandidateNodesTest {
 
         final var mockedChildNode2 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.WRITE).when(mockedChildNode2).modificationType();
-        doReturn(mock(NormalizedNode.class)).when(mockedChildNode2).dataAfter();
+        doReturn(mock(LeafNode.class)).when(mockedChildNode2).dataAfter();
 
         final var mockedChildNode3 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedChildNode3).modificationType();
@@ -79,7 +79,7 @@ class DataTreeCandidateNodesTest {
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(2)).enter((PathArgument) isNull());
         verify(mockedCursor, times(2)).delete(isNull());
-        verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
+        verify(mockedCursor, times(1)).write(isNull(), any());
     }
 
     @Test
@@ -99,10 +99,10 @@ class DataTreeCandidateNodesTest {
         final var mockedCursor = mock(DataTreeModificationCursor.class);
 
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).modificationType();
-        doReturn(mock(NormalizedNode.class)).when(mockedDataTreeCandidateNode).dataAfter();
+        doReturn(mock(LeafNode.class)).when(mockedDataTreeCandidateNode).dataAfter();
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
+        verify(mockedCursor, times(1)).write(isNull(), any());
     }
 
     @Test

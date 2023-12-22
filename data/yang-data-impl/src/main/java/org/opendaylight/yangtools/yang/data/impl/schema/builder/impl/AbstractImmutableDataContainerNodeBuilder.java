@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.ModifiableMapPhase;
 import org.opendaylight.yangtools.util.UnmodifiableMapPhase;
@@ -21,7 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.CloneableMap;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
 import org.slf4j.Logger;
@@ -71,15 +73,16 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
         nodeIdentifier = null;
     }
 
-    AbstractImmutableDataContainerNodeBuilder(final AbstractImmutableDataContainerNode<I, R> node) {
-        nodeIdentifier = node.name();
-
+    AbstractImmutableDataContainerNodeBuilder(final @NonNull I name, final @NonNull Map<NodeIdentifier, Object> value) {
+        nodeIdentifier = requireNonNull(name);
         /*
          * This quite awkward. What we actually want to be saying here is: give me a copy-on-write view of your
          * children. The API involved in that could be a bit hairy, so we do the next best thing and rely on the fact
          * that the returned object implements a specific interface, which leaks the functionality we need.
+         *
+         * The awkwardness now lives in callers.
          */
-        value = node.getChildren();
+        this.value = requireNonNull(value);
         dirty = true;
     }
 

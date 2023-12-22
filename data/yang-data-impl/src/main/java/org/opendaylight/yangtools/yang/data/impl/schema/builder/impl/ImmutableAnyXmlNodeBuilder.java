@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
 public final class ImmutableAnyXmlNodeBuilder
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode>
@@ -27,17 +30,28 @@ public final class ImmutableAnyXmlNodeBuilder
         return new ImmutableXmlNode(getNodeIdentifier(), getValue());
     }
 
-    private static final class ImmutableXmlNode
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, DOMSourceAnyxmlNode, DOMSource>
-            implements DOMSourceAnyxmlNode {
+    private static final class ImmutableXmlNode extends AbstractAnyxmlNode<DOMSource> implements DOMSourceAnyxmlNode {
+        private final @NonNull NodeIdentifier name;
+        private final @NonNull DOMSource value;
 
-        ImmutableXmlNode(final NodeIdentifier nodeIdentifier, final DOMSource value) {
-            super(nodeIdentifier, value);
+        ImmutableXmlNode(final NodeIdentifier name, final DOMSource value) {
+            this.name = requireNonNull(name);
+            this.value = requireNonNull(value);
         }
 
         @Override
-        protected Class<DOMSourceAnyxmlNode> implementedType() {
-            return DOMSourceAnyxmlNode.class;
+        public NodeIdentifier name() {
+            return name;
+        }
+
+        @Override
+        protected DOMSource value() {
+            return value;
+        }
+
+        @Override
+        protected DOMSource wrappedValue() {
+            return value;
         }
     }
 }

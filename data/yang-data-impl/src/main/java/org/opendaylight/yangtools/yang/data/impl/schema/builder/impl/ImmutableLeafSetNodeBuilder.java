@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,9 +19,9 @@ import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractSystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 
 public final class ImmutableLeafSetNodeBuilder<T> implements SystemLeafSetNode.Builder<T> {
     private static final int DEFAULT_CAPACITY = 4;
@@ -101,17 +103,19 @@ public final class ImmutableLeafSetNodeBuilder<T> implements SystemLeafSetNode.B
         return withoutChild(key);
     }
 
-    protected static final class ImmutableLeafSetNode<T>
-            extends AbstractImmutableNormalizedValueNode<NodeIdentifier, SystemLeafSetNode<?>,
-                Collection<@NonNull LeafSetEntryNode<T>>>
-            implements SystemLeafSetNode<T> {
+    protected static final class ImmutableLeafSetNode<T> extends AbstractSystemLeafSetNode<T> {
+        private final @NonNull NodeIdentifier name;
+        private final @NonNull Map<NodeWithValue<?>, LeafSetEntryNode<T>> children;
 
-        private final Map<NodeWithValue<?>, LeafSetEntryNode<T>> children;
+        ImmutableLeafSetNode(final NodeIdentifier name, final Map<NodeWithValue<?>, LeafSetEntryNode<T>> children) {
+            this.name = requireNonNull(name);
+            this.children = requireNonNull(children);
+        }
 
-        ImmutableLeafSetNode(final NodeIdentifier nodeIdentifier,
-                final Map<NodeWithValue<?>, LeafSetEntryNode<T>> children) {
-            super(nodeIdentifier, UnmodifiableCollection.create(children.values()));
-            this.children = children;
+        @Override
+        public NodeIdentifier name() {
+            body();
+            return name;
         }
 
         @Override
@@ -125,17 +129,22 @@ public final class ImmutableLeafSetNodeBuilder<T> implements SystemLeafSetNode.B
         }
 
         @Override
-        protected Class<SystemLeafSetNode<?>> implementedType() {
-            return (Class) SystemLeafSetNode.class;
-        }
-
-        @Override
         protected int valueHashCode() {
             return children.hashCode();
         }
 
         @Override
-        protected boolean valueEquals(final SystemLeafSetNode<?> other) {
+        protected Collection<LeafSetEntryNode<T>> value() {
+            return children.values();
+        }
+
+        @Override
+        protected Collection<LeafSetEntryNode<T>> wrappedValue() {
+            return UnmodifiableCollection.create(value());
+        }
+
+        @Override
+        protected boolean valueEquals(final SystemLeafSetNode<T> other) {
             if (other instanceof ImmutableLeafSetNode<?> otherImmutable) {
                 return children.equals(otherImmutable.children);
             }

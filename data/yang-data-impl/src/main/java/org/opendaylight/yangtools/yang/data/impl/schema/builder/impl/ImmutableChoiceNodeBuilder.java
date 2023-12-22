@@ -7,11 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.Collection;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyValues;
 
 public final class ImmutableChoiceNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode>
@@ -25,7 +32,7 @@ public final class ImmutableChoiceNodeBuilder
     }
 
     private ImmutableChoiceNodeBuilder(final ImmutableChoiceNode node) {
-        super(node);
+        super(node.name, node.children);
     }
 
     public static ChoiceNode.@NonNull Builder create(final ChoiceNode node) {
@@ -40,15 +47,45 @@ public final class ImmutableChoiceNodeBuilder
         return new ImmutableChoiceNode(getNodeIdentifier(), buildValue());
     }
 
-    private static final class ImmutableChoiceNode
-            extends AbstractImmutableDataContainerNode<NodeIdentifier, ChoiceNode> implements ChoiceNode {
-        ImmutableChoiceNode(final NodeIdentifier nodeIdentifier, final Map<NodeIdentifier, Object> children) {
-            super(children, nodeIdentifier);
+    private static final class ImmutableChoiceNode extends AbstractChoiceNode {
+        private final @NonNull NodeIdentifier name;
+        private final @NonNull Map<NodeIdentifier, Object> children;
+
+        ImmutableChoiceNode(final NodeIdentifier name, final Map<NodeIdentifier, Object> children) {
+            this.name = requireNonNull(name);
+            // FIXME: move this to caller
+            this.children = ImmutableOffsetMap.unorderedCopyOf(children);
         }
 
         @Override
-        protected Class<ChoiceNode> implementedType() {
-            return ChoiceNode.class;
+        public NodeIdentifier name() {
+            return name;
+        }
+
+        @Override
+        public DataContainerChild childByArg(final NodeIdentifier child) {
+            return LazyLeafOperations.getChild(children, child);
+        }
+
+        @Override
+        public Collection<DataContainerChild> body() {
+            return new LazyValues(children);
+        }
+
+        @Override
+        public int size() {
+            return children.size();
+        }
+
+        @Override
+        protected int valueHashCode() {
+            return children.hashCode();
+        }
+
+        @Override
+        protected boolean valueEquals(final ChoiceNode other) {
+            return other instanceof ImmutableChoiceNode immutable ? children.equals(immutable.children)
+                : ImmutableNormalizedNodeMethods.bodyEquals(this, other);
         }
     }
 }

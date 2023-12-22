@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 // NormalizedNode.getValue() does not compare as equal. When invoked twice and lazy leaves are in effect. Note that
 // Collection.equals() is undefined, but the expectation from users is that we will return the same view object, which
 // equals on identity.
-final class LazyValues extends AbstractCollection<DataContainerChild> {
+public final class LazyValues extends AbstractCollection<DataContainerChild> {
     private final Map<NodeIdentifier, Object> map;
 
-    LazyValues(final Map<NodeIdentifier, Object> map) {
+    public LazyValues(final Map<NodeIdentifier, Object> map) {
         this.map = requireNonNull(map);
     }
 
