@@ -19,6 +19,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBui
  *
  * @param <T> Value type
  */
+// FIXME: define specializations for each concrete normalized type:
+//        Uint{8,16,32,64)
+//        String
+//        Byte,Short,Integer,Long
+//        Empty
+//        Set<String> (== bits)
+//        YangInstanceIdentifier
+//        QName (== identityref)
 public non-sealed interface LeafNode<T> extends ValueNode<T>, DataContainerChild {
     @Override
     @SuppressWarnings("rawtypes")

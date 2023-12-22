@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode.Builder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
@@ -63,6 +64,7 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
  */
 public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     private static final Interner<LeafSetEntryNode<?>> ENTRY_INTERNER = Interners.newWeakInterner();
+    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
     private final Deque<NormalizedNode.Builder> builders = new ArrayDeque<>();
 
@@ -123,8 +125,8 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        final var builder = UNKNOWN_SIZE == childSizeHint ? Builders.leafSetBuilder()
-            : Builders.leafSetBuilder(childSizeHint);
+        final var builder = UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newSystemLeafSetBuilder()
+            : BUILDER_FACTORY.newSystemLeafSetBuilder(childSizeHint);
         enter(name, leafSetNodeBuilder(builder, nextSchema));
     }
 
@@ -152,14 +154,15 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, Builders.orderedLeafSetBuilder());
+        enter(name, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newUserLeafSetBuilder()
+            : BUILDER_FACTORY.newUserLeafSetBuilder(childSizeHint));
     }
 
     @Override
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) {
         checkDataNodeContainer();
         if (DOMSource.class.isAssignableFrom(objectModel)) {
-            enter(name, Builders.anyXmlBuilder());
+            enter(name, BUILDER_FACTORY.newAnyxmlBuilder(DOMSource.class));
             nextSchema = null;
             return true;
         }
@@ -169,15 +172,15 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.containerBuilder()
-            : Builders.containerBuilder(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newContainerBuilder()
+            : BUILDER_FACTORY.newContainerBuilder(childSizeHint));
     }
 
     @Override
     public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.unkeyedListBuilder()
-            : Builders.unkeyedListBuilder(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newUnkeyedListBuilder()
+            : BUILDER_FACTORY.newUnkeyedListBuilder(childSizeHint));
     }
 
     @Override
@@ -185,14 +188,15 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         final var current = current();
         checkArgument(current instanceof ImmutableUnkeyedListNodeBuilder
             || current instanceof NormalizationResultBuilder);
-        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.unkeyedListEntryBuilder()
-            : Builders.unkeyedListEntryBuilder(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newUnkeyedListEntryBuilder()
+            : BUILDER_FACTORY.newUnkeyedListEntryBuilder(childSizeHint));
     }
 
     @Override
     public void startMapNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.mapBuilder() : Builders.mapBuilder(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newSystemMapBuilder()
+            : BUILDER_FACTORY.newSystemMapBuilder(childSizeHint));
     }
 
     @Override
@@ -201,21 +205,22 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         checkArgument(current instanceof ImmutableMapNodeBuilder || current instanceof ImmutableUserMapNodeBuilder
             || current instanceof NormalizationResultBuilder);
 
-        enter(identifier, UNKNOWN_SIZE == childSizeHint ? Builders.mapEntryBuilder()
-            : Builders.mapEntryBuilder(childSizeHint));
+        enter(identifier, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newMapEntryBuilder()
+            : BUILDER_FACTORY.newMapEntryBuilder(childSizeHint));
     }
 
     @Override
     public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.orderedMapBuilder()
-            : Builders.orderedMapBuilder(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newUserMapBuilder()
+            : BUILDER_FACTORY.newUserMapBuilder(childSizeHint));
     }
 
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? Builders.choiceBuilder() : Builders.choiceBuilder(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newChoiceBuilder()
+            : BUILDER_FACTORY.newChoiceBuilder(childSizeHint));
     }
 
     @Override
@@ -259,8 +264,8 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         checkDataNodeContainer();
-        enter(name, Builders.anydataBuilder(objectModel));
-        // We support all object models
+        enter(name, BUILDER_FACTORY.newAnydataBuilder(objectModel));
+        // We support all object model
         return true;
     }
 
@@ -308,11 +313,11 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     <T> LeafNode.@NonNull Builder<T> leafNodeBuilder() {
-        return Builders.leafBuilder();
+        return BUILDER_FACTORY.newLeafBuilder();
     }
 
     <T> LeafSetEntryNode.@NonNull Builder<T> leafsetEntryNodeBuilder() {
-        return Builders.leafSetEntryBuilder();
+        return BUILDER_FACTORY.newLeafSetEntryBuilder();
     }
 
     private void checkDataNodeContainer() {
