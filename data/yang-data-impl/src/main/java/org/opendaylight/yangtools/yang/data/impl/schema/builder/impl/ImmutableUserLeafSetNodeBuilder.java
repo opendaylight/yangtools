@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -29,6 +30,11 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
 
     public ImmutableUserLeafSetNodeBuilder() {
         value = new LinkedHashMap<>();
+        dirty = false;
+    }
+
+    public ImmutableUserLeafSetNodeBuilder(final int sizeHint) {
+        value = Maps.newLinkedHashMapWithExpectedSize(sizeHint);
         dirty = false;
     }
 
