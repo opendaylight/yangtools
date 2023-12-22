@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractLeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
 public final class ImmutableLeafNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>>
@@ -30,26 +32,45 @@ public final class ImmutableLeafNodeBuilder<T>
         return createNode(getNodeIdentifier(), getValue());
     }
 
-    private static class ImmutableLeafNode<T>
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, LeafNode<?>, T> implements LeafNode<T> {
-        ImmutableLeafNode(final NodeIdentifier nodeIdentifier, final T value) {
-            super(nodeIdentifier, value);
+    private abstract static sealed class AbstractImmutableLeafNode<T> extends AbstractLeafNode<T> {
+        private final @NonNull NodeIdentifier name;
+        private final @NonNull T value;
+
+        AbstractImmutableLeafNode(final NodeIdentifier name, final T value) {
+            this.name = requireNonNull(name);
+            this.value = requireNonNull(value);
         }
 
         @Override
-        protected final Class<LeafNode<?>> implementedType() {
-            return (Class) LeafNode.class;
+        public final NodeIdentifier name() {
+            return name;
+        }
+
+        @Override
+        protected final T value() {
+            return value;
         }
     }
 
-    private static final class ImmutableBinaryLeafNode extends ImmutableLeafNode<byte[]> {
-        ImmutableBinaryLeafNode(final NodeIdentifier nodeIdentifier, final byte[] value) {
-            super(nodeIdentifier, value);
+    private static final class ImmutableLeafNode<T> extends AbstractImmutableLeafNode<T> {
+        ImmutableLeafNode(final NodeIdentifier name, final T value) {
+            super(name, value);
         }
 
         @Override
-        protected byte[] wrapValue(final byte[] valueToWrap) {
-            return valueToWrap.clone();
+        protected T wrappedValue() {
+            return value();
+        }
+    }
+
+    private static final class ImmutableBinaryLeafNode extends AbstractImmutableLeafNode<byte[]> {
+        ImmutableBinaryLeafNode(final NodeIdentifier name, final byte[] value) {
+            super(name, value);
+        }
+
+        @Override
+        protected byte[] wrappedValue() {
+            return value().clone();
         }
     }
 }

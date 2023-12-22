@@ -6,39 +6,21 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.spi.node;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
-import static java.util.Objects.requireNonNull;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.PrettyTree;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * Abstract base class for {@link NormalizedNode} implementations.
  *
- * @param <I> Identifier type
  * @param <T> Implemented {@link NormalizedNode} specialization type
  */
-@Beta
-public abstract class AbstractNormalizedNode<I extends PathArgument, T extends NormalizedNode>
-        implements NormalizedNode, Immutable {
-    private final @NonNull I name;
-
-    protected AbstractNormalizedNode(final I name) {
-        this.name = requireNonNull(name);
-    }
-
-    @Override
-    public final I name() {
-        return name;
-    }
-
+public abstract sealed class AbstractNormalizedNode<T extends NormalizedNode> implements NormalizedNode, Immutable
+        permits AbstractNormalizedValueNode, AbstractChoiceNode, AbstractContainerNode {
     @Override
     public final PrettyTree prettyTree() {
         return new NormalizedNodePrettyTree(this);
@@ -68,7 +50,7 @@ public abstract class AbstractNormalizedNode<I extends PathArgument, T extends N
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("name", name).add("body", body());
+        return toStringHelper.add("name", name()).add("body", body());
     }
 
     protected abstract @NonNull Class<T> implementedType();

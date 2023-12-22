@@ -7,20 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractUnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
-import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public final class ImmutableUnkeyedListNodeBuilder implements UnkeyedListNode.Builder {
     private List<UnkeyedListEntryNode> value;
@@ -111,14 +113,35 @@ public final class ImmutableUnkeyedListNodeBuilder implements UnkeyedListNode.Bu
         return withoutChild(key);
     }
 
-    protected static final class EmptyImmutableUnkeyedListNode
-            extends AbstractNormalizedNode<NodeIdentifier, UnkeyedListNode> implements UnkeyedListNode {
-        protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
-            super(nodeIdentifier);
+    @NonNullByDefault
+    private abstract static sealed class AbstractImmutableUnkeyedListNode extends AbstractUnkeyedListNode {
+        private final NodeIdentifier name;
+
+        AbstractImmutableUnkeyedListNode(final NodeIdentifier name) {
+            this.name = requireNonNull(name);
         }
 
         @Override
-        public ImmutableList<UnkeyedListEntryNode> body() {
+        public final NodeIdentifier name() {
+            return name;
+        }
+
+        @Override
+        protected final ImmutableList<UnkeyedListEntryNode> wrappedValue() {
+            return value();
+        }
+
+        @Override
+        protected abstract ImmutableList<UnkeyedListEntryNode> value();
+    }
+
+    static final class EmptyImmutableUnkeyedListNode extends AbstractImmutableUnkeyedListNode {
+        EmptyImmutableUnkeyedListNode(final NodeIdentifier name) {
+            super(name);
+        }
+
+        @Override
+        public ImmutableList<UnkeyedListEntryNode> value() {
             return ImmutableList.of();
         }
 
@@ -133,11 +156,6 @@ public final class ImmutableUnkeyedListNodeBuilder implements UnkeyedListNode.Bu
         }
 
         @Override
-        protected Class<UnkeyedListNode> implementedType() {
-            return UnkeyedListNode.class;
-        }
-
-        @Override
         protected int valueHashCode() {
             return 1;
         }
@@ -148,17 +166,12 @@ public final class ImmutableUnkeyedListNodeBuilder implements UnkeyedListNode.Bu
         }
     }
 
-    protected static final class ImmutableUnkeyedListNode
-            extends AbstractImmutableNormalizedValueNode<NodeIdentifier, UnkeyedListNode,
-                Collection<@NonNull UnkeyedListEntryNode>>
-            implements UnkeyedListNode {
+    protected static final class ImmutableUnkeyedListNode extends AbstractImmutableUnkeyedListNode {
+        private final @NonNull ImmutableList<UnkeyedListEntryNode> children;
 
-        private final ImmutableList<UnkeyedListEntryNode> children;
-
-        ImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier,
-                final ImmutableList<UnkeyedListEntryNode> children) {
-            super(nodeIdentifier, children);
-            this.children = children;
+        ImmutableUnkeyedListNode(final NodeIdentifier name, final ImmutableList<UnkeyedListEntryNode> children) {
+            super(name);
+            this.children = requireNonNull(children);
         }
 
         @Override
@@ -172,13 +185,13 @@ public final class ImmutableUnkeyedListNodeBuilder implements UnkeyedListNode.Bu
         }
 
         @Override
-        protected Class<UnkeyedListNode> implementedType() {
-            return UnkeyedListNode.class;
+        protected int valueHashCode() {
+            return children.hashCode();
         }
 
         @Override
-        protected int valueHashCode() {
-            return children.hashCode();
+        protected ImmutableList<UnkeyedListEntryNode> value() {
+            return children;
         }
 
         @Override

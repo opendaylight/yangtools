@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractSystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 
 public final class ImmutableLeafSetNodeBuilder<T> implements SystemLeafSetNode.Builder<T> {
     private static final int DEFAULT_CAPACITY = 4;
@@ -101,11 +101,7 @@ public final class ImmutableLeafSetNodeBuilder<T> implements SystemLeafSetNode.B
         return withoutChild(key);
     }
 
-    protected static final class ImmutableLeafSetNode<T>
-            extends AbstractImmutableNormalizedValueNode<NodeIdentifier, SystemLeafSetNode<?>,
-                Collection<@NonNull LeafSetEntryNode<T>>>
-            implements SystemLeafSetNode<T> {
-
+    protected static final class ImmutableLeafSetNode<T> extends AbstractSystemLeafSetNode<T> {
         private final Map<NodeWithValue<?>, LeafSetEntryNode<T>> children;
 
         ImmutableLeafSetNode(final NodeIdentifier nodeIdentifier,
