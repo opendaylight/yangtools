@@ -5,31 +5,37 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema;
+package org.opendaylight.yangtools.yang.data.spi.node;
 
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Interner;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode.Builder;
 
-final class InterningLeafNodeBuilder<T> implements LeafNode.Builder<T> {
+/**
+ * A {@link Builder} interning {@link LeafNode}s via an {@link Interner}.
+ *
+ * @param <T> value type
+ */
+public final class InterningLeafNodeBuilder<T> implements Builder<T> {
     private final Interner<LeafNode<T>> interner;
-    private final LeafNode.Builder<T> delegate;
+    private final Builder<T> delegate;
 
-    InterningLeafNodeBuilder(final LeafNode.Builder<T> delegate, final Interner<LeafNode<T>> interner) {
+    public InterningLeafNodeBuilder(final Builder<T> delegate, final Interner<LeafNode<T>> interner) {
         this.delegate = requireNonNull(delegate);
         this.interner = requireNonNull(interner);
     }
 
     @Override
-    public LeafNode.Builder<T> withValue(final T value) {
+    public Builder<T> withValue(final T value) {
         delegate.withValue(value);
         return this;
     }
 
     @Override
-    public LeafNode.Builder<T> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public Builder<T> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
         delegate.withNodeIdentifier(nodeIdentifier);
         return this;
     }
