@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.spi.node.MandatoryLeafEnforcer;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -30,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -292,5 +294,16 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      */
     static final boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
         return treeType == TreeType.OPERATIONAL || node.effectiveConfig().orElse(Boolean.TRUE);
+    }
+
+    static final @Nullable MandatoryLeafEnforcer enforcerFor(final DataSchemaNode schema,
+            final DataTreeConfiguration treeConfig) {
+        if (treeConfig.isMandatoryNodesValidationEnabled() && schema instanceof DataNodeContainer container) {
+            final var includeConfigFalse = treeConfig.getTreeType() == TreeType.OPERATIONAL;
+            if (includeConfigFalse || schema.effectiveConfig().orElse(Boolean.TRUE)) {
+                return MandatoryLeafEnforcer.forContainer(container, includeConfigFalse);
+            }
+        }
+        return null;
     }
 }
