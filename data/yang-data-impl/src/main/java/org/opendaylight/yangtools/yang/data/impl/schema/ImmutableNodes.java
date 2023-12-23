@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.YangInstanceIdentifierWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -105,7 +105,7 @@ public final class ImmutableNodes {
      * @return Leaf node with supplied identifier and value
      */
     public static <T> @NonNull LeafNode<T> leafNode(final NodeIdentifier name, final T value) {
-        return ImmutableLeafNodeBuilder.createNode(name, value);
+        return ImmutableLeafNode.of(name, value);
     }
 
     /**
