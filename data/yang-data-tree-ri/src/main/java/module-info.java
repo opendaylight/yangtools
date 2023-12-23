@@ -22,6 +22,7 @@ module org.opendaylight.yangtools.yang.data.tree {
     requires org.opendaylight.yangtools.yang.data.impl;
     requires org.opendaylight.yangtools.yang.data.spi;
     requires org.opendaylight.yangtools.yang.data.util;
+    requires org.opendaylight.yangtools.yang.model.api;
     requires org.slf4j;
 
     // Annotations

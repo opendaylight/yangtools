@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.spi.node.MandatoryLeafEnforcer;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
@@ -38,25 +39,24 @@ sealed class MapEntryModificationStrategy extends DataNodeContainerModificationS
         @Override
         protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
                 final Version version) {
-            final var ret = super.applyMerge(modification, currentMeta, version);
-            enforcer.enforceOnTreeNode(ret);
-            return ret;
+            return enforce(super.applyMerge(modification, currentMeta, version));
         }
 
         @Override
         protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
                 final TreeNode currentMeta, final Version version) {
-            final var ret = super.applyWrite(modification, newValue, currentMeta, version);
-            enforcer.enforceOnTreeNode(ret);
-            return ret;
+            return enforce(super.applyWrite(modification, newValue, currentMeta, version));
         }
 
         @Override
         protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
                 final Version version) {
-            final var ret = super.applyTouch(modification, currentMeta, version);
-            enforcer.enforceOnTreeNode(ret);
-            return ret;
+            return enforce(super.applyTouch(modification, currentMeta, version));
+        }
+
+        private @NonNull TreeNode enforce(final TreeNode treeNode) {
+            enforcer.enforceOnData(treeNode.getData());
+            return treeNode;
         }
     }
 
@@ -70,7 +70,7 @@ sealed class MapEntryModificationStrategy extends DataNodeContainerModificationS
 
     static @NonNull MapEntryModificationStrategy of(final ListSchemaNode schema,
             final DataTreeConfiguration treeConfig) {
-        final var enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
+        final var enforcer = enforcerFor(schema, treeConfig);
         return enforcer != null ? new EnforcingMandatory(schema, treeConfig, enforcer)
             : new MapEntryModificationStrategy(schema, treeConfig);
     }
