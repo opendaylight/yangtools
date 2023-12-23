@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -38,24 +39,26 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUs
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 
 public final class Builders {
+    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
+
     private Builders() {
         // Hidden on purpose
     }
 
     public static <T> LeafNode.@NonNull Builder<T> leafBuilder() {
-        return new ImmutableLeafNodeBuilder<>();
+        return BUILDER_FACTORY.newLeafBuilder();
     }
 
     public static <T> LeafSetEntryNode.@NonNull Builder<T> leafSetEntryBuilder() {
-        return new ImmutableLeafSetEntryNodeBuilder<>();
+        return BUILDER_FACTORY.newLeafSetEntryBuilder()
     }
 
-    public static AnyxmlNode.@NonNull Builder<DOMSource, DOMSourceAnyxmlNode> anyXmlBuilder() {
-        return new ImmutableAnyXmlNodeBuilder();
+    public static AnyxmlNode.@NonNull Builder<DOMSource, AnyxmlNode<DOMSource>> anyXmlBuilder() {
+        return BUILDER_FACTORY.newAnyxmlBuilder(DOMSource.class);
     }
 
     public static <T> AnydataNode.@NonNull Builder<T> anydataBuilder(final Class<T> objectModel) {
-        return new ImmutableAnydataNodeBuilder<>(objectModel);
+        return BUILDER_FACTORY.newAnydataBuilder(objectModel);
     }
 
     public static <T> UserLeafSetNode.@NonNull Builder<T> orderedLeafSetBuilder() {
