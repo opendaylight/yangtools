@@ -13,136 +13,125 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 
 public final class Builders {
+    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
+
     private Builders() {
         // Hidden on purpose
     }
 
     public static <T> LeafNode.@NonNull Builder<T> leafBuilder() {
-        return new ImmutableLeafNodeBuilder<>();
+        return BUILDER_FACTORY.newLeafBuilder();
     }
 
     public static <T> LeafSetEntryNode.@NonNull Builder<T> leafSetEntryBuilder() {
-        return new ImmutableLeafSetEntryNodeBuilder<>();
+        return BUILDER_FACTORY.newLeafSetEntryBuilder();
     }
 
-    public static AnyxmlNode.@NonNull Builder<DOMSource, DOMSourceAnyxmlNode> anyXmlBuilder() {
-        return new ImmutableAnyXmlNodeBuilder();
+    public static AnyxmlNode.@NonNull Builder<DOMSource, AnyxmlNode<DOMSource>> anyXmlBuilder() {
+        return BUILDER_FACTORY.newAnyxmlBuilder(DOMSource.class);
     }
 
     public static <T> AnydataNode.@NonNull Builder<T> anydataBuilder(final Class<T> objectModel) {
-        return new ImmutableAnydataNodeBuilder<>(objectModel);
+        return BUILDER_FACTORY.newAnydataBuilder(objectModel);
     }
 
     public static <T> UserLeafSetNode.@NonNull Builder<T> orderedLeafSetBuilder() {
-        return new ImmutableUserLeafSetNodeBuilder<>();
+        return BUILDER_FACTORY.newUserLeafSetBuilder();
     }
 
     public static <T> UserLeafSetNode.@NonNull Builder<T> orderedLeafSetBuilder(final UserLeafSetNode<T> node) {
-        return ImmutableUserLeafSetNodeBuilder.create(node);
+        return BUILDER_FACTORY.newUserLeafSetBuilder(node);
     }
 
     public static <T> SystemLeafSetNode.@NonNull Builder<T> leafSetBuilder() {
-        return new ImmutableLeafSetNodeBuilder<>();
+        return BUILDER_FACTORY.newSystemLeafSetBuilder();
     }
 
     public static <T> SystemLeafSetNode.@NonNull Builder<T> leafSetBuilder(final int sizeHint) {
-        return new ImmutableLeafSetNodeBuilder<>(sizeHint);
+        return BUILDER_FACTORY.newSystemLeafSetBuilder(sizeHint);
     }
 
     public static <T> SystemLeafSetNode.@NonNull Builder<T> leafSetBuilder(final SystemLeafSetNode<T> node) {
-        return ImmutableLeafSetNodeBuilder.create(node);
+        return BUILDER_FACTORY.newSystemLeafSetBuilder(node);
     }
 
     public static ContainerNode.@NonNull Builder containerBuilder() {
-        return new ImmutableContainerNodeBuilder();
+        return BUILDER_FACTORY.newContainerBuilder();
     }
 
     public static ContainerNode.@NonNull Builder containerBuilder(final int sizeHint) {
-        return new ImmutableContainerNodeBuilder(sizeHint);
+        return BUILDER_FACTORY.newContainerBuilder(sizeHint);
     }
 
     public static ContainerNode.@NonNull Builder containerBuilder(final ContainerNode node) {
-        return ImmutableContainerNodeBuilder.create(node);
+        return BUILDER_FACTORY.newContainerBuilder(node);
     }
 
     public static MapEntryNode.@NonNull Builder mapEntryBuilder() {
-        return new ImmutableMapEntryNodeBuilder();
+        return BUILDER_FACTORY.newMapEntryBuilder();
     }
 
     public static MapEntryNode.@NonNull Builder mapEntryBuilder(final int sizeHint) {
-        return new ImmutableMapEntryNodeBuilder(sizeHint);
+        return BUILDER_FACTORY.newMapEntryBuilder(sizeHint);
     }
 
     public static MapEntryNode.@NonNull Builder mapEntryBuilder(final MapEntryNode mapEntryNode) {
-        return ImmutableMapEntryNodeBuilder.create(mapEntryNode);
+        return BUILDER_FACTORY.newMapEntryBuilder(mapEntryNode);
     }
 
     public static UserMapNode.@NonNull Builder orderedMapBuilder() {
-        return new ImmutableUserMapNodeBuilder();
+        return BUILDER_FACTORY.newUserMapBuilder();
     }
 
     public static UserMapNode.@NonNull Builder orderedMapBuilder(final int sizeHint) {
-        return new ImmutableUserMapNodeBuilder(sizeHint);
+        return BUILDER_FACTORY.newUserMapBuilder(sizeHint);
     }
 
     public static UnkeyedListNode.@NonNull Builder unkeyedListBuilder() {
-        return new ImmutableUnkeyedListNodeBuilder();
+        return BUILDER_FACTORY.newUnkeyedListBuilder();
     }
 
     public static UnkeyedListNode.@NonNull Builder unkeyedListBuilder(final int sizeHint) {
-        return new ImmutableUnkeyedListNodeBuilder(sizeHint);
+        return BUILDER_FACTORY.newUnkeyedListBuilder(sizeHint);
     }
 
     public static SystemMapNode.@NonNull Builder mapBuilder() {
-        return new ImmutableMapNodeBuilder();
+        return BUILDER_FACTORY.newSystemMapBuilder();
     }
 
     public static SystemMapNode.@NonNull Builder mapBuilder(final int sizeHint) {
-        return new ImmutableMapNodeBuilder(sizeHint);
+        return BUILDER_FACTORY.newSystemMapBuilder(sizeHint);
     }
 
     public static SystemMapNode.@NonNull Builder mapBuilder(final SystemMapNode node) {
-        return ImmutableMapNodeBuilder.create(node);
+        return BUILDER_FACTORY.newSystemMapBuilder(node);
     }
 
     public static ChoiceNode.@NonNull Builder choiceBuilder() {
-        return new ImmutableChoiceNodeBuilder();
+        return BUILDER_FACTORY.newChoiceBuilder();
     }
 
     public static ChoiceNode.@NonNull Builder choiceBuilder(final int sizeHint) {
-        return new ImmutableChoiceNodeBuilder(sizeHint);
+        return BUILDER_FACTORY.newChoiceBuilder(sizeHint);
     }
 
     public static UnkeyedListEntryNode.@NonNull Builder unkeyedListEntryBuilder() {
-        return new ImmutableUnkeyedListEntryNodeBuilder();
+        return BUILDER_FACTORY.newUnkeyedListEntryBuilder();
     }
 
     public static UnkeyedListEntryNode.@NonNull Builder unkeyedListEntryBuilder(final int sizeHint) {
-        return new ImmutableUnkeyedListEntryNodeBuilder(sizeHint);
+        return BUILDER_FACTORY.newUnkeyedListEntryBuilder(sizeHint);
     }
 }

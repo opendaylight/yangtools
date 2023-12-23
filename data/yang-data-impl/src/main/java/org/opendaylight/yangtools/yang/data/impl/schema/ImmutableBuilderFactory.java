@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
@@ -86,6 +87,11 @@ public final class ImmutableBuilderFactory implements BuilderFactory {
     }
 
     @Override
+    public ContainerNode.Builder newContainerBuilder(final ContainerNode node) {
+        return ImmutableContainerNodeBuilder.create(node);
+    }
+
+    @Override
     public MapEntryNode.Builder newMapEntryBuilder() {
         return new ImmutableMapEntryNodeBuilder();
     }
@@ -93,6 +99,11 @@ public final class ImmutableBuilderFactory implements BuilderFactory {
     @Override
     public MapEntryNode.Builder newMapEntryBuilder(final int sizeHint) {
         return new ImmutableMapEntryNodeBuilder(sizeHint);
+    }
+
+    @Override
+    public MapEntryNode.Builder newMapEntryBuilder(final MapEntryNode mapEntryNode) {
+        return ImmutableMapEntryNodeBuilder.create(mapEntryNode);
     }
 
     @Override
@@ -106,6 +117,11 @@ public final class ImmutableBuilderFactory implements BuilderFactory {
     }
 
     @Override
+    public SystemMapNode.Builder newSystemMapBuilder(final SystemMapNode node) {
+        return ImmutableMapNodeBuilder.create(node);
+    }
+
+    @Override
     public UserMapNode.Builder newUserMapBuilder() {
         return new ImmutableUserMapNodeBuilder();
     }
@@ -113,6 +129,11 @@ public final class ImmutableBuilderFactory implements BuilderFactory {
     @Override
     public UserMapNode.Builder newUserMapBuilder(final int sizeHint) {
         return new ImmutableUserMapNodeBuilder(sizeHint);
+    }
+
+    @Override
+    public UserMapNode.Builder newUserMapBuilder(final UserMapNode node) {
+        return ImmutableUserMapNodeBuilder.create(node);
     }
 
     @Override
@@ -156,6 +177,11 @@ public final class ImmutableBuilderFactory implements BuilderFactory {
     }
 
     @Override
+    public <T> SystemLeafSetNode.@NonNull Builder<T> newSystemLeafSetBuilder(final SystemLeafSetNode<T> node) {
+        return ImmutableLeafSetNodeBuilder.create(node);
+    }
+
+    @Override
     public <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder() {
         return new ImmutableUserLeafSetNodeBuilder<>();
     }
@@ -163,5 +189,10 @@ public final class ImmutableBuilderFactory implements BuilderFactory {
     @Override
     public <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder(final int sizeHint) {
         return new ImmutableUserLeafSetNodeBuilder<>(sizeHint);
+    }
+
+    @Override
+    public <T> UserLeafSetNode.@NonNull Builder<T> newUserLeafSetBuilder(final UserLeafSetNode<T> node) {
+        return ImmutableUserLeafSetNodeBuilder.create(node);
     }
 }

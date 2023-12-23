@@ -84,17 +84,25 @@ public interface NormalizedNode extends NormalizedData, PrettyTreeAware {
 
         ContainerNode.Builder newContainerBuilder(int sizeHint);
 
+        ContainerNode.Builder newContainerBuilder(ContainerNode node);
+
         MapEntryNode.Builder newMapEntryBuilder();
 
         MapEntryNode.Builder newMapEntryBuilder(int sizeHint);
+
+        MapEntryNode.Builder newMapEntryBuilder(MapEntryNode node);
 
         SystemMapNode.Builder newSystemMapBuilder();
 
         SystemMapNode.Builder newSystemMapBuilder(int sizeHint);
 
+        SystemMapNode.Builder newSystemMapBuilder(SystemMapNode node);
+
         UserMapNode.Builder newUserMapBuilder();
 
         UserMapNode.Builder newUserMapBuilder(int sizeHint);
+
+        UserMapNode.Builder newUserMapBuilder(UserMapNode node);
 
         UnkeyedListEntryNode.Builder newUnkeyedListEntryBuilder();
 
@@ -112,8 +120,12 @@ public interface NormalizedNode extends NormalizedData, PrettyTreeAware {
 
         <T> SystemLeafSetNode.Builder<T> newSystemLeafSetBuilder(int sizeHint);
 
+        <T> SystemLeafSetNode.Builder<T> newSystemLeafSetBuilder(SystemLeafSetNode<T> node);
+
         <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder();
 
         <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder(int sizeHint);
+
+        <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder(UserLeafSetNode<T> node);
     }
 }
