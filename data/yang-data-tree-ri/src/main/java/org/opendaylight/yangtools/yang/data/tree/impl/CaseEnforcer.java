@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.spi.node.MandatoryLeafEnforcer;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -44,22 +44,27 @@ class CaseEnforcer implements Immutable {
     }
 
     static CaseEnforcer forTree(final CaseSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        final TreeType type = treeConfig.getTreeType();
-        final Builder<NodeIdentifier, DataSchemaNode> childrenBuilder = ImmutableMap.builder();
-        if (SchemaAwareApplyOperation.belongsToTree(type, schema)) {
-            for (final DataSchemaNode child : schema.getChildNodes()) {
-                if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
+        final var treeType = treeConfig.getTreeType();
+        final var childrenBuilder = ImmutableMap.<NodeIdentifier, DataSchemaNode>builder();
+        if (SchemaAwareApplyOperation.belongsToTree(treeType, schema)) {
+            for (var child : schema.getChildNodes()) {
+                if (SchemaAwareApplyOperation.belongsToTree(treeType, child)) {
                     childrenBuilder.put(NodeIdentifier.create(child.getQName()), child);
                 }
             }
         }
 
-        final ImmutableMap<NodeIdentifier, DataSchemaNode> children = childrenBuilder.build();
+        final var children = childrenBuilder.build();
         if (children.isEmpty()) {
             return null;
         }
-        final var enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
-        return enforcer != null ? new EnforcingMandatory(children, enforcer) : new CaseEnforcer(children);
+        if (treeConfig.isMandatoryNodesValidationEnabled()) {
+            final var enforcer = MandatoryLeafEnforcer.forContainer(schema, treeType == TreeType.OPERATIONAL);
+            if (enforcer != null) {
+                return new EnforcingMandatory(children, enforcer);
+            }
+        }
+        return new CaseEnforcer(children);
     }
 
     final Set<Entry<NodeIdentifier, DataSchemaNode>> getChildEntries() {

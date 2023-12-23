@@ -9,12 +9,14 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.spi.node.MandatoryLeafEnforcer;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
@@ -44,25 +46,24 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
         @Override
         protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
                 final Version version) {
-            final var ret = super.applyMerge(modification, currentMeta, version);
-            enforcer.enforceOnTreeNode(ret);
-            return ret;
+            return enforce(super.applyMerge(modification, currentMeta, version));
         }
 
         @Override
         protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
                 final TreeNode currentMeta, final Version version) {
-            final var ret = super.applyWrite(modification, newValue, currentMeta, version);
-            enforcer.enforceOnTreeNode(ret);
-            return ret;
+            return enforce(super.applyWrite(modification, newValue, currentMeta, version));
         }
 
         @Override
         protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
                 final Version version) {
-            final var ret = super.applyTouch(modification, currentMeta, version);
-            enforcer.enforceOnTreeNode(ret);
-            return ret;
+            return enforce(super.applyTouch(modification, currentMeta, version));
+        }
+
+        private @NonNull TreeNode enforce(final TreeNode treeNode) {
+            enforcer.enforceOnData(treeNode.getData());
+            return treeNode;
         }
     }
 
@@ -104,7 +105,7 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
 
     static ContainerModificationStrategy of(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {
         if (schema.isPresenceContainer()) {
-            final var enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
+            final var enforcer = enforcerFor(schema, treeConfig);
             return enforcer != null ? new EnforcingMandatory(schema, treeConfig, enforcer)
                 : new ContainerModificationStrategy(schema, treeConfig);
         }
