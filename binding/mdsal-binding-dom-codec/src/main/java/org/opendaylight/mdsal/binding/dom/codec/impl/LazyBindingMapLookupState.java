@@ -54,6 +54,7 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends DataObject & K
 
     // Used via the varhandle above
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile Values<K, V> values;
 
     LazyBindingMapLookupState(final LazyBindingMap<K, V> map) {

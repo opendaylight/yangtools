@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -81,6 +82,7 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
 
     // Accessed via a VarHandle
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile DataContainerSerializer eventStreamSerializer;
 
     DataContainerCodecContext(final T type) {

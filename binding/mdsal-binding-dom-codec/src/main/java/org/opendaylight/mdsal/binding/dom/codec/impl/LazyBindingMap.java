@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.AbstractMap;
@@ -73,6 +74,7 @@ final class LazyBindingMap<K extends Key<V>, V extends DataObject & KeyAware<K>>
 
     // Used via VarHandle above
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile State<K, V> state;
 
     private LazyBindingMap(final Unordered<K, V> codec, final MapNode mapNode) {

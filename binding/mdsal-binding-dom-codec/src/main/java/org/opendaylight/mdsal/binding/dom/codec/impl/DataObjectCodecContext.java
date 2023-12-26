@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
@@ -69,6 +70,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     // Note this the content of this field depends only of invariants expressed as this class's fields or
     // BindingRuntimeContext. It is only accessed via MISMATCHED_AUGMENTED above.
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
 
     DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype) {

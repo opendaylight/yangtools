@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Map;
@@ -42,6 +43,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
     // Used via VarHandle
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> cachedAugmentations;
 
     protected AugmentableCodecDataObject(final AbstractDataObjectCodecContext<T, ?> context,

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
@@ -31,6 +32,7 @@ final class StructuralContainerCodecContext<D extends DataObject> extends Contai
     }
 
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile D emptyObject;
 
     StructuralContainerCodecContext(final Class<D> cls, final ContainerRuntimeType type,

@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
@@ -35,6 +36,7 @@ abstract sealed class CommonDataObjectCodecPrototype<T extends CompositeRuntimeT
 
     // Accessed via INSTANCE
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile CommonDataObjectCodecContext<?, T> instance;
 
     CommonDataObjectCodecPrototype(final Item<?> bindingArg, final T type, final CodecContextFactory factory) {

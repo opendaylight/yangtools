@@ -13,6 +13,7 @@ import static org.opendaylight.mdsal.binding.dom.codec.impl.LazyBindingList.OBJ_
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.VarHandle;
@@ -58,12 +59,15 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends DataObject & Key
 
     // Secondary views derived from values, used via varhandles above
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile KeySet<K, V> keySet;
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile EntrySet<K, V> entrySet;
 
     // Lookup map, instantiated on demand, used via varhandle above
     @SuppressWarnings("unused")
+    @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<K, V> lookupMap;
 
     LazyBindingMapIterState(final LazyBindingMap<K, V> map) {
