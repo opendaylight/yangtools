@@ -20,6 +20,10 @@
     <artifactId>binding-parent</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <spotbugs.onlyAnalyze>!org.opendaylight.yang.gen.-</spotbugs.onlyAnalyze>
+    </properties>
+
     <build>
         <!-- https://bugs.opendaylight.org/show_bug.cgi?id=6252 -->
         <resources>
