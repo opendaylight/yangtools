@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.spi.node;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Interner;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode.Builder;
@@ -29,14 +31,20 @@ public final class InterningLeafNodeBuilder<T> implements Builder<T> {
     }
 
     @Override
-    public Builder<T> withValue(final T value) {
-        delegate.withValue(value);
+    public Builder<T> withName(final NodeIdentifier nodeIdentifier) {
+        verifyNotNull(delegate.withName(nodeIdentifier));
         return this;
     }
 
     @Override
-    public Builder<T> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
-        delegate.withNodeIdentifier(nodeIdentifier);
+    public Builder<T> withName(final QName qname) {
+        verifyNotNull(delegate.withName(qname));
+        return this;
+    }
+
+    @Override
+    public Builder<T> withBody(final T value) {
+        verifyNotNull(delegate.withBody(value));
         return this;
     }
 

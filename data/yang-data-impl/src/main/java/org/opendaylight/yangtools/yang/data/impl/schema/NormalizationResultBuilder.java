@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 
@@ -36,11 +35,6 @@ final class NormalizationResultBuilder implements NormalizedNodeContainerBuilder
 
     void reset() {
         holder.reset();
-    }
-
-    @Override
-    public NormalizedNodeBuilder withValue(final Object value) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

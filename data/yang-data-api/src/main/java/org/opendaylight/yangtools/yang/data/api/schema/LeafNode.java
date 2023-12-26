@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 
 /**
  * Leaf node with multiplicity 0..1.
@@ -37,7 +38,17 @@ public non-sealed interface LeafNode<T> extends ValueNode<T>, DataContainerChild
     /**
      * A builder of {@link LeafNode}s.
      */
-    interface Builder<V> extends NormalizedNodeBuilder<NodeIdentifier, V, LeafNode<V>> {
-        // Just a specialization
+    interface Builder<V> extends NormalizedNode.Builder {
+
+        @NonNull Builder<V> withName(NodeIdentifier name);
+
+        default @NonNull Builder<V> withName(final QName qname) {
+            return withName(new NodeIdentifier(qname));
+        }
+
+        @NonNull Builder<V> withBody(V value);
+
+        @Override
+        LeafNode<V> build();
     }
 }

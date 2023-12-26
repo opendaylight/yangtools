@@ -8,8 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 
 /**
  * A NormalizedNode holding the contents of an {@code anydata} node in some object model. While no guarantees are placed
@@ -36,7 +37,17 @@ public non-sealed interface AnydataNode<V> extends ForeignDataNode<V> {
     /**
      * A builder of {@link AnydataNode}s.
      */
-    interface Builder<V> extends NormalizedNodeBuilder<NodeIdentifier, V, AnydataNode<V>> {
-        // Just a specialization
+    interface Builder<V> extends NormalizedNode.Builder {
+
+        @NonNull Builder<V> withName(NodeIdentifier name);
+
+        default @NonNull Builder<V> withName(final QName qname) {
+            return withName(new NodeIdentifier(qname));
+        }
+
+        @NonNull Builder<V> withBody(V value);
+
+        @Override
+        AnydataNode<V> build();
     }
 }
