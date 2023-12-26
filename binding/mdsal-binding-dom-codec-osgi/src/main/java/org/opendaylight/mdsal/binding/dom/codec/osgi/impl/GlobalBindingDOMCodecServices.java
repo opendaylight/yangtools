@@ -45,11 +45,30 @@ import org.slf4j.LoggerFactory;
 public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCodecServices {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalBindingDOMCodecServices.class);
 
-    @Reference(updated = "update")
-    volatile OSGiBindingDOMCodecServices osgi = null;
-
     private BindingDOMCodecServices delegate;
     private UnsignedLong generation;
+
+    @Activate
+    public GlobalBindingDOMCodecServices(@Reference(updated = "update") final OSGiBindingDOMCodecServices services) {
+        updateDelegate(services);
+        LOG.info("Global Binding/DOM Codec activated with generation {}", generation);
+    }
+
+    @Deactivate
+    void deactivate() {
+        delegate = null;
+        LOG.info("Global Binding/DOM Codec deactivated");
+    }
+
+    void update(final OSGiBindingDOMCodecServices services) {
+        updateDelegate(services);
+        LOG.info("Global Binding/DOM Codec updated to generation {}", generation);
+    }
+
+    private void updateDelegate(final OSGiBindingDOMCodecServices services) {
+        generation = services.getGeneration();
+        delegate = services.getService();
+    }
 
     @Override
     public BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
@@ -66,27 +85,5 @@ public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCod
     @Override
     protected BindingDOMCodecServices delegate() {
         return verifyNotNull(delegate);
-    }
-
-    void update() {
-        updateDelegate();
-        LOG.info("Global Binding/DOM Codec updated to generation {}", generation);
-    }
-
-    @Activate
-    void activate() {
-        updateDelegate();
-        LOG.info("Global Binding/DOM Codec activated with generation {}", generation);
-    }
-
-    @Deactivate
-    void deactivate() {
-        delegate = null;
-        LOG.info("Global Binding/DOM Codec deactivated");
-    }
-
-    private void updateDelegate() {
-        generation = osgi.getGeneration();
-        delegate = osgi.getService();
     }
 }
