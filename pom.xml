@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-aggregator</artifactId>
-    <version>11.0.5</version>
+    <version>11.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>yangtools</name> <!-- Used by Sonar to set project name -->
     <description>
