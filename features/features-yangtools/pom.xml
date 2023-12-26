@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>features-yangtools</artifactId>
-    <version>11.0.5-SNAPSHOT</version>
+    <version>11.0.5</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Stable Features</name>
     <description>YANG Tools Stable Features</description>
