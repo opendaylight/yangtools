@@ -44,11 +44,6 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>com.github.spotbugs</groupId>
-                    <artifactId>spotbugs-annotations</artifactId>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </dependency>
@@ -101,15 +96,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <configuration>
-                            <ignoredUnusedDeclaredDependencies combine.children="append">
-                                <!-- Binding uses SpotBugs only for some constructs (RPCs) methods -->
-                                <ignoredUnusedDeclaredDependency>com.github.spotbugs:spotbugs-annotations</ignoredUnusedDeclaredDependency>
-                            </ignoredUnusedDeclaredDependencies>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
