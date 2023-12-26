@@ -15,9 +15,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +30,6 @@ import org.eclipse.jdt.annotation.Nullable;
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
  * to perform specific shared functions. This allows for generated classes to be leaner. Methods in this class follows
  * general API stability requirements of the Binding Specification.
- *
- * @author Robert Varga
  */
 public final class CodeHelpers {
     private CodeHelpers() {
@@ -460,7 +456,7 @@ public final class CodeHelpers {
     @SuppressWarnings("unchecked")
     public static <T> @Nullable List<T> checkListFieldCast(final @NonNull Class<?> requiredClass,
             final @NonNull String fieldName, final @Nullable List<?> list) {
-        checkCollectionField(requiredClass, fieldName, list);
+        DoNotLeakSpotbugs.checkCollectionField(requiredClass, fieldName, list);
         return (List<T>) list;
     }
 
@@ -477,21 +473,7 @@ public final class CodeHelpers {
     @SuppressWarnings("unchecked")
     public static <T> @Nullable Set<T> checkSetFieldCast(final @NonNull Class<?> requiredClass,
             final @NonNull String fieldName, final @Nullable Set<?> set) {
-        checkCollectionField(requiredClass, fieldName, set);
+        DoNotLeakSpotbugs.checkCollectionField(requiredClass, fieldName, set);
         return (Set<T>) set;
-    }
-
-    @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION",
-        justification = "Internal NPE->IAE conversion")
-    private static void checkCollectionField(final @NonNull Class<?> requiredClass,
-            final @NonNull String fieldName, final @Nullable Collection<?> collection) {
-        if (collection != null) {
-            try {
-                collection.forEach(item -> requiredClass.cast(requireNonNull(item)));
-            } catch (ClassCastException | NullPointerException e) {
-                throw new IllegalArgumentException("Invalid input item for property \"" + requireNonNull(fieldName)
-                    + "\"", e);
-            }
-        }
     }
 }
