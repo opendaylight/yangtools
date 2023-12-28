@@ -31,4 +31,5 @@ module org.opendaylight.yangtools.yang.data.tree {
     requires static org.osgi.service.component.annotations;
     requires static com.github.spotbugs.annotations;
     requires static javax.inject;
+    requires org.opendaylight.yangtools.yang.data.api;
 }

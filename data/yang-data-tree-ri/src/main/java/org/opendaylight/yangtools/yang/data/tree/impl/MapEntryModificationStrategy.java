@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.MandatoryLeafEnforcer;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
@@ -61,8 +60,8 @@ sealed class MapEntryModificationStrategy extends DataNodeContainerModificationS
     }
 
     private static final NormalizedNodeContainerSupport<NodeIdentifierWithPredicates, MapEntryNode> SUPPORT =
-            new NormalizedNodeContainerSupport<>(MapEntryNode.class, ImmutableMapEntryNodeBuilder::create,
-                    ImmutableMapEntryNodeBuilder::new);
+        new NormalizedNodeContainerSupport<>(MapEntryNode.class, BUILDER_FACTORY::newMapEntryBuilder,
+            BUILDER_FACTORY::newMapEntryBuilder);
 
     MapEntryModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, schema, treeConfig);

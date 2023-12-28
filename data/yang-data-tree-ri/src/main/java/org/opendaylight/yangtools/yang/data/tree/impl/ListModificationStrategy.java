@@ -14,9 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
@@ -26,15 +23,17 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
-            new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
-                    ImmutableUnkeyedListEntryNodeBuilder::create, ImmutableUnkeyedListEntryNodeBuilder::new);
+        new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
+            BUILDER_FACTORY::newUnkeyedListEntryBuilder, BUILDER_FACTORY::newUnkeyedListEntryBuilder);
 
     private final DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
     private final UnkeyedListNode emptyNode;
 
     ListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         entryStrategy = new DataNodeContainerModificationStrategy<>(ITEM_SUPPORT, schema, treeConfig);
-        emptyNode = ImmutableNodes.listNode(schema.getQName());
+        emptyNode = BUILDER_FACTORY.newUnkeyedListBuilder()
+            .withNodeIdentifier(NodeIdentifier.create(schema.getQName()))
+            .build();
     }
 
     @Override
@@ -84,7 +83,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         final var mutable = newValueMeta.mutable();
         mutable.setSubtreeVersion(version);
 
-        return mutateChildren(mutable, ImmutableUnkeyedListNodeBuilder.create((UnkeyedListNode) newValue), version,
+        return mutateChildren(mutable, BUILDER_FACTORY.newUnkeyedListBuilder((UnkeyedListNode) newValue), version,
             modification.getChildren());
     }
 
