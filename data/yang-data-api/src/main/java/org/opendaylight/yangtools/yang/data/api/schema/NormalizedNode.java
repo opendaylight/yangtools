@@ -81,6 +81,8 @@ public sealed interface NormalizedNode extends NormalizedData, PrettyTreeAware
 
         ChoiceNode.Builder newChoiceBuilder(int sizeHint);
 
+        ChoiceNode.Builder newChoiceBuilder(ChoiceNode node);
+
         ContainerNode.Builder newContainerBuilder();
 
         ContainerNode.Builder newContainerBuilder(int sizeHint);
@@ -109,9 +111,13 @@ public sealed interface NormalizedNode extends NormalizedData, PrettyTreeAware
 
         UnkeyedListEntryNode.Builder newUnkeyedListEntryBuilder(int sizeHint);
 
+        UnkeyedListEntryNode.Builder newUnkeyedListEntryBuilder(UnkeyedListEntryNode node);
+
         UnkeyedListNode.Builder newUnkeyedListBuilder();
 
         UnkeyedListNode.Builder newUnkeyedListBuilder(int sizeHint);
+
+        UnkeyedListNode.Builder newUnkeyedListBuilder(UnkeyedListNode node);
 
         <T> LeafNode.Builder<T> newLeafBuilder();
 

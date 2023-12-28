@@ -14,8 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.MandatoryLeafEnforcer;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
@@ -80,7 +78,9 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
 
         Structural(final ContainerLike schema, final DataTreeConfiguration treeConfig) {
             super(schema, treeConfig);
-            emptyNode = ImmutableNodes.containerNode(schema.getQName());
+            emptyNode = BUILDER_FACTORY.newContainerBuilder()
+                .withNodeIdentifier(NodeIdentifier.create(schema.getQName()))
+                .build();
         }
 
         @Override
@@ -96,8 +96,8 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
     }
 
     private static final NormalizedNodeContainerSupport<NodeIdentifier, ContainerNode> SUPPORT =
-            new NormalizedNodeContainerSupport<>(ContainerNode.class, ImmutableContainerNodeBuilder::create,
-                    ImmutableContainerNodeBuilder::new);
+            new NormalizedNodeContainerSupport<>(ContainerNode.class, BUILDER_FACTORY::newContainerBuilder,
+                BUILDER_FACTORY::newContainerBuilder);
 
     ContainerModificationStrategy(final ContainerLike schemaNode, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, schemaNode, treeConfig);

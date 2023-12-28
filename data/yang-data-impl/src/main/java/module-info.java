@@ -9,12 +9,7 @@ module org.opendaylight.yangtools.yang.data.impl {
     // FIXME: do not export data.impl.*
     exports org.opendaylight.yangtools.yang.data.impl.codec;
     exports org.opendaylight.yangtools.yang.data.impl.schema;
-    exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
     exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
-    exports org.opendaylight.yangtools.yang.data.impl.schema.nodes;
-
-    provides org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory
-        with org.opendaylight.yangtools.yang.data.impl.schema.ImmutableBuilderFactory;
 
     requires transitive java.xml;
     requires transitive com.google.common;
@@ -27,13 +22,8 @@ module org.opendaylight.yangtools.yang.data.impl {
     requires transitive org.opendaylight.yangtools.yang.model.spi;
 
     requires org.opendaylight.yangtools.yang.model.util;
-    requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
-    requires static com.github.spotbugs.annotations;
-    requires static javax.inject;
-    requires static org.kohsuke.metainf_services;
-    requires static org.osgi.service.component.annotations;
 }

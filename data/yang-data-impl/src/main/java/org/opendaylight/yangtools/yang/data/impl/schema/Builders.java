@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
@@ -23,7 +24,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
+/**
+ * Utility methods producing immutable implementations of various {@link NormalizedNode}s via builders.
+ *
+ * @deprecated Use {@link BuilderFactory} provided by {@link ImmutableNodes#builderFactory()} instead.
+ */
+@Deprecated(since = "12.0.0", forRemoval = true)
 public final class Builders {
     private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 

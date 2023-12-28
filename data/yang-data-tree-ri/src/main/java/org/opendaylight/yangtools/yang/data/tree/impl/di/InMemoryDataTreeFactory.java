@@ -17,10 +17,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -56,8 +57,9 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeFactory.class);
     private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
     // FIXME: YANGTOOLS-1074: we do not want this name
-    private static final @NonNull NormalizedNode ROOT_CONTAINER =
-            ImmutableNodes.containerNode(SchemaContext.NAME);
+    private static final @NonNull ContainerNode ROOT_CONTAINER = BUILDER_FACTORY.newContainerBuilder(0)
+        .withNodeIdentifier(NodeIdentifier.create(SchemaContext.NAME))
+        .build();
 
     @Inject
     public InMemoryDataTreeFactory() {

@@ -24,21 +24,23 @@ import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.YangInstanceIdentifierWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
+/**
+ * Utility methods producing immutable implementations of various {@link NormalizedNode}s.
+ *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes} instead.
+ */
+@Deprecated(since = "12.0.0", forRemoval = true)
 public final class ImmutableNodes {
-    private static final @NonNull ImmutableBuilderFactory BUILDER_FACTORY = new ImmutableBuilderFactory();
+    private static final @NonNull BuilderFactory BUILDER_FACTORY =
+        org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes.builderFactory();
     // FIXME: YANGTOOLS-1074: we do not want this name
     private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
 
     private ImmutableNodes() {
         // Hidden on purpose
-    }
-
-    public static @NonNull BuilderFactory builderFactory() {
-        return BUILDER_FACTORY;
     }
 
     public static SystemMapNode.@NonNull Builder mapNodeBuilder() {
@@ -105,7 +107,7 @@ public final class ImmutableNodes {
      * @return Leaf node with supplied identifier and value
      */
     public static <T> @NonNull LeafNode<T> leafNode(final NodeIdentifier name, final T value) {
-        return ImmutableLeafNodeBuilder.createNode(name, value);
+        return org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes.leafNode(name, value);
     }
 
     /**
@@ -117,7 +119,7 @@ public final class ImmutableNodes {
      * @return Leaf node with supplied identifier and value
      */
     public static <T> @NonNull LeafNode<T> leafNode(final QName name, final T value) {
-        return leafNode(NodeIdentifier.create(name), value);
+        return org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes.leafNode(name, value);
     }
 
     public static MapEntryNode.@NonNull Builder mapEntryBuilder(final QName nodeName, final QName keyName,
