@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.spi.node.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
@@ -42,6 +43,11 @@ final class ImmutableSystemLeafSetNode<T> extends AbstractSystemLeafSetNode<T> {
     @Override
     public int size() {
         return children.size();
+    }
+
+    @Override
+    public Map<NodeWithValue<?>, LeafSetEntryNode<T>> asMap() {
+        return Collections.unmodifiableMap(children);
     }
 
     @Override

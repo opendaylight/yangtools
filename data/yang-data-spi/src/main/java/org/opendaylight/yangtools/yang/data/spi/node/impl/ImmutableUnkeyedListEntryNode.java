@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.AbstractUnkeyedListEntryN
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.spi.node.LazyLeafOperations;
+import org.opendaylight.yangtools.yang.data.spi.node.LazyMap;
 import org.opendaylight.yangtools.yang.data.spi.node.LazyValues;
 
 final class ImmutableUnkeyedListEntryNode extends AbstractUnkeyedListEntryNode {
@@ -48,6 +49,11 @@ final class ImmutableUnkeyedListEntryNode extends AbstractUnkeyedListEntryNode {
     @Override
     public int size() {
         return children.size();
+    }
+
+    @Override
+    public Map<NodeIdentifier, DataContainerChild> asMap() {
+        return new LazyMap(children);
     }
 
     @Override

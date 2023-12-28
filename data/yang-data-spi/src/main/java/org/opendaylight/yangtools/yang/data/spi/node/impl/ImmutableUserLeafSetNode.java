@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Iterables;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
@@ -47,6 +48,11 @@ final class ImmutableUserLeafSetNode<T> extends AbstractUserLeafSetNode<T> {
     @Override
     public int size() {
         return children.size();
+    }
+
+    @Override
+    public Map<NodeWithValue<?>, LeafSetEntryNode<T>> asMap() {
+        return Collections.unmodifiableMap(children);
     }
 
     @Override

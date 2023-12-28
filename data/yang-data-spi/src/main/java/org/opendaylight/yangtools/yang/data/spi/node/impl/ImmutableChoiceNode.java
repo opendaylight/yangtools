@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.AbstractChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.spi.node.LazyLeafOperations;
+import org.opendaylight.yangtools.yang.data.spi.node.LazyMap;
 import org.opendaylight.yangtools.yang.data.spi.node.LazyValues;
 
 final class ImmutableChoiceNode extends AbstractChoiceNode {
@@ -48,6 +49,11 @@ final class ImmutableChoiceNode extends AbstractChoiceNode {
     @Override
     public int size() {
         return children.size();
+    }
+
+    @Override
+    public Map<NodeIdentifier, DataContainerChild> asMap() {
+        return new LazyMap(children);
     }
 
     @Override

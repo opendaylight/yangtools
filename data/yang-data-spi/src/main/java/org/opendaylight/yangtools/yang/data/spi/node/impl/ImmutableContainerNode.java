@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.AbstractContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.spi.node.LazyLeafOperations;
+import org.opendaylight.yangtools.yang.data.spi.node.LazyMap;
 import org.opendaylight.yangtools.yang.data.spi.node.LazyValues;
 
 final class ImmutableContainerNode extends AbstractContainerNode {
@@ -48,6 +49,11 @@ final class ImmutableContainerNode extends AbstractContainerNode {
     @Override
     public int size() {
         return children.size();
+    }
+
+    @Override
+    public Map<NodeIdentifier, DataContainerChild> asMap() {
+        return new LazyMap(children);
     }
 
     @Override
