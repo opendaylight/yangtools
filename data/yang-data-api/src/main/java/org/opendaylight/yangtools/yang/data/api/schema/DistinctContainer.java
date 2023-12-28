@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.VerifyException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -67,4 +68,12 @@ public sealed interface DistinctContainer<K extends PathArgument, V extends Norm
     default @NonNull V getChildByArg(final K key) {
         return verifyNotNull(childByArg(key), "No child matching %s", key);
     }
+
+    /**
+     * Return a {@link Map} view of this node. Note that the iteration order of the returned is map is not defined in
+     * this interface.
+     *
+     * @return Map view of this node.
+     */
+    @NonNull Map<K, V> asMap();
 }

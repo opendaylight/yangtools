@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import com.google.common.annotations.Beta;
 import java.util.Collection;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
@@ -25,15 +23,6 @@ public sealed interface MapNode
         permits SystemMapNode, UserMapNode {
     @Override
     Class<? extends MapNode> contract();
-
-    /**
-     * Return a {@link Map} view of this node. Note that the iteration order of the returned is map is not defined in
-     * this interface.
-     *
-     * @return Map view of this node.
-     */
-    @Beta
-    @NonNull Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();
 
     @Override
     default Collection<@NonNull MapEntryNode> body() {
