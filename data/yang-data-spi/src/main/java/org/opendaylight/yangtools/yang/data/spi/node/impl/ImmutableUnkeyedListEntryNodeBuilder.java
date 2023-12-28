@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
+package org.opendaylight.yangtools.yang.data.spi.node.impl;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,44 +14,46 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.AbstractChoiceNode;
-import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractUnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyValues;
 
-public final class ImmutableChoiceNodeBuilder
-        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode>
-        implements ChoiceNode.Builder {
-    public ImmutableChoiceNodeBuilder() {
+public final class ImmutableUnkeyedListEntryNodeBuilder
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode>
+        implements UnkeyedListEntryNode.Builder {
+    public ImmutableUnkeyedListEntryNodeBuilder() {
 
     }
 
-    public ImmutableChoiceNodeBuilder(final int sizeHint) {
+    public ImmutableUnkeyedListEntryNodeBuilder(final int sizeHint) {
         super(sizeHint);
     }
 
-    private ImmutableChoiceNodeBuilder(final ImmutableChoiceNode node) {
+    private ImmutableUnkeyedListEntryNodeBuilder(final ImmutableUnkeyedListEntryNode node) {
         super(node.name, node.children);
     }
 
-    public static ChoiceNode.@NonNull Builder create(final ChoiceNode node) {
-        if (node instanceof ImmutableChoiceNode immutableNode) {
-            return new ImmutableChoiceNodeBuilder(immutableNode);
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
+            final UnkeyedListEntryNode node) {
+        if (node instanceof ImmutableUnkeyedListEntryNode immutableNode) {
+            return new ImmutableUnkeyedListEntryNodeBuilder(immutableNode);
         }
         throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     @Override
-    public ChoiceNode build() {
-        return new ImmutableChoiceNode(getNodeIdentifier(), buildValue());
+    public UnkeyedListEntryNode build() {
+        return new ImmutableUnkeyedListEntryNode(getNodeIdentifier(), buildValue());
     }
 
-    private static final class ImmutableChoiceNode extends AbstractChoiceNode {
+    protected static final class ImmutableUnkeyedListEntryNode extends AbstractUnkeyedListEntryNode {
         private final @NonNull NodeIdentifier name;
         private final @NonNull Map<NodeIdentifier, Object> children;
 
-        ImmutableChoiceNode(final NodeIdentifier name, final Map<NodeIdentifier, Object> children) {
+        ImmutableUnkeyedListEntryNode(final NodeIdentifier name, final Map<NodeIdentifier, Object> children) {
             this.name = requireNonNull(name);
             // FIXME: move this to caller
             this.children = ImmutableOffsetMap.unorderedCopyOf(children);
@@ -63,8 +65,8 @@ public final class ImmutableChoiceNodeBuilder
         }
 
         @Override
-        public DataContainerChild childByArg(final NodeIdentifier child) {
-            return LazyLeafOperations.getChild(children, child);
+        public DataContainerChild childByArg(final NodeIdentifier key) {
+            return LazyLeafOperations.getChild(children, key);
         }
 
         @Override
@@ -83,8 +85,8 @@ public final class ImmutableChoiceNodeBuilder
         }
 
         @Override
-        protected boolean valueEquals(final ChoiceNode other) {
-            return other instanceof ImmutableChoiceNode immutable ? children.equals(immutable.children)
+        protected boolean valueEquals(final UnkeyedListEntryNode other) {
+            return other instanceof ImmutableUnkeyedListEntryNode immutable ? children.equals(immutable.children)
                 : ImmutableNormalizedNodeMethods.bodyEquals(this, other);
         }
     }

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
+package org.opendaylight.yangtools.yang.data.spi.node.impl;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,46 +14,44 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.AbstractUnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AbstractContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyValues;
 
-public final class ImmutableUnkeyedListEntryNodeBuilder
-        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode>
-        implements UnkeyedListEntryNode.Builder {
-    public ImmutableUnkeyedListEntryNodeBuilder() {
+public final class ImmutableContainerNodeBuilder
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ContainerNode>
+        implements ContainerNode.Builder {
+    public ImmutableContainerNodeBuilder() {
 
     }
 
-    public ImmutableUnkeyedListEntryNodeBuilder(final int sizeHint) {
+    public ImmutableContainerNodeBuilder(final int sizeHint) {
         super(sizeHint);
     }
 
-    private ImmutableUnkeyedListEntryNodeBuilder(final ImmutableUnkeyedListEntryNode node) {
+    private ImmutableContainerNodeBuilder(final ImmutableContainerNode node) {
         super(node.name, node.children);
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
-            final UnkeyedListEntryNode node) {
-        if (node instanceof ImmutableUnkeyedListEntryNode immutableNode) {
-            return new ImmutableUnkeyedListEntryNodeBuilder(immutableNode);
+    public static ContainerNode.@NonNull Builder create(final ContainerNode node) {
+        if (node instanceof ImmutableContainerNode immutableNode) {
+            return new ImmutableContainerNodeBuilder(immutableNode);
         }
         throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     @Override
-    public UnkeyedListEntryNode build() {
-        return new ImmutableUnkeyedListEntryNode(getNodeIdentifier(), buildValue());
+    public ContainerNode build() {
+        return new ImmutableContainerNode(getNodeIdentifier(), buildValue());
     }
 
-    protected static final class ImmutableUnkeyedListEntryNode extends AbstractUnkeyedListEntryNode {
+    protected static final class ImmutableContainerNode extends AbstractContainerNode {
         private final @NonNull NodeIdentifier name;
         private final @NonNull Map<NodeIdentifier, Object> children;
 
-        ImmutableUnkeyedListEntryNode(final NodeIdentifier name, final Map<NodeIdentifier, Object> children) {
+        ImmutableContainerNode(final NodeIdentifier name, final Map<NodeIdentifier, Object> children) {
             this.name = requireNonNull(name);
             // FIXME: move this to caller
             this.children = ImmutableOffsetMap.unorderedCopyOf(children);
@@ -65,8 +63,8 @@ public final class ImmutableUnkeyedListEntryNodeBuilder
         }
 
         @Override
-        public DataContainerChild childByArg(final NodeIdentifier key) {
-            return LazyLeafOperations.getChild(children, key);
+        public DataContainerChild childByArg(final NodeIdentifier child) {
+            return LazyLeafOperations.getChild(children, child);
         }
 
         @Override
@@ -85,8 +83,8 @@ public final class ImmutableUnkeyedListEntryNodeBuilder
         }
 
         @Override
-        protected boolean valueEquals(final UnkeyedListEntryNode other) {
-            return other instanceof ImmutableUnkeyedListEntryNode immutable ? children.equals(immutable.children)
+        protected boolean valueEquals(final ContainerNode other) {
+            return other instanceof ImmutableContainerNode immutable ? children.equals(immutable.children)
                 : ImmutableNormalizedNodeMethods.bodyEquals(this, other);
         }
     }

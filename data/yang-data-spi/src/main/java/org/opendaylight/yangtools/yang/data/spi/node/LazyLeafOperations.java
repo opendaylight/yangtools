@@ -5,19 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
+package org.opendaylight.yangtools.yang.data.spi.node;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableLeafNode;
 
 /**
  * Support utilities for dealing with Maps which would normally hold {@link DataContainerChild} values, but are modified
@@ -31,7 +31,7 @@ public final class LazyLeafOperations {
 
     public static @Nullable DataContainerChild getChild(final Map<NodeIdentifier, Object> map,
             final NodeIdentifier key) {
-        final Object value = map.get(key);
+        final var value = map.get(key);
         return value == null ? null : decodeChild(key, value);
     }
 
@@ -41,7 +41,7 @@ public final class LazyLeafOperations {
     }
 
     static @NonNull LeafNode<?> coerceLeaf(final NodeIdentifier key, final Object value) {
-        return ImmutableNodes.leafNode(key, value);
+        return ImmutableLeafNode.of(key, value);
     }
 
     private static @Nullable DataContainerChild decodeChild(final NodeIdentifier key, final @NonNull Object value) {
@@ -58,7 +58,9 @@ public final class LazyLeafOperations {
     }
 
     private static @NonNull Object verifyEncode(final @NonNull Object value) {
-        verify(!(value instanceof DataContainerChild), "Unexpected leaf value %s", value);
+        if (value instanceof DataContainerChild) {
+            throw new VerifyException("Unexpected leaf value " + value);
+        }
         return value;
     }
 }

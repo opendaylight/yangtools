@@ -22,11 +22,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableChoiceNodeBuilder;
+import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableLeafSetEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableUnkeyedListEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableUnkeyedListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableUserMapNodeBuilder;
 
 class BuilderTest {
     private static final QName ROOT_CONTAINER = QName.create("test.namespace.builder.test", "2016-01-01",

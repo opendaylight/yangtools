@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
+package org.opendaylight.yangtools.yang.data.spi.node;
 
 import com.google.common.annotations.Beta;
 import java.util.Map;
