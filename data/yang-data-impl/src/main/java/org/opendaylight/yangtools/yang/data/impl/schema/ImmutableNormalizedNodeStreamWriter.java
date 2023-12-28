@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.spi.node.InterningLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.InterningLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.LeafInterner;
