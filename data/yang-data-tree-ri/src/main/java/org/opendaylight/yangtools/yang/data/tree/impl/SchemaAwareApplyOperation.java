@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.spi.node.MandatoryLeafEnforcer;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extends ModificationApplyOperation
         permits AbstractNodeContainerModificationStrategy, ListModificationStrategy, ValueNodeModificationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
+    static final @NonNull BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
     static ModificationApplyOperation from(final DataSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) throws ExcludedDataSchemaNodeException {
@@ -79,15 +80,11 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
 
     private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
-        final List<QName> keyDefinition = schemaNode.getKeyDefinition();
-        final SchemaAwareApplyOperation<ListSchemaNode> op;
-        if (keyDefinition == null || keyDefinition.isEmpty()) {
-            op = new ListModificationStrategy(schemaNode, treeConfig);
-        } else {
-            op = MapModificationStrategy.of(schemaNode, treeConfig);
-        }
-
-        return UniqueValidation.of(schemaNode, treeConfig, MinMaxElementsValidation.from(op));
+        final var keyDefinition = schemaNode.getKeyDefinition();
+        final var strategy = keyDefinition == null || keyDefinition.isEmpty()
+            ? new ListModificationStrategy(schemaNode, treeConfig)
+                : MapModificationStrategy.of(schemaNode, treeConfig);
+        return UniqueValidation.of(schemaNode, treeConfig, MinMaxElementsValidation.from(strategy));
     }
 
     protected static final void checkNotConflicting(final ModificationPath path, final @NonNull TreeNode original,

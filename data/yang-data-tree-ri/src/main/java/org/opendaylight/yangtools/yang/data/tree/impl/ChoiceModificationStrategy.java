@@ -20,8 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.AbstractNodeContainerModificationStrategy.Visible;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
@@ -30,8 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 
 final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, ChoiceNode> SUPPORT =
-            new NormalizedNodeContainerSupport<>(ChoiceNode.class, ImmutableChoiceNodeBuilder::create,
-                    ImmutableChoiceNodeBuilder::new);
+            new NormalizedNodeContainerSupport<>(ChoiceNode.class, BUILDER_FACTORY::newChoiceBuilder,
+                BUILDER_FACTORY::newChoiceBuilder);
 
     private final ImmutableMap<PathArgument, ModificationApplyOperation> childNodes;
     // FIXME: enforce leaves not coming from two case statements at the same time
@@ -71,7 +69,9 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
                 .collect(ImmutableList.toImmutableList()));
         }
         exclusions = ImmutableMap.copyOf(exclusionsBuilder);
-        emptyNode = ImmutableNodes.choiceNode(schema.getQName());
+        emptyNode =  BUILDER_FACTORY.newChoiceBuilder()
+            .withNodeIdentifier(NodeIdentifier.create(schema.getQName()))
+            .build();
     }
 
     @Override
