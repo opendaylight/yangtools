@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
-
 /**
  * {@link LeafSetNode} which preserves user-supplied ordering. This node represents a data instance of
  * a {@code leaf-list} with a {@code ordered-by user;} substatement.
@@ -25,7 +23,7 @@ public non-sealed interface UserLeafSetNode<T> extends LeafSetNode<T>, OrderedNo
     /**
      * A builder of {@link UserLeafSetNode}s.
      */
-    interface Builder<T> extends ListNodeBuilder<T, UserLeafSetNode<T>> {
+    non-sealed interface Builder<T> extends LeafSetNode.Builder<T, UserLeafSetNode<T>> {
         // Just a specialization
     }
 }

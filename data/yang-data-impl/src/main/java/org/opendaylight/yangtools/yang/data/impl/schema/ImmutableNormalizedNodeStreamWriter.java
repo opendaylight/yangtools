@@ -25,13 +25,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
@@ -145,8 +144,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startLeafSetEntryNode(final NodeWithValue<?> name) {
         final var current = current();
-        checkArgument(current instanceof SystemLeafSetNode.Builder
-            || current instanceof UserLeafSetNode.Builder || current instanceof NormalizationResultBuilder,
+        checkArgument(current instanceof LeafSetNode.Builder || current instanceof NormalizationResultBuilder,
             "LeafSetEntryNode is not valid for parent %s", current);
         enter(name, leafsetEntryNodeBuilder());
         nextSchema = null;
@@ -202,8 +200,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
         final var current = current();
-        checkArgument(current instanceof SystemMapNode.Builder || current instanceof UserMapNode.Builder
-            || current instanceof NormalizationResultBuilder);
+        checkArgument(current instanceof MapNode.Builder || current instanceof NormalizationResultBuilder);
 
         enter(identifier, UNKNOWN_SIZE == childSizeHint ? BUILDER_FACTORY.newMapEntryBuilder()
             : BUILDER_FACTORY.newMapEntryBuilder(childSizeHint));
