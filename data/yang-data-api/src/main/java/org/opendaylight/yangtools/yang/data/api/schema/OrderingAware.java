@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.ItemOrder.Ordered;
 import org.opendaylight.yangtools.concepts.ItemOrder.Unordered;
@@ -16,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.Ordering;
 /**
  * Marker interfaces for {@link NormalizedNodeContainer}s which have distinct ordering requirements.
  */
-@Beta
 @NonNullByDefault
 public sealed interface OrderingAware permits NormalizedContainer, OrderingAware.System, OrderingAware.User {
     /**

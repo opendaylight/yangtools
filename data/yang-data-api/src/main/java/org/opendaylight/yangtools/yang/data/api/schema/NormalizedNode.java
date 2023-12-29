@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
+import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -107,6 +108,20 @@ public sealed interface NormalizedNode extends NormalizedData, PrettyTreeAware
 
         UserMapNode.Builder newUserMapBuilder(UserMapNode node);
 
+        default MapNode.Builder<?> newMapBuilder(final Ordering ordering) {
+            return switch (ordering) {
+                case SYSTEM -> newSystemMapBuilder();
+                case USER -> newUserMapBuilder();
+            };
+        }
+
+        default MapNode.Builder<?> newMapBuilder(final Ordering ordering, final int sizeHint) {
+            return switch (ordering) {
+                case SYSTEM -> newSystemMapBuilder(sizeHint);
+                case USER -> newUserMapBuilder(sizeHint);
+            };
+        }
+
         UnkeyedListEntryNode.Builder newUnkeyedListEntryBuilder();
 
         UnkeyedListEntryNode.Builder newUnkeyedListEntryBuilder(int sizeHint);
@@ -134,5 +149,19 @@ public sealed interface NormalizedNode extends NormalizedData, PrettyTreeAware
         <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder(int sizeHint);
 
         <T> UserLeafSetNode.Builder<T> newUserLeafSetBuilder(UserLeafSetNode<T> node);
+
+        default <T> LeafSetNode.Builder<T, ?> newLeafSetBuilder(final Ordering ordering) {
+            return switch (ordering) {
+                case SYSTEM -> newSystemLeafSetBuilder();
+                case USER -> newUserLeafSetBuilder();
+            };
+        }
+
+        default <T> LeafSetNode.Builder<T, ?> newLeafSetBuilder(final Ordering ordering, final int sizeHint) {
+            return switch (ordering) {
+                case SYSTEM -> newSystemLeafSetBuilder(sizeHint);
+                case USER -> newUserLeafSetBuilder(sizeHint);
+            };
+        }
     }
 }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
 
 /**
  * Node representing set of simple leaf nodes. Node containing instances of {@link LeafSetEntryNode}.
@@ -24,4 +25,12 @@ public sealed interface LeafSetNode<T>
     @Override
     @SuppressWarnings("rawtypes")
     Class<? extends LeafSetNode> contract();
+
+    /**
+     * A builder of {@link LeafSetNode}s.
+     */
+    sealed interface Builder<T, N extends LeafSetNode<T>> extends ListNodeBuilder<T, N>
+        permits SystemLeafSetNode.Builder, UserLeafSetNode.Builder {
+        // Just a specialization
+    }
 }
