@@ -20,15 +20,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 @ExtendWith(MockitoExtension.class)
 class YT1417Test {
-    public static final QName FOO = QName.create("foo", "foo");
-    public static final QName BAR = QName.create("foo", "bar");
+    private static final QName FOO = QName.create("foo", "foo");
+    private static final QName BAR = QName.create("foo", "bar");
+    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
     @Test
     void testContainerNodeEquality() {
@@ -37,26 +38,26 @@ class YT1417Test {
         doReturn(1).when(mock).size();
         doReturn(ImmutableNodes.leafNode(BAR, "abc")).when(mock).childByArg(new NodeIdentifier(BAR));
 
-        assertEquals(Builders.containerBuilder()
+        assertEquals(BUILDER_FACTORY.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafNode(BAR, "abc"))
             .build(), mock);
 
         // Mismatched identifier
-        assertNotEquals(Builders.containerBuilder()
+        assertNotEquals(BUILDER_FACTORY.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(BAR))
             .withChild(ImmutableNodes.leafNode(BAR, "abc"))
             .build(), mock);
 
         // Mismatched child size
-        assertNotEquals(Builders.containerBuilder()
+        assertNotEquals(BUILDER_FACTORY.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafNode(FOO, "abc"))
             .withChild(ImmutableNodes.leafNode(BAR, "abc"))
             .build(), mock);
 
         // Mismatched child
-        assertNotEquals(Builders.containerBuilder()
+        assertNotEquals(BUILDER_FACTORY.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafNode(FOO, "abc"))
             .build(), mock);
@@ -67,48 +68,30 @@ class YT1417Test {
         final var mock = mock(SystemLeafSetNode.class);
         doReturn(new NodeIdentifier(FOO)).when(mock).name();
         doReturn(1).when(mock).size();
-        doReturn(Builders.leafSetEntryBuilder()
-            .withNodeIdentifier(new NodeWithValue<>(FOO, "abc"))
-            .withValue("abc")
-            .build()).when(mock).childByArg(new NodeWithValue<>(FOO, "abc"));
+        doReturn(ImmutableNodes.leafSetEntry(FOO, "abc")).when(mock).childByArg(new NodeWithValue<>(FOO, "abc"));
 
-        assertEquals(Builders.leafSetBuilder()
+        assertEquals(BUILDER_FACTORY.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "abc"))
-                .withValue("abc")
-                .build())
+            .withChild(ImmutableNodes.leafSetEntry(FOO, "abc"))
             .build(), mock);
 
         // Mismatched identifier
-        assertNotEquals(Builders.leafSetBuilder()
+        assertNotEquals(BUILDER_FACTORY.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(BAR))
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(BAR, "abc"))
-                .withValue("abc")
-                .build())
+            .withChild(ImmutableNodes.leafSetEntry(BAR, "abc"))
             .build(), mock);
 
         // Mismatched child size
-        assertNotEquals(Builders.leafSetBuilder()
+        assertNotEquals(BUILDER_FACTORY.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "abc"))
-                .withValue("abc")
-                .build())
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "def"))
-                .withValue("def")
-                .build())
+            .withChild(ImmutableNodes.leafSetEntry(FOO, "abc"))
+            .withChild(ImmutableNodes.leafSetEntry(FOO, "def"))
             .build(), mock);
 
         // Mismatched child
-        assertNotEquals(Builders.leafSetBuilder()
+        assertNotEquals(BUILDER_FACTORY.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "def"))
-                .withValue("def")
-                .build())
+            .withChild(ImmutableNodes.leafSetEntry(FOO, "def"))
             .build(), mock);
     }
 
@@ -117,51 +100,27 @@ class YT1417Test {
         final var mock = mock(UserLeafSetNode.class);
         doReturn(new NodeIdentifier(FOO)).when(mock).name();
         doReturn(List.of(
-            Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "abc"))
-                .withValue("abc")
-                .build(),
-            Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "def"))
-                .withValue("def")
-                .build())).when(mock).body();
+            ImmutableNodes.leafSetEntry(FOO, "abc"),
+            ImmutableNodes.leafSetEntry(FOO, "def"))).when(mock).body();
 
-        assertEquals(Builders.orderedLeafSetBuilder()
+        assertEquals(BUILDER_FACTORY.newUserLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "abc"))
-                .withValue("abc")
-                .build())
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "def"))
-                .withValue("def")
-                .build())
+            .withChild(ImmutableNodes.leafSetEntry(FOO, "abc"))
+            .withChild(ImmutableNodes.leafSetEntry(FOO, "def"))
             .build(), mock);
 
         // Mismatched identifier
-        assertNotEquals(Builders.orderedLeafSetBuilder()
+        assertNotEquals(BUILDER_FACTORY.newUserLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(BAR))
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(BAR, "abc"))
-                .withValue("abc")
-                .build())
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(BAR, "def"))
-                .withValue("def")
-                .build())
+            .withChild(ImmutableNodes.leafSetEntry(BAR, "abc"))
+            .withChild(ImmutableNodes.leafSetEntry(BAR, "def"))
             .build(), mock);
 
         // Mismatched child order
-        assertNotEquals(Builders.orderedLeafSetBuilder()
+        assertNotEquals(BUILDER_FACTORY.newUserLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "def"))
-                .withValue("def")
-                .build())
-            .withChild(Builders.leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(FOO, "abc"))
-                .withValue("abc")
-                .build())
+            .withChild(ImmutableNodes.leafSetEntry(FOO, "def"))
+            .withChild(ImmutableNodes.leafSetEntry(FOO, "abc"))
             .build(), mock);
     }
 }
