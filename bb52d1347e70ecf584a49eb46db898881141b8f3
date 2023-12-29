@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "229d5a70_d6d13958",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/LazyLeafOperations.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-12-29T05:33:14Z",
+      "side": 1,
+      "message": "retain ImmutableNodes indirection",
+      "range": {
+        "startLine": 44,
+        "startChar": 15,
+        "endLine": 44,
+        "endChar": 35
+      },
+      "revId": "bb52d1347e70ecf584a49eb46db898881141b8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2d622a1_24c346f7",
+        "filename": "data/yang-data-tree-ri/src/main/java/module-info.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-12-29T05:33:14Z",
+      "side": 1,
+      "message": "mis-ordered",
+      "range": {
+        "startLine": 34,
+        "startChar": 4,
+        "endLine": 34,
+        "endChar": 54
+      },
+      "revId": "bb52d1347e70ecf584a49eb46db898881141b8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "db9615c3_d9d05392",
+        "filename": "data/yang-data-tree-ri/src/main/java/org/opendaylight/yangtools/yang/data/tree/impl/ContainerModificationStrategy.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-12-29T05:33:14Z",
+      "side": 1,
+      "message": "needs to be migrated as well",
+      "range": {
+        "startLine": 17,
+        "startChar": 56,
+        "endLine": 17,
+        "endChar": 70
+      },
+      "revId": "bb52d1347e70ecf584a49eb46db898881141b8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
