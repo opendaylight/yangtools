@@ -15,10 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 final class EmptyStringCodec extends TypeDefinitionAwareCodec<Empty, EmptyTypeDefinition>
         implements EmptyCodec<String> {
-    static final EmptyStringCodec INSTANCE = new EmptyStringCodec();
-
-    private EmptyStringCodec() {
-        super(null, Empty.class);
+    EmptyStringCodec(final EmptyTypeDefinition typeDef) {
+        super(Empty.class, typeDef);
     }
 
     @Override

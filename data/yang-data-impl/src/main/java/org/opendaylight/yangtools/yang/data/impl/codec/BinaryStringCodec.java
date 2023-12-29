@@ -54,7 +54,7 @@ public abstract sealed class BinaryStringCodec extends TypeDefinitionAwareCodec<
     }
 
     BinaryStringCodec(final BinaryTypeDefinition typeDef) {
-        super(requireNonNull(typeDef), byte[].class);
+        super(byte[].class, typeDef);
     }
 
     public static BinaryStringCodec from(final BinaryTypeDefinition type) {

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
@@ -21,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 public final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
         implements BooleanCodec<String> {
     private BooleanStringCodec(final BooleanTypeDefinition typeDef) {
-        super(requireNonNull(typeDef), Boolean.class);
+        super(Boolean.class, typeDef);
     }
 
     public static @NonNull BooleanStringCodec from(final BooleanTypeDefinition typeDef) {

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Functions;
@@ -25,7 +24,7 @@ public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, Enum
     private final ImmutableMap<String, String> values;
 
     private EnumStringCodec(final EnumTypeDefinition typeDef) {
-        super(requireNonNull(typeDef), String.class);
+        super(String.class, typeDef);
         values = typeDef.getValues().stream()
                 // Intern the String to get wide reuse
                 .map(pair -> pair.getName().intern())

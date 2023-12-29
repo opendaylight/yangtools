@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.RangeSet;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.ErrorType;
@@ -49,10 +47,9 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
 
     private final RangeConstraint<N> rangeConstraint;
 
-    AbstractIntegerStringCodec(final T typeDefinition, final Optional<RangeConstraint<N>> constraint,
-            final Class<N> outputClass) {
-        super(requireNonNull(typeDefinition), outputClass);
-        rangeConstraint = constraint.orElse(null);
+    AbstractIntegerStringCodec(final Class<N> outputClass, final T typeDefinition) {
+        super(outputClass, typeDefinition);
+        rangeConstraint = typeDefinition.getRangeConstraint().orElse(null);
     }
 
     public static @NonNull AbstractIntegerStringCodec<Byte, Int8TypeDefinition> from(final Int8TypeDefinition type) {
@@ -120,11 +117,6 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
      * @return Deserialized value.
      */
     protected abstract @NonNull N deserialize(@NonNull String stringRepresentation, int radix);
-
-    protected static <N extends Number & Comparable<N>> Optional<RangeConstraint<N>> extractRange(
-            final RangeRestrictedTypeDefinition<?, N> type) {
-        return type == null ? Optional.empty() : type.getRangeConstraint();
-    }
 
     private static int provideBase(final String integer) {
         if (integer.length() == 1 && integer.charAt(0) == '0' || INT_PATTERN.matcher(integer).matches()) {

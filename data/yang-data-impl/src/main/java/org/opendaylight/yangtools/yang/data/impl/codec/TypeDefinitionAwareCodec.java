@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -42,22 +41,20 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
     }
 
     private final @NonNull Class<J> inputClass;
-    private final @Nullable T typeDefinition;
+    private final @NonNull T typeDefinition;
 
-    // FIXME: reverse arguments
-    protected TypeDefinitionAwareCodec(final @Nullable T typeDefinition, final Class<J> outputClass) {
-        this.typeDefinition = typeDefinition;
-        this.inputClass = requireNonNull(outputClass);
+    protected TypeDefinitionAwareCodec(final Class<J> outputClass, final T typeDefinition) {
+        inputClass = requireNonNull(outputClass);
+        this.typeDefinition = requireNonNull(typeDefinition);
     }
 
     @Override
-    public Class<J> getInputClass() {
+    public final Class<J> getInputClass() {
         return inputClass;
     }
 
-    // FIXME: is this even useful?
-    public Optional<T> getTypeDefinition() {
-        return Optional.ofNullable(typeDefinition);
+    protected final @NonNull T typeDefinition() {
+        return typeDefinition;
     }
 
     @SuppressWarnings("unchecked")
@@ -75,8 +72,8 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
             return BooleanStringCodec.from(booleanType);
         } else if (typeDefinition instanceof DecimalTypeDefinition decimalType) {
             return  DecimalStringCodec.from(decimalType);
-        } else if (typeDefinition instanceof EmptyTypeDefinition) {
-            return EmptyStringCodec.INSTANCE;
+        } else if (typeDefinition instanceof EmptyTypeDefinition emptyType) {
+            return new EmptyStringCodec(emptyType);
         } else if (typeDefinition instanceof EnumTypeDefinition enumType) {
             return EnumStringCodec.from(enumType);
         } else if (typeDefinition instanceof Int8TypeDefinition int8Type) {

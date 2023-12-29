@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 final class Int64StringCodec extends AbstractIntegerStringCodec<Long, Int64TypeDefinition>
         implements Int64Codec<String> {
     Int64StringCodec(final Int64TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), Long.class);
+        super(Long.class, typeDef);
     }
 
     @Override

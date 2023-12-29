@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
@@ -24,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 public final class DecimalStringCodec extends TypeDefinitionAwareCodec<Decimal64, DecimalTypeDefinition>
         implements DecimalCodec<String> {
     private DecimalStringCodec(final DecimalTypeDefinition typeDef) {
-        super(requireNonNull(typeDef), Decimal64.class);
+        super(Decimal64.class, typeDef);
     }
 
     public static @NonNull DecimalStringCodec from(final DecimalTypeDefinition type) {
@@ -33,7 +31,7 @@ public final class DecimalStringCodec extends TypeDefinitionAwareCodec<Decimal64
 
     @Override
     protected Decimal64 deserializeImpl(final String product) {
-        final var typeDef = getTypeDefinition().orElseThrow();
+        final var typeDef = typeDefinition();
         final var parsed = Decimal64.valueOf(product);
         final Decimal64 value;
         try {

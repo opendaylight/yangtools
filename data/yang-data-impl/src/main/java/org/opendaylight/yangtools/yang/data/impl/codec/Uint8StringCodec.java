@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 final class Uint8StringCodec extends AbstractIntegerStringCodec<Uint8, Uint8TypeDefinition> implements
         Uint8Codec<String> {
     Uint8StringCodec(final Uint8TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), Uint8.class);
+        super(Uint8.class, typeDef);
     }
 
     @Override

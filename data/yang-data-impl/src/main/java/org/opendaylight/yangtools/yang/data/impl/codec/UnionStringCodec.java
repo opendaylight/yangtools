@@ -27,7 +27,7 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
 
     private UnionStringCodec(final UnionTypeDefinition typeDef,
             final ImmutableList<TypeDefinitionAwareCodec<Object, ?>> codecs) {
-        super(requireNonNull(typeDef), Object.class);
+        super(Object.class, typeDef);
         this.codecs = requireNonNull(codecs);
     }
 

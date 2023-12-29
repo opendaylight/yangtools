@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 final class Int32StringCodec extends AbstractIntegerStringCodec<Integer, Int32TypeDefinition>
         implements Int32Codec<String> {
     Int32StringCodec(final Int32TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), Integer.class);
+        super(Integer.class, typeDef);
     }
 
     @Override

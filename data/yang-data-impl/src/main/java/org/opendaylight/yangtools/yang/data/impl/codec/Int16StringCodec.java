@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 final class Int16StringCodec extends AbstractIntegerStringCodec<Short, Int16TypeDefinition>
         implements Int16Codec<String> {
     Int16StringCodec(final Int16TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), Short.class);
+        super(Short.class, typeDef);
     }
 
     @Override

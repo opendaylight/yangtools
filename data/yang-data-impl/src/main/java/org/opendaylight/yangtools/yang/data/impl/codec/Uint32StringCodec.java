@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 final class Uint32StringCodec extends AbstractIntegerStringCodec<Uint32, Uint32TypeDefinition> implements
         Uint32Codec<String> {
     Uint32StringCodec(final Uint32TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), Uint32.class);
+        super(Uint32.class, typeDef);
     }
 
     @Override

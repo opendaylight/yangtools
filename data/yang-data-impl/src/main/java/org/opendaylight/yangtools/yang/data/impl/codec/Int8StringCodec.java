@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 
 final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, Int8TypeDefinition> implements Int8Codec<String> {
     Int8StringCodec(final Int8TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), Byte.class);
+        super(Byte.class, typeDef);
     }
 
     @Override

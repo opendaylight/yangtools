@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.RangeSet;
 import org.opendaylight.yangtools.yang.common.ErrorType;
@@ -26,7 +24,7 @@ public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTy
     private final LengthConstraint lengthConstraint;
 
     StringStringCodec(final StringTypeDefinition typeDef) {
-        super(requireNonNull(typeDef), String.class);
+        super(String.class, typeDef);
         lengthConstraint = typeDef.getLengthConstraint().orElse(null);
     }
 

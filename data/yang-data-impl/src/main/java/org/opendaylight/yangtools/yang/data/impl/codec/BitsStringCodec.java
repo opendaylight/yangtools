@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 @Beta
 public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefinition>
         implements BitsCodec<String> {
-
     private static final Joiner JOINER = Joiner.on(" ").skipNulls();
     private static final Splitter SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
@@ -36,8 +33,10 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
 
     @SuppressWarnings("unchecked")
     private BitsStringCodec(final BitsTypeDefinition typeDef) {
-        super(requireNonNull(typeDef), (Class<Set<String>>) (Class<?>) Set.class);
-        validBits = ImmutableSet.copyOf(Collections2.transform(typeDef.getBits(), Bit::getName));
+        super((Class<Set<String>>) (Class<?>) Set.class, typeDef);
+        validBits = typeDef.getBits().stream()
+            .map(Bit::getName)
+            .collect(ImmutableSet.toImmutableSet());
     }
 
     public static BitsStringCodec from(final BitsTypeDefinition type) {
