@@ -16,7 +16,7 @@ import org.junit.Assert;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 abstract class AbstractSerializationTest {
     static final <T extends NormalizedNode> T assertEquals(final NormalizedNodeStreamVersion version, final T node,
