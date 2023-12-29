@@ -103,13 +103,6 @@
             <artifactId>org.osgi.service.component.annotations</artifactId>
         </dependency>
 
-        <!-- FIXME: default mockito-inline does not seem to quite work -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-subclass</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>mockito-configuration</artifactId>
