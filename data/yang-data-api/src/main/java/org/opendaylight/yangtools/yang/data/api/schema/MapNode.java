@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 
 /**
  * Containment node, which contains {@link MapEntryNode} of the same type, which may be quickly retrieved using a key.
@@ -48,5 +49,13 @@ public sealed interface MapNode
     @Override
     default boolean isEmpty() {
         return asMap().isEmpty();
+    }
+
+    /**
+     * A builder of {@link MapNode}s.
+     */
+    sealed interface Builder<T extends MapNode> extends CollectionNodeBuilder<MapEntryNode, T>
+        permits SystemMapNode.Builder, UserMapNode.Builder {
+        // Just a specialization
     }
 }

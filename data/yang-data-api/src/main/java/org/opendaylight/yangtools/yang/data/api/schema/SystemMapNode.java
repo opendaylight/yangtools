@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
-
 /**
  * {@link MapNode} which additionally preserves user-supplied ordering. This node represents a data instance of
  * a {@code list} with {@code ordered-by user;} substatement and a {@code key} definition.
@@ -28,7 +26,7 @@ public non-sealed interface SystemMapNode extends MapNode, OrderingAware.System 
     /**
      * A builder of {@link SystemMapNode}s.
      */
-    interface Builder extends CollectionNodeBuilder<MapEntryNode, SystemMapNode> {
+    non-sealed interface Builder extends MapNode.Builder<SystemMapNode> {
         // Just a specialization
     }
 }

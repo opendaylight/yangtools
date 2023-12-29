@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 
 /**
  * {@link MapNode} which additionally preserves user-supplied ordering. This node represents a data instance of
@@ -33,7 +32,7 @@ public non-sealed interface UserMapNode extends MapNode, OrderedNodeContainer<Ma
     /**
      * A builder of {@link UserMapNode}s.
      */
-    interface Builder extends CollectionNodeBuilder<MapEntryNode, UserMapNode> {
+    non-sealed interface Builder extends MapNode.Builder<UserMapNode> {
         // Just a specialization
     }
 }
