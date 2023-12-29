@@ -71,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2838f291_30dd01df",
+        "filename": "data/yang-data-tree-ri/src/main/java/module-info.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2023-12-29T05:56:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e2d622a1_24c346f7",
+      "range": {
+        "startLine": 34,
+        "startChar": 4,
+        "endLine": 34,
+        "endChar": 54
+      },
+      "revId": "bb52d1347e70ecf584a49eb46db898881141b8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "db9615c3_d9d05392",
