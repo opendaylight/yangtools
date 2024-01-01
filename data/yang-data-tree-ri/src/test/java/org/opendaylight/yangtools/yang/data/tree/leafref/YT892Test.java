@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -70,13 +69,13 @@ class YT892Test {
     @Test
     void testWriteBgpNeighbour() throws Exception {
         final var writeModification = dataTree.takeSnapshot().newModification();
-        writeModification.write(BGP_ID, Builders.containerBuilder()
+        writeModification.write(BGP_ID, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(BGP))
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(PEER_GROUPS))
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(PEER_GROUP))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(PEER_GROUP,
                             PEER_GROUP_NAME, "application-peers"))
                         .withChild(ImmutableNodes.leafNode(PEER_GROUP_NAME, "application-peers"))
@@ -85,58 +84,58 @@ class YT892Test {
                 .build())
             .build());
 
-        writeModification.write(NETWORK_INSTANCES_ID, Builders.containerBuilder()
+        writeModification.write(NETWORK_INSTANCES_ID, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(NETWORK_INSTANCES))
-            .withChild(Builders.mapBuilder()
+            .withChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(NETWORK_INSTANCE))
-                .withChild(Builders.mapEntryBuilder()
+                .withChild(ImmutableNodes.newMapEntryBuilder()
                     .withNodeIdentifier(NodeIdentifierWithPredicates.of(NETWORK_INSTANCE, NAME, "global-bgp"))
                     .withChild(ImmutableNodes.leafNode(NAME, "global-bgp"))
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(new NodeIdentifier(CONFIG))
                         .withChild(ImmutableNodes.leafNode(NAME, "global-bgp"))
                         .build())
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(new NodeIdentifier(PROTOCOLS))
-                        .withChild(Builders.mapBuilder()
+                        .withChild(ImmutableNodes.newSystemMapBuilder()
                             .withNodeIdentifier(new NodeIdentifier(PROTOCOL))
-                            .withChild(Builders.mapEntryBuilder()
+                            .withChild(ImmutableNodes.newMapEntryBuilder()
                                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(PROTOCOL, ImmutableMap.of(
                                     IDENTIFIER, BGP_POLICY,
                                     NAME, "test-bgp-instance")))
                                 .withChild(ImmutableNodes.leafNode(IDENTIFIER, BGP_POLICY))
                                 .withChild(ImmutableNodes.leafNode(NAME, "test-bgp-instance"))
-                                .withChild(Builders.containerBuilder()
+                                .withChild(ImmutableNodes.newContainerBuilder()
                                     .withNodeIdentifier(new NodeIdentifier(CONFIG))
                                     .withChild(ImmutableNodes.leafNode(IDENTIFIER, BGP_POLICY))
                                     .withChild(ImmutableNodes.leafNode(NAME, "test-bgp-instance"))
                                     .build())
-                                .withChild(Builders.containerBuilder()
+                                .withChild(ImmutableNodes.newContainerBuilder()
                                     .withNodeIdentifier(new NodeIdentifier(TEST_BGP))
-                                    .withChild(Builders.containerBuilder()
+                                    .withChild(ImmutableNodes.newContainerBuilder()
                                         .withNodeIdentifier(new NodeIdentifier(NEIGHBORS))
-                                        .withChild(Builders.mapBuilder()
+                                        .withChild(ImmutableNodes.newSystemMapBuilder()
                                             .withNodeIdentifier(new NodeIdentifier(NEIGHBOR))
-                                            .withChild(Builders.mapEntryBuilder()
+                                            .withChild(ImmutableNodes.newMapEntryBuilder()
                                                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(NEIGHBOR,
                                                     NEIGHBOR_ADDRESS, "10.25.1.9"))
                                                 .withChild(ImmutableNodes.leafNode(NEIGHBOR_ADDRESS, "10.25.1.9"))
-                                                .withChild(Builders.containerBuilder()
+                                                .withChild(ImmutableNodes.newContainerBuilder()
                                                     .withNodeIdentifier(new NodeIdentifier(TEST_CONFIG))
                                                     .withChild(ImmutableNodes.leafNode(TEST_PEER_GROUP,
                                                         "application-peers"))
                                                     .build())
-                                                .withChild(Builders.containerBuilder()
+                                                .withChild(ImmutableNodes.newContainerBuilder()
                                                     .withNodeIdentifier(new NodeIdentifier(AFI_SAFIS))
-                                                    .withChild(Builders.mapBuilder()
+                                                    .withChild(ImmutableNodes.newSystemMapBuilder()
                                                         .withNodeIdentifier(new NodeIdentifier(AFI_SAFI))
-                                                        .withChild(Builders.mapEntryBuilder()
+                                                        .withChild(ImmutableNodes.newMapEntryBuilder()
                                                             .withNodeIdentifier(NodeIdentifierWithPredicates.of(
                                                                 AFI_SAFI,
                                                                 ImmutableMap.of(AFI_SAFI_NAME, IPV4_UNICAST)))
                                                             .withChild(ImmutableNodes.leafNode(AFI_SAFI_NAME,
                                                                 IPV4_UNICAST))
-                                                            .withChild(Builders.containerBuilder()
+                                                            .withChild(ImmutableNodes.newContainerBuilder()
                                                                 .withNodeIdentifier(
                                                                     new NodeIdentifier(TEST_CONFIG))
                                                                 .withChild(ImmutableNodes.leafNode(

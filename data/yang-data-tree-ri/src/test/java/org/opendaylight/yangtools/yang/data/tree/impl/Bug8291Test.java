@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -77,7 +76,7 @@ class Bug8291Test {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
             YangInstanceIdentifier.of(NodeIdentifierWithPredicates.of(OUTER_LIST, OUTER_LIST_ID, 1)).node(INNER_LIST),
-            Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(INNER_LIST)).build());
+            ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(new NodeIdentifier(INNER_LIST)).build());
 
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
@@ -89,7 +88,7 @@ class Bug8291Test {
             throws DataValidationFailedException {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final var outerListMapEntry = Builders.mapEntryBuilder()
+        final var outerListMapEntry = ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(OUTER_LIST, OUTER_LIST_ID, 1))
             .withChild(ImmutableNodes.leafNode(OUTER_LIST_ID, 1))
             .build();

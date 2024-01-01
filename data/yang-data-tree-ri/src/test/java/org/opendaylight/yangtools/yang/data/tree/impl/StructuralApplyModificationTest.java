@@ -15,8 +15,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -38,13 +37,13 @@ final class StructuralApplyModificationTest extends AbstractTestModelTest {
         // Prepare root
         final var rootContainerId = getNId(TestModel.TEST_QNAME);
         addListEntryModification.write(YangInstanceIdentifier.of(rootContainerId),
-            Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(rootContainerId).build());
 
         final var outerListEntryId = NodeIdentifierWithPredicates.of(
             TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 1);
 
         // Write list entry (MapEntryNode) without creating list parent (MapNode)
-        final var outerListEntry = Builders.mapEntryBuilder().withNodeIdentifier(outerListEntryId).build();
+        final var outerListEntry = ImmutableNodes.newMapEntryBuilder().withNodeIdentifier(outerListEntryId).build();
         final var outerListParentPath = YangInstanceIdentifier.of(getNId(TestModel.TEST_QNAME),
             getNId(TestModel.OUTER_LIST_QNAME));
         final var outerListEntryPath = outerListParentPath.node(outerListEntryId);
@@ -75,11 +74,13 @@ final class StructuralApplyModificationTest extends AbstractTestModelTest {
         // Prepare root container
         final var rootContainerId = getNId(TestModel.TEST_QNAME);
         addListEntryModification.write(YangInstanceIdentifier.of(rootContainerId),
-            Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(rootContainerId).build());
 
         final var outerListParentPath = YangInstanceIdentifier.of(getNId(TestModel.TEST_QNAME),
             getNId(TestModel.OUTER_LIST_QNAME));
-        addListEntryModification.merge(outerListParentPath, ImmutableNodes.mapNode(TestModel.OUTER_LIST_QNAME));
+        addListEntryModification.merge(outerListParentPath, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+            .build());
 
         // Check empty map node auto deleted
         assertNodeExistence(outerListParentPath, false);
@@ -91,7 +92,9 @@ final class StructuralApplyModificationTest extends AbstractTestModelTest {
 
         final var rootContainerId = getNId(TestModel.NON_PRESENCE_QNAME);
         final var path = YangInstanceIdentifier.of(rootContainerId);
-        addListEntryModification.write(path, Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
+        addListEntryModification.write(path, ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(rootContainerId)
+            .build());
 
         addListEntryModification.ready();
         inMemoryDataTree.validate(addListEntryModification);
@@ -109,7 +112,7 @@ final class StructuralApplyModificationTest extends AbstractTestModelTest {
             .node(getNId(TestModel.A_LIST_QNAME, TestModel.A_NAME_QNAME, "1"));
 
         addListEntryModification.write(path,
-            Builders.mapEntryBuilder()
+            ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(getNId(TestModel.A_LIST_QNAME, TestModel.A_NAME_QNAME, "1"))
                 .build());
 

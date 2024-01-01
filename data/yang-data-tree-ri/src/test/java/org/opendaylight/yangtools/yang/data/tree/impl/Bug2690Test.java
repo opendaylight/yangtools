@@ -14,8 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -36,18 +35,18 @@ class Bug2690Test extends AbstractTestModelTest {
     void testWriteMerge1() throws DataValidationFailedException {
         final var fooEntryNode = ImmutableNodes.mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 1);
         final var barEntryNode = ImmutableNodes.mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 2);
-        final var mapNode1 = ImmutableNodes.mapNodeBuilder()
+        final var mapNode1 = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
                 .withChild(fooEntryNode).build();
-        final var mapNode2 = ImmutableNodes.mapNodeBuilder()
+        final var mapNode2 = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
                 .withChild(barEntryNode).build();
 
-        final var cont1 = Builders.containerBuilder()
+        final var cont1 = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(mapNode1).build();
 
-        final var cont2 = Builders.containerBuilder()
+        final var cont2 = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(mapNode2).build();
 

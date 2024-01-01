@@ -116,7 +116,7 @@ public class InMemoryDataTreeBenchmark {
             BenchmarkModel.createTestContext());
 
         final DataTreeModification modification = begin();
-        modification.write(BenchmarkModel.TEST_PATH, Builders.containerBuilder()
+        modification.write(BenchmarkModel.TEST_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BenchmarkModel.TEST)
             .withChild(EMPTY_OUTER_LIST)
             .build());

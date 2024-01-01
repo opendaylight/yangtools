@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -71,7 +70,7 @@ class YT1543Test {
             try (var nnWriter = NormalizedNodeWriter.forStreamWriter(xmlWriter)) {
                 // Contrived: we have a document for foo's 'foo' container, with 'leaf' pointing to an instance of bar's
                 //            'bar' list item, whose key points to baz's 'baz' container.
-                nnWriter.write(Builders.containerBuilder()
+                nnWriter.write(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(QName.create("foons", "foo")))
                     .withChild(ImmutableNodes.leafNode(QName.create("foons", "leaf"), IID))
                     .build());
