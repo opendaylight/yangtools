@@ -112,23 +112,16 @@ public final class SubmoduleStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(),
-            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null)));
-    }
-
-    @Override
     public void onLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         final SourceIdentifier submoduleIdentifier = new SourceIdentifier(stmt.getArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null));
 
-        final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
-            possibleDuplicateSubmodule = stmt.namespaceItem(ParserNamespaces.SUBMODULE, submoduleIdentifier);
+        // FIXME: This check should become superfluous once we operate in YangModuleInfo world
+        final var possibleDuplicateSubmodule = stmt.namespaceItem(ParserNamespaces.SUBMODULE, submoduleIdentifier);
         if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
             throw new SourceException(stmt, "Submodule name collision: %s. At %s", stmt.rawArgument(),
                 possibleDuplicateSubmodule.sourceReference());
         }
-
         stmt.addToNs(ParserNamespaces.SUBMODULE, submoduleIdentifier, stmt);
 
         final Unqualified belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(),

@@ -126,6 +126,8 @@ public final class ModuleStatementSupport
 
     @Override
     public void onPreLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
+        // FIXME: all of this should be just gone -- we can resolve these namespaces with SourceInfo
+
         final Unqualified moduleName = stmt.getArgument();
 
         final XMLNamespace moduleNs = SourceException.throwIfNull(
@@ -144,7 +146,6 @@ public final class ModuleStatementSupport
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
 
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
-        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
     }
 
     @Override
