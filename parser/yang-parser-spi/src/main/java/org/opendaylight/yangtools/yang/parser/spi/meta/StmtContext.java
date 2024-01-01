@@ -261,20 +261,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         void setRootVersion(YangVersion version);
 
         /**
-         * Add required module. Based on these dependencies are collected required sources from library sources.
-         *
-         * @param dependency
-         *            SourceIdentifier of module required by current root
-         *            context
-         */
-        /*
-         * FIXME: this method is used solely during SOURCE_PRE_LINKAGE reactor phase and does not have a corresponding
-         *        getter -- which makes it rather strange. At some point this method needs to be deprecated and its
-         *        users migrated to use proper global namespace.
-         */
-        void addRequiredSource(SourceIdentifier dependency);
-
-        /**
          * Adds an effective statement to collection of substatements.
          *
          * @param substatement substatement
