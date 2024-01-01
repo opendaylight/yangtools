@@ -19,7 +19,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * derived from the line of reasoning.
  */
 @Beta
-public interface EffectiveStatementInference extends EffectiveModelContextProvider, Immutable {
+public interface EffectiveStatementInference extends Immutable {
+    /**
+     * Return the {@link EffectiveModelContext} against which this inference is made.
+     *
+     * @return the {@link EffectiveModelContext} against which this inference is made
+     */
+    @NonNull EffectiveModelContext modelContext();
+
     /**
      * An {@code Unmodifiable} {@link List} of {@link EffectiveStatement}s, ordered in some meaningful way. Precise
      * semantics of the statement order is clarified by individual {@link EffectiveStatementInference} specializations.
