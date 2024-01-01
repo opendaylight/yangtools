@@ -73,13 +73,6 @@ public final class IncludeStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, IncludeStatement, IncludeEffectiveStatement> stmt) {
-        final var revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
-        stmt.addRequiredSource(
-            new SourceIdentifier(stmt.getArgument(), revision != null ? revision.getArgument() : null));
-    }
-
-    @Override
     public void onLinkageDeclared(final Mutable<Unqualified, IncludeStatement, IncludeEffectiveStatement> stmt) {
         final Unqualified submoduleName = stmt.getArgument();
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
