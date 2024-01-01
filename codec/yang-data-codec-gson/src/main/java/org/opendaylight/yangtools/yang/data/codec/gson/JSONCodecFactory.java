@@ -158,7 +158,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
 
     @Override
     protected final JSONCodec<QName> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
-        return new IdentityrefJSONCodec(getEffectiveModelContext(), module);
+        return new IdentityrefJSONCodec(modelContext(), module);
     }
 
     @Override

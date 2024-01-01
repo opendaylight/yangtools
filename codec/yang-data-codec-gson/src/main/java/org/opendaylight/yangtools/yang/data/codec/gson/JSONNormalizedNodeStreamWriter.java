@@ -149,8 +149,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final JsonWriter jsonWriter, final @Nullable XMLNamespace initialNs) {
-        return new Exclusive(codecFactory, NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext()),
-            jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
+        return new Exclusive(codecFactory, NormalizedNodeStreamWriterStack.of(codecFactory.modelContext()), jsonWriter,
+            new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
     /**
@@ -203,9 +203,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final Absolute path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Exclusive(codecFactory,
-            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
-            new JSONStreamWriterExclusiveRootContext(initialNs));
+        return new Exclusive(codecFactory, NormalizedNodeStreamWriterStack.of(codecFactory.modelContext(), path),
+            jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
     /**
@@ -250,8 +249,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final JsonWriter jsonWriter, final @Nullable XMLNamespace initialNs) {
-        return new Nested(codecFactory, NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext()),
-            jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
+        return new Nested(codecFactory, NormalizedNodeStreamWriterStack.of(codecFactory.modelContext()), jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     /**
@@ -275,9 +274,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final Absolute path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Nested(codecFactory,
-            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
-            new JSONStreamWriterSharedRootContext(initialNs));
+        return new Nested(codecFactory, NormalizedNodeStreamWriterStack.of(codecFactory.modelContext(), path),
+            jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     /**
@@ -313,8 +311,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void startLeafNode(final NodeIdentifier name) throws IOException {
         tracker.startLeafNode(name);
-        context.emittingChild(codecs.getEffectiveModelContext(), writer);
-        context.writeChildJsonIdentifier(codecs.getEffectiveModelContext(), writer, name.getNodeType());
+        context.emittingChild(codecs.modelContext(), writer);
+        context.writeChildJsonIdentifier(codecs.modelContext(), writer, name.getNodeType());
     }
 
     @Override
@@ -326,7 +324,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void startLeafSetEntryNode(final NodeWithValue<?> name) throws IOException {
         tracker.startLeafSetEntryNode(name);
-        context.emittingChild(codecs.getEffectiveModelContext(), writer);
+        context.emittingChild(codecs.modelContext(), writer);
     }
 
     @Override
@@ -387,8 +385,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public final boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (NormalizedAnydata.class.isAssignableFrom(objectModel)) {
             tracker.startAnydataNode(name);
-            context.emittingChild(codecs.getEffectiveModelContext(), writer);
-            context.writeChildJsonIdentifier(codecs.getEffectiveModelContext(), writer, name.getNodeType());
+            context.emittingChild(codecs.modelContext(), writer);
+            context.writeChildJsonIdentifier(codecs.modelContext(), writer, name.getNodeType());
             return true;
         }
 
@@ -398,7 +396,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final NormalizedNodeStreamWriter startMountPoint(final MountPointLabel label,
             final MountPointContext mountCtx) throws IOException {
-        final EffectiveModelContext ctx = mountCtx.getEffectiveModelContext();
+        final EffectiveModelContext ctx = mountCtx.modelContext();
         return new Nested(codecs.rebaseTo(ctx), NormalizedNodeStreamWriterStack.of(ctx), writer,
             new JSONStreamWriterSharedRootContext(context.getNamespace()));
     }
@@ -407,8 +405,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public final boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
             tracker.startAnyxmlNode(name);
-            context.emittingChild(codecs.getEffectiveModelContext(), writer);
-            context.writeChildJsonIdentifier(codecs.getEffectiveModelContext(), writer, name.getNodeType());
+            context.emittingChild(codecs.modelContext(), writer);
+            context.writeChildJsonIdentifier(codecs.modelContext(), writer, name.getNodeType());
             return true;
         }
         return false;
@@ -417,7 +415,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final void endNode() throws IOException {
         tracker.endNode();
-        context = context.endNode(codecs.getEffectiveModelContext(), writer);
+        context = context.endNode(codecs.modelContext(), writer);
     }
 
     @Override
@@ -430,7 +428,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
             throw new IOException("Unexpected root context " + context);
         }
 
-        context.endNode(codecs.getEffectiveModelContext(), writer);
+        context.endNode(codecs.modelContext(), writer);
         writer.close();
     }
 
@@ -479,7 +477,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         }
 
         anydata.writeTo(JSONNormalizedNodeStreamWriter.createNestedWriter(
-            codecs.rebaseTo(inference.getEffectiveModelContext()), inference, context.getNamespace(), writer));
+            codecs.rebaseTo(inference.modelContext()), inference, context.getNamespace(), writer));
     }
 
     private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {

@@ -37,7 +37,7 @@ class YT1412Test {
 
     private static DataSchemaContextTree CONTEXT;
 
-    private final SchemaInferenceStack stack = SchemaInferenceStack.of(CONTEXT.getEffectiveModelContext());
+    private final SchemaInferenceStack stack = SchemaInferenceStack.of(CONTEXT.modelContext());
 
     @BeforeAll
     static void init() {
