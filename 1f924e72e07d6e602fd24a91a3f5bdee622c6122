@@ -41,7 +41,7 @@
       },
       "applicabilityExpressionResult": {},
       "submittabilityExpressionResult": {
-        "value": {"expression":{"expressionString":"label:Verified=MAX,user=odl.required.gha AND label:Verified=MAX,count>=2 AND -label:Verified=MIN"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":["label:Verified=MAX,user=odl.required.gha"],"failingAtoms":["label:Verified=MIN","label:Verified=MAX,count>=2"]}
+        "value": {"expression":{"expressionString":"label:Verified=MAX,user=odl.required.gha AND label:Verified=MAX,count>=2 AND -label:Verified=MIN"},"status":"FAIL","errorMessage":{"value":null},"passingAtoms":["label:Verified=MAX,user=odl.required.gha","label:Verified=MIN"],"failingAtoms":["label:Verified=MAX,count>=2"]}
       },
       "overrideExpressionResult": {},
       "patchSetCommitId": "1f924e72e07d6e602fd24a91a3f5bdee622c6122",
