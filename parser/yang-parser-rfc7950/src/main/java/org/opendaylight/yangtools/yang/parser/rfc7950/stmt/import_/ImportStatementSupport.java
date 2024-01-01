@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
@@ -82,8 +83,7 @@ public final class ImportStatementSupport
          * Based on this information, required modules are searched from library
          * sources.
          */
-        final SourceIdentifier importId = RevisionImport.getImportedSourceIdentifier(stmt);
-        stmt.addRequiredSource(importId);
+        final var revision = StmtContextUtils.findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
 
         final Unqualified moduleName = stmt.getArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
@@ -104,7 +104,7 @@ public final class ImportStatementSupport
 
                 final Mutable<?, ?, ?> root = rootPrereq.resolve(ctx);
                 // Version 1 sources must not import-by-revision Version 1.1 modules
-                if (importId.revision() != null && root.yangVersion() == YangVersion.VERSION_1) {
+                if (revision != null && root.yangVersion() == YangVersion.VERSION_1) {
                     final YangVersion importedVersion = importedModuleContext.yangVersion();
                     if (importedVersion != YangVersion.VERSION_1) {
                         throw new YangVersionLinkageException(stmt, "Cannot import by revision version %s module %s",
