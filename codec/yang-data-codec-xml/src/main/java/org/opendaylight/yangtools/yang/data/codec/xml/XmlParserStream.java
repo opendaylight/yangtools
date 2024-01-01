@@ -162,7 +162,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                 throw new IllegalArgumentException("Illegal parent node " + stmt);
             }
         } else {
-            parentNode = stack.getEffectiveModelContext();
+            parentNode = stack.modelContext();
         }
     }
 
@@ -233,7 +233,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
             final EffectiveStatementInference parentNode, final boolean strictParsing) {
-        return create(writer, XmlCodecFactory.create(parentNode.getEffectiveModelContext()), parentNode, strictParsing);
+        return create(writer, XmlCodecFactory.create(parentNode.modelContext()), parentNode, strictParsing);
     }
 
     /**
@@ -242,8 +242,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      * instead and maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx) {
-        return create(writer, mountCtx, SchemaInferenceStack.of(mountCtx.getEffectiveModelContext()).toInference(),
-            true);
+        return create(writer, mountCtx, SchemaInferenceStack.of(mountCtx.modelContext()).toInference(), true);
     }
 
     /**
@@ -278,7 +277,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
             final Absolute parentNode, final boolean strictParsing) {
         return new XmlParserStream(writer, codecs,
-            SchemaInferenceStack.of(codecs.getEffectiveModelContext(), parentNode), strictParsing);
+            SchemaInferenceStack.of(codecs.modelContext(), parentNode), strictParsing);
     }
 
     @Beta
@@ -290,7 +289,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     @Beta
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
             final YangInstanceIdentifier parentNode, final boolean strictParsing) {
-        final var init = DataSchemaContextTree.from(mountCtx.getEffectiveModelContext())
+        final var init = DataSchemaContextTree.from(mountCtx.modelContext())
             .enterPath(parentNode)
             .orElseThrow();
         return new XmlParserStream(writer, XmlCodecFactory.create(mountCtx), init.stack(), strictParsing);
@@ -372,7 +371,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             final Optional<QNameModule> optModule = resolveXmlNamespace(attributeNS);
             if (optModule.isPresent()) {
                 final QName qname = QName.create(optModule.orElseThrow(), localName);
-                final var optAnnotation = AnnotationSchemaNode.find(codecs.getEffectiveModelContext(),
+                final var optAnnotation = AnnotationSchemaNode.find(codecs.modelContext(),
                     new AnnotationName(qname));
                 if (optAnnotation.isPresent()) {
                     final AnnotationSchemaNode schema = optAnnotation.orElseThrow();
@@ -711,7 +710,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Optional<QNameModule> resolveXmlNamespace(final String xmlNamespace) {
         return resolvedNamespaces.computeIfAbsent(xmlNamespace, nsUri -> {
-            final var it = codecs.getEffectiveModelContext().findModuleStatements(XMLNamespace.of(nsUri)).iterator();
+            final var it = codecs.modelContext().findModuleStatements(XMLNamespace.of(nsUri)).iterator();
             return it.hasNext() ? Optional.of(it.next().localQNameModule()) : Optional.empty();
         });
     }

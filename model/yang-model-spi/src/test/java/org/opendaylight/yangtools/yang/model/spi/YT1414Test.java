@@ -37,7 +37,7 @@ class YT1414Test {
     void testUnsafeOf() {
         final var path = ImmutableList.of(container);
         final var inference = DefaultSchemaTreeInference.unsafeOf(modelContext, path);
-        assertSame(modelContext, inference.getEffectiveModelContext());
+        assertSame(modelContext, inference.modelContext());
         assertSame(path, inference.statementPath());
     }
 
@@ -53,7 +53,7 @@ class YT1414Test {
         final var path = ImmutableList.of(container);
         final var inference = DefaultSchemaTreeInference.verifiedOf(modelContext, path);
 
-        assertSame(modelContext, inference.getEffectiveModelContext());
+        assertSame(modelContext, inference.modelContext());
         assertSame(path, inference.statementPath());
     }
 

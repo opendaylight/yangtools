@@ -76,7 +76,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
                 throw new IllegalArgumentException("Cannot instantiate on " + current);
             }
         } else {
-            root = dataTree.getEffectiveModelContext();
+            root = dataTree.modelContext();
         }
     }
 

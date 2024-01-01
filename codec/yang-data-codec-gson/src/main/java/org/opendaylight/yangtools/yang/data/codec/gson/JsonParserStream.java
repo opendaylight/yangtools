@@ -94,7 +94,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                 throw new IllegalArgumentException("Illegal parent node " + parent);
             }
         } else {
-            parentNode = stack.getEffectiveModelContext();
+            parentNode = stack.modelContext();
         }
     }
 
@@ -111,7 +111,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
         return new JsonParserStream(writer, codecFactory,
-            SchemaInferenceStack.of(codecFactory.getEffectiveModelContext()), false);
+            SchemaInferenceStack.of(codecFactory.modelContext()), false);
     }
 
     /**
@@ -148,7 +148,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
         return new JsonParserStream(writer, codecFactory,
-            SchemaInferenceStack.of(codecFactory.getEffectiveModelContext()), true);
+            SchemaInferenceStack.of(codecFactory.modelContext()), true);
     }
 
     /**
@@ -384,7 +384,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             final var moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
 
-            final var m = codecs.getEffectiveModelContext().findModuleStatements(moduleNamePart).iterator();
+            final var m = codecs.modelContext().findModuleStatements(moduleNamePart).iterator();
             namespace = m.hasNext() ? m.next().localQNameModule().getNamespace() : null;
         } else {
             nodeNamePart = childName;
@@ -414,7 +414,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         for (var potentialUri : potentialUris) {
             sb.append('\n');
             // FIXME how to get information about revision from JSON input? currently first available is used.
-            sb.append(codecs.getEffectiveModelContext().findModuleStatements(potentialUri).iterator().next()
+            sb.append(codecs.modelContext().findModuleStatements(potentialUri).iterator().next()
                 .argument().getLocalName());
         }
         return sb.toString();

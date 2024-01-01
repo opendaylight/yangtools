@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInfer
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of a a {@link SchemaTreeInference}. Guaranteed to be consistent with its
- * {@link #getEffectiveModelContext()}.
+ * Default implementation of a {@link SchemaTreeInference}. Guaranteed to be consistent with its
+ * {@link #modelContext()}.
  */
 @Beta
 @NonNullByDefault

@@ -110,7 +110,7 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveStatementInference inference, final boolean preferPrefixes) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, inference.getEffectiveModelContext(),
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, inference.modelContext(),
             NormalizedNodeStreamWriterStack.of(inference), preferPrefixes);
     }
 

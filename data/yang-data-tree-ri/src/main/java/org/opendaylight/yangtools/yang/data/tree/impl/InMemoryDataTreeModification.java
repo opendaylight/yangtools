@@ -27,12 +27,10 @@ import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedExcep
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification,
-        EffectiveModelContextProvider {
+final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
     private static final byte STATE_OPEN    = 0;
@@ -90,8 +88,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public EffectiveModelContext getEffectiveModelContext() {
-        return snapshot.getEffectiveModelContext();
+    public EffectiveModelContext modelContext() {
+        return snapshot.modelContext();
     }
 
     @Override
@@ -214,8 +212,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         if (newRoot == null) {
             throw new IllegalStateException("Data tree root is not present, possibly removed by previous modification");
         }
-        return new InMemoryDataTreeSnapshot(snapshot.getEffectiveModelContext(), newRoot, strategyTree)
-            .newModification();
+        return new InMemoryDataTreeSnapshot(snapshot.modelContext(), newRoot, strategyTree).newModification();
     }
 
     Version getVersion() {

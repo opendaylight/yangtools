@@ -81,7 +81,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
         offset = 0;
 
         final DataSchemaContextTree tree = codec.getDataContextTree();
-        stack = SchemaInferenceStack.of(tree.getEffectiveModelContext());
+        stack = SchemaInferenceStack.of(tree.modelContext());
         current = tree.getRoot();
     }
 

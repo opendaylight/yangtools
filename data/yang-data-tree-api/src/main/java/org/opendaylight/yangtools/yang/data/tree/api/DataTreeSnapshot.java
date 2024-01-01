@@ -11,13 +11,20 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * Read-only snapshot of a {@link DataTree}. The snapshot is stable and isolated, e.g. data tree changes occurring after
  * the snapshot has been taken are not visible through the snapshot.
  */
-public interface DataTreeSnapshot extends EffectiveModelContextProvider {
+public interface DataTreeSnapshot {
+    /**
+     * Return the {@link EffectiveModelContext} effective at the time this snapshot was taken.
+     *
+     * @return the {@link EffectiveModelContext} effective at the time this snapshot was taken
+     */
+    @NonNull EffectiveModelContext modelContext();
+
     /**
      * Read a particular node from the snapshot.
      *
@@ -27,8 +34,7 @@ public interface DataTreeSnapshot extends EffectiveModelContextProvider {
     Optional<NormalizedNode> readNode(YangInstanceIdentifier path);
 
     /**
-     * Create a new data tree modification based on this snapshot, using the
-     * specified data application strategy.
+     * Create a new data tree modification based on this snapshot, using the specified data application strategy.
      *
      * @return A new data tree modification
      */

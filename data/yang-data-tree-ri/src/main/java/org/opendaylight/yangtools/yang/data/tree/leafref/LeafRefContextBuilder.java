@@ -26,7 +26,7 @@ final class LeafRefContextBuilder implements Mutable {
 
     private final QName currentNodeQName;
     private final ImmutableList<QName> currentNodePath;
-    private final EffectiveModelContext schemaContext;
+    private final EffectiveModelContext modelContext;
 
     private LeafRefPath leafRefTargetPath = null;
     private LeafRefPath absoluteLeafRefTargetPath = null;
@@ -36,10 +36,10 @@ final class LeafRefContextBuilder implements Mutable {
     private boolean isReferencing = false;
 
     LeafRefContextBuilder(final QName currentNodeQName, final ImmutableList<QName> currentNodePath,
-            final EffectiveModelContext schemaContext) {
+            final EffectiveModelContext modelContext) {
         this.currentNodeQName = requireNonNull(currentNodeQName);
         this.currentNodePath = requireNonNull(currentNodePath);
-        this.schemaContext = requireNonNull(schemaContext);
+        this.modelContext = requireNonNull(modelContext);
     }
 
     @NonNull LeafRefContext build() {
@@ -109,8 +109,8 @@ final class LeafRefContextBuilder implements Mutable {
         return currentNodeQName;
     }
 
-    EffectiveModelContext getSchemaContext() {
-        return schemaContext;
+    EffectiveModelContext modelContext() {
+        return modelContext;
     }
 
     LeafRefPath getAbsoluteLeafRefTargetPath() {
@@ -129,7 +129,7 @@ final class LeafRefContextBuilder implements Mutable {
     Module getLeafRefContextModule() {
         final QNameModule qnameModule = currentNodePath.isEmpty() ? currentNodeQName.getModule()
             : currentNodePath.get(0).getModule();
-        return schemaContext.findModule(qnameModule).orElse(null);
+        return modelContext.findModule(qnameModule).orElse(null);
     }
 
     void addReferencedByLeafRefCtx(final QName qname, final LeafRefContext leafRef) {
