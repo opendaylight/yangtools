@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,15 +50,15 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Codec type
  */
-public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
-        extends AbstractEffectiveModelContextProvider {
+public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCodecFactory.class);
 
+    private final @NonNull EffectiveModelContext modelContext;
     private final @NonNull CodecCache<T> cache;
 
-    protected AbstractCodecFactory(final @NonNull EffectiveModelContext schemaContext,
+    protected AbstractCodecFactory(final @NonNull EffectiveModelContext modelContext,
             final @NonNull CodecCache<T> cache) {
-        super(schemaContext);
+        this.modelContext = requireNonNull(modelContext);
         this.cache = requireNonNull(cache);
     }
 
@@ -100,6 +99,15 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         ret = createComplexCodecFor(schema, type, resolver);
         LOG.trace("Type {} miss complex {}", type, ret);
         return cache.getComplex(schema, ret);
+    }
+
+    /**
+     * Return the {@link EffectiveModelContext} backing this factory.
+     *
+     * @return the {@link EffectiveModelContext} backing this factory
+     */
+    public final @NonNull EffectiveModelContext modelContext() {
+        return modelContext;
     }
 
     protected abstract T binaryCodec(BinaryTypeDefinition type);

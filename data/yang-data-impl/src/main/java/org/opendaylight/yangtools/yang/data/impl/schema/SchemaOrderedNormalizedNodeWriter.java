@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -19,15 +18,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -36,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * in the order as they are defined in YANG file.
  */
 public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
-    private final EffectiveModelContext schemaContext;
+    private final EffectiveModelContext modelContext;
     private final SchemaNode root;
 
     private SchemaNode currentSchemaNode;
@@ -45,26 +41,29 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
      * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
      *
      * @param writer Back-end writer
-     * @param schemaContext Associated {@link EffectiveModelContext}
+     * @param modelContext Associated {@link EffectiveModelContext}
      */
     public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
-            final EffectiveModelContext schemaContext) {
+            final EffectiveModelContext modelContext) {
         super(writer);
-        root = this.schemaContext = requireNonNull(schemaContext);
+        root = this.modelContext = requireNonNull(modelContext);
     }
 
     private SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
             final SchemaInferenceStack stack) {
         super(writer);
-        schemaContext = stack.getEffectiveModelContext();
+        modelContext = stack.modelContext();
 
         if (!stack.isEmpty()) {
-            final EffectiveStatement<?, ?> current = stack.currentStatement();
+            final var current = stack.currentStatement();
             // FIXME: this should be one of NormalizedNodeContainer/NotificationDefinition/OperationDefinition
-            checkArgument(current instanceof SchemaNode, "Instantiating at %s is not supported", current);
-            root = (SchemaNode) current;
+            if (current instanceof SchemaNode schemaNode) {
+                root = schemaNode;
+            } else {
+                throw new IllegalArgumentException("Instantiating at " + current + " is not supported");
+            }
         } else {
-            root = schemaContext;
+            root = modelContext;
         }
     }
 
@@ -93,8 +92,8 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
 
     @Override
     public SchemaOrderedNormalizedNodeWriter write(final NormalizedNode node) throws IOException {
-        if (schemaContext.equals(root)) {
-            currentSchemaNode = schemaContext.dataChildByName(node.name().getNodeType());
+        if (modelContext.equals(root)) {
+            currentSchemaNode = modelContext.dataChildByName(node.name().getNodeType());
         } else {
             currentSchemaNode = root;
         }
@@ -122,7 +121,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             throws IOException {
 
         //Set current schemaNode
-        try (SchemaNodeSetter sns = new SchemaNodeSetter(dataSchemaNode)) {
+        try (var sns = new SchemaNodeSetter(dataSchemaNode)) {
             if (node == null) {
                 return this;
             }
@@ -140,7 +139,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     }
 
     private void write(final Collection<NormalizedNode> nodes, final SchemaNode dataSchemaNode) throws IOException {
-        for (final NormalizedNode node : nodes) {
+        for (var node : nodes) {
             write(node, dataSchemaNode);
         }
     }
@@ -154,7 +153,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             final boolean endParent) throws IOException {
         // Augmentations cannot be gotten with node.getChild so create our own structure with augmentations resolved
         final var qnameToNodes = ArrayListMultimap.<QName, NormalizedNode>create();
-        for (final NormalizedNode child : children) {
+        for (var child : children) {
             putChild(qnameToNodes, child);
         }
 
@@ -162,20 +161,21 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             if (parentContainer instanceof ListSchemaNode && qnameToNodes.containsKey(parentSchemaNode.getQName())) {
                 write(qnameToNodes.get(parentSchemaNode.getQName()), parentSchemaNode);
             } else {
-                for (final DataSchemaNode schemaNode : parentContainer.getChildNodes()) {
+                for (var schemaNode : parentContainer.getChildNodes()) {
                     write(qnameToNodes.get(schemaNode.getQName()), schemaNode);
                 }
             }
         } else if (parentSchemaNode instanceof ChoiceSchemaNode parentChoice) {
-            for (final CaseSchemaNode ccNode : parentChoice.getCases()) {
-                for (final DataSchemaNode dsn : ccNode.getChildNodes()) {
-                    if (qnameToNodes.containsKey(dsn.getQName())) {
-                        write(qnameToNodes.get(dsn.getQName()), dsn);
+            for (var childCase : parentChoice.getCases()) {
+                for (var childCaseChild : childCase.getChildNodes()) {
+                    final var node = qnameToNodes.asMap().get(childCaseChild.getQName());
+                    if (node != null) {
+                        write(node, childCaseChild);
                     }
                 }
             }
         } else {
-            for (final NormalizedNode child : children) {
+            for (var child : children) {
                 writeLeaf(child);
             }
         }

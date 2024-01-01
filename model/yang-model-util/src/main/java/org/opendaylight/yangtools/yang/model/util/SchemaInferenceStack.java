@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
@@ -74,7 +73,7 @@ import org.slf4j.LoggerFactory;
  * This class is designed for single-threaded uses and does not make any guarantees around concurrent access.
  */
 @Beta
-public final class SchemaInferenceStack implements Mutable, EffectiveModelContextProvider, LeafrefResolver {
+public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
     /**
      * Semantic binding of {@link EffectiveStatementInference} produced by {@link SchemaInferenceStack}. Sequence of
      * {@link #statementPath()} is implementation-specific.
@@ -142,7 +141,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
          * @return A new stack
          */
         public @NonNull SchemaInferenceStack toSchemaInferenceStack() {
-            return new SchemaInferenceStack(getEffectiveModelContext(), deque, currentModule, groupingDepth, clean);
+            return new SchemaInferenceStack(modelContext(), deque, currentModule, groupingDepth, clean);
         }
     }
 
@@ -158,7 +157,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         }
     }
 
-    private final @NonNull EffectiveModelContext effectiveModel;
+    private final @NonNull EffectiveModelContext modelContext;
     private final ArrayDeque<EffectiveStatement<?, ?>> deque;
 
     private @Nullable ModuleEffectiveStatement currentModule;
@@ -170,22 +169,22 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private SchemaInferenceStack(final EffectiveModelContext effectiveModel, final int expectedSize) {
         deque = new ArrayDeque<>(expectedSize);
-        this.effectiveModel = requireNonNull(effectiveModel);
+        modelContext = requireNonNull(effectiveModel);
         clean = true;
     }
 
     private SchemaInferenceStack(final SchemaInferenceStack source) {
         deque = source.deque.clone();
-        effectiveModel = source.effectiveModel;
+        modelContext = source.modelContext;
         currentModule = source.currentModule;
         groupingDepth = source.groupingDepth;
         clean = source.clean;
     }
 
-    private SchemaInferenceStack(final EffectiveModelContext effectiveModel,
+    private SchemaInferenceStack(final EffectiveModelContext modelContext,
             final ArrayDeque<EffectiveStatement<?, ?>> deque, final ModuleEffectiveStatement currentModule,
             final int groupingDepth, final boolean clean) {
-        this.effectiveModel = requireNonNull(effectiveModel);
+        this.modelContext = requireNonNull(modelContext);
         this.deque = deque.clone();
         this.currentModule = currentModule;
         this.groupingDepth = groupingDepth;
@@ -193,7 +192,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     private SchemaInferenceStack(final EffectiveModelContext effectiveModel) {
-        this.effectiveModel = requireNonNull(effectiveModel);
+        modelContext = requireNonNull(effectiveModel);
         deque = new ArrayDeque<>();
         clean = true;
     }
@@ -234,7 +233,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public static @NonNull SchemaInferenceStack ofInference(final EffectiveStatementInference inference) {
         if (inference.statementPath().isEmpty()) {
-            return new SchemaInferenceStack(inference.getEffectiveModelContext());
+            return new SchemaInferenceStack(inference.modelContext());
         } else if (inference instanceof SchemaTreeInference sti) {
             return ofInference(sti);
         } else if (inference instanceof Inference inf) {
@@ -254,7 +253,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public static @NonNull SchemaInferenceStack ofInference(final SchemaTreeInference inference) {
         return inference instanceof DefaultSchemaTreeInference dsti ? ofInference(dsti)
-            : of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
+            : of(inference.modelContext(), inference.toSchemaNodeIdentifier());
     }
 
     /**
@@ -277,7 +276,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private static @NonNull SchemaInferenceStack ofTrusted(final DefaultSchemaTreeInference inference) {
         final var path = inference.statementPath();
-        final var ret = new SchemaInferenceStack(inference.getEffectiveModelContext(), path.size());
+        final var ret = new SchemaInferenceStack(inference.modelContext(), path.size());
         ret.currentModule = ret.getModule(path.get(0).argument());
         ret.deque.addAll(path);
         return ret;
@@ -285,7 +284,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     @VisibleForTesting
     static @NonNull SchemaInferenceStack ofUntrusted(final DefaultSchemaTreeInference inference) {
-        final var ret = of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
+        final var ret = of(inference.modelContext(), inference.toSchemaNodeIdentifier());
         if (!Iterables.elementsEqual(ret.deque, inference.statementPath())) {
             throw new IllegalArgumentException("Provided " + inference + " is not consistent with resolved path "
                 + ret.toSchemaTreeInference());
@@ -310,9 +309,13 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return ret;
     }
 
-    @Override
-    public EffectiveModelContext getEffectiveModelContext() {
-        return effectiveModel;
+    /**
+     * Return the {@link EffectiveModelContext} this stack operates on.
+     *
+     * @return the {@link EffectiveModelContext} this stack operates on
+     */
+    public @NonNull EffectiveModelContext modelContext() {
+        return modelContext;
     }
 
     /**
@@ -561,7 +564,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
         final var checkedName = requireNonNull(name);
         final var namespace = name.module();
-        final var module = effectiveModel.getModuleStatements().get(namespace);
+        final var module = modelContext.getModuleStatements().get(namespace);
         if (module == null) {
             throw new IllegalArgumentException("Module for " + namespace + " not found");
         }
@@ -759,7 +762,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @return An {@link Inference}
      */
     public @NonNull Inference toInference() {
-        return new Inference(effectiveModel, deque.clone(), currentModule, groupingDepth, clean);
+        return new Inference(modelContext, deque.clone(), currentModule, groupingDepth, clean);
     }
 
     /**
@@ -770,7 +773,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull SchemaTreeInference toSchemaTreeInference() {
         checkInInstantiatedContext();
-        return DefaultSchemaTreeInference.unsafeOf(getEffectiveModelContext(), reconstructDeque().stream()
+        return DefaultSchemaTreeInference.unsafeOf(modelContext, reconstructDeque().stream()
             .map(stmt -> (SchemaTreeEffectiveStatement<?>) stmt)
             .collect(ImmutableList.toImmutableList()));
     }
@@ -905,7 +908,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     private @NonNull ModuleEffectiveStatement getModule(final @NonNull QName nodeIdentifier) {
-        final var module = effectiveModel.getModuleStatements().get(nodeIdentifier.getModule());
+        final var module = modelContext.getModuleStatements().get(nodeIdentifier.getModule());
         if (module == null) {
             throw new IllegalArgumentException("Module for " + nodeIdentifier + " not found");
         }
@@ -936,7 +939,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private SchemaInferenceStack reconstructSchemaInferenceStack() {
         // Let's walk all statements and decipher them into a temporary stack
-        final var tmp = new SchemaInferenceStack(effectiveModel, deque.size());
+        final var tmp = new SchemaInferenceStack(modelContext, deque.size());
         for (var stmt : deque) {
             // Order of checks is significant
             if (stmt instanceof DataTreeEffectiveStatement<?> dataTree) {

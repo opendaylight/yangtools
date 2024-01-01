@@ -32,7 +32,7 @@ final class InstanceIdentifierDeserializer extends AbstractInstanceIdentifierCod
 
     @Override
     protected QNameModule moduleForPrefix(final String prefix) {
-        final var modules = codecFactory.getEffectiveModelContext()
+        final var modules = codecFactory.modelContext()
             .findModuleStatements(XMLNamespace.of(namespaceContext.getNamespaceURI(prefix)))
             .iterator();
         return modules.hasNext() ? modules.next().localQNameModule() : null;

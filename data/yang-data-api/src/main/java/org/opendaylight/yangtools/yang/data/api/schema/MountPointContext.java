@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 /**
  * A context of either an explicit (RFC8528 Schema Mount instance) or implicit (system root). It encapsulates a data
@@ -23,7 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
  * so that proper {@link MountPointLabel}ed {@link NormalizedMountPoint}s can be created. This is enough to integrate
  * with other elements of this API.
  */
-public interface MountPointContext extends EffectiveModelContextProvider {
+public interface MountPointContext {
+    /**
+     * Return this mount point's {@link EffectiveModelContext}.
+     *
+     * @return this mount point's {@link EffectiveModelContext}
+     */
+    @NonNull EffectiveModelContext modelContext();
+
     /**
      * Attempt to acquire a {@link MountPointContextFactory} to resolve schemas for the purposes of interpreting
      * this mount point. An empty result indicates the mount point is not attached.

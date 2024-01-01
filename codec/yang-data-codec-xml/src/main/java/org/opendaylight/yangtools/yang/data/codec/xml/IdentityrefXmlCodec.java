@@ -24,13 +24,13 @@ import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class IdentityrefXmlCodec implements XmlCodec<QName> {
-    private final @NonNull EffectiveModelContext context;
+    private final @NonNull EffectiveModelContext modelContext;
     private final @NonNull QNameModule parentModule;
     private final @Nullable PreferredPrefixes pref;
 
-    IdentityrefXmlCodec(final EffectiveModelContext context, final QNameModule parentModule,
+    IdentityrefXmlCodec(final EffectiveModelContext modelContext, final QNameModule parentModule,
             final @Nullable PreferredPrefixes pref) {
-        this.context = requireNonNull(context);
+        this.modelContext = requireNonNull(modelContext);
         this.parentModule = requireNonNull(parentModule);
         this.pref = pref;
     }
@@ -42,7 +42,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
     @Override
     public QName parseValue(final NamespaceContext ctx, final String str) {
-        return IdentityCodecUtil.parseIdentity(str, context, prefix -> {
+        return IdentityCodecUtil.parseIdentity(str, modelContext, prefix -> {
             if (prefix.isEmpty()) {
                 return parentModule;
             }
@@ -50,7 +50,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             final var prefixedNS = ctx.getNamespaceURI(prefix);
             checkArgument(prefixedNS != null, "Failed to resolve prefix %s", prefix);
 
-            final var modules = context.findModuleStatements(XMLNamespace.of(prefixedNS)).iterator();
+            final var modules = modelContext.findModuleStatements(XMLNamespace.of(prefixedNS)).iterator();
             checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
             return modules.next().localQNameModule();
         }).getQName();

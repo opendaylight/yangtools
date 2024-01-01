@@ -54,9 +54,9 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     private final @Nullable PreferredPrefixes pref;
 
     private XmlCodecFactory(final MountPointContext mountCtx, final boolean modelPrefixes) {
-        super(mountCtx.getEffectiveModelContext(), new SharedCodecCache<>());
+        super(mountCtx.modelContext(), new SharedCodecCache<>());
         this.mountCtx = requireNonNull(mountCtx);
-        pref = modelPrefixes ? new PreferredPrefixes.Shared(getEffectiveModelContext()) : null;
+        pref = modelPrefixes ? new PreferredPrefixes.Shared(modelContext()) : null;
         instanceIdentifierCodec = new InstanceIdentifierXmlCodec(this, pref);
     }
 
@@ -133,7 +133,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     @Override
     protected XmlCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
-        return new IdentityrefXmlCodec(getEffectiveModelContext(), module, pref);
+        return new IdentityrefXmlCodec(modelContext(), module, pref);
     }
 
     @Override

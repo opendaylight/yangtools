@@ -198,9 +198,8 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         @NonNull QName expected, @NonNull InputStream stream) throws IOException, NormalizationException;
 
     private void checkInference(final EffectiveStatementInference inference) {
-        final var modelContext = inference.getEffectiveModelContext();
-        final var local = getEffectiveModelContext();
-        if (!local.equals(modelContext)) {
+        final var local = modelContext();
+        if (!local.equals(inference.modelContext())) {
             throw new IllegalArgumentException("Mismatched inference, expecting model context " + local);
         }
     }
