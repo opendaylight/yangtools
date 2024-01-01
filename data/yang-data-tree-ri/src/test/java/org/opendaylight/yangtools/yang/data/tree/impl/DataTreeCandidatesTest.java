@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
@@ -38,9 +37,9 @@ class DataTreeCandidatesTest extends AbstractTestModelTest {
     void setUp() throws Exception {
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
 
-        final var testContainer = Builders.containerBuilder()
+        final var testContainer = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
                 .build())
             .build();
@@ -92,7 +91,9 @@ class DataTreeCandidatesTest extends AbstractTestModelTest {
     @Test
     void testEmptyMergeOnContainer() throws DataValidationFailedException {
         final var modification = dataTree.takeSnapshot().newModification();
-        modification.merge(TestModel.NON_PRESENCE_PATH, ImmutableNodes.containerNode(TestModel.NON_PRESENCE_QNAME));
+        modification.merge(TestModel.NON_PRESENCE_PATH, ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.NON_PRESENCE_QNAME))
+            .build());
         modification.ready();
         dataTree.validate(modification);
 
@@ -108,7 +109,9 @@ class DataTreeCandidatesTest extends AbstractTestModelTest {
     @Test
     void testEmptyWriteOnContainer() throws DataValidationFailedException {
         final var modification = dataTree.takeSnapshot().newModification();
-        modification.write(TestModel.NON_PRESENCE_PATH, ImmutableNodes.containerNode(TestModel.NON_PRESENCE_QNAME));
+        modification.write(TestModel.NON_PRESENCE_PATH, ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.NON_PRESENCE_QNAME))
+            .build());
         modification.ready();
         dataTree.validate(modification);
 
@@ -125,7 +128,9 @@ class DataTreeCandidatesTest extends AbstractTestModelTest {
     void testEmptyMergesOnDeleted() throws DataValidationFailedException {
         final var modification = dataTree.takeSnapshot().newModification();
         modification.delete(TestModel.NON_PRESENCE_PATH);
-        modification.merge(TestModel.DEEP_CHOICE_PATH, ImmutableNodes.choiceNode(TestModel.DEEP_CHOICE_QNAME));
+        modification.merge(TestModel.DEEP_CHOICE_PATH, ImmutableNodes.newChoiceBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.DEEP_CHOICE_QNAME))
+            .build());
         modification.ready();
         dataTree.validate(modification);
 
@@ -149,8 +154,12 @@ class DataTreeCandidatesTest extends AbstractTestModelTest {
 
         // Issue an empty merge on it and a child choice
         modification = dataTree.takeSnapshot().newModification();
-        modification.merge(TestModel.NON_PRESENCE_PATH, ImmutableNodes.containerNode(TestModel.NON_PRESENCE_QNAME));
-        modification.merge(TestModel.DEEP_CHOICE_PATH, ImmutableNodes.choiceNode(TestModel.DEEP_CHOICE_QNAME));
+        modification.merge(TestModel.NON_PRESENCE_PATH, ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.NON_PRESENCE_QNAME))
+            .build());
+        modification.merge(TestModel.DEEP_CHOICE_PATH, ImmutableNodes.newChoiceBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.DEEP_CHOICE_QNAME))
+            .build());
         modification.ready();
         dataTree.validate(modification);
 

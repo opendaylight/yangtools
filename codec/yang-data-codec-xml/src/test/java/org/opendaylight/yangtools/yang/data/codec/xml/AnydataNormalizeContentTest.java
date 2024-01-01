@@ -19,15 +19,13 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 class AnydataNormalizeContentTest extends AbstractAnydataTest {
@@ -69,21 +67,21 @@ class AnydataNormalizeContentTest extends AbstractAnydataTest {
             Arguments.of("container (root level)",
                 ANYDATA_XML,
                 Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME),
-                Builders.containerBuilder().withNodeIdentifier(CONT_NODEID).withChild(LEAF_NODE).build()),
+                ImmutableNodes.newContainerBuilder().withNodeIdentifier(CONT_NODEID).withChild(LEAF_NODE).build()),
             Arguments.of("container (level 2)",
                 ANYDATA_XML,
                 Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME, BAR_QNAME),
-                Builders.containerBuilder().withNodeIdentifier(BAR_NODEID).withChild(LEAF_NODE).build()),
+                ImmutableNodes.newContainerBuilder().withNodeIdentifier(BAR_NODEID).withChild(LEAF_NODE).build()),
             Arguments.of("empty container",
                 ANYDATA_EMPTY_XML,
                 Inference.ofDataTreePath(SCHEMA_CONTEXT, CONT_QNAME, BAR_QNAME),
-                ImmutableNodes.containerNode(BAR_NODEID)),
+                ImmutableNodes.newContainerBuilder().withNodeIdentifier(BAR_NODEID).build()),
             Arguments.of("single list element",
                 ANYDATA_XML,
                 Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME),
-                Builders.unkeyedListBuilder()
+                ImmutableNodes.newUnkeyedListBuilder()
                     .withNodeIdentifier(LIST_NODEID)
-                    .withChild(Builders.unkeyedListEntryBuilder()
+                    .withChild(ImmutableNodes.newUnkeyedListEntryBuilder()
                         .withNodeIdentifier(LIST_NODEID)
                         .withChild(LEAF_NODE)
                         .build())
@@ -91,21 +89,18 @@ class AnydataNormalizeContentTest extends AbstractAnydataTest {
             Arguments.of("single empty list element",
                 ANYDATA_EMPTY_XML,
                 Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME),
-                Builders.unkeyedListBuilder()
+                ImmutableNodes.newUnkeyedListBuilder()
                     .withNodeIdentifier(LIST_NODEID)
-                    .withChild(Builders.unkeyedListEntryBuilder()
+                    .withChild(ImmutableNodes.newUnkeyedListEntryBuilder()
                         .withNodeIdentifier(LIST_NODEID)
                         .build())
                     .build()),
             Arguments.of("single empty leaf-list element",
                 ANYDATA_EMPTY_XML,
                 Inference.ofDataTreePath(SCHEMA_CONTEXT, LIST_QNAME, LEAF_LIST_QNAME),
-                Builders.leafSetBuilder()
+                ImmutableNodes.newSystemLeafSetBuilder()
                     .withNodeIdentifier(LEAF_LIST_NODEID)
-                    .withChild(Builders.leafSetEntryBuilder()
-                        .withNodeIdentifier(new NodeWithValue<>(LEAF_LIST_QNAME, ""))
-                        .withValue("")
-                        .build())
+                    .withChild(ImmutableNodes.leafSetEntry(LEAF_LIST_QNAME, ""))
                     .build()),
             Arguments.of("leaf of type empty",
                 ANYDATA_EMPTY_XML,

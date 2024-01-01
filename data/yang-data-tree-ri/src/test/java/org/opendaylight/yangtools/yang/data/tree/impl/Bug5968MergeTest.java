@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -83,12 +82,12 @@ class Bug5968MergeTest {
         final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
-        final var root = Builders.containerBuilder()
+        final var root = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.merge(YangInstanceIdentifier.of(ROOT),
             withMapNode ? root.withChild(
-                Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST)).build()).build()
+                ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST)).build()).build()
                 : root.build());
         modificationTree.ready();
 
@@ -108,7 +107,7 @@ class Bug5968MergeTest {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final var myList = createMap(true);
-        final var root = Builders.containerBuilder()
+        final var root = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -169,7 +168,7 @@ class Bug5968MergeTest {
     }
 
     private static SystemMapNode createMap(final boolean mandatoryDataMissing) throws DataValidationFailedException {
-        return Builders.mapBuilder()
+        return ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_LIST))
             .withChild(mandatoryDataMissing ? createMapEntry("1", "common-value")
                 : createMapEntry("1", "mandatory-value", "common-value"))
@@ -189,7 +188,7 @@ class Bug5968MergeTest {
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object mandatoryLeafValue,
             final Object commonLeafValue) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF, mandatoryLeafValue))
@@ -197,14 +196,14 @@ class Bug5968MergeTest {
     }
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object commonLeafValue) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue)).build();
     }
 
     private static MapEntryNode createMapEntryM(final Object listIdValue, final Object mandatoryLeafValue) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF, mandatoryLeafValue)).build();
@@ -215,7 +214,7 @@ class Bug5968MergeTest {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final var myList = createMap(false);
-        final var root = Builders.containerBuilder()
+        final var root = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -299,17 +298,17 @@ class Bug5968MergeTest {
 
     private static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> createEmptyMapEntryBuilder(
             final Object listIdValue) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue));
     }
 
     private static CollectionNodeBuilder<MapEntryNode, SystemMapNode> createMapBuilder() {
-        return Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST));
+        return ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST));
     }
 
     private static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createContainerBuilder() {
-        return Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(ROOT));
+        return ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(ROOT));
     }
 
     @Test

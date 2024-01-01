@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ReusableStreamReceiver;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -25,12 +24,10 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 @Beta
 public final class ReusableImmutableNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
         implements ReusableStreamReceiver {
-    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
-
     private final NormalizationResultBuilder builder;
 
-    private final LeafSetEntryNode.Builder<?> leafsetEntryBuilder = BUILDER_FACTORY.newLeafSetEntryBuilder();
-    private final LeafNode.Builder<?> leafNodeBuilder = BUILDER_FACTORY.newLeafBuilder();
+    private final LeafSetEntryNode.Builder<?> leafsetEntryBuilder = ImmutableNodes.newLeafSetEntryBuilder();
+    private final LeafNode.Builder<?> leafNodeBuilder = ImmutableNodes.newLeafBuilder();
 
     private ReusableImmutableNormalizedNodeStreamWriter(final NormalizationResultBuilder builder) {
         super(builder);

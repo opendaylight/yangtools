@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -165,14 +164,14 @@ class YT891Test {
     }
 
     private static ContainerNode fooTopWithList(final String refValue) {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO_TOP))
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(LIST_IN_GROUPING))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_IN_GROUPING, NAME, "name1"))
                         .withChild(ImmutableNodes.leafNode(NAME, "name1"))
-                        .withChild(Builders.containerBuilder()
+                        .withChild(ImmutableNodes.newContainerBuilder()
                             .withNodeIdentifier(new NodeIdentifier(CONTAINER_IN_LIST))
                             .withChild(ImmutableNodes.leafNode(NAME, refValue))
                             .build())
@@ -182,18 +181,18 @@ class YT891Test {
     }
 
     private static ContainerNode fooTopWithRef(final String refValue) {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO_TOP))
                 .withChild(ImmutableNodes.leafNode(REF, refValue))
                 .build();
     }
 
     private static ContainerNode bazTop() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAZ_TOP))
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(LIST_IN_CONTAINER))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_IN_CONTAINER, BAZ_NAME, "name1"))
                         .withChild(ImmutableNodes.leafNode(BAZ_NAME, "name1"))
                         .build())

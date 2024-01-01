@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -165,14 +164,13 @@ class UniqueConstraintTest {
 
     private static void writeMap(final InMemoryDataTree inMemoryDataTree, final boolean withUniqueViolation)
             throws DataValidationFailedException {
-        final var taskNode = Builders
-                .mapBuilder()
-                .withNodeIdentifier(new NodeIdentifier(TASK))
-                .withChild(createMapEntry("1", "l1", "l2", "l3"))
-                .withChild(createMapEntry("2", "l2", "l3", "l4"))
-                .withChild(
-                        withUniqueViolation ? createMapEntry("3", "l1", "l2", "l10") : createMapEntry("3", "l3", "l4",
-                                "l5")).build();
+        final var taskNode = ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TASK))
+            .withChild(createMapEntry("1", "l1", "l2", "l3"))
+            .withChild(createMapEntry("2", "l2", "l3", "l4"))
+            .withChild(
+                withUniqueViolation ? createMapEntry("3", "l1", "l2", "l10") : createMapEntry("3", "l3", "l4", "l5"))
+            .build();
 
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK), taskNode);
@@ -185,15 +183,16 @@ class UniqueConstraintTest {
     private static void writeMapEntry(final InMemoryDataTree inMemoryDataTree, final Object taskIdValue,
             final Object myLeaf1Value, final Object myLeaf2Value, final Object myLeaf3Value)
             throws DataValidationFailedException {
-        final var taskEntryNode = Builders
-                .mapEntryBuilder()
-                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, taskIdValue))
-                .withChild(ImmutableNodes.leafNode(TASK_ID, taskIdValue))
-                .withChild(ImmutableNodes.leafNode(MY_LEAF_1, myLeaf1Value))
-                .withChild(ImmutableNodes.leafNode(MY_LEAF_2, myLeaf2Value))
-                .withChild(
-                        Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(MY_CONTAINER))
-                                .withChild(ImmutableNodes.leafNode(MY_LEAF_3, myLeaf3Value)).build()).build();
+        final var taskEntryNode = ImmutableNodes.newMapEntryBuilder()
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, taskIdValue))
+            .withChild(ImmutableNodes.leafNode(TASK_ID, taskIdValue))
+            .withChild(ImmutableNodes.leafNode(MY_LEAF_1, myLeaf1Value))
+            .withChild(ImmutableNodes.leafNode(MY_LEAF_2, myLeaf2Value))
+            .withChild(ImmutableNodes.newContainerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_CONTAINER))
+                .withChild(ImmutableNodes.leafNode(MY_LEAF_3, myLeaf3Value))
+                .build())
+            .build();
 
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
@@ -218,15 +217,16 @@ class UniqueConstraintTest {
 
     private static MapEntryNode createMapEntry(final Object taskIdValue, final Object myLeaf1Value,
             final Object myLeaf2Value, final Object myLeaf3Value) {
-        return Builders
-                .mapEntryBuilder()
-                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, taskIdValue))
-                .withChild(ImmutableNodes.leafNode(TASK_ID, taskIdValue))
-                .withChild(ImmutableNodes.leafNode(MY_LEAF_1, myLeaf1Value))
-                .withChild(ImmutableNodes.leafNode(MY_LEAF_2, myLeaf2Value))
-                .withChild(
-                        Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(MY_CONTAINER))
-                                .withChild(ImmutableNodes.leafNode(MY_LEAF_3, myLeaf3Value)).build()).build();
+        return ImmutableNodes.newMapEntryBuilder()
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, taskIdValue))
+            .withChild(ImmutableNodes.leafNode(TASK_ID, taskIdValue))
+            .withChild(ImmutableNodes.leafNode(MY_LEAF_1, myLeaf1Value))
+            .withChild(ImmutableNodes.leafNode(MY_LEAF_2, myLeaf2Value))
+            .withChild(ImmutableNodes.newContainerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_CONTAINER))
+                .withChild(ImmutableNodes.leafNode(MY_LEAF_3, myLeaf3Value))
+                .build())
+            .build();
     }
 
     private static NodeIdentifierWithPredicates taskEntryKey(final String taskId) {
@@ -257,7 +257,7 @@ class UniqueConstraintTest {
             new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build());
         inMemoryDataTree.setEffectiveModelContext(schemaContext);
 
-        final var taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
+        final var taskNode = ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK), taskNode);
         modificationTree.ready();

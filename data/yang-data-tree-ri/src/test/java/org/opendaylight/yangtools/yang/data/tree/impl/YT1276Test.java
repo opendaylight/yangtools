@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -54,7 +53,7 @@ class YT1276Test {
     @Test
     void testFooWithBar() throws DataValidationFailedException {
         applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(FOO), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(FOO), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
                 .withChild(ImmutableNodes.leafNode(BAR, "xyzzy"))
                 .build());
@@ -65,7 +64,7 @@ class YT1276Test {
     @Deprecated
     void testFooWithBarLegacy() throws DataValidationFailedException {
         applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(FOO), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(FOO), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
                 .withChild(ImmutableNodes.leafNode(BAR, "xyzzy"))
                 .build());
@@ -75,7 +74,7 @@ class YT1276Test {
     @Test
     void testFooWithoutBar() {
         final IllegalArgumentException ex = assertFailsReady(mod -> {
-            mod.write(YangInstanceIdentifier.of(FOO), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(FOO), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
                 .build());
         });
@@ -85,15 +84,15 @@ class YT1276Test {
     @Test
     void testBarWithXyzzyWithSubtree() throws DataValidationFailedException {
         applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(XYZZY_LEAF, "xyzzy"))
                     .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT))
-                        .withChild(Builders.containerBuilder()
+                        .withChild(ImmutableNodes.newContainerBuilder()
                             .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT_INNER))
                             .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
                             .build())
@@ -106,9 +105,9 @@ class YT1276Test {
     @Test
     void testBazWithAugmentedCaseWithMandatoryLeaf() throws DataValidationFailedException {
         applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(BAZ_AUG_CASE_MANDAT_LEAF, "augmentedCaseMandatory"))
                     .withChild(ImmutableNodes.leafNode(BAZ_AUG_CASE_NON_MANDAT_LEAF, "augmentedCaseNonMandatory"))
@@ -121,9 +120,9 @@ class YT1276Test {
     void testBazWithAugmentedCaseWithoutMandatoryLeaf() throws DataValidationFailedException {
         assertThrows(IllegalArgumentException.class, () -> {
             applyOperation(mod -> {
-                mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+                mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAR))
-                    .withChild(Builders.choiceBuilder()
+                    .withChild(ImmutableNodes.newChoiceBuilder()
                         .withNodeIdentifier(new NodeIdentifier(BAZ))
                         .withChild(ImmutableNodes.leafNode(BAZ_AUG_CASE_NON_MANDAT_LEAF, "augmentedCaseNonMandatory"))
                         .build())
@@ -135,11 +134,11 @@ class YT1276Test {
     @Test
     void testWithAugmentedNestedBazWithMandatoryLeaf() throws DataValidationFailedException {
         applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
-                    .withChild(Builders.choiceBuilder()
+                    .withChild(ImmutableNodes.newChoiceBuilder()
                         .withNodeIdentifier(new NodeIdentifier(NESTED_BAZ_CHOICE))
                         .withChild(ImmutableNodes.leafNode(NESTED_BAZ_XYZ_CASE_MANDATORY, "nestedMandatory"))
                         .withChild(ImmutableNodes.leafNode(NESTED_BAZ_XYZ_CASE_NON_MANDATORY, "nestedNonMandatory"))
@@ -153,11 +152,11 @@ class YT1276Test {
     void testWithAugmentedNestedBazWithhoutMandatoryLeaf() throws DataValidationFailedException {
         assertThrows(IllegalArgumentException.class, () -> {
             applyOperation(mod -> {
-                mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+                mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAR))
-                    .withChild(Builders.choiceBuilder()
+                    .withChild(ImmutableNodes.newChoiceBuilder()
                         .withNodeIdentifier(new NodeIdentifier(BAZ))
-                        .withChild(Builders.choiceBuilder()
+                        .withChild(ImmutableNodes.newChoiceBuilder()
                             .withNodeIdentifier(new NodeIdentifier(NESTED_BAZ_CHOICE))
                             .withChild(ImmutableNodes.leafNode(NESTED_BAZ_XYZ_CASE_NON_MANDATORY, "nestedNonMandatory"))
                             .build())
@@ -171,15 +170,15 @@ class YT1276Test {
     @Deprecated
     void testBarWithXyzzyLegacy() throws DataValidationFailedException {
         applyOperation(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(XYZZY_LEAF, "xyzzy"))
                     .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT))
-                        .withChild(Builders.containerBuilder()
+                        .withChild(ImmutableNodes.newContainerBuilder()
                             .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT_INNER))
                             .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
                             .build())
@@ -192,14 +191,14 @@ class YT1276Test {
     @Test
     void testBarWithoutXyzzyLeaf() {
         final var ex = assertFailsReady(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT))
-                        .withChild(Builders.containerBuilder()
+                        .withChild(ImmutableNodes.newContainerBuilder()
                             .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT_INNER))
                             .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
                             .build())
@@ -215,9 +214,9 @@ class YT1276Test {
     @Test
     void testBarWithoutXyzzyAugment() {
         final var ex = assertFailsReady(mod -> {
-            mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
+            mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(XYZZY_LEAF, "xyzzy"))
                     .build())

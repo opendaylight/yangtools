@@ -19,9 +19,8 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaOrderedNormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xmlunit.builder.DiffBuilder;
@@ -76,11 +75,11 @@ class SchemaOrderedNormalizedNodeWriterTest {
             rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
                 createQName(FOO_NAMESPACE, NAME_NODE), "rule4"));
 
-            final var rules1 = Builders.orderedMapBuilder()
+            final var rules1 = ImmutableNodes.newUserMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
                     .withValue(rule1Names)
                     .build();
-            final var rules2 = Builders.orderedMapBuilder()
+            final var rules2 = ImmutableNodes.newUserMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
                     .withValue(rule2Names)
                     .build();
@@ -99,11 +98,11 @@ class SchemaOrderedNormalizedNodeWriterTest {
             policyNodes.add(pn1);
             policyNodes.add(pn2);
 
-            final var policy = Builders.orderedMapBuilder()
+            final var policy = ImmutableNodes.newUserMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, POLICY_NODE))
                     .withValue(policyNodes)
                     .build();
-            final var root = Builders.containerBuilder()
+            final var root = ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, "root"))
                     .withChild(policy).build();
             nnw.write(root);
@@ -162,9 +161,9 @@ class SchemaOrderedNormalizedNodeWriterTest {
         var writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
         try (var nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext)) {
-            nnw.write(Builders.containerBuilder()
+            nnw.write(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
-                .withChild(Builders.containerBuilder()
+                .withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "cont"))
                     .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "content"), "content1"))
                     .build())

@@ -26,9 +26,9 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
@@ -43,7 +43,7 @@ class AnydataSerializeTest extends AbstractAnydataTest {
         final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter,
             SCHEMA_CONTEXT);
         final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(Builders.anydataBuilder(DOMSourceAnydata.class)
+        normalizedNodeWriter.write(ImmutableNodes.newAnydataBuilder(DOMSourceAnydata.class)
             .withNodeIdentifier(FOO_NODEID)
             .withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>"))
             .build());
@@ -164,9 +164,9 @@ class AnydataSerializeTest extends AbstractAnydataTest {
         final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter,
             SCHEMA_CONTEXT);
         final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(Builders.containerBuilder()
+        normalizedNodeWriter.write(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(CONT_NODEID)
-            .withChild(Builders.anydataBuilder(DOMSourceAnydata.class)
+            .withChild(ImmutableNodes.newAnydataBuilder(DOMSourceAnydata.class)
                 .withNodeIdentifier(CONT_ANY_NODEID)
                 .withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>"))
                 .build())
@@ -188,13 +188,13 @@ class AnydataSerializeTest extends AbstractAnydataTest {
         final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter,
             SCHEMA_CONTEXT);
         final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(Builders.containerBuilder()
+        normalizedNodeWriter.write(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(CONT_NODEID)
-            .withChild(Builders.anydataBuilder(NormalizedAnydata.class)
+            .withChild(ImmutableNodes.newAnydataBuilder(NormalizedAnydata.class)
                 .withNodeIdentifier(CONT_ANY_NODEID)
                 .withValue(NormalizedAnydata.of(
                     DefaultSchemaTreeInference.of(SCHEMA_CONTEXT, Absolute.of(CONT_QNAME)),
-                    Builders.containerBuilder().withNodeIdentifier(CONT_NODEID).build()))
+                    ImmutableNodes.newContainerBuilder().withNodeIdentifier(CONT_NODEID).build()))
                 .build())
             .build());
         normalizedNodeWriter.flush();
