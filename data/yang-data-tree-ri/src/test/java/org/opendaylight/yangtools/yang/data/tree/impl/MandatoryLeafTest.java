@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -49,14 +49,15 @@ class MandatoryLeafTest {
         final var inMemoryDataTree = initDataTree(true);
         final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
-        final var container = Builders.containerBuilder()
+        final var container = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(choice1Id)
-                .withChild(Builders.containerBuilder()
+                .withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
-                    .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value"))
-                    .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
+                    .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value"))
+                    .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"),
+                        "leaf-value2"))
                     .build())
                 .build())
             .build();
@@ -74,7 +75,7 @@ class MandatoryLeafTest {
     void testCorrectMandatoryLeafChoiceWrite() throws DataValidationFailedException {
         final var inMemoryDataTree = initDataTree(true);
         // Container write
-        final var container = Builders.containerBuilder()
+        final var container = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
             .build();
 
@@ -88,9 +89,9 @@ class MandatoryLeafTest {
 
         // Choice write
         final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
-        final var choice = Builders.choiceBuilder()
+        final var choice = ImmutableNodes.newChoiceBuilder()
             .withNodeIdentifier(choice1Id)
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value"))
                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
@@ -112,11 +113,11 @@ class MandatoryLeafTest {
             final var inMemoryDataTree = initDataTree(true);
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
-            final var container = Builders.containerBuilder()
+            final var container = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(choice1Id)
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
                         .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
                         .build())
@@ -145,11 +146,11 @@ class MandatoryLeafTest {
         final var inMemoryDataTree = initDataTree(false);
         final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
-        final ContainerNode container = Builders.containerBuilder()
+        final ContainerNode container = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(choice1Id)
-                .withChild(Builders.containerBuilder()
+                .withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
                     .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
                     .build())
@@ -169,7 +170,7 @@ class MandatoryLeafTest {
         assertThrows(IllegalArgumentException.class, () -> {
             final var inMemoryDataTree = initDataTree(true);
             // Container write
-            final var container = Builders.containerBuilder()
+            final var container = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
 
             final var modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
@@ -182,9 +183,9 @@ class MandatoryLeafTest {
 
             // Choice write
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
-            final var choice = Builders.choiceBuilder()
+            final var choice = ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(choice1Id)
-                .withChild(Builders.containerBuilder()
+                .withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
                     .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
                     .build())
@@ -211,7 +212,7 @@ class MandatoryLeafTest {
     void testDisabledValidationChoiceWrite() throws DataValidationFailedException {
         final var inMemoryDataTree = initDataTree(false);
         // Container write
-        final var container = Builders.containerBuilder()
+        final var container = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
 
         final var modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
@@ -224,9 +225,9 @@ class MandatoryLeafTest {
 
         // Choice write
         final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
-        final var choice = Builders.choiceBuilder()
+        final var choice = ImmutableNodes.newChoiceBuilder()
             .withNodeIdentifier(choice1Id)
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
                 .build())

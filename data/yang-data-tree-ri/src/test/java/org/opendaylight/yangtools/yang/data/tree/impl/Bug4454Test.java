@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
@@ -64,11 +64,11 @@ class Bug4454Test {
     private static final YangInstanceIdentifier MIN_MAX_LEAF_LIST_PATH =
         YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node(MIN_MAX_LEAF_LIST_QNAME).build();
 
-    private final MapEntryNode fooEntryNodeWithValue = Builders.mapEntryBuilder()
+    private final MapEntryNode fooEntryNodeWithValue = ImmutableNodes.newMapEntryBuilder()
         .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo"))
         .withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "footest"))
         .build();
-    private final MapEntryNode bazEntryNodeWithValue = Builders.mapEntryBuilder()
+    private final MapEntryNode bazEntryNodeWithValue = ImmutableNodes.newMapEntryBuilder()
         .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "baz"))
         .withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "baztest"))
         .build();
@@ -78,18 +78,18 @@ class Bug4454Test {
             "bar");
     private final MapEntryNode bazEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
             "baz");
-    private final SystemMapNode mapNodeBazFuzWithNodes = ImmutableNodes.mapNodeBuilder()
+    private final SystemMapNode mapNodeBazFuzWithNodes = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).withChild(bazEntryNodeWithValue).withChild(fooEntryNode)
             .build();
-    private final SystemMapNode mapNodeFooWithNodes = ImmutableNodes.mapNodeBuilder()
+    private final SystemMapNode mapNodeFooWithNodes = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(fooEntryNode).withChild(fooEntryNodeWithValue).withChild(barEntryNode).withChild(bazEntryNode)
             .build();
-    private final SystemMapNode mapNodeBar = ImmutableNodes.mapNodeBuilder()
+    private final SystemMapNode mapNodeBar = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(barEntryNode).build();
-    private final SystemMapNode mapNodeBaz = ImmutableNodes.mapNodeBuilder()
+    private final SystemMapNode mapNodeBaz = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).build();
 
@@ -315,7 +315,7 @@ class Bug4454Test {
                 .withNodeIdentifier(gooPath)
                 .withValue("goo").build();
 
-        final var fooLeafSetNode = Builders.leafSetBuilder()
+        final var fooLeafSetNode = ImmutableNodes.newSystemLeafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
                 .withChildValue("foo")
                 .build();
@@ -429,7 +429,7 @@ class Bug4454Test {
     void minMaxListNoMinMaxDeleteTest() throws DataValidationFailedException {
         final var fooEntryNoMinMaxNode =
                 ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME, "foo");
-        final var mapNode1 = ImmutableNodes.mapNodeBuilder()
+        final var mapNode1 = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
                 .withChild(fooEntryNoMinMaxNode).build();
 

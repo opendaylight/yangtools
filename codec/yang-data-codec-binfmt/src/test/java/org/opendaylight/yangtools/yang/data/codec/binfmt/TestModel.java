@@ -92,7 +92,7 @@ public final class TestModel {
 
     public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createBaseTestContainerBuilder() {
         // Create the document
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TEST_QNAME))
             // Create a bits leaf
             .withChild(leafNode(QName.create(TEST_QNAME, "my-bits"), ImmutableSet.of("foo", "bar")))
@@ -109,53 +109,53 @@ public final class TestModel {
                         QName.create(TEST_QNAME, "key"), 10),
                     new NodeWithValue<>(QName.create(TEST_QNAME, "leaf-list-entry"), "foo"))))
             .withChild(leafNode(MYIDENTITY_QNAME, DESC_QNAME))
-            .withChild(Builders.unkeyedListBuilder()
+            .withChild(ImmutableNodes.newUnkeyedListBuilder()
                 .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
                 // Create unkeyed list entry
-                .withChild(Builders.unkeyedListEntryBuilder()
+                .withChild(ImmutableNodes.newUnkeyedListEntryBuilder()
                     .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
                     .withChild(leafNode(NAME_QNAME, "unkeyed-entry-name"))
                     .build())
                 .build())
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TWO_THREE_QNAME))
                 .withChild(leafNode(TWO_QNAME, "two"))
                 .build())
-            .withChild(Builders.orderedMapBuilder()
+            .withChild(ImmutableNodes.newUserMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ORDERED_LIST_QNAME))
                 .withChild(mapEntryBuilder(ORDERED_LIST_QNAME, ORDERED_LIST_ENTRY_QNAME, "1").build())
                 .withChild(mapEntryBuilder(ORDERED_LIST_QNAME, ORDERED_LIST_ENTRY_QNAME, "2").build())
                 .build())
             // Create a list of shoes
-            .withChild(Builders.leafSetBuilder()
+            .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(SHOE_QNAME))
-                .withChild(Builders.leafSetEntryBuilder()
+                .withChild(ImmutableNodes.leafSetEntry(
                     .withNodeIdentifier(new NodeWithValue<>(SHOE_QNAME, "nike"))
                     .withValue("nike")
                     .build())
-                .withChild(Builders.leafSetEntryBuilder()
+                .withChild(ImmutableNodes.leafSetEntry(
                     .withNodeIdentifier(new NodeWithValue<>(SHOE_QNAME, "puma"))
                     .withValue("puma")
                     .build())
                 .build())
             // Create a leaf list with numbers
-            .withChild(Builders.leafSetBuilder()
+            .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(TEST_QNAME, "number")))
-                .withChild(Builders.leafSetEntryBuilder()
+                .withChild(ImmutableNodes.leafSetEntry(
                     .withNodeIdentifier(new NodeWithValue<>(QName.create(TEST_QNAME, "number"), 5))
                     .withValue(5)
                     .build())
-                .withChild(Builders.leafSetEntryBuilder()
+                .withChild(ImmutableNodes.leafSetEntry(
                     .withNodeIdentifier(new NodeWithValue<>(QName.create(TEST_QNAME, "number"), 15))
                     .withValue(15)
                     .build())
                 .build())
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(SWITCH_FEATURES_QNAME))
                 // Test a leaf-list where each entry contains an identity
-                .withChild(Builders.leafSetBuilder()
+                .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                     .withNodeIdentifier(new NodeIdentifier(QName.create(TEST_QNAME, "capability")))
-                    .withChild(Builders.leafSetEntryBuilder()
+                    .withChild(ImmutableNodes.leafSetEntry(
                         .withNodeIdentifier(new NodeWithValue<>(QName.create(TEST_QNAME, "capability"), DESC_QNAME))
                         .withValue(DESC_QNAME)
                         .build())
@@ -176,10 +176,10 @@ public final class TestModel {
     }
 
     private static MapEntryNode createAugmentedListEntry(final int id, final String name) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(AUGMENTED_LIST_QNAME, ID_QNAME, id))
             .withChild(leafNode(ID_QNAME, id))
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(AUG_CONT_QNAME))
                 .withChild(leafNode(AUG_NAME_QNAME, name))
                 .build())

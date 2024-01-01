@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -66,7 +65,7 @@ class Bug7246Test {
                 }
               }
             }""");
-        final var inputStructure = Builders.containerBuilder()
+        final var inputStructure = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(qN("my-name")))
             .withChild(ImmutableNodes.leafNode(new NodeIdentifier(qN("my-name")), "my-value"))
             .build();

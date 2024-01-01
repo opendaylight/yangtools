@@ -28,10 +28,8 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -49,13 +47,13 @@ public class NormalizedNodeXmlTranslationTest extends AbstractXmlTest {
         final var containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final var leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(container)
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(augmentChoice1QName))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(augmentChoice2QName))
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(new NodeIdentifier(containerQName))
                         .withChild(ImmutableNodes.leafNode(leafQName, "leaf-value"))
                         .build())
@@ -65,76 +63,47 @@ public class NormalizedNodeXmlTranslationTest extends AbstractXmlTest {
     }
 
     private static ContainerNode withAttributes() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(getNodeIdentifier("container"))
-            .withChild(Builders.mapBuilder()
+            .withChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(getNodeIdentifier("list"))
-                .withChild(Builders.mapEntryBuilder()
+                .withChild(ImmutableNodes.newMapEntryBuilder()
                     .withNodeIdentifier(NodeIdentifierWithPredicates.of(getNodeIdentifier("list").getNodeType(),
                         getNodeIdentifier("uint32InList").getNodeType(), Uint32.valueOf(3)))
-                    .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(getNodeIdentifier("uint32InList"))
-                        .withValue(Uint32.valueOf(3))
-                        .build())
+                    .withChild(ImmutableNodes.leafNode(getNodeIdentifier("uint32InList"), Uint32.valueOf(3)))
                     .build())
                 .build())
-            .withChild(Builders.leafBuilder()
-                .withNodeIdentifier(getNodeIdentifier("boolean"))
-                .withValue(Boolean.FALSE)
-                .build())
-            .withChild(Builders.leafSetBuilder()
+            .withChild(ImmutableNodes.leafNode(getNodeIdentifier("boolean"), Boolean.FALSE))
+            .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                 .withNodeIdentifier(getNodeIdentifier("leafList"))
-                .withChild(Builders.leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(getNodeIdentifier("leafList").getNodeType(), "a"))
-                    .withValue("a")
-                    .build())
+                .withChild(ImmutableNodes.leafSetEntry(getNodeIdentifier("leafList").getNodeType(), "a"))
                 .build())
             .build();
     }
 
     private static ContainerNode augmentChoiceHell() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(getNodeIdentifier("container"))
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(getNodeIdentifier("ch2"))
-                .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(getNodeIdentifier("c2Leaf"))
-                    .withValue("2")
-                    .build())
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.leafNode(getNodeIdentifier("c2Leaf"), "2"))
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(getNodeIdentifier("c2DeepChoice"))
-                    .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(getNodeIdentifier("c2DeepChoiceCase1Leaf2"))
-                        .withValue("2")
-                        .build())
+                    .withChild(ImmutableNodes.leafNode(getNodeIdentifier("c2DeepChoiceCase1Leaf2"), "2"))
                     .build())
                 .build())
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(getNodeIdentifier("ch3"))
-                .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(getNodeIdentifier("c3Leaf"))
-                    .withValue("3")
-                    .build())
+                .withChild(ImmutableNodes.leafNode(getNodeIdentifier("c3Leaf"), "3"))
                 .build())
-            .withChild(Builders.leafBuilder()
-                .withNodeIdentifier(getNodeIdentifier("augLeaf"))
-                .withValue("augment")
-                .build())
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.leafNode(getNodeIdentifier("augLeaf"), "augment"))
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(getNodeIdentifier("ch"))
-                .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(getNodeIdentifier("c1Leaf")).withValue("1")
-                    .build())
-                .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(getNodeIdentifier("c1Leaf_AnotherAugment"))
-                    .withValue("1")
-                    .build())
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.leafNode(getNodeIdentifier("c1Leaf"), "1"))
+                .withChild(ImmutableNodes.leafNode(getNodeIdentifier("c1Leaf_AnotherAugment"), "1"))
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(getNodeIdentifier("deepChoice"))
-                    .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(getNodeIdentifier("deepLeafc1"))
-                        .withValue("1")
-                        .build())
+                    .withChild(ImmutableNodes.leafNode(getNodeIdentifier("deepLeafc1"), "1"))
                     .build())
                 .build())
             .build();

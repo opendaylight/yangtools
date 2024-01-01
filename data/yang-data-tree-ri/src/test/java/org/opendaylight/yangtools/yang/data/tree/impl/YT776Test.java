@@ -9,9 +9,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafSetBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.mapBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.mapEntryBuilder;
@@ -29,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -45,8 +43,7 @@ class YT776Test {
     private static final NodeIdentifier OBJECT_LIST = new NodeIdentifier(OBJECT);
     private static final NodeIdentifierWithPredicates OBJECT_ITEM = NodeIdentifierWithPredicates.of(OBJECT,
         ImmutableMap.of(OBJECT_ID, "1"));
-    private static final LeafNode<?> OBJECT_ID_LEAF = leafBuilder().withNodeIdentifier(new NodeIdentifier(OBJECT_ID))
-            .withValue("1").build();
+    private static final LeafNode<?> OBJECT_ID_LEAF = ImmutableNodes.leafNode(OBJECT_ID, "1");
     private static final NodeIdentifier ATTRIBUTES = new NodeIdentifier(QName.create(MODULE, "attributes"));
 
     private static final QName NESTED = QName.create(MODULE, "nested");
@@ -126,15 +123,18 @@ class YT776Test {
     @Test
     void testNoAttributes() {
         final var mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
-            .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
-                .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
+        mod.write(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(OBJECT_LIST)
+                .addChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
                     .build())
                 .build())
             .build());
 
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, mod::ready);
+        final var ex = assertThrows(IllegalArgumentException.class, mod::ready);
         // FIXME: This is actually mandatory leaf enforcer kicking in: attributes have to be present. This is
         //        most probably not what we want.
         assertEquals("Node (yt776)object[{(yt776)object-id=1}] is missing mandatory descendant /(yt776)attributes",
@@ -143,11 +143,14 @@ class YT776Test {
 
     @Test
     void testEmptyAttributes() throws DataValidationFailedException {
-        final var mod = write(containerBuilder().withNodeIdentifier(BOX)
-            .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
-                .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
+        final var mod = write(ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(OBJECT_LIST)
+                .addChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
-                    .withChild(leafSetBuilder().withNodeIdentifier(ATTRIBUTES).build())
+                    .withChild(ImmutableNodes.newSystemLeafSetBuilder().withNodeIdentifier(ATTRIBUTES).build())
                     .build())
                 .build())
             .build());
@@ -159,7 +162,8 @@ class YT776Test {
 
     @Test
     void testOneAttribute() throws DataValidationFailedException {
-        writeAndCommit(containerBuilder().withNodeIdentifier(BOX)
+        writeAndCommit(ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -173,7 +177,8 @@ class YT776Test {
 
     @Test
     void testTwoAttributes() throws DataValidationFailedException {
-        writeAndCommit(containerBuilder().withNodeIdentifier(BOX)
+        writeAndCommit(ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -188,7 +193,8 @@ class YT776Test {
 
     @Test
     void testThreeAttributes() throws DataValidationFailedException {
-        final var mod = write(containerBuilder().withNodeIdentifier(BOX)
+        final var mod = write(ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -209,14 +215,16 @@ class YT776Test {
     @Test
     void testEmptyAndMergeOne() throws DataValidationFailedException {
         final var mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.write(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
                     .build())
                 .build())
             .build());
-        mod.merge(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.merge(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -233,14 +241,16 @@ class YT776Test {
     @Test
     void testEmptyAndMergeOneWithListTouched() throws DataValidationFailedException {
         final var mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.write(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
                     .build())
                 .build())
             .build());
-        mod.merge(YangInstanceIdentifier.of(BOX), containerBuilder().withNodeIdentifier(BOX)
+        mod.merge(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(BOX)
             .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
                 .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
                     .withChild(OBJECT_ID_LEAF)
@@ -260,13 +270,15 @@ class YT776Test {
     void testDisappearInChoice() throws DataValidationFailedException {
         var mod = dataTree.takeSnapshot().newModification();
         // Initialize choice with list
-        mod.write(YangInstanceIdentifier.of(BOX), containerBuilder()
+        mod.write(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BOX)
-            .withChild(choiceBuilder().withNodeIdentifier(ANY_OF)
-                .withChild(mapBuilder().withNodeIdentifier(SOME_LIST_ID)
-                    .withChild(mapEntryBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
+                .withNodeIdentifier(ANY_OF)
+                .withChild(ImmutableNodes.newSystemMapBuilder()
+                    .withNodeIdentifier(SOME_LIST_ID)
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(SOME_LIST_ITEM)
-                        .withChild(leafBuilder().withNodeIdentifier(SOME_LEAF_ID).withValue("foo").build())
+                        .withChild(ImmutableNodes.leafNode(SOME_LEAF_ID, "foo"))
                         .build())
                     .build())
                 .build())
@@ -276,8 +288,7 @@ class YT776Test {
         // Now delete the single item, causing the list to fizzle, while creating the alterinative case
         mod = dataTree.takeSnapshot().newModification();
         mod.delete(YangInstanceIdentifier.of(BOX, ANY_OF, SOME_LIST_ID, SOME_LIST_ITEM));
-        mod.write(YangInstanceIdentifier.of(BOX, ANY_OF, SOME_LEAF_ID),
-            leafBuilder().withNodeIdentifier(SOME_LEAF_ID).withValue("foo").build());
+        mod.write(YangInstanceIdentifier.of(BOX, ANY_OF, SOME_LEAF_ID), ImmutableNodes.leafNode(SOME_LEAF_ID, "foo"));
 
         commit(mod);
     }

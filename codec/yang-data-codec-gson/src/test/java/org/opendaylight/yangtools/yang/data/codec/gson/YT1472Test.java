@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -66,11 +65,11 @@ class YT1472Test {
                 ]
               }
             }""")));
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(NodeIdentifier.create(QName.create(RESTCONF_MODULE, "errors")))
-            .withChild(Builders.unkeyedListBuilder()
+            .withChild(ImmutableNodes.newUnkeyedListBuilder()
                 .withNodeIdentifier(ERROR_NID)
-                .withChild(Builders.unkeyedListEntryBuilder()
+                .withChild(ImmutableNodes.newUnkeyedListEntryBuilder()
                     .withNodeIdentifier(ERROR_NID)
                     .withChild(ImmutableNodes.leafNode(QName.create(RESTCONF_MODULE, "error-type"), "protocol"))
                     .withChild(ImmutableNodes.leafNode(QName.create(RESTCONF_MODULE, "error-tag"), "lock-denied"))

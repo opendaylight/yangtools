@@ -19,8 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -94,7 +93,7 @@ class Bug4295Test {
         DataTreeModification modification = inMemoryDataTree.takeSnapshot().newModification();
         modification.merge(path, createRootContainerBuilder()
             .withChild(createSubRootContainerBuilder()
-                .withChild(ImmutableNodes.mapNodeBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(NodeIdentifier.create(outerList))
                     .withChild(createOuterListEntry("1", "o-1"))
                     .withChild(createOuterListEntry("2", "o-2"))
@@ -121,7 +120,7 @@ class Bug4295Test {
         /*  MERGE */
         ContainerNode rootContainerNode = createRootContainerBuilder()
             .withChild(createSubRootContainerBuilder()
-                .withChild(ImmutableNodes.mapNodeBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(NodeIdentifier.create(outerList))
                     .withChild(createOuterListEntry("3", "o-3"))
                     .withChild(createOuterListEntry("4", "o-4"))
@@ -174,15 +173,15 @@ class Bug4295Test {
     }
 
     private DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createRootContainerBuilder() {
-        return Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(root));
+        return ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(root));
     }
 
     private DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createSubRootContainerBuilder() {
-        return  Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(subRoot));
+        return  ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(subRoot));
     }
 
     private CollectionNodeBuilder<MapEntryNode, SystemMapNode> createInnerListBuilder() {
-        return ImmutableNodes.mapNodeBuilder().withNodeIdentifier(NodeIdentifier.create(innerList));
+        return ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(NodeIdentifier.create(innerList));
     }
 
     private NodeIdentifierWithPredicates createInnerListEntryPath(final String keyValue) {

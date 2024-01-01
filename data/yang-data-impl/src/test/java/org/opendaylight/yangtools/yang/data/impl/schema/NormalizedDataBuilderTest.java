@@ -13,12 +13,13 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 class NormalizedDataBuilderTest {
     @Test
     void testSchemaUnaware() {
         // Container
-        final var builder = Builders.containerBuilder()
+        final var builder = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(getNodeIdentifier("container"))
             .withChild(Builders.<String>leafBuilder()
                 .withNodeIdentifier(getNodeIdentifier("leaf"))
@@ -32,14 +33,14 @@ class NormalizedDataBuilderTest {
                     .withValue(3)
                     .build())
                 .build())
-            .withChild(Builders.mapBuilder()
+            .withChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(getNodeIdentifier("list"))
-                .withChild(Builders.mapEntryBuilder()
+                .withChild(ImmutableNodes.newMapEntryBuilder()
                     .withChild(Builders.<Integer>leafBuilder()
                         .withNodeIdentifier(getNodeIdentifier("uint32InList"))
                         .withValue(1)
                         .build())
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(getNodeIdentifier("containerInList"))
                         .build())
                     .withNodeIdentifier(NodeIdentifierWithPredicates.of(getNodeIdentifier("list").getNodeType(),

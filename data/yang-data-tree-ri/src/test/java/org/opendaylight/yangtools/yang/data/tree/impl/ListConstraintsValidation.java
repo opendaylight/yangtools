@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -139,10 +139,10 @@ class ListConstraintsValidation {
 
         final var fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo");
         final var barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar");
-        final var mapNode1 = ImmutableNodes.mapNodeBuilder()
+        final var mapNode1 = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(fooEntryNode).build();
-        final var mapNode2 = ImmutableNodes.mapNodeBuilder()
+        final var mapNode2 = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(barEntryNode).build();
 
@@ -172,7 +172,7 @@ class ListConstraintsValidation {
                     "bar");
             final var gooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
                     "goo");
-            final var mapNode = ImmutableNodes.mapNodeBuilder()
+            final var mapNode = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(fooEntryNode).build();
 
@@ -225,7 +225,7 @@ class ListConstraintsValidation {
         final var barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
         final var gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH, Builders.leafSetBuilder()
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH, ImmutableNodes.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
             .withChildValue("foo")
             .build());
@@ -262,7 +262,7 @@ class ListConstraintsValidation {
         final var gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
         final var fuuPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "fuu");
 
-        modificationTree.write(MIN_MAX_LEAF_LIST_PATH, Builders.leafSetBuilder()
+        modificationTree.write(MIN_MAX_LEAF_LIST_PATH, ImmutableNodes.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
             .withChildValue("foo")
             .build());
@@ -291,9 +291,9 @@ class ListConstraintsValidation {
     void unkeyedListTestPass() throws DataValidationFailedException {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final var unkeyedListNode = Builders.unkeyedListBuilder()
+        final var unkeyedListNode = ImmutableNodes.newUnkeyedListBuilder()
             .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
-            .withValue(List.of(Builders.unkeyedListEntryBuilder()
+            .withValue(List.of(ImmutableNodes.newUnkeyedListEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
                 .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "foo"))
                 .build()))
@@ -317,14 +317,14 @@ class ListConstraintsValidation {
     void unkeyedListTestFail() {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        modificationTree.write(UNKEYED_LIST_PATH, Builders.unkeyedListBuilder()
+        modificationTree.write(UNKEYED_LIST_PATH, ImmutableNodes.newUnkeyedListBuilder()
             .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
             .withValue(List.of(
-                Builders.unkeyedListEntryBuilder()
+                ImmutableNodes.newUnkeyedListEntryBuilder()
                     .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
                     .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "foo"))
                     .build(),
-                Builders.unkeyedListEntryBuilder()
+                ImmutableNodes.newUnkeyedListEntryBuilder()
                     .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
                     .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "bar"))
                     .build()))

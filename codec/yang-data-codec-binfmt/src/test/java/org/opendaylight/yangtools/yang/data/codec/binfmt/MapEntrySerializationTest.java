@@ -60,7 +60,7 @@ class MapEntrySerializationTest extends AbstractSerializationTest {
     }
 
     private static MapEntryNode createEntry(final int size) {
-        final var builder = Builders.mapEntryBuilder();
+        final var builder = ImmutableNodes.newMapEntryBuilder();
         final var predicates = Maps.<QName, Object>newHashMapWithExpectedSize(size);
         for (var qname : generateQNames(size)) {
             builder.withChild(ImmutableNodes.leafNode(qname, "a"));

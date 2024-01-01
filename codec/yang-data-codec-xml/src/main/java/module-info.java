@@ -24,4 +24,5 @@ module org.opendaylight.yangtools.yang.data.codec.xml {
 
     // Annotations
     requires static org.eclipse.jdt.annotation;
+    requires org.opendaylight.yangtools.yang.data.spi;
 }
