@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -39,12 +38,6 @@ public final class YangVersionStatementSupport
     @Override
     public YangVersion parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return SourceException.unwrap(YangVersion.parse(value), ctx,  "Unsupported YANG version %s", value);
-    }
-
-    @Override
-    public void onPreLinkageDeclared(
-            final Mutable<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> stmt) {
-        stmt.setRootVersion(stmt.argument());
     }
 
     @Override

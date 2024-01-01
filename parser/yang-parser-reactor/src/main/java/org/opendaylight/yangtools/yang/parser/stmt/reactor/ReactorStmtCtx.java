@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
@@ -191,21 +190,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     @Override
     public final YangVersion yangVersion() {
         return getRoot().getRootVersionImpl();
-    }
-
-    @Override
-    public final void setRootVersion(final YangVersion version) {
-        getRoot().setRootVersionImpl(version);
-    }
-
-    @Override
-    public final void addRequiredSource(final SourceIdentifier dependency) {
-        getRoot().addRequiredSourceImpl(dependency);
-    }
-
-    @Override
-    public final void setRootIdentifier(final SourceIdentifier identifier) {
-        getRoot().setRootIdentifierImpl(identifier);
     }
 
     @Override

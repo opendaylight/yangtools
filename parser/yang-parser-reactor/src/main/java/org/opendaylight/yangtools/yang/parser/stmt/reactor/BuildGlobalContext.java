@@ -52,7 +52,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,11 +155,11 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     private void executePhases() throws ReactorException {
-        for (final ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
-            startPhase(phase);
+        for (var processingPhase : PHASE_EXECUTION_ORDER) {
+            startPhase(processingPhase);
             loadPhaseStatements();
             completePhaseActions();
-            endPhase(phase);
+            endPhase(processingPhase);
         }
     }
 
@@ -294,7 +293,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     @SuppressWarnings("checkstyle:illegalCatch")
     private void completePhaseActions() throws ReactorException {
         checkState(currentPhase != null);
-        final List<SourceSpecificContext> sourcesToProgress = new ArrayList<>(sources);
+        final var sourcesToProgress = new ArrayList<>(sources);
         if (!libSources.isEmpty()) {
             checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                     "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, "
@@ -306,12 +305,11 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         while (progressing) {
             // We reset progressing to false.
             progressing = false;
-            final Iterator<SourceSpecificContext> currentSource = sourcesToProgress.iterator();
+            final var currentSource = sourcesToProgress.iterator();
             while (currentSource.hasNext()) {
-                final SourceSpecificContext nextSourceCtx = currentSource.next();
+                final var nextSource = currentSource.next();
                 try {
-                    final PhaseCompletionProgress sourceProgress =
-                        nextSourceCtx.tryToCompletePhase(currentPhase.executionOrder());
+                    final var sourceProgress = nextSource.tryToCompletePhase(currentPhase.executionOrder());
                     switch (sourceProgress) {
                         case FINISHED:
                             currentSource.remove();
@@ -328,13 +326,13 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
                             throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
                     }
                 } catch (final RuntimeException ex) {
-                    throw propagateException(nextSourceCtx, ex);
+                    throw propagateException(nextSource, ex);
                 }
             }
         }
 
         if (!libSources.isEmpty()) {
-            final Set<SourceSpecificContext> requiredLibs = getRequiredSourcesFromLib();
+            final var requiredLibs = getRequiredSourcesFromLib();
             sources.addAll(requiredLibs);
             libSources = ImmutableSet.of();
             /*
@@ -345,7 +343,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         }
 
         if (!sourcesToProgress.isEmpty()) {
-            final SomeModifiersUnresolvedException buildFailure = addSourceExceptions(sourcesToProgress);
+            final var buildFailure = addSourceExceptions(sourcesToProgress);
             if (buildFailure != null) {
                 throw buildFailure;
             }
@@ -356,27 +354,28 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                 "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
                         + " but current phase was %s", currentPhase);
-        final TreeBasedTable<Unqualified, Optional<Revision>, SourceSpecificContext> libSourcesTable =
-            TreeBasedTable.create(Unqualified::compareTo, Revision::compare);
-        for (final SourceSpecificContext libSource : libSources) {
-            final SourceIdentifier libSourceIdentifier = requireNonNull(libSource.getRootIdentifier());
-            libSourcesTable.put(libSourceIdentifier.name(),
-                Optional.ofNullable(libSourceIdentifier.revision()), libSource);
+        final var libSourcesTable = TreeBasedTable.<Unqualified, Optional<Revision>, SourceSpecificContext>create(
+            Unqualified::compareTo, Revision::compare);
+        for (var libSource : libSources) {
+            final var libSourceIdentifier = requireNonNull(libSource.getRootIdentifier());
+            libSourcesTable.put(libSourceIdentifier.name(), Optional.ofNullable(libSourceIdentifier.revision()),
+                libSource);
         }
 
-        final Set<SourceSpecificContext> requiredLibs = new HashSet<>();
-        for (final SourceSpecificContext source : sources) {
+        final var requiredLibs = new HashSet<SourceSpecificContext>();
+        for (var source : sources) {
             collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, source);
             removeConflictingLibSources(source, requiredLibs);
         }
         return requiredLibs;
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     private void collectRequiredSourcesFromLib(
             final TreeBasedTable<Unqualified, Optional<Revision>, SourceSpecificContext> libSourcesTable,
             final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
-        for (final SourceIdentifier requiredSource : source.getRequiredSources()) {
-            final SourceSpecificContext libSource = getRequiredLibSource(requiredSource, libSourcesTable);
+        for (var requiredSource : source.getRequiredSources()) {
+            final var libSource = getRequiredLibSource(requiredSource, libSourcesTable);
             if (libSource != null && requiredLibs.add(libSource)) {
                 collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, libSource);
             }

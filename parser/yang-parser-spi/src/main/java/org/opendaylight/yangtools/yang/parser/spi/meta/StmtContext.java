@@ -19,11 +19,9 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
  * An inference context associated with an instance of a statement.
@@ -253,28 +251,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @NonNull ModelActionBuilder newInferenceAction(@NonNull ModelProcessingPhase phase);
 
         /**
-         * Set version of root statement context.
-         *
-         * @param version
-         *            of root statement context
-         */
-        void setRootVersion(YangVersion version);
-
-        /**
-         * Add required module. Based on these dependencies are collected required sources from library sources.
-         *
-         * @param dependency
-         *            SourceIdentifier of module required by current root
-         *            context
-         */
-        /*
-         * FIXME: this method is used solely during SOURCE_PRE_LINKAGE reactor phase and does not have a corresponding
-         *        getter -- which makes it rather strange. At some point this method needs to be deprecated and its
-         *        users migrated to use proper global namespace.
-         */
-        void addRequiredSource(SourceIdentifier dependency);
-
-        /**
          * Adds an effective statement to collection of substatements.
          *
          * @param substatement substatement
@@ -340,14 +316,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         StmtContext<?, ?, ?> wrapWithImplicit(StmtContext<?, ?, ?> original);
 
         void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
-
-        /**
-         * Set identifier of current root context.
-         *
-         * @param identifier
-         *            of current root context, must not be null
-         */
-        void setRootIdentifier(SourceIdentifier identifier);
 
         void setUnsupported();
     }

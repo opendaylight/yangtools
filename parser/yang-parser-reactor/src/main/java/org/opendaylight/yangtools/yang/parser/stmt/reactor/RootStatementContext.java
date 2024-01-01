@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
@@ -29,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -55,8 +52,11 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     private final @NonNull SourceSpecificContext sourceContext;
     private final A argument;
 
+    // FIXME: this should be constant
     private YangVersion rootVersion;
-    private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
+    @Deprecated(since = "12.0.0", forRemoval = true)
+    private final Set<SourceIdentifier> requiredSources = ImmutableSet.of();
+    @Deprecated(since = "12.0.0", forRemoval = true)
     private SourceIdentifier rootIdentifier;
 
     /**
@@ -75,8 +75,8 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
             final StatementSourceReference ref, final String rawArgument, final YangVersion version,
             final SourceIdentifier identifier) {
         this(sourceContext, def, ref, rawArgument);
-        setRootVersion(version);
-        setRootIdentifier(identifier);
+        rootVersion = requireNonNull(version);
+        rootIdentifier = requireNonNull(identifier);
     }
 
     @Override
@@ -191,6 +191,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
      *
      * @return Required sources.
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     Collection<SourceIdentifier> getRequiredSources() {
         return ImmutableSet.copyOf(requiredSources);
     }
@@ -214,20 +215,8 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         return true;
     }
 
-    void setRootIdentifierImpl(final SourceIdentifier identifier) {
-        rootIdentifier = requireNonNull(identifier);
-    }
-
     @NonNull YangVersion getRootVersionImpl() {
         return rootVersion == null ? DEFAULT_VERSION : rootVersion;
-    }
-
-    void setRootVersionImpl(final YangVersion version) {
-        checkArgument(sourceContext.globalContext().getSupportedVersions().contains(version),
-                "Unsupported yang version %s in %s", version, sourceReference());
-        checkState(rootVersion == null, "Version of root %s has been already set to %s", argument,
-                rootVersion);
-        rootVersion = requireNonNull(version);
     }
 
     /**
@@ -239,15 +228,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
      */
     void addMutableStmtToSeal(final MutableStatement mutableStatement) {
         sourceContext.globalContext().addMutableStmtToSeal(mutableStatement);
-    }
-
-    void addRequiredSourceImpl(final SourceIdentifier dependency) {
-        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
-        if (requiredSources.isEmpty()) {
-            requiredSources = new HashSet<>();
-        }
-        requiredSources.add(dependency);
     }
 
     @Deprecated
