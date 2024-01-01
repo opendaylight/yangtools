@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -148,21 +147,21 @@ class YT821Test {
     }
 
     private static ContainerNode refFromAug(final String refValue) {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT))
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(FOO))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, NAME, "foo1"))
                         .withChild(ImmutableNodes.leafNode(NAME, "foo1"))
                         .build())
                     .build())
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAR))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAR, NAME, "bar1"))
                         .withChild(ImmutableNodes.leafNode(NAME, "bar1"))
-                        .withChild(Builders.containerBuilder()
+                        .withChild(ImmutableNodes.newContainerBuilder()
                             .withNodeIdentifier(new NodeIdentifier(CONTAINER_IN_LIST))
                             .withChild(ImmutableNodes.leafNode(REF_FROM_AUG, refValue))
                             .build())
@@ -172,21 +171,21 @@ class YT821Test {
     }
 
     private static ContainerNode refInContainer(final String refValue) {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT))
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(FOO))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, NAME, "foo1"))
                         .withChild(ImmutableNodes.leafNode(NAME, "foo1"))
                         .build())
                     .build())
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAR))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAR, NAME, "bar1"))
                         .withChild(ImmutableNodes.leafNode(NAME, "bar1"))
-                        .withChild(Builders.containerBuilder()
+                        .withChild(ImmutableNodes.newContainerBuilder()
                             .withNodeIdentifier(new NodeIdentifier(CONTAINER_FROM_AUG))
                             .withChild(ImmutableNodes.leafNode(REF_IN_CONTAINER, refValue))
                             .build())

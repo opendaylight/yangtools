@@ -16,6 +16,7 @@ module org.opendaylight.yangtools.yang.data.codec.gson {
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.impl;
+    requires org.opendaylight.yangtools.yang.data.spi;
     requires org.opendaylight.yangtools.yang.data.util;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.util;

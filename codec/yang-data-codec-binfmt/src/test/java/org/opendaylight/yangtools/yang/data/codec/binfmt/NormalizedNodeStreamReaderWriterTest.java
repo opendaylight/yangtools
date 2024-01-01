@@ -34,11 +34,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.xml.sax.InputSource;
@@ -56,11 +54,11 @@ class NormalizedNodeStreamReaderWriterTest {
         final var toaster = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","toaster");
         final var darknessFactor = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","darknessFactor");
         final var description = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","description");
-        final var toasterNode = Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(toaster))
+        final var toasterNode = ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(toaster))
                 .withChild(ImmutableNodes.leafNode(darknessFactor, "1000"))
                 .withChild(ImmutableNodes.leafNode(description, largeString(20))).build();
 
-        final var toasterContainer = Builders.containerBuilder()
+        final var toasterContainer = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME)).withChild(toasterNode).build();
         nnout.writeNormalizedNode(toasterContainer);
 
@@ -82,20 +80,14 @@ class NormalizedNodeStreamReaderWriterTest {
         final byte[] bytes2 = {};
 
         return TestModel.createBaseTestContainerBuilder()
-            .withChild(Builders.leafSetBuilder()
+            .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.BINARY_LEAF_LIST_QNAME))
-                .withChild(Builders.leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(TestModel.BINARY_LEAF_LIST_QNAME, bytes1))
-                    .withValue(bytes1)
-                    .build())
-                .withChild(Builders.leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(TestModel.BINARY_LEAF_LIST_QNAME, bytes2))
-                    .withValue(bytes2)
-                    .build())
+                .withChild(ImmutableNodes.leafSetEntry(TestModel.BINARY_LEAF_LIST_QNAME, bytes1))
+                .withChild(ImmutableNodes.leafSetEntry(TestModel.BINARY_LEAF_LIST_QNAME, bytes2))
                 .build())
             .withChild(ImmutableNodes.leafNode(TestModel.SOME_BINARY_DATA_QNAME, new byte[]{1, 2, 3, 4}))
             .withChild(ImmutableNodes.leafNode(TestModel.EMPTY_QNAME, Empty.value()))
-            .withChild(Builders.orderedMapBuilder()
+            .withChild(ImmutableNodes.newUserMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.ORDERED_LIST_QNAME))
                 .withChild(ImmutableNodes.mapEntry(TestModel.ORDERED_LIST_ENTRY_QNAME, TestModel.ID_QNAME, 11))
                 .build())
@@ -185,9 +177,9 @@ class NormalizedNodeStreamReaderWriterTest {
 
         assertEquals("http://www.w3.org/TR/html4/", xmlNode.getNamespaceURI());
 
-        final var anyXmlContainer = Builders.containerBuilder()
+        final var anyXmlContainer = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(Builders.anyXmlBuilder()
+            .withChild(ImmutableNodes.newAnyxmlBuilder(DOMSource.class)
                 .withNodeIdentifier(new NodeIdentifier(TestModel.ANY_XML_QNAME))
                 .withValue(new DOMSource(xmlNode))
                 .build())
@@ -270,8 +262,9 @@ class NormalizedNodeStreamReaderWriterTest {
     @ParameterizedTest
     @MethodSource
     void testHugeEntries(final NormalizedNodeStreamVersion version, final int size) throws Exception {
-        final var mapBuilder = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME));
-        final var entryBuilder = Builders.mapEntryBuilder()
+        final var mapBuilder = ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME));
+        final var entryBuilder = ImmutableNodes.newMapEntryBuilder()
             .withChild(ImmutableNodes.leafNode(TestModel.DESC_QNAME, (byte) 42));
 
         for (int i = 0; i < 100_000; ++i) {

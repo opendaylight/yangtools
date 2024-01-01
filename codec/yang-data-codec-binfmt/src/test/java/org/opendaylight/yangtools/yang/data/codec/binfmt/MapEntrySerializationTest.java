@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 class MapEntrySerializationTest extends AbstractSerializationTest {
@@ -60,7 +59,7 @@ class MapEntrySerializationTest extends AbstractSerializationTest {
     }
 
     private static MapEntryNode createEntry(final int size) {
-        final var builder = Builders.mapEntryBuilder();
+        final var builder = ImmutableNodes.newMapEntryBuilder();
         final var predicates = Maps.<QName, Object>newHashMapWithExpectedSize(size);
         for (var qname : generateQNames(size)) {
             builder.withChild(ImmutableNodes.leafNode(qname, "a"));

@@ -50,19 +50,19 @@ class BuilderTest {
     @Test
     void immutableOrderedMapBuilderTest() {
         final var mapEntryPath = NodeIdentifierWithPredicates.of(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 1);
-        final var orderedMapNodeCreateNull = BUILDER_FACTORY.newUserMapBuilder()
+        final var orderedMapNodeCreateNull = ImmutableNodes.newUserMapBuilder()
                 .withNodeIdentifier(NODE_IDENTIFIER_LIST)
                 .withChild(LIST_MAIN_CHILD_1)
                 .addChild(LIST_MAIN_CHILD_2)
                 .withValue(List.of(LIST_MAIN_CHILD_3))
                 .build();
-        final var orderedMapNodeCreateSize = BUILDER_FACTORY.newUserMapBuilder(SIZE)
+        final var orderedMapNodeCreateSize = ImmutableNodes.builderFactory().newUserMapBuilder(SIZE)
                 .withNodeIdentifier(NODE_IDENTIFIER_LIST)
                 .build();
         final var orderedMapNodeCreateNode = ImmutableUserMapNodeBuilder.create(orderedMapNodeCreateNull)
                 .removeChild(mapEntryPath)
                 .build();
-        final var orderedMapNodeSchemaAware = BUILDER_FACTORY.newUserMapBuilder()
+        final var orderedMapNodeSchemaAware = ImmutableNodes.newUserMapBuilder()
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .withChild(LIST_MAIN_CHILD_1)
                 .build();
@@ -80,18 +80,18 @@ class BuilderTest {
 
     @Test
     void immutableUserLeafSetNodeBuilderTest() {
-        final var orderedLeafSet = BUILDER_FACTORY.<String>newUserLeafSetBuilder()
+        final var orderedLeafSet = ImmutableNodes.<String>newUserLeafSetBuilder()
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .withChild(LEAF_SET_ENTRY_NODE)
                 .withChildValue("baz")
                 .removeChild(BAR_PATH)
                 .build();
-        final var orderedMapNodeSchemaAware = BUILDER_FACTORY.newUserLeafSetBuilder()
+        final var orderedMapNodeSchemaAware = ImmutableNodes.newUserLeafSetBuilder()
             .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
             .withChildValue("baz")
             .build();
 
-        assertNotNull(BUILDER_FACTORY.newAnyxmlBuilder(DOMSource.class));
+        assertNotNull(ImmutableNodes.newAnyxmlBuilder(DOMSource.class));
         assertEquals(1, orderedLeafSet.size());
         assertEquals("baz", orderedLeafSet.childAt(0).body());
         assertNull(orderedLeafSet.childByArg(BAR_PATH));
@@ -110,7 +110,7 @@ class BuilderTest {
 
     @Test
     void immutableUnkeyedListEntryNodeBuilderTest() {
-        final var unkeyedListEntryNode = BUILDER_FACTORY.newUnkeyedListEntryBuilder()
+        final var unkeyedListEntryNode = ImmutableNodes.newUnkeyedListEntryBuilder()
                 .withNodeIdentifier(NODE_IDENTIFIER_LIST)
                 .build();
         final var unkeyedListEntryNodeSize = BUILDER_FACTORY.newUnkeyedListEntryBuilder(1)
@@ -123,10 +123,10 @@ class BuilderTest {
 
     @Test
     void immutableUnkeyedListNodeBuilderTest() {
-        final var unkeyedListEntryNode = BUILDER_FACTORY.newUnkeyedListEntryBuilder()
+        final var unkeyedListEntryNode = ImmutableNodes.newUnkeyedListEntryBuilder()
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF)
                 .build();
-        final var immutableUnkeyedListNodeBuilder = BUILDER_FACTORY.newUnkeyedListBuilder();
+        final var immutableUnkeyedListNodeBuilder = ImmutableNodes.newUnkeyedListBuilder();
         final var unkeyedListNode = immutableUnkeyedListNodeBuilder
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .addChild(unkeyedListEntryNode)
@@ -176,12 +176,12 @@ class BuilderTest {
 
     @Test
     void immutableUnkeyedListNodeBuilderExceptionTest() {
-        final var builder = BUILDER_FACTORY.newUnkeyedListBuilder().withNodeIdentifier(NODE_IDENTIFIER_LEAF);
+        final var builder = ImmutableNodes.newUnkeyedListBuilder().withNodeIdentifier(NODE_IDENTIFIER_LEAF);
         assertThrows(UnsupportedOperationException.class, () -> builder.removeChild(NODE_IDENTIFIER_LIST));
     }
 
     private static UserMapNode getImmutableUserMapNode() {
-        return BUILDER_FACTORY.newUserMapBuilder()
+        return ImmutableNodes.newUserMapBuilder()
             .withNodeIdentifier(NODE_IDENTIFIER_LIST)
             .withChild(LIST_MAIN_CHILD_1)
             .build();

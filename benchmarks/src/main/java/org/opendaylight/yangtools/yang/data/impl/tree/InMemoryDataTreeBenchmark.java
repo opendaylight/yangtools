@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.data.impl.tree;
 import com.google.common.collect.Streams;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -63,19 +61,22 @@ public class InMemoryDataTreeBenchmark {
     private static final NodeIdentifierWithPredicates[] OUTER_LIST_IDS = Streams.mapWithIndex(
         IntStream.range(0, OUTER_LIST_100K),
         (i, index) -> NodeIdentifierWithPredicates.of(BenchmarkModel.OUTER_LIST_QNAME, BenchmarkModel.ID_QNAME, i))
-            .collect(Collectors.toList()).toArray(new NodeIdentifierWithPredicates[0]);
+            .toArray(NodeIdentifierWithPredicates[]::new);
 
     private static final YangInstanceIdentifier[] OUTER_LIST_PATHS = Arrays.stream(OUTER_LIST_IDS)
             .map(id -> BenchmarkModel.OUTER_LIST_PATH.node(id).toOptimized())
-            .collect(Collectors.toList()).toArray(new YangInstanceIdentifier[0]);
+            .toArray(YangInstanceIdentifier[]::new);
 
-    private static final MapNode EMPTY_OUTER_LIST = ImmutableNodes.mapNodeBuilder(BenchmarkModel.OUTER_LIST).build();
+    private static final MapNode EMPTY_OUTER_LIST = ImmutableNodes.newSystemMapBuilder()
+        .withNodeIdentifier(BenchmarkModel.OUTER_LIST)
+        .build();
     private static final MapNode ONE_ITEM_INNER_LIST = initInnerListItems(1);
     private static final MapNode TWO_ITEM_INNER_LIST = initInnerListItems(2);
     private static final MapNode TEN_ITEM_INNER_LIST = initInnerListItems(10);
 
     private static MapNode initInnerListItems(final int count) {
-        final var mapEntryBuilder = ImmutableNodes.mapNodeBuilder(BenchmarkModel.INNER_LIST);
+        final var mapEntryBuilder = ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(BenchmarkModel.INNER_LIST);
 
         for (int i = 0; i < count; ++i) {
             mapEntryBuilder
@@ -95,7 +96,7 @@ public class InMemoryDataTreeBenchmark {
     private static MapEntryNode[] initOuterListItems(final int outerListItemsCount, final MapNode innerList) {
         return Arrays.stream(OUTER_LIST_IDS)
             .limit(outerListItemsCount)
-            .map(id -> ImmutableNodes.mapEntryBuilder().withNodeIdentifier(id).withChild(innerList).build())
+            .map(id -> ImmutableNodes.newMapEntryBuilder().withNodeIdentifier(id).withChild(innerList).build())
             .toArray(MapEntryNode[]::new);
     }
 
@@ -116,7 +117,7 @@ public class InMemoryDataTreeBenchmark {
             BenchmarkModel.createTestContext());
 
         final DataTreeModification modification = begin();
-        modification.write(BenchmarkModel.TEST_PATH, Builders.containerBuilder()
+        modification.write(BenchmarkModel.TEST_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BenchmarkModel.TEST)
             .withChild(EMPTY_OUTER_LIST)
             .build());

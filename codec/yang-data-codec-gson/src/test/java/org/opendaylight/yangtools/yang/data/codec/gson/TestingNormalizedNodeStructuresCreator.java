@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.Arrays;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 final class TestingNormalizedNodeStructuresCreator {
     private static final QNameModule COMPLEX_JSON =
@@ -39,116 +39,87 @@ final class TestingNormalizedNodeStructuresCreator {
     }
 
     static ContainerNode cont1Node(final DataContainerChild... children) {
-        return Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont1")))
-                .withValue(Arrays.asList(children))
-                .build();
+        return ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont1")))
+            .withValue(List.of(children))
+            .build();
     }
 
     static ContainerNode cont2Node() {
-        return Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont2")))
-                .build();
+        return ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont2")))
+            .build();
     }
 
     private static UnkeyedListNode lst12Node() {
-        return Builders.unkeyedListBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lst12")))
-                .withChild(lst12Entry1Node())
-                .build();
+        return ImmutableNodes.newUnkeyedListBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lst12")))
+            .withChild(lst12Entry1Node())
+            .build();
     }
 
     private static UnkeyedListEntryNode lst12Entry1Node() {
-        return Builders.unkeyedListEntryBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lst12")))
-                .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf121")))
-                    .withValue("lf121 value").build())
-                .build();
+        return ImmutableNodes.newUnkeyedListEntryBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lst12")))
+            .withChild(ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf121"), "lf121 value"))
+            .build();
     }
 
     private static ChoiceNode choc12Node() {
-        return Builders.choiceBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "choc12")))
-                .withChild(lf17Node())
-                .build();
+        return ImmutableNodes.newChoiceBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "choc12")))
+            .withChild(lf17Node())
+            .build();
     }
 
-    protected static LeafNode<Object> lf17Node() {
-        return Builders.leafBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf17")))
-                .withValue("lf17 value").build();
+    protected static LeafNode<?> lf17Node() {
+        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf17"), "lf17 value");
     }
 
-    private static LeafNode<Object> lf15_12NodeExternal() {
-        return Builders.leafBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON_AUG, "lf15_12")))
-                .withValue("lf15_12 value from augmentation")
-                .build();
+    private static LeafNode<?> lf15_12NodeExternal() {
+        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON_AUG, "lf15_12"), "lf15_12 value from augmentation");
     }
 
-    private static LeafNode<Object> lf15_11NodeExternal() {
-        return Builders.leafBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON_AUG, "lf15_11")))
-                .withValue("lf15_11 value from augmentation")
-                .build();
+    private static LeafNode<?> lf15_11NodeExternal() {
+        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON_AUG, "lf15_11"), "lf15_11 value from augmentation");
     }
 
     private static ChoiceNode choc11Node(final DataContainerChild... children) {
-        return Builders.choiceBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "choc11")))
-                .withValue(Arrays.asList(children))
-                // choc11Builder.addChild(lf13Node());
-                // choc11Builder.addChild(augmentChoc11_c11A_lf1511AndLf1512Children());
-                // choc11Builder.addChild(augmentChoc11_c11_lf1521Children());
-                .build();
+        return ImmutableNodes.newChoiceBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "choc11")))
+            .withValue(List.of(children))
+            .build();
     }
 
-    private static LeafNode<Object> lf13Node() {
-        return Builders.leafBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf13")))
-                .withValue("lf13 value").build();
+    private static LeafNode<?> lf13Node() {
+        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf13"), "lf13 value");
     }
 
-    private static LeafNode<Object> lf15_21Node() {
-        return Builders.leafBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf15_21")))
-                .withValue("lf15_21 value").build();
+    private static LeafNode<?> lf15_21Node() {
+        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf15_21"), "lf15_21 value");
     }
 
-    private static LeafNode<Object> lf15_12Node() {
-        return Builders.leafBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf15_12")))
-                .withValue(QName.create(COMPLEX_JSON, "ident")).build();
+    private static LeafNode<?> lf15_12Node() {
+        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf15_12"), QName.create(COMPLEX_JSON, "ident"));
     }
 
     private static LeafNode<Object> lf15_11Node() {
-        return Builders.leafBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf15_11")))
-                .withValue(ImmutableSet.of("one", "two")).build();
+        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf15_11"), ImmutableSet.of("one", "two"));
     }
 
     private static SystemMapNode childLst11() {
-        return Builders.mapBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lst11")))
-                .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                    NodeIdentifierWithPredicates.of(QName.create(COMPLEX_JSON, "lst11"), ImmutableMap.of(
-                        QName.create(COMPLEX_JSON, "key111"), "key111 value",
-                        QName.create(COMPLEX_JSON, "lf111"), "lf111 value")))
-                    .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "key111")))
-                        .withValue("key111 value").build())
-                    .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf112")))
-                        .withValue(lf112Value()).build())
-                    .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf113")))
-                        .withValue("lf113 value").build())
-                    .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf111")))
-                        .withValue("lf111 value").build())
-                    .build())
-                .build();
+        return ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lst11")))
+            .withChild(ImmutableNodes.newMapEntryBuilder().withNodeIdentifier(
+                NodeIdentifierWithPredicates.of(QName.create(COMPLEX_JSON, "lst11"), ImmutableMap.of(
+                    QName.create(COMPLEX_JSON, "key111"), "key111 value",
+                    QName.create(COMPLEX_JSON, "lf111"), "lf111 value")))
+                .withChild(ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "key111"), "key111 value"))
+                .withChild(ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf112"), lf112Value()))
+                .withChild(ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf113"), "lf113 value"))
+                .withChild(ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf111"), "lf111 value"))
+                .build())
+            .build();
     }
 
     private static Object lf112Value() {
@@ -159,35 +130,25 @@ final class TestingNormalizedNodeStructuresCreator {
     }
 
     private static SystemLeafSetNode<?> childLflst11() {
-        return Builders.leafSetBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lflst11")))
-                .withChild(Builders.leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(QName.create(COMPLEX_JSON, "lflst11"), "lflst11 value1"))
-                    .withValue("lflst11 value1").build())
-                .withChild(Builders.leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(QName.create(COMPLEX_JSON, "lflst11"), "lflst11 value2"))
-                    .withValue("lflst11 value2").build())
-                .build();
+        return ImmutableNodes.newSystemLeafSetBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lflst11")))
+            .withChild(ImmutableNodes.leafSetEntry(QName.create(COMPLEX_JSON, "lflst11"), "lflst11 value1"))
+            .withChild(ImmutableNodes.leafSetEntry(QName.create(COMPLEX_JSON, "lflst11"), "lflst11 value2"))
+            .build();
     }
 
     private static SystemLeafSetNode<?> childLflst11Multiline() {
-        return Builders.leafSetBuilder()
-                .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lflst11")))
-                .withChild(Builders.leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(QName.create(COMPLEX_JSON, "lflst11"),
-                            "lflst11 value1\nanother line 1"))
-                    .withValue("lflst11 value1\nanother line 1").build())
-                .withChild(Builders.leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(QName.create(COMPLEX_JSON, "lflst11"),
-                            "lflst11 value2\r\nanother line 2"))
-                    .withValue("lflst11 value2\r\nanother line 2").build())
-                .build();
+        return ImmutableNodes.newSystemLeafSetBuilder()
+            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lflst11")))
+            .withChild(ImmutableNodes.leafSetEntry(QName.create(COMPLEX_JSON, "lflst11"),
+                "lflst11 value1\nanother line 1"))
+            .withChild(ImmutableNodes.leafSetEntry(QName.create(COMPLEX_JSON, "lflst11"),
+                "lflst11 value2\r\nanother line 2"))
+            .build();
     }
 
     public static ContainerNode leafNodeInContainer() {
-        return cont1Node(Builders.leafBuilder()
-            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf11")))
-            .withValue(453).build());
+        return cont1Node(ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf11"), 453));
     }
 
     public static ContainerNode leafListNodeInContainer() {
@@ -203,10 +164,7 @@ final class TestingNormalizedNodeStructuresCreator {
     }
 
     public static ContainerNode leafNodeViaAugmentationInContainer() {
-        return cont1Node(Builders.leafBuilder()
-            .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lf12_1")))
-            .withValue("lf12 value")
-            .build());
+        return cont1Node(ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf12_1"), "lf12 value"));
     }
 
     public static ContainerNode choiceNodeInContainer() {
@@ -221,8 +179,8 @@ final class TestingNormalizedNodeStructuresCreator {
     }
 
     public static ContainerNode caseNodeExternalAugmentationInChoiceInContainer() {
-        return cont1Node(choc11Node(lf13Node(), lf15_11Node(), lf15_12Node(),
-            lf15_11NodeExternal(), lf15_12NodeExternal()));
+        return cont1Node(choc11Node(lf13Node(), lf15_11Node(), lf15_12Node(), lf15_11NodeExternal(),
+            lf15_12NodeExternal()));
     }
 
     public static ContainerNode choiceNodeAugmentationInContainer() {
@@ -238,7 +196,7 @@ final class TestingNormalizedNodeStructuresCreator {
     }
 
     public static ContainerNode emptyContainerInContainer() {
-        return cont1Node(Builders.containerBuilder()
+        return cont1Node(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont11")))
             .build());
     }

@@ -17,12 +17,12 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
@@ -66,14 +66,14 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     }
 
     private static ContainerNode createFooTestContainerNode() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
             .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(FOO_NODE).build())
             .build();
     }
 
     private static ContainerNode createBarTestContainerNode() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
             .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(BAR_NODE).build())
             .build();
@@ -93,8 +93,10 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
         final var modificationTree1 = initialDataTreeSnapshot.newModification();
         final var modificationTree2 = initialDataTreeSnapshot.newModification();
 
-        modificationTree1.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
-        modificationTree2.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        modificationTree1.write(TestModel.TEST_PATH,
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build());
+        modificationTree2.write(TestModel.TEST_PATH,
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build());
 
         modificationTree1.ready();
         modificationTree2.ready();
@@ -122,8 +124,10 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
         final var modificationTree1 = initialDataTreeSnapshot.newModification();
         final var modificationTree2 = initialDataTreeSnapshot.newModification();
 
-        modificationTree1.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
-        modificationTree2.merge(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        modificationTree1.write(TestModel.TEST_PATH,
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build());
+        modificationTree2.merge(TestModel.TEST_PATH,
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build());
 
         modificationTree1.ready();
         modificationTree2.ready();
@@ -253,7 +257,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void writeWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -287,7 +291,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void writeMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -316,7 +320,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void mergeWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -351,7 +355,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void mergeMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -380,7 +384,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void deleteWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -414,7 +418,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void deleteMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -442,7 +446,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void writeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
             .build());
         initialDataTreeModification.ready();
@@ -473,7 +477,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void writeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
             .build());
         initialDataTreeModification.ready();
@@ -504,7 +508,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void mergeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
             .build());
         initialDataTreeModification.ready();
@@ -535,7 +539,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void mergeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
             .build());
         initialDataTreeModification.ready();
@@ -566,7 +570,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void deleteWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
             .build());
         initialDataTreeModification.ready();
@@ -601,7 +605,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     @Test
     void deleteMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
             .build());
         initialDataTreeModification.ready();
@@ -631,5 +635,9 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
 
         final var snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertFalse(snapshotAfterCommits.readNode(TestModel.TEST_PATH).isPresent());
+    }
+
+    private static ContainerNode emptyContainer(final QName name) {
+        return ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(name)).build();
     }
 }
