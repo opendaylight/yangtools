@@ -7,14 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableBiMap;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
  * Utility {@link YangNamespaceContext} backed by a SchemaContext, resolving namespaces to their module names. This
@@ -26,14 +32,14 @@ import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextPr
  * resolved by using the latest revision available.
  */
 @Beta
-public final class ModuleNameNamespaceContext extends AbstractEffectiveModelContextProvider
-        implements YangNamespaceContext {
+public final class ModuleNameNamespaceContext implements YangNamespaceContext {
     @java.io.Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    @SuppressFBWarnings(value = "SE_NO_SUITABLE_CONSTRUCTOR", justification = "Handled through writeReplace()")
-    public ModuleNameNamespaceContext(final EffectiveModelContext schemaContext) {
-        super(schemaContext);
+    private final @NonNull EffectiveModelContext modelContext;
+
+    public ModuleNameNamespaceContext(final EffectiveModelContext modelContext) {
+        this.modelContext = requireNonNull(modelContext);
     }
 
     /**
@@ -43,7 +49,7 @@ public final class ModuleNameNamespaceContext extends AbstractEffectiveModelCont
      */
     public BiMapYangNamespaceContext toBiMap() {
         final var builder = ImmutableBiMap.<String, QNameModule>builder();
-        for (var module : getEffectiveModelContext().getModuleStatements().values()) {
+        for (var module : modelContext.getModuleStatements().values()) {
             final var name = module.argument().getLocalName();
             builder.put(name, findNamespaceForPrefix(name).orElseThrow());
         }
@@ -52,13 +58,13 @@ public final class ModuleNameNamespaceContext extends AbstractEffectiveModelCont
 
     @Override
     public QNameModule namespaceForPrefix(final String prefix) {
-        final var modules = getEffectiveModelContext().findModuleStatements(prefix).iterator();
+        final var modules = modelContext.findModuleStatements(prefix).iterator();
         return modules.hasNext() ? modules.next().localQNameModule() : null;
     }
 
     @Override
     public String prefixForNamespace(final QNameModule namespace) {
-        return getEffectiveModelContext().findModuleStatement(namespace)
+        return modelContext.findModuleStatement(namespace)
             .map(module -> module.argument().getLocalName())
             .orElse(null);
     }
@@ -66,5 +72,24 @@ public final class ModuleNameNamespaceContext extends AbstractEffectiveModelCont
     @java.io.Serial
     private Object writeReplace() {
         return toBiMap();
+    }
+
+    @java.io.Serial
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        throwNSE();
+    }
+
+    @java.io.Serial
+    private void readObjectNoData() throws ObjectStreamException {
+        throwNSE();
+    }
+
+    @java.io.Serial
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        throwNSE();
+    }
+
+    private static void throwNSE() throws NotSerializableException {
+        throw new NotSerializableException(ModuleNameNamespaceContext.class.getName());
     }
 }

@@ -7,17 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
  * A simple {@link MountPointContext} which does not contain any mount points.
  */
-final class EmptyMountPointContext extends AbstractEffectiveModelContextProvider implements MountPointContext {
-    EmptyMountPointContext(final EffectiveModelContext modelContext) {
-        super(modelContext);
+record EmptyMountPointContext(@NonNull EffectiveModelContext modelContext) implements MountPointContext {
+    EmptyMountPointContext {
+        requireNonNull(modelContext);
     }
 
     @Override

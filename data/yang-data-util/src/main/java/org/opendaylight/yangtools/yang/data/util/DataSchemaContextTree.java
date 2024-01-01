@@ -21,14 +21,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.impl.context.ContainerContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Semantic tree binding a {@link EffectiveModelContext} to a {@link NormalizedNode} tree. Since the layout of the
  * schema and data has differences, the mapping is not trivial -- which is where this class comes in.
  */
-public final class DataSchemaContextTree extends AbstractEffectiveModelContextProvider {
+public final class DataSchemaContextTree {
     public record NodeAndStack(@NonNull DataSchemaContext node, @NonNull SchemaInferenceStack stack) {
         public NodeAndStack(final @NonNull DataSchemaContext node, final @NonNull SchemaInferenceStack stack) {
             this.node = requireNonNull(node);
@@ -44,15 +43,25 @@ public final class DataSchemaContextTree extends AbstractEffectiveModelContextPr
             }
         });
 
+    private final @NonNull EffectiveModelContext modelContext;
     private final @NonNull ContainerContext root;
 
-    private DataSchemaContextTree(final EffectiveModelContext ctx) {
-        super(ctx);
-        root = new ContainerContext(ctx);
+    private DataSchemaContextTree(final EffectiveModelContext modelContext) {
+        this.modelContext = requireNonNull(modelContext);
+        root = new ContainerContext(modelContext);
     }
 
     public static @NonNull DataSchemaContextTree from(final @NonNull EffectiveModelContext ctx) {
         return TREES.getUnchecked(ctx);
+    }
+
+    /**
+     * Return the {@link EffectiveModelContext} used to derive this tree.
+     *
+     * @return the {@link EffectiveModelContext} used to derive this tree
+     */
+    public @NonNull EffectiveModelContext modelContext() {
+        return modelContext;
     }
 
     /**

@@ -25,7 +25,7 @@ final class InstanceIdentifierXmlCodec implements XmlCodec<YangInstanceIdentifie
     InstanceIdentifierXmlCodec(final XmlCodecFactory codecFactory, final @Nullable PreferredPrefixes pref) {
         this.codecFactory = requireNonNull(codecFactory);
         this.pref = pref;
-        dataContextTree = DataSchemaContextTree.from(codecFactory.getEffectiveModelContext());
+        dataContextTree = DataSchemaContextTree.from(codecFactory.modelContext());
     }
 
     @Override

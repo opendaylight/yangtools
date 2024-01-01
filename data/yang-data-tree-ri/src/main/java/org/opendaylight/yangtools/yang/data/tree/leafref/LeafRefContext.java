@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.leafref;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -17,13 +18,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
-public final class LeafRefContext extends AbstractEffectiveModelContextProvider {
+public final class LeafRefContext {
+    private final @NonNull EffectiveModelContext modelContext;
 
     private final QName currentNodeQName;
     private final ImmutableList<QName> currentNodePath;
@@ -46,7 +48,7 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
     private volatile LeafRefPath leafRefNodePath = null;
 
     LeafRefContext(final LeafRefContextBuilder leafRefContextBuilder) {
-        super(leafRefContextBuilder.getSchemaContext());
+        modelContext = requireNonNull(leafRefContextBuilder.modelContext());
         currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
         currentNodePath = leafRefContextBuilder.getCurrentNodePath();
         leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
@@ -58,6 +60,15 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
         referencedByChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencedByChilds());
         referencedByLeafRefCtx = ImmutableMap.copyOf(leafRefContextBuilder.getAllReferencedByLeafRefCtxs());
         module = leafRefContextBuilder.getLeafRefContextModule();
+    }
+
+    /**
+     * Return the {@link EffectiveModelContext} from which this context was derived.
+     *
+     * @return the {@link EffectiveModelContext} from which this context was derived
+     */
+    public @NonNull EffectiveModelContext modelContext() {
+        return modelContext;
     }
 
     public static LeafRefContext create(final EffectiveModelContext ctx) {
@@ -167,9 +178,7 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
     private Iterator<QName> descendantIterator(final SchemaNodeIdentifier node) {
         final Iterator<QName> nodeSteps = node.getNodeIdentifiers().iterator();
         if (node instanceof SchemaNodeIdentifier.Absolute) {
-            final Iterator<QName> mySteps = currentNodePath.iterator();
-            while (mySteps.hasNext()) {
-                final QName myNext = mySteps.next();
+            for (QName myNext : currentNodePath) {
                 checkArgument(nodeSteps.hasNext(), "Node %s is an ancestor of %s", node, currentNodePath);
                 final QName nodeNext = nodeSteps.next();
                 checkArgument(myNext.equals(nodeNext), "Node %s is not a descendant of %s", node, currentNodePath);
