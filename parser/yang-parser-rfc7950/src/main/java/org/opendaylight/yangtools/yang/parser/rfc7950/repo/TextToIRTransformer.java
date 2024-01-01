@@ -11,9 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
@@ -35,11 +33,7 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
 
     public static @NonNull YangIRSchemaSource transformText(final YangTextSource text)
             throws YangSyntaxErrorException, IOException {
-        final IRStatement rootStatement = IRSupport.createStatement(YangStatementStreamSource.parseYangSource(text));
-        final String name = YangModelDependencyInfo.safeStringArgument(text.sourceId(), rootStatement, "name");
-        final String latestRevision = YangModelDependencyInfo.getLatestRevision(rootStatement, text.sourceId());
-        final SourceIdentifier sourceId = new SourceIdentifier(name, latestRevision);
-
-        return new YangIRSchemaSource(sourceId, rootStatement, text.symbolicName());
+        final var rootStatement = IRSupport.createStatement(YangStatementStreamSource.parseYangSource(text));
+        return new YangIRSchemaSource(text.sourceId(), rootStatement, text.symbolicName());
     }
 }
