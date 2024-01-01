@@ -47,11 +47,6 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> ctx) {
-        ctx.addRequiredSource(new SourceIdentifier(ctx.getArgument()));
-    }
-
-    @Override
     public void onLinkageDeclared(
             final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
         ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);

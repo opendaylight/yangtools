@@ -513,6 +513,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return qnameToStmtDefMap;
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     Collection<SourceIdentifier> getRequiredSources() {
         return root.getRequiredSources();
     }
