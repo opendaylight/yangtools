@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -48,7 +47,7 @@ class Bug5830Test {
         final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
-        final var taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
+        final var taskNode = ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(TASK_CONTAINER, TASK), taskNode);
         modificationTree.ready();
@@ -270,7 +269,7 @@ class Bug5830Test {
     private static void testContainerIsNotPresent(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
         final var inMemoryDataTree = initDataTree(schemaContext);
-        final var taskEntryNode = Builders.mapEntryBuilder()
+        final var taskEntryNode = ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
@@ -291,7 +290,7 @@ class Bug5830Test {
             throws DataValidationFailedException {
         final var inMemoryDataTree = initDataTree(schemaContext);
 
-        final var taskEntryNode = Builders.mapEntryBuilder()
+        final var taskEntryNode = ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
@@ -312,7 +311,7 @@ class Bug5830Test {
             throws DataValidationFailedException {
         final var inMemoryDataTree = initDataTree(schemaContext);
 
-        final var taskEntryNode = Builders.mapEntryBuilder()
+        final var taskEntryNode = ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
@@ -333,7 +332,7 @@ class Bug5830Test {
             final boolean withPresenceContianer) throws DataValidationFailedException {
         final var inMemoryDataTree = initDataTree(schemaContext);
 
-        final var taskEntryNode = Builders.mapEntryBuilder()
+        final var taskEntryNode = ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
@@ -352,7 +351,7 @@ class Bug5830Test {
     }
 
     private static DataContainerChild createTaskDataContainer(final boolean withMandatoryNode) {
-        final var taskDataBuilder = Builders.containerBuilder()
+        final var taskDataBuilder = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
                 .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"));
         if (withMandatoryNode) {
@@ -362,18 +361,18 @@ class Bug5830Test {
     }
 
     private static DataContainerChild createTaskDataMultipleContainer(final boolean withPresenceContianer) {
-        final var nonPresenceContainerBuilder = Builders.containerBuilder()
+        final var nonPresenceContainerBuilder = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER))
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER_2))
                 .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF_2, "mandatory leaf data 2")).build());
 
         if (withPresenceContianer) {
-            nonPresenceContainerBuilder.withChild(Builders.containerBuilder()
+            nonPresenceContainerBuilder.withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(PRESENCE_CONTAINER_2)).build());
         }
 
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
             .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"))
             .withChild(ImmutableNodes.leafNode(MANDATORY_DATA, "mandatory-data-value"))

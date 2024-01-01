@@ -23,25 +23,25 @@ class OrderingEqualityTest {
 
     @Test
     void testUserMap() {
-        final var firstMap = Builders.orderedMapBuilder()
+        final var firstMap = ImmutableNodes.newUserMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "two"))
                 .withChild(ImmutableNodes.leafNode(BAR, "two"))
                 .build())
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
                 .withChild(ImmutableNodes.leafNode(BAR, "one"))
                 .build())
             .build();
 
-        final var secondMap = Builders.orderedMapBuilder()
+        final var secondMap = ImmutableNodes.newUserMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
                 .withChild(ImmutableNodes.leafNode(BAR, "one"))
                 .build())
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "two"))
                 .withChild(ImmutableNodes.leafNode(BAR, "two"))
                 .build())
@@ -51,13 +51,13 @@ class OrderingEqualityTest {
         assertNotEquals(firstMap, secondMap);
         assertNotEquals(secondMap, firstMap);
 
-        final var thirdMap = Builders.orderedMapBuilder()
+        final var thirdMap = ImmutableNodes.newUserMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
                 .withChild(ImmutableNodes.leafNode(BAR, "one"))
                 .build())
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "two"))
                 .withChild(ImmutableNodes.leafNode(BAR, "two"))
                 .build())
@@ -70,13 +70,13 @@ class OrderingEqualityTest {
         assertEquals(secondMap.hashCode(), thirdMap.hashCode());
 
         // Although this map looks as secondMap, it is not equal
-        final var systemMap = Builders.mapBuilder()
+        final var systemMap = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
                 .withChild(ImmutableNodes.leafNode(BAR, "one"))
                 .build())
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "two"))
                 .withChild(ImmutableNodes.leafNode(BAR, "two"))
                 .build())
@@ -89,24 +89,24 @@ class OrderingEqualityTest {
 
     @Test
     void testSystemMap() {
-        final var firstMap = Builders.mapBuilder()
+        final var firstMap = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
                 .withChild(ImmutableNodes.leafNode(BAR, "one"))
                 .build())
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "two"))
                 .withChild(ImmutableNodes.leafNode(BAR, "two"))
                 .build())
             .build();
-        final var secondMap = Builders.mapBuilder()
+        final var secondMap = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "two"))
                 .withChild(ImmutableNodes.leafNode(BAR, "two"))
                 .build())
-            .withChild(Builders.mapEntryBuilder()
+            .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(FOO, BAR, "one"))
                 .withChild(ImmutableNodes.leafNode(BAR, "one"))
                 .build())

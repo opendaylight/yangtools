@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.anyXmlBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.anydataBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
-
 import javax.xml.transform.dom.DOMSource;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -64,17 +61,24 @@ class YT1104Test {
 
     @Test
     void testAnydata() throws DataValidationFailedException {
-        writeChoice(anydataBuilder(String.class).withNodeIdentifier(BAR).withValue("anydata").build());
+        writeChoice(ImmutableNodes.newAnydataBuilder(String.class)
+            .withNodeIdentifier(BAR)
+            .withValue("anydata")
+            .build());
     }
 
     @Test
     void testAnyxml() throws DataValidationFailedException {
-        writeChoice(anyXmlBuilder().withNodeIdentifier(BAZ).withValue(new DOMSource()).build());
+        writeChoice(ImmutableNodes.newAnyxmlBuilder(DOMSource.class)
+            .withNodeIdentifier(BAZ)
+            .withValue(new DOMSource())
+            .build());
     }
 
     private void writeChoice(final DataContainerChild child) throws DataValidationFailedException {
         final var mod = dataTree.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.of(FOO), choiceBuilder().withNodeIdentifier(FOO).withChild(child).build());
+        mod.write(YangInstanceIdentifier.of(FOO),
+            ImmutableNodes.newChoiceBuilder().withNodeIdentifier(FOO).withChild(child).build());
         mod.ready();
         dataTree.validate(mod);
         dataTree.commit(dataTree.prepare(mod));

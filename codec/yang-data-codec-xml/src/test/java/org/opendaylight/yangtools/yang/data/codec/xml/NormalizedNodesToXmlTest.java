@@ -25,10 +25,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -124,53 +122,47 @@ public class NormalizedNodesToXmlTest extends AbstractXmlTest {
     }
 
     private ContainerNode buildOuterContainerNode() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(outerContainer))
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(myContainer1))
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(myKeyedList))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "listkeyvalue1"))
                         .withChild(ImmutableNodes.leafNode(myLeafInList1, "listleafvalue1"))
                         .withChild(ImmutableNodes.leafNode(myLeafInList2, "listleafvalue2"))
                         .build())
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "listkeyvalue2"))
                         .withChild(ImmutableNodes.leafNode(myLeafInList1, "listleafvalue12"))
                         .withChild(ImmutableNodes.leafNode(myLeafInList2, "listleafvalue22"))
                         .build())
                     .build())
                 .withChild(ImmutableNodes.leafNode(myLeaf1, "value1"))
-                .withChild(Builders.leafSetBuilder()
+                .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                     .withNodeIdentifier(new NodeIdentifier(myLeafList))
-                    .withChild(Builders.leafSetEntryBuilder()
-                        .withNodeIdentifier(new NodeWithValue<>(myLeafList, "lflvalue1"))
-                        .withValue("lflvalue1")
-                        .build())
-                    .withChild(Builders.leafSetEntryBuilder()
-                        .withNodeIdentifier(new NodeWithValue<>(myLeafList, "lflvalue2"))
-                        .withValue("lflvalue2")
-                        .build())
+                    .withChild(ImmutableNodes.leafSetEntry(myLeafList, "lflvalue1"))
+                    .withChild(ImmutableNodes.leafSetEntry(myLeafList, "lflvalue2"))
                     .build())
                 .build())
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(myContainer2))
-                .withChild(Builders.containerBuilder()
+                .withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(innerContainer))
                     .withChild(ImmutableNodes.leafNode(myLeaf2, "value2"))
                     .build())
                 .withChild(ImmutableNodes.leafNode(myLeaf3, "value3"))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(myChoice))
                     .withChild(ImmutableNodes.leafNode(myLeafInCase2, "case2value"))
                     .build())
                 .build())
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(myContainer3))
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(myDoublyKeyedList))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(myDoublyKeyedList,
                             Map.of(myFirstKeyLeaf, "listkeyvalue1", mySecondKeyLeaf, "listkeyvalue2")))
                         .withChild(ImmutableNodes.leafNode(myLeafInList3, "listleafvalue1"))

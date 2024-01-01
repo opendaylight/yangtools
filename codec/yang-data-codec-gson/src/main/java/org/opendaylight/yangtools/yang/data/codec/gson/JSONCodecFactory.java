@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
@@ -112,8 +111,6 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
             return new QuotedJSONCodec<>(integerCodec);
         }
     }
-
-    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
     private final @NonNull JSONInstanceIdentifierCodec iidCodec;
 
@@ -283,7 +280,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
                 throw NormalizationException.ofMessage("Expected name '" + expected + "', got '" + name + "'");
             }
 
-            final var builder = BUILDER_FACTORY.newContainerBuilder().withNodeIdentifier(containerName);
+            final var builder = ImmutableNodes.newContainerBuilder().withNodeIdentifier(containerName);
 
             if (reader.peek() == JsonToken.BEGIN_OBJECT) {
                 try (var writer = ImmutableNormalizedNodeStreamWriter.from(builder)) {

@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 class YT1417Test {
     private static final QName FOO = QName.create("foo", "foo");
     private static final QName BAR = QName.create("foo", "bar");
-    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
     @Test
     void testContainerNodeEquality() {
@@ -38,26 +36,26 @@ class YT1417Test {
         doReturn(1).when(mock).size();
         doReturn(ImmutableNodes.leafNode(BAR, "abc")).when(mock).childByArg(new NodeIdentifier(BAR));
 
-        assertEquals(BUILDER_FACTORY.newContainerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafNode(BAR, "abc"))
             .build(), mock);
 
         // Mismatched identifier
-        assertNotEquals(BUILDER_FACTORY.newContainerBuilder()
+        assertNotEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(BAR))
             .withChild(ImmutableNodes.leafNode(BAR, "abc"))
             .build(), mock);
 
         // Mismatched child size
-        assertNotEquals(BUILDER_FACTORY.newContainerBuilder()
+        assertNotEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafNode(FOO, "abc"))
             .withChild(ImmutableNodes.leafNode(BAR, "abc"))
             .build(), mock);
 
         // Mismatched child
-        assertNotEquals(BUILDER_FACTORY.newContainerBuilder()
+        assertNotEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafNode(FOO, "abc"))
             .build(), mock);
@@ -70,26 +68,26 @@ class YT1417Test {
         doReturn(1).when(mock).size();
         doReturn(ImmutableNodes.leafSetEntry(FOO, "abc")).when(mock).childByArg(new NodeWithValue<>(FOO, "abc"));
 
-        assertEquals(BUILDER_FACTORY.newSystemLeafSetBuilder()
+        assertEquals(ImmutableNodes.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafSetEntry(FOO, "abc"))
             .build(), mock);
 
         // Mismatched identifier
-        assertNotEquals(BUILDER_FACTORY.newSystemLeafSetBuilder()
+        assertNotEquals(ImmutableNodes.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(BAR))
             .withChild(ImmutableNodes.leafSetEntry(BAR, "abc"))
             .build(), mock);
 
         // Mismatched child size
-        assertNotEquals(BUILDER_FACTORY.newSystemLeafSetBuilder()
+        assertNotEquals(ImmutableNodes.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafSetEntry(FOO, "abc"))
             .withChild(ImmutableNodes.leafSetEntry(FOO, "def"))
             .build(), mock);
 
         // Mismatched child
-        assertNotEquals(BUILDER_FACTORY.newSystemLeafSetBuilder()
+        assertNotEquals(ImmutableNodes.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafSetEntry(FOO, "def"))
             .build(), mock);
@@ -103,21 +101,21 @@ class YT1417Test {
             ImmutableNodes.leafSetEntry(FOO, "abc"),
             ImmutableNodes.leafSetEntry(FOO, "def"))).when(mock).body();
 
-        assertEquals(BUILDER_FACTORY.newUserLeafSetBuilder()
+        assertEquals(ImmutableNodes.newUserLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafSetEntry(FOO, "abc"))
             .withChild(ImmutableNodes.leafSetEntry(FOO, "def"))
             .build(), mock);
 
         // Mismatched identifier
-        assertNotEquals(BUILDER_FACTORY.newUserLeafSetBuilder()
+        assertNotEquals(ImmutableNodes.newUserLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(BAR))
             .withChild(ImmutableNodes.leafSetEntry(BAR, "abc"))
             .withChild(ImmutableNodes.leafSetEntry(BAR, "def"))
             .build(), mock);
 
         // Mismatched child order
-        assertNotEquals(BUILDER_FACTORY.newUserLeafSetBuilder()
+        assertNotEquals(ImmutableNodes.newUserLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafSetEntry(FOO, "def"))
             .withChild(ImmutableNodes.leafSetEntry(FOO, "abc"))

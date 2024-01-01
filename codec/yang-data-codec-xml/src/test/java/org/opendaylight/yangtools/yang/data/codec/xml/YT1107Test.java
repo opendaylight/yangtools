@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -68,22 +67,22 @@ class YT1107Test {
         final var xmlParser = XmlParserStream.create(streamWriter, Inference.ofDataTreePath(schemaContext, PARENT));
         xmlParser.parse(reader);
 
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(PARENT))
-            .withChild(Builders.mapBuilder()
+            .withChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ADMIN))
-                .withChild(Builders.mapEntryBuilder()
+                .withChild(ImmutableNodes.newMapEntryBuilder()
                     .withNodeIdentifier(NodeIdentifierWithPredicates.of(ADMIN, NAME, "John"))
                     .withChild(ImmutableNodes.leafNode(NAME, "John"))
                     .build())
                 .build())
-            .withChild(Builders.mapBuilder()
+            .withChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(USER))
-                .withChild(Builders.mapEntryBuilder()
+                .withChild(ImmutableNodes.newMapEntryBuilder()
                     .withNodeIdentifier(NodeIdentifierWithPredicates.of(USER, NAME, "Freud"))
                     .withChild(ImmutableNodes.leafNode(NAME, "Freud"))
                     .build())
-                .withChild(Builders.mapEntryBuilder()
+                .withChild(ImmutableNodes.newMapEntryBuilder()
                     .withNodeIdentifier(NodeIdentifierWithPredicates.of(USER, NAME, "Bob"))
                     .withChild(ImmutableNodes.leafNode(NAME, "Bob"))
                     .build())

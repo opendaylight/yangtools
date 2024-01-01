@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -213,13 +212,13 @@ class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final var containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final var leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final var cont1Normalized = Builders.containerBuilder()
+        final var cont1Normalized = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(CONT_1))
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(augmentChoice1QName))
-                .withChild(Builders.choiceBuilder()
+                .withChild(ImmutableNodes.newChoiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(augmentChoice2QName))
-                    .withChild(Builders.containerBuilder()
+                    .withChild(ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(new NodeIdentifier(containerQName))
                         .withChild(ImmutableNodes.leafNode(leafQName, "leaf-value"))
                         .build())

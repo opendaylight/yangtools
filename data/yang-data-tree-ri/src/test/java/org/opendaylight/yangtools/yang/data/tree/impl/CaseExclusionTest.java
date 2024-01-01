@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,8 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -50,13 +48,13 @@ class CaseExclusionTest {
     void testCorrectCaseWrite() throws DataValidationFailedException {
         final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
-        final var container = Builders
-                .containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-                .withChild(
-                        Builders.choiceBuilder().withNodeIdentifier(choice1Id)
-                                .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
-                                .build()).build();
+        final var container = ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .withChild(ImmutableNodes.newChoiceBuilder()
+                .withNodeIdentifier(choice1Id)
+                .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
+                .build())
+            .build();
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, container);
         modificationTree.ready();
@@ -70,17 +68,17 @@ class CaseExclusionTest {
     void testCaseExclusion() {
         assertThrows(IllegalArgumentException.class, () -> {
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
-
-            final var container = Builders
-                .containerBuilder()
+            final var container = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-                .withChild(
-                    Builders.choiceBuilder()
-                        .withNodeIdentifier(choice1Id)
-                        .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
-                        .withChild(
-                            ImmutableNodes.containerNode(QName.create(TestModel.TEST_QNAME, "case2-cont")))
-                        .build()).build();
+                .withChild(ImmutableNodes.newChoiceBuilder()
+                    .withNodeIdentifier(choice1Id)
+                    .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
+                    .withChild(ImmutableNodes.newContainerBuilder()
+                        .withNodeIdentifier(new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
+                        .build())
+                    .build())
+                .build();
+
             try {
                 final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
                 modificationTree.write(TestModel.TEST_PATH, container);
@@ -100,7 +98,7 @@ class CaseExclusionTest {
     void testCaseExclusionOnChoiceWrite() {
         assertThrows(IllegalArgumentException.class, () -> {
             // Container write
-            final var container = Builders.containerBuilder()
+            final var container = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
 
             final var modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
@@ -113,9 +111,12 @@ class CaseExclusionTest {
 
             // Choice write
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
-            final var choice = Builders.choiceBuilder().withNodeIdentifier(choice1Id)
-                .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
-                .withChild(ImmutableNodes.containerNode(QName.create(TestModel.TEST_QNAME, "case2-cont"))).build();
+            final var choice = ImmutableNodes.newChoiceBuilder().withNodeIdentifier(choice1Id)
+                .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
+                .withChild(ImmutableNodes.newContainerBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
+                    .build())
+                .build();
 
             try {
                 final var modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
