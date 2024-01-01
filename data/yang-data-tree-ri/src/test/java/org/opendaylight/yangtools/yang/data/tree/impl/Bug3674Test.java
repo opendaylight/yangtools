@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
@@ -31,7 +32,8 @@ class Bug3674Test extends AbstractTestModelTest {
 
         // Create the top-level container
         final var mod = tree.takeSnapshot().newModification();
-        mod.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        mod.write(TestModel.TEST_PATH,
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build());
         mod.ready();
         tree.commit(tree.prepare(mod));
 

@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -32,7 +33,8 @@ class ErrorReportingTest extends AbstractTestModelTest {
     void writeWithoutParentExisting() {
         final var modification = tree.takeSnapshot().newModification();
         // We write node without creating parent
-        modification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+        modification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         modification.ready();
         try {
@@ -49,7 +51,8 @@ class ErrorReportingTest extends AbstractTestModelTest {
     void parentConcurrentlyDeletedExisting() throws DataValidationFailedException {
         final var initial = tree.takeSnapshot().newModification();
         // We write node without creating parent
-        initial.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        initial.write(TestModel.TEST_PATH,
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build());
         initial.ready();
         // We commit transaction
         tree.commit(tree.prepare(initial));
@@ -61,7 +64,9 @@ class ErrorReportingTest extends AbstractTestModelTest {
         // We commit delete modification
         tree.commit(tree.prepare(deleteTx));
 
-        writeTx.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        writeTx.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+            .build());
         writeTx.ready();
         try {
             tree.validate(writeTx);

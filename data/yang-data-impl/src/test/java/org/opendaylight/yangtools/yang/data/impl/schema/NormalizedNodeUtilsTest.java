@@ -5,21 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 /*
 * Schema structure of document is:
@@ -86,14 +84,18 @@ class NormalizedNodeUtilsTest {
      * @return A test document
      */
     private static NormalizedNode createDocumentOne() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
-            .withChild(mapNodeBuilder(LIST_A_QNAME)
-                .withChild(mapEntry(LIST_A_QNAME, LEAF_A_QNAME, FOO))
-                .withChild(mapEntryBuilder(LIST_A_QNAME, LEAF_A_QNAME, BAR)
-                    .withChild(mapNodeBuilder(LIST_B_QNAME)
-                        .withChild(mapEntry(LIST_B_QNAME, LEAF_B_QNAME, ONE))
-                        .withChild(mapEntry(LIST_B_QNAME, LEAF_B_QNAME, TWO))
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(LIST_A_QNAME))
+                .withChild(ImmutableNodes.mapEntry(LIST_A_QNAME, LEAF_A_QNAME, FOO))
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_A_QNAME, LEAF_A_QNAME, BAR))
+                    .withChild(ImmutableNodes.leafNode(LEAF_A_QNAME, BAR))
+                    .withChild(ImmutableNodes.newSystemMapBuilder()
+                        .withNodeIdentifier(new NodeIdentifier(LIST_B_QNAME))
+                        .withChild(ImmutableNodes.mapEntry(LIST_B_QNAME, LEAF_B_QNAME, ONE))
+                        .withChild(ImmutableNodes.mapEntry(LIST_B_QNAME, LEAF_B_QNAME, TWO))
                         .build())
                     .build())
                 .build())

@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
@@ -19,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
@@ -37,12 +35,12 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
             .builder(TestModel.OUTER_LIST_PATH).nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
             .build();
 
-    private static final MapEntryNode INNER_FOO_ENTRY_NODE = mapEntry(TestModel.INNER_LIST_QNAME,
+    private static final MapEntryNode INNER_FOO_ENTRY_NODE = ImmutableNodes.mapEntry(TestModel.INNER_LIST_QNAME,
             TestModel.NAME_QNAME, "foo");
 
     private static final MapEntryNode INNER_BAR_ENTRY_NODE =
             mapEntryBuilder(QName.create(TestModel.TEST_QNAME, "inner-list2"), TestModel.NAME_QNAME, "foo")
-                .withChild(leafNode(TestModel.VALUE_QNAME, "value")).build();
+                .withChild(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "value")).build();
 
     private static final MapEntryNode FOO_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
             .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).withChild(INNER_FOO_ENTRY_NODE)
@@ -55,13 +53,13 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
             .build();
 
     private static ContainerNode createFooTestContainerNode() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
             .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(FOO_NODE).build()).build();
     }
 
     private static ContainerNode createBarTestContainerNode() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
             .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(BAR_NODE).build()).build();
     }
@@ -118,8 +116,10 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
             final var case2ContId = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont"));
             final var ii = TestModel.TEST_PATH.node(choice1Id).node(case2ContId);
-            final var case2Cont = Builders.containerBuilder().withNodeIdentifier(case2ContId)
-                .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value")).build();
+            final var case2Cont = ImmutableNodes.newContainerBuilder()
+                .withNodeIdentifier(case2ContId)
+                .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value"))
+                .build();
 
             final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree.write(ii, case2Cont);
@@ -134,8 +134,10 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
             final var ii = TestModel.TEST_PATH.node(choice1Id);
-            final var choice1 = Builders.choiceBuilder().withNodeIdentifier(choice1Id)
-                .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value")).build();
+            final var choice1 = ImmutableNodes.newChoiceBuilder()
+                .withNodeIdentifier(choice1Id)
+                .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
+                .build();
 
             final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree.write(ii, choice1);

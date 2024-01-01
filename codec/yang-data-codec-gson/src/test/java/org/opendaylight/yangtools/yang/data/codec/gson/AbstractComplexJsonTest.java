@@ -23,7 +23,7 @@ abstract class AbstractComplexJsonTest {
 
     private static final QName EMPTY_LEAF = QName.create(CONT_1, "empty");
 
-    static final ContainerNode CONT1_WITH_EMPTYLEAF = ImmutableNodes.builderFactory().newContainerBuilder()
+    static final ContainerNode CONT1_WITH_EMPTYLEAF = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(CONT_1_NODEID)
             .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, Empty.value()))
             .build();

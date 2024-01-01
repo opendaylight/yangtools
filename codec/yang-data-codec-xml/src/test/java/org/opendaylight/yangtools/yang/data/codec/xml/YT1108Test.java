@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xmlunit.builder.DiffBuilder;
@@ -77,12 +77,9 @@ class YT1108Test {
     void testLeafOfIdentityRefTypeNNToXmlSerialization(final String factoryMode, final XMLOutputFactory factory)
             throws Exception {
         final var diff = DiffBuilder
-            .compare(serializeToXml(factory, Builders.containerBuilder()
+            .compare(serializeToXml(factory, ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(LEAF_CONTAINER))
-                .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(NodeIdentifier.create(IDENTITYREF_LEAF))
-                    .withValue(IDENT_ONE)
-                    .build())
+                .withChild(ImmutableNodes.leafNode(IDENTITYREF_LEAF, IDENT_ONE))
                 .build()))
             .withTest("""
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -101,12 +98,9 @@ class YT1108Test {
     void testLeafOfUnionWithIdentityRefNNToXmlSerialization(final String factoryMode, final XMLOutputFactory factory)
             throws Exception {
         final var diff = DiffBuilder
-            .compare(serializeToXml(factory, Builders.containerBuilder()
+            .compare(serializeToXml(factory, ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(LEAF_CONTAINER))
-                .withChild(Builders.leafBuilder()
-                    .withNodeIdentifier(NodeIdentifier.create(UNION_IDENTITYREF_LEAF))
-                    .withValue(IDENT_ONE)
-                    .build())
+                .withChild(ImmutableNodes.leafNode(UNION_IDENTITYREF_LEAF, IDENT_ONE))
                 .build()))
             .withTest("""
                 <?xml version="1.0" encoding="UTF-8"?>

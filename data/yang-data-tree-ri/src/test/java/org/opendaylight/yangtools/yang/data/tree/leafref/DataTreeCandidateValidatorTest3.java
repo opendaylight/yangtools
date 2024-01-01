@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -103,18 +102,18 @@ public class DataTreeCandidateValidatorTest3 {
 
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
 
-        initialDataTreeModification.write(YangInstanceIdentifier.of(chips), Builders.containerBuilder()
+        initialDataTreeModification.write(YangInstanceIdentifier.of(chips), ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(chips))
-            .addChild(Builders.mapBuilder()
+            .addChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(chip))
                 .addChild(createChipsListEntry("dev_type_1", "desc1"))
                 .addChild(createChipsListEntry("dev_type_2", "desc2"))
                 .build())
             .build());
 
-        initialDataTreeModification.write(YangInstanceIdentifier.of(deviceTypeStr), Builders.containerBuilder()
+        initialDataTreeModification.write(YangInstanceIdentifier.of(deviceTypeStr), ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(deviceTypeStr))
-            .addChild(Builders.mapBuilder()
+            .addChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(deviceType))
                 .addChild(createDevTypeListEntry("dev_type1_1", "dev_type2_1", "dev_type3_1", "typedesc1"))
                 .addChild(createDevTypeListEntry("dev_type1_2", "dev_type2_2", "dev_type3_2", "typedesc2"))
@@ -146,9 +145,9 @@ public class DataTreeCandidateValidatorTest3 {
 
     private static void writeDevices() throws DataValidationFailedException {
         final var writeModification = inMemoryDataTree.takeSnapshot().newModification();
-        writeModification.write(YangInstanceIdentifier.of(devices), Builders.containerBuilder()
+        writeModification.write(YangInstanceIdentifier.of(devices), ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(devices))
-            .addChild(Builders.mapBuilder()
+            .addChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(device))
                 .addChild(createDeviceListEntry("dev_type1_1", "dev_type2_1", "dev_type3_1", "typedesc1", 123456,
                     "192.168.0.1"))
@@ -181,9 +180,9 @@ public class DataTreeCandidateValidatorTest3 {
     }
 
     private static void mergeDevices() throws DataValidationFailedException {
-        final var devicesContainer = Builders.containerBuilder()
+        final var devicesContainer = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(devices))
-            .addChild(Builders.mapBuilder()
+            .addChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(device))
                 .addChild(createDeviceListEntry("dev_type1_3", "dev_type2_3", "dev_type3_3", "typedesc3", 123459,
                     "192.168.0.1"))
@@ -223,7 +222,7 @@ public class DataTreeCandidateValidatorTest3 {
 
     private static MapEntryNode createDevTypeListEntry(final String type1Val, final String type2Val,
             final String type3Val, final String descVal) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(deviceType,
                 Map.of(type1, type1Val, type2, type2Val, type3, type3Val)))
             .addChild(ImmutableNodes.leafNode(type1, type1Val))
@@ -234,7 +233,7 @@ public class DataTreeCandidateValidatorTest3 {
     }
 
     private static MapEntryNode createChipsListEntry(final String devTypeVal, final String chipDescVal) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(chip, devType, devTypeVal))
             .addChild(ImmutableNodes.leafNode(devType, devTypeVal))
             .addChild(ImmutableNodes.leafNode(chipDesc, chipDescVal))
@@ -243,7 +242,7 @@ public class DataTreeCandidateValidatorTest3 {
 
     private static MapEntryNode createDeviceListEntry(final String type1TextVal, final String type2TextVal,
             final String type3TextVal, final String descVal, final int snVal, final String defaultIpVal) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(device, Map.of(typeText1, type1TextVal, sn, snVal)))
             .addChild(ImmutableNodes.leafNode(typeText1, type1TextVal))
             .addChild(ImmutableNodes.leafNode(typeText2, type2TextVal))

@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -85,11 +84,11 @@ class CaseAugmentTest {
     void testWriteAugment() throws DataValidationFailedException {
         final var inMemoryDataTree = initDataTree();
 
-        final var container = Builders.containerBuilder()
+        final var container = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(CHOICE_ID)
-                .withChild(leafNode(C1L2_QNAME, "leaf-value"))
+                .withChild(ImmutableNodes.leafNode(C1L2_QNAME, "leaf-value"))
                 .build())
             .build();
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -106,13 +105,13 @@ class CaseAugmentTest {
         final var inMemoryDataTree = initDataTree();
 
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(TestModel.TEST_PATH, Builders.containerBuilder()
+        modificationTree.write(TestModel.TEST_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(CHOICE_ID)
-                .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
-                .withChild(leafNode(C1L2_QNAME, "leaf-value"))
-                .withChild(leafNode(C1L3_QNAME, "leaf-value"))
+                .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
+                .withChild(ImmutableNodes.leafNode(C1L2_QNAME, "leaf-value"))
+                .withChild(ImmutableNodes.leafNode(C1L3_QNAME, "leaf-value"))
                 .build())
             .build());
         modificationTree.ready();
@@ -125,12 +124,12 @@ class CaseAugmentTest {
     @Test
     void testWriteConflict() throws DataValidationFailedException {
         final var modificationTree = initDataTree().takeSnapshot().newModification();
-        modificationTree.write(TestModel.TEST_PATH, Builders.containerBuilder()
+        modificationTree.write(TestModel.TEST_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(Builders.choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(CHOICE_ID)
-                .withChild(leafNode(C1L2_QNAME, "leaf-value"))
-                .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value"))
+                .withChild(ImmutableNodes.leafNode(C1L2_QNAME, "leaf-value"))
+                .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf1"), "leaf-value"))
                 .build())
             .build());
 

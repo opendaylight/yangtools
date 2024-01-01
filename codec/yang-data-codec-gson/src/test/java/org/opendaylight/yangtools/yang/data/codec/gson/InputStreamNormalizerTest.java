@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.InputStreamNormalizer;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationException;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -108,13 +107,13 @@ class InputStreamNormalizerTest {
 
     @Test
     void parseDatastore() throws Exception {
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(DATA_NID)
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
                 .withChild(ImmutableNodes.leafNode(STR, "str"))
                 .build())
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
                 .withChild(ImmutableNodes.leafNode(UINT, Uint32.TWO))
                 .build())
@@ -134,7 +133,7 @@ class InputStreamNormalizerTest {
 
     @Test
     void parseData() throws Exception {
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafNode(STR, "str"))
             .build(),
@@ -197,7 +196,7 @@ class InputStreamNormalizerTest {
             }"""));
 
         assertEquals(List.of(), prefixAndNode.prefix());
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(FOO))
             .withChild(ImmutableNodes.leafNode(STR, "str"))
             .build(), prefixAndNode.result().data());
@@ -227,7 +226,7 @@ class InputStreamNormalizerTest {
               ]
             }"""));
         assertEquals(List.of(new NodeIdentifier(BAZ)), prefixAndNode.prefix());
-        assertEquals(Builders.mapEntryBuilder()
+        assertEquals(ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAZ, Map.of(ONE, Boolean.TRUE, TWO, "two")))
             .withChild(ImmutableNodes.leafNode(ONE, Boolean.TRUE))
             .withChild(ImmutableNodes.leafNode(TWO, "two"))
@@ -268,7 +267,7 @@ class InputStreamNormalizerTest {
               }
             }"""));
         assertEquals(List.of(new NodeIdentifier(BAZ)), prefixAndNode.prefix());
-        assertEquals(Builders.mapEntryBuilder()
+        assertEquals(ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAZ, Map.of(ONE, Boolean.TRUE, TWO, "two")))
             .withChild(ImmutableNodes.leafNode(ONE, Boolean.TRUE))
             .withChild(ImmutableNodes.leafNode(TWO, "two"))
@@ -312,7 +311,7 @@ class InputStreamNormalizerTest {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterSchemaTree(THUD);
 
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(QName.create("foo", "input")))
             .withChild(ImmutableNodes.leafNode(UINT, Uint32.TWO))
             .build(),
@@ -342,7 +341,7 @@ class InputStreamNormalizerTest {
         stack.enterSchemaTree(BAZ);
         stack.enterSchemaTree(QUX);
 
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(QName.create("foo", "input")))
             .withChild(ImmutableNodes.leafNode(STR, "str"))
             .build(),
@@ -369,7 +368,7 @@ class InputStreamNormalizerTest {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterSchemaTree(THUD);
 
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(QName.create("foo", "output")))
             .build(),
             PARSER.parseOutput(stack.toInference(), stream("""
@@ -397,7 +396,7 @@ class InputStreamNormalizerTest {
         stack.enterSchemaTree(BAZ);
         stack.enterSchemaTree(QUX);
 
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(QName.create("foo", "output")))
             .build(),
             PARSER.parseOutput(stack.toInference(), stream("""

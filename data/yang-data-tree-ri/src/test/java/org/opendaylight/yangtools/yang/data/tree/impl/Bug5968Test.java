@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -81,14 +80,15 @@ class Bug5968Test {
         final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
-        final var root = Builders.containerBuilder()
+        final var root = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(
-                YangInstanceIdentifier.of(ROOT),
-                withMapNode ? root.withChild(
-                        Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST)).build()).build() : root
-                        .build());
+        modificationTree.write(YangInstanceIdentifier.of(ROOT), withMapNode
+            ? root.withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_LIST))
+                .build())
+                .build()
+                : root.build());
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
@@ -107,7 +107,7 @@ class Bug5968Test {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final var myList = createMap(true);
-        final var root = Builders.containerBuilder()
+        final var root = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -167,7 +167,7 @@ class Bug5968Test {
     }
 
     private static SystemMapNode createMap(final boolean mandatoryDataMissing) {
-        return Builders.mapBuilder()
+        return ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_LIST))
             .withChild(mandatoryDataMissing ? createMapEntry("1", "common-value")
                 : createMapEntry("1", "mandatory-value", "common-value"))
@@ -187,7 +187,7 @@ class Bug5968Test {
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object mandatoryLeafValue,
             final Object commonLeafValue) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF, mandatoryLeafValue))
@@ -195,7 +195,7 @@ class Bug5968Test {
     }
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object commonLeafValue) {
-        return Builders.mapEntryBuilder()
+        return ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue)).build();
@@ -206,7 +206,7 @@ class Bug5968Test {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final var myList = createMap(false);
-        final var root = Builders.containerBuilder()
+        final var root = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
