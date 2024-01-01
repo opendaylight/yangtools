@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -56,7 +55,8 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     private final A argument;
 
     private YangVersion rootVersion;
-    private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
+    @Deprecated(since = "12.0.0", forRemoval = true)
+    private final Set<SourceIdentifier> requiredSources = ImmutableSet.of();
     private SourceIdentifier rootIdentifier;
 
     /**
@@ -191,6 +191,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
      *
      * @return Required sources.
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     Collection<SourceIdentifier> getRequiredSources() {
         return ImmutableSet.copyOf(requiredSources);
     }
@@ -239,15 +240,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
      */
     void addMutableStmtToSeal(final MutableStatement mutableStatement) {
         sourceContext.globalContext().addMutableStmtToSeal(mutableStatement);
-    }
-
-    void addRequiredSourceImpl(final SourceIdentifier dependency) {
-        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
-        if (requiredSources.isEmpty()) {
-            requiredSources = new HashSet<>();
-        }
-        requiredSources.add(dependency);
     }
 
     @Deprecated

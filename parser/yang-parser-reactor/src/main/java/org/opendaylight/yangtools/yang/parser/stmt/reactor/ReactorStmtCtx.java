@@ -199,11 +199,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
-    public final void addRequiredSource(final SourceIdentifier dependency) {
-        getRoot().addRequiredSourceImpl(dependency);
-    }
-
-    @Override
     public final void setRootIdentifier(final SourceIdentifier identifier) {
         getRoot().setRootIdentifierImpl(identifier);
     }
