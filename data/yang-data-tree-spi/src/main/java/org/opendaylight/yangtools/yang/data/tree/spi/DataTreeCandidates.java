@@ -20,7 +20,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -55,36 +54,16 @@ public final class DataTreeCandidates {
     }
 
     public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
-        if (modification instanceof CursorAwareDataTreeModification) {
-            applyToCursorAwareModification((CursorAwareDataTreeModification) modification, candidate);
-            return;
-        }
-
-        final DataTreeCandidateNode node = candidate.getRootNode();
-        final YangInstanceIdentifier path = candidate.getRootPath();
-        switch (node.modificationType()) {
-            case DELETE:
-                modification.delete(path);
-                LOG.debug("Modification {} deleted path {}", modification, path);
-                break;
-            case SUBTREE_MODIFIED:
-                LOG.debug("Modification {} modified path {}", modification, path);
-
-                NodeIterator iterator = new NodeIterator(null, path, node.childNodes().iterator());
-                do {
-                    iterator = iterator.next(modification);
-                } while (iterator != null);
-                break;
-            case UNMODIFIED:
-                LOG.debug("Modification {} unmodified path {}", modification, path);
-                // No-op
-                break;
-            case WRITE:
-                modification.write(path, verifyNotNull(node.dataAfter()));
-                LOG.debug("Modification {} written path {}", modification, path);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
+        final var candidatePath = candidate.getRootPath();
+        final var parent = candidatePath.getParent();
+        if (parent == null) {
+            try (DataTreeModificationCursor cursor = modification.openCursor()) {
+                DataTreeCandidateNodes.applyRootToCursor(cursor, candidate.getRootNode());
+            }
+        } else {
+            try (var cursor = modification.openCursor(parent)) {
+                DataTreeCandidateNodes.applyRootedNodeToCursor(cursor, candidatePath, candidate.getRootNode());
+            }
         }
     }
 
@@ -320,21 +299,6 @@ public final class DataTreeCandidates {
 
     private static ModificationType illegalModification(final ModificationType first, final ModificationType second) {
         throw new IllegalArgumentException(first + " modification event on " + second + " node");
-    }
-
-    private static void applyToCursorAwareModification(final CursorAwareDataTreeModification modification,
-                                                       final DataTreeCandidate candidate) {
-        final YangInstanceIdentifier candidatePath = candidate.getRootPath();
-        final YangInstanceIdentifier parent = candidatePath.getParent();
-        if (parent == null) {
-            try (DataTreeModificationCursor cursor = modification.openCursor()) {
-                DataTreeCandidateNodes.applyRootToCursor(cursor, candidate.getRootNode());
-            }
-        } else {
-            try (DataTreeModificationCursor cursor = modification.openCursor(parent).orElseThrow()) {
-                DataTreeCandidateNodes.applyRootedNodeToCursor(cursor, candidatePath, candidate.getRootNode());
-            }
-        }
     }
 
     private static final class NodeIterator {

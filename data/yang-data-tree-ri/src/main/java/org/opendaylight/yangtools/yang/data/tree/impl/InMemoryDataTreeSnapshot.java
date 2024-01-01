@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -16,13 +15,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeSnapshot;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshotCursor;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
-final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements CursorAwareDataTreeSnapshot,
+final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements DataTreeSnapshot,
         EffectiveModelContextProvider {
     private final @NonNull RootApplyStrategy applyOper;
     private final @NonNull EffectiveModelContext schemaContext;
@@ -55,11 +53,22 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
     }
 
     @Override
-    public Optional<DataTreeSnapshotCursor> openCursor(final YangInstanceIdentifier path) {
-        return NormalizedNodes.findNode(rootNode.getData(), path).map(root -> {
-            checkArgument(root instanceof DistinctNodeContainer, "Child %s is not a container", path);
-            return openCursor(new InMemoryDataTreeSnapshotCursor(this, path, (DistinctNodeContainer<?, ?>)root));
-        });
+    public InMemoryDataTreeSnapshotCursor openCursor() {
+        return openCursor(new InMemoryDataTreeSnapshotCursor(this, YangInstanceIdentifier.of(),
+            (DistinctNodeContainer<?, ?>) rootNode.getData()));
+    }
+
+    @Override
+    public InMemoryDataTreeSnapshotCursor openCursor(final YangInstanceIdentifier rootPath) {
+        return NormalizedNodes.findNode(rootNode.getData(), rootPath)
+            .map(root -> {
+                if (root instanceof DistinctNodeContainer<?, ?> container) {
+                    return container;
+                }
+                throw new IllegalArgumentException("Child " + rootPath + " is not a container");
+            })
+            .map(root -> openCursor(new InMemoryDataTreeSnapshotCursor(this, rootPath, root)))
+            .orElse(null);
     }
 
     @Override

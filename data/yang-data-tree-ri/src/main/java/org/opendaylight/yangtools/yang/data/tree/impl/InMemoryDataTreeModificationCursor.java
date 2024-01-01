@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -93,8 +92,8 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
     }
 
     @Override
-    public Optional<NormalizedNode> readNode(final PathArgument child) {
-        return stack.peek().read(child, getParent().getVersion());
+    public NormalizedNode readNode(final PathArgument child) {
+        return stack.peek().read(child, getParent().getVersion()).orElse(null);
     }
 
     @Override
