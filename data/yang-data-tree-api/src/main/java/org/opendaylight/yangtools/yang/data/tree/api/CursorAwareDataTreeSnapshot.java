@@ -36,7 +36,4 @@ public interface CursorAwareDataTreeSnapshot extends DataTreeSnapshot {
     default DataTreeSnapshotCursor openCursor() {
         return openCursor(YangInstanceIdentifier.of()).orElseThrow();
     }
-
-    @Override
-    CursorAwareDataTreeModification newModification();
 }
