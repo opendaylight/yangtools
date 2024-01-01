@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.api;
 
-import com.google.common.annotations.Beta;
-import java.util.Optional;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * A cursor holding a logical position within a {@link DataTreeSnapshot}. It allows operations relative to that
  * position, as well as moving the position up or down the tree. Implementations are expected to be NOT thread-safe.
  */
-@Beta
 public interface DataTreeSnapshotCursor extends AutoCloseable {
     /**
      * Move the cursor to the specified child of the current position.
@@ -44,7 +43,9 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
      *                                  a valid child, or if that child is not an
      *                                  instance of {@link NormalizedNodeContainer}.
      */
-    void enter(@NonNull PathArgument... path);
+    default void enter(final @NonNull PathArgument... path) {
+        enter(List.of(path));
+    }
 
     /**
      * Move the cursor to the specified child of the current position. This is
@@ -92,11 +93,10 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
      *                                servicing the request.
      * @throws IllegalArgumentException when specified path does not identify a valid child.
      */
-    Optional<NormalizedNode> readNode(@NonNull PathArgument child);
+    @Nullable NormalizedNode readNode(@NonNull PathArgument child);
 
     /**
-     * Close this cursor. Attempting any further operations on the cursor will lead
-     * to undefined behavior.
+     * Close this cursor. Attempting any further operations on the cursor will lead to undefined behavior.
      */
     @Override
     void close();

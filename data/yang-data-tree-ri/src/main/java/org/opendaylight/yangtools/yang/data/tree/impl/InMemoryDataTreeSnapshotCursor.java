@@ -74,7 +74,7 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
     }
 
     @Override
-    public Optional<NormalizedNode> readNode(final PathArgument child) {
-        return NormalizedNodes.findNode(stack.peek(), child);
+    public NormalizedNode readNode(final PathArgument child) {
+        return NormalizedNodes.findNode(stack.peek(), child).orElse(null);
     }
 }

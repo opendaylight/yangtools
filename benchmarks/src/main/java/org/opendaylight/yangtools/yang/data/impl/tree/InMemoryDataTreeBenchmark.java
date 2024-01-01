@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
@@ -115,7 +114,7 @@ public class InMemoryDataTreeBenchmark {
         datastore = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION,
             BenchmarkModel.createTestContext());
 
-        final DataTreeModification modification = begin();
+        final var modification = begin();
         modification.write(BenchmarkModel.TEST_PATH, Builders.containerBuilder()
             .withNodeIdentifier(BenchmarkModel.TEST)
             .withChild(EMPTY_OUTER_LIST)
@@ -132,7 +131,7 @@ public class InMemoryDataTreeBenchmark {
     @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write100KSingleNodeWithOneInnerItemInOneCommitBenchmark() throws DataValidationFailedException {
-        final DataTreeModification modification = begin();
+        final var modification = begin();
         for (int outerListKey = 0; outerListKey < OUTER_LIST_100K; ++outerListKey) {
             modification.write(OUTER_LIST_PATHS[outerListKey], OUTER_LIST_ONE_ITEM_INNER_LIST[outerListKey]);
         }
@@ -143,8 +142,8 @@ public class InMemoryDataTreeBenchmark {
     @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write100KSingleNodeWithOneInnerItemInOneCommitCursorBenchmark() throws DataValidationFailedException {
-        final CursorAwareDataTreeModification modification = begin();
-        try (var cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH).orElseThrow()) {
+        final var modification = begin();
+        try (var cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH)) {
             for (int outerListKey = 0; outerListKey < OUTER_LIST_100K; ++outerListKey) {
                 cursor.write(OUTER_LIST_IDS[outerListKey], OUTER_LIST_ONE_ITEM_INNER_LIST[outerListKey]);
             }
@@ -157,7 +156,7 @@ public class InMemoryDataTreeBenchmark {
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write100KSingleNodeWithOneInnerItemInCommitPerWriteBenchmark() throws DataValidationFailedException {
         for (int outerListKey = 0; outerListKey < OUTER_LIST_100K; ++outerListKey) {
-            final DataTreeModification modification = begin();
+            final var modification = begin();
             modification.write(OUTER_LIST_PATHS[outerListKey], OUTER_LIST_ONE_ITEM_INNER_LIST[outerListKey]);
             commit(modification);
         }
@@ -167,7 +166,7 @@ public class InMemoryDataTreeBenchmark {
     @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write50KSingleNodeWithTwoInnerItemsInOneCommitBenchmark() throws DataValidationFailedException {
-        final DataTreeModification modification = begin();
+        final var modification = begin();
         for (int outerListKey = 0; outerListKey < OUTER_LIST_50K; ++outerListKey) {
             modification.write(OUTER_LIST_PATHS[outerListKey], OUTER_LIST_TWO_ITEM_INNER_LIST[outerListKey]);
         }
@@ -178,8 +177,8 @@ public class InMemoryDataTreeBenchmark {
     @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write50KSingleNodeWithTwoInnerItemsInOneCommitCursorBenchmark() throws DataValidationFailedException {
-        final CursorAwareDataTreeModification modification = begin();
-        try (var cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH).orElseThrow()) {
+        final var modification = begin();
+        try (var cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH)) {
             for (int outerListKey = 0; outerListKey < OUTER_LIST_50K; ++outerListKey) {
                 cursor.write(OUTER_LIST_IDS[outerListKey], OUTER_LIST_TWO_ITEM_INNER_LIST[outerListKey]);
             }
@@ -192,7 +191,7 @@ public class InMemoryDataTreeBenchmark {
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write50KSingleNodeWithTwoInnerItemsInCommitPerWriteBenchmark() throws DataValidationFailedException {
         for (int outerListKey = 0; outerListKey < OUTER_LIST_50K; ++outerListKey) {
-            final DataTreeModification modification = begin();
+            final var modification = begin();
             modification.write(OUTER_LIST_PATHS[outerListKey], OUTER_LIST_TWO_ITEM_INNER_LIST[outerListKey]);
             commit(modification);
         }
@@ -202,7 +201,7 @@ public class InMemoryDataTreeBenchmark {
     @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write10KSingleNodeWithTenInnerItemsInOneCommitBenchmark() throws DataValidationFailedException {
-        final DataTreeModification modification = begin();
+        final var modification = begin();
         for (int outerListKey = 0; outerListKey < OUTER_LIST_10K; ++outerListKey) {
             modification.write(OUTER_LIST_PATHS[outerListKey], OUTER_LIST_TEN_ITEM_INNER_LIST[outerListKey]);
         }
@@ -213,8 +212,8 @@ public class InMemoryDataTreeBenchmark {
     @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write10KSingleNodeWithTenInnerItemsInOneCommitCursorBenchmark() throws DataValidationFailedException {
-        final CursorAwareDataTreeModification modification = begin();
-        try (var cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH).orElseThrow()) {
+        final var modification = begin();
+        try (var cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH)) {
             for (int outerListKey = 0; outerListKey < OUTER_LIST_10K; ++outerListKey) {
                 cursor.write(OUTER_LIST_IDS[outerListKey], OUTER_LIST_TEN_ITEM_INNER_LIST[outerListKey]);
             }
@@ -233,8 +232,8 @@ public class InMemoryDataTreeBenchmark {
         }
     }
 
-    private CursorAwareDataTreeModification begin() {
-        return (CursorAwareDataTreeModification) datastore.takeSnapshot().newModification();
+    private DataTreeModification begin() {
+        return datastore.takeSnapshot().newModification();
     }
 
     private void commit(final DataTreeModification modification) throws DataValidationFailedException {

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.tree.api;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
@@ -24,6 +25,7 @@ public interface DataTreeSnapshot extends EffectiveModelContextProvider {
      * @param path Path of the node
      * @return Optional result encapsulating the presence and value of the node
      */
+    // FIXME: return nullable
     Optional<NormalizedNode> readNode(YangInstanceIdentifier path);
 
     /**
@@ -33,4 +35,22 @@ public interface DataTreeSnapshot extends EffectiveModelContextProvider {
      * @return A new data tree modification
      */
     @NonNull DataTreeModification newModification();
+
+    /**
+     * Create a new {@link DataTreeSnapshotCursor} at the root of the modification.
+     *
+     * @return A new cursor
+     * @throws IllegalStateException if there is another cursor currently open.
+     */
+    @NonNull DataTreeSnapshotCursor openCursor();
+
+    /**
+     * Try to create a new {@link DataTreeSnapshotCursor} at specified path, or {@code null} if it does not exist.
+     *
+     * @param path Path at which the cursor is to be anchored
+     * @return A new cursor, or empty if the path does not exist.
+     * @throws IllegalStateException if there is another cursor currently open.
+     */
+    @Nullable DataTreeSnapshotCursor openCursor(@NonNull YangInstanceIdentifier path);
+
 }

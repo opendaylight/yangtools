@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.api;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * Extension to the {@link DataTreeSnapshotCursor} which allows modifying the data tree. An instance of this interface
- * can be obtained from {@link CursorAwareDataTreeModification} and modifications made through this interface are staged
+ * can be obtained from a {@link DataTreeModification} and modifications made through this interface are staged
  * in the parent modification.
  */
-@Beta
 public interface DataTreeModificationCursor extends DataTreeSnapshotCursor {
     /**
      * Delete the specified child.

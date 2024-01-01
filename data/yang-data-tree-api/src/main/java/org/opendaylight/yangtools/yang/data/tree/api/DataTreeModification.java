@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.api;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -16,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * Class encapsulation of set of modifications to a base tree. This tree is backed by a read-only snapshot and tracks
  * modifications on top of that. The modification has the ability to rebase itself to a new snapshot.
  */
-public interface DataTreeModification extends DataTreeSnapshot, CursorAwareDataTreeSnapshot {
+public interface DataTreeModification extends DataTreeSnapshot {
     /**
      * Delete the node at specified path.
      *
@@ -57,6 +56,15 @@ public interface DataTreeModification extends DataTreeSnapshot, CursorAwareDataT
     void applyToCursor(@NonNull DataTreeModificationCursor cursor);
 
     /**
+     * Create a new {@link DataTreeModificationCursor} at the root of the modification.
+     *
+     * @return A new cursor
+     * @throws IllegalStateException if there is another cursor currently open.
+     */
+    @Override
+    DataTreeModificationCursor openCursor();
+
+    /**
      * Create a new {@link DataTreeModificationCursor} at specified path. May fail
      * if specified path does not exist.
      *
@@ -66,16 +74,5 @@ public interface DataTreeModification extends DataTreeSnapshot, CursorAwareDataT
      *                               or the modification is already {@link #ready()}.
      */
     @Override
-    Optional<? extends DataTreeModificationCursor> openCursor(YangInstanceIdentifier path);
-
-    /**
-     * Create a new {@link DataTreeModificationCursor} at the root of the modification.
-     *
-     * @return A new cursor
-     * @throws IllegalStateException if there is another cursor currently open.
-     */
-    @Override
-    default DataTreeModificationCursor openCursor() {
-        return openCursor(YangInstanceIdentifier.of()).orElseThrow();
-    }
+    DataTreeModificationCursor openCursor(YangInstanceIdentifier path);
 }

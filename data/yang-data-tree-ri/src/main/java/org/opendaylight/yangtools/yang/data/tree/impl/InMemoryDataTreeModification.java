@@ -15,13 +15,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
-import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
@@ -31,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification,
+final class InMemoryDataTreeModification extends AbstractCursorAware implements DataTreeModification,
         EffectiveModelContextProvider {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
@@ -296,9 +297,17 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public Optional<DataTreeModificationCursor> openCursor(final YangInstanceIdentifier path) {
-        final var op = resolveModificationFor(path);
-        return Optional.of(openCursor(new InMemoryDataTreeModificationCursor(this, path, op)));
+    public InMemoryDataTreeModificationCursor openCursor() {
+        return openCursorImpl(YangInstanceIdentifier.of());
+    }
+
+    @Override
+    public InMemoryDataTreeModificationCursor openCursor(final YangInstanceIdentifier path) {
+        return openCursorImpl(path);
+    }
+
+    private @NonNull InMemoryDataTreeModificationCursor openCursorImpl(final YangInstanceIdentifier path) {
+        return openCursor(new InMemoryDataTreeModificationCursor(this, path, resolveModificationFor(path)));
     }
 
     @Override
