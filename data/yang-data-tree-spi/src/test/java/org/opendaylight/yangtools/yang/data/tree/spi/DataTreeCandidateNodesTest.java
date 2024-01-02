@@ -13,41 +13,55 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
+@ExtendWith(MockitoExtension.class)
 class DataTreeCandidateNodesTest {
+    private static final LeafNode<?> LEAF_NODE = ImmutableNodes.leafNode(QName.create("foo", "foo"), "foo");
+
+    @Mock
+    private DataTreeCandidateNode mockedDataTreeCandidateNode;
+    @Mock
+    private DataTreeModificationCursor mockedCursor;
+    @Mock
+    private DataTreeCandidateNode mockedChildNode1;
+    @Mock
+    private DataTreeCandidateNode mockedChildNode2;
+    @Mock
+    private DataTreeCandidateNode mockedChildNode3;
+    @Mock
+    private DataTreeCandidateNode mockedChildNode3ChildNode;
+
     @Test
     void testFromNormalizedNode() {
-        assertNotNull(DataTreeCandidateNodes.written(mock(LeafNode.class)));
+        assertNotNull(DataTreeCandidateNodes.written(LEAF_NODE));
     }
 
     @Test
     void testApplyToCursorWithWriteModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).modificationType();
-        doReturn(mock(LeafNode.class)).when(mockedDataTreeCandidateNode).dataAfter();
+        doReturn(LEAF_NODE).when(mockedDataTreeCandidateNode).dataAfter();
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).write(isNull(), any());
     }
 
     @Test
     void testApplyToCursorWithDeleteModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).modificationType();
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).delete(isNull());
@@ -55,21 +69,14 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyToCursorWithSubtreeModifiedModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).modificationType();
 
-        final var mockedChildNode1 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.DELETE).when(mockedChildNode1).modificationType();
 
-        final var mockedChildNode2 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.WRITE).when(mockedChildNode2).modificationType();
-        doReturn(mock(LeafNode.class)).when(mockedChildNode2).dataAfter();
+        doReturn(LEAF_NODE).when(mockedChildNode2).dataAfter();
 
-        final var mockedChildNode3 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedChildNode3).modificationType();
-        final var mockedChildNode3ChildNode = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.DELETE).when(mockedChildNode3ChildNode).modificationType();
         doReturn(List.of(mockedChildNode3ChildNode)).when(mockedChildNode3).childNodes();
 
@@ -84,9 +91,6 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyToCursorWithUnsupportedModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).modificationType();
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode));
@@ -95,11 +99,8 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyRootedNodeToCursorWithWriteModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).modificationType();
-        doReturn(mock(LeafNode.class)).when(mockedDataTreeCandidateNode).dataAfter();
+        doReturn(LEAF_NODE).when(mockedDataTreeCandidateNode).dataAfter();
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).write(isNull(), any());
@@ -107,9 +108,6 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyRootedNodeToCursorWithDeleteModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).modificationType();
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
             mockedDataTreeCandidateNode);
@@ -118,12 +116,8 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyRootedNodeToCursorWithSubtreeModifiedModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).modificationType();
 
-        final var mockedChildNode1 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.DELETE).when(mockedChildNode1).modificationType();
         doReturn(List.of(mockedChildNode1)).when(mockedDataTreeCandidateNode).childNodes();
 
@@ -135,9 +129,6 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyRootedNodeToCursorWithUnsupportedModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).modificationType();
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, YangInstanceIdentifier.of(),
@@ -147,12 +138,8 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyRootToCursorWithSubtreeModifiedModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.SUBTREE_MODIFIED).when(mockedDataTreeCandidateNode).modificationType();
 
-        final var mockedChildNode1 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.DELETE).when(mockedChildNode1).modificationType();
         doReturn(List.of(mockedChildNode1)).when(mockedDataTreeCandidateNode).childNodes();
 
@@ -162,9 +149,6 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyRootToCursorWithDeleteModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).modificationType();
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootToCursor(mockedCursor, mockedDataTreeCandidateNode));
@@ -173,9 +157,6 @@ class DataTreeCandidateNodesTest {
 
     @Test
     void testApplyRootToCursorWithUnsupportedModificationType() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
-        final var mockedCursor = mock(DataTreeModificationCursor.class);
-
         doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).modificationType();
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> DataTreeCandidateNodes.applyRootToCursor(mockedCursor, mockedDataTreeCandidateNode));
