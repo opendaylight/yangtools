@@ -16,12 +16,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeSnapshot;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshotCursor;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
-final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements CursorAwareDataTreeSnapshot {
+final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements DataTreeSnapshot {
     private final @NonNull EffectiveModelContext modelContext;
     private final @NonNull RootApplyStrategy applyOper;
     private final @NonNull TreeNode rootNode;
