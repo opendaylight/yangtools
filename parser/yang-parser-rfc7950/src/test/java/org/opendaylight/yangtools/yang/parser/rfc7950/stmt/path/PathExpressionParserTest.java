@@ -71,7 +71,7 @@ public class PathExpressionParserTest {
     @Test
     void testInvalidLeftParent() {
         final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo("));
-        assertSame(ref, ex.getSourceReference());
+        assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), allOf(
             startsWith("extraneous input '(' expecting "),
             containsString(" at 1:3 [at ")));
@@ -80,7 +80,7 @@ public class PathExpressionParserTest {
     @Test
     void testInvalidRightParent() {
         final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo)"));
-        assertSame(ref, ex.getSourceReference());
+        assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), allOf(
             startsWith("extraneous input ')' expecting "),
             containsString(" at 1:3 [at ")));
@@ -89,7 +89,7 @@ public class PathExpressionParserTest {
     @Test
     void testInvalidIdentifier() {
         final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo%"));
-        assertSame(ref, ex.getSourceReference());
+        assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), startsWith("token recognition error at: '%' at 1:3 [at "));
     }
 

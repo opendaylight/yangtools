@@ -69,7 +69,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             if (it.hasNext()) {
                 return fetchSource(id, it);
             }
-            throw new MissingSchemaSourceException("All available providers exhausted", id, input);
+            throw new MissingSchemaSourceException(id, "All available providers exhausted", input);
         }, MoreExecutors.directExecutor());
     }
 
@@ -81,8 +81,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         synchronized (this) {
             final var srcs = sources.get(id);
             if (srcs == null) {
-                return immediateFailedFluentFuture(new MissingSchemaSourceException(
-                    "No providers registered for source " + id, id));
+                return immediateFailedFluentFuture(new MissingSchemaSourceException(id,
+                    "No providers registered for source " + id));
             }
 
             sortedSchemaSourceRegistrations = new ArrayList<>(srcs.get(representation));
@@ -93,8 +93,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         final var regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
-            return immediateFailedFluentFuture(new MissingSchemaSourceException(
-                        "No providers for source " + id + " representation " + representation + " available", id));
+            return immediateFailedFluentFuture(new MissingSchemaSourceException(id,
+                        "No providers for source " + id + " representation " + representation + " available"));
         }
 
         final ListenableFuture<T> fetchSourceFuture = fetchSource(id, regs);
