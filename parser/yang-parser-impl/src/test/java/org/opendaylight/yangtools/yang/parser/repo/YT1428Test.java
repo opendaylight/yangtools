@@ -19,6 +19,6 @@ public class YT1428Test extends AbstractSchemaRepositoryTest {
     void testDeviateSourceReported() {
         final var ex = assertExecutionException(null, "/yt1428/orig.yang", "/yt1428/deviate.yang");
         assertEquals(new SourceIdentifier("deviate"),
-            assertInstanceOf(SchemaResolutionException.class, ex.getCause()).getFailedSource());
+            assertInstanceOf(SchemaResolutionException.class, ex.getCause()).sourceId());
     }
 }
