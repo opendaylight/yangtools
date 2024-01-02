@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 public class YangTextSchemaContextResolverTest {
     @Test
@@ -49,17 +49,17 @@ public class YangTextSchemaContextResolverTest {
         final var fooModuleId = new SourceIdentifier("foo", "2016-09-26");
         final var foo = yangTextSchemaContextResolver.getSource(fooModuleId);
         assertTrue(foo.isDone());
-        assertEquals(fooModuleId, foo.get().getIdentifier());
+        assertEquals(fooModuleId, foo.get().sourceId());
 
         final var barModuleId = new SourceIdentifier("bar", "2016-09-26");
         final var bar = yangTextSchemaContextResolver.getSource(barModuleId);
         assertTrue(bar.isDone());
-        assertEquals(barModuleId, bar.get().getIdentifier());
+        assertEquals(barModuleId, bar.get().sourceId());
 
         final var bazModuleId = new SourceIdentifier("baz", "2016-09-26");
         final var baz = yangTextSchemaContextResolver.getSource(bazModuleId);
         assertTrue(baz.isDone());
-        assertEquals(bazModuleId, baz.get().getIdentifier());
+        assertEquals(bazModuleId, baz.get().sourceId());
 
         final var foobarModuleId = new SourceIdentifier("foobar", "2016-09-26");
         final var foobar = yangTextSchemaContextResolver.getSource(foobarModuleId);

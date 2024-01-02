@@ -14,8 +14,8 @@ import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
  * A single <a href="https://www.rfc-editor.org/rfc/rfc8525">RFC8525</a> {@code module} or {@code import-only-module}
@@ -27,11 +27,11 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * @param submodules Submodules of this module
  * @param features The set of supported features in this module
  * @param deviationModuleNames Names of modules containing {@code deviate} statements targetting this module
- * @param source A {@link SchemaSourceRepresentation} of the module
+ * @param source A {@link SourceRepresentation} of the module
  */
 public record YangLibModule(@NonNull SourceIdentifier identifier, @NonNull XMLNamespace namespace,
         @NonNull ImmutableMap<Unqualified, YangLibSubmodule> submodules, @NonNull ImmutableSet<Unqualified> features,
-        @NonNull ImmutableSet<Unqualified> deviationModuleNames, @NonNull SchemaSourceRepresentation source) {
+        @NonNull ImmutableSet<Unqualified> deviationModuleNames, @NonNull SourceRepresentation source) {
     public YangLibModule {
         requireNonNull(identifier);
         requireNonNull(namespace);

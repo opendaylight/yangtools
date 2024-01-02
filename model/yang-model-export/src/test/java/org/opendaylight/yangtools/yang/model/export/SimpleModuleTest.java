@@ -14,9 +14,9 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
@@ -50,7 +50,7 @@ public class SimpleModuleTest {
                 }
 
                 @Override
-                public void schemaSourceEncountered(final SchemaSourceRepresentation source) {
+                public void schemaSourceEncountered(final SourceRepresentation source) {
                     // NOOP
                 }
             })) {

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 public class YT1193Test {
@@ -24,9 +24,9 @@ public class YT1193Test {
     void testDeclarationReference() throws Exception {
         final var declaredRoots = new DefaultYangParserFactory()
             .createParser(YangParserConfiguration.builder().retainDeclarationReferences(true).build())
-            .addSource(YangTextSchemaSource.forResource(getClass(), "/yt1193/foo.yang"))
-            .addSource(YangTextSchemaSource.forResource(getClass(), "/yt1193/bar.yang"))
-            .addSource(YangTextSchemaSource.forResource(getClass(), "/yt1193/baz.yang"))
+            .addSource(YangTextSource.forResource(getClass(), "/yt1193/foo.yang"))
+            .addSource(YangTextSource.forResource(getClass(), "/yt1193/bar.yang"))
+            .addSource(YangTextSource.forResource(getClass(), "/yt1193/baz.yang"))
             .buildDeclaredModel();
         assertEquals(3, declaredRoots.size());
 

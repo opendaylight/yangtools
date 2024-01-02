@@ -35,34 +35,34 @@ import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.GuavaSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class YangTextSchemaContextResolver implements AutoCloseable, SchemaSourceProvider<YangTextSchemaSource> {
+public final class YangTextSchemaContextResolver implements AutoCloseable, SchemaSourceProvider<YangTextSource> {
     private static final Logger LOG = LoggerFactory.getLogger(YangTextSchemaContextResolver.class);
     private static final Duration SOURCE_LIFETIME = Duration.ofSeconds(60);
 
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
-    private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
+    private final Multimap<SourceIdentifier, YangTextSource> texts = ArrayListMultimap.create();
     @GuardedBy("this")
     private final Map<QNameModule, List<ImmutableSet<String>>> registeredFeatures = new HashMap<>();
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
@@ -96,7 +96,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     /**
-     * Register a {@link YangTextSchemaSource}.
+     * Register a {@link YangTextSource}.
      *
      * @param source YANG text source
      * @return a {@link Registration}
@@ -105,16 +105,16 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * @throws SchemaSourceException When parsing encounters general error
      * @throws NullPointerException if {@code source} is {@code null}
      */
-    public @NonNull Registration registerSource(final @NonNull YangTextSchemaSource source)
+    public @NonNull Registration registerSource(final @NonNull YangTextSource source)
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
         final var ast = TextToIRTransformer.transformText(source);
         LOG.trace("Resolved source {} to source {}", source, ast);
 
         // AST carries an accurate identifier, check if it matches the one supplied by the source. If it
         // does not, check how much it differs and emit a warning.
-        final var providedId = source.getIdentifier();
-        final var parsedId = ast.getIdentifier();
-        final YangTextSchemaSource text;
+        final var providedId = source.sourceId();
+        final var parsedId = ast.sourceId();
+        final YangTextSource text;
         if (!parsedId.equals(providedId)) {
             if (!parsedId.name().equals(providedId.name())) {
                 LOG.info("Provided module name {} does not match actual text {}, corrected",
@@ -131,7 +131,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                 }
             }
 
-            text = YangTextSchemaSource.delegateForCharSource(parsedId, source);
+            text = YangTextSource.delegateForCharSource(parsedId, source);
         } else {
             text = source;
         }
@@ -141,7 +141,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             LOG.debug("Populated {} with text", parsedId);
 
             final var reg = registry.registerSchemaSource(this,
-                PotentialSchemaSource.create(parsedId, YangTextSchemaSource.class, Costs.IMMEDIATE.getValue()));
+                PotentialSchemaSource.create(parsedId, YangTextSource.class, Costs.IMMEDIATE.getValue()));
             requiredSources.add(parsedId);
             cache.schemaSourceEncountered(ast);
             LOG.debug("Added source {} to schema context requirements", parsedId);
@@ -176,7 +176,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
         final String path = url.getPath();
         final String fileName = path.substring(path.lastIndexOf('/') + 1);
-        return registerSource(YangTextSchemaSource.forURL(url, guessSourceIdentifier(fileName)));
+        return registerSource(YangTextSource.forURL(url, guessSourceIdentifier(fileName)));
     }
 
     /**
@@ -233,7 +233,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     private static SourceIdentifier guessSourceIdentifier(final @NonNull String fileName) {
         try {
-            return YangTextSchemaSource.identifierFromFilename(fileName);
+            return YangTextSource.identifierFromFilename(fileName);
         } catch (IllegalArgumentException e) {
             LOG.warn("Invalid file name format in '{}'", fileName, e);
             return new SourceIdentifier(fileName);
@@ -311,8 +311,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Override
-    public synchronized @NonNull FluentFuture<YangTextSchemaSource> getSource(
-            final SourceIdentifier sourceIdentifier) {
+    public synchronized @NonNull FluentFuture<YangTextSource> getSource(final SourceIdentifier sourceIdentifier) {
         final var ret = texts.get(sourceIdentifier);
 
         LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
@@ -334,7 +333,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Beta
-    public synchronized Collection<YangTextSchemaSource> getSourceTexts(final SourceIdentifier sourceIdentifier) {
+    public synchronized Collection<YangTextSource> getSourceTexts(final SourceIdentifier sourceIdentifier) {
         return ImmutableSet.copyOf(texts.get(sourceIdentifier));
     }
 

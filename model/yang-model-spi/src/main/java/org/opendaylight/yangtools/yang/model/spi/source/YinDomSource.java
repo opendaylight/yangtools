@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -16,7 +16,6 @@ import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.SUBMODUL
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -26,6 +25,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -34,10 +34,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Utility {@link YinXmlSchemaSource} exposing a W3C {@link DOMSource} representation of YIN model.
+ * Utility {@link YinXmlSource} exposing a W3C {@link DOMSource} representation of YIN model.
  */
-public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
-    private static final Logger LOG = LoggerFactory.getLogger(YinDomSchemaSource.class);
+public abstract sealed class YinDomSource implements YinXmlSource {
+    private static final Logger LOG = LoggerFactory.getLogger(YinDomSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
     private static final QName REVISION_STMT = REVISION.getStatementName();
     private static final String MODULE_ARG = MODULE.getArgumentDefinition().orElseThrow()
@@ -45,19 +45,15 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     private static final String REVISION_ARG = REVISION.getArgumentDefinition().orElseThrow()
         .argumentName().getLocalName();
 
-    YinDomSchemaSource() {
-        // Prevent outside instantiation
-    }
-
     /**
-     * Create a new {@link YinDomSchemaSource} using an identifier and a source.
+     * Create a new {@link YinDomSource} using an identifier and a source.
      *
      * @param identifier Schema source identifier
      * @param source W3C DOM source
      * @param symbolicName Source symbolic name
-     * @return A new {@link YinDomSchemaSource} instance.
+     * @return A new {@link YinDomSource} instance.
      */
-    public static @NonNull YinDomSchemaSource create(final @NonNull SourceIdentifier identifier,
+    public static @NonNull YinDomSource create(final @NonNull SourceIdentifier identifier,
             final @NonNull DOMSource source, final @Nullable String symbolicName) {
 
         final Node root = source.getNode().getFirstChild();
@@ -90,7 +86,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         final Attr dateAttr = revisionStmt.getAttributeNode(REVISION_ARG);
         checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
-        final SourceIdentifier parsedId = new SourceIdentifier(nameAttr.getValue(), dateAttr.getValue());
+        final var parsedId = new SourceIdentifier(nameAttr.getValue(), dateAttr.getValue());
         final SourceIdentifier id;
         if (!parsedId.equals(identifier)) {
             LOG.debug("Changed identifier from {} to {}", identifier, parsedId);
@@ -103,45 +99,45 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     }
 
     /**
-     * Create a {@link YinDomSchemaSource} from a {@link YinXmlSchemaSource}. If the argument is already a
+     * Create a {@link YinDomSource} from a {@link YinXmlSource}. If the argument is already a
      * YinDomSchemaSource, this method returns the same instance. The source will be translated on first access,
      * at which point an {@link IllegalStateException} may be raised.
      *
      * @param xmlSchemaSource Backing schema source
-     * @return A {@link YinDomSchemaSource} instance
+     * @return A {@link YinDomSource} instance
      */
-    public static @NonNull YinDomSchemaSource lazyTransform(final YinXmlSchemaSource xmlSchemaSource) {
-        final YinDomSchemaSource cast = castSchemaSource(xmlSchemaSource);
+    public static @NonNull YinDomSource lazyTransform(final YinXmlSource xmlSchemaSource) {
+        final var cast = castSchemaSource(xmlSchemaSource);
         return cast != null ? cast : new Transforming(xmlSchemaSource);
     }
 
     /**
-     * Create a {@link YinDomSchemaSource} from a {@link YinXmlSchemaSource}. If the argument is already a
+     * Create a {@link YinDomSource} from a {@link YinXmlSource}. If the argument is already a
      * YinDomSchemaSource, this method returns the same instance. The source will be translated immediately.
      *
      * @param xmlSchemaSource Backing schema source
-     * @return A {@link YinDomSchemaSource} instance
+     * @return A {@link YinDomSource} instance
      * @throws TransformerException when the provided source fails to transform
      */
-    public static @NonNull YinDomSchemaSource transform(final YinXmlSchemaSource xmlSchemaSource)
+    public static @NonNull YinDomSource transform(final YinXmlSource xmlSchemaSource)
             throws TransformerException {
-        final YinDomSchemaSource cast = castSchemaSource(xmlSchemaSource);
+        final var cast = castSchemaSource(xmlSchemaSource);
         return cast != null ? cast :
-            create(xmlSchemaSource.getIdentifier(), transformSource(xmlSchemaSource.getSource()),
-                xmlSchemaSource.getSymbolicName().orElse(null));
+            create(xmlSchemaSource.sourceId(), transformSource(xmlSchemaSource.getSource()),
+                xmlSchemaSource.symbolicName());
+    }
+
+    @Override
+    public final Class<YinDomSource> getType() {
+        return YinDomSource.class;
     }
 
     @Override
     public abstract DOMSource getSource();
 
     @Override
-    public final Class<YinDomSchemaSource> getType() {
-        return YinDomSchemaSource.class;
-    }
-
-    @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("identifier", getIdentifier())).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).add("sourceId", sourceId())).toString();
     }
 
     /**
@@ -162,28 +158,33 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         return new DOMSource(result.getNode(), result.getSystemId());
     }
 
-    private static @Nullable YinDomSchemaSource castSchemaSource(final YinXmlSchemaSource xmlSchemaSource) {
-        if (xmlSchemaSource instanceof YinDomSchemaSource yinDom) {
+    private static @Nullable YinDomSource castSchemaSource(final YinXmlSource xmlSchemaSource) {
+        if (xmlSchemaSource instanceof YinDomSource yinDom) {
             return yinDom;
         }
 
-        final Source source = xmlSchemaSource.getSource();
+        final var source = xmlSchemaSource.getSource();
         if (source instanceof DOMSource dom) {
-            return create(xmlSchemaSource.getIdentifier(), dom, xmlSchemaSource.getSymbolicName().orElse(null));
+            return create(xmlSchemaSource.sourceId(), dom, xmlSchemaSource.symbolicName());
         }
         return null;
     }
 
-    private static final class Simple extends YinDomSchemaSource {
-        private final @NonNull SourceIdentifier identifier;
+    private static final class Simple extends YinDomSource {
+        private final @NonNull SourceIdentifier sourceId;
         private final @NonNull DOMSource source;
         private final String symbolicName;
 
-        Simple(final @NonNull SourceIdentifier identifier, final @NonNull DOMSource source,
+        Simple(final @NonNull SourceIdentifier sourceId, final @NonNull DOMSource source,
                 final @Nullable String symbolicName) {
-            this.identifier = requireNonNull(identifier);
+            this.sourceId = requireNonNull(sourceId);
             this.source = requireNonNull(source);
             this.symbolicName = symbolicName;
+        }
+
+        @Override
+        public SourceIdentifier sourceId() {
+            return sourceId;
         }
 
         @Override
@@ -192,13 +193,8 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         }
 
         @Override
-        public SourceIdentifier getIdentifier() {
-            return identifier;
-        }
-
-        @Override
-        public Optional<String> getSymbolicName() {
-            return Optional.ofNullable(symbolicName);
+        public String symbolicName() {
+            return symbolicName;
         }
 
         @Override
@@ -207,12 +203,23 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         }
     }
 
-    private static final class Transforming extends YinDomSchemaSource {
-        private final YinXmlSchemaSource xmlSchemaSource;
+    private static final class Transforming extends YinDomSource {
+        private final YinXmlSource xmlSchemaSource;
+
         private volatile DOMSource source;
 
-        Transforming(final YinXmlSchemaSource xmlSchemaSource) {
+        Transforming(final YinXmlSource xmlSchemaSource) {
             this.xmlSchemaSource = requireNonNull(xmlSchemaSource);
+        }
+
+        @Override
+        public SourceIdentifier sourceId() {
+            return xmlSchemaSource.sourceId();
+        }
+
+        @Override
+        public String symbolicName() {
+            return xmlSchemaSource.symbolicName();
         }
 
         @Override
@@ -233,16 +240,6 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             }
 
             return ret;
-        }
-
-        @Override
-        public SourceIdentifier getIdentifier() {
-            return xmlSchemaSource.getIdentifier();
-        }
-
-        @Override
-        public Optional<String> getSymbolicName() {
-            return xmlSchemaSource.getSymbolicName();
         }
 
         @Override

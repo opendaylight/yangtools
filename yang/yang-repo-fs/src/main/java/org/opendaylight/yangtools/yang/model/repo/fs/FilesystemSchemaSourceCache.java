@@ -33,28 +33,25 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Cache implementation that stores schemas in form of files under provided folder.
  */
-public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentation>
-        extends AbstractSchemaSourceCache<T> {
-
+public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> extends AbstractSchemaSourceCache<T> {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemSchemaSourceCache.class);
 
     // Init storage adapters
-    private static final Map<Class<? extends SchemaSourceRepresentation>,
-            StorageAdapter<? extends SchemaSourceRepresentation>> STORAGE_ADAPTERS = Collections.singletonMap(
-                    YangTextSchemaSource.class, new YangTextSchemaStorageAdapter());
+    private static final Map<Class<? extends SourceRepresentation>, StorageAdapter<? extends SourceRepresentation>>
+        STORAGE_ADAPTERS = Collections.singletonMap(YangTextSource.class, new YangTextStorageAdapter());
 
     private static final Pattern CACHED_FILE_PATTERN =
             Pattern.compile("(?<moduleName>[^@]+)" + "(@(?<revision>" + Revision.STRING_FORMAT_PATTERN + "))?");
@@ -62,8 +59,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     private final Class<T> representation;
     private final File storageDirectory;
 
-    public FilesystemSchemaSourceCache(
-            final SchemaSourceRegistry consumer, final Class<T> representation, final File storageDirectory) {
+    public FilesystemSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
+            final File storageDirectory) {
         super(consumer, representation, Costs.LOCAL_IO);
         this.representation = representation;
         this.storageDirectory = requireNonNull(storageDirectory);
@@ -78,16 +75,16 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         init();
     }
 
-    private static void checkSupportedRepresentation(final Class<? extends SchemaSourceRepresentation> representation) {
-        for (final Class<? extends SchemaSourceRepresentation> supportedRepresentation : STORAGE_ADAPTERS.keySet()) {
+    private static void checkSupportedRepresentation(final Class<? extends SourceRepresentation> representation) {
+        for (final var supportedRepresentation : STORAGE_ADAPTERS.keySet()) {
             if (supportedRepresentation.isAssignableFrom(representation)) {
                 return;
             }
         }
 
         throw new IllegalArgumentException(String.format(
-                   "This cache does not support representation: %s, supported representations are: %s",
-                   representation, STORAGE_ADAPTERS.keySet()));
+            "This cache does not support representation: %s, supported representations are: %s",
+            representation, STORAGE_ADAPTERS.keySet()));
     }
 
     /**
@@ -111,8 +108,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
         if (file.exists() && file.canRead()) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);
-            final SchemaSourceRepresentation restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier,
-                    file);
+            final var restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier, file);
             return immediateFluentFuture(representation.cast(restored));
         }
 
@@ -122,20 +118,20 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
     @Override
     protected synchronized void offer(final T source) {
-        LOG.trace("Source {} offered to cache", source.getIdentifier());
+        LOG.trace("Source {} offered to cache", source.sourceId());
         final File file = sourceIdToFile(source);
         if (file.exists()) {
-            LOG.debug("Source {} already in cache as {}", source.getIdentifier(), file);
+            LOG.debug("Source {} already in cache as {}", source.sourceId(), file);
             return;
         }
 
         storeSource(file, source);
-        register(source.getIdentifier());
-        LOG.trace("Source {} stored in cache as {}", source.getIdentifier(), file);
+        register(source.sourceId());
+        LOG.trace("Source {} stored in cache as {}", source.sourceId(), file);
     }
 
     private File sourceIdToFile(final T source) {
-        return sourceIdToFile(source.getIdentifier(), storageDirectory);
+        return sourceIdToFile(source.sourceId(), storageDirectory);
     }
 
     static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
@@ -198,15 +194,14 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         STORAGE_ADAPTERS.get(representation).store(file, schemaRepresentation);
     }
 
-    private abstract static class StorageAdapter<T extends SchemaSourceRepresentation> {
-
+    private abstract static class StorageAdapter<T extends SourceRepresentation> {
         private final Class<T> supportedType;
 
         protected StorageAdapter(final Class<T> supportedType) {
             this.supportedType = supportedType;
         }
 
-        void store(final File file, final SchemaSourceRepresentation schemaSourceRepresentation) {
+        void store(final File file, final SourceRepresentation schemaSourceRepresentation) {
             checkArgument(supportedType.isAssignableFrom(schemaSourceRepresentation.getClass()),
                     "Cannot store schema source %s, this adapter only supports %s", schemaSourceRepresentation,
                     supportedType);
@@ -227,25 +222,23 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         abstract T restoreAsType(SourceIdentifier sourceIdentifier, File cachedSource);
     }
 
-    private static final class YangTextSchemaStorageAdapter extends StorageAdapter<YangTextSchemaSource> {
-
-        protected YangTextSchemaStorageAdapter() {
-            super(YangTextSchemaSource.class);
+    private static final class YangTextStorageAdapter extends StorageAdapter<YangTextSource> {
+        protected YangTextStorageAdapter() {
+            super(YangTextSource.class);
         }
 
         @Override
-        protected void storeAsType(final File file, final YangTextSchemaSource cast) {
+        protected void storeAsType(final File file, final YangTextSource cast) {
             try (var castStream = cast.asByteSource(StandardCharsets.UTF_8).openStream()) {
                 Files.copy(castStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (final IOException e) {
-                throw new IllegalStateException("Cannot store schema source " + cast.getIdentifier() + " to " + file,
-                        e);
+                throw new IllegalStateException("Cannot store schema source " + cast.sourceId() + " to " + file, e);
             }
         }
 
         @Override
-        YangTextSchemaSource restoreAsType(final SourceIdentifier sourceIdentifier, final File cachedSource) {
-            return YangTextSchemaSource.forPath(cachedSource.toPath(), sourceIdentifier);
+        YangTextSource restoreAsType(final SourceIdentifier sourceIdentifier, final File cachedSource) {
+            return YangTextSource.forPath(cachedSource.toPath(), sourceIdentifier);
         }
     }
 

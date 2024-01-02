@@ -28,7 +28,7 @@ import java.util.zip.ZipFile;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +40,8 @@ abstract class ScannedDependency {
         }
 
         @Override
-        ImmutableList<YangTextSchemaSource> sources() {
-            return ImmutableList.of(YangTextSchemaSource.forPath(file().toPath()));
+        ImmutableList<YangTextSource> sources() {
+            return ImmutableList.of(YangTextSource.forPath(file().toPath()));
         }
     }
 
@@ -54,14 +54,14 @@ abstract class ScannedDependency {
         }
 
         @Override
-        ImmutableList<YangTextSchemaSource> sources() throws IOException {
-            final var builder = ImmutableList.<YangTextSchemaSource>builderWithExpectedSize(entryNames.size());
+        ImmutableList<YangTextSource> sources() throws IOException {
+            final var builder = ImmutableList.<YangTextSource>builderWithExpectedSize(entryNames.size());
 
             try (ZipFile zip = new ZipFile(file())) {
                 for (String entryName : entryNames) {
                     final ZipEntry entry = requireNonNull(zip.getEntry(entryName));
 
-                    builder.add(YangTextSchemaSource.delegateForByteSource(
+                    builder.add(YangTextSource.delegateForByteSource(
                         entryName.substring(entryName.lastIndexOf('/') + 1),
                         // FIXME: can we reasonable make this a CharSource?
                         ByteSource.wrap(ByteStreams.toByteArray(zip.getInputStream(entry))),
@@ -130,7 +130,7 @@ abstract class ScannedDependency {
         return file;
     }
 
-    abstract ImmutableList<YangTextSchemaSource> sources() throws IOException;
+    abstract ImmutableList<YangTextSource> sources() throws IOException;
 
     @VisibleForTesting
     static List<File> getClassPath(final MavenProject project) {

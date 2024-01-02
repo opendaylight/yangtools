@@ -12,19 +12,19 @@ import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport;
 
 @Beta
-public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextSchemaSource, YangIRSchemaSource> {
+public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextSource, YangIRSchemaSource> {
     private TextToIRTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
-        super(provider, YangTextSchemaSource.class, consumer, YangIRSchemaSource.class,
+        super(provider, YangTextSource.class, consumer, YangIRSchemaSource.class,
             input -> Futures.immediateFuture(transformText(input)));
     }
 
@@ -33,13 +33,13 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
         return new TextToIRTransformer(provider, consumer);
     }
 
-    public static @NonNull YangIRSchemaSource transformText(final YangTextSchemaSource text)
+    public static @NonNull YangIRSchemaSource transformText(final YangTextSource text)
             throws YangSyntaxErrorException, IOException {
         final IRStatement rootStatement = IRSupport.createStatement(YangStatementStreamSource.parseYangSource(text));
-        final String name = YangModelDependencyInfo.safeStringArgument(text.getIdentifier(), rootStatement, "name");
-        final String latestRevision = YangModelDependencyInfo.getLatestRevision(rootStatement, text.getIdentifier());
+        final String name = YangModelDependencyInfo.safeStringArgument(text.sourceId(), rootStatement, "name");
+        final String latestRevision = YangModelDependencyInfo.getLatestRevision(rootStatement, text.sourceId());
         final SourceIdentifier sourceId = new SourceIdentifier(name, latestRevision);
 
-        return new YangIRSchemaSource(sourceId, rootStatement, text.getSymbolicName().orElse(null));
+        return new YangIRSchemaSource(sourceId, rootStatement, text.symbolicName());
     }
 }

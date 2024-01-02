@@ -15,14 +15,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.HashMap;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
-public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
+public class SchemaSourceTransformer<S extends SourceRepresentation, D extends SourceRepresentation>
         implements SchemaSourceListener, SchemaSourceProvider<D> {
     @FunctionalInterface
-    public interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
+    public interface Transformation<S extends SourceRepresentation, D extends SourceRepresentation>
             extends AsyncFunction<S, D> {
         @Override
         ListenableFuture<D> apply(S input) throws Exception;
@@ -51,7 +51,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     }
 
     @Override
-    public final void schemaSourceEncountered(final SchemaSourceRepresentation source) {
+    public final void schemaSourceEncountered(final SourceRepresentation source) {
         // Not interesting
     }
 

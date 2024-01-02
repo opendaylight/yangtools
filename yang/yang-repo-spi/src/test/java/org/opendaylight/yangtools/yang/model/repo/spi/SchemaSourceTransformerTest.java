@@ -19,19 +19,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
+import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 
 @ExtendWith(MockitoExtension.class)
 class SchemaSourceTransformerTest {
-    public static final Class<YangSchemaSourceRepresentation> SRC_CLASS = YangSchemaSourceRepresentation.class;
-    public static final Class<YinXmlSchemaSource> DST_CLASS = YinXmlSchemaSource.class;
+    public static final Class<YangSourceRepresentation> SRC_CLASS = YangSourceRepresentation.class;
+    public static final Class<YinXmlSource> DST_CLASS = YinXmlSource.class;
 
     @Mock
     public SchemaRepository provider;
@@ -40,9 +40,9 @@ class SchemaSourceTransformerTest {
     public SchemaSourceRegistry consumer;
 
     @Mock
-    public AsyncFunction<YangSchemaSourceRepresentation, YinXmlSchemaSource> function;
+    public AsyncFunction<YangSourceRepresentation, YinXmlSource> function;
 
-    public SchemaSourceTransformer<YangSchemaSourceRepresentation, YinXmlSchemaSource> schema;
+    public SchemaSourceTransformer<YangSourceRepresentation, YinXmlSource> schema;
 
     @Test
     void schemaSourceTransformerTest() {
@@ -99,7 +99,7 @@ class SchemaSourceTransformerTest {
         assertNotNull(source2);
     }
 
-    private static class Foo<T extends SchemaSourceRepresentation> {
+    private static class Foo<T extends SourceRepresentation> {
         final PotentialSchemaSource<T> src;
 
         Foo(final SourceIdentifier sourceIdentifier, final Class<T> representation, final Costs cost) {
@@ -111,20 +111,19 @@ class SchemaSourceTransformerTest {
         }
     }
 
-    private static class Registrator extends AbstractSchemaSourceCache<YangSchemaSourceRepresentation> {
-        Registrator(final SchemaSourceRegistry consumer, final Class<YangSchemaSourceRepresentation> srcClass,
+    private static class Registrator extends AbstractSchemaSourceCache<YangSourceRepresentation> {
+        Registrator(final SchemaSourceRegistry consumer, final Class<YangSourceRepresentation> srcClass,
                 final Costs cost) {
             super(consumer, srcClass, cost);
         }
 
         @Override
-        protected void offer(final YangSchemaSourceRepresentation source) {
+        protected void offer(final YangSourceRepresentation source) {
 
         }
 
         @Override
-        public ListenableFuture<? extends YangSchemaSourceRepresentation> getSource(
-                final SourceIdentifier sourceIdentifier) {
+        public ListenableFuture<? extends YangSourceRepresentation> getSource(final SourceIdentifier sourceId) {
             return SettableFuture.create();
         }
     }

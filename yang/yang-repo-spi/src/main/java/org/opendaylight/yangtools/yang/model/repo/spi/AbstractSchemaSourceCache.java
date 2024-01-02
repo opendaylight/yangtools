@@ -10,18 +10,18 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 
 /**
  * Abstract base class for cache-type SchemaSourceListeners. It needs to be registered with a
  * {@link SchemaSourceRegistry}, where it gets notifications from. It performs filtering and
- * {@link #offer(SchemaSourceRepresentation)}s conforming sources to the subclass.
+ * {@link #offer(SourceRepresentation)}s conforming sources to the subclass.
  *
  * @param <T> Cached schema source type.
  */
-public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresentation>
+public abstract class AbstractSchemaSourceCache<T extends SourceRepresentation>
         implements SchemaSourceListener, SchemaSourceProvider<T> {
     private final SchemaSourceRegistry consumer;
     private final Class<T> representation;
@@ -48,17 +48,17 @@ public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresenta
      * have cached a schema source representation, or when they have determined they have a schema source is available
      * -- like when a persistent cache reads its cache index.
      *
-     * @param sourceIdentifier Source identifier
+     * @param sourceId Source identifier
      * @return schema source registration, which the subclass needs to {@link Registration#close()} once it expunges the
      *         source from the cache.
      */
-    protected final Registration register(final SourceIdentifier sourceIdentifier) {
-        return consumer.registerSchemaSource(this, PotentialSchemaSource.create(sourceIdentifier, representation,
+    protected final Registration register(final SourceIdentifier sourceId) {
+        return consumer.registerSchemaSource(this, PotentialSchemaSource.create(sourceId, representation,
             cost.getValue()));
     }
 
     @Override
-    public void schemaSourceEncountered(final SchemaSourceRepresentation source) {
+    public void schemaSourceEncountered(final SourceRepresentation source) {
         if (representation.isAssignableFrom(source.getType())) {
             offer(representation.cast(source));
         }

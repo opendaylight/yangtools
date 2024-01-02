@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
@@ -36,7 +36,7 @@ class YinFileStmtTest {
     private static StatementStreamSource createSource(final String name) {
         try {
             return YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSchemaSource.forResource(YinFileStmtTest.class, "/semantic-statement-parser/yin/" + name)));
+                YinTextSource.forResource(YinFileStmtTest.class, "/semantic-statement-parser/yin/" + name)));
         } catch (SAXException | IOException e) {
             throw new IllegalArgumentException(e);
         }
