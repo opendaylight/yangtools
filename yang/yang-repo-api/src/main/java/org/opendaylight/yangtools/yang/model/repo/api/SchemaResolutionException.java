@@ -29,23 +29,15 @@ public class SchemaResolutionException extends SchemaSourceException {
     private final @NonNull ImmutableMultimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
     private final @NonNull ImmutableList<SourceIdentifier> resolvedSources;
 
-    public SchemaResolutionException(final @NonNull String message) {
-        this(message, null);
-    }
-
-    public SchemaResolutionException(final @NonNull String message, final Throwable cause) {
-        this(message, null, cause, ImmutableList.of(), ImmutableMultimap.of());
-    }
-
     public SchemaResolutionException(final @NonNull String message, final SourceIdentifier failedSource,
             final Throwable cause) {
         this(message, failedSource, cause, ImmutableList.of(), ImmutableMultimap.of());
     }
 
-    public SchemaResolutionException(final @NonNull String message,
+    public SchemaResolutionException(final @NonNull String message, final SourceIdentifier failedSource,
             final @NonNull Collection<SourceIdentifier> resolvedSources,
             final @NonNull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
-        this(message, null, null, resolvedSources, unsatisfiedImports);
+        this(message, failedSource, null, resolvedSources, unsatisfiedImports);
     }
 
     public SchemaResolutionException(final @NonNull String message, final SourceIdentifier failedSource,
