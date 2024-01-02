@@ -38,7 +38,7 @@ public class SchemaResolutionException extends SchemaSourceException {
     public SchemaResolutionException(final @NonNull String message, final SourceIdentifier failedSource,
             final @NonNull Collection<SourceIdentifier> resolvedSources,
             final @NonNull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
-        super(failedSource, formatMessage(message, failedSource, resolvedSources, unsatisfiedImports));
+        super(failedSource, formatMessage(message, failedSource, resolvedSources, unsatisfiedImports), null);
         this.unsatisfiedImports = ImmutableMultimap.copyOf(unsatisfiedImports);
         this.resolvedSources = ImmutableList.copyOf(resolvedSources);
     }
