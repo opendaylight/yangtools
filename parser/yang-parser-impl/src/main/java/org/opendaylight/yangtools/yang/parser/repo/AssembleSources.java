@@ -16,7 +16,6 @@ import com.google.common.util.concurrent.FluentFuture;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
@@ -72,11 +71,12 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
         config.getSupportedFeatures().ifPresent(parser::setSupportedFeatures);
         config.getModulesDeviatedByModules().ifPresent(parser::setModulesWithSupportedDeviations);
 
-        for (final Entry<SourceIdentifier, YangIRSchemaSource> entry : srcs.entrySet()) {
+        for (var entry : srcs.entrySet()) {
             try {
                 parser.addSource(entry.getValue());
             } catch (YangSyntaxErrorException | IOException e) {
-                throw new SchemaResolutionException("Failed to add source " + entry.getKey(), e);
+                final var sourceId = entry.getKey();
+                throw new SchemaResolutionException("Failed to add source " + sourceId, sourceId, e);
             }
         }
 
