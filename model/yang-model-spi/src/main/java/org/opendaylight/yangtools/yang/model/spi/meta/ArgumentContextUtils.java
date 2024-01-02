@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Utilities for dealing with YANG statement argument strings, encapsulated in ANTLR grammar's ArgumentContext.
@@ -59,7 +59,7 @@ abstract class ArgumentContextUtils {
                     final var escape = str.charAt(index + 1);
                     index = switch (escape) {
                         case 'n', 't', '\\', '\"' -> str.indexOf('\\', index + 2);
-                        default -> throw new SourceException(ref, """
+                        default -> throw new StatementSourceException(ref, """
                             YANG 1.1: illegal double quoted string (%s). In double quoted string the backslash must be \
                             followed by one of the following character [n,t,",\\], but was '%s'.""", str, escape);
                     };
@@ -69,8 +69,10 @@ abstract class ArgumentContextUtils {
 
         @Override
         void checkUnquoted(final String str, final StatementSourceReference ref) {
-            SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
-                "YANG 1.1: unquoted string (%s) contains illegal characters", str);
+            if (ANYQUOTE_MATCHER.matchesAnyOf(str)) {
+                throw new StatementSourceException(ref, "YANG 1.1: unquoted string (%s) contains illegal characters",
+                    str);
+            }
         }
     }
 
