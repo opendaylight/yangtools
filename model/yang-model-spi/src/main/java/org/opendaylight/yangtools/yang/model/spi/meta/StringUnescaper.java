@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
@@ -16,20 +16,18 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Utilities for dealing with YANG statement argument strings, encapsulated in ANTLR grammar's ArgumentContext.
  */
-abstract class ArgumentContextUtils {
+public enum StringUnescaper {
     /**
      * YANG 1.0 version of strings, which were not completely clarified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.1.3">RFC6020</a>.
      */
-    private static final class RFC6020 extends ArgumentContextUtils {
-        private static final @NonNull RFC6020 INSTANCE = new RFC6020();
-
+    RFC6020 {
         @Override
         void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
             // No-op
@@ -39,17 +37,15 @@ abstract class ArgumentContextUtils {
         void checkUnquoted(final String str, final StatementSourceReference ref) {
             // No-op
         }
-    }
-
+    },
     /**
      * YANG 1.1 version of strings, which were clarified in
      * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3">RFC7950</a>.
      */
     // NOTE: the differences clarified lead to a proper ability to delegate this to ANTLR lexer, but that does not
     //       understand versions and needs to work with both.
-    private static final class RFC7950 extends ArgumentContextUtils {
+    RFC7950 {
         private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
-        private static final @NonNull RFC7950 INSTANCE = new RFC7950();
 
         @Override
         void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
@@ -59,7 +55,7 @@ abstract class ArgumentContextUtils {
                     final var escape = str.charAt(index + 1);
                     index = switch (escape) {
                         case 'n', 't', '\\', '\"' -> str.indexOf('\\', index + 2);
-                        default -> throw new SourceException(ref, """
+                        default -> throw new StatementSourceException(ref, """
                             YANG 1.1: illegal double quoted string (%s). In double quoted string the backslash must be \
                             followed by one of the following character [n,t,",\\], but was '%s'.""", str, escape);
                     };
@@ -69,25 +65,18 @@ abstract class ArgumentContextUtils {
 
         @Override
         void checkUnquoted(final String str, final StatementSourceReference ref) {
-            SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
-                "YANG 1.1: unquoted string (%s) contains illegal characters", str);
+            if (ANYQUOTE_MATCHER.matchesAnyOf(str)) {
+                throw new StatementSourceException(ref, "YANG 1.1: unquoted string (%s) contains illegal characters",
+                    str);
+            }
         }
-    }
+    };
 
-    private ArgumentContextUtils() {
-        // Hidden on purpose
-    }
-
-    static @NonNull ArgumentContextUtils forVersion(final YangVersion version) {
+    public static @NonNull StringUnescaper forVersion(final YangVersion version) {
         return switch (version) {
-            case VERSION_1 -> RFC6020.INSTANCE;
-            case VERSION_1_1 -> RFC7950.INSTANCE;
+            case VERSION_1 -> RFC6020;
+            case VERSION_1_1 -> RFC7950;
         };
-    }
-
-    // TODO: teach the only caller about versions, or provide common-enough idioms for its use case
-    static @NonNull ArgumentContextUtils rfc6020() {
-        return RFC6020.INSTANCE;
     }
 
     /*
@@ -95,7 +84,9 @@ abstract class ArgumentContextUtils {
      *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
      *       such as intermediate List allocation et al.
      */
-    final @NonNull String stringFromStringContext(final IRArgument argument, final StatementSourceReference ref) {
+    // FIXME: better name and interface
+    public final @NonNull String stringFromStringContext(final IRArgument argument,
+            final StatementSourceReference ref) {
         if (argument instanceof final Single single) {
             final var str = single.string();
             if (single.needQuoteCheck()) {
@@ -144,7 +135,7 @@ abstract class ArgumentContextUtils {
     }
 
     @VisibleForTesting
-    static void unescapeBackslash(final StringBuilder sb, final String str, final int backslash) {
+    public static void unescapeBackslash(final StringBuilder sb, final String str, final int backslash) {
         String substring = str;
         int backslashIndex = backslash;
         while (true) {
