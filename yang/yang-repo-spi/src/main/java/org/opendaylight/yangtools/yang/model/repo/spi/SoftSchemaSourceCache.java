@@ -55,7 +55,7 @@ public final class SoftSchemaSourceCache<T extends SourceRepresentation> extends
             references.remove(sourceIdentifier, ref);
         }
 
-        return Futures.immediateFailedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
+        return Futures.immediateFailedFuture(new MissingSchemaSourceException(sourceIdentifier, "Source not found"));
     }
 
     @Override

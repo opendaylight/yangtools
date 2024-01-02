@@ -68,7 +68,7 @@ public final class GuavaSchemaSourceCache<T extends SourceRepresentation> extend
         final T present = cache.getIfPresent(sourceId);
         return present != null ? FluentFutures.immediateFluentFuture(present)
                 : FluentFutures.immediateFailedFluentFuture(
-                    new MissingSchemaSourceException("Source not found", sourceId));
+                    new MissingSchemaSourceException(sourceId, "Source not found"));
     }
 
     @Override

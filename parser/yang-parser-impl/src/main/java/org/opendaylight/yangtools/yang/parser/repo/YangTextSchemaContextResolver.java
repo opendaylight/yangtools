@@ -317,7 +317,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
         if (ret.isEmpty()) {
             return FluentFutures.immediateFailedFluentFuture(
-                new MissingSchemaSourceException("URL for " + sourceIdentifier + " not registered", sourceIdentifier));
+                new MissingSchemaSourceException(sourceIdentifier, "URL for " + sourceIdentifier + " not registered"));
         }
 
         return FluentFutures.immediateFluentFuture(ret.iterator().next());
