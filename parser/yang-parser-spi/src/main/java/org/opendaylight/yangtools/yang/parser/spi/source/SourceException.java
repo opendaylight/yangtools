@@ -9,32 +9,29 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 
 /**
  * Thrown to indicate error in YANG model source.
  */
-public class SourceException extends RuntimeException {
+public class SourceException extends StatementSourceException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
-
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Interface-specified member")
-    private final @NonNull StatementSourceReference sourceRef;
 
     /**
      * Create a new instance with the specified message and source. The message will be appended with
      * the source reference.
      *
      * @param message Context message
-     * @param source Statement source
+     * @param sourceRef Statement source
      */
-    public SourceException(final @NonNull String message, final @NonNull StatementSourceReference source) {
-        super(createMessage(message, source));
-        sourceRef = source;
+    public SourceException(final @NonNull String message, final @NonNull StatementSourceReference sourceRef) {
+        super(sourceRef, createMessage(message, sourceRef));
     }
 
     /**
@@ -42,13 +39,12 @@ public class SourceException extends RuntimeException {
      * the source reference.
      *
      * @param message Context message
-     * @param source Statement source
+     * @param sourceRef Statement source
      * @param cause Underlying cause of this exception
      */
-    public SourceException(final @NonNull String message, final @NonNull StatementSourceReference source,
+    public SourceException(final @NonNull String message, final @NonNull StatementSourceReference sourceRef,
             final Throwable cause) {
-        super(createMessage(message, source), cause);
-        sourceRef = source;
+        super(sourceRef, createMessage(message, sourceRef), cause);
     }
 
     /**
@@ -125,15 +121,6 @@ public class SourceException extends RuntimeException {
     public SourceException(final @NonNull CommonStmtCtx stmt, final Throwable cause,
             final @NonNull String format, final Object... args) {
         this(stmt.sourceReference(), cause, format, args);
-    }
-
-    /**
-     * Return the reference to the source which caused this exception.
-     *
-     * @return Source reference
-     */
-    public @NonNull StatementSourceReference getSourceReference() {
-        return sourceRef;
     }
 
     /**
