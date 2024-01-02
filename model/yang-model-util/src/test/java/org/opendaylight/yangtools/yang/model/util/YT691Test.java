@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.SimpleSchemaContext;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT691Test {

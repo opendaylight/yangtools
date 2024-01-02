@@ -20,11 +20,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class SharedEffectiveModelContextFactoryTest {
@@ -62,8 +62,8 @@ public class SharedEffectiveModelContextFactoryTest {
     public void testSourceRegisteredWithDifferentSI() throws Exception {
         final var source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         final var source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
-        s1 = source1.getIdentifier();
-        s2 = source2.getIdentifier();
+        s1 = source1.sourceId();
+        s2 = source2.sourceId();
 
         final var provider = SharedSchemaRepositoryTest.getImmediateYangSourceProviderFromResource(
             "/no-revision/imported@2012-12-12.yang");

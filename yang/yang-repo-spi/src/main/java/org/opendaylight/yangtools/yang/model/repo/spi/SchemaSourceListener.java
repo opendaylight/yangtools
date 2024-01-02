@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
 
 /**
  * Listener on {@link SchemaSourceRepresentation} lifecycle.

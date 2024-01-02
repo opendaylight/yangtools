@@ -148,7 +148,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyStatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyYangVersionStatement;
@@ -278,6 +277,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredInputEff
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredOutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 
 /**
  * Static entry point to instantiating declared {@link EffectiveStatement} covered in the {@code RFC7950} metamodel.

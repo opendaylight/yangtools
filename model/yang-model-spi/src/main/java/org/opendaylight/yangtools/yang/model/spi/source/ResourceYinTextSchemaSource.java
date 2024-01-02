@@ -5,16 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -22,14 +20,12 @@ import org.opendaylight.yangtools.concepts.Delegator;
 /**
  * A resource-backed {@link YinTextSchemaSource}.
  */
-final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements Delegator<URL> {
+final class ResourceYinTextSchemaSource extends YinTextSchemaSource implements Delegator<URL> {
     private final @NonNull URL url;
-    private final @NonNull Charset charset;
 
-    ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url, final Charset charset) {
-        super(identifier);
+    ResourceYinTextSchemaSource(final SourceIdentifier sourceId, final URL url) {
+        super(sourceId);
         this.url = requireNonNull(url);
-        this.charset = requireNonNull(charset);
     }
 
     @Override
@@ -43,8 +39,8 @@ final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements
     }
 
     @Override
-    public Reader openStream() throws IOException {
-        return new InputStreamReader(url.openStream(), charset);
+    public InputStream openStream() throws IOException {
+        return url.openStream();
     }
 
     @Override

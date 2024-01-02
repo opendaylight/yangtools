@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 import org.slf4j.Logger;
@@ -107,9 +107,9 @@ abstract class DependencyResolver {
             }
         }
 
-        this.resolvedSources = ImmutableList.copyOf(resolved);
-        this.unresolvedSources = ImmutableList.copyOf(pending);
-        this.unsatisfiedImports = ImmutableMultimap.copyOf(imports);
+        resolvedSources = ImmutableList.copyOf(resolved);
+        unresolvedSources = ImmutableList.copyOf(pending);
+        unsatisfiedImports = ImmutableMultimap.copyOf(imports);
     }
 
     protected abstract boolean isKnown(Collection<SourceIdentifier> haystack, ModuleImport mi);

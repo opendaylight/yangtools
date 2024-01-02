@@ -22,11 +22,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangSchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSchemaSource;
 
 @ExtendWith(MockitoExtension.class)
 class SchemaSourceTransformerTest {
