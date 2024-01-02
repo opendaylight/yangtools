@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.spi.meta.StringUnescaper;
 import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -26,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 class StatementContextVisitor {
     private final QNameToStatementDefinition stmtDef;
-    private final ArgumentContextUtils utils;
+    private final StringUnescaper unsescaper;
     private final PrefixResolver prefixes;
     private final StatementWriter writer;
     private final String sourceName;
@@ -35,7 +36,7 @@ class StatementContextVisitor {
             final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
-        utils = ArgumentContextUtils.forVersion(yangVersion);
+        unsescaper = StringUnescaper.forVersion(yangVersion);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
     }
@@ -104,7 +105,7 @@ class StatementContextVisitor {
         }
 
         final IRArgument argumentCtx = stmt.argument();
-        final String argument = argumentCtx == null ? null : utils.stringFromStringContext(argumentCtx, ref);
+        final String argument = argumentCtx == null ? null : unsescaper.stringFromStringContext(argumentCtx, ref);
         writer.startStatement(myOffset, def, argument, ref);
         return doProcessStatement(stmt, ref);
     }
