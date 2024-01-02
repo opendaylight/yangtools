@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.meta.StringUnescaper;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
 
@@ -268,7 +269,7 @@ public abstract class YangModelDependencyInfo {
         }
 
         // TODO: we probably need to understand yang version first....
-        return ArgumentContextUtils.rfc6020().stringFromStringContext(arg, ref);
+        return StringUnescaper.RFC6020.stringFromStringContext(arg, ref);
     }
 
     private static StatementSourceReference getReference(final SourceIdentifier source, final IRStatement stmt) {
