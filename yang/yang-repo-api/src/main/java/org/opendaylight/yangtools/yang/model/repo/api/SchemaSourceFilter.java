@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
 
 /**
  * A filter of schema sources. This is used to restrict which sources representation instances are allowed

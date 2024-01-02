@@ -14,8 +14,8 @@ import java.io.StringReader;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 
 /**
  * A {@link YangTextSchemaSource} backed by a string literal.
@@ -60,6 +60,6 @@ final class LiteralYangTextSchemaSource extends YangTextSchemaSource {
 
     @Override
     public Optional<String> getSymbolicName() {
-        return Optional.of(getIdentifier().name().getLocalName());
+        return Optional.of(sourceId().name().getLocalName());
     }
 }

@@ -23,9 +23,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangSchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 
 @ExtendWith(MockitoExtension.class)
 class SoftSchemaSourceCacheTest {
@@ -57,7 +57,7 @@ class SoftSchemaSourceCacheTest {
             assertNotNull(checkedSource);
             final var yangSchemaSourceRepresentation = checkedSource.get();
             assertNotNull(yangSchemaSourceRepresentation);
-            assertEquals(sourceIdentifier, yangSchemaSourceRepresentation.getIdentifier());
+            assertEquals(sourceIdentifier, yangSchemaSourceRepresentation.sourceId());
         }
     }
 

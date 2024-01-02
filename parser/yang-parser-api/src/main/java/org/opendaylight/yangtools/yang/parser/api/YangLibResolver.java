@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
 
 /**
  * A service capable of transforming a {@link YangLibModuleSet} to an {@link EffectiveModelContext}.

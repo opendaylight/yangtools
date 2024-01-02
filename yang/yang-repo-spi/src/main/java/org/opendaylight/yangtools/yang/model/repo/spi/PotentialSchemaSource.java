@@ -14,8 +14,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.Objects;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 
 /**
  * A potential schema source. Instances of this class track the various

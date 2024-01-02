@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 
 /**
  * A simple {@link AbstractSchemaSourceCache} based on {@link Cache Guava Cache}.
@@ -67,13 +67,13 @@ public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> 
     public FluentFuture<? extends T> getSource(final SourceIdentifier sourceIdentifier) {
         final T present = cache.getIfPresent(sourceIdentifier);
         return present != null ? FluentFutures.immediateFluentFuture(present)
-                : FluentFutures.immediateFailedFluentFuture(new MissingSchemaSourceException("Source not found",
-                    sourceIdentifier));
+                : FluentFutures.immediateFailedFluentFuture(
+                    new MissingSchemaSourceException(sourceIdentifier, "Source not found"));
     }
 
     @Override
     protected void offer(final T source) {
-        final var srcId = source.getIdentifier();
+        final var srcId = source.sourceId();
         if (cache.getIfPresent(srcId) != null) {
             // We already have this source, do not track it
             return;
