@@ -16,8 +16,8 @@ import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
@@ -48,7 +48,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
     }
 
     @Override
-    public Collection<Class<? extends SchemaSourceRepresentation>> supportedSourceRepresentations() {
+    public Collection<Class<? extends SourceRepresentation>> supportedSourceRepresentations() {
         return DefaultYangParser.REPRESENTATIONS;
     }
 

@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
 import static org.opendaylight.yangtools.yang.common.YangNames.parseFilename;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
@@ -26,16 +25,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 
 /**
  * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as an {@link InputStream}.
  */
-@Beta
-public abstract class YangTextSchemaSource extends CharSource implements YangSchemaSourceRepresentation {
-    private final @NonNull SourceIdentifier identifier;
+public abstract class YangTextSource extends CharSource implements YangSourceRepresentation {
+    private final @NonNull SourceIdentifier sourceId;
 
-    protected YangTextSchemaSource(final SourceIdentifier identifier) {
-        this.identifier = requireNonNull(identifier);
+    protected YangTextSource(final SourceIdentifier sourceId) {
+        this.sourceId = requireNonNull(sourceId);
     }
 
     public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
@@ -56,7 +56,7 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @param charset Expected character set
      * @return A new YangTextSchemaSource
      */
-    public static @NonNull YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
+    public static @NonNull YangTextSource delegateForByteSource(final SourceIdentifier identifier,
             final ByteSource delegate, final Charset charset) {
         return delegateForCharSource(identifier, delegate.asCharSource(charset));
     }
@@ -70,7 +70,7 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @return A new YangTextSchemaSource
      * @throws IllegalArgumentException if the file name has invalid format
      */
-    public static @NonNull YangTextSchemaSource delegateForByteSource(final String fileName,
+    public static @NonNull YangTextSource delegateForByteSource(final String fileName,
             final ByteSource delegate, final Charset charset) {
         return delegateForCharSource(fileName, delegate.asCharSource(charset));
     }
@@ -83,9 +83,9 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @param delegate Backing CharSource instance
      * @return A new YangTextSchemaSource
      */
-    public static @NonNull YangTextSchemaSource delegateForCharSource(final SourceIdentifier identifier,
+    public static @NonNull YangTextSource delegateForCharSource(final SourceIdentifier identifier,
             final CharSource delegate) {
-        return new DelegatedYangTextSchemaSource(identifier, delegate);
+        return new DelegatedYangTextSource(identifier, delegate);
     }
 
     /**
@@ -97,9 +97,9 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @return A new YangTextSchemaSource
      * @throws IllegalArgumentException if the file name has invalid format
      */
-    public static @NonNull YangTextSchemaSource delegateForCharSource(final String fileName,
+    public static @NonNull YangTextSource delegateForCharSource(final String fileName,
             final CharSource delegate) {
-        return new DelegatedYangTextSchemaSource(identifierFromFilename(fileName), delegate);
+        return new DelegatedYangTextSource(identifierFromFilename(fileName), delegate);
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @throws IllegalArgumentException if the file name has invalid format or if the supplied File is not a file
      * @throws NullPointerException if file is {@code null}
      */
-    public static @NonNull YangTextSchemaSource forPath(final Path path) {
+    public static @NonNull YangTextSource forPath(final Path path) {
         return forPath(path, identifierFromFilename(path.toFile().getName()));
     }
 
@@ -124,7 +124,7 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @throws NullPointerException if any argument is {@code null}
      * @throws IllegalArgumentException if the supplied path is not a regular file
      */
-    public static @NonNull YangTextSchemaSource forPath(final Path path, final SourceIdentifier identifier) {
+    public static @NonNull YangTextSource forPath(final Path path, final SourceIdentifier identifier) {
         return forPath(path, identifier, StandardCharsets.UTF_8);
     }
 
@@ -138,26 +138,26 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @throws NullPointerException if any argument is {@code null}
      * @throws IllegalArgumentException if the supplied path is not a regular file
      */
-    public static @NonNull YangTextSchemaSource forPath(final Path path, final SourceIdentifier identifier,
+    public static @NonNull YangTextSource forPath(final Path path, final SourceIdentifier identifier,
             final Charset charset) {
         checkArgument(Files.isRegularFile(path), "Supplied path %s is not a regular file", path);
-        return new YangTextFileSchemaSource(identifier, path, charset);
+        return new YangTextFileSource(identifier, path, charset);
     }
 
     /**
-     * Create a new {@link YangTextSchemaSource} backed by a resource available in the ClassLoader where this
+     * Create a new {@link YangTextSource} backed by a resource available in the ClassLoader where this
      * class resides.
      *
      * @param resourceName Resource name
      * @return A new instance.
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
-    public static @NonNull YangTextSchemaSource forResource(final String resourceName) {
-        return forResource(YangTextSchemaSource.class, resourceName);
+    public static @NonNull YangTextSource forResource(final String resourceName) {
+        return forResource(YangTextSource.class, resourceName);
     }
 
     /**
-     * Create a new {@link YangTextSchemaSource} backed by a resource by a resource available on the ClassLoader
+     * Create a new {@link YangTextSource} backed by a resource by a resource available on the ClassLoader
      * which loaded the specified class.
      *
      * @param clazz Class reference
@@ -165,12 +165,12 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @return A new instance.
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
-    public static @NonNull YangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
+    public static @NonNull YangTextSource forResource(final Class<?> clazz, final String resourceName) {
         return forResource(clazz, resourceName, StandardCharsets.UTF_8);
     }
 
     /**
-     * Create a new {@link YangTextSchemaSource} backed by a resource by a resource available on the ClassLoader
+     * Create a new {@link YangTextSource} backed by a resource by a resource available on the ClassLoader
      * which loaded the specified class.
      *
      * @param clazz Class reference
@@ -179,29 +179,29 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @return A new instance.
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
-    public static @NonNull YangTextSchemaSource forResource(final Class<?> clazz, final String resourceName,
+    public static @NonNull YangTextSource forResource(final Class<?> clazz, final String resourceName,
             final Charset charset) {
         final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
         final SourceIdentifier identifier = identifierFromFilename(fileName);
         final URL url = Resources.getResource(clazz, resourceName);
-        return new ResourceYangTextSchemaSource(identifier, url, charset);
+        return new ResourceYangTextSource(identifier, url, charset);
     }
 
 
     /**
-     * Create a new {@link YangTextSchemaSource} backed by a URL.
+     * Create a new {@link YangTextSource} backed by a URL.
      *
      * @param url Backing URL
      * @param identifier Source identifier
      * @return A new instance.
      * @throws NullPointerException if any argument is {@code null}
      */
-    public static @NonNull YangTextSchemaSource forURL(final URL url, final SourceIdentifier identifier) {
+    public static @NonNull YangTextSource forURL(final URL url, final SourceIdentifier identifier) {
         return forURL(url, identifier, StandardCharsets.UTF_8);
     }
 
     /**
-     * Create a new {@link YangTextSchemaSource} backed by a URL.
+     * Create a new {@link YangTextSource} backed by a URL.
      *
      * @param url Backing URL
      * @param identifier Source identifier
@@ -209,20 +209,19 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @return A new instance.
      * @throws NullPointerException if any argument is {@code null}
      */
-    public static @NonNull YangTextSchemaSource forURL(final URL url, final SourceIdentifier identifier,
+    public static @NonNull YangTextSource forURL(final URL url, final SourceIdentifier identifier,
             final Charset charset) {
-        return new ResourceYangTextSchemaSource(identifier, url, charset);
-    }
-
-
-    @Override
-    public final SourceIdentifier getIdentifier() {
-        return identifier;
+        return new ResourceYangTextSource(identifier, url, charset);
     }
 
     @Override
-    public final Class<YangTextSchemaSource> getType() {
-        return YangTextSchemaSource.class;
+    public final Class<YangTextSource> getType() {
+        return YangTextSource.class;
+    }
+
+    @Override
+    public final SourceIdentifier sourceId() {
+        return sourceId;
     }
 
     @Override
@@ -240,6 +239,6 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @return ToStringHelper supplied as input argument.
      */
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("identifier", identifier);
+        return toStringHelper.add("identifier", sourceId);
     }
 }

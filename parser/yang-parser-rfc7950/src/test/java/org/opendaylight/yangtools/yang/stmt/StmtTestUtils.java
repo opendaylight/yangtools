@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -67,7 +67,7 @@ public final class StmtTestUtils {
 
     public static YangStatementStreamSource sourceForResource(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(YangTextSchemaSource.forPath(Path.of(
+            return YangStatementStreamSource.create(YangTextSource.forPath(Path.of(
                 StmtTestUtils.class.getResource(resourceName).toURI())));
         } catch (IOException | YangSyntaxErrorException | URISyntaxException e) {
             throw new IllegalArgumentException("Failed to create source", e);
@@ -117,7 +117,7 @@ public final class StmtTestUtils {
 
         final Collection<YangStatementStreamSource> sources = new ArrayList<>(files.length);
         for (File file : files) {
-            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forPath(file.toPath())));
+            sources.add(YangStatementStreamSource.create(YangTextSource.forPath(file.toPath())));
         }
 
         return parseYangSources(config, supportedFeatures, sources);
@@ -151,10 +151,10 @@ public final class StmtTestUtils {
         final File[] files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
         final StatementStreamSource[] sources = new StatementStreamSource[files.length];
         for (int i = 0; i < files.length; i++) {
-            final SourceIdentifier identifier = YinTextSchemaSource.identifierFromFilename(files[i].getName());
+            final SourceIdentifier identifier = YinTextSource.identifierFromFilename(files[i].getName());
 
             sources[i] = YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSchemaSource.delegateForByteSource(identifier, Files.asByteSource(files[i]))));
+                YinTextSource.delegateForByteSource(identifier, Files.asByteSource(files[i]))));
         }
 
         return parseYinSources(config, sources);

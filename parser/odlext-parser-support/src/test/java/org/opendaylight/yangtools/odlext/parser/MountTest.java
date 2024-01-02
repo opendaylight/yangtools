@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.odlext.model.api.MountEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
@@ -30,10 +30,8 @@ class MountTest {
                 new MountStatementSupport(YangParserConfiguration.DEFAULT))
             .build();
         final var foo = reactor.newBuild()
-            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                MountTest.class, "/yang-ext.yang")))
-            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                MountTest.class, "/mount.yang")))
+            .addSource(YangStatementStreamSource.create(YangTextSource.forResource(MountTest.class, "/yang-ext.yang")))
+            .addSource(YangStatementStreamSource.create(YangTextSource.forResource(MountTest.class, "/mount.yang")))
             .buildEffective()
             .getModuleStatements()
             .get(FOO);

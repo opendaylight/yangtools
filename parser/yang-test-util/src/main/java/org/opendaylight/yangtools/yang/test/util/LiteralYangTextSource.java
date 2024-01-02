@@ -11,26 +11,25 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.io.StringReader;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 
 /**
- * A {@link YangTextSchemaSource} backed by a string literal.
+ * A {@link YangTextSource} backed by a string literal.
  */
-final class LiteralYangTextSchemaSource extends YangTextSchemaSource {
+final class LiteralYangTextSource extends YangTextSource {
     private final @NonNull String sourceString;
 
-    private LiteralYangTextSchemaSource(final SourceIdentifier identifier, final String sourceString,
+    private LiteralYangTextSource(final SourceIdentifier identifier, final String sourceString,
             final String symbolicName) {
         super(identifier);
         this.sourceString = requireNonNull(sourceString);
     }
 
     /**
-     * Create a new {@link YangTextSchemaSource} backed by a String input.
+     * Create a new {@link YangTextSource} backed by a String input.
      *
      * @param sourceString YANG file as a String
      * @return A new instance.
@@ -38,7 +37,7 @@ final class LiteralYangTextSchemaSource extends YangTextSchemaSource {
      * @throws IllegalArgumentException if {@code sourceString} does not a valid YANG body, given a rather restrictive
      *         view of what is valid.
      */
-    static @NonNull LiteralYangTextSchemaSource ofLiteral(final String sourceString) {
+    static @NonNull LiteralYangTextSource ofLiteral(final String sourceString) {
         // First line of a YANG file looks as follows:
         //   `module module-name {`
         // therefore in order to extract the name of the module from a plain string, we are interested in the second
@@ -50,7 +49,7 @@ final class LiteralYangTextSchemaSource extends YangTextSchemaSource {
         final String arg = firstLine[1].strip();
         final var localName = UnresolvedQName.tryLocalName(arg);
         checkArgument(localName != null);
-        return new LiteralYangTextSchemaSource(new SourceIdentifier(localName), sourceString, arg);
+        return new LiteralYangTextSource(new SourceIdentifier(localName), sourceString, arg);
     }
 
     @Override
@@ -59,7 +58,7 @@ final class LiteralYangTextSchemaSource extends YangTextSchemaSource {
     }
 
     @Override
-    public Optional<String> getSymbolicName() {
-        return Optional.of(getIdentifier().name().getLocalName());
+    public String symbolicName() {
+        return sourceId().name().getLocalName();
     }
 }

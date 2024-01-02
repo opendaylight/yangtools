@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.api.source;
 
 /**
- * A YIN {@link SchemaSourceRepresentation}.
+ * A YANG {@link SourceRepresentation}.
  */
-public non-sealed interface YinSchemaSourceRepresentation extends SchemaSourceRepresentation {
+public non-sealed interface YangSourceRepresentation extends SourceRepresentation {
     @Override
-    Class<? extends YinSchemaSourceRepresentation> getType();
+    Class<? extends YangSourceRepresentation> getType();
 }

@@ -39,8 +39,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -87,10 +87,10 @@ class YangToSourcesProcessor {
 
         final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
         for (var source : modelsInProject) {
-            final File file = new File(withMetaInf, source.getIdentifier().toYangFilename());
+            final File file = new File(withMetaInf, source.sourceId().toYangFilename());
             stateListBuilder.add(FileState.ofWrittenFile(file,
                 out -> source.asByteSource(StandardCharsets.UTF_8).copyTo(out)));
-            LOG.debug("Created file {} for {}", file, source.getIdentifier());
+            LOG.debug("Created file {} for {}", file, source.sourceId());
         }
 
         ProjectFileAccess.addResourceDir(project, generatedYangDir);
@@ -244,9 +244,9 @@ class YangToSourcesProcessor {
 
         final Stopwatch watch = Stopwatch.createStarted();
 
-        final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed = yangFilesInProject.parallelStream()
+        final List<Entry<YangTextSource, YangIRSchemaSource>> parsed = yangFilesInProject.parallelStream()
             .map(file -> {
-                final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(file.toPath());
+                final var textSource = YangTextSource.forPath(file.toPath());
                 try {
                     return Map.entry(textSource, TextToIRTransformer.transformText(textSource));
                 } catch (YangSyntaxErrorException | IOException e) {
@@ -258,7 +258,7 @@ class YangToSourcesProcessor {
         LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
 
         final var outputFiles = ImmutableList.<FileState>builder();
-        Collection<YangTextSchemaSource> modelsInProject = null;
+        Collection<YangTextSource> modelsInProject = null;
         for (var parserConfig : codeGenerators.stream().map(GeneratorTask::parserConfig).collect(Collectors.toSet())) {
             final var moduleReactor = createReactor(yangFilesInProject, parserConfig, dependencies, parsed);
             final var yangSw = Stopwatch.createStarted();
@@ -388,19 +388,19 @@ class YangToSourcesProcessor {
     @SuppressWarnings("checkstyle:illegalCatch")
     private @NonNull ProcessorModuleReactor createReactor(final List<File> yangFilesInProject,
             final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
-            final List<Entry<YangTextSchemaSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
+            final List<Entry<YangTextSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
 
         try {
-            final var sourcesInProject = new ArrayList<YangTextSchemaSource>(yangFilesInProject.size());
+            final var sourcesInProject = new ArrayList<YangTextSource>(yangFilesInProject.size());
             final var parser = parserFactory.createParser(parserConfig);
             for (var entry : parsed) {
                 final var textSource = entry.getKey();
                 final var astSource = entry.getValue();
                 parser.addSource(astSource);
 
-                if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
+                if (!astSource.sourceId().equals(textSource.sourceId())) {
                     // AST indicates a different source identifier, make sure we use that
-                    sourcesInProject.add(YangTextSchemaSource.delegateForCharSource(astSource.getIdentifier(),
+                    sourcesInProject.add(YangTextSource.delegateForCharSource(astSource.sourceId(),
                         textSource));
                 } else {
                     sourcesInProject.add(textSource);

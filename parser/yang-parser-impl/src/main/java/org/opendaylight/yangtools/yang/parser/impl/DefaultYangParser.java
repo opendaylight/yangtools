@@ -16,15 +16,15 @@ import java.util.List;
 import javax.xml.transform.TransformerException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -37,13 +37,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.xml.sax.SAXException;
 
 final class DefaultYangParser implements YangParser {
-    static final @NonNull ImmutableSet<Class<? extends SchemaSourceRepresentation>> REPRESENTATIONS = ImmutableSet.of(
+    static final @NonNull ImmutableSet<Class<? extends SourceRepresentation>> REPRESENTATIONS = ImmutableSet.of(
         // In order of preference
         YangIRSchemaSource.class,
-        YangTextSchemaSource.class,
-        YinDomSchemaSource.class,
-        YinXmlSchemaSource.class,
-        YinTextSchemaSource.class);
+        YangTextSource.class,
+        YinDomSource.class,
+        YinXmlSource.class,
+        YinTextSource.class);
 
     private final BuildAction buildAction;
 
@@ -52,19 +52,18 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public ImmutableSet<Class<? extends SchemaSourceRepresentation>> supportedSourceRepresentations() {
+    public ImmutableSet<Class<? extends SourceRepresentation>> supportedSourceRepresentations() {
         return REPRESENTATIONS;
     }
 
     @Override
-    public YangParser addSource(final SchemaSourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    public YangParser addSource(final SourceRepresentation source) throws IOException, YangSyntaxErrorException {
         buildAction.addSource(sourceToStatementStream(source));
         return this;
     }
 
     @Override
-    public YangParser addLibSource(final SchemaSourceRepresentation source)
-            throws IOException, YangSyntaxErrorException {
+    public YangParser addLibSource(final SourceRepresentation source) throws IOException, YangSyntaxErrorException {
         buildAction.addLibSource(sourceToStatementStream(source));
         return this;
     }
@@ -105,26 +104,26 @@ final class DefaultYangParser implements YangParser {
         return new YangParserException("Failed to assemble sources", reported);
     }
 
-    static StatementStreamSource sourceToStatementStream(final SchemaSourceRepresentation source)
+    static StatementStreamSource sourceToStatementStream(final SourceRepresentation source)
             throws IOException, YangSyntaxErrorException {
         requireNonNull(source);
         if (source instanceof YangIRSchemaSource irSource) {
             return YangStatementStreamSource.create(irSource);
-        } else if (source instanceof YangTextSchemaSource yangSource) {
+        } else if (source instanceof YangTextSource yangSource) {
             return YangStatementStreamSource.create(yangSource);
-        } else if (source instanceof YinDomSchemaSource yinDom) {
+        } else if (source instanceof YinDomSource yinDom) {
             return YinStatementStreamSource.create(yinDom);
-        } else if (source instanceof YinTextSchemaSource yinText) {
+        } else if (source instanceof YinTextSource yinText) {
             try {
                 return YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(yinText));
             } catch (SAXException e) {
-                throw new YangSyntaxErrorException(source.getIdentifier(), 0, 0, "Failed to parse XML text", e);
+                throw new YangSyntaxErrorException(source.sourceId(), 0, 0, "Failed to parse XML text", e);
             }
-        } else if (source instanceof YinXmlSchemaSource yinXml) {
+        } else if (source instanceof YinXmlSource yinXml) {
             try {
                 return YinStatementStreamSource.create(yinXml);
             } catch (TransformerException e) {
-                throw new YangSyntaxErrorException(source.getIdentifier(), 0, 0,
+                throw new YangSyntaxErrorException(source.sourceId(), 0, 0,
                     "Failed to assemble in-memory representation", e);
             }
         } else {

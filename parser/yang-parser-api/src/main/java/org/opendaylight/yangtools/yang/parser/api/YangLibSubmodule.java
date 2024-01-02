@@ -10,17 +10,17 @@ package org.opendaylight.yangtools.yang.parser.api;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
  * A single <a href="https://www.rfc-editor.org/rfc/rfc8525">RFC8525</a> {@code submodule} list entry.
  *
  * @param identifier {@link SourceIdentifier} of this submodule, e.g. the combination of {@code name} and
  *        {@code revision}
- * @param source A {@link SchemaSourceRepresentation} of the submodule
+ * @param source A {@link SourceRepresentation} of the submodule
  */
-public record YangLibSubmodule(@NonNull SourceIdentifier identifier, @NonNull SchemaSourceRepresentation source) {
+public record YangLibSubmodule(@NonNull SourceIdentifier identifier, @NonNull SourceRepresentation source) {
     public YangLibSubmodule {
         requireNonNull(identifier);
         requireNonNull(source);

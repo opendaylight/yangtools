@@ -5,19 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
-import com.google.common.annotations.Beta;
 import javax.xml.transform.Source;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 
 /**
  * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an XML {@link Source}.
  */
-@Beta
-public interface YinXmlSchemaSource extends YinSchemaSourceRepresentation {
+public interface YinXmlSource extends YinSourceRepresentation {
     @Override
-    Class<? extends YinXmlSchemaSource> getType();
+    Class<? extends YinXmlSource> getType();
 
     /**
      * Return an XML {@link Source} of the YIN document.

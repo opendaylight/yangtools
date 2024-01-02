@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 public class ReactorException extends Exception {
     private static final long serialVersionUID = 1L;
@@ -21,13 +21,13 @@ public class ReactorException extends Exception {
             final Throwable cause) {
         super(message, cause);
         this.phase = requireNonNull(phase);
-        this.sourceIdentifier = sourceId;
+        sourceIdentifier = sourceId;
     }
 
     public ReactorException(final ModelProcessingPhase phase, final String message, final SourceIdentifier sourceId) {
         super(message);
         this.phase = requireNonNull(phase);
-        this.sourceIdentifier = sourceId;
+        sourceIdentifier = sourceId;
     }
 
     public final ModelProcessingPhase getPhase() {

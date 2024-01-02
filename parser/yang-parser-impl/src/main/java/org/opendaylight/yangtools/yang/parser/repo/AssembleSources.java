@@ -18,11 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -44,7 +44,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
         this.parserFactory = parserFactory;
         this.config = config;
         getIdentifier = switch (config.getStatementParserMode()) {
-            case DEFAULT_MODE -> YangIRSchemaSource::getIdentifier;
+            case DEFAULT_MODE -> YangIRSchemaSource::sourceId;
         };
     }
 

@@ -25,8 +25,8 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.slf4j.Logger;
@@ -39,22 +39,22 @@ import org.slf4j.LoggerFactory;
 final class ProcessorModuleReactor {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorModuleReactor.class);
 
-    private final Map<SourceIdentifier, YangTextSchemaSource> modelsInProject;
+    private final Map<SourceIdentifier, YangTextSource> modelsInProject;
     private final Collection<ScannedDependency> dependencies;
 
     private YangParser parser;
 
-    ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject,
+    ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSource> modelsInProject,
             final Collection<ScannedDependency> dependencies) {
         this.parser = requireNonNull(parser);
-        this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSchemaSource::getIdentifier);
+        this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSource::sourceId);
         this.dependencies = ImmutableList.copyOf(dependencies);
     }
 
     ContextHolder toContext() throws IOException, YangParserException {
         checkState(parser != null, "Context has already been assembled");
 
-        for (YangTextSchemaSource source : toUniqueSources(dependencies)) {
+        for (var source : toUniqueSources(dependencies)) {
             // This source is coming from a dependency:
             // - its identifier should be accurate, as it should have been processed into a file with accurate name
             // - it is not required to be parsed, hence we add it just as a library source
@@ -84,16 +84,16 @@ final class ProcessorModuleReactor {
         return new ContextHolder(schemaContext, modules, modelsInProject.keySet());
     }
 
-    Collection<YangTextSchemaSource> getModelsInProject() {
+    Collection<YangTextSource> getModelsInProject() {
         return modelsInProject.values();
     }
 
-    private static Collection<YangTextSchemaSource> toUniqueSources(final Collection<ScannedDependency> dependencies)
+    private static Collection<YangTextSource> toUniqueSources(final Collection<ScannedDependency> dependencies)
             throws IOException {
-        final Map<String, YangTextSchemaSource> byContent = new HashMap<>();
+        final Map<String, YangTextSource> byContent = new HashMap<>();
 
         for (ScannedDependency dependency : dependencies) {
-            for (YangTextSchemaSource s : dependency.sources()) {
+            for (YangTextSource s : dependency.sources()) {
                 try (Reader reader = s.openStream()) {
                     final String contents = CharStreams.toString(reader);
                     byContent.putIfAbsent(contents, s);

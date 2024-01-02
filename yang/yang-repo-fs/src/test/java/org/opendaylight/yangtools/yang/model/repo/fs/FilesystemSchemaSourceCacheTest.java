@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,11 +41,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -67,15 +66,15 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void testCacheAndRestore() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache
-                = new FilesystemSchemaSourceCache<>(registry, YangTextSchemaSource.class, storageDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
+            YangTextSource.class, storageDir);
 
         final String content = "content1";
-        final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
+        final YangTextSource source = new TestingYangSource("test", "2012-12-12", content);
         cache.offer(source);
 
         final String content2 = "content2";
-        final YangTextSchemaSource source2 = new TestingYangSource("test2", null, content);
+        final YangTextSource source2 = new TestingYangSource("test2", null, content);
         cache.offer(source2);
 
         final List<File> storedFiles = getFilesFromCache();
@@ -93,7 +92,7 @@ public class FilesystemSchemaSourceCacheTest {
             any(PotentialSchemaSource.class));
 
         // Create new cache from stored sources
-        new FilesystemSchemaSourceCache<>(registry, YangTextSchemaSource.class, storageDir);
+        new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
 
         verify(registry, times(4)).registerSchemaSource(any(SchemaSourceProvider.class),
             any(PotentialSchemaSource.class));
@@ -112,11 +111,11 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void testCacheDuplicate() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache
-                = new FilesystemSchemaSourceCache<>(registry, YangTextSchemaSource.class, storageDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
+            YangTextSource.class, storageDir);
 
         final String content = "content1";
-        final YangTextSchemaSource source = new TestingYangSource("test", null, content);
+        final YangTextSource source = new TestingYangSource("test", null, content);
         // Double offer
         cache.offer(source);
         cache.offer(source);
@@ -128,13 +127,13 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void testCacheMultipleRevisions() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache
-                = new FilesystemSchemaSourceCache<>(registry, YangTextSchemaSource.class, storageDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
+            YangTextSource.class, storageDir);
 
         final String content = "content1";
-        final YangTextSchemaSource source = new TestingYangSource("test", null, content);
-        final YangTextSchemaSource source2 = new TestingYangSource("test", "2012-12-12", content);
-        final YangTextSchemaSource source3 = new TestingYangSource("test", "2013-12-12", content);
+        final YangTextSource source = new TestingYangSource("test", null, content);
+        final YangTextSource source2 = new TestingYangSource("test", "2012-12-12", content);
+        final YangTextSource source3 = new TestingYangSource("test", "2013-12-12", content);
         // Double offer
         cache.offer(source);
         cache.offer(source2);
@@ -154,8 +153,8 @@ public class FilesystemSchemaSourceCacheTest {
     public void sourceIdToFileEmptyRevWithEmptyDir() {
         final SourceIdentifier sourceIdentifier = new SourceIdentifier("test");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, storageDir);
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSchemaSource.class, sourceIdToFile);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
+                YangTextSource.class, sourceIdToFile);
         assertNotNull(cache);
         final List<File> storedFiles = Arrays.asList(sourceIdToFile.listFiles());
         assertEquals(0, storedFiles.size());
@@ -163,10 +162,10 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void sourceIdToFileEmptyRevWithOneItemInDir() {
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSchemaSource.class, storageDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
+                YangTextSource.class, storageDir);
         final String content = "content1";
-        final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
+        final YangTextSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
 
         final SourceIdentifier sourceIdentifier = new SourceIdentifier("test");
@@ -179,11 +178,11 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void sourceIdToFileEmptyRevWithMoreItemsInDir() {
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSchemaSource.class, storageDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
+                YangTextSource.class, storageDir);
         final String content = "content1";
-        final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
-        final YangTextSchemaSource source2 = new TestingYangSource("test", "2013-12-12", content);
+        final YangTextSource source = new TestingYangSource("test", "2012-12-12", content);
+        final YangTextSource source2 = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
         cache.offer(source2);
 
@@ -196,28 +195,28 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void test() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSchemaSource.class, storageDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
+                YangTextSource.class, storageDir);
         final String content = "content1";
-        final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
+        final YangTextSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
         final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "2013-12-12");
-        final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
+        final ListenableFuture<? extends YangTextSource> checked = cache.getSource(sourceIdentifier);
         assertNotNull(checked);
         assertTrue(checked.isDone());
-        final YangTextSchemaSource checkedGet = checked.get();
-        assertEquals(sourceIdentifier, checkedGet.getIdentifier());
+        final YangTextSource checkedGet = checked.get();
+        assertEquals(sourceIdentifier, checkedGet.sourceId());
     }
 
     @Test
     public void test1() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSchemaSource.class, storageDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
+                YangTextSource.class, storageDir);
         final String content = "content1";
-        final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
+        final YangTextSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
         final SourceIdentifier sourceIdentifier = new SourceIdentifier("test1", "2012-12-12");
-        final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
+        final ListenableFuture<? extends YangTextSource> checked = cache.getSource(sourceIdentifier);
         assertNotNull(checked);
         assertThrows(ExecutionException.class, () -> checked.get());
     }
@@ -226,7 +225,7 @@ public class FilesystemSchemaSourceCacheTest {
         return Arrays.asList(storageDir.listFiles());
     }
 
-    private static class TestingYangSource extends YangTextSchemaSource {
+    private static class TestingYangSource extends YangTextSource {
         private final String content;
 
         TestingYangSource(final String name, final String revision, final String content) {
@@ -245,8 +244,8 @@ public class FilesystemSchemaSourceCacheTest {
         }
 
         @Override
-        public Optional<String> getSymbolicName() {
-            return Optional.empty();
+        public String symbolicName() {
+            return null;
         }
     }
 }

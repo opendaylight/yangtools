@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscribedNotificationsConstants;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
@@ -30,24 +30,24 @@ class SubscribedNotificationsTest {
 
         final var context = reactor.newBuild()
             .addLibSources(
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-inet-types@2013-07-15.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-interfaces@2018-02-20.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-ip@2018-02-22.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-netconf-acm@2018-02-14.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-network-instance@2019-01-21.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-restconf@2017-01-26.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-yang-schema-mount@2019-01-14.yang")),
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-yang-types@2013-07-15.yang")))
             .addSources(
-                YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+                YangStatementStreamSource.create(YangTextSource.forResource(
                     SubscribedNotificationsTest.class, "/ietf-subscribed-notifications@2019-09-09.yang")))
             .buildEffective();
 

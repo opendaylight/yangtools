@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
@@ -51,7 +51,7 @@ public final class TestUtils {
             .listFiles(StmtTestUtils.YANG_FILE_FILTER);
         final var sources = new ArrayList<StatementStreamSource>(files.length);
         for (var file : files) {
-            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forPath(file.toPath())));
+            sources.add(YangStatementStreamSource.create(YangTextSource.forPath(file.toPath())));
         }
         return sources;
     }
@@ -96,9 +96,9 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static YangTextSchemaSource assertSchemaSource(final String resourcePath) {
+    public static YangTextSource assertSchemaSource(final String resourcePath) {
         try {
-            return YangTextSchemaSource.forPath(Path.of(TestUtils.class.getResource(resourcePath).toURI()));
+            return YangTextSource.forPath(Path.of(TestUtils.class.getResource(resourcePath).toURI()));
         } catch (URISyntaxException e) {
             throw new AssertionError(e);
         }
@@ -112,18 +112,17 @@ public final class TestUtils {
 
         for (File file : new File(resourceDirectory).listFiles()) {
             reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSchemaSource.forPath(file.toPath()))));
+                YinTextSource.forPath(file.toPath()))));
         }
 
         return reactor.buildEffective();
     }
 
-    public static Module loadYinModule(final YinTextSchemaSource source) throws ReactorException, SAXException,
-            IOException {
+    public static Module loadYinModule(final YinTextSource source) throws ReactorException, SAXException, IOException {
         return RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)))
-                .buildEffective()
-                .getModules().iterator().next();
+            .addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)))
+            .buildEffective()
+            .getModules().iterator().next();
     }
 
     public static ModuleImport findImport(final Collection<? extends ModuleImport> imports, final String prefix) {

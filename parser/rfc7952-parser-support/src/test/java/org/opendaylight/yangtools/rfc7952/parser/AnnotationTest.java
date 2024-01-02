@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
@@ -37,9 +37,9 @@ class AnnotationTest {
         final var context = reactor.newBuild()
             .addSources(
                 YangStatementStreamSource.create(
-                    YangTextSchemaSource.forResource(AnnotationTest.class, "/ietf-yang-metadata@2016-08-05.yang")),
+                    YangTextSource.forResource(AnnotationTest.class, "/ietf-yang-metadata@2016-08-05.yang")),
                 YangStatementStreamSource.create(
-                    YangTextSchemaSource.forResource(AnnotationTest.class, "/example-last-modified.yang")))
+                    YangTextSource.forResource(AnnotationTest.class, "/example-last-modified.yang")))
             .buildEffective();
 
         final var annotations = AnnotationSchemaNode.findAll(context);
