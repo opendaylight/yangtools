@@ -16,9 +16,9 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 
 public class YT1428Test extends AbstractSchemaRepositoryTest {
     @Test
-    public void testDeviateSourceReported() {
+    void testDeviateSourceReported() {
         final var ex = assertExecutionException(null, "/yt1428/orig.yang", "/yt1428/deviate.yang");
         assertEquals(new SourceIdentifier("deviate"),
-            assertInstanceOf(SchemaResolutionException.class, ex.getCause()).getFailedSource());
+            assertInstanceOf(SchemaResolutionException.class, ex.getCause()).sourceId());
     }
 }
