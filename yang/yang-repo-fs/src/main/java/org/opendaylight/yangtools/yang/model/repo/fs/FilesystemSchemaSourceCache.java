@@ -34,12 +34,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,20 +122,20 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
     @Override
     protected synchronized void offer(final T source) {
-        LOG.trace("Source {} offered to cache", source.getIdentifier());
+        LOG.trace("Source {} offered to cache", source.sourceId());
         final File file = sourceIdToFile(source);
         if (file.exists()) {
-            LOG.debug("Source {} already in cache as {}", source.getIdentifier(), file);
+            LOG.debug("Source {} already in cache as {}", source.sourceId(), file);
             return;
         }
 
         storeSource(file, source);
-        register(source.getIdentifier());
-        LOG.trace("Source {} stored in cache as {}", source.getIdentifier(), file);
+        register(source.sourceId());
+        LOG.trace("Source {} stored in cache as {}", source.sourceId(), file);
     }
 
     private File sourceIdToFile(final T source) {
-        return sourceIdToFile(source.getIdentifier(), storageDirectory);
+        return sourceIdToFile(source.sourceId(), storageDirectory);
     }
 
     static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
@@ -238,8 +238,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             try (var castStream = cast.asByteSource(StandardCharsets.UTF_8).openStream()) {
                 Files.copy(castStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (final IOException e) {
-                throw new IllegalStateException("Cannot store schema source " + cast.getIdentifier() + " to " + file,
-                        e);
+                throw new IllegalStateException("Cannot store schema source " + cast.sourceId() + " to " + file, e);
             }
         }
 

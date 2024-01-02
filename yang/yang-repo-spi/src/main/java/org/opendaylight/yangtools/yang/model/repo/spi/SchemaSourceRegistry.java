@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 
 /**
  * Registry of all potentially available schema sources. Processes capable of dynamic schema discovery, such as OSGi

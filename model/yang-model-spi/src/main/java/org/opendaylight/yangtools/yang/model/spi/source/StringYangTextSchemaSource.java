@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
@@ -22,13 +22,13 @@ public class StringYangTextSchemaSource extends YangTextSchemaSource {
     private final @Nullable String symbolicName;
     private final @NonNull String content;
 
-    public StringYangTextSchemaSource(final SourceIdentifier identifier, final String content) {
-        this(identifier, content, null);
+    public StringYangTextSchemaSource(final SourceIdentifier sourceId, final String content) {
+        this(sourceId, content, null);
     }
 
-    public StringYangTextSchemaSource(final SourceIdentifier identifier, final String content,
+    public StringYangTextSchemaSource(final SourceIdentifier sourceId, final String content,
             final @Nullable String symbolicName) {
-        super(identifier);
+        super(sourceId);
         this.content = requireNonNull(content);
         this.symbolicName = symbolicName;
     }

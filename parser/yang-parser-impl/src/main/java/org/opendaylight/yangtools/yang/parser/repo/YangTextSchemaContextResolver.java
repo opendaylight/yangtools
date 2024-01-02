@@ -42,15 +42,15 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.GuavaSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
@@ -112,8 +112,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
         // AST carries an accurate identifier, check if it matches the one supplied by the source. If it
         // does not, check how much it differs and emit a warning.
-        final var providedId = source.getIdentifier();
-        final var parsedId = ast.getIdentifier();
+        final var providedId = source.sourceId();
+        final var parsedId = ast.sourceId();
         final YangTextSchemaSource text;
         if (!parsedId.equals(providedId)) {
             if (!parsedId.name().equals(providedId.name())) {

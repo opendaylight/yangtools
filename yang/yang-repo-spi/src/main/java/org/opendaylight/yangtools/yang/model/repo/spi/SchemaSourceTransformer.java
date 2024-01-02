@@ -16,8 +16,8 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 
 public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
         implements SchemaSourceListener, SchemaSourceProvider<D> {

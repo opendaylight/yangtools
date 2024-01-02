@@ -10,24 +10,23 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangSchemaSourceRepresentation;
 
-@Beta
-public final class YangIRSchemaSource extends AbstractSimpleIdentifiable<SourceIdentifier>
-        implements YangSchemaSourceRepresentation {
+public final class YangIRSchemaSource implements YangSchemaSourceRepresentation {
+    private final @NonNull SourceIdentifier sourceId;
     private final @NonNull IRStatement rootStatement;
     private final @Nullable String symbolicName;
 
-    public YangIRSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull IRStatement rootStatement,
+    public YangIRSchemaSource(final @NonNull SourceIdentifier sourceId, final @NonNull IRStatement rootStatement,
             final @Nullable String symbolicName) {
-        super(identifier);
+        this.sourceId = requireNonNull(sourceId);
         this.rootStatement = requireNonNull(rootStatement);
         this.symbolicName = symbolicName;
 
@@ -43,6 +42,11 @@ public final class YangIRSchemaSource extends AbstractSimpleIdentifiable<SourceI
         }
 
         checkArgument(rootStatement.argument() != null, "Root statement does not have an argument");
+    }
+
+    @Override
+    public SourceIdentifier sourceId() {
+        return sourceId;
     }
 
     @Override
