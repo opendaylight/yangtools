@@ -339,14 +339,14 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Beta
-    public EffectiveModelContext trySchemaContext() throws SchemaResolutionException {
+    public EffectiveModelContext trySchemaContext() throws SchemaResolutionException, ExecutionException {
         return trySchemaContext(StatementParserMode.DEFAULT_MODE);
     }
 
     @Beta
     @SuppressWarnings("checkstyle:avoidHidingCauseException")
     public EffectiveModelContext trySchemaContext(final StatementParserMode statementParserMode)
-            throws SchemaResolutionException {
+            throws SchemaResolutionException, ExecutionException {
         final var future = repository
                 .createEffectiveModelContextFactory(config(statementParserMode, getSupportedFeatures()))
                 .createEffectiveModelContext(ImmutableSet.copyOf(requiredSources));
@@ -356,11 +356,10 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         } catch (InterruptedException e) {
             throw new IllegalStateException("Interrupted while waiting for SchemaContext assembly", e);
         } catch (ExecutionException e) {
-            final var cause = e.getCause();
-            if (cause instanceof SchemaResolutionException resolutionException) {
-                throw resolutionException;
+            if (e.getCause() instanceof SchemaResolutionException sre) {
+                throw sre;
             }
-            throw new SchemaResolutionException("Failed to assemble SchemaContext", e);
+            throw e;
         }
     }
 
