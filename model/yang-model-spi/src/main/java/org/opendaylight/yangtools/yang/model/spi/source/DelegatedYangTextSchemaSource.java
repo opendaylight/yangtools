@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.concepts.Delegator;
 final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<CharSource> {
     private final @NonNull CharSource delegate;
 
-    DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final CharSource delegate) {
-        super(identifier);
+    DelegatedYangTextSchemaSource(final SourceIdentifier sourceId, final CharSource delegate) {
+        super(sourceId);
         this.delegate = requireNonNull(delegate);
     }
 
