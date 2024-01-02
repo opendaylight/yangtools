@@ -13,7 +13,6 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
@@ -28,8 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * An {@link InferenceAction} tasked with identifying when we are dealing with {@link YangDataConstants#RFC8040_SOURCE}.
  */
 final class OperationsValidateModuleAction implements InferenceAction {
-    private static final Unqualified IETF_RESTCONF = YangDataConstants.RFC8040_SOURCE.name();
-
     private final Prerequisite<? extends Mutable<?, ?, ?>> prereq;
 
     private OperationsValidateModuleAction(final Prerequisite<? extends Mutable<?, ?, ?>> prereq) {
@@ -38,7 +35,7 @@ final class OperationsValidateModuleAction implements InferenceAction {
 
     static void applyTo(@NonNull final Mutable<?, ?, ?> module) {
         // Quick checks we can
-        if (module.producesDeclared(ModuleStatement.class) && IETF_RESTCONF.equals(module.argument())) {
+        if (module.producesDeclared(ModuleStatement.class) && YangDataConstants.MODULE_NAME.equals(module.argument())) {
             // This is 'yang-api' definition within a 'ietf-restconf' module, but we are not certain about revisions
             // and its structure. Next up we require the module to be fully declared, hence an inference action is
             // needed to continue this process.
