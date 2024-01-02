@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
 public final class ConfigListWarningNamespace {
