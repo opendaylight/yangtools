@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.APPEARED;
 import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.DELETE;
 import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.DISAPPEARED;
@@ -21,15 +20,19 @@ import static org.opendaylight.yangtools.yang.data.tree.api.ModificationType.WRI
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
+@ExtendWith(MockitoExtension.class)
 class DataTreeCandidatesAggregateTest {
     private static final YangInstanceIdentifier ROOT_PATH = YangInstanceIdentifier.of(QName.create(
             "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test:container",
@@ -1065,20 +1068,13 @@ class DataTreeCandidatesAggregateTest {
     }
 
     private static LeafNode<String> normalizedNode(final String value) {
-        final var node = mock(LeafNode.class);
-        doReturn(value).when(node).body();
-        return node;
+        return ImmutableNodes.leafNode(QName.create("foo", "qn" + value), value);
     }
 
     private static TerminalDataTreeCandidateNode dataTreeCandidateNode(final NormalizedNode before,
                                                                        final NormalizedNode after,
                                                                        final ModificationType modification) {
-        final var dataTreeCandidateNode = mock(TerminalDataTreeCandidateNode.class);
-        doReturn(null).when(dataTreeCandidateNode).name();
-        doReturn(before).when(dataTreeCandidateNode).dataBefore();
-        doReturn(after).when(dataTreeCandidateNode).dataAfter();
-        doReturn(modification).when(dataTreeCandidateNode).modificationType();
-        return dataTreeCandidateNode;
+        return new TerminalDataTreeCandidateNode(null, modification, before, after);
     }
 
     private static void setChildNodes(final TerminalDataTreeCandidateNode parentNode,
