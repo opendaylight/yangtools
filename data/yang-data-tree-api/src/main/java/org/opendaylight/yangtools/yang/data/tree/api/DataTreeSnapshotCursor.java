@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.api;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -18,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * A cursor holding a logical position within a {@link DataTreeSnapshot}. It allows operations relative to that
  * position, as well as moving the position up or down the tree. Implementations are expected to be NOT thread-safe.
  */
-@Beta
 public interface DataTreeSnapshotCursor extends AutoCloseable {
     /**
      * Move the cursor to the specified child of the current position.
