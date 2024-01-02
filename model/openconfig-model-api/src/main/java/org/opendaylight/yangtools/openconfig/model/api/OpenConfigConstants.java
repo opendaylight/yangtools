@@ -7,38 +7,34 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * Constants associated with OpenDaylight extension in yang-ext.yang.
- *
- * @author Robert Varga
  */
 @NonNullByDefault
 public final class OpenConfigConstants {
-    private static final Unqualified MODULE_NAME = Unqualified.of("openconfig-extensions").intern();
+    public static final Unqualified MODULE_NAME = Unqualified.of("openconfig-extensions").intern();
 
     // Package-visible, because openconfig-version applies across all known revisions and needs to bind to all of them
-    static final XMLNamespace MODULE_NAMESPACE = XMLNamespace.of("http://openconfig.net/yang/openconfig-ext").intern();
+    public static final XMLNamespace MODULE_NAMESPACE =
+        XMLNamespace.of("http://openconfig.net/yang/openconfig-ext").intern();
 
     // Initial revision, defining semantic-version
-    private static final Revision SEMVER_REVISION = Revision.of("2015-10-09");
+    public static final Revision SEMVER_REVISION = Revision.of("2015-10-09");
 
     // Revised extension, adds openconfig-encrypted-value
-    private static final Revision ENCRYPTED_VALUE_REVISION = Revision.of("2017-01-29");
+    public static final Revision ENCRYPTED_VALUE_REVISION = Revision.of("2017-01-29");
 
     // Revised extension, renames openconfig-encrypted-value to openconfig-hashed-value
-    private static final Revision HASHED_VALUE_REVISION = Revision.of("2017-04-11");
+    public static final Revision HASHED_VALUE_REVISION = Revision.of("2017-04-11");
 
     // Revised extension, adds extension for POSIX pattern statements
-    private static final Revision REGEXP_POSIX_REVISION = Revision.of("2020-06-16");
+    public static final Revision REGEXP_POSIX_REVISION = Revision.of("2020-06-16");
 
     /**
     * Runtime identity of model which exposed regexp-posix.
@@ -63,41 +59,11 @@ public final class OpenConfigConstants {
             .intern();
 
     /**
-     * Original model source name.
-     */
-    public static final SourceIdentifier SEMVER_SOURCE = new SourceIdentifier(MODULE_NAME, SEMVER_REVISION);
-
-    /**
-     * Original model source name.
-     */
-    public static final SourceIdentifier ENCRYPTED_VALUE_SOURCE = new SourceIdentifier(MODULE_NAME,
-        ENCRYPTED_VALUE_REVISION);
-
-    /**
-     * Original model source name.
-     */
-    public static final SourceIdentifier HASHED_VALUE_SOURCE = new SourceIdentifier(MODULE_NAME, HASHED_VALUE_REVISION);
-
-    /**
-     * Original model source name.
-     */
-    public static final SourceIdentifier REGEXP_POSIX_SOURCE = new SourceIdentifier(MODULE_NAME, REGEXP_POSIX_REVISION);
-
-    /**
-     * Normative prefix to use when importing {@link #SEMVER_SOURCE} and later.
+     * Normative prefix to use when importing {@link #MODULE_NAME} and later.
      */
     public static final String MODULE_PREFIX = "oc-ext";
 
     private OpenConfigConstants() {
         // Hidden on purpose
-    }
-
-    /**
-     * Return identifiers of all sources known to define the metadata extension.
-     *
-     * @return Collection of identifiers.
-     */
-    public static Collection<SourceIdentifier> knownModelSources() {
-        return ImmutableList.of(HASHED_VALUE_SOURCE, ENCRYPTED_VALUE_SOURCE, SEMVER_SOURCE);
     }
 }

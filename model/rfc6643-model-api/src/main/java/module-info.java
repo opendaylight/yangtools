@@ -13,7 +13,6 @@ module org.opendaylight.yangtools.rfc6643.model.api {
     requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
     requires com.google.common;
 
     // Annotations
