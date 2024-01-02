@@ -117,7 +117,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         }
 
         LOG.debug("Source {} not found in cache as {}", sourceIdentifier, file);
-        return immediateFailedFluentFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
+        return immediateFailedFluentFuture(new MissingSchemaSourceException(sourceIdentifier, "Source not found"));
     }
 
     @Override

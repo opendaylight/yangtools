@@ -17,20 +17,14 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
  */
 @Beta
 public class MissingSchemaSourceException extends SchemaSourceException {
-    private static final long serialVersionUID = 1L;
+    @java.io.Serial
+    private static final long serialVersionUID = 2L;
 
-    private final SourceIdentifier id;
-
-    public MissingSchemaSourceException(final String message, final SourceIdentifier id) {
-        this(message, id, null);
+    public MissingSchemaSourceException(final SourceIdentifier sourceId, final String message) {
+        this(sourceId, message, null);
     }
 
-    public MissingSchemaSourceException(final String message, final SourceIdentifier id, final Throwable cause) {
-        super(requireNonNull(message), cause);
-        this.id = requireNonNull(id);
-    }
-
-    public SourceIdentifier getSourceId() {
-        return id;
+    public MissingSchemaSourceException(final SourceIdentifier sourceId, final String message, final Throwable cause) {
+        super(sourceId, requireNonNull(message), cause);
     }
 }
