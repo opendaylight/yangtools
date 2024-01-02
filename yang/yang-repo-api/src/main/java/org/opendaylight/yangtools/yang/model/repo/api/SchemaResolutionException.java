@@ -16,6 +16,7 @@ import com.google.common.collect.Multimap;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 
 /**
  * Exception thrown when a Schema Source fails to resolve.

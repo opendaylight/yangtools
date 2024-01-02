@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -58,8 +58,8 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         });
     private final Node root;
 
-    private YinStatementStreamSource(final SourceIdentifier identifier, final Node root) {
-        super(identifier);
+    private YinStatementStreamSource(final SourceIdentifier sourceId, final Node root) {
+        super(sourceId);
         this.root = requireNonNull(root);
     }
 
@@ -68,7 +68,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     }
 
     public static StatementStreamSource create(final YinDomSchemaSource source) {
-        return new YinStatementStreamSource(source.getIdentifier(), source.getSource().getNode());
+        return new YinStatementStreamSource(source.sourceId(), source.getSource().getNode());
     }
 
     private static StatementDefinition getValidDefinition(final Node node, final StatementWriter writer,

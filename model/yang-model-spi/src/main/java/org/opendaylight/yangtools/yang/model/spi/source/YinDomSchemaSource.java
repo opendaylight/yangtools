@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 /**
  * Utility {@link YinXmlSchemaSource} exposing a W3C {@link DOMSource} representation of YIN model.
  */
-public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
+public abstract sealed class YinDomSchemaSource implements YinXmlSchemaSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinDomSchemaSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
     private static final QName REVISION_STMT = REVISION.getStatementName();
@@ -44,10 +44,6 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         .argumentName().getLocalName();
     private static final String REVISION_ARG = REVISION.getArgumentDefinition().orElseThrow()
         .argumentName().getLocalName();
-
-    YinDomSchemaSource() {
-        // Prevent outside instantiation
-    }
 
     /**
      * Create a new {@link YinDomSchemaSource} using an identifier and a source.
@@ -90,7 +86,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         final Attr dateAttr = revisionStmt.getAttributeNode(REVISION_ARG);
         checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
-        final SourceIdentifier parsedId = new SourceIdentifier(nameAttr.getValue(), dateAttr.getValue());
+        final var parsedId = new SourceIdentifier(nameAttr.getValue(), dateAttr.getValue());
         final SourceIdentifier id;
         if (!parsedId.equals(identifier)) {
             LOG.debug("Changed identifier from {} to {}", identifier, parsedId);
@@ -111,7 +107,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @return A {@link YinDomSchemaSource} instance
      */
     public static @NonNull YinDomSchemaSource lazyTransform(final YinXmlSchemaSource xmlSchemaSource) {
-        final YinDomSchemaSource cast = castSchemaSource(xmlSchemaSource);
+        final var cast = castSchemaSource(xmlSchemaSource);
         return cast != null ? cast : new Transforming(xmlSchemaSource);
     }
 
@@ -125,14 +121,11 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      */
     public static @NonNull YinDomSchemaSource transform(final YinXmlSchemaSource xmlSchemaSource)
             throws TransformerException {
-        final YinDomSchemaSource cast = castSchemaSource(xmlSchemaSource);
+        final var cast = castSchemaSource(xmlSchemaSource);
         return cast != null ? cast :
-            create(xmlSchemaSource.getIdentifier(), transformSource(xmlSchemaSource.getSource()),
+            create(xmlSchemaSource.sourceId(), transformSource(xmlSchemaSource.getSource()),
                 xmlSchemaSource.getSymbolicName().orElse(null));
     }
-
-    @Override
-    public abstract DOMSource getSource();
 
     @Override
     public final Class<YinDomSchemaSource> getType() {
@@ -140,8 +133,11 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     }
 
     @Override
+    public abstract DOMSource getSource();
+
+    @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("identifier", getIdentifier())).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).add("sourceId", sourceId())).toString();
     }
 
     /**
@@ -167,33 +163,33 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             return yinDom;
         }
 
-        final Source source = xmlSchemaSource.getSource();
+        final var source = xmlSchemaSource.getSource();
         if (source instanceof DOMSource dom) {
-            return create(xmlSchemaSource.getIdentifier(), dom, xmlSchemaSource.getSymbolicName().orElse(null));
+            return create(xmlSchemaSource.sourceId(), dom, xmlSchemaSource.getSymbolicName().orElse(null));
         }
         return null;
     }
 
     private static final class Simple extends YinDomSchemaSource {
-        private final @NonNull SourceIdentifier identifier;
+        private final @NonNull SourceIdentifier sourceId;
         private final @NonNull DOMSource source;
         private final String symbolicName;
 
-        Simple(final @NonNull SourceIdentifier identifier, final @NonNull DOMSource source,
+        Simple(final @NonNull SourceIdentifier sourceId, final @NonNull DOMSource source,
                 final @Nullable String symbolicName) {
-            this.identifier = requireNonNull(identifier);
+            this.sourceId = requireNonNull(sourceId);
             this.source = requireNonNull(source);
             this.symbolicName = symbolicName;
         }
 
         @Override
-        public DOMSource getSource() {
-            return source;
+        public SourceIdentifier sourceId() {
+            return sourceId;
         }
 
         @Override
-        public SourceIdentifier getIdentifier() {
-            return identifier;
+        public DOMSource getSource() {
+            return source;
         }
 
         @Override
@@ -209,10 +205,21 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
 
     private static final class Transforming extends YinDomSchemaSource {
         private final YinXmlSchemaSource xmlSchemaSource;
+
         private volatile DOMSource source;
 
         Transforming(final YinXmlSchemaSource xmlSchemaSource) {
             this.xmlSchemaSource = requireNonNull(xmlSchemaSource);
+        }
+
+        @Override
+        public SourceIdentifier sourceId() {
+            return xmlSchemaSource.sourceId();
+        }
+
+        @Override
+        public Optional<String> getSymbolicName() {
+            return xmlSchemaSource.getSymbolicName();
         }
 
         @Override
@@ -233,16 +240,6 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             }
 
             return ret;
-        }
-
-        @Override
-        public SourceIdentifier getIdentifier() {
-            return xmlSchemaSource.getIdentifier();
-        }
-
-        @Override
-        public Optional<String> getSymbolicName() {
-            return xmlSchemaSource.getSymbolicName();
         }
 
         @Override

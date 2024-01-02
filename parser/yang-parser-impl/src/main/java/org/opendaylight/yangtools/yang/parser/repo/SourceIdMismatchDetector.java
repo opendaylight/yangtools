@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ final class SourceIdMismatchDetector implements Function<List<YangIRSchemaSource
         final Iterator<SourceIdentifier> srcIt = sourceIdentifiers.iterator();
         final Map<SourceIdentifier, YangIRSchemaSource> filtered = new LinkedHashMap<>();
         for (YangIRSchemaSource irSchemaSource : input) {
-            final SourceIdentifier realSId = irSchemaSource.getIdentifier();
+            final SourceIdentifier realSId = irSchemaSource.sourceId();
             if (srcIt.hasNext()) {
                 final SourceIdentifier expectedSId = srcIt.next();
                 if (!expectedSId.equals(realSId)) {

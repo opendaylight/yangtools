@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.plugin.generator.api;
 
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 
 /**
  * An SPI-level interface to find the schema source for a particular YANG module, as packaged in the final artifact.

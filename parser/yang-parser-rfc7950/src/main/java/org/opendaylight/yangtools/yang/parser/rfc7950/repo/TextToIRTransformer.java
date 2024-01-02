@@ -13,11 +13,11 @@ import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport;
 
@@ -36,8 +36,8 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
     public static @NonNull YangIRSchemaSource transformText(final YangTextSchemaSource text)
             throws YangSyntaxErrorException, IOException {
         final IRStatement rootStatement = IRSupport.createStatement(YangStatementStreamSource.parseYangSource(text));
-        final String name = YangModelDependencyInfo.safeStringArgument(text.getIdentifier(), rootStatement, "name");
-        final String latestRevision = YangModelDependencyInfo.getLatestRevision(rootStatement, text.getIdentifier());
+        final String name = YangModelDependencyInfo.safeStringArgument(text.sourceId(), rootStatement, "name");
+        final String latestRevision = YangModelDependencyInfo.getLatestRevision(rootStatement, text.sourceId());
         final SourceIdentifier sourceId = new SourceIdentifier(name, latestRevision);
 
         return new YangIRSchemaSource(sourceId, rootStatement, text.getSymbolicName().orElse(null));

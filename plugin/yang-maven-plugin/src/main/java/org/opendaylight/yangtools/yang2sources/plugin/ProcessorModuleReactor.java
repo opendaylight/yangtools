@@ -25,8 +25,8 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ final class ProcessorModuleReactor {
     ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject,
             final Collection<ScannedDependency> dependencies) {
         this.parser = requireNonNull(parser);
-        this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSchemaSource::getIdentifier);
+        this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSchemaSource::sourceId);
         this.dependencies = ImmutableList.copyOf(dependencies);
     }
 
