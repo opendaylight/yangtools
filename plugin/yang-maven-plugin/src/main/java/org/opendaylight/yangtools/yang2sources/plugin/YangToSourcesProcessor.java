@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -87,10 +87,10 @@ class YangToSourcesProcessor {
 
         final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
         for (var source : modelsInProject) {
-            final File file = new File(withMetaInf, source.getIdentifier().toYangFilename());
+            final File file = new File(withMetaInf, source.sourceId().toYangFilename());
             stateListBuilder.add(FileState.ofWrittenFile(file,
                 out -> source.asByteSource(StandardCharsets.UTF_8).copyTo(out)));
-            LOG.debug("Created file {} for {}", file, source.getIdentifier());
+            LOG.debug("Created file {} for {}", file, source.sourceId());
         }
 
         ProjectFileAccess.addResourceDir(project, generatedYangDir);
@@ -398,9 +398,9 @@ class YangToSourcesProcessor {
                 final var astSource = entry.getValue();
                 parser.addSource(astSource);
 
-                if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
+                if (!astSource.sourceId().equals(textSource.sourceId())) {
                     // AST indicates a different source identifier, make sure we use that
-                    sourcesInProject.add(YangTextSchemaSource.delegateForCharSource(astSource.getIdentifier(),
+                    sourcesInProject.add(YangTextSchemaSource.delegateForCharSource(astSource.sourceId(),
                         textSource));
                 } else {
                     sourcesInProject.add(textSource);

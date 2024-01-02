@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 
 /**
  * Exception thrown when a the specified schema source is not available.

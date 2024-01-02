@@ -24,13 +24,13 @@ import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
 
@@ -133,28 +133,28 @@ public abstract class YangModelDependencyInfo {
      * @throws IllegalArgumentException If the root statement is not a valid YANG module/submodule
      */
     public static @NonNull YangModelDependencyInfo forIR(final YangIRSchemaSource source) {
-        return forIR(source.getRootStatement(), source.getIdentifier());
+        return forIR(source.getRootStatement(), source.sourceId());
     }
 
     /**
      * Extracts {@link YangModelDependencyInfo} from an intermediate representation root statement of a YANG model.
      *
-     * @param source Source identifier
+     * @param sourceId Source identifier
      * @param rootStatement root statement
      * @return {@link YangModelDependencyInfo}
      * @throws IllegalArgumentException If the root statement is not a valid YANG module/submodule
      */
     static @NonNull YangModelDependencyInfo forIR(final IRStatement rootStatement,
-            final SourceIdentifier source) {
+            final SourceIdentifier sourceId) {
         final IRKeyword keyword = rootStatement.keyword();
         checkArgument(keyword instanceof Unqualified, "Invalid root statement %s", keyword);
 
         final String arg = keyword.identifier();
         if (MODULE.equals(arg)) {
-            return parseModuleContext(rootStatement, source);
+            return parseModuleContext(rootStatement, sourceId);
         }
         if (SUBMODULE.equals(arg)) {
-            return parseSubmoduleContext(rootStatement, source);
+            return parseSubmoduleContext(rootStatement, sourceId);
         }
         throw new IllegalArgumentException("Root of parsed AST must be either module or submodule");
     }

@@ -19,12 +19,12 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -118,13 +118,13 @@ final class DefaultYangParser implements YangParser {
             try {
                 return YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(yinText));
             } catch (SAXException e) {
-                throw new YangSyntaxErrorException(source.getIdentifier(), 0, 0, "Failed to parse XML text", e);
+                throw new YangSyntaxErrorException(source.sourceId(), 0, 0, "Failed to parse XML text", e);
             }
         } else if (source instanceof YinXmlSchemaSource yinXml) {
             try {
                 return YinStatementStreamSource.create(yinXml);
             } catch (TransformerException e) {
-                throw new YangSyntaxErrorException(source.getIdentifier(), 0, 0,
+                throw new YangSyntaxErrorException(source.sourceId(), 0, 0,
                     "Failed to assemble in-memory representation", e);
             }
         } else {

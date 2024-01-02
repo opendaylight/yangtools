@@ -14,10 +14,10 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextSchemaSource;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -45,7 +45,7 @@ public final class YinTextToDomTransformer extends SchemaSourceTransformer<YinTe
         final SAXParser parser = UntrustedXML.newSAXParser();
         final DefaultHandler handler = new StatementSourceReferenceHandler(doc, null);
         parser.parse(source.openStream(), handler);
-        return YinDomSchemaSource.create(source.getIdentifier(), new DOMSource(doc),
+        return YinDomSchemaSource.create(source.sourceId(), new DOMSource(doc),
             source.getSymbolicName().orElse(null));
     }
 }

@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
@@ -27,15 +26,14 @@ import org.slf4j.LoggerFactory;
 /**
  * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an {@link InputStream}.
  */
-@Beta
 public abstract class YinTextSchemaSource extends ByteSource implements YinSchemaSourceRepresentation {
     private static final Logger LOG = LoggerFactory.getLogger(YinTextSchemaSource.class);
     private static final String XML_EXTENSION = ".xml";
 
-    private final @NonNull SourceIdentifier identifier;
+    private final @NonNull SourceIdentifier sourceId;
 
-    protected YinTextSchemaSource(final SourceIdentifier identifier) {
-        this.identifier = requireNonNull(identifier);
+    protected YinTextSchemaSource(final SourceIdentifier sourceId) {
+        this.sourceId = requireNonNull(sourceId);
     }
 
     public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
@@ -55,8 +53,8 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     }
 
     @Override
-    public final SourceIdentifier getIdentifier() {
-        return identifier;
+    public final SourceIdentifier sourceId() {
+        return sourceId;
     }
 
     @Override
@@ -79,7 +77,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
      * @return ToStringHelper supplied as input argument.
      */
     protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
-        return toStringHelper.add("identifier", identifier);
+        return toStringHelper.add("identifier", sourceId);
     }
 
     /**

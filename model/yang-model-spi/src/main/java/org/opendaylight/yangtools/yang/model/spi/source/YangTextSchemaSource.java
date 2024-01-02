@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
 import static org.opendaylight.yangtools.yang.common.YangNames.parseFilename;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
@@ -30,12 +29,11 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as an {@link InputStream}.
  */
-@Beta
 public abstract class YangTextSchemaSource extends CharSource implements YangSchemaSourceRepresentation {
-    private final @NonNull SourceIdentifier identifier;
+    private final @NonNull SourceIdentifier sourceId;
 
-    protected YangTextSchemaSource(final SourceIdentifier identifier) {
-        this.identifier = requireNonNull(identifier);
+    protected YangTextSchemaSource(final SourceIdentifier sourceId) {
+        this.sourceId = requireNonNull(sourceId);
     }
 
     public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
@@ -214,15 +212,14 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
         return new ResourceYangTextSchemaSource(identifier, url, charset);
     }
 
-
-    @Override
-    public final SourceIdentifier getIdentifier() {
-        return identifier;
-    }
-
     @Override
     public final Class<YangTextSchemaSource> getType() {
         return YangTextSchemaSource.class;
+    }
+
+    @Override
+    public final SourceIdentifier sourceId() {
+        return sourceId;
     }
 
     @Override
@@ -240,6 +237,6 @@ public abstract class YangTextSchemaSource extends CharSource implements YangSch
      * @return ToStringHelper supplied as input argument.
      */
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("identifier", identifier);
+        return toStringHelper.add("identifier", sourceId);
     }
 }

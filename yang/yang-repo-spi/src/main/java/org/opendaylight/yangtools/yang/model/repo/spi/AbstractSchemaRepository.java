@@ -31,8 +31,8 @@ import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,18 +58,18 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     @GuardedBy("this")
     private final List<SchemaListenerRegistration> listeners = new ArrayList<>();
 
-    private static <T extends SchemaSourceRepresentation> ListenableFuture<T> fetchSource(final SourceIdentifier id,
-            final Iterator<SchemaSourceRegistration> it) {
+    private static <T extends SchemaSourceRepresentation> ListenableFuture<T> fetchSource(
+            final SourceIdentifier sourceId, final Iterator<SchemaSourceRegistration> it) {
         final var reg = it.next();
         @SuppressWarnings("unchecked")
         final var provider = (SchemaSourceProvider<T>) reg.provider();
 
-        return Futures.catchingAsync(provider.getSource(id), Throwable.class, input -> {
+        return Futures.catchingAsync(provider.getSource(sourceId), Throwable.class, input -> {
             LOG.debug("Failed to acquire source from {}", reg, input);
             if (it.hasNext()) {
-                return fetchSource(id, it);
+                return fetchSource(sourceId, it);
             }
-            throw new MissingSchemaSourceException("All available providers exhausted", id, input);
+            throw new MissingSchemaSourceException("All available providers exhausted", sourceId, input);
         }, MoreExecutors.directExecutor());
     }
 
@@ -94,7 +94,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         final var regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
             return immediateFailedFluentFuture(new MissingSchemaSourceException(
-                        "No providers for source " + id + " representation " + representation + " available", id));
+                "No providers for source " + id + " representation " + representation + " available", id));
         }
 
         final ListenableFuture<T> fetchSourceFuture = fetchSource(id, regs);

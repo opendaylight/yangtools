@@ -5,12 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -36,11 +34,14 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <p>
  * Implementations of this interface expected to comply with the {@link Immutable} contract.
  */
-@Beta
-public sealed interface SchemaSourceRepresentation extends Identifiable<SourceIdentifier>, Immutable
+public sealed interface SchemaSourceRepresentation extends Immutable
         permits YangSchemaSourceRepresentation, YinSchemaSourceRepresentation {
-    @Override
-    SourceIdentifier getIdentifier();
+    /**
+     * The {@link SourceIdentifier} of this source.
+     *
+     * @return {@link SourceIdentifier} of this source
+     */
+    @NonNull SourceIdentifier sourceId();
 
     /**
      * Return the concrete representation type.
