@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 
 /**
