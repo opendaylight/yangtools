@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.plugin.generator.api;
 
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 
 /**
  * An SPI-level interface to find the schema source for a particular YANG module, as packaged in the final artifact.
@@ -26,10 +26,9 @@ public interface ModuleResourceResolver {
      * @throws NullPointerException if any argument is {@code null}
      * @throws IllegalArgumentException if the requested representation is not supported by this resolver
      */
-    Optional<String> findModuleResourcePath(ModuleLike module,
-        Class<? extends SchemaSourceRepresentation> representation);
+    Optional<String> findModuleResourcePath(ModuleLike module, Class<? extends SourceRepresentation> representation);
 
     default Optional<String> findModuleYangTextResourcePath(final ModuleLike module) {
-        return findModuleResourcePath(module, YangTextSchemaSource.class);
+        return findModuleResourcePath(module, YangTextSource.class);
     }
 }

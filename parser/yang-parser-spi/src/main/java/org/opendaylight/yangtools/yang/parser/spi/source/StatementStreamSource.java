@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
  * Statement stream source, which is used for inference of effective model.

@@ -11,31 +11,32 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 @Beta
 public class YangSyntaxErrorException extends YangParserException {
+    @java.io.Serial
     private static final long serialVersionUID = 2L;
 
-    private final SourceIdentifier source;
+    private final SourceIdentifier sourceId;
     private final int line;
     private final int charPositionInLine;
 
-    public YangSyntaxErrorException(final @Nullable SourceIdentifier source, final int line,
+    public YangSyntaxErrorException(final @Nullable SourceIdentifier sourceId, final int line,
             final int charPositionInLine, final String message) {
-        this(source, line, charPositionInLine, message, null);
+        this(sourceId, line, charPositionInLine, message, null);
     }
 
-    public YangSyntaxErrorException(final @Nullable SourceIdentifier source, final int line,
+    public YangSyntaxErrorException(final @Nullable SourceIdentifier sourceId, final int line,
             final int charPositionInLine, final String message, final @Nullable Throwable cause) {
         super(message, cause);
-        this.source = source;
+        this.sourceId = sourceId;
         this.line = line;
         this.charPositionInLine = charPositionInLine;
     }
 
     public final Optional<SourceIdentifier> getSource() {
-        return Optional.ofNullable(source);
+        return Optional.ofNullable(sourceId);
     }
 
     public final int getLine() {
@@ -48,8 +49,8 @@ public class YangSyntaxErrorException extends YangParserException {
 
     public @NonNull String getFormattedMessage() {
         final StringBuilder sb = new StringBuilder(getMessage());
-        if (source != null) {
-            sb.append(" in source ").append(source);
+        if (sourceId != null) {
+            sb.append(" in source ").append(sourceId);
         }
         if (line != 0) {
             sb.append(" on line ").append(line);

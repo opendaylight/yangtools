@@ -20,19 +20,19 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * A simple {@link AbstractSchemaSourceCache} based on {@link Cache Guava Cache}.
  *
- * @param <T> {@link SchemaSourceRepresentation} type stored in this cache
+ * @param <T> {@link SourceRepresentation} type stored in this cache
  * @deprecated This class has a rather complicated and ugly design. Use {@link SoftSchemaSourceCache} instead.
  */
 @Beta
 @Deprecated(since = "7.0.13", forRemoval = true)
-public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
+public final class GuavaSchemaSourceCache<T extends SourceRepresentation> extends AbstractSchemaSourceCache<T>
         implements AutoCloseable {
     // FIXME: 7.0.0: use a java.util.Cleaner?
     private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<>());
@@ -45,35 +45,35 @@ public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> 
         cache = cacheBuilder.build();
     }
 
-    public static <R extends SchemaSourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
+    public static <R extends SourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
             final SchemaSourceRegistry consumer, final Class<R> representation) {
         return new GuavaSchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues());
     }
 
-    public static <R extends SchemaSourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
+    public static <R extends SourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
             final SchemaSourceRegistry consumer, final Class<R> representation, final long lifetime,
             final TimeUnit units) {
         return new GuavaSchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues()
             .expireAfterAccess(lifetime, units));
     }
 
-    public static <R extends SchemaSourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
+    public static <R extends SourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
             final SchemaSourceRegistry consumer, final Class<R> representation, final Duration duration) {
         return new GuavaSchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues()
             .expireAfterAccess(duration));
     }
 
     @Override
-    public FluentFuture<? extends T> getSource(final SourceIdentifier sourceIdentifier) {
-        final T present = cache.getIfPresent(sourceIdentifier);
+    public FluentFuture<? extends T> getSource(final SourceIdentifier sourceId) {
+        final T present = cache.getIfPresent(sourceId);
         return present != null ? FluentFutures.immediateFluentFuture(present)
-                : FluentFutures.immediateFailedFluentFuture(new MissingSchemaSourceException("Source not found",
-                    sourceIdentifier));
+                : FluentFutures.immediateFailedFluentFuture(
+                    new MissingSchemaSourceException(sourceId, "Source not found"));
     }
 
     @Override
     protected void offer(final T source) {
-        final var srcId = source.getIdentifier();
+        final var srcId = source.sourceId();
         if (cache.getIfPresent(srcId) != null) {
             // We already have this source, do not track it
             return;

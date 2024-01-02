@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo.ModuleDependencyInfo;
 
@@ -61,7 +61,7 @@ public class DependencyResolverTest {
 
     private static void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map, final String yangFileName)
             throws Exception {
-        final var info = ModuleDependencyInfo.forYangText(YangTextSchemaSource.forResource(DependencyResolverTest.class,
+        final var info = ModuleDependencyInfo.forYangText(YangTextSource.forResource(DependencyResolverTest.class,
             yangFileName));
         map.put(new SourceIdentifier(info.getName(), info.getFormattedRevision()), info);
     }

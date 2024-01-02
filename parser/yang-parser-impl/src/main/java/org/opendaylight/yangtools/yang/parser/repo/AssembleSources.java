@@ -16,13 +16,12 @@ import com.google.common.util.concurrent.FluentFuture;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -44,7 +43,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
         this.parserFactory = parserFactory;
         this.config = config;
         getIdentifier = switch (config.getStatementParserMode()) {
-            case DEFAULT_MODE -> YangIRSchemaSource::getIdentifier;
+            case DEFAULT_MODE -> YangIRSchemaSource::sourceId;
         };
     }
 
@@ -72,11 +71,12 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
         config.getSupportedFeatures().ifPresent(parser::setSupportedFeatures);
         config.getModulesDeviatedByModules().ifPresent(parser::setModulesWithSupportedDeviations);
 
-        for (final Entry<SourceIdentifier, YangIRSchemaSource> entry : srcs.entrySet()) {
+        for (var entry : srcs.entrySet()) {
             try {
                 parser.addSource(entry.getValue());
             } catch (YangSyntaxErrorException | IOException e) {
-                throw new SchemaResolutionException("Failed to add source " + entry.getKey(), e);
+                final var sourceId = entry.getKey();
+                throw new SchemaResolutionException("Failed to add source " + sourceId, sourceId, e);
             }
         }
 

@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
-class SettableSchemaProvider<T extends SchemaSourceRepresentation> implements SchemaSourceProvider<T> {
+class SettableSchemaProvider<T extends SourceRepresentation> implements SchemaSourceProvider<T> {
 
     private final SettableFuture<T> future = SettableFuture.create();
     private final T schemaSourceRepresentation;
@@ -25,18 +25,18 @@ class SettableSchemaProvider<T extends SchemaSourceRepresentation> implements Sc
     SettableSchemaProvider(final T schemaSourceRepresentation, final SourceIdentifier sourceIdentifier,
             final Class<T> representation, final int cost) {
         this.schemaSourceRepresentation = schemaSourceRepresentation;
-        this.potentialSchemaSource = PotentialSchemaSource.create(sourceIdentifier, representation, cost);
+        potentialSchemaSource = PotentialSchemaSource.create(sourceIdentifier, representation, cost);
     }
 
-    public static <T extends SchemaSourceRepresentation> SettableSchemaProvider<T> createRemote(
+    public static <T extends SourceRepresentation> SettableSchemaProvider<T> createRemote(
             final T schemaSourceRepresentation, final Class<T> representation) {
-        return new SettableSchemaProvider<>(schemaSourceRepresentation, schemaSourceRepresentation.getIdentifier(),
+        return new SettableSchemaProvider<>(schemaSourceRepresentation, schemaSourceRepresentation.sourceId(),
                 representation, PotentialSchemaSource.Costs.REMOTE_IO.getValue());
     }
 
-    public static <T extends SchemaSourceRepresentation> SettableSchemaProvider<T> createImmediate(
+    public static <T extends SourceRepresentation> SettableSchemaProvider<T> createImmediate(
             final T schemaSourceRepresentation, final Class<T> representation) {
-        return new SettableSchemaProvider<>(schemaSourceRepresentation, schemaSourceRepresentation.getIdentifier(),
+        return new SettableSchemaProvider<>(schemaSourceRepresentation, schemaSourceRepresentation.sourceId(),
                 representation, PotentialSchemaSource.Costs.IMMEDIATE.getValue());
     }
 
@@ -50,7 +50,7 @@ class SettableSchemaProvider<T extends SchemaSourceRepresentation> implements Sc
     }
 
     public SourceIdentifier getId() {
-        return schemaSourceRepresentation.getIdentifier();
+        return schemaSourceRepresentation.sourceId();
     }
 
     public void setResult() {

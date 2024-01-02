@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class OpenconfigVerSharedSchemaRepositoryTest {
@@ -54,7 +54,6 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
     static SettableSchemaProvider<YangIRSchemaSource> getImmediateYangSourceProviderFromResource(
             final String resourceName) throws Exception {
         return SettableSchemaProvider.createImmediate(
-            TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName)),
-            YangIRSchemaSource.class);
+            TextToIRTransformer.transformText(YangTextSource.forResource(resourceName)), YangIRSchemaSource.class);
     }
 }

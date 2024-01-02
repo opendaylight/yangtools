@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 
 final class ContextHolder implements Immutable, ModuleResourceResolver {
     private final @NonNull EffectiveModelContext context;
@@ -36,8 +36,8 @@ final class ContextHolder implements Immutable, ModuleResourceResolver {
 
     @Override
     public Optional<String> findModuleResourcePath(final ModuleLike module,
-            final Class<? extends SchemaSourceRepresentation> representation) {
-        checkArgument(YangTextSchemaSource.class.equals(requireNonNull(representation)),
+            final Class<? extends SourceRepresentation> representation) {
+        checkArgument(YangTextSource.class.equals(requireNonNull(representation)),
             "Unsupported representation %s", representation);
         final SourceIdentifier id = Util.moduleToIdentifier(module);
         return sources.contains(id)

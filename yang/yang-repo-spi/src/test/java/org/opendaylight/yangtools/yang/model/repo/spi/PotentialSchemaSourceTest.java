@@ -16,27 +16,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 
 @ExtendWith(MockitoExtension.class)
 class PotentialSchemaSourceTest {
-    private interface TestSchemaSourceRepresentation extends YangSchemaSourceRepresentation {
+    private interface TestSourceRepresentation extends YangSourceRepresentation {
         @Override
-        default Class<TestSchemaSourceRepresentation> getType() {
-            return TestSchemaSourceRepresentation.class;
+        default Class<TestSourceRepresentation> getType() {
+            return TestSourceRepresentation.class;
         }
     }
 
     public final SourceIdentifier sourceIdentifier = new SourceIdentifier("foo");
     @SuppressWarnings("exports")
-    public PotentialSchemaSource<TestSchemaSourceRepresentation> source;
+    public PotentialSchemaSource<TestSourceRepresentation> source;
     @SuppressWarnings("exports")
-    public PotentialSchemaSource<TestSchemaSourceRepresentation> same;
+    public PotentialSchemaSource<TestSourceRepresentation> same;
 
     @BeforeEach
     void before() {
-        source = PotentialSchemaSource.create(sourceIdentifier, TestSchemaSourceRepresentation.class,
+        source = PotentialSchemaSource.create(sourceIdentifier, TestSourceRepresentation.class,
             PotentialSchemaSource.Costs.LOCAL_IO.getValue());
         same = PotentialSchemaSource.create(source.getSourceIdentifier(), source.getRepresentation(),
             source.getCost());
@@ -45,14 +45,14 @@ class PotentialSchemaSourceTest {
     @Test
     void testNegativeCost() {
         assertThrows(IllegalArgumentException.class,
-            () -> PotentialSchemaSource.create(sourceIdentifier, TestSchemaSourceRepresentation.class, -1));
+            () -> PotentialSchemaSource.create(sourceIdentifier, TestSourceRepresentation.class, -1));
     }
 
     @Test
     void testMethods() {
         assertEquals(PotentialSchemaSource.Costs.LOCAL_IO.getValue(), source.getCost());
         assertSame(sourceIdentifier, source.getSourceIdentifier());
-        assertSame(TestSchemaSourceRepresentation.class, source.getRepresentation());
+        assertSame(TestSourceRepresentation.class, source.getRepresentation());
         assertEquals(same.hashCode(), source.hashCode());
         assertNotEquals(null, source);
         assertEquals(source, source);

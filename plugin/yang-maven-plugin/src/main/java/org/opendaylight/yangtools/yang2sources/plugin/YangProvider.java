@@ -12,12 +12,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import org.apache.maven.project.MavenProject;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 
 @FunctionalInterface
 @VisibleForTesting
 interface YangProvider {
 
-    List<FileState> addYangsToMetaInf(MavenProject project,
-            Collection<YangTextSchemaSource> modelsInProject) throws IOException;
+    List<FileState> addYangsToMetaInf(MavenProject project, Collection<YangTextSource> modelsInProject)
+        throws IOException;
 }
