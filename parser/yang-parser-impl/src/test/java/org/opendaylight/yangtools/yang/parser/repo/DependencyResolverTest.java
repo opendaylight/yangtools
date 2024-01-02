@@ -27,8 +27,8 @@ public class DependencyResolverTest {
         addToMap(map, "/no-revision/top@2012-10-10.yang");
 
         final var resolved = RevisionDependencyResolver.create(map);
-        assertEquals(0, resolved.getUnresolvedSources().size());
-        assertEquals(0, resolved.getUnsatisfiedImports().size());
+        assertEquals(0, resolved.unresolvedSources().size());
+        assertEquals(0, resolved.unsatisfiedImports().size());
     }
 
     @Test
@@ -40,9 +40,9 @@ public class DependencyResolverTest {
         addToMap(map, "/model/baz.yang");
 
         final var resolved = RevisionDependencyResolver.create(map);
-        assertEquals(2, resolved.getResolvedSources().size());
-        assertEquals(1, resolved.getUnresolvedSources().size());
-        assertEquals(0, resolved.getUnsatisfiedImports().size());
+        assertEquals(2, resolved.resolvedSources().size());
+        assertEquals(1, resolved.unresolvedSources().size());
+        assertEquals(0, resolved.unsatisfiedImports().size());
     }
 
     @Test
@@ -54,9 +54,9 @@ public class DependencyResolverTest {
         addToMap(map, "/model/baz.yang");
 
         final var resolved = RevisionDependencyResolver.create(map);
-        assertEquals(0, resolved.getUnresolvedSources().size());
-        assertEquals(0, resolved.getUnsatisfiedImports().size());
-        assertEquals(4, resolved.getResolvedSources().size());
+        assertEquals(0, resolved.unresolvedSources().size());
+        assertEquals(0, resolved.unsatisfiedImports().size());
+        assertEquals(4, resolved.resolvedSources().size());
     }
 
     private static void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map, final String yangFileName)
