@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
+import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -57,18 +56,13 @@ abstract class ArgumentContextUtils {
             if (backslash < str.length() - 1) {
                 int index = backslash;
                 while (index != -1) {
-                    switch (str.charAt(index + 1)) {
-                        case 'n':
-                        case 't':
-                        case '\\':
-                        case '\"':
-                            index = str.indexOf('\\', index + 2);
-                            break;
-                        default:
-                            throw new SourceException(ref, "YANG 1.1: illegal double quoted string (%s). In double "
-                                + "quoted string the backslash must be followed by one of the following character "
-                                + "[n,t,\",\\], but was '%s'.", str, str.charAt(index + 1));
-                    }
+                    final var escape = str.charAt(index + 1);
+                    index = switch (escape) {
+                        case 'n', 't', '\\', '\"' -> str.indexOf('\\', index + 2);
+                        default -> throw new SourceException(ref, """
+                            YANG 1.1: illegal double quoted string (%s). In double quoted string the backslash must be \
+                            followed by one of the following character [n,t,",\\], but was '%s'.""", str, escape);
+                    };
                 }
             }
         }
@@ -85,14 +79,10 @@ abstract class ArgumentContextUtils {
     }
 
     static @NonNull ArgumentContextUtils forVersion(final YangVersion version) {
-        switch (version) {
-            case VERSION_1:
-                return RFC6020.INSTANCE;
-            case VERSION_1_1:
-                return RFC7950.INSTANCE;
-            default:
-                throw new IllegalStateException("Unhandled version " + version);
-        }
+        return switch (version) {
+            case VERSION_1 -> RFC6020.INSTANCE;
+            case VERSION_1_1 -> RFC7950.INSTANCE;
+        };
     }
 
     // TODO: teach the only caller about versions, or provide common-enough idioms for its use case
@@ -106,24 +96,23 @@ abstract class ArgumentContextUtils {
      *       such as intermediate List allocation et al.
      */
     final @NonNull String stringFromStringContext(final IRArgument argument, final StatementSourceReference ref) {
-        if (argument instanceof Single) {
-            final Single single = (Single) argument;
-            final String str = single.string();
+        if (argument instanceof final Single single) {
+            final var str = single.string();
             if (single.needQuoteCheck()) {
                 checkUnquoted(str, ref);
             }
             return single.needUnescape() ? unescape(str, ref) : str;
+        } else if (argument instanceof Concatenation concat) {
+            return concatStrings(concat.parts(), ref);
+        } else {
+            throw new VerifyException("Unexpected argument " + argument);
         }
-
-        verify(argument instanceof Concatenation, "Unexpected argument %s", argument);
-        return concatStrings(((Concatenation) argument).parts(), ref);
     }
 
     private @NonNull String concatStrings(final List<? extends Single> parts, final StatementSourceReference ref) {
-        final StringBuilder sb = new StringBuilder();
-        for (Single part : parts) {
-            final String str = part.string();
-            sb.append(part.needUnescape() ? unescape(str, ref) : str);
+        final var sb = new StringBuilder();
+        for (var part : parts) {
+            sb.append(part.needUnescape() ? unescape(part.string(), ref) : part.string());
         }
         return sb.toString();
     }
@@ -149,7 +138,7 @@ abstract class ArgumentContextUtils {
      */
     private @NonNull String unescape(final StatementSourceReference ref, final String str, final int backslash) {
         checkDoubleQuoted(str, ref, backslash);
-        StringBuilder sb = new StringBuilder(str.length());
+        final var sb = new StringBuilder(str.length());
         unescapeBackslash(sb, str, backslash);
         return sb.toString();
     }
@@ -180,18 +169,10 @@ abstract class ArgumentContextUtils {
         sb.append(str, 0, backslash);
         final char c = str.charAt(nextAfterBackslash);
         switch (c) {
-            case '\\':
-            case '"':
-                sb.append(c);
-                break;
-            case 't':
-                sb.append('\t');
-                break;
-            case 'n':
-                sb.append('\n');
-                break;
-            default:
-                sb.append(str, backslash, nextAfterBackslash + 1);
+            case '\\', '"' -> sb.append(c);
+            case 't' -> sb.append('\t');
+            case 'n' -> sb.append('\n');
+            default -> sb.append(str, backslash, nextAfterBackslash + 1);
         }
     }
 }
