@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Thrown when there was Missing element in yang file.
