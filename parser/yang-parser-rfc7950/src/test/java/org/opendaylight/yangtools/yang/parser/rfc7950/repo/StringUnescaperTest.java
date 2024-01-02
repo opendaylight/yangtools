@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.ArgumentContextUtils.unescapeBackslash;
+import static org.opendaylight.yangtools.yang.model.spi.meta.StringUnescaper.unescapeBackslash;
 
 import java.io.File;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-class ArgumentContextUtilsTest {
+class StringUnescaperTest {
     @Test
     void testUnescapeNew() {
         //      a\b -----> a\b  (invalid for 7950)

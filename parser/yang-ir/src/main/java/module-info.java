@@ -10,8 +10,10 @@ module org.opendaylight.yangtools.yang.ir {
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires org.opendaylight.yangtools.concepts;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires org.opendaylight.yangtools.yang.common;
 }
