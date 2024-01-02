@@ -17,18 +17,18 @@ import java.lang.ref.SoftReference;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.opendaylight.yangtools.concepts.Registration;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 
 /**
  * A simple {@link AbstractSchemaSourceCache} maintaining soft references.
  *
- * @param <T> {@link SchemaSourceRepresentation} type stored in this cache
+ * @param <T> {@link SourceRepresentation} type stored in this cache
  */
 @Beta
-public final class SoftSchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
+public final class SoftSchemaSourceCache<T extends SourceRepresentation> extends AbstractSchemaSourceCache<T>
         implements AutoCloseable {
     private static final Cleaner CLEANER = Cleaner.create();
 
@@ -74,11 +74,11 @@ public final class SoftSchemaSourceCache<T extends SchemaSourceRepresentation> e
             return;
         }
 
-        final var id = source.getIdentifier();
+        final var sourceId = source.sourceId();
         final var ref = new SoftReference<>(source);
 
         while (true) {
-            final var prev = references.putIfAbsent(id, ref);
+            final var prev = references.putIfAbsent(sourceId, ref);
             if (prev == null) {
                 // We have performed a fresh insert and need to add a cleanup
                 break;
@@ -90,15 +90,15 @@ public final class SoftSchemaSourceCache<T extends SchemaSourceRepresentation> e
             }
 
             // Existing reference is dead, remove it and retry
-            references.remove(id, prev);
+            references.remove(sourceId, prev);
         }
 
         // We have populated a cache entry, register the source and a cleanup action
-        final var reg = register(id);
+        final var reg = register(sourceId);
         cleanables.put(reg, CLEANER.register(source, () -> {
             cleanables.remove(reg);
             reg.close();
-            references.remove(id, ref);
+            references.remove(sourceId, ref);
         }));
 
         // Ensure 'source' is still reachable here. This is needed to ensure the cleanable action does not fire before

@@ -5,12 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.api.source;
 
-import com.google.common.annotations.Beta;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Identifiable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -26,28 +24,30 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <p>
  * Typical examples of a schema source representation include:
  * <ul>
- * <li>a {@link java.lang.String} - textual representation of source code
- * <li>a {@link java.io.InputStream} - input stream containing source code
- * <li>a {@link com.google.common.io.ByteSource} - source for input streams
- * containing source code
- * <li>Parsed abstract syntax tree (AST), which is the result of a syntactic parser
+ *   <li>a {@link java.lang.String} - textual representation of source code</li>
+ *   <li>a {@link java.io.InputStream} - input stream containing source code</li>
+ *   <li>a {@link com.google.common.io.ByteSource} - source for input streams containing source code</li>
+ *   <li>Parsed abstract syntax tree (AST), which is the result of a syntactic parser</li>
  * </ul>
  *
  * <p>
  * Implementations of this interface expected to comply with the {@link Immutable} contract.
  */
-@Beta
-public sealed interface SchemaSourceRepresentation extends Identifiable<SourceIdentifier>, Immutable
-        permits YangSchemaSourceRepresentation, YinSchemaSourceRepresentation {
-    @Override
-    SourceIdentifier getIdentifier();
+public sealed interface SourceRepresentation extends Immutable
+        permits YangSourceRepresentation, YinSourceRepresentation {
+    /**
+     * The {@link SourceIdentifier} of this source.
+     *
+     * @return {@link SourceIdentifier} of this source
+     */
+    @NonNull SourceIdentifier sourceId();
 
     /**
      * Return the concrete representation type.
      *
      * @return The type of representation.
      */
-    @NonNull Class<? extends SchemaSourceRepresentation> getType();
+    @NonNull Class<? extends SourceRepresentation> getType();
 
     /**
      * Return the symbolic name, if available. This name has no semantic meaning beyond being useful for debugging
@@ -55,5 +55,5 @@ public sealed interface SchemaSourceRepresentation extends Identifiable<SourceId
      *
      * @return Symbolic name, if available
      */
-    Optional<String> getSymbolicName();
+    @Nullable String symbolicName();
 }

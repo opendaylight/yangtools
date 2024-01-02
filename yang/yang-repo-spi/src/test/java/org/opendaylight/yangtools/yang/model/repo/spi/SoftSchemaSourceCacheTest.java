@@ -16,20 +16,19 @@ import static org.mockito.Mockito.doReturn;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.StringReader;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 
 @ExtendWith(MockitoExtension.class)
 class SoftSchemaSourceCacheTest {
-    private static final Class<YangSchemaSourceRepresentation> REPRESENTATION = YangSchemaSourceRepresentation.class;
+    private static final Class<YangSourceRepresentation> REPRESENTATION = YangSourceRepresentation.class;
 
     @Mock
     private SchemaSourceRegistry registry;
@@ -57,7 +56,7 @@ class SoftSchemaSourceCacheTest {
             assertNotNull(checkedSource);
             final var yangSchemaSourceRepresentation = checkedSource.get();
             assertNotNull(yangSchemaSourceRepresentation);
-            assertEquals(sourceIdentifier, yangSchemaSourceRepresentation.getIdentifier());
+            assertEquals(sourceIdentifier, yangSchemaSourceRepresentation.sourceId());
         }
     }
 
@@ -94,7 +93,7 @@ class SoftSchemaSourceCacheTest {
         }
     }
 
-    private static class TestingYangSource extends YangTextSchemaSource {
+    private static class TestingYangSource extends YangTextSource {
         private final String content;
 
         TestingYangSource(final String name, final String revision, final String content) {
@@ -108,8 +107,8 @@ class SoftSchemaSourceCacheTest {
         }
 
         @Override
-        public Optional<String> getSymbolicName() {
-            return Optional.empty();
+        public String symbolicName() {
+            return null;
         }
 
         @Override

@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
  * Exception thrown when a the specified schema source is not available.
@@ -18,18 +20,18 @@ import com.google.common.annotations.Beta;
 public class MissingSchemaSourceException extends SchemaSourceException {
     private static final long serialVersionUID = 1L;
 
-    private final SourceIdentifier id;
+    private final @NonNull SourceIdentifier sourceId;
 
-    public MissingSchemaSourceException(final String message, final SourceIdentifier id) {
-        this(message, id, null);
+    public MissingSchemaSourceException(final String message, final SourceIdentifier sourceId) {
+        this(message, sourceId, null);
     }
 
-    public MissingSchemaSourceException(final String message, final SourceIdentifier id, final Throwable cause) {
+    public MissingSchemaSourceException(final String message, final SourceIdentifier sourceId, final Throwable cause) {
         super(requireNonNull(message), cause);
-        this.id = requireNonNull(id);
+        this.sourceId = requireNonNull(sourceId);
     }
 
-    public SourceIdentifier getSourceId() {
-        return id;
+    public final @NonNull SourceIdentifier sourceId() {
+        return sourceId;
     }
 }

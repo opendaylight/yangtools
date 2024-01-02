@@ -14,16 +14,15 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.Objects;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
- * A potential schema source. Instances of this class track the various
- * representations of a schema source and the cost attached to obtaining
- * the source from them.
+ * A potential schema source. Instances of this class track the various representations of a schema source and the cost
+ * attached to obtaining the source from them.
  */
 @Beta
-public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
+public final class PotentialSchemaSource<T extends SourceRepresentation> {
     /**
      * Each registered source has a cost associated with it. Since a particular
      * representation can be acquired by various means, here are general constants
@@ -79,14 +78,14 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
         this.cost = cost;
     }
 
-    public static <T extends SchemaSourceRepresentation> PotentialSchemaSource<T> create(
-            final SourceIdentifier sourceIdentifier, final Class<? extends T> representation, final int cost) {
-        return new PotentialSchemaSource<>(sourceIdentifier, representation, cost);
+    public static <T extends SourceRepresentation> PotentialSchemaSource<T> create(
+            final SourceIdentifier sourceId, final Class<? extends T> representation, final int cost) {
+        return new PotentialSchemaSource<>(sourceId, representation, cost);
     }
 
-    public static <T extends SchemaSourceRepresentation> PotentialSchemaSource<T> create(
-            final SourceIdentifier sourceIdentifier, final Class<? extends T> representation, final Costs cost) {
-        return new PotentialSchemaSource<>(sourceIdentifier, representation, cost.getValue());
+    public static <T extends SourceRepresentation> PotentialSchemaSource<T> create(
+            final SourceIdentifier sourceId, final Class<? extends T> representation, final Costs cost) {
+        return new PotentialSchemaSource<>(sourceId, representation, cost.getValue());
     }
 
     /**

@@ -8,6 +8,7 @@
 module org.opendaylight.yangtools.yang.model.api {
     exports org.opendaylight.yangtools.yang.model.api;
     exports org.opendaylight.yangtools.yang.model.api.meta;
+    exports org.opendaylight.yangtools.yang.model.api.source;
     exports org.opendaylight.yangtools.yang.model.api.stmt;
     exports org.opendaylight.yangtools.yang.model.api.stmt.compat;
     exports org.opendaylight.yangtools.yang.model.api.type;

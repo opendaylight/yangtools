@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
  * Registry of all potentially available schema sources. Processes capable of dynamic schema discovery, such as OSGi
@@ -28,7 +28,7 @@ public interface SchemaSourceRegistry {
      * @param source Schema source details
      * @return A registration handle. Invoking {@link Registration#close()} will cancel the registration.
      */
-    <T extends SchemaSourceRepresentation> Registration registerSchemaSource(SchemaSourceProvider<? super T> provider,
+    <T extends SourceRepresentation> Registration registerSchemaSource(SchemaSourceProvider<? super T> provider,
         PotentialSchemaSource<T> source);
 
     /**
