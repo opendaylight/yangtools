@@ -21,7 +21,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagEffectiveStatement;
 import org.opendaylight.yangtools.rfc8819.model.api.Tag;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -89,8 +89,7 @@ public class ModuleTagTest {
 
     private static YangStatementStreamSource moduleFromResources(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(
-                YangTextSchemaSource.forResource(ModuleTagTest.class, resourceName));
+            return YangStatementStreamSource.create(YangTextSource.forResource(ModuleTagTest.class, resourceName));
         } catch (final YangSyntaxErrorException | IOException e) {
             throw new IllegalStateException("Failed to find resource " + resourceName, e);
         }

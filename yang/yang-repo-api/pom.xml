@@ -44,11 +44,11 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-ir</artifactId>
+            <artifactId>yang-model-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-model-api</artifactId>
+            <artifactId>yang-model-spi</artifactId>
         </dependency>
     </dependencies>
 </project>

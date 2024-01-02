@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
@@ -102,10 +102,10 @@ final class SystemTestUtils {
         }
 
         for (File file : testFiles) {
-            parser.addSource(YangTextSchemaSource.forPath(file.toPath()));
+            parser.addSource(YangTextSource.forPath(file.toPath()));
         }
         for (File file : libFiles) {
-            parser.addLibSource(YangTextSchemaSource.forPath(file.toPath()));
+            parser.addLibSource(YangTextSource.forPath(file.toPath()));
         }
 
         return parser.buildEffectiveModel();

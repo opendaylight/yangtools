@@ -15,14 +15,12 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
  * Namespace key matching criterion.
  *
  * @param <K> Key type
- *
- * @author Robert Varga
  */
 @Beta
 public abstract class NamespaceKeyCriterion<K> {

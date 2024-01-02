@@ -20,11 +20,11 @@ import static org.mockito.Mockito.verify;
 
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class SharedSchemaRepositoryTest {
@@ -36,9 +36,9 @@ public class SharedSchemaRepositoryTest {
         final var id2 = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported@2012-12-12.yang");
 
         var source = sharedSchemaRepository.getSchemaSource(idNoRevision, YangIRSchemaSource.class);
-        assertEquals(idNoRevision, source.get().getIdentifier());
+        assertEquals(idNoRevision, source.get().sourceId());
         source = sharedSchemaRepository.getSchemaSource(id2, YangIRSchemaSource.class);
-        assertEquals(id2, source.get().getIdentifier());
+        assertEquals(id2, source.get().sourceId());
     }
 
     private static SourceIdentifier loadAndRegisterSource(final SharedSchemaRepository sharedSchemaRepository,
@@ -167,14 +167,12 @@ public class SharedSchemaRepositoryTest {
     static SettableSchemaProvider<YangIRSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName)
             throws Exception {
         return SettableSchemaProvider.createRemote(
-            TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName)),
-            YangIRSchemaSource.class);
+            TextToIRTransformer.transformText(YangTextSource.forResource(resourceName)), YangIRSchemaSource.class);
     }
 
     static SettableSchemaProvider<YangIRSchemaSource> getImmediateYangSourceProviderFromResource(
             final String resourceName) throws Exception {
         return SettableSchemaProvider.createImmediate(
-            TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName)),
-            YangIRSchemaSource.class);
+            TextToIRTransformer.transformText(YangTextSource.forResource(resourceName)), YangIRSchemaSource.class);
     }
 }

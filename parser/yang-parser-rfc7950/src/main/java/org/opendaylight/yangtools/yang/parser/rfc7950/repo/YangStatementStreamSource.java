@@ -21,11 +21,11 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
@@ -51,25 +51,25 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     private final IRStatement rootStatement;
     private final String sourceName;
 
-    private YangStatementStreamSource(final SourceIdentifier identifier,  final IRStatement rootStatement,
+    private YangStatementStreamSource(final SourceIdentifier sourceId, final IRStatement rootStatement,
             final String sourceName) {
-        super(identifier);
+        super(sourceId);
         this.rootStatement = requireNonNull(rootStatement);
         this.sourceName = sourceName;
     }
 
     /**
-     * Create a {@link YangStatementStreamSource} for a {@link YangTextSchemaSource}.
+     * Create a {@link YangStatementStreamSource} for a {@link YangTextSource}.
      *
      * @param source YangTextSchemaSource, must not be null
      * @return A new {@link YangStatementStreamSource}
      * @throws IOException When we fail to read the source
      * @throws YangSyntaxErrorException If the source fails basic parsing
      */
-    public static YangStatementStreamSource create(final YangTextSchemaSource source) throws IOException,
-            YangSyntaxErrorException {
-        return new YangStatementStreamSource(source.getIdentifier(),
-            IRSupport.createStatement(parseYangSource(source)), source.getSymbolicName().orElse(null));
+    public static YangStatementStreamSource create(final YangTextSource source)
+            throws IOException, YangSyntaxErrorException {
+        return new YangStatementStreamSource(source.sourceId(),
+            IRSupport.createStatement(parseYangSource(source)), source.symbolicName());
     }
 
     /**
@@ -80,7 +80,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
      * @throws NullPointerException if {@code source} is null
      */
     public static YangStatementStreamSource create(final YangIRSchemaSource source) {
-        return create(source.getIdentifier(), source.getRootStatement(), source.getSymbolicName().orElse(null));
+        return create(source.sourceId(), source.getRootStatement(), source.symbolicName());
     }
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final IRStatement rootStatement,
@@ -130,14 +130,14 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
         return rootStatement;
     }
 
-    static StatementContext parseYangSource(final YangTextSchemaSource source)
+    static StatementContext parseYangSource(final YangTextSource source)
             throws IOException, YangSyntaxErrorException {
         try (var reader = source.openStream()) {
-            return parseYangSource(source.getIdentifier(), reader);
+            return parseYangSource(source.sourceId(), reader);
         }
     }
 
-    private static StatementContext parseYangSource(final SourceIdentifier source, final Reader stream)
+    private static StatementContext parseYangSource(final SourceIdentifier sourceId, final Reader stream)
             throws IOException, YangSyntaxErrorException {
         final YangStatementLexer lexer = new CompactYangStatementLexer(CharStreams.fromReader(stream));
         final YangStatementParser parser = new YangStatementParser(new CommonTokenStream(lexer));
@@ -145,7 +145,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
         lexer.removeErrorListeners();
         parser.removeErrorListeners();
 
-        final YangErrorListener errorListener = new YangErrorListener(source);
+        final YangErrorListener errorListener = new YangErrorListener(sourceId);
         lexer.addErrorListener(errorListener);
         parser.addErrorListener(errorListener);
 

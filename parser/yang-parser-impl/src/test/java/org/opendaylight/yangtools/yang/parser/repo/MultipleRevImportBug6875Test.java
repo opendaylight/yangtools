@@ -18,9 +18,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.repo.api.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class MultipleRevImportBug6875Test {
@@ -98,7 +98,7 @@ public class MultipleRevImportBug6875Test {
     private static SettableSchemaProvider<YangIRSchemaSource> getSourceProvider(final String resourceName)
             throws Exception {
         return SettableSchemaProvider.createImmediate(
-            TextToIRTransformer.transformText(YangTextSchemaSource.forResource(resourceName)),
+            TextToIRTransformer.transformText(YangTextSource.forResource(resourceName)),
             YangIRSchemaSource.class);
     }
 

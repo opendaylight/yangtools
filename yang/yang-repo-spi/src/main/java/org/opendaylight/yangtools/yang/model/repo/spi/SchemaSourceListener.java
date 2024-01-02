@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
- * Listener on {@link SchemaSourceRepresentation} lifecycle.
+ * Listener on {@link SourceRepresentation} lifecycle.
  */
 @Beta
 @NonNullByDefault
@@ -23,7 +23,7 @@ public interface SchemaSourceListener {
      *
      * @param source Schema source
      */
-    void schemaSourceEncountered(SchemaSourceRepresentation source);
+    void schemaSourceEncountered(SourceRepresentation source);
 
     /**
      * Invoked when a new schema source is registered by a provider. This call

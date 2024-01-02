@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
  * A service capable of transforming a {@link YangLibModuleSet} to an {@link EffectiveModelContext}.
@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation
 @Beta
 public interface YangLibResolver {
     /**
-     * Return enumeration of concrete types of {@link SchemaSourceRepresentation} this resolver supports. Users can use
-     * this information prepare the source they have to a representation which will be accepted by this resolver.
+     * Return enumeration of concrete types of {@link SourceRepresentation} this resolver supports. Users can use this
+     * information prepare the source they have to a representation which will be accepted by this resolver.
      *
      * @return Enumeration of supported schema source representations.
      */
-    @NonNull Collection<Class<? extends SchemaSourceRepresentation>> supportedSourceRepresentations();
+    @NonNull Collection<Class<? extends SourceRepresentation>> supportedSourceRepresentations();
 
     /**
      * Build the effective view of a combined view of effective statements.
@@ -34,8 +34,7 @@ public interface YangLibResolver {
      * @throws IOException if a module source cannot be read
      * @throws YangSyntaxErrorException when a syntactic error is encountered
      * @throws NullPointerException if {@code moduleSet} is {@code null}
-     * @throws IllegalArgumentException if {@code moduleSet} references an unsupported
-     *                                  {@link SchemaSourceRepresentation}
+     * @throws IllegalArgumentException if {@code moduleSet} references an unsupported {@link SourceRepresentation}
      */
     @NonNull EffectiveModelContext resolveModuleSet(YangLibModuleSet moduleSet) throws IOException, YangParserException;
 }

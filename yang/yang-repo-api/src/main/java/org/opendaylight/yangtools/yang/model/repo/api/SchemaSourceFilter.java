@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
  * A filter of schema sources. This is used to restrict which sources representation instances are allowed
@@ -25,16 +26,16 @@ public interface SchemaSourceFilter {
      * A {@link SchemaSourceFilter} which accepts any schema source it is presented with.
      */
     @NonNull SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
-        private final ImmutableList<Class<? extends SchemaSourceRepresentation>> representations =
-                ImmutableList.of(SchemaSourceRepresentation.class);
+        private final ImmutableList<Class<? extends SourceRepresentation>> representations =
+                ImmutableList.of(SourceRepresentation.class);
 
         @Override
-        public ImmutableList<Class<? extends SchemaSourceRepresentation>> supportedRepresentations() {
+        public ImmutableList<Class<? extends SourceRepresentation>> supportedRepresentations() {
             return representations;
         }
 
         @Override
-        public FluentFuture<Boolean> apply(final SchemaSourceRepresentation schemaSource) {
+        public FluentFuture<Boolean> apply(final SourceRepresentation schemaSource) {
             return FluentFutures.immediateTrueFluentFuture();
         }
     };
@@ -45,7 +46,7 @@ public interface SchemaSourceFilter {
      *
      * @return Set of supported representations.
      */
-    Iterable<Class<? extends SchemaSourceRepresentation>> supportedRepresentations();
+    Iterable<Class<? extends SourceRepresentation>> supportedRepresentations();
 
     /**
      * Check if a particular schema source is acceptable to the filter. The process
@@ -57,5 +58,5 @@ public interface SchemaSourceFilter {
      * @return Promise of a filtering decision. The result should be {@link Boolean#TRUE}
      *         if the source is acceptable.
      */
-    ListenableFuture<Boolean> apply(SchemaSourceRepresentation schemaSource);
+    ListenableFuture<Boolean> apply(SourceRepresentation schemaSource);
 }

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 
 @ExtendWith(MockitoExtension.class)
 class FilenameResolutionTest extends AbstractCodeGeneratorTest {
@@ -38,11 +38,11 @@ class FilenameResolutionTest extends AbstractCodeGeneratorTest {
 
                     final var module = Iterables.getOnlyElement(context.getModules());
                     assertEquals(Optional.of("/META-INF/yang/foo@2020-10-13.yang"),
-                        resolver.findModuleResourcePath(module, YangTextSchemaSource.class));
+                        resolver.findModuleResourcePath(module, YangTextSource.class));
 
                     final var submodule = Iterables.getOnlyElement(module.getSubmodules());
                     assertEquals(Optional.of("/META-INF/yang/foo-submodule@2020-10-12.yang"),
-                        resolver.findModuleResourcePath(submodule, YangTextSchemaSource.class));
+                        resolver.findModuleResourcePath(submodule, YangTextSource.class));
 
                     return ImmutableTable.of();
                 }).when(mock).generateFiles(any(), any(), any());

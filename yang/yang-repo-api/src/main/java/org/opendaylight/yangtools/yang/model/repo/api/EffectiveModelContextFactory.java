@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
  * An asynchronous factory for building {@link EffectiveModelContext} instances based on a specification of what
@@ -32,6 +33,6 @@ public interface EffectiveModelContextFactory {
 
     default @NonNull ListenableFuture<EffectiveModelContext> createEffectiveModelContext(
             final SourceIdentifier... requiredSources) {
-        return createEffectiveModelContext(Arrays.asList(requiredSources));
+        return createEffectiveModelContext(List.of(requiredSources));
     }
 }

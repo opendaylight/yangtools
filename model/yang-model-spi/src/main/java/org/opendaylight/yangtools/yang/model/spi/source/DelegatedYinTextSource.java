@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
@@ -13,15 +13,15 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
-final class DelegatedYinTextSchemaSource extends YinTextSchemaSource implements Delegator<ByteSource> {
+final class DelegatedYinTextSource extends YinTextSource implements Delegator<ByteSource> {
     private final @NonNull ByteSource delegate;
 
-    DelegatedYinTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
-        super(identifier);
+    DelegatedYinTextSource(final SourceIdentifier sourceId, final ByteSource delegate) {
+        super(sourceId);
         this.delegate = requireNonNull(delegate);
     }
 
@@ -36,8 +36,8 @@ final class DelegatedYinTextSchemaSource extends YinTextSchemaSource implements 
     }
 
     @Override
-    public Optional<String> getSymbolicName() {
-        return Optional.of("[" + delegate.toString() + "]");
+    public String symbolicName() {
+        return "[" + delegate.toString() + "]";
     }
 
     @Override

@@ -26,9 +26,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
@@ -107,8 +107,8 @@ public final class YangParserTestUtils {
      */
     public static EffectiveModelContext parseYangResource(final String resource, final YangParserConfiguration config,
             final Set<QName> supportedFeatures) {
-        final YangTextSchemaSource source = YangTextSchemaSource.forResource(YangParserTestUtils.class, resource);
-        return parseYangSources(config, supportedFeatures, source);
+        return parseYangSources(config, supportedFeatures,
+            YangTextSource.forResource(YangParserTestUtils.class, resource));
     }
 
     /**
@@ -201,7 +201,7 @@ public final class YangParserTestUtils {
     public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final YangParserConfiguration config, final Collection<File> files) {
         return parseSources(config, supportedFeatures,
-            files.stream().map(file -> YangTextSchemaSource.forPath(file.toPath())).collect(Collectors.toList()));
+            files.stream().map(file -> YangTextSource.forPath(file.toPath())).collect(Collectors.toList()));
     }
 
     /**
@@ -275,9 +275,9 @@ public final class YangParserTestUtils {
     }
 
     public static EffectiveModelContext parseYangResources(final Class<?> clazz, final Collection<String> resources) {
-        final List<YangTextSchemaSource> sources = new ArrayList<>(resources.size());
+        final var sources = new ArrayList<YangTextSource>(resources.size());
         for (final String r : resources) {
-            sources.add(YangTextSchemaSource.forResource(clazz, r));
+            sources.add(YangTextSource.forResource(clazz, r));
         }
         return parseSources(YangParserConfiguration.DEFAULT, null, sources);
     }
@@ -340,12 +340,12 @@ public final class YangParserTestUtils {
     }
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
-            final Set<QName> supportedFeatures, final YangTextSchemaSource... sources) {
+            final Set<QName> supportedFeatures, final YangTextSource... sources) {
         return parseSources(config, supportedFeatures, Arrays.asList(sources));
     }
 
     public static EffectiveModelContext parseSources(final YangParserConfiguration config,
-            final Set<QName> supportedFeatures, final Collection<? extends SchemaSourceRepresentation> sources) {
+            final Set<QName> supportedFeatures, final Collection<? extends SourceRepresentation> sources) {
         final YangParser parser = PARSER_FACTORY.createParser(config);
         if (supportedFeatures != null) {
             parser.setSupportedFeatures(FeatureSet.of(supportedFeatures));
@@ -374,7 +374,7 @@ public final class YangParserTestUtils {
      */
     public static EffectiveModelContext parseYang(final String... sources) {
         return parseSources(YangParserConfiguration.DEFAULT, null,
-            Arrays.stream(sources).map(LiteralYangTextSchemaSource::ofLiteral).toList());
+            Arrays.stream(sources).map(LiteralYangTextSource::ofLiteral).toList());
     }
 
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")

@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * Schema source provider implementations take care of resolving a {@link SourceIdentifier}
@@ -22,30 +22,29 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * @param <T> Schema source representation type provided by this implementation
  */
 @Beta
-public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
+public interface SchemaSourceProvider<T extends SourceRepresentation> {
     /**
      * Returns a representation a for supplied YANG source identifier. The resolution
      * criteria are as follows:
      *
      * <ul>
-     * <li> If the source identifier specifies a revision, this method returns either
-     * a representation of that particular revision or throw {@link MissingSchemaSourceException}.
-     * <li> If the source identifier does not specify a revision, this method returns
-     * the newest available revision, or throws {@link MissingSchemaSourceException}.
+     *   <li>If the source identifier specifies a revision, this method returns either a representation of that
+     *       particular revision or throw {@link MissingSchemaSourceException}</li>
+     *   <li>If the source identifier does not specify a revision, this method returns the newest available revision,
+     *       or throws {@link MissingSchemaSourceException}</li>
      * </ul>
      *
      * <p>
-     * In either case the returned representation is required to report a non-null
-     * revision in the {@link SourceIdentifier} returned from
-     * {@link SchemaSourceRepresentation#getIdentifier()}.
+     * In either case the returned representation is required to report a non-null revision in the
+     * {@link SourceIdentifier} returned from {@link SourceRepresentation#sourceId()}.
      *
      * <p>
-     * Implementations are not required to provide constant behavior in time, notably
-     * this different invocation of this method may produce different results.
+     * Implementations are not required to provide constant behavior in time, notably this different invocation of this
+     * method may produce different results.
      *
-     * @param sourceIdentifier source identifier
+     * @param sourceId source identifier
      * @return future source representation, if supplied YANG module is available
      * @throws NullPointerException if {@code sourceIdentifier} is null
      */
-    @NonNull ListenableFuture<? extends T> getSource(@NonNull SourceIdentifier sourceIdentifier);
+    @NonNull ListenableFuture<? extends T> getSource(@NonNull SourceIdentifier sourceId);
 }

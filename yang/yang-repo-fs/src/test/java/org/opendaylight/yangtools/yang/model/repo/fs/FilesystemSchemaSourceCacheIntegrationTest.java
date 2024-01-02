@@ -13,7 +13,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Lists;
@@ -28,16 +27,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
@@ -50,7 +49,7 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
             List<PotentialSchemaSource<?>> registeredSources = new ArrayList<>();
 
             @Override
-            public void schemaSourceEncountered(final SchemaSourceRepresentation source) {
+            public void schemaSourceEncountered(final SourceRepresentation source) {
             }
 
             @Override
@@ -82,8 +81,8 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
         final File test4 = new File(tempDir, "module@2010-12-12.yang");
         Files.asCharSink(test4, StandardCharsets.UTF_8).write("content-module-2010");
 
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(
-                sharedSchemaRepository, YangTextSchemaSource.class, tempDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(
+                sharedSchemaRepository, YangTextSource.class, tempDir);
         sharedSchemaRepository.registerSchemaSourceListener(cache);
 
         assertEquals(4, listener.registeredSources.size());
@@ -102,14 +101,14 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
 
         final File storageDir = Files.createTempDir();
 
-        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(
-                sharedSchemaRepository, YangTextSchemaSource.class, storageDir);
+        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(
+                sharedSchemaRepository, YangTextSource.class, storageDir);
         sharedSchemaRepository.registerSchemaSourceListener(cache);
 
         final SourceIdentifier runningId = new SourceIdentifier("running", "2012-12-12");
 
-        sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(
-            new YangTextSchemaSource(runningId) {
+        sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> FluentFutures.immediateFluentFuture(
+            new YangTextSource(runningId) {
                 @Override
                 protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
                     return toStringHelper;
@@ -121,10 +120,10 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
                 }
 
                 @Override
-                public Optional<String> getSymbolicName() {
-                    return Optional.empty();
+                public String symbolicName() {
+                    return null;
                 }
-            }), PotentialSchemaSource.create(runningId, YangTextSchemaSource.class,
+            }), PotentialSchemaSource.create(runningId, YangTextSource.class,
                 PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
 
         final TextToIRTransformer transformer = TextToIRTransformer.create(sharedSchemaRepository,

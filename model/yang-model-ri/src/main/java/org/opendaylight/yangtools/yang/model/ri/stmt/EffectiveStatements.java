@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
@@ -148,7 +149,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyStatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyYangVersionStatement;
@@ -524,7 +524,7 @@ public final class EffectiveStatements {
     public static ImportEffectiveStatement createImport(final ImportStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final SourceIdentifier importedSource) {
-        return new ImportEffectiveStatementImpl(declared, substatements, importedSource);
+        return new ImportEffectiveStatementImpl(declared, substatements, importedSource.revision());
     }
 
     public static IncludeEffectiveStatement createInclude(final IncludeStatement declared,
