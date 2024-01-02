@@ -7,22 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.FluentFuture;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -48,26 +45,24 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
     }
 
     @Override
-    public FluentFuture<EffectiveModelContext> apply(final List<YangIRSchemaSource> sources)
-            throws SchemaResolutionException, ReactorException {
-        final Map<SourceIdentifier, YangIRSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
-        final Map<SourceIdentifier, YangModelDependencyInfo> deps =
-                Maps.transformValues(srcs, YangModelDependencyInfo::forIR);
-
+    public FluentFuture<EffectiveModelContext> apply(final List<YangIRSchemaSource> sources) {
+        final var srcs = Maps.uniqueIndex(sources, getIdentifier);
+        final var deps = Maps.transformValues(srcs, YangModelDependencyInfo::forIR);
         LOG.debug("Resolving dependency reactor {}", deps);
 
-        final DependencyResolver res = switch (config.getStatementParserMode()) {
+        final var res = switch (config.getStatementParserMode()) {
             case DEFAULT_MODE -> RevisionDependencyResolver.create(deps);
         };
 
-        if (!res.getUnresolvedSources().isEmpty()) {
-            LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(),
-                res.getUnsatisfiedImports());
-            throw new SchemaResolutionException("Failed to resolve required models",
-                    res.getResolvedSources(), res.getUnsatisfiedImports());
+        final var unresolved = res.unresolvedSources();
+        if (!unresolved.isEmpty()) {
+            LOG.debug("Omitting models {} due to unsatisfied imports {}", unresolved, res.unsatisfiedImports());
+            return FluentFutures.immediateFailedFluentFuture(
+                new SchemaResolutionException("Failed to resolve required models", unresolved.get(0),
+                    res.resolvedSources(), res.unsatisfiedImports()));
         }
 
-        final YangParser parser = parserFactory.createParser(res.parserConfig());
+        final var parser = parserFactory.createParser(res.parserConfig());
         config.getSupportedFeatures().ifPresent(parser::setSupportedFeatures);
         config.getModulesDeviatedByModules().ifPresent(parser::setModulesWithSupportedDeviations);
 
@@ -76,7 +71,8 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
                 parser.addSource(entry.getValue());
             } catch (YangSyntaxErrorException | IOException e) {
                 final var sourceId = entry.getKey();
-                throw new SchemaResolutionException("Failed to add source " + sourceId, sourceId, e);
+                return FluentFutures.immediateFailedFluentFuture(
+                    new SchemaResolutionException("Failed to add source " + sourceId, sourceId, e));
             }
         }
 
@@ -84,12 +80,10 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
         try {
             schemaContext = parser.buildEffectiveModel();
         } catch (final YangParserException e) {
-            if (e.getCause() instanceof ReactorException re) {
-                throw new SchemaResolutionException("Failed to resolve required models", re.getSourceIdentifier(), e);
-            }
-            throw new SchemaResolutionException("Failed to resolve required models", e);
+            return FluentFutures.immediateFailedFluentFuture(e.getCause() instanceof ReactorException re
+                ? new SchemaResolutionException("Failed to resolve required models", re.getSourceIdentifier(), re) : e);
         }
 
-        return immediateFluentFuture(schemaContext);
+        return FluentFutures.immediateFluentFuture(schemaContext);
     }
 }
