@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInFile;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 /**
  * Reference of statement source present in textual source format. Utility implementation
