@@ -11,8 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -48,13 +47,21 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
             .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
             .build();
 
-    private static final MapEntryNode FOO_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).build())
-            .build();
+    private static final MapEntryNode FOO_NODE = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+        .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, ONE_ID))
+        .withChild(ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
+            .build())
+        .build();
 
-    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).build())
-            .build();
+    private static final MapEntryNode BAR_NODE = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID))
+        .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, TWO_ID))
+        .withChild(ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
+            .build())
+        .build();
 
     private DataTree inMemoryDataTree;
 
@@ -68,14 +75,20 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     private static ContainerNode createFooTestContainerNode() {
         return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(FOO_NODE).build())
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+                .withChild(FOO_NODE)
+                .build())
             .build();
     }
 
     private static ContainerNode createBarTestContainerNode() {
         return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(BAR_NODE).build())
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+                .withChild(BAR_NODE)
+                .build())
             .build();
     }
 
@@ -447,7 +460,8 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     void writeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -478,7 +492,8 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     void writeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -509,7 +524,8 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     void mergeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -540,7 +556,8 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     void mergeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -571,7 +588,8 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     void deleteWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -606,7 +624,8 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     void deleteMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, emptyContainer(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));

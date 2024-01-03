@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaOrderedNormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -68,14 +69,10 @@ class SchemaOrderedNormalizedNodeWriterTest {
                             createQName(FOO_NAMESPACE, NAME_NODE), "policy1"))
                         .withChild(ImmutableNodes.newUserMapBuilder()
                             .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
-                            .withChild(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
-                                createQName(FOO_NAMESPACE, NAME_NODE), "rule1"))
-                            .withChild(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
-                                createQName(FOO_NAMESPACE, NAME_NODE), "rule2"))
-                            .withChild(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
-                                createQName(FOO_NAMESPACE, NAME_NODE), "rule3"))
-                            .withChild(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
-                                createQName(FOO_NAMESPACE, NAME_NODE), "rule4"))
+                            .withChild(newRule("rule1"))
+                            .withChild(newRule("rule2"))
+                            .withChild(newRule("rule3"))
+                            .withChild(newRule("rule4"))
                             .build())
                         .build())
                     .withChild(ImmutableNodes.newMapEntryBuilder()
@@ -115,6 +112,14 @@ class SchemaOrderedNormalizedNodeWriterTest {
             .checkForIdentical()
             .build();
         assertFalse(diff.hasDifferences(), diff.toString());
+    }
+
+    private static MapEntryNode newRule(final String ruleName) {
+        final var name = createQName(FOO_NAMESPACE, NAME_NODE);
+        return ImmutableNodes.newMapEntryBuilder()
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(createQName(FOO_NAMESPACE, RULE_NODE), name, ruleName))
+            .withChild(ImmutableNodes.leafNode(name, ruleName))
+            .build();
     }
 
     @ParameterizedTest(name = "{0}")

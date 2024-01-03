@@ -79,8 +79,14 @@ public final class TestModel {
         .withChild(ImmutableNodes.leafNode(ID_QNAME, TWO_ID))
         .withChild(ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(INNER_LIST_QNAME))
-            .withChild(ImmutableNodes.mapEntry(INNER_LIST_QNAME, NAME_QNAME, TWO_ONE_NAME))
-            .withChild(ImmutableNodes.mapEntry(INNER_LIST_QNAME, NAME_QNAME, TWO_TWO_NAME))
+            .withChild(ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(INNER_LIST_QNAME, NAME_QNAME, TWO_ONE_NAME))
+                .withChild(ImmutableNodes.leafNode(NAME_QNAME, TWO_ONE_NAME))
+                .build())
+            .withChild(ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(INNER_LIST_QNAME, NAME_QNAME, TWO_TWO_NAME))
+                .withChild(ImmutableNodes.leafNode(NAME_QNAME, TWO_TWO_NAME))
+                .build())
             .build())
         .build();
 
@@ -121,8 +127,16 @@ public final class TestModel {
                 .build())
             .withChild(ImmutableNodes.newUserMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ORDERED_LIST_QNAME))
-                .withChild(ImmutableNodes.mapEntry(ORDERED_LIST_QNAME, ORDERED_LIST_ENTRY_QNAME, "1"))
-                .withChild(ImmutableNodes.mapEntry(ORDERED_LIST_QNAME, ORDERED_LIST_ENTRY_QNAME, "2"))
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(
+                        NodeIdentifierWithPredicates.of(ORDERED_LIST_QNAME, ORDERED_LIST_ENTRY_QNAME, "1"))
+                    .withChild(ImmutableNodes.leafNode(ORDERED_LIST_ENTRY_QNAME, "1"))
+                    .build())
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(
+                        NodeIdentifierWithPredicates.of(ORDERED_LIST_QNAME, ORDERED_LIST_ENTRY_QNAME, "2"))
+                    .withChild(ImmutableNodes.leafNode(ORDERED_LIST_ENTRY_QNAME, "2"))
+                    .build())
                 .build())
             // Create a list of shoes
             .withChild(ImmutableNodes.newSystemLeafSetBuilder()
@@ -151,7 +165,10 @@ public final class TestModel {
                 .build())
             .withChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(OUTER_LIST_QNAME))
-                .withChild(ImmutableNodes.mapEntry(OUTER_LIST_QNAME, ID_QNAME, ONE_ID))
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(NodeIdentifierWithPredicates.of(OUTER_LIST_QNAME, ID_QNAME, ONE_ID))
+                    .withChild(ImmutableNodes.leafNode(ID_QNAME, ONE_ID))
+                    .build())
                 .withChild(BAR_NODE)
                 .build());
     }
