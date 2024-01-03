@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Streams;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,11 +26,9 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.ModuleSourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Import;
@@ -59,7 +58,7 @@ public abstract sealed class YangModelDependencyInfo {
      */
     public static final class ModuleDependencyInfo extends YangModelDependencyInfo {
         private ModuleDependencyInfo(final String name, final Revision revision,
-                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
+                final ImmutableSet<Import> imports, final ImmutableSet<Include> includes) {
             super(name, revision, imports, includes);
         }
     }
@@ -71,7 +70,7 @@ public abstract sealed class YangModelDependencyInfo {
         private final @NonNull Unqualified belongsTo;
 
         private SubmoduleDependencyInfo(final String name, final Revision revision, final Unqualified belongsTo,
-                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
+                final ImmutableSet<Import> imports, final ImmutableSet<Include> includes) {
             super(name, revision, imports, includes);
             this.belongsTo = requireNonNull(belongsTo);
         }
@@ -83,6 +82,12 @@ public abstract sealed class YangModelDependencyInfo {
          */
         public @NonNull Unqualified getParentModule() {
             return belongsTo;
+        }
+    }
+
+    public record Dependency(@NonNull Unqualified name, @Nullable Revision revision) {
+        public Dependency {
+            requireNonNull(name);
         }
     }
 
@@ -99,17 +104,17 @@ public abstract sealed class YangModelDependencyInfo {
 
     private final @NonNull String name;
     private final @Nullable Revision revision;
-    private final @NonNull ImmutableSet<ModuleImport> submoduleIncludes;
-    private final @NonNull ImmutableSet<ModuleImport> moduleImports;
-    private final @NonNull ImmutableSet<ModuleImport> dependencies;
+    private final @NonNull ImmutableSet<Dependency> dependencies;
 
-    YangModelDependencyInfo(final String name, final Revision revision, final ImmutableSet<ModuleImport> imports,
-            final ImmutableSet<ModuleImport> includes) {
+    YangModelDependencyInfo(final String name, final Revision revision, final ImmutableSet<Import> imports,
+            final ImmutableSet<Include> includes) {
         this.name = requireNonNull(name);
         this.revision = revision;
-        moduleImports = requireNonNull(imports);
-        submoduleIncludes = requireNonNull(includes);
-        dependencies = ImmutableSet.<ModuleImport>builder().addAll(moduleImports).addAll(submoduleIncludes).build();
+
+        dependencies = Streams.concat(
+            imports.stream().map(spec -> new Dependency(spec.name(), spec.revision())),
+            includes.stream().map(spec -> new Dependency(spec.name(), spec.revision())))
+            .collect(ImmutableSet.toImmutableSet());
     }
 
     /**
@@ -141,12 +146,12 @@ public abstract sealed class YangModelDependencyInfo {
     }
 
     /**
-     * Returns immutable collection of all module imports. This collection contains both <code>import</code> statements
-     * and <code>include</code> statements for submodules.
+     * Returns immutable collection of all source dependencies. This collection contains both {@code import} statements
+     * and {@code include} statements..
      *
-     * @return Immutable collection of imports.
+     * @return Immutable collection of dependencies..
      */
-    public final ImmutableSet<ModuleImport> getDependencies() {
+    public final ImmutableSet<Dependency> getDependencies() {
         return dependencies;
     }
 
@@ -217,15 +222,13 @@ public abstract sealed class YangModelDependencyInfo {
     }
 
     public static @NonNull ModuleDependencyInfo forSourceInfo(final @NonNull ModuleSourceInfo info) {
-        return new ModuleDependencyInfo(info.name().getLocalName(), latestRevision(info.revisions()),
-            info.imports().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()),
-            info.includes().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()));
+        return new ModuleDependencyInfo(info.name().getLocalName(), latestRevision(info.revisions()), info.imports(),
+            info.includes());
     }
 
     public static @NonNull SubmoduleDependencyInfo forSourceInfo(final @NonNull SubmoduleSourceInfo info) {
         return new SubmoduleDependencyInfo(info.name().getLocalName(), latestRevision(info.revisions()),
-            info.belongsTo(), info.imports().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()),
-            info.includes().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()));
+            info.belongsTo(), info.imports(), info.includes());
     }
 
     /**
@@ -359,74 +362,5 @@ public abstract sealed class YangModelDependencyInfo {
 
     private static StatementSourceReference refOf(final SourceIdentifier source, final IRStatement stmt) {
         return ExplicitStatement.atPosition(source.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
-    }
-
-    /**
-     * Utility implementation of {@link ModuleImport} to be used by {@link YangModelDependencyInfo}.
-     */
-    // FIXME: this is a rather nasty misuse of APIs :(
-    private static final class ModuleImportImpl implements ModuleImport {
-        private final @NonNull Unqualified moduleName;
-        private final Revision revision;
-
-        ModuleImportImpl(final Import importSpec) {
-            moduleName = importSpec.name();
-            revision = importSpec.revision();
-        }
-
-        ModuleImportImpl(final Include includeSpec) {
-            moduleName = includeSpec.name();
-            revision = includeSpec.revision();
-        }
-
-        @Override
-        public Unqualified getModuleName() {
-            return moduleName;
-        }
-
-        @Override
-        public Optional<Revision> getRevision() {
-            return Optional.ofNullable(revision);
-        }
-
-        @Override
-        public String getPrefix() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Optional<String> getDescription() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<String> getReference() {
-            return Optional.empty();
-        }
-
-        @Override
-        public ImportEffectiveStatement asEffectiveStatement() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + Objects.hashCode(moduleName);
-            result = prime * result + Objects.hashCode(revision);
-            return result;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            return this == obj || obj instanceof ModuleImportImpl other
-                && moduleName.equals(other.moduleName) && Objects.equals(revision, other.revision);
-        }
-
-        @Override
-        public String toString() {
-            return "ModuleImportImpl [name=" + moduleName + ", revision=" + revision + "]";
-        }
     }
 }

@@ -106,7 +106,7 @@ abstract class DependencyResolver {
         unsatisfiedImports = ImmutableMultimap.copyOf(imports);
     }
 
-    protected abstract boolean isKnown(Collection<SourceIdentifier> haystack, ModuleImport mi);
+    protected abstract boolean isKnown(Collection<SourceIdentifier> haystack, SourceIdentifier dependency);
 
     abstract YangParserConfiguration parserConfig();
 

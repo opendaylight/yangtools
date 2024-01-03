@@ -37,16 +37,14 @@ final class RevisionDependencyResolver extends DependencyResolver {
     }
 
     @Override
-    protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
-        final SourceIdentifier msi = new SourceIdentifier(mi.getModuleName(), mi.getRevision().orElse(null));
-
+    protected boolean isKnown(final Collection<SourceIdentifier> haystack, final SourceIdentifier dependency) {
         // Quick lookup
-        if (haystack.contains(msi)) {
+        if (haystack.contains(dependency)) {
             return true;
         }
 
         // Slow revision-less walk
-        return mi.getRevision().isEmpty() && findWildcard(haystack, mi.getModuleName()) != null;
+        return dependency.revision()getRevision().isEmpty() && findWildcard(haystack, mi.getModuleName()) != null;
     }
 
     public static RevisionDependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
