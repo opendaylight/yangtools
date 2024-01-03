@@ -71,12 +71,18 @@ class Bug4454Test {
         .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "baz"))
         .withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "baztest"))
         .build();
-    private final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
-            "foo");
-    private final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
-            "bar");
-    private final MapEntryNode bazEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
-            "baz");
+    private final MapEntryNode fooEntryNode = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo"))
+        .withChild(ImmutableNodes.leafNode(MIN_MAX_KEY_LEAF_QNAME, "foo"))
+        .build();
+    private final MapEntryNode barEntryNode = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar"))
+        .withChild(ImmutableNodes.leafNode(MIN_MAX_KEY_LEAF_QNAME, "bar"))
+        .build();
+    private final MapEntryNode bazEntryNode = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "baz"))
+        .withChild(ImmutableNodes.leafNode(MIN_MAX_KEY_LEAF_QNAME, "baz"))
+        .build();
     private final SystemMapNode mapNodeBazFuzWithNodes = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).withChild(bazEntryNodeWithValue).withChild(fooEntryNode)
@@ -425,8 +431,11 @@ class Bug4454Test {
 
     @Test
     void minMaxListNoMinMaxDeleteTest() throws DataValidationFailedException {
-        final var fooEntryNoMinMaxNode =
-                ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME, "foo");
+        final var fooEntryNoMinMaxNode = ImmutableNodes.newMapEntryBuilder()
+            .withNodeIdentifier(
+                NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME, "foo"))
+            .withChild(ImmutableNodes.leafNode(MIN_MAX_KEY_LEAF_QNAME, "foo"))
+            .build();
         final var mapNode1 = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
                 .withChild(fooEntryNoMinMaxNode).build();

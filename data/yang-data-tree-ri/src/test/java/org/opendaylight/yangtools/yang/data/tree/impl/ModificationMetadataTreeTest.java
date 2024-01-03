@@ -12,14 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -74,10 +73,21 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
             .node(TestModel.VALUE_QNAME)
             .build();
 
-    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
-        .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME)
-            .withChild(ImmutableNodes.mapEntry(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_ONE_NAME))
-            .withChild(ImmutableNodes.mapEntry(TestModel.INNER_LIST_QNAME,TestModel.NAME_QNAME, TWO_TWO_NAME))
+    private static final MapEntryNode BAR_NODE = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID))
+        .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, TWO_ID))
+        .withChild(ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
+            .withChild(ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(
+                    NodeIdentifierWithPredicates.of(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_ONE_NAME))
+                .withChild(ImmutableNodes.leafNode(TestModel.NAME_QNAME, TWO_ONE_NAME))
+                .build())
+            .withChild(ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(
+                    NodeIdentifierWithPredicates.of(TestModel.INNER_LIST_QNAME,TestModel.NAME_QNAME, TWO_TWO_NAME))
+                .withChild(ImmutableNodes.leafNode(TestModel.NAME_QNAME, TWO_TWO_NAME))
+                .build())
             .build())
         .build();
 
@@ -116,8 +126,13 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
     private static ContainerNode createTestContainer() {
         return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
-                .withChild(ImmutableNodes.mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(
+                        NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+                    .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, ONE_ID))
+                    .build())
                 .withChild(BAR_NODE).build())
             .build();
     }

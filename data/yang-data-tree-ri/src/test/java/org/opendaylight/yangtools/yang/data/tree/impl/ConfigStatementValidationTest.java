@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -35,33 +34,54 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
             .builder(TestModel.OUTER_LIST_PATH).nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
             .build();
 
-    private static final MapEntryNode INNER_FOO_ENTRY_NODE = ImmutableNodes.mapEntry(TestModel.INNER_LIST_QNAME,
-            TestModel.NAME_QNAME, "foo");
+    private static final MapEntryNode INNER_FOO_ENTRY_NODE = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, "foo"))
+        .withChild(ImmutableNodes.leafNode(TestModel.NAME_QNAME, "foo"))
+        .build();
 
-    private static final MapEntryNode INNER_BAR_ENTRY_NODE =
-            mapEntryBuilder(QName.create(TestModel.TEST_QNAME, "inner-list2"), TestModel.NAME_QNAME, "foo")
-                .withChild(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "value")).build();
+    private static final MapEntryNode INNER_BAR_ENTRY_NODE = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(QName.create(TestModel.TEST_QNAME, "inner-list2"),
+            TestModel.NAME_QNAME, "foo"))
+        .withChild(ImmutableNodes.leafNode(TestModel.NAME_QNAME, "foo"))
+        .withChild(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "value"))
+        .build();
 
-    private static final MapEntryNode FOO_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).withChild(INNER_FOO_ENTRY_NODE)
-                    .build())
-            .build();
+    private static final MapEntryNode FOO_NODE = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+        .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, ONE_ID))
+        .withChild(ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
+            .withChild(INNER_FOO_ENTRY_NODE)
+            .build())
+        .build();
 
-    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).withChild(INNER_BAR_ENTRY_NODE)
-                    .build())
-            .build();
+    private static final MapEntryNode BAR_NODE = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID))
+        .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, TWO_ID))
+        .withChild(ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
+            .withChild(INNER_BAR_ENTRY_NODE)
+            .build())
+        .build();
 
     private static ContainerNode createFooTestContainerNode() {
         return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(FOO_NODE).build()).build();
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+                .withChild(FOO_NODE)
+                .build())
+            .build();
     }
 
     private static ContainerNode createBarTestContainerNode() {
         return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(BAR_NODE).build()).build();
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+                .withChild(BAR_NODE)
+                .build())
+            .build();
     }
 
     @Test

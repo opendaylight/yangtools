@@ -10,16 +10,15 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
@@ -28,12 +27,8 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class StoreTreeNodesTest extends AbstractTestModelTest {
-    private static final Logger LOG = LoggerFactory.getLogger(StoreTreeNodesTest.class);
-
+class StoreTreeNodesTest extends AbstractTestModelTest {
     private static final Short ONE_ID = 1;
     private static final Short TWO_ID = 2;
     private static final String TWO_ONE_NAME = "one";
@@ -54,10 +49,21 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
             .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_TWO_NAME)
             .build();
 
-    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
-        .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME)
-            .withChild(ImmutableNodes.mapEntry(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_ONE_NAME))
-            .withChild(ImmutableNodes.mapEntry(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_TWO_NAME))
+    private static final MapEntryNode BAR_NODE = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID))
+        .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, TWO_ID))
+        .withChild(ImmutableNodes.newSystemMapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
+            .withChild(ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(
+                    NodeIdentifierWithPredicates.of(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_ONE_NAME))
+                .withChild(ImmutableNodes.leafNode(TestModel.NAME_QNAME, TWO_ONE_NAME))
+                .build())
+            .withChild(ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(
+                    NodeIdentifierWithPredicates.of(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_TWO_NAME))
+                .withChild(ImmutableNodes.leafNode(TestModel.NAME_QNAME, TWO_TWO_NAME))
+                .build())
             .build())
         .build();
 
@@ -102,12 +108,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
         final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        TreeNode foundNode = null;
-        try {
-            foundNode = StoreTreeNodes.findNodeChecked(rootNode, OUTER_LIST_1_PATH);
-        } catch (final IllegalArgumentException e) {
-            fail("Illegal argument exception was thrown and should not have been" + e.getMessage());
-        }
+        TreeNode foundNode = StoreTreeNodes.findNodeChecked(rootNode, OUTER_LIST_1_PATH);
         assertNotNull(foundNode);
     }
 
@@ -119,12 +120,8 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         final var outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
-        try {
-            StoreTreeNodes.findNodeChecked(rootNode, outerList1InvalidPath);
-            fail("Illegal argument exception should have been thrown");
-        } catch (final IllegalArgumentException e) {
-            LOG.debug("Illegal argument exception was thrown as expected: '{}' - '{}'", e.getClass(), e.getMessage());
-        }
+        assertThrows(IllegalArgumentException.class,
+            () -> StoreTreeNodes.findNodeChecked(rootNode, outerList1InvalidPath));
     }
 
     @Test
@@ -162,8 +159,13 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     private static ContainerNode createTestContainer() {
         return ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
-            .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
-                .withChild(ImmutableNodes.mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(
+                        NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))
+                    .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, ONE_ID))
+                    .build())
                 .withChild(BAR_NODE)
                 .build())
             .build();
