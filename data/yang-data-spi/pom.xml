@@ -40,12 +40,18 @@
             <artifactId>concepts</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.opendaylight.yangtools</groupId>
-          <artifactId>yang-common</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.opendaylight.yangtools</groupId>
-          <artifactId>yang-data-api</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-test-util</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

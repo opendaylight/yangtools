@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.spi.node;
 
+import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -26,15 +28,22 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.YangInstanceIdentifierWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableBuilderFactory;
 import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableLeafNode;
 import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableLeafSetEntryNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Utilities for creating immutable implementations of various {@link NormalizedNode}s.
  */
 public final class ImmutableNodes {
     private static final @NonNull ImmutableBuilderFactory BUILDER_FACTORY = new ImmutableBuilderFactory();
+    // FIXME: YANGTOOLS-1074: we do not want this name
+    private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
 
     private ImmutableNodes() {
         // Hidden on purpose
@@ -76,6 +85,37 @@ public final class ImmutableNodes {
 
     public static <T> @NonNull LeafSetEntryNode<T> leafSetEntry(final QName name, final T value) {
         return leafSetEntry(new NodeWithValue<>(name, value));
+    }
+
+    /**
+     * Convert YangInstanceIdentifier into a normalized node structure.
+     *
+     * @param modelContext schema context to used during serialization
+     * @param id instance identifier to convert to node structure starting from root
+     * @return serialized normalized node for provided instance Id
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if the identifier cannot be converted
+     */
+    public static @NonNull NormalizedNode fromInstanceId(final EffectiveModelContext modelContext,
+            final YangInstanceIdentifier id) {
+        if (id.isEmpty()) {
+            return newContainerBuilder().withNodeIdentifier(SCHEMACONTEXT_NAME).build();
+        }
+
+        final var result = new NormalizationResultHolder();
+        try (var writer = ImmutableNormalizedNodeStreamWriter.from(result)) {
+            try (var iidWriter = YangInstanceIdentifierWriter.open(writer, modelContext, id)) {
+                // leaf-list entry nodes are special: they require a value and we can derive it from our instance
+                // identitifier
+                final var lastArg = id.getLastPathArgument();
+                if (lastArg instanceof NodeWithValue<?> withValue) {
+                    writer.scalarValue(withValue.getValue());
+                }
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to convert " + id, e);
+        }
+        return result.getResult().data();
     }
 
     public static <T> AnydataNode.@NonNull Builder<T> newAnydataBuilder(final Class<T> objectModel) {

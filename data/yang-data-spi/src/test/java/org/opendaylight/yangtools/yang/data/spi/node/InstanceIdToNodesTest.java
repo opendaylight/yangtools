@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema;
+package org.opendaylight.yangtools.yang.data.spi.node;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.fromInstanceId;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -70,29 +68,26 @@ class InstanceIdToNodesTest {
                     .build())
                 .build())
             .build(),
-            fromInstanceId(ctx, YangInstanceIdentifier.of(rootContainer, outerList, outerListWithKey)));
+            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of(rootContainer, outerList, outerListWithKey)));
     }
 
     @Test
     void testLeafList() {
         assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(rootContainer)
-            .withChild(Builders.<String>orderedLeafSetBuilder()
+            .withChild(ImmutableNodes.<String>newUserLeafSetBuilder()
                 .withNodeIdentifier(leafList)
-                .withChild(Builders.<String>leafSetEntryBuilder()
-                    .withNodeIdentifier(leafListWithValue)
-                    .withValue(leafListWithValue.getValue())
-                    .build())
+                .withChild(ImmutableNodes.leafSetEntry(leafListWithValue))
                 .build())
             .build(),
-            fromInstanceId(ctx, YangInstanceIdentifier.of(rootContainer, leafList, leafListWithValue)));
+            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of(rootContainer, leafList, leafListWithValue)));
     }
 
     @Test
     void testEmptyInstanceIdentifier() {
         assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
-            .build(), fromInstanceId(ctx, YangInstanceIdentifier.of()));
+            .build(), ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of()));
     }
 
     @Test
@@ -101,7 +96,7 @@ class InstanceIdToNodesTest {
         final var id = NodeIdentifierWithPredicates.of(TWO_KEY_LIST.getNodeType(), misordered);
         assertArrayEquals(new Object[] { BAR, FOO }, id.keySet().toArray());
 
-        final var filter = fromInstanceId(ctx, YangInstanceIdentifier.of(TWO_KEY_LIST, id));
+        final var filter = ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.of(TWO_KEY_LIST, id));
         final var value = assertInstanceOf(MapNode.class, filter).body();
         assertEquals(1, value.size());
         final var entry = value.iterator().next();

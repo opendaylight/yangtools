@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -23,9 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFac
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.YangInstanceIdentifierWriter;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Utility methods producing immutable implementations of various {@link NormalizedNode}s.
@@ -36,8 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 public final class ImmutableNodes {
     private static final @NonNull BuilderFactory BUILDER_FACTORY =
         org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes.builderFactory();
-    // FIXME: YANGTOOLS-1074: we do not want this name
-    private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
 
     private ImmutableNodes() {
         // Hidden on purpose
@@ -210,23 +204,6 @@ public final class ImmutableNodes {
      */
     public static @NonNull NormalizedNode fromInstanceId(final EffectiveModelContext ctx,
             final YangInstanceIdentifier id) {
-        if (id.isEmpty()) {
-            return containerNode(SCHEMACONTEXT_NAME);
-        }
-
-        final var result = new NormalizationResultHolder();
-        try (var writer = ImmutableNormalizedNodeStreamWriter.from(result)) {
-            try (var iidWriter = YangInstanceIdentifierWriter.open(writer, ctx, id)) {
-                // leaf-list entry nodes are special: they require a value and we can derive it from our instance
-                // identitifier
-                final var lastArg = id.getLastPathArgument();
-                if (lastArg instanceof NodeWithValue<?> withValue) {
-                    writer.scalarValue(withValue.getValue());
-                }
-            }
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to convert " + id, e);
-        }
-        return result.getResult().data();
+        return org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes.fromInstanceId(ctx, id);
     }
 }
