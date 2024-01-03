@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
@@ -26,7 +26,7 @@ public class SchemaResolutionException extends SchemaSourceException {
     @java.io.Serial
     private static final long serialVersionUID = 2L;
 
-    private final @NonNull ImmutableMultimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
+    private final @NonNull ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports;
     private final @NonNull ImmutableList<SourceIdentifier> resolvedSources;
 
     public SchemaResolutionException(final @NonNull String message, final SourceIdentifier failedSource,
@@ -36,21 +36,20 @@ public class SchemaResolutionException extends SchemaSourceException {
 
     public SchemaResolutionException(final @NonNull String message, final SourceIdentifier failedSource,
             final @NonNull Collection<SourceIdentifier> resolvedSources,
-            final @NonNull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
+            final @NonNull Multimap<SourceIdentifier, SourceDependency> unsatisfiedImports) {
         this(message, failedSource, null, resolvedSources, unsatisfiedImports);
     }
 
     public SchemaResolutionException(final @NonNull String message, final SourceIdentifier failedSource,
             final Throwable cause, final @NonNull Collection<SourceIdentifier> resolvedSources,
-            final @NonNull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
+            final @NonNull Multimap<SourceIdentifier, SourceDependency> unsatisfiedImports) {
         super(failedSource, formatMessage(message, failedSource, resolvedSources, unsatisfiedImports), cause);
         this.unsatisfiedImports = ImmutableMultimap.copyOf(unsatisfiedImports);
         this.resolvedSources = ImmutableList.copyOf(resolvedSources);
     }
 
     private static String formatMessage(final String message, final SourceIdentifier failedSource,
-            final Collection<SourceIdentifier> resolvedSources,
-            final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
+            final Collection<?> resolvedSources, final Multimap<?, ?> unsatisfiedImports) {
         return String.format("%s, failed source: %s, resolved sources: %s, unsatisfied imports: %s", message,
                 failedSource, resolvedSources, unsatisfiedImports);
     }
@@ -60,7 +59,7 @@ public class SchemaResolutionException extends SchemaSourceException {
      *
      * @return Source/reason map.
      */
-    public final @NonNull Multimap<SourceIdentifier, ModuleImport> getUnsatisfiedImports() {
+    public final @NonNull Multimap<SourceIdentifier, SourceDependency> getUnsatisfiedImports() {
         return unsatisfiedImports;
     }
 

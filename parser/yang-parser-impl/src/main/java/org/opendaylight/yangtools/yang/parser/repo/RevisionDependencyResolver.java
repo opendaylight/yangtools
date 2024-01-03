@@ -10,25 +10,14 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import java.util.Collection;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 
 final class RevisionDependencyResolver extends DependencyResolver {
-    RevisionDependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+    RevisionDependencyResolver(final Map<SourceIdentifier, SourceInfo> depInfo) {
         super(depInfo);
-    }
-
-    protected static SourceIdentifier findWildcard(final Iterable<SourceIdentifier> haystack,
-            final Unqualified needle) {
-        for (final SourceIdentifier r : haystack) {
-            if (needle.equals(r.name())) {
-                return r;
-            }
-        }
-
-        return null;
     }
 
     @Override
@@ -37,19 +26,20 @@ final class RevisionDependencyResolver extends DependencyResolver {
     }
 
     @Override
-    protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
-        final SourceIdentifier msi = new SourceIdentifier(mi.getModuleName(), mi.getRevision().orElse(null));
-
+    boolean isKnown(final Collection<SourceIdentifier> haystack, final SourceDependency dependency) {
         // Quick lookup
-        if (haystack.contains(msi)) {
-            return true;
-        }
-
-        // Slow revision-less walk
-        return mi.getRevision().isEmpty() && findWildcard(haystack, mi.getModuleName()) != null;
+        return haystack.contains(new SourceIdentifier(dependency.name(), dependency.revision()))
+            // Slow revision-less walk
+            || dependency.revision() == null && findWildcard(haystack, dependency.name()) != null;
     }
 
-    public static RevisionDependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
-        return new RevisionDependencyResolver(depInfo);
+    private static SourceIdentifier findWildcard(final Collection<SourceIdentifier> haystack,
+            final Unqualified needle) {
+        for (var sourceId : haystack) {
+            if (needle.equals(sourceId.name())) {
+                return sourceId;
+            }
+        }
+        return null;
     }
 }
