@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -15,12 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Dependency;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo.SubmoduleDependencyInfo;
@@ -41,12 +36,12 @@ abstract class DependencyResolver {
 
     private final ImmutableList<SourceIdentifier> resolvedSources;
     private final ImmutableList<SourceIdentifier> unresolvedSources;
-    private final ImmutableMultimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
+    private final ImmutableMultimap<SourceIdentifier, Dependency> unsatisfiedImports;
 
     protected DependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
         final var resolved = new ArrayList<SourceIdentifier>(depInfo.size());
         final var pending = new ArrayList<>(depInfo.keySet());
-        final var submodules = new HashMap<SourceIdentifier, BelongsToDependency>();
+        final var submodules = new HashMap<SourceIdentifier, Dependency>();
 
         boolean progress;
         do {
@@ -59,8 +54,7 @@ abstract class DependencyResolver {
 
                 // in case of submodule, remember belongs to
                 if (dep instanceof SubmoduleDependencyInfo submodule) {
-                    final var parent = submodule.getParentModule();
-                    submodules.put(sourceId, new BelongsToDependency(parent));
+                    submodules.put(sourceId, submodule.getParentModule());
                 }
 
                 boolean okay = true;
@@ -92,7 +86,7 @@ abstract class DependencyResolver {
             }
         }
 
-        final var imports = ArrayListMultimap.<SourceIdentifier, ModuleImport>create();
+        final var imports = ArrayListMultimap.<SourceIdentifier, Dependency>create();
         for (var sourceId : pending) {
             for (var dependency : depInfo.get(sourceId).getDependencies()) {
                 if (!isKnown(pending, dependency) && !isKnown(resolved, dependency)) {
@@ -106,7 +100,7 @@ abstract class DependencyResolver {
         unsatisfiedImports = ImmutableMultimap.copyOf(imports);
     }
 
-    protected abstract boolean isKnown(Collection<SourceIdentifier> haystack, ModuleImport mi);
+    protected abstract boolean isKnown(Collection<SourceIdentifier> haystack, Dependency dependency);
 
     abstract YangParserConfiguration parserConfig();
 
@@ -143,50 +137,7 @@ abstract class DependencyResolver {
      * A->C and B->C will be reported.
      * </li></ul>
      */
-    ImmutableMultimap<SourceIdentifier, ModuleImport> unsatisfiedImports() {
+    ImmutableMultimap<SourceIdentifier, Dependency> unsatisfiedImports() {
         return unsatisfiedImports;
-    }
-
-    private static class BelongsToDependency implements ModuleImport {
-        private final Unqualified parent;
-
-        BelongsToDependency(final Unqualified parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public Unqualified getModuleName() {
-            return parent;
-        }
-
-        @Override
-        public Optional<Revision> getRevision() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<String> getDescription() {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<String> getReference() {
-            return Optional.empty();
-        }
-
-        @Override
-        public String getPrefix() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String toString() {
-            return MoreObjects.toStringHelper(this).add("parent", parent).toString();
-        }
-
-        @Override
-        public ImportEffectiveStatement asEffectiveStatement() {
-            throw new UnsupportedOperationException();
-        }
     }
 }

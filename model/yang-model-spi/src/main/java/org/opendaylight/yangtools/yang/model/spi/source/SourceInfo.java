@@ -37,17 +37,37 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
  */
 @NonNullByDefault
 public sealed interface SourceInfo permits ModuleSourceInfo, SubmoduleSourceInfo {
-    record Import(Unqualified name, String prefix, @Nullable Revision revision) {
+    record Import(Unqualified name, String prefix, @Nullable Revision revision) implements Dependency {
         public Import {
             requireNonNull(name);
             requireNonNull(prefix);
         }
     }
 
-    record Include(Unqualified name, @Nullable Revision revision) {
+    record Include(Unqualified name, @Nullable Revision revision) implements Dependency {
         public Include {
             requireNonNull(name);
         }
+    }
+
+    /**
+     * Common interface expressing a dependency on a source, be it a {@code module} or a {@code submodule}.
+     */
+    sealed interface Dependency permits Import, Include, SubmoduleSourceInfo.BelongsTo {
+        /**
+         * The name of the required source.
+         *
+         * @return name of the required source
+         */
+        Unqualified name();
+
+        /**
+         * Returns optional required revision. If {@code null}, this dependency is satisfied by any source, otherwise
+         * the source must have this exact revision.
+         *
+         * @return optional required revision
+         */
+        @Nullable Revision revision();
     }
 
     /**

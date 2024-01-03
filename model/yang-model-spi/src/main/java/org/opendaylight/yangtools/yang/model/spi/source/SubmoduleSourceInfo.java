@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -22,10 +23,22 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 public record SubmoduleSourceInfo(
         Unqualified name,
         YangVersion yangVersion,
-        Unqualified belongsTo,
+        BelongsTo belongsTo,
         ImmutableSet<Revision> revisions,
         ImmutableSet<Import> imports,
         ImmutableSet<Include> includes) implements SourceInfo {
+    public record BelongsTo(Unqualified name, String prefix) implements SourceInfo.Dependency {
+        public BelongsTo {
+            requireNonNull(name);
+            requireNonNull(prefix);
+        }
+
+        @Override
+        public @Nullable Revision revision() {
+            return null;
+        }
+    }
+
     public SubmoduleSourceInfo {
         requireNonNull(name);
         requireNonNull(yangVersion);
