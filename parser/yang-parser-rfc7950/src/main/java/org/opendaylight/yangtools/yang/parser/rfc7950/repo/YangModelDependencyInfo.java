@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Collection;
@@ -53,6 +54,38 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
  * @see SubmoduleDependencyInfo
  */
 public abstract sealed class YangModelDependencyInfo {
+    /**
+     * Dependency information for a YANG module.
+     */
+    public static final class ModuleDependencyInfo extends YangModelDependencyInfo {
+        private ModuleDependencyInfo(final String name, final Revision revision,
+                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
+            super(name, revision, imports, includes);
+        }
+    }
+
+    /**
+     * Dependency information for a YANG submodule, also provides name for parent module.
+     */
+    public static final class SubmoduleDependencyInfo extends YangModelDependencyInfo {
+        private final @NonNull Unqualified belongsTo;
+
+        private SubmoduleDependencyInfo(final String name, final Revision revision, final Unqualified belongsTo,
+                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
+            super(name, revision, imports, includes);
+            this.belongsTo = requireNonNull(belongsTo);
+        }
+
+        /**
+         * Returns name of parent module.
+         *
+         * @return The module this info belongs to
+         */
+        public @NonNull Unqualified getParentModule() {
+            return belongsTo;
+        }
+    }
+
     private static final String BELONGS_TO = YangStmtMapping.BELONGS_TO.getStatementName().getLocalName();
     private static final String IMPORT = YangStmtMapping.IMPORT.getStatementName().getLocalName();
     private static final String INCLUDE = YangStmtMapping.INCLUDE.getStatementName().getLocalName();
@@ -64,20 +97,47 @@ public abstract sealed class YangModelDependencyInfo {
     private static final String SUBMODULE = YangStmtMapping.SUBMODULE.getStatementName().getLocalName();
     private static final String YANG_VERSION = YangStmtMapping.YANG_VERSION.getStatementName().getLocalName();
 
-    private final String name;
-    private final Revision revision;
-    private final ImmutableSet<ModuleImport> submoduleIncludes;
-    private final ImmutableSet<ModuleImport> moduleImports;
-    private final ImmutableSet<ModuleImport> dependencies;
+    private final @NonNull String name;
+    private final @Nullable Revision revision;
+    private final @NonNull ImmutableSet<ModuleImport> submoduleIncludes;
+    private final @NonNull ImmutableSet<ModuleImport> moduleImports;
+    private final @NonNull ImmutableSet<ModuleImport> dependencies;
 
-    YangModelDependencyInfo(final String name, final String formattedRevision, final ImmutableSet<ModuleImport> imports,
+    YangModelDependencyInfo(final String name, final Revision revision, final ImmutableSet<ModuleImport> imports,
             final ImmutableSet<ModuleImport> includes) {
-        this.name = name;
-        revision = Revision.ofNullable(formattedRevision).orElse(null);
-        moduleImports = imports;
-        submoduleIncludes = includes;
-        dependencies = ImmutableSet.<ModuleImport>builder()
-                .addAll(moduleImports).addAll(submoduleIncludes).build();
+        this.name = requireNonNull(name);
+        this.revision = revision;
+        moduleImports = requireNonNull(imports);
+        submoduleIncludes = requireNonNull(includes);
+        dependencies = ImmutableSet.<ModuleImport>builder().addAll(moduleImports).addAll(submoduleIncludes).build();
+    }
+
+    /**
+     * Returns model name.
+     *
+     * @return model name
+     */
+    public final String getName() {
+        return name;
+    }
+
+    /**
+     * Returns formatted revision string.
+     *
+     * @return formatted revision string, or {@code null}
+     */
+    public final @Nullable String getFormattedRevision() {
+        final var local = revision;
+        return local != null ? local.toString() : null;
+    }
+
+    /**
+     * Returns revision.
+     *
+     * @return revision, potentially null
+     */
+    public final Optional<Revision> getRevision() {
+        return Optional.ofNullable(revision);
     }
 
     /**
@@ -86,50 +146,28 @@ public abstract sealed class YangModelDependencyInfo {
      *
      * @return Immutable collection of imports.
      */
-    public ImmutableSet<ModuleImport> getDependencies() {
+    public final ImmutableSet<ModuleImport> getDependencies() {
         return dependencies;
     }
 
-    /**
-     * Returns model name.
-     *
-     * @return model name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns formatted revision string.
-     *
-     * @return formatted revision string
-     */
-    public String getFormattedRevision() {
-        return revision != null ? revision.toString() : null;
-    }
-
-    /**
-     * Returns revision.
-     *
-     * @return revision, potentially null
-     */
-    public Optional<Revision> getRevision() {
-        return Optional.ofNullable(revision);
+    @Override
+    public final int hashCode() {
+        return Objects.hash(name, revision);
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(name);
-        result = prime * result + Objects.hashCode(revision);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         return this == obj || obj instanceof YangModelDependencyInfo other
             && Objects.equals(name, other.name) && Objects.equals(revision, other.revision);
+    }
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(this).omitNullValues()
+            .add("name", getName())
+            .add("revision", getRevision())
+            .add("dependencies", getDependencies())
+            .toString();
     }
 
     /**
@@ -179,15 +217,13 @@ public abstract sealed class YangModelDependencyInfo {
     }
 
     public static @NonNull ModuleDependencyInfo forSourceInfo(final @NonNull ModuleSourceInfo info) {
-        final var rev = latestRevision(info.revisions());
-        return new ModuleDependencyInfo(info.name().getLocalName(), rev == null ? null : rev.toString(),
+        return new ModuleDependencyInfo(info.name().getLocalName(), latestRevision(info.revisions()),
             info.imports().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()),
             info.includes().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()));
     }
 
     public static @NonNull SubmoduleDependencyInfo forSourceInfo(final @NonNull SubmoduleSourceInfo info) {
-        final var rev = latestRevision(info.revisions());
-        return new SubmoduleDependencyInfo(info.name().getLocalName(), rev == null ? null : rev.toString(),
+        return new SubmoduleDependencyInfo(info.name().getLocalName(), latestRevision(info.revisions()),
             info.belongsTo(), info.imports().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()),
             info.includes().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()));
     }
@@ -323,52 +359,6 @@ public abstract sealed class YangModelDependencyInfo {
 
     private static StatementSourceReference refOf(final SourceIdentifier source, final IRStatement stmt) {
         return ExplicitStatement.atPosition(source.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
-    }
-
-    /**
-     * Dependency information for YANG module.
-     */
-    public static final class ModuleDependencyInfo extends YangModelDependencyInfo {
-        ModuleDependencyInfo(final String name, final String latestRevision, final ImmutableSet<ModuleImport> imports,
-                final ImmutableSet<ModuleImport> includes) {
-            super(name, latestRevision, imports, includes);
-        }
-
-        @Override
-        public String toString() {
-            return "Module [name=" + getName() + ", revision=" + getRevision()
-                + ", dependencies=" + getDependencies()
-                + "]";
-        }
-    }
-
-    /**
-     * Dependency information for submodule, also provides name for parent module.
-     */
-    public static final class SubmoduleDependencyInfo extends YangModelDependencyInfo {
-        private final Unqualified belongsTo;
-
-        private SubmoduleDependencyInfo(final String name, final String latestRevision, final Unqualified belongsTo,
-                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
-            super(name, latestRevision, imports, includes);
-            this.belongsTo = belongsTo;
-        }
-
-        /**
-         * Returns name of parent module.
-         *
-         * @return The module this info belongs to
-         */
-        public Unqualified getParentModule() {
-            return belongsTo;
-        }
-
-        @Override
-        public String toString() {
-            return "Submodule [name=" + getName() + ", revision=" + getRevision()
-                + ", dependencies=" + getDependencies()
-                + "]";
-        }
     }
 
     /**
