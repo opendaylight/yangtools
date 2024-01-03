@@ -7,22 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName;
-import org.opendaylight.yangtools.yang.ir.IRArgument;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
-import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -30,6 +29,11 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.source.ModuleSourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Import;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Include;
+import org.opendaylight.yangtools.yang.model.spi.source.SubmoduleSourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
@@ -53,9 +57,12 @@ public abstract sealed class YangModelDependencyInfo {
     private static final String IMPORT = YangStmtMapping.IMPORT.getStatementName().getLocalName();
     private static final String INCLUDE = YangStmtMapping.INCLUDE.getStatementName().getLocalName();
     private static final String MODULE = YangStmtMapping.MODULE.getStatementName().getLocalName();
+    private static final String NAMESPACE = YangStmtMapping.NAMESPACE.getStatementName().getLocalName();
+    private static final String PREFIX = YangStmtMapping.PREFIX.getStatementName().getLocalName();
     private static final String REVISION = YangStmtMapping.REVISION.getStatementName().getLocalName();
     private static final String REVISION_DATE = YangStmtMapping.REVISION_DATE.getStatementName().getLocalName();
     private static final String SUBMODULE = YangStmtMapping.SUBMODULE.getStatementName().getLocalName();
+    private static final String YANG_VERSION = YangStmtMapping.YANG_VERSION.getStatementName().getLocalName();
 
     private final String name;
     private final Revision revision;
@@ -146,17 +153,43 @@ public abstract sealed class YangModelDependencyInfo {
      */
     static @NonNull YangModelDependencyInfo forIR(final IRStatement rootStatement,
             final SourceIdentifier sourceId) {
-        final IRKeyword keyword = rootStatement.keyword();
-        checkArgument(keyword instanceof Unqualified, "Invalid root statement %s", keyword);
+        final var keyword = rootStatement.keyword();
+        if (!(keyword instanceof IRKeyword.Unqualified)) {
+            throw new IllegalArgumentException("Invalid root statement " + keyword);
+        }
 
         final String arg = keyword.identifier();
         if (MODULE.equals(arg)) {
-            return parseModuleContext(rootStatement, sourceId);
+            return forSourceInfo(moduleForIR(rootStatement, sourceId));
         }
         if (SUBMODULE.equals(arg)) {
-            return parseSubmoduleContext(rootStatement, sourceId);
+            return forSourceInfo(submmoduleForIR(rootStatement, sourceId));
         }
         throw new IllegalArgumentException("Root of parsed AST must be either module or submodule");
+    }
+
+    public static @NonNull YangModelDependencyInfo forSourceInfo(final SourceInfo info) {
+        if (info instanceof ModuleSourceInfo module) {
+            return forSourceInfo(module);
+        } else if (info instanceof SubmoduleSourceInfo submodule) {
+            return forSourceInfo(submodule);
+        } else {
+            throw new IllegalArgumentException("Unhandled source info " + requireNonNull(info));
+        }
+    }
+
+    public static @NonNull ModuleDependencyInfo forSourceInfo(final @NonNull ModuleSourceInfo info) {
+        final var rev = latestRevision(info.revisions());
+        return new ModuleDependencyInfo(info.name().getLocalName(), rev == null ? null : rev.toString(),
+            info.imports().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()),
+            info.includes().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()));
+    }
+
+    public static @NonNull SubmoduleDependencyInfo forSourceInfo(final @NonNull SubmoduleSourceInfo info) {
+        final var rev = latestRevision(info.revisions());
+        return new SubmoduleDependencyInfo(info.name().getLocalName(), rev == null ? null : rev.toString(),
+            info.belongsTo(), info.imports().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()),
+            info.includes().stream().map(ModuleImportImpl::new).collect(ImmutableSet.toImmutableSet()));
     }
 
     /**
@@ -174,56 +207,93 @@ public abstract sealed class YangModelDependencyInfo {
         return forIR(source.rootStatement(), source.getIdentifier());
     }
 
-    private static @NonNull YangModelDependencyInfo parseModuleContext(final IRStatement module,
-            final SourceIdentifier source) {
-        final String name = safeStringArgument(source, module, "module name");
-        final String latestRevision = getLatestRevision(module, source);
-        final ImmutableSet<ModuleImport> imports = parseImports(module, source);
-        final ImmutableSet<ModuleImport> includes = parseIncludes(module, source);
-
-        return new ModuleDependencyInfo(name, latestRevision, imports, includes);
+    private static @NonNull ModuleSourceInfo moduleForIR(final IRStatement root, final SourceIdentifier sourceId) {
+        return new ModuleSourceInfo(Unqualified.of(safeStringArgument(sourceId, root, "module name")),
+            extractYangVersion(root, sourceId), extractNamespace(root, sourceId), extractPrefix(root, sourceId),
+            extractRevisions(root, sourceId), extractImports(root, sourceId), extractIncludes(root, sourceId));
     }
 
-    private static ImmutableSet<ModuleImport> parseImports(final IRStatement module,
-            final SourceIdentifier source) {
-        final Set<ModuleImport> result = new HashSet<>();
-        for (final IRStatement substatement : module.statements()) {
-            if (isBuiltin(substatement, IMPORT)) {
-                final String importedModuleName = safeStringArgument(source, substatement, "imported module name");
-                final String revisionDateStr = getRevisionDateString(substatement, source);
-                result.add(new ModuleImportImpl(UnresolvedQName.Unqualified.of(importedModuleName),
-                    revisionDateStr != null ? Revision.of(revisionDateStr) : null));
-            }
-        }
-        return ImmutableSet.copyOf(result);
+    private static @NonNull SubmoduleSourceInfo submmoduleForIR(final IRStatement root,
+            final SourceIdentifier sourceId) {
+        return new SubmoduleSourceInfo(Unqualified.of(safeStringArgument(sourceId, root, "submodule name")),
+            extractYangVersion(root, sourceId), extractBelongsTo(root, sourceId),
+            extractRevisions(root, sourceId), extractImports(root, sourceId), extractIncludes(root, sourceId));
+    }
+
+    private static @Nullable Revision latestRevision(final Collection<Revision> revision) {
+        return revision.stream().sorted(Comparator.reverseOrder()).findFirst().orElse(null);
+    }
+
+    private static YangVersion extractYangVersion(final IRStatement root, final SourceIdentifier sourceId) {
+        return root.statements().stream()
+            .filter(stmt -> isBuiltin(stmt, YANG_VERSION))
+            .findFirst()
+            .map(stmt -> safeStringArgument(sourceId, stmt, "yang-version argument"))
+            .map(YangVersion::forString)
+            .orElse(YangVersion.VERSION_1);
+    }
+
+    private static @NonNull XMLNamespace extractNamespace(final IRStatement root, final SourceIdentifier sourceId) {
+        return root.statements().stream()
+            .filter(stmt -> isBuiltin(stmt, NAMESPACE))
+            .findFirst()
+            .map(stmt -> safeStringArgument(sourceId, stmt, "namespace argument"))
+            .map(XMLNamespace::of)
+            .orElseThrow(() -> new IllegalArgumentException("No namespace statement in " + refOf(sourceId, root)));
+    }
+
+    private static @NonNull String extractPrefix(final IRStatement root, final SourceIdentifier sourceId) {
+        return root.statements().stream()
+            .filter(stmt -> isBuiltin(stmt, PREFIX))
+            .findFirst()
+            .map(stmt -> safeStringArgument(sourceId, stmt, "prefix argument"))
+            .orElseThrow(() -> new IllegalArgumentException("No prefix statement in " + refOf(sourceId, root)));
+    }
+
+    private static @NonNull Unqualified extractBelongsTo(final IRStatement root, final SourceIdentifier sourceId) {
+        return root.statements().stream()
+            .filter(stmt -> isBuiltin(stmt, BELONGS_TO))
+            .findFirst()
+            .map(stmt -> Unqualified.of(safeStringArgument(sourceId, stmt, "belongs-to module name")))
+            .orElseThrow(() -> new IllegalArgumentException("No belongs-to statement in " + refOf(sourceId, root)));
+    }
+
+    private static @NonNull ImmutableSet<Revision> extractRevisions(final IRStatement root,
+            final SourceIdentifier sourceId) {
+        return root.statements().stream()
+            .filter(stmt -> isBuiltin(stmt, REVISION))
+            .map(stmt -> Revision.of(safeStringArgument(sourceId, stmt, "revision argument")))
+            .collect(ImmutableSet.toImmutableSet());
+    }
+
+    private static @Nullable Revision extractRevisionDate(final IRStatement root, final SourceIdentifier sourceId) {
+        return root.statements().stream()
+            .filter(stmt -> isBuiltin(stmt, REVISION_DATE))
+            .findFirst()
+            .map(stmt -> Revision.of(safeStringArgument(sourceId, stmt, "revision date argument")))
+            .orElse(null);
+    }
+
+    private static @NonNull ImmutableSet<Import> extractImports(final IRStatement root,
+            final SourceIdentifier sourceId) {
+        return root.statements().stream()
+            .filter(stmt -> isBuiltin(stmt, IMPORT))
+            .map(stmt -> new Import(Unqualified.of(safeStringArgument(sourceId, stmt, "imported module name")),
+                extractPrefix(stmt, sourceId), extractRevisionDate(stmt, sourceId)))
+            .collect(ImmutableSet.toImmutableSet());
+    }
+
+    private static @NonNull ImmutableSet<Include> extractIncludes(final IRStatement root,
+            final SourceIdentifier sourceId) {
+        return root.statements().stream()
+            .filter(stmt -> isBuiltin(stmt, INCLUDE))
+            .map(stmt -> new Include(Unqualified.of(safeStringArgument(sourceId, stmt, "included submodule name")),
+                extractRevisionDate(stmt, sourceId)))
+            .collect(ImmutableSet.toImmutableSet());
     }
 
     private static boolean isBuiltin(final IRStatement stmt, final String localName) {
-        final IRKeyword keyword = stmt.keyword();
-        return keyword instanceof Unqualified && localName.equals(keyword.identifier());
-    }
-
-    private static ImmutableSet<ModuleImport> parseIncludes(final IRStatement module, final SourceIdentifier source) {
-        final Set<ModuleImport> result = new HashSet<>();
-        for (final IRStatement substatement : module.statements()) {
-            if (isBuiltin(substatement, INCLUDE)) {
-                final String revisionDateStr = getRevisionDateString(substatement, source);
-                final String includeModuleName = safeStringArgument(source, substatement, "included submodule name");
-                result.add(new ModuleImportImpl(UnresolvedQName.Unqualified.of(includeModuleName),
-                    revisionDateStr == null ? null : Revision.of(revisionDateStr)));
-            }
-        }
-        return ImmutableSet.copyOf(result);
-    }
-
-    private static String getRevisionDateString(final IRStatement importStatement, final SourceIdentifier source) {
-        String revisionDateStr = null;
-        for (final IRStatement substatement : importStatement.statements()) {
-            if (isBuiltin(substatement, REVISION_DATE)) {
-                revisionDateStr = safeStringArgument(source, substatement, "imported module revision-date");
-            }
-        }
-        return revisionDateStr;
+        return stmt.keyword() instanceof IRKeyword.Unqualified keyword && localName.equals(keyword.identifier());
     }
 
     public static String getLatestRevision(final IRStatement module, final SourceIdentifier source) {
@@ -239,30 +309,10 @@ public abstract sealed class YangModelDependencyInfo {
         return latestRevision;
     }
 
-    private static @NonNull YangModelDependencyInfo parseSubmoduleContext(final IRStatement submodule,
-            final SourceIdentifier source) {
-        final String name = safeStringArgument(source, submodule, "submodule name");
-        final UnresolvedQName.Unqualified belongsTo = UnresolvedQName.Unqualified.of(parseBelongsTo(submodule, source));
-
-        final String latestRevision = getLatestRevision(submodule, source);
-        final ImmutableSet<ModuleImport> imports = parseImports(submodule, source);
-        final ImmutableSet<ModuleImport> includes = parseIncludes(submodule, source);
-
-        return new SubmoduleDependencyInfo(name, latestRevision, belongsTo, imports, includes);
-    }
-
-    private static String parseBelongsTo(final IRStatement submodule, final SourceIdentifier source) {
-        for (final IRStatement substatement : submodule.statements()) {
-            if (isBuiltin(substatement, BELONGS_TO)) {
-                return safeStringArgument(source, substatement, "belongs-to module name");
-            }
-        }
-        return null;
-    }
-
-    static String safeStringArgument(final SourceIdentifier source, final IRStatement stmt, final String desc) {
-        final StatementSourceReference ref = getReference(source, stmt);
-        final IRArgument arg = stmt.argument();
+    static @NonNull String safeStringArgument(final SourceIdentifier source, final IRStatement stmt,
+            final String desc) {
+        final var ref = refOf(source, stmt);
+        final var arg = stmt.argument();
         if (arg == null) {
             throw new IllegalArgumentException("Missing " + desc + " at " + ref);
         }
@@ -271,7 +321,7 @@ public abstract sealed class YangModelDependencyInfo {
         return ArgumentContextUtils.rfc6020().stringFromStringContext(arg, ref);
     }
 
-    private static StatementSourceReference getReference(final SourceIdentifier source, final IRStatement stmt) {
+    private static StatementSourceReference refOf(final SourceIdentifier source, final IRStatement stmt) {
         return ExplicitStatement.atPosition(source.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
     }
 
@@ -296,11 +346,10 @@ public abstract sealed class YangModelDependencyInfo {
      * Dependency information for submodule, also provides name for parent module.
      */
     public static final class SubmoduleDependencyInfo extends YangModelDependencyInfo {
-        private final UnresolvedQName.Unqualified belongsTo;
+        private final Unqualified belongsTo;
 
-        private SubmoduleDependencyInfo(final String name, final String latestRevision,
-                final UnresolvedQName.Unqualified belongsTo, final ImmutableSet<ModuleImport> imports,
-                final ImmutableSet<ModuleImport> includes) {
+        private SubmoduleDependencyInfo(final String name, final String latestRevision, final Unqualified belongsTo,
+                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
             super(name, latestRevision, imports, includes);
             this.belongsTo = belongsTo;
         }
@@ -310,7 +359,7 @@ public abstract sealed class YangModelDependencyInfo {
          *
          * @return The module this info belongs to
          */
-        public UnresolvedQName.Unqualified getParentModule() {
+        public Unqualified getParentModule() {
             return belongsTo;
         }
 
@@ -327,16 +376,21 @@ public abstract sealed class YangModelDependencyInfo {
      */
     // FIXME: this is a rather nasty misuse of APIs :(
     private static final class ModuleImportImpl implements ModuleImport {
-        private final UnresolvedQName.@NonNull Unqualified moduleName;
+        private final @NonNull Unqualified moduleName;
         private final Revision revision;
 
-        ModuleImportImpl(final UnresolvedQName.@NonNull Unqualified moduleName, final @Nullable Revision revision) {
-            this.moduleName = requireNonNull(moduleName, "Module name must not be null.");
-            this.revision = revision;
+        ModuleImportImpl(final Import importSpec) {
+            moduleName = importSpec.name();
+            revision = importSpec.revision();
+        }
+
+        ModuleImportImpl(final Include includeSpec) {
+            moduleName = includeSpec.name();
+            revision = includeSpec.revision();
         }
 
         @Override
-        public UnresolvedQName.Unqualified getModuleName() {
+        public Unqualified getModuleName() {
             return moduleName;
         }
 

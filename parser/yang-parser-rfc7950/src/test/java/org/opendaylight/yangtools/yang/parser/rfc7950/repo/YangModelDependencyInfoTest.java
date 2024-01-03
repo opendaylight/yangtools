@@ -19,13 +19,13 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 class YangModelDependencyInfoTest {
     // Utility
     private static YangModelDependencyInfo forResource(final String resourceName) {
-        final YangStatementStreamSource source = StmtTestUtils.sourceForResource(resourceName);
+        final var source = StmtTestUtils.sourceForResource(resourceName);
         return YangModelDependencyInfo.forIR(source.rootStatement(), source.getIdentifier());
     }
 
     @Test
     void testModuleWithNoImports() {
-        YangModelDependencyInfo info = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
+        final var info = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         assertNotNull(info);
         assertEquals("ietf-inet-types", info.getName());
         assertEquals("2010-09-24", info.getFormattedRevision());
@@ -36,7 +36,7 @@ class YangModelDependencyInfoTest {
 
     @Test
     void testModuleWithImports() {
-        YangModelDependencyInfo info = forResource("/parse-methods/dependencies/m2@2013-09-30.yang");
+        final var info = forResource("/parse-methods/dependencies/m2@2013-09-30.yang");
         assertNotNull(info);
         assertEquals("m2", info.getName());
         assertEquals("2013-09-30", info.getFormattedRevision());
@@ -46,7 +46,7 @@ class YangModelDependencyInfoTest {
 
     @Test
     void testModuleWithoutRevision() {
-        YangModelDependencyInfo info = forResource("/no-revision/module-without-revision.yang");
+        final var info = forResource("/no-revision/module-without-revision.yang");
         assertNotNull(info);
         assertEquals("module-without-revision", info.getName());
         assertNull(info.getFormattedRevision());
@@ -54,8 +54,8 @@ class YangModelDependencyInfoTest {
 
     @Test
     void testEquals() {
-        YangModelDependencyInfo info1 = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
-        YangModelDependencyInfo info2 = forResource("/no-revision/module-without-revision.yang");
+        final var info1 = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
+        final var info2 = forResource("/no-revision/module-without-revision.yang");
 
         assertEquals(info1, info1);
         assertNotEquals(null, info1);
@@ -65,13 +65,13 @@ class YangModelDependencyInfoTest {
     @Test
     void testYangtools827() {
         // Latest revision needs to be picked up irrespective of ordering
-        YangModelDependencyInfo info = forResource("/bugs/YT827/foo.yang");
+        final var info = forResource("/bugs/YT827/foo.yang");
         assertEquals("2014-12-24", info.getFormattedRevision());
     }
 
     @Test
     void testHashcode() {
-        YangModelDependencyInfo info = forResource("/no-revision/module-without-revision.yang");
+        final var info = forResource("/no-revision/module-without-revision.yang");
         assertNotEquals(31, info.hashCode(), "hashcode");
     }
 
