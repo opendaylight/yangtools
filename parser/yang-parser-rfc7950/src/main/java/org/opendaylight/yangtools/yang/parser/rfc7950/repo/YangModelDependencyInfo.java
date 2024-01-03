@@ -48,7 +48,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
  * @see ModuleDependencyInfo
  * @see SubmoduleDependencyInfo
  */
-public abstract class YangModelDependencyInfo {
+public abstract sealed class YangModelDependencyInfo {
     private static final String BELONGS_TO = YangStmtMapping.BELONGS_TO.getStatementName().getLocalName();
     private static final String IMPORT = YangStmtMapping.IMPORT.getStatementName().getLocalName();
     private static final String INCLUDE = YangStmtMapping.INCLUDE.getStatementName().getLocalName();
