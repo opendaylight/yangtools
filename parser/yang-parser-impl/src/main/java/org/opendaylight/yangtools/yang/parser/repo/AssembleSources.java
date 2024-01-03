@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangIRSourceInfoExtractor;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +47,11 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
     @Override
     public FluentFuture<EffectiveModelContext> apply(final List<YangIRSchemaSource> sources) {
         final var srcs = Maps.uniqueIndex(sources, getIdentifier);
-        final var deps = Maps.transformValues(srcs, YangModelDependencyInfo::forIR);
+        final var deps = Maps.transformValues(srcs, YangIRSourceInfoExtractor::forIR);
         LOG.debug("Resolving dependency reactor {}", deps);
 
         final var res = switch (config.getStatementParserMode()) {
-            case DEFAULT_MODE -> RevisionDependencyResolver.create(deps);
+            case DEFAULT_MODE -> new RevisionDependencyResolver(deps);
         };
 
         final var unresolved = res.unresolvedSources();
