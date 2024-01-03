@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo.Dependency;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo.SubmoduleDependencyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +107,7 @@ abstract class DependencyResolver {
         unsatisfiedImports = ImmutableMultimap.copyOf(imports);
     }
 
-    protected abstract boolean isKnown(Collection<SourceIdentifier> haystack, ModuleImport mi);
+    protected abstract boolean isKnown(Collection<SourceIdentifier> haystack, Dependency mi);
 
     abstract YangParserConfiguration parserConfig();
 
