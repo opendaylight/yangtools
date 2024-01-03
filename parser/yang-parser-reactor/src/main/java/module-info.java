@@ -15,7 +15,6 @@ module org.opendaylight.yangtools.yang.parser.reactor {
     requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
     requires org.slf4j;
 
     // Annotations

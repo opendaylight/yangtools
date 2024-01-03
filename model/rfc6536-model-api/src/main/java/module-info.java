@@ -12,7 +12,6 @@ module org.opendaylight.yangtools.rfc6536.model.api {
 
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires com.google.common;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
