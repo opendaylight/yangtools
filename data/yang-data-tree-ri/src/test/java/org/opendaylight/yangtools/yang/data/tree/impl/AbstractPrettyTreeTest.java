@@ -106,8 +106,15 @@ abstract class AbstractPrettyTreeTest {
     protected static MapNode createMapNode() {
         return ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(LIST_A_QNAME))
-            .withChild(ImmutableNodes.mapEntry(LIST_A_QNAME, LEAF_A_QNAME, "foo"))
+            .withChild(createMapEntry(LIST_A_QNAME, LEAF_A_QNAME, "foo"))
             .withChild(createMapEntryNode())
+            .build();
+    }
+
+    private static MapEntryNode createMapEntry(final QName list, final QName key, final String value) {
+        return ImmutableNodes.newMapEntryBuilder()
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(list, key, value))
+            .withChild(ImmutableNodes.leafNode(key, value))
             .build();
     }
 
@@ -117,8 +124,8 @@ abstract class AbstractPrettyTreeTest {
             .withChild(ImmutableNodes.leafNode(LEAF_A_QNAME, "bar"))
             .withChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(LIST_B_QNAME))
-                .withChild(ImmutableNodes.mapEntry(LIST_B_QNAME, LEAF_B_QNAME, "one"))
-                .withChild(ImmutableNodes.mapEntry(LIST_B_QNAME, LEAF_B_QNAME, "two"))
+                .withChild(createMapEntry(LIST_B_QNAME, LEAF_B_QNAME, "one"))
+                .withChild(createMapEntry(LIST_B_QNAME, LEAF_B_QNAME, "two"))
                 .build())
             .build();
     }
@@ -139,7 +146,7 @@ abstract class AbstractPrettyTreeTest {
             .withNodeIdentifier(new NodeIdentifier(ANOTHER_QNAME))
             .withChild(ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(LIST_ANOTHER_NAMESPACE_QNAME))
-                .withChild(ImmutableNodes.mapEntry(LIST_ANOTHER_NAMESPACE_QNAME, LEAF_ANOTHER_NAMESPACE_QNAME,
+                .withChild(createMapEntry(LIST_ANOTHER_NAMESPACE_QNAME, LEAF_ANOTHER_NAMESPACE_QNAME,
                     "Leaf from another namespace value"))
                 .build())
             .build();
@@ -173,7 +180,7 @@ abstract class AbstractPrettyTreeTest {
     }
 
     protected static MapEntryNode createUserMapEntryNode() {
-        return ImmutableNodes.mapEntry(USER_MAP_QNAME, USER_MAP_ENTRY_QNAME, "User map entry value");
+        return createMapEntry(USER_MAP_QNAME, USER_MAP_ENTRY_QNAME, "User map entry value");
     }
 
     protected static UnkeyedListNode createUnkeyedListNode() {

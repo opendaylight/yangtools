@@ -79,8 +79,11 @@ public class InMemoryDataTreeBenchmark {
             .withNodeIdentifier(BenchmarkModel.INNER_LIST);
 
         for (int i = 0; i < count; ++i) {
-            mapEntryBuilder
-                .withChild(ImmutableNodes.mapEntry(BenchmarkModel.INNER_LIST_QNAME, BenchmarkModel.NAME_QNAME, i));
+            mapEntryBuilder.withChild(ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(
+                    NodeIdentifierWithPredicates.of(BenchmarkModel.INNER_LIST_QNAME, BenchmarkModel.NAME_QNAME, i))
+                .withChild(ImmutableNodes.leafNode(BenchmarkModel.NAME_QNAME, i))
+                .build());
         }
 
         return mapEntryBuilder.build();

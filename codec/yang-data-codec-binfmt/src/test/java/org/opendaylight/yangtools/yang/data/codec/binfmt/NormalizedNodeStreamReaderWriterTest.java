@@ -89,7 +89,11 @@ class NormalizedNodeStreamReaderWriterTest {
             .withChild(ImmutableNodes.leafNode(TestModel.EMPTY_QNAME, Empty.value()))
             .withChild(ImmutableNodes.newUserMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.ORDERED_LIST_QNAME))
-                .withChild(ImmutableNodes.mapEntry(TestModel.ORDERED_LIST_ENTRY_QNAME, TestModel.ID_QNAME, 11))
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(
+                        NodeIdentifierWithPredicates.of(TestModel.ORDERED_LIST_ENTRY_QNAME, TestModel.ID_QNAME, 11))
+                    .withChild(ImmutableNodes.leafNode(TestModel.ID_QNAME, 11))
+                    .build())
                 .build())
             .build();
     }

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.spi.node;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
@@ -69,14 +68,6 @@ public final class ImmutableNodes {
      */
     public static <T> @NonNull LeafNode<T> leafNode(final QName name, final T value) {
         return leafNode(NodeIdentifier.create(name), value);
-    }
-
-    public static @NonNull MapEntryNode mapEntry(final NodeIdentifierWithPredicates name) {
-        return BUILDER_FACTORY.newMapEntryBuilder(name.size()).withNodeIdentifier(name).build();
-    }
-
-    public static @NonNull MapEntryNode mapEntry(final QName listName, final QName keyName, final Object keyValue) {
-        return mapEntry(NodeIdentifierWithPredicates.of(listName, keyName, keyValue));
     }
 
     public static <T> @NonNull LeafSetEntryNode<T> leafSetEntry(final NodeWithValue<T> name) {

@@ -24,9 +24,11 @@ import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -138,8 +140,8 @@ class ListConstraintsValidation {
     @Test
     void minMaxListTestPass() throws DataValidationFailedException {
 
-        final var fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo");
-        final var barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar");
+        final var fooEntryNode = minMaxEntry("foo");
+        final var barEntryNode = minMaxEntry("bar");
         final var mapNode1 = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(fooEntryNode).build();
@@ -162,20 +164,25 @@ class ListConstraintsValidation {
         assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
     }
 
+    private static MapEntryNode minMaxEntry(final String value) {
+        return ImmutableNodes.newMapEntryBuilder()
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, value))
+            .withChild(ImmutableNodes.leafNode(MIN_MAX_KEY_LEAF_QNAME, value))
+            .build();
+    }
+
     @Test
     void minMaxListFail() throws DataValidationFailedException {
         assertThrows(DataValidationFailedException.class, () -> {
             var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-            final var fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
-                    "foo");
-            final var barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
-                    "bar");
-            final var gooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
-                    "goo");
+            final var fooEntryNode = minMaxEntry("foo");
+            final var barEntryNode = minMaxEntry("bar");
+            final var gooEntryNode = minMaxEntry("goo");
             final var mapNode = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
-                .withChild(fooEntryNode).build();
+                .withChild(fooEntryNode)
+                .build();
 
             final var fooPath = MIN_MAX_LIST_PATH.node(fooEntryNode.name());
             final var barPath = MIN_MAX_LIST_PATH.node(barEntryNode.name());

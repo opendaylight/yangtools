@@ -36,12 +36,18 @@ class BuilderTest {
     private static final NodeIdentifier NODE_IDENTIFIER_LIST = NodeIdentifier.create(LIST_MAIN);
     private static final NodeIdentifier NODE_IDENTIFIER_LEAF_LIST = NodeIdentifier.create(LEAF_LIST_MAIN);
     private static final NodeIdentifier NODE_IDENTIFIER_LEAF = NodeIdentifier.create(LIST_MAIN_CHILD_QNAME_1);
-    private static final MapEntryNode LIST_MAIN_CHILD_1 = ImmutableNodes.mapEntry(
-        NodeIdentifierWithPredicates.of(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 1));
-    private static final MapEntryNode LIST_MAIN_CHILD_2 = ImmutableNodes.mapEntry(
-        NodeIdentifierWithPredicates.of(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 2));
-    private static final MapEntryNode LIST_MAIN_CHILD_3 = ImmutableNodes.mapEntry(
-        NodeIdentifierWithPredicates.of(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 3));
+    private static final MapEntryNode LIST_MAIN_CHILD_1 = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 1))
+        .withChild(ImmutableNodes.leafNode(LIST_MAIN_CHILD_QNAME_1, 1))
+        .build();
+    private static final MapEntryNode LIST_MAIN_CHILD_2 = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 2))
+        .withChild(ImmutableNodes.leafNode(LIST_MAIN_CHILD_QNAME_1, 2))
+        .build();
+    private static final MapEntryNode LIST_MAIN_CHILD_3 = ImmutableNodes.newMapEntryBuilder()
+        .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 3))
+        .withChild(ImmutableNodes.leafNode(LIST_MAIN_CHILD_QNAME_1, 3))
+        .build();
     private static final int SIZE = 3;
     private static final NodeWithValue<String> BAR_PATH = new NodeWithValue<>(LEAF_LIST_MAIN, "bar");
     private static final LeafSetEntryNode<String> LEAF_SET_ENTRY_NODE =
