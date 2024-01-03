@@ -22,6 +22,9 @@ public sealed interface RootDeclaredStatement
         extends DocumentedDeclaredStatement<Unqualified>, NotificationStatementAwareDeclaredStatement<Unqualified>,
                 DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<Unqualified>
         permits ModuleStatement, SubmoduleStatement {
+    @Override
+    Unqualified argument();
+
     default Optional<OrganizationStatement> getOrganization() {
         return findFirstDeclaredSubstatement(OrganizationStatement.class);
     }
