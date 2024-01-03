@@ -19,7 +19,6 @@ module org.opendaylight.yangtools.yang.data.tree {
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.api;
-    requires org.opendaylight.yangtools.yang.data.impl;
     requires org.opendaylight.yangtools.yang.data.spi;
     requires org.opendaylight.yangtools.yang.data.tree.spi;
     requires org.opendaylight.yangtools.yang.data.util;
