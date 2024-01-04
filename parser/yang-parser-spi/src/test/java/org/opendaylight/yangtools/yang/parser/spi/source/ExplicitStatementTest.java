@@ -21,7 +21,7 @@ class ExplicitStatementTest {
     @Test
     void testToString() {
         assertEquals("foo", ExplicitStatement.inFile("foo").toString());
-        assertEquals("<UNKNOWN>:5:10", ExplicitStatement.atPosition(5, 10).toString());
-        assertEquals("foo:5:10", ExplicitStatement.atPosition("foo", 5, 10).toString());
+        assertEquals("<UNKNOWN>:5:10", ExplicitStatement.inText(5, 10).toString());
+        assertEquals("foo:5:10", ExplicitStatement.inText("foo", 5, 10).toString());
     }
 }
