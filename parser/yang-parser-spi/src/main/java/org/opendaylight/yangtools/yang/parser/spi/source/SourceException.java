@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -31,7 +29,7 @@ public class SourceException extends StatementSourceException {
      * @param sourceRef Statement source
      */
     public SourceException(final @NonNull String message, final @NonNull StatementSourceReference sourceRef) {
-        super(sourceRef, createMessage(message, sourceRef));
+        super(sourceRef, message);
     }
 
     /**
@@ -44,7 +42,7 @@ public class SourceException extends StatementSourceException {
      */
     public SourceException(final @NonNull String message, final @NonNull StatementSourceReference sourceRef,
             final Throwable cause) {
-        super(sourceRef, createMessage(message, sourceRef), cause);
+        super(sourceRef, message, cause);
     }
 
     /**
@@ -227,9 +225,5 @@ public class SourceException extends StatementSourceException {
             final @NonNull String format, final Object... args) {
         throwIf(opt.isEmpty(), stmt, format, args);
         return opt.orElseThrow();
-    }
-
-    private static String createMessage(final @NonNull String message, final @NonNull StatementSourceReference source) {
-        return requireNonNull(message) + " [at " + requireNonNull(source) + ']';
     }
 }

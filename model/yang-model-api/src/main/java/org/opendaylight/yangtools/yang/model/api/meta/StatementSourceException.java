@@ -27,20 +27,23 @@ public class StatementSourceException extends RuntimeException {
     private final @NonNull StatementSourceReference sourceRef;
 
     public StatementSourceException(final StatementSourceReference sourceRef, final String message) {
-        super(message);
+        super(createMessage(sourceRef, message));
         this.sourceRef = requireNonNull(sourceRef);
     }
 
     public StatementSourceException(final StatementSourceReference sourceRef, final String message,
             final Throwable cause) {
-        super(message, cause);
+        super(createMessage(sourceRef, message), cause);
         this.sourceRef = requireNonNull(sourceRef);
     }
 
     public StatementSourceException(final StatementSourceReference sourceRef, final String format,
             final Object... args) {
-        super(format.formatted(args));
-        this.sourceRef = requireNonNull(sourceRef);
+        this(sourceRef, format.formatted(args));
+    }
+
+    private static final String createMessage(final StatementSourceReference sourceRef, final String message) {
+        return requireNonNull(message) + " [at " + requireNonNull(sourceRef) + ']';
     }
 
     /**
