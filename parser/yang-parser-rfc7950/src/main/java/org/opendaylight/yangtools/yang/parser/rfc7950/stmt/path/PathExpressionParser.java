@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathLexer;
 import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser;
 import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Absolute_pathContext;
@@ -41,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.antlr.LeafRefPathParser.Relative_p
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
@@ -66,7 +66,7 @@ class PathExpressionParser {
         PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
             try {
                 return super.parseExpression(ctx, pathArg);
-            } catch (IllegalStateException | SourceException e) {
+            } catch (IllegalStateException | StatementSourceException e) {
                 LOG.warn("Failed to parse expression '{}'", pathArg, e);
                 return new UnparsedPathExpression(pathArg, e);
             }
