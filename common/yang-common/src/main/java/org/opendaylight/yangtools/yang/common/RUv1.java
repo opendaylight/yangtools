@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 final class RUv1 implements Externalizable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
-    private static final int LENGTH = Revision.MAX_VALUE.toString().length();
+    private static final int LENGTH = Revision.MAX_VALUE.unionString().length();
 
     private String dateString;
 
@@ -61,6 +61,6 @@ final class RUv1 implements Externalizable {
 
     @java.io.Serial
     private Object readResolve() {
-        return dateString.isEmpty() ? null : Revision.of(dateString);
+        return RevisionUnion.of(dateString);
     }
 }
