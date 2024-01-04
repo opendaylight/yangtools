@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer;
-import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
