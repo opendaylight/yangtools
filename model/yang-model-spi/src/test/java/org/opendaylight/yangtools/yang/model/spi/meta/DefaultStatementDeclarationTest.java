@@ -5,23 +5,23 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
-class ExplicitStatementTest {
+class DefaultStatementDeclarationTest {
     @Test
     void testStatementSource() {
-        assertEquals(StatementOrigin.DECLARATION, ExplicitStatement.inFile("foo").statementOrigin());
+        assertEquals(StatementOrigin.DECLARATION, StatementDeclarations.inText(null, 1, 1).statementOrigin());
     }
 
     @Test
     void testToString() {
-        assertEquals("foo", ExplicitStatement.inFile("foo").toString());
-        assertEquals("<UNKNOWN>:5:10", ExplicitStatement.atPosition(5, 10).toString());
-        assertEquals("foo:5:10", ExplicitStatement.atPosition("foo", 5, 10).toString());
+        assertEquals("foo", StatementDeclarations.inText("foo", 1, 1).toString());
+        assertEquals("<UNKNOWN>:5:10", StatementDeclarations.inText(5, 10).toString());
+        assertEquals("foo:5:10", StatementDeclarations.inText("foo", 5, 10).toString());
     }
 }
