@@ -16,8 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInFile;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 /**
@@ -34,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
  *   <li>{@link #inFile(String)}- provides a source name.</li>
  * </ul>
  */
-public abstract class StatementInText extends StatementSourceReference implements DeclarationReference {
+public abstract class StatementInText extends StatementDeclaration {
     private static final class InFile extends StatementInText implements DeclarationInFile {
         InFile(final String fileName) {
             super(fileName, -1, -1);
@@ -100,14 +99,16 @@ public abstract class StatementInText extends StatementSourceReference implement
         return new InFile(fileName);
     }
 
-    @Override
-    public final StatementOrigin statementOrigin() {
-        return StatementOrigin.DECLARATION;
+    final String file() {
+        return file;
     }
 
-    @Override
-    public final DeclarationReference declarationReference() {
-        return this;
+    final int line() {
+        return line;
+    }
+
+    final int column() {
+        return column;
     }
 
     @Override
@@ -143,17 +144,5 @@ public abstract class StatementInText extends StatementSourceReference implement
     @Override
     public final String toString() {
         return toHumanReadable();
-    }
-
-    final String file() {
-        return file;
-    }
-
-    final int line() {
-        return line;
-    }
-
-    final int column() {
-        return column;
     }
 }
