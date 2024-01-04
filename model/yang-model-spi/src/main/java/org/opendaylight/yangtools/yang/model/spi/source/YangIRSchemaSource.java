@@ -5,16 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.ir;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
+import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 
 public final class YangIRSchemaSource implements YangSourceRepresentation {
     private final @NonNull SourceIdentifier sourceId;
@@ -23,22 +27,27 @@ public final class YangIRSchemaSource implements YangSourceRepresentation {
 
     public YangIRSchemaSource(final @NonNull SourceIdentifier sourceId, final @NonNull IRStatement rootStatement,
             final @Nullable String symbolicName) {
-        this.sourceId = requireNonNull(sourceId);
-        this.rootStatement = requireNonNull(rootStatement);
-        this.symbolicName = symbolicName;
-
-        final IRKeyword rootKeyword = rootStatement.keyword();
-        checkArgument(rootKeyword instanceof Unqualified, "Root statement has invalid keyword %s", rootKeyword);
-        final String rootName = rootKeyword.identifier();
+        final var rootKeyword = rootStatement.keyword();
+        if (!(rootKeyword instanceof Unqualified)) {
+            throw new StatementSourceException(refOf(sourceId, rootStatement),
+                "Root statement has invalid keyword " + rootKeyword);
+        }
+        final var rootName = rootKeyword.identifier();
         switch (rootName) {
             case "module":
             case "submodule":
                 break;
             default:
-                throw new IllegalArgumentException("Invalid root statement keyword " + rootName);
+                throw new StatementSourceException(refOf(sourceId, rootStatement),
+                    "Invalid root statement keyword " + rootName);
         }
-
-        checkArgument(rootStatement.argument() != null, "Root statement does not have an argument");
+        if (rootStatement.argument() == null) {
+            throw new StatementSourceException(refOf(sourceId, rootStatement),
+                "Root statement does not have an argument");
+        }
+        this.sourceId = requireNonNull(sourceId);
+        this.rootStatement = rootStatement;
+        this.symbolicName = symbolicName;
     }
 
     @Override
@@ -61,7 +70,13 @@ public final class YangIRSchemaSource implements YangSourceRepresentation {
      *
      * @return Root statement.
      */
-    public @NonNull IRStatement getRootStatement() {
+    public @NonNull IRStatement rootStatement() {
         return rootStatement;
+    }
+
+    // FIXME: hide this method
+    @Beta
+    public static StatementDeclaration.InText refOf(final SourceIdentifier source, final IRStatement stmt) {
+        return StatementDeclarations.inText(source.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
     }
 }

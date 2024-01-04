@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
@@ -80,7 +80,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
      * @throws NullPointerException if {@code source} is null
      */
     public static YangStatementStreamSource create(final YangIRSchemaSource source) {
-        return create(source.sourceId(), source.getRootStatement(), source.symbolicName());
+        return create(source.sourceId(), source.rootStatement(), source.symbolicName());
     }
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final IRStatement rootStatement,

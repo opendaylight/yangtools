@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -25,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 
@@ -55,7 +55,7 @@ public final class YangIRSourceInfoExtractor {
      * @throws IllegalArgumentException If the root statement is not a valid YANG module/submodule
      */
     public static @NonNull SourceInfo forIR(final YangIRSchemaSource source) {
-        return forIR(source.getRootStatement(), source.sourceId());
+        return forIR(source.rootStatement(), source.sourceId());
     }
 
     /**
