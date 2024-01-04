@@ -54,7 +54,7 @@ public final class ImplicitSubstatement extends StatementSourceReference {
 
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof ImplicitSubstatement && parentRef.equals(((ImplicitSubstatement) obj).parentRef);
+        return obj instanceof ImplicitSubstatement other && parentRef.equals(other.parentRef);
     }
 
     @Override
