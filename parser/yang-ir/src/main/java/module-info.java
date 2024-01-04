@@ -9,7 +9,6 @@ module org.opendaylight.yangtools.yang.ir {
     exports org.opendaylight.yangtools.yang.ir;
 
     requires transitive com.google.common;
-    requires transitive org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.concepts;
 
     // Annotations
