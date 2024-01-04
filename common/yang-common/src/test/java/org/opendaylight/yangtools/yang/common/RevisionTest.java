@@ -90,17 +90,17 @@ public class RevisionTest {
 
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
-        final Revision source = Revision.of("2017-12-25");
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+        final var source = Revision.of("2017-12-25");
+        final var bos = new ByteArrayOutputStream();
+        try (var oos = new ObjectOutputStream(bos)) {
             oos.writeObject(source);
         }
 
-        final Object read;
-        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()))) {
-            read = ois.readObject();
-        }
+        final var bytes = bos.toByteArray();
+        assertEquals(88, bytes.length);
 
-        assertEquals(source, read);
+        try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+            assertEquals(source, ois.readObject());
+        }
     }
 }
