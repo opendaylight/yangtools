@@ -15,6 +15,7 @@ module org.opendaylight.yangtools.yang.parser.spi {
     requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
     requires org.slf4j;
 
