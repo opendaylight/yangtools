@@ -17,8 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInFile;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 /**
@@ -36,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
  * </ul>
  */
 @Beta
-public abstract class ExplicitStatement extends StatementSourceReference implements DeclarationReference {
+public abstract class ExplicitStatement extends StatementDeclaration {
     private static final class InFile extends ExplicitStatement implements DeclarationInFile {
         InFile(final String fileName) {
             super(fileName, -1, -1);
@@ -103,29 +102,6 @@ public abstract class ExplicitStatement extends StatementSourceReference impleme
     }
 
     @Override
-    public final StatementOrigin statementOrigin() {
-        return StatementOrigin.DECLARATION;
-    }
-
-    @Override
-    public final DeclarationReference declarationReference() {
-        return this;
-    }
-
-    @Override
-    public final String toHumanReadable() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(file != null ? file : "<UNKNOWN>");
-        if (line > 0) {
-            sb.append(':').append(line);
-        }
-        if (column > 0) {
-            sb.append(':').append(column);
-        }
-        return sb.toString();
-    }
-
-    @Override
     public final int hashCode() {
         return Objects.hash(file(), line(), column());
     }
@@ -143,19 +119,17 @@ public abstract class ExplicitStatement extends StatementSourceReference impleme
     }
 
     @Override
-    public final String toString() {
-        return toHumanReadable();
-    }
-
-    final String file() {
+    protected final String file() {
         return file;
     }
 
-    final int line() {
+    @Override
+    protected final int line() {
         return line;
     }
 
-    final int column() {
+    @Override
+    protected final int column() {
         return column;
     }
 }
