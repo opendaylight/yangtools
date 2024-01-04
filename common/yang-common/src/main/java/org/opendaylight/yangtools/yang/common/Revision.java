@@ -17,7 +17,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
@@ -25,7 +24,6 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * Dedicated object identifying a YANG module revision.
@@ -40,7 +38,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * {@link Optional}. Both patterns can take advantage of {@link #compare(Optional, Optional)} and
  * {@link #compare(Revision, Revision)} respectively.
  */
-public final class Revision implements Comparable<Revision>, Immutable, Serializable {
+public final class Revision implements RevisionUnion {
     // Note: since we are using writeReplace() this version is not significant.
     @java.io.Serial
     private static final long serialVersionUID = 1L;
@@ -61,7 +59,7 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
      */
     public static final Revision MAX_VALUE = Revision.of("9999-12-31");
 
-    private final @NonNull String str;
+    private final @NonNull String dateString;
 
     private Revision(final @NonNull String str) {
         /*
@@ -75,7 +73,7 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
          * Hence we use JDK-provided parsing faculties to parse the date.
          */
         FORMATTER.parse(str);
-        this.str = str;
+        dateString = str;
     }
 
     /**
@@ -99,6 +97,11 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
      */
     public static @NonNull Optional<Revision> ofNullable(final @Nullable String str) {
         return str == null ? Optional.empty() : Optional.of(new Revision(str));
+    }
+
+    @Override
+    public Optional<Revision> toOptional() {
+        return Optional.of(this);
     }
 
     /**
@@ -133,31 +136,23 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
     }
 
     @Override
-    @SuppressWarnings("checkstyle:parameterName")
-    public int compareTo(final Revision o) {
-        // Since all strings conform to the format, we can use their comparable property to do the correct thing
-        // with respect to temporal ordering.
-        return str.compareTo(o.str);
-    }
-
-    @Override
     public int hashCode() {
-        return str.hashCode();
+        return dateString.hashCode();
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof Revision other && str.equals(other.str);
+        return this == obj || obj instanceof Revision other && dateString.equals(other.dateString);
     }
 
     @Override
     public String toString() {
-        return str;
+        return dateString;
     }
 
     @java.io.Serial
     Object writeReplace() {
-        return new Proxy(str);
+        return new RUv1(this);
     }
 
     @java.io.Serial
@@ -175,38 +170,35 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
         throwNSE();
     }
 
-    private static void throwNSE() throws NotSerializableException {
+    static void throwNSE() throws NotSerializableException {
         throw new NotSerializableException(Revision.class.getName());
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     private static final class Proxy implements Externalizable {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
-        private String str;
+        private Revision revision;
 
         @SuppressWarnings("checkstyle:redundantModifier")
         public Proxy() {
             // For Externalizable
         }
 
-        Proxy(final String str) {
-            this.str = requireNonNull(str);
-        }
-
         @Override
         public void writeExternal(final ObjectOutput out) throws IOException {
-            out.writeObject(str);
+            throw new NotSerializableException(Proxy.class.getName());
         }
 
         @Override
         public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-            str = (String) in.readObject();
+            revision = Revision.of((String) in.readObject());
         }
 
         @java.io.Serial
         private Object readResolve() {
-            return Revision.of(requireNonNull(str));
+            return requireNonNull(revision);
         }
     }
 }
