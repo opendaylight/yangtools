@@ -218,26 +218,20 @@ class PathExpressionParser {
     }
 
     private static YangQNameExpr createChildExpr(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
-        switch (qname.getChildCount()) {
-            case 1:
-                return YangQNameExpr.of(Unqualified.of(qname.getText()).intern());
-            case 3:
-                return YangQNameExpr.of(parseQName(ctx, qname));
-            default:
-                throw new IllegalStateException("Unexpected shape " + qname.getText());
-        }
+        return switch (qname.getChildCount()) {
+            case 1 -> YangQNameExpr.of(Unqualified.of(qname.getText()).intern());
+            case 3 -> YangQNameExpr.of(parseQName(ctx, qname));
+            default -> throw new IllegalStateException("Unexpected shape " + qname.getText());
+        };
     }
 
     private static QNameStep createChildStep(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname,
             final List<YangExpr> predicates) {
-        switch (qname.getChildCount()) {
-            case 1:
-                return YangXPathAxis.CHILD.asStep(Unqualified.of(qname.getText()).intern(), predicates);
-            case 3:
-                return YangXPathAxis.CHILD.asStep(parseQName(ctx, qname), predicates);
-            default:
-                throw new IllegalStateException("Unexpected shape " + qname.getText());
-        }
+        return switch (qname.getChildCount()) {
+            case 1 -> YangXPathAxis.CHILD.asStep(Unqualified.of(qname.getText()).intern(), predicates);
+            case 3 -> YangXPathAxis.CHILD.asStep(parseQName(ctx, qname), predicates);
+            default -> throw new IllegalStateException("Unexpected shape " + qname.getText());
+        };
     }
 
     private static @NonNull QName parseQName(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
