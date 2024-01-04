@@ -97,7 +97,7 @@ public class RevisionTest {
         }
 
         final var bytes = bos.toByteArray();
-        assertEquals(88, bytes.length);
+        assertEquals(78, bytes.length);
 
         try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
             assertEquals(source, ois.readObject());
