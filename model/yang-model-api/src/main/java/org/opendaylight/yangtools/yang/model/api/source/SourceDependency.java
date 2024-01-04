@@ -39,9 +39,29 @@ public sealed interface SourceDependency extends Serializable
      * or its semantic equivalent (think semantic version of imports). If unspecified, this dependency can be satisfied
      * by any source with a matching {@link #name()}.
      *
+     * <p>
+     * Satisfaction criteria can be easily be valuated via {@link #isSatisfiedBy(SourceIdentifier)}.
+     *
      * @return required source revision, {@code null} if unspecified
      */
     @Nullable Revision revision();
+
+    /**
+     * Check if a given {@link SourceIdentifier} satisfies the needs of this dependency.
+     *
+     * @param sourceId given {@link SourceIdentifier}
+     * @return {@code true} if the {@link SourceIdentifier} satisfies this dependency
+     * @throws NullPointerException if {@code sourceId} is {@code null}
+     */
+    default boolean isSatisfiedBy(final SourceIdentifier sourceId) {
+        if (name().equals(sourceId.name())) {
+            final var revision = revision();
+            if (revision == null || revision.equals(sourceId.revision())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * A dependency created by a {@link BelongsToStatement}.

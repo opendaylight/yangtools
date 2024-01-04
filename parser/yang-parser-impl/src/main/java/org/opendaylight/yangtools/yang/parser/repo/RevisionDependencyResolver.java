@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import java.util.Collection;
 import java.util.Map;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
@@ -30,16 +29,6 @@ final class RevisionDependencyResolver extends DependencyResolver {
         // Quick lookup
         return haystack.contains(new SourceIdentifier(dependency.name(), dependency.revision()))
             // Slow revision-less walk
-            || dependency.revision() == null && findWildcard(haystack, dependency.name()) != null;
-    }
-
-    private static SourceIdentifier findWildcard(final Collection<SourceIdentifier> haystack,
-            final Unqualified needle) {
-        for (var sourceId : haystack) {
-            if (needle.equals(sourceId.name())) {
-                return sourceId;
-            }
-        }
-        return null;
+            || dependency.revision() == null && haystack.stream().anyMatch(dependency::isSatisfiedBy);
     }
 }
