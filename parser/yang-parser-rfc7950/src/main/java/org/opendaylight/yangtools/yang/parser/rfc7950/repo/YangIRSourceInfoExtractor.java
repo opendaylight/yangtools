@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+import static org.opendaylight.yangtools.yang.model.spi.source.YangIRSource.refOf;
+
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -16,17 +18,16 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
 
 /**
  * Utility class for extract {@link SourceInfo} from a {@link YangIRSchemaSource}.
@@ -54,8 +55,8 @@ public final class YangIRSourceInfoExtractor {
      * @return {@link SourceInfo}
      * @throws IllegalArgumentException If the root statement is not a valid YANG module/submodule
      */
-    public static @NonNull SourceInfo forIR(final YangIRSchemaSource source) {
-        return forIR(source.getRootStatement(), source.sourceId());
+    public static @NonNull SourceInfo forIR(final YangIRSource source) {
+        return forIR(source.rootStatement(), source.sourceId());
     }
 
     /**
@@ -69,7 +70,7 @@ public final class YangIRSourceInfoExtractor {
     public static @NonNull SourceInfo forIR(final IRStatement rootStatement, final SourceIdentifier sourceId) {
         final var keyword = rootStatement.keyword();
         if (!(keyword instanceof IRKeyword.Unqualified)) {
-            throw new IllegalArgumentException("Invalid root statement " + keyword);
+            throw new StatementSourceException(refOf(sourceId, rootStatement), "Invalid root statement " + keyword);
         }
 
         final String arg = keyword.identifier();
@@ -79,7 +80,8 @@ public final class YangIRSourceInfoExtractor {
         if (SUBMODULE.equals(arg)) {
             return submmoduleForIR(rootStatement, sourceId);
         }
-        throw new IllegalArgumentException("Root of parsed AST must be either module or submodule");
+        throw new StatementSourceException(refOf(sourceId, rootStatement),
+            "Root of parsed AST must be either module or submodule");
     }
 
     /**
@@ -106,7 +108,7 @@ public final class YangIRSourceInfoExtractor {
                 .findFirst()
                 .map(stmt -> safeStringArgument(sourceId, stmt, "namespace argument"))
                 .map(XMLNamespace::of)
-                .orElseThrow(() -> new IllegalArgumentException("No namespace statement in " + refOf(sourceId, root))))
+                .orElseThrow(() -> new StatementSourceException(refOf(sourceId, root), "No namespace statement")))
             .setPrefix(extractPrefix(root, sourceId))
             .build();
     }
@@ -121,7 +123,7 @@ public final class YangIRSourceInfoExtractor {
                 .findFirst()
                 .map(stmt -> new BelongsTo(Unqualified.of(safeStringArgument(sourceId, stmt, "belongs-to module name")),
                     extractPrefix(stmt, sourceId)))
-                .orElseThrow(() -> new IllegalArgumentException("No belongs-to statement in " + refOf(sourceId, root))))
+                .orElseThrow(() -> new StatementSourceException(refOf(sourceId, root), "No belongs-to statement")))
             .build();
     }
 
@@ -159,7 +161,7 @@ public final class YangIRSourceInfoExtractor {
             .filter(stmt -> isStatement(stmt, PREFIX))
             .findFirst()
             .map(stmt -> Unqualified.of(safeStringArgument(sourceId, stmt, "prefix argument")))
-            .orElseThrow(() -> new IllegalArgumentException("No prefix statement in " + refOf(sourceId, root)));
+            .orElseThrow(() -> new StatementSourceException(refOf(sourceId, root), "No prefix statement"));
     }
 
     private static @Nullable Revision extractRevisionDate(final IRStatement root, final SourceIdentifier sourceId) {
@@ -179,14 +181,10 @@ public final class YangIRSourceInfoExtractor {
         final var ref = refOf(source, stmt);
         final var arg = stmt.argument();
         if (arg == null) {
-            throw new IllegalArgumentException("Missing " + desc + " at " + ref);
+            throw new StatementSourceException(ref, "Missing " + desc);
         }
 
         // TODO: we probably need to understand yang version first....
         return ArgumentContextUtils.rfc6020().stringFromStringContext(arg, ref);
-    }
-
-    private static StatementSourceReference refOf(final SourceIdentifier source, final IRStatement stmt) {
-        return ExplicitStatement.atPosition(source.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
     }
 }

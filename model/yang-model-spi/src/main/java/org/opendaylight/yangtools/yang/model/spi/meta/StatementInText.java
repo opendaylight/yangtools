@@ -6,12 +6,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -34,9 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
  *   <li>{@link #inFile(String)}- provides a source name.</li>
  * </ul>
  */
-@Beta
-public abstract class ExplicitStatement extends StatementDeclaration {
-    private static final class InFile extends ExplicitStatement implements DeclarationInFile {
+public abstract class StatementInText extends StatementDeclaration {
+    private static final class InFile extends StatementInText implements DeclarationInFile {
         InFile(final String fileName) {
             super(fileName, -1, -1);
             checkArgument(!fileName.isEmpty(), "Invalid empty file name");
@@ -48,7 +46,7 @@ public abstract class ExplicitStatement extends StatementDeclaration {
         }
     }
 
-    private static class InText extends ExplicitStatement implements DeclarationInText {
+    private static class InText extends StatementInText implements DeclarationInText {
         InText(final String file, final int line, final int column) {
             super(file, line, column);
             checkArgument(line > 0, "Invalid start line %s", line);
@@ -82,22 +80,22 @@ public abstract class ExplicitStatement extends StatementDeclaration {
     private final int line;
     private final int column;
 
-    ExplicitStatement(final String file, final int line, final int column) {
+    StatementInText(final String file, final int line, final int column) {
         this.file = file;
         this.line = line;
         this.column = column;
     }
 
-    public static @NonNull ExplicitStatement atPosition(final int line, final int column) {
+    public static @NonNull StatementInText atPosition(final int line, final int column) {
         return new InText(null, line, column);
     }
 
-    public static @NonNull ExplicitStatement atPosition(final @Nullable String fileName, final int line,
+    public static @NonNull StatementInText atPosition(final @Nullable String fileName, final int line,
             final int column) {
         return fileName == null ? atPosition(line, column) : new InTextFile(fileName, line, column);
     }
 
-    public static @NonNull ExplicitStatement inFile(final @NonNull String fileName) {
+    public static @NonNull StatementInText inFile(final @NonNull String fileName) {
         return new InFile(fileName);
     }
 
@@ -127,7 +125,7 @@ public abstract class ExplicitStatement extends StatementDeclaration {
         if (obj == null || !getClass().equals(obj.getClass())) {
             return false;
         }
-        final ExplicitStatement other = (ExplicitStatement) obj;
+        final StatementInText other = (StatementInText) obj;
         return line == other.line && column == other.column && Objects.equals(file, other.file);
     }
 

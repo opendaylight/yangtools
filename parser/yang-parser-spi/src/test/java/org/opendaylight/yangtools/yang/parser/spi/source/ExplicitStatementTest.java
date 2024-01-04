@@ -11,17 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementInText;
 
 class ExplicitStatementTest {
     @Test
     void testStatementSource() {
-        assertEquals(StatementOrigin.DECLARATION, ExplicitStatement.inFile("foo").statementOrigin());
+        assertEquals(StatementOrigin.DECLARATION, StatementInText.inFile("foo").statementOrigin());
     }
 
     @Test
     void testToString() {
-        assertEquals("foo", ExplicitStatement.inFile("foo").toString());
-        assertEquals("<UNKNOWN>:5:10", ExplicitStatement.atPosition(5, 10).toString());
-        assertEquals("foo:5:10", ExplicitStatement.atPosition("foo", 5, 10).toString());
+        assertEquals("foo", StatementInText.inFile("foo").toString());
+        assertEquals("<UNKNOWN>:5:10", StatementInText.atPosition(5, 10).toString());
+        assertEquals("foo:5:10", StatementInText.atPosition("foo", 5, 10).toString());
     }
 }
