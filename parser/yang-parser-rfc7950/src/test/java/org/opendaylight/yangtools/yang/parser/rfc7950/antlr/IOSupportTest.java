@@ -18,12 +18,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.ir.IOSupport;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.ir.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 class IOSupportTest {
-    private static YangIRSchemaSource FOO;
+    private static YangIRSource FOO;
 
     @BeforeAll
     static void beforeClass() throws Exception {
@@ -32,13 +32,13 @@ class IOSupportTest {
 
     @Test
     void testSerializedSize() throws IOException {
-        final byte[] bytes = serialize(FOO.getRootStatement());
+        final byte[] bytes = serialize(FOO.rootStatement());
         assertEquals(485, bytes.length);
     }
 
     @Test
     void testSerdes() throws IOException {
-        final var orig = FOO.getRootStatement();
+        final var orig = FOO.rootStatement();
         assertEquals(orig, deserialize(serialize(orig)));
     }
 

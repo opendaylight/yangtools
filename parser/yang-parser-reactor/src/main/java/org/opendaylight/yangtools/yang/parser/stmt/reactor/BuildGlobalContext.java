@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -48,7 +49,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
@@ -185,8 +185,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     private SomeModifiersUnresolvedException propagateException(final SourceSpecificContext source,
             final RuntimeException cause) throws SomeModifiersUnresolvedException {
-        final SourceIdentifier sourceId = source.identifySource();
-        if (!(cause instanceof SourceException)) {
+        final var sourceId = source.identifySource();
+        if (!(cause instanceof StatementSourceException)) {
             /*
              * This should not be happening as all our processing should provide SourceExceptions.
              * We will wrap the exception to provide enough information to identify the problematic model,
@@ -195,7 +195,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
             LOG.warn("Unexpected error processing source {}. Please file an issue with this model attached.",
                 sourceId, cause);
         }
-
         throw new SomeModifiersUnresolvedException(currentPhase, sourceId, cause);
     }
 
@@ -253,37 +252,37 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private SomeModifiersUnresolvedException addSourceExceptions(final List<SourceSpecificContext> sourcesToProgress) {
         boolean addedCause = false;
         SomeModifiersUnresolvedException buildFailure = null;
-        for (final SourceSpecificContext failedSource : sourcesToProgress) {
-            final Optional<SourceException> optSourceEx = failedSource.failModifiers(currentPhase);
+        for (var failedSource : sourcesToProgress) {
+            final var optSourceEx = failedSource.failModifiers(currentPhase);
             if (optSourceEx.isEmpty()) {
                 continue;
             }
 
-            final SourceException sourceEx = optSourceEx.orElseThrow();
+            final var sourceEx = optSourceEx.orElseThrow();
             // Workaround for broken logging implementations which ignore
             // suppressed exceptions
-            final Throwable cause = sourceEx.getCause() != null ? sourceEx.getCause() : sourceEx;
+            final var cause = sourceEx.getCause() != null ? sourceEx.getCause() : sourceEx;
             if (LOG.isDebugEnabled()) {
                 LOG.error("Failed to parse YANG from source {}", failedSource, sourceEx);
             } else {
                 LOG.error("Failed to parse YANG from source {}: {}", failedSource, cause.getMessage());
             }
 
-            final Throwable[] suppressed = sourceEx.getSuppressed();
+            final var suppressed = sourceEx.getSuppressed();
             if (suppressed.length > 0) {
                 LOG.error("{} additional errors reported:", suppressed.length);
 
                 int count = 1;
-                for (final Throwable t : suppressed) {
-                    LOG.error("Error {}: {}", count, t.getMessage());
+                for (var additional : suppressed) {
+                    LOG.error("Error {}: {}", count, additional.getMessage());
                     count++;
                 }
             }
 
             if (!addedCause) {
                 addedCause = true;
-                final SourceIdentifier sourceId = failedSource.identifySource();
-                buildFailure = new SomeModifiersUnresolvedException(currentPhase, sourceId, sourceEx);
+                buildFailure = new SomeModifiersUnresolvedException(currentPhase, failedSource.identifySource(),
+                    sourceEx);
             } else {
                 buildFailure.addSuppressed(sourceEx);
             }
