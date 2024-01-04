@@ -11,9 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.Externalizable;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.Serial;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -36,12 +39,10 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * the primary bridge data type. Implementations can use nullable fields with explicit conversions to/from
  * {@link Optional}. Both patterns can take advantage of {@link #compare(Optional, Optional)} and
  * {@link #compare(Revision, Revision)} respectively.
- *
- * @author Robert Varga
  */
 public final class Revision implements Comparable<Revision>, Immutable, Serializable {
     // Note: since we are using writeReplace() this version is not significant.
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -154,13 +155,32 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
         return str;
     }
 
-    @Serial
+    @java.io.Serial
     Object writeReplace() {
         return new Proxy(str);
     }
 
+    @java.io.Serial
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        throwNSE();
+    }
+
+    @java.io.Serial
+    private void readObjectNoData() throws ObjectStreamException {
+        throwNSE();
+    }
+
+    @java.io.Serial
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        throwNSE();
+    }
+
+    private static void throwNSE() throws NotSerializableException {
+        throw new NotSerializableException(Revision.class.getName());
+    }
+
     private static final class Proxy implements Externalizable {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private String str;
@@ -184,7 +204,7 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
             str = (String) in.readObject();
         }
 
-        @Serial
+        @java.io.Serial
         private Object readResolve() {
             return Revision.of(requireNonNull(str));
         }
