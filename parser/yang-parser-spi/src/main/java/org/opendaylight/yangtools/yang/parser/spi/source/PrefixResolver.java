@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -22,5 +23,5 @@ public interface PrefixResolver {
      * @param prefix Prefix
      * @return QNameModule associated with supplied prefix, or null if prefix is not defined.
      */
-    @Nullable QNameModule resolvePrefix(String prefix);
+    @Nullable QNameModule resolvePrefix(@NonNull String prefix);
 }
