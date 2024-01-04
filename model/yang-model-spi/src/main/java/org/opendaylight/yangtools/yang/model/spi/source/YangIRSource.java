@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.spi.meta.StatementInText;
 
 /**
  * A {@link YangSourceRepresentation} based on {@link IRStatement}.
@@ -77,8 +76,7 @@ public record YangIRSource(SourceIdentifier sourceId, IRStatement rootStatement,
 
     // FIXME: hide this method
     @Beta
-    public static StatementInText refOf(final SourceIdentifier source, final IRStatement stmt) {
-        return StatementInText.atPosition(source.name().getLocalName(), stmt.startLine(),
-            stmt.startColumn() + 1);
+    public static YangIRStatementInText refOf(final SourceIdentifier sourceId, final IRStatement stmt) {
+        return new YangIRStatementInText(stmt, sourceId);
     }
 }
