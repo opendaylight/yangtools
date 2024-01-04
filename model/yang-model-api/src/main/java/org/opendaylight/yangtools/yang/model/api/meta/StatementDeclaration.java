@@ -12,7 +12,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * A {@link StatementSourceReference} which acts as its own {@link DeclarationReference}.
+ * A {@link StatementSourceReference} which acts as its own {@link DeclarationReference}, i.e. referring to a statement
+ * source present in textual source format.
  */
 @NonNullByDefault
 public abstract class StatementDeclaration extends StatementSourceReference implements DeclarationReference {
@@ -28,6 +29,11 @@ public abstract class StatementDeclaration extends StatementSourceReference impl
         @Override
         protected final int column() {
             return startColumn();
+        }
+
+        @Override
+        protected @Nullable String file() {
+            return null;
         }
     }
 
