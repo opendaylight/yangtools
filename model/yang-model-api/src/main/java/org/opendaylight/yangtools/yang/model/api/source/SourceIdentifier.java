@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  * and <a href="https://www.rfc-editor.org/rfc/rfc6022#section-3.1">RFC6022</a>.
  */
 public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision revision) implements Identifier {
+    @java.io.Serial
     private static final long serialVersionUID = 3L;
 
     /**
@@ -124,7 +125,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * @return Filename for this source identifier.
      */
     public static @NonNull String toYangFileName(final @NonNull String moduleName, final @Nullable Revision revision) {
-        final StringBuilder sb = new StringBuilder(moduleName);
+        final var sb = new StringBuilder(moduleName);
         if (revision != null) {
             sb.append('@').append(revision);
         }
