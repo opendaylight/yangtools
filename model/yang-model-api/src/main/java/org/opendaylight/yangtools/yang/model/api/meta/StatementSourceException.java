@@ -42,6 +42,11 @@ public class StatementSourceException extends RuntimeException {
         this(sourceRef, format.formatted(args));
     }
 
+    public StatementSourceException(final StatementSourceReference sourceRef, final Throwable cause,
+            final String format, final Object... args) {
+        this(sourceRef, format.formatted(args), cause);
+    }
+
     private static String createMessage(final StatementSourceReference sourceRef, final String message) {
         return requireNonNull(message) + " [at " + requireNonNull(sourceRef) + ']';
     }

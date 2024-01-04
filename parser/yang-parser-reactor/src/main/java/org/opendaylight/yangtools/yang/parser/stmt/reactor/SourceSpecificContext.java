@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -411,12 +412,12 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
                 + finishedPhase + "]";
     }
 
-    Optional<SourceException> failModifiers(final ModelProcessingPhase identifier) {
-        final List<SourceException> exceptions = new ArrayList<>();
-        for (final ModifierImpl mod : modifiers.get(identifier)) {
+    Optional<StatementSourceException> failModifiers(final ModelProcessingPhase identifier) {
+        final var exceptions = new ArrayList<StatementSourceException>();
+        for (var mod : modifiers.get(identifier)) {
             try {
                 mod.failModifier();
-            } catch (final SourceException e) {
+            } catch (StatementSourceException e) {
                 exceptions.add(e);
             }
         }
@@ -425,8 +426,8 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             case 0 -> Optional.empty();
             case 1 -> Optional.of(exceptions.get(0));
             default -> {
-                final String message = String.format("Yang model processing phase %s failed", identifier);
-                final InferenceException ex = new InferenceException(message, root, exceptions.get(0));
+                final var ex = new InferenceException("Yang model processing phase " + identifier + " failed", root,
+                    exceptions.get(0));
                 exceptions.listIterator(1).forEachRemaining(ex::addSuppressed);
                 yield Optional.of(ex);
             }

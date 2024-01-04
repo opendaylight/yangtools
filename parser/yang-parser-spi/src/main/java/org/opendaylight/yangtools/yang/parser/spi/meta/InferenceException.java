@@ -8,40 +8,43 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
- * Thrown when there is an inference error.
+ * A {@link StatementSourceException} indicating an inference problem, e.g. a problem with how statements interact with
+ * each other.
  */
-public class InferenceException extends SourceException {
-    private static final long serialVersionUID = 1L;
+public final class InferenceException extends StatementSourceException {
+    @java.io.Serial
+    private static final long serialVersionUID = 2L;
 
     public InferenceException(final @NonNull String message, final @NonNull StatementSourceReference source) {
-        super(message, source);
+        super(source, message);
     }
 
     public InferenceException(final @NonNull String message, final @NonNull StatementSourceReference source,
             final Throwable cause) {
-        super(message, source, cause);
+        super(source, message, cause);
     }
 
     public InferenceException(final @NonNull StatementSourceReference source, final @NonNull String format,
             final Object... args) {
-        this(String.format(format, args), source);
+        super(source, format, args);
     }
 
     public InferenceException(final @NonNull String message, final @NonNull CommonStmtCtx stmt) {
-        super(message, stmt);
+        super(stmt.sourceReference(), message);
     }
 
     public InferenceException(final @NonNull String message, final @NonNull CommonStmtCtx stmt, final Throwable cause) {
-        super(message, stmt, cause);
+        super(stmt.sourceReference(), message, cause);
     }
 
     public InferenceException(final @NonNull CommonStmtCtx stmt, final @NonNull String format,
             final Object... args) {
-        this(stmt.sourceReference(), format, args);
+        super(stmt.sourceReference(), format, args);
     }
 
     /**
@@ -76,5 +79,43 @@ public class InferenceException extends SourceException {
         if (expression) {
             throw new InferenceException(stmt.sourceReference(), format, args);
         }
+    }
+
+    /**
+     * Throw an instance of this exception if an object is null. If the object is non-null, it will
+     * be returned as the result of this method.
+     *
+     * @param obj Object reference to be checked
+     * @param stmt Statement context, not retained
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @return Object if it is not null
+     * @throws InferenceException if object is null
+     */
+    public static <T> @NonNull T throwIfNull(final @Nullable T obj, final @NonNull CommonStmtCtx stmt,
+            final @NonNull String format, final Object... args) {
+        if (obj == null) {
+            throw new InferenceException(stmt.sourceReference(), format, args);
+        }
+        return obj;
+    }
+
+    /**
+     * Throw an instance of this exception if an object is null. If the object is non-null, it will
+     * be returned as the result of this method.
+     *
+     * @param obj Object reference to be checked
+     * @param source Statement source reference
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @return Object if it is not null
+     * @throws InferenceException if object is null
+     */
+    public static <T> @NonNull T throwIfNull(final @Nullable T obj, final @NonNull StatementSourceReference source,
+            final @NonNull String format, final Object... args) {
+        if (obj == null) {
+            throw new InferenceException(source, format, args);
+        }
+        return obj;
     }
 }

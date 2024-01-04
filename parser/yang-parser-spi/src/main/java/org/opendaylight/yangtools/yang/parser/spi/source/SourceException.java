@@ -55,7 +55,7 @@ public class SourceException extends StatementSourceException {
      */
     public SourceException(final @NonNull StatementSourceReference source, final @NonNull String format,
             final Object... args) {
-        this(String.format(format, args), source);
+        super(source, format, args);
     }
 
     /**
@@ -69,7 +69,7 @@ public class SourceException extends StatementSourceException {
      */
     public SourceException(final @NonNull StatementSourceReference source, final Throwable cause,
             final @NonNull String format, final Object... args) {
-        this(String.format(format, args), source, cause);
+        super(source, cause, format, args);
     }
 
     /**
@@ -80,7 +80,7 @@ public class SourceException extends StatementSourceException {
      * @param stmt Statement context, not retained
      */
     public SourceException(final @NonNull String message, final @NonNull CommonStmtCtx stmt) {
-        this(message, stmt.sourceReference());
+        super(stmt.sourceReference(), message);
     }
 
     /**
@@ -92,7 +92,7 @@ public class SourceException extends StatementSourceException {
      * @param cause Underlying cause of this exception
      */
     public SourceException(final @NonNull String message, final @NonNull CommonStmtCtx stmt, final Throwable cause) {
-        this(message, stmt.sourceReference(), cause);
+        super(stmt.sourceReference(), message, cause);
     }
 
     /**
@@ -104,7 +104,7 @@ public class SourceException extends StatementSourceException {
      * @param args Format string arguments, according to {@link String#format(String, Object...)}
      */
     public SourceException(final @NonNull CommonStmtCtx stmt, final @NonNull String format, final Object... args) {
-        this(stmt.sourceReference(), format, args);
+        super(stmt.sourceReference(), format, args);
     }
 
     /**

@@ -253,36 +253,36 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private SomeModifiersUnresolvedException addSourceExceptions(final List<SourceSpecificContext> sourcesToProgress) {
         boolean addedCause = false;
         SomeModifiersUnresolvedException buildFailure = null;
-        for (final SourceSpecificContext failedSource : sourcesToProgress) {
-            final Optional<SourceException> optSourceEx = failedSource.failModifiers(currentPhase);
+        for (var failedSource : sourcesToProgress) {
+            final var optSourceEx = failedSource.failModifiers(currentPhase);
             if (optSourceEx.isEmpty()) {
                 continue;
             }
 
-            final SourceException sourceEx = optSourceEx.orElseThrow();
+            final var sourceEx = optSourceEx.orElseThrow();
             // Workaround for broken logging implementations which ignore
             // suppressed exceptions
-            final Throwable cause = sourceEx.getCause() != null ? sourceEx.getCause() : sourceEx;
+            final var cause = sourceEx.getCause() != null ? sourceEx.getCause() : sourceEx;
             if (LOG.isDebugEnabled()) {
                 LOG.error("Failed to parse YANG from source {}", failedSource, sourceEx);
             } else {
                 LOG.error("Failed to parse YANG from source {}: {}", failedSource, cause.getMessage());
             }
 
-            final Throwable[] suppressed = sourceEx.getSuppressed();
+            final var suppressed = sourceEx.getSuppressed();
             if (suppressed.length > 0) {
                 LOG.error("{} additional errors reported:", suppressed.length);
 
                 int count = 1;
-                for (final Throwable t : suppressed) {
-                    LOG.error("Error {}: {}", count, t.getMessage());
+                for (var supp : suppressed) {
+                    LOG.error("Error {}: {}", count, supp.getMessage());
                     count++;
                 }
             }
 
             if (!addedCause) {
                 addedCause = true;
-                final SourceIdentifier sourceId = failedSource.identifySource();
+                final var sourceId = failedSource.identifySource();
                 buildFailure = new SomeModifiersUnresolvedException(currentPhase, sourceId, sourceEx);
             } else {
                 buildFailure.addSuppressed(sourceEx);
