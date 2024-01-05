@@ -60,6 +60,16 @@ public final class NotRevision implements RevisionUnion {
     }
 
     @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return this == obj;
+    }
+
+    @Override
     public String toString() {
         return unionString();
     }
