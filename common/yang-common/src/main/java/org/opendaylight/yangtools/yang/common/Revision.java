@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.DataInput;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -107,6 +108,18 @@ public final class Revision implements RevisionUnion {
     @Override
     public String unionString() {
         return str;
+    }
+
+    public static @NonNull Revision readFrom(final DataInput in) throws IOException {
+        return ofRead(in.readUTF());
+    }
+
+    static @NonNull Revision ofRead(final @NonNull String str) throws IOException {
+        try {
+            return of(str);
+        } catch (DateTimeParseException e) {
+            throw new IOException("Invalid revision-date string", e);
+        }
     }
 
     /**
