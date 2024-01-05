@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
-import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.getCodec;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
 
 import org.junit.jupiter.api.Test;
@@ -39,9 +39,9 @@ class UnionCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     void testSerialize() {
-        final var codec = getCodec(toUnionTypeDefinition(toEnumTypeDefinition("enum1", "enum2"),
-                toUnionTypeDefinition(BaseTypes.int32Type(),BaseTypes.int64Type()), BaseTypes.emptyType()),
-                UnionCodec.class);
+        final var codec = assertInstanceOf(UnionCodec.class,
+            UnionStringCodec.from(toUnionTypeDefinition(toEnumTypeDefinition("enum1", "enum2"),
+                toUnionTypeDefinition(BaseTypes.int32Type(),BaseTypes.int64Type()), BaseTypes.emptyType())));
 
         assertEquals("enum1", codec.serialize("enum1"), "serialize");
         assertEquals("123", codec.serialize("123"), "serialize");
@@ -52,9 +52,9 @@ class UnionCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     void testDeserialize() {
-        final var codec = getCodec(toUnionTypeDefinition(toEnumTypeDefinition("enum1", "enum2"),
-                toUnionTypeDefinition(BaseTypes.int32Type(),BaseTypes.int64Type()), BaseTypes.emptyType()),
-                UnionCodec.class);
+        final var codec = assertInstanceOf(UnionCodec.class,
+            UnionStringCodec.from(toUnionTypeDefinition(toEnumTypeDefinition("enum1", "enum2"),
+                toUnionTypeDefinition(BaseTypes.int32Type(),BaseTypes.int64Type()), BaseTypes.emptyType())));
 
         assertEquals("enum1", codec.deserialize("enum1"), "deserialize");
         assertEquals(123, codec.deserialize("123"), "deserialize");
