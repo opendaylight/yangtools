@@ -10,4 +10,5 @@
  * {@link org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement} and
  * {@link org.opendaylight.yangtools.yang.model.api.SchemaNode}.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.model.api.stmt.compat;
