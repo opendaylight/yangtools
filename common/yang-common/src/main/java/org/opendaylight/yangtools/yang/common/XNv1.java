@@ -14,13 +14,12 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serial;
 
 /**
  * Externalizable proxy for {@link XMLNamespace}.
  */
 final class XNv1 implements Externalizable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private XMLNamespace namespace;
@@ -41,14 +40,10 @@ final class XNv1 implements Externalizable {
 
     @Override
     public void readExternal(final ObjectInput in) throws IOException {
-        try {
-            namespace = XMLNamespace.of(in.readUTF());
-        } catch (IllegalArgumentException e) {
-            throw new IOException("Invalid namespace", e);
-        }
+        namespace = XMLNamespace.readFrom(in);
     }
 
-    @Serial
+    @java.io.Serial
     Object readResolve() {
         return verifyNotNull(namespace);
     }
