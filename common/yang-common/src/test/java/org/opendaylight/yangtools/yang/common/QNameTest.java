@@ -88,7 +88,7 @@ public class QNameTest {
 
     @Test
     public void testQNameModule() throws URISyntaxException {
-        final QNameModule qnameModule = QNameModule.create(NS, Revision.of("2000-01-01"));
+        final QNameModule qnameModule = QNameModule.of(NS, Revision.of("2000-01-01"));
         assertEquals("QNameModule{ns=urn:foo, rev=2000-01-01}", qnameModule.toString());
     }
 }
