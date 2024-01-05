@@ -22,4 +22,5 @@ module org.opendaylight.yangtools.yang.model.api {
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
+    requires static org.osgi.annotation.bundle;
 }

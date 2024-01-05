@@ -5,12 +5,5 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-/**
- * Base interfaces for identifying and source of YANG and YIN models. Two main entry points are
- * <ol>
- *   <li>{@link SourceIdentifier}, i.e. how a model source is known</li>
- *   <li>{@link SourceRepresentation}, i.e. its format</li>
- * </ol>
- */
 @org.osgi.annotation.bundle.Export
-package org.opendaylight.yangtools.yang.model.api.source;
+package org.opendaylight.yangtools.yang.model.api.stmt;

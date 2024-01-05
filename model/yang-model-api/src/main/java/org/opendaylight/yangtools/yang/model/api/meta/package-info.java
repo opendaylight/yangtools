@@ -45,4 +45,5 @@
  * and are mostly used during data processing and transformation. Namespaces are typically exposed as a pair of methods
  * in an appropriate {@code SomethingAwareEffectiveStatement} -- one for enumeration and one for lookups.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.model.api.meta;
