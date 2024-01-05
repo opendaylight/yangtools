@@ -38,7 +38,7 @@ public final class YangConstants {
     /**
      * Base QNameModule for all YANG statements.
      */
-    public static final QNameModule RFC6020_YANG_MODULE = QNameModule.create(RFC6020_YANG_NAMESPACE).intern();
+    public static final QNameModule RFC6020_YANG_MODULE = QNameModule.of(RFC6020_YANG_NAMESPACE).intern();
     /**
      * YIN File Extension, as defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-14.2">RFC6020</a>.
      */
@@ -62,7 +62,7 @@ public final class YangConstants {
     /**
      * Base QNameModule for all YIN statements.
      */
-    public static final QNameModule RFC6020_YIN_MODULE = QNameModule.create(RFC6020_YIN_NAMESPACE).intern();
+    public static final QNameModule RFC6020_YIN_MODULE = QNameModule.of(RFC6020_YIN_NAMESPACE).intern();
     /**
      * Prefix for YANG-specific XPath functions.
      */
@@ -82,7 +82,7 @@ public final class YangConstants {
      * <a href="https://www.rfc-editor.org/rfc/rfc6241#section-10.3">ietf-netconf@2011-06-01.yang</a>.
      */
     public static final QNameModule RFC6241_YANG_MODULE =
-        QNameModule.create(NETCONF_NAMESPACE, Revision.of("2011-06-01")).intern();
+        QNameModule.of(NETCONF_NAMESPACE, Revision.of("2011-06-01")).intern();
     /**
      * {@code bad-attribute}, value is the name of the attribute.
      */
@@ -135,13 +135,13 @@ public final class YangConstants {
      * <a href="https://www.rfc-editor.org/rfc/rfc7895#section-2.2">ietf-yang-library@2016-06-21.yang</a>.
      */
     public static final QNameModule RFC7895_YANG_MODULE =
-        QNameModule.create(YANG_LIBRARY_NAMESPACE, Revision.of("2016-06-21")).intern();
+        QNameModule.of(YANG_LIBRARY_NAMESPACE, Revision.of("2016-06-21")).intern();
     /**
      * {@code ietf-yang-library} namespace bound to YANG through
      * <a href="https://www.rfc-editor.org/rfc/rfc8525#section-4">ietf-yang-library@2019-01-04.yang</a>.
      */
     public static final QNameModule RFC8525_YANG_MODULE =
-        QNameModule.create(YANG_LIBRARY_NAMESPACE, Revision.of("2019-01-04")).intern();
+        QNameModule.of(YANG_LIBRARY_NAMESPACE, Revision.of("2019-01-04")).intern();
 
     // Dummy template UnqualifiedQName. These are never leaked, but are used for efficient instantiation via
     // UnqualifiedQName#bindTo()
