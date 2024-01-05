@@ -15,7 +15,9 @@ import com.google.common.collect.Interners;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.Serial;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,26 +34,17 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  */
 public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier, WritableObject {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 3L;
 
     private final @NonNull XMLNamespace namespace;
-    private final @Nullable Revision revision;
+    private final @NonNull RevisionUnion revision;
 
     private transient int hash = 0;
 
-    private QNameModule(final XMLNamespace namespace, final @Nullable Revision revision) {
+    private QNameModule(final XMLNamespace namespace, final RevisionUnion revision) {
         this.namespace = requireNonNull(namespace);
-        this.revision = revision;
-    }
-
-    /**
-     * Return an interned reference to a equivalent QNameModule.
-     *
-     * @return Interned reference, or this object if it was interned.
-     */
-    public @NonNull QNameModule intern() {
-        return INTERNER.intern(this);
+        this.revision = requireNonNull(revision);
     }
 
     /**
@@ -74,7 +67,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @throws NullPointerException if {@code namespace} is null
      */
     public static @NonNull QNameModule create(final XMLNamespace namespace) {
-        return new QNameModule(namespace, null);
+        return new QNameModule(namespace, NotRevision.INSTANCE);
     }
 
     /**
@@ -100,7 +93,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     public static @NonNull QNameModule readFrom(final DataInput in) throws IOException {
         final var namespace = XMLNamespace.of(in.readUTF());
         final var revStr = in.readUTF();
-        return new QNameModule(namespace, revStr.isEmpty() ? null : Revision.of(revStr));
+        return new QNameModule(namespace, RevisionUnion.of(revStr));
     }
 
     /**
@@ -118,14 +111,23 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return date of the module revision which is specified as argument of YANG Module {@code revision} keyword
      */
     public @NonNull Optional<Revision> getRevision() {
-        return Optional.ofNullable(revision);
+        return revision.findRevision();
+    }
+
+    /**
+     * Return an interned reference to a equivalent QNameModule.
+     *
+     * @return Interned reference, or this object if it was interned.
+     */
+    public @NonNull QNameModule intern() {
+        return INTERNER.intern(this);
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int compareTo(final QNameModule o) {
         int cmp;
-        return (cmp = namespace.compareTo(o.namespace)) != 0 ? cmp : Revision.compare(revision, o.revision);
+        return (cmp = namespace.compareTo(o.namespace)) != 0 ? cmp : revision.compareTo(o.revision);
     }
 
     /**
@@ -135,13 +137,13 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return a QNameModule with the same namespace, but with no revision.
      */
     public @NonNull QNameModule withoutRevision() {
-        return revision == null ? this : new QNameModule(namespace, null);
+        return revision instanceof NotRevision ? this : new QNameModule(namespace, NotRevision.INSTANCE);
     }
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
         out.writeUTF(namespace.toString());
-        out.writeUTF(revision == null ? "" : revision.toString());
+        out.writeUTF(revision.unionString());
     }
 
     @Override
@@ -154,20 +156,35 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof QNameModule other
-            && Objects.equals(revision, other.revision) && namespace.equals(other.namespace);
+        return this == obj || obj instanceof QNameModule other && revision.equals(other.revision)
+            && namespace.equals(other.namespace);
     }
 
     @Override
     public @NonNull String toString() {
         return MoreObjects.toStringHelper(QNameModule.class).omitNullValues()
             .add("ns", namespace)
-            .add("rev", revision)
+            .add("rev", revision.revision())
             .toString();
     }
 
-    @Serial
+    @java.io.Serial
     Object writeReplace() {
         return new NSv1(this);
+    }
+
+    @java.io.Serial
+    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        Revision.throwNSE();
+    }
+
+    @java.io.Serial
+    private void readObjectNoData() throws ObjectStreamException {
+        Revision.throwNSE();
+    }
+
+    @java.io.Serial
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        Revision.throwNSE();
     }
 }
