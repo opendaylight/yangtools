@@ -22,7 +22,7 @@ public class QNameTest {
 
     @Test
     public void testStringSerialization() throws Exception {
-        QName qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
+        var qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
         assertEquals("(urn:foo?revision=2013-12-24)bar", qname.toString());
         assertEquals(qname, QName.create(qname.toString()));
     }
@@ -30,7 +30,7 @@ public class QNameTest {
     @Test
     public void testStringSerializationNoRevision() throws Exception {
         // no revision
-        QName qname = QName.create(NS, LOCALNAME);
+        var qname = QName.create(NS, LOCALNAME);
         assertEquals("(urn:foo)bar", qname.toString());
         assertEquals(qname, QName.create(qname.toString()));
     }
@@ -51,8 +51,8 @@ public class QNameTest {
         final String B = "b";
 
         // compare with namespace
-        QName qa = QName.create(A, REVISION, A);
-        QName qb = QName.create(B, REVISION, A);
+        var qa = QName.create(A, REVISION, A);
+        var qb = QName.create(B, REVISION, A);
         assertTrue(qa.compareTo(qb) < 0);
         assertTrue(qb.compareTo(qa) > 0);
 
@@ -76,9 +76,9 @@ public class QNameTest {
 
     @Test
     public void testQName() {
-        final QName qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
-        final QName qname1 = QName.create(NAMESPACE, LOCALNAME);
-        final QName qname2 = QName.create(qname1, LOCALNAME);
+        final var qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
+        final var qname1 = QName.create(NAMESPACE, LOCALNAME);
+        final var qname2 = QName.create(qname1, LOCALNAME);
         assertEquals(qname1, qname.withoutRevision());
         assertEquals(qname1, qname2);
         assertTrue(qname.isEqualWithoutRevision(qname1));
@@ -88,7 +88,7 @@ public class QNameTest {
 
     @Test
     public void testQNameModule() throws URISyntaxException {
-        final QNameModule qnameModule = QNameModule.create(NS, Revision.of("2000-01-01"));
+        final var qnameModule = QNameModule.of(NS, Revision.of("2000-01-01"));
         assertEquals("QNameModule{ns=urn:foo, rev=2000-01-01}", qnameModule.toString());
     }
 }
