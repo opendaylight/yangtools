@@ -31,11 +31,11 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
         this.codecs = requireNonNull(codecs);
     }
 
-    static @Nullable TypeDefinitionAwareCodec<?, UnionTypeDefinition> from(final UnionTypeDefinition typeDef) {
+    static @Nullable TypeDefinitionAwareCodec<Object, UnionTypeDefinition> from(final UnionTypeDefinition typeDef) {
         final var types = typeDef.getTypes();
         final var builder = ImmutableList.<TypeDefinitionAwareCodec<Object, ?>>builderWithExpectedSize(types.size());
         for (var type : types) {
-            final var codec = from(type);
+            final var codec = type instanceof UnionTypeDefinition union ? from(union) : from(type);
             if (codec == null) {
                 LOG.debug("Cannot handle {} because of unhandled component {}", typeDef, type);
                 return null;

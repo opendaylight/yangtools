@@ -28,16 +28,25 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> extends AbstractDataStringCodec<J> {
-    private static final boolean ENABLE_UNION_CODEC =
-        !Boolean.getBoolean("org.opendaylight.yangtools.yang.data.impl.codec.disable-union");
+    private static final Logger LOG = LoggerFactory.getLogger(TypeDefinitionAwareCodec.class);
+
+    private static final boolean ENABLE_UNION_CODEC;
 
     static {
-        if (!ENABLE_UNION_CODEC) {
-            LoggerFactory.getLogger(TypeDefinitionAwareCodec.class).info("Support for unions is disabled");
-        }
+        final var prop = System.getProperty("org.opendaylight.yangtools.yang.data.impl.codec.disable-union", "true");
+        ENABLE_UNION_CODEC = switch (prop) {
+            case "true" -> false;
+            case "false" -> true;
+            default -> {
+                LOG.warn("Unrecognized property value '{}', defaulting to 'true'", prop);
+                yield false;
+            }
+        };
+        LOG.info("Support for unions is {}", ENABLE_UNION_CODEC ? "enabled" : "disabled");
     }
 
     private final @NonNull Class<J> inputClass;
@@ -62,7 +71,6 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
         return (TypeDefinitionAwareCodec<Object, ?>) fromType(typeDefinition);
     }
 
-    // FIXME: do we want an Optional or a throws instead of @Nullable here?
     public static @Nullable TypeDefinitionAwareCodec<?, ?> fromType(final TypeDefinition<?> typeDefinition) {
         return switch (typeDefinition) {
             case BinaryTypeDefinition binaryType -> BinaryStringCodec.from(binaryType);
@@ -80,8 +88,16 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
             case Uint16TypeDefinition uint16Type -> AbstractIntegerStringCodec.from(uint16Type);
             case Uint32TypeDefinition uint32Type -> AbstractIntegerStringCodec.from(uint32Type);
             case Uint64TypeDefinition uint64Type -> AbstractIntegerStringCodec.from(uint64Type);
-            case UnionTypeDefinition unionType when ENABLE_UNION_CODEC -> UnionStringCodec.from(unionType);
+            case UnionTypeDefinition unionType when acceptUnionCodec(unionType) -> UnionStringCodec.from(unionType);
             default -> null;
         };
+    }
+
+    private static boolean acceptUnionCodec(final UnionTypeDefinition unionType) {
+        if (ENABLE_UNION_CODEC) {
+            return true;
+        }
+        LOG.trace("Unions are not supported, ignoring {}", unionType, new Throwable());
+        return false;
     }
 }

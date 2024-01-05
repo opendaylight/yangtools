@@ -26,9 +26,7 @@ final class TypeDefinitionAwareCodecTestHelper {
     }
 
     static <T> T getCodec(final TypeDefinition<?> def, final Class<T> clazz) {
-        final var codec = TypeDefinitionAwareCodec.fromType(def);
-        assertInstanceOf(clazz, codec);
-        return clazz.cast(codec);
+        return assertInstanceOf(clazz, TypeDefinitionAwareCodec.fromType(def));
     }
 
     static void deserializeWithExpectedIllegalArgEx(final IllegalArgumentCodec<String, ?> codec,

@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1097Test {
@@ -30,12 +31,11 @@ class YT1097Test {
                 }
               }
             }""").findModule("yt1097").orElseThrow();
-        final var foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo")).orElseThrow();
-        assertInstanceOf(LeafSchemaNode.class, foo);
+        final var foo = assertInstanceOf(LeafSchemaNode.class,
+            module.dataChildByName(QName.create(module.getQNameModule(), "foo")));
 
-        final var codec = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).getType());
-        assertInstanceOf(UnionStringCodec.class, codec);
-
+        final var codec = assertInstanceOf(UnionStringCodec.class,
+            UnionStringCodec.from(assertInstanceOf(UnionTypeDefinition.class, foo.getType())));
         assertDecoded(codec, Boolean.TRUE, "true");
         assertDecoded(codec, Boolean.FALSE, "false");
         assertDecoded(codec, "True");
