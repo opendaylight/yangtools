@@ -14,13 +14,12 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serial;
 
 /**
  * Externalizable proxy for {@link QNameModule}.
  */
 final class NSv1 implements Externalizable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private QNameModule namespace;
@@ -44,7 +43,7 @@ final class NSv1 implements Externalizable {
         namespace = QNameModule.readFrom(in);
     }
 
-    @Serial
+    @java.io.Serial
     Object readResolve() {
         return verifyNotNull(namespace);
     }
