@@ -12,43 +12,39 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mock.Strictness;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class DeclaredStatementTest {
-    @Mock(strictness = Strictness.LENIENT)
-    DeclaredStatement1 stmt;
     @Mock
-    DeclaredStatement1 stmt1;
+    private DeclaredStatement1 stmt;
     @Mock
-    DeclaredStatement2 stmt2;
+    private DeclaredStatement1 stmt1;
+    @Mock
+    private DeclaredStatement2 stmt2;
 
     @BeforeEach
     void before() {
-        doReturn(ImmutableList.of(stmt1, stmt2)).when(stmt).declaredSubstatements();
-        doCallRealMethod().when(stmt).declaredSubstatements(any());
-        doCallRealMethod().when(stmt).findFirstDeclaredSubstatement(any());
-        doCallRealMethod().when(stmt).findFirstDeclaredSubstatementArgument(any());
-        doCallRealMethod().when(stmt).streamDeclaredSubstatements(any());
+        doReturn(List.of(stmt1, stmt2)).when(stmt).declaredSubstatements();
     }
 
     @Test
     void testDeclaredSubstatements() {
-        assertEquals(ImmutableList.of(stmt1), ImmutableList.copyOf(stmt.declaredSubstatements(
-            DeclaredStatement1.class)));
-        assertEquals(ImmutableList.of(stmt2), ImmutableList.copyOf(stmt.declaredSubstatements(
-            DeclaredStatement2.class)));
+        doCallRealMethod().when(stmt).declaredSubstatements(any());
+        assertEquals(List.of(stmt1), List.copyOf(stmt.declaredSubstatements(DeclaredStatement1.class)));
+        assertEquals(List.of(stmt2), List.copyOf(stmt.declaredSubstatements(DeclaredStatement2.class)));
     }
 
     @Test
     void testFindFirstDeclaredSubstatement() {
+        doCallRealMethod().when(stmt).streamDeclaredSubstatements(any());
+        doCallRealMethod().when(stmt).findFirstDeclaredSubstatement(any());
         assertEquals(Optional.of(stmt1), stmt.findFirstDeclaredSubstatement(DeclaredStatement1.class));
         assertEquals(Optional.of(stmt2), stmt.findFirstDeclaredSubstatement(DeclaredStatement2.class));
     }
@@ -57,6 +53,9 @@ class DeclaredStatementTest {
     void testFindFirstDeclaredSubstatementArgument() {
         doReturn("one").when(stmt1).argument();
         doReturn("two").when(stmt2).argument();
+        doCallRealMethod().when(stmt).streamDeclaredSubstatements(any());
+        doCallRealMethod().when(stmt).findFirstDeclaredSubstatement(any());
+        doCallRealMethod().when(stmt).findFirstDeclaredSubstatementArgument(any());
         assertEquals(Optional.of("one"), stmt.findFirstDeclaredSubstatementArgument(DeclaredStatement1.class));
         assertEquals(Optional.of("two"), stmt.findFirstDeclaredSubstatementArgument(DeclaredStatement2.class));
     }
