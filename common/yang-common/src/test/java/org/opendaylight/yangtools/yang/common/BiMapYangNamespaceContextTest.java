@@ -21,9 +21,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class BiMapYangNamespaceContextTest {
-    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"));
-    private static final QNameModule BAR = QNameModule.create(XMLNamespace.of("bar"));
-    private static final QNameModule BAZ = QNameModule.create(XMLNamespace.of("baz"));
+    private static final QNameModule FOO = QNameModule.of("foo");
+    private static final QNameModule BAR = QNameModule.of("bar");
+    private static final QNameModule BAZ = QNameModule.of("baz");
 
     private final BiMapYangNamespaceContext context = new BiMapYangNamespaceContext(
         ImmutableBiMap.of("foo", FOO, "bar", BAR));

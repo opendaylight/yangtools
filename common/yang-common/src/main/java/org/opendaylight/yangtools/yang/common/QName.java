@@ -76,7 +76,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      *            YANG schema identifier
      */
     private QName(final XMLNamespace namespace, final String localName) {
-        this(QNameModule.create(namespace), checkLocalName(localName));
+        this(QNameModule.of(namespace), checkLocalName(localName));
     }
 
     public static @NonNull QName create(final String input) {
@@ -123,7 +123,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      */
     public static @NonNull QName create(final XMLNamespace namespace, final @Nullable Revision revision,
             final String localName) {
-        return create(QNameModule.create(namespace, revision), localName);
+        return create(QNameModule.ofRevision(namespace, revision), localName);
     }
 
     /**
@@ -136,7 +136,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      */
     public static @NonNull QName create(final XMLNamespace namespace, final Optional<Revision> revision,
             final String localName) {
-        return create(QNameModule.create(namespace, revision), localName);
+        return create(QNameModule.ofRevision(namespace, revision.orElse(null)), localName);
     }
 
     /**
@@ -148,7 +148,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @return Instance of QName
      */
     public static @NonNull QName create(final String namespace, final String localName, final Revision revision) {
-        return create(QNameModule.create(XMLNamespace.of(namespace), revision), localName);
+        return create(QNameModule.of(XMLNamespace.of(namespace), revision), localName);
     }
 
     /**
@@ -163,7 +163,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      *         to {@code YYYY-mm-dd}.
      */
     public static @NonNull QName create(final String namespace, final String revision, final String localName) {
-        return create(XMLNamespace.of(namespace), Revision.of(revision), localName);
+        return create(QNameModule.ofRevision(namespace, revision), localName);
     }
 
     /**
@@ -204,7 +204,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
             return aware.readQName();
         }
 
-        final QNameModule module = QNameModule.readFrom(in);
+        final var module = QNameModule.readFrom(in);
         return new QName(module, checkLocalName(in.readUTF()));
     }
 
@@ -240,7 +240,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @return XMLNamespace assigned to the YANG module.
      */
     public @NonNull XMLNamespace getNamespace() {
-        return module.getNamespace();
+        return module.namespace();
     }
 
     /**
@@ -249,7 +249,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @return revision of the YANG module if the module has defined revision.
      */
     public @NonNull Optional<Revision> getRevision() {
-        return module.getRevision();
+        return module.findRevision();
     }
 
     @Override
