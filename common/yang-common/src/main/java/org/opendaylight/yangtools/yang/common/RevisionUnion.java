@@ -38,8 +38,8 @@ public sealed interface RevisionUnion extends Comparable<RevisionUnion>, Immutab
      *
      * @return empty {@link RevisionUnion}
      */
-    static RevisionUnion none() {
-        return NotRevision.INSTANCE;
+    static NotRevision none() {
+        return NotRevision.of();
     }
 
     static RevisionUnion of(final String unionString) {
