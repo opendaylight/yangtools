@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import java.io.DataInput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,15 +15,38 @@ import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
-// Empty alternative to Revision
+/**
+ * An empty alternative to {@link Revision}. This contract is exactly the same as the {@code type string} block from
+ * this fragment from {@code ietf-yang-library}:
+ * <pre>{@code
+ *   type union {
+ *     type revision-identifier;
+ *     type string {
+ *       length "0";
+ *     }
+ *   }
+ * }</pre>
+ */
 @NonNullByDefault
-final class NotRevision implements RevisionUnion {
+public final class NotRevision implements RevisionUnion {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
-    static final NotRevision INSTANCE = new NotRevision();
+    private static final NotRevision INSTANCE = new NotRevision();
 
     private NotRevision() {
         // Hidden on purpose
+    }
+
+    public static NotRevision of() {
+        return INSTANCE;
+    }
+
+    public static NotRevision readFrom(final DataInput in) throws IOException {
+        final var str = in.readUTF();
+        if (!str.isEmpty()) {
+            throw new IOException("Unexpected value '" + str + "'");
+        }
+        return of();
     }
 
     @Override

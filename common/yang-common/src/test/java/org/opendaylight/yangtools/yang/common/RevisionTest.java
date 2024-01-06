@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.format.DateTimeParseException;
@@ -23,45 +24,53 @@ import org.junit.jupiter.api.Test;
 
 public class RevisionTest {
     @Test
-    public void testOf() {
+    void testOf() {
         assertEquals("2017-12-25", Revision.of("2017-12-25").toString());
     }
 
     @Test
-    public void testOfNull() {
+    void testOfNull() {
         assertThrows(NullPointerException.class, () -> Revision.of(null));
     }
 
     @Test
-    public void testOfEmpty() {
-        assertThrows(DateTimeParseException.class, () -> Revision.of(""));
+    void testOfEmpty() {
+        assertThrowsParse("", "Text '' could not be parsed at index 0");
     }
 
     @Test
-    public void testOfInvalid() {
-        assertThrows(DateTimeParseException.class, () -> Revision.of("invalid"));
+    void testOfInvalid() {
+        assertThrowsParse("invalid", "Text 'invalid' could not be parsed at index 0");
     }
 
     @Test
-    public void testOfInvalidDate1() {
-        assertThrows(DateTimeParseException.class, () -> Revision.of("2017-13-01"));
+    void testOfInvalidDate1() {
+        assertThrowsParse("2017-13-01",
+            "Text '2017-13-01' could not be parsed: Invalid value for MonthOfYear (valid values 1 - 12): 13");
     }
 
     @Test
-    public void testOfInvalidDate2() {
-        assertThrows(DateTimeParseException.class, () -> Revision.of("2017-12-00"));
+    void testOfInvalidDate2() {
+        assertThrowsParse("2017-12-00",
+            "Text '2017-12-00' could not be parsed: Invalid value for DayOfMonth (valid values 1 - 28/31): 0");
     }
 
     @Test
-    public void testOfInvalidDate3() {
-        assertThrows(DateTimeParseException.class, () -> Revision.of("2017-12-32"));
+    void testOfInvalidDate3() {
+        assertThrowsParse("2017-12-32",
+            "Text '2017-12-32' could not be parsed: Invalid value for DayOfMonth (valid values 1 - 28/31): 32");
+    }
+
+    private static void assertThrowsParse(final String input, final String expectedMessage) {
+        final var ex = assertThrows(DateTimeParseException.class, () -> Revision.of(input));
+        assertEquals(expectedMessage, ex.getMessage());
     }
 
     @Test
-    public void testEquals() {
-        final Revision rev1 = Revision.of("2017-12-25");
-        final Revision rev1dup = Revision.of("2017-12-25");
-        final Revision rev2 = Revision.of("2017-12-26");
+    void testEquals() {
+        final var rev1 = Revision.of("2017-12-25");
+        final var rev1dup = Revision.of("2017-12-25");
+        final var rev2 = Revision.of("2017-12-26");
 
         assertFalse(rev1.equals(null));
         assertTrue(rev1.equals(rev1));
@@ -72,16 +81,13 @@ public class RevisionTest {
     }
 
     @Test
-    public void testOfNullable() {
+    void testOfNullable() {
         assertEquals(Optional.empty(), Revision.ofNullable(null));
-
-        final Optional<Revision> opt = Revision.ofNullable("2017-12-25");
-        assertTrue(opt.isPresent());
-        assertEquals("2017-12-25", opt.orElseThrow().toString());
+        assertEquals(Optional.of(Revision.of("2017-12-25")), Revision.ofNullable("2017-12-25"));
     }
 
     @Test
-    public void testCompareOptional() {
+    void testCompareOptional() {
         assertEquals(0, Revision.compare(Optional.empty(), Optional.empty()));
         assertEquals(0, Revision.compare(Revision.ofNullable("2017-12-25"), Revision.ofNullable("2017-12-25")));
         assertEquals(-1, Revision.compare(Optional.empty(), Revision.ofNullable("2017-12-25")));
@@ -89,18 +95,27 @@ public class RevisionTest {
     }
 
     @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        final var source = Revision.of("2017-12-25");
+    void testSerializationRevision() throws Exception {
+        final var revision = Revision.of("2017-12-25");
+        assertEquals(revision, testSerialization(revision, 78));
+    }
+
+    @Test
+    void testSerializationNotRevision() throws Exception {
+        assertSame(NotRevision.of(), testSerialization(NotRevision.of(), 68));
+    }
+
+    private static RevisionUnion testSerialization(final RevisionUnion obj, final int expectedLength) throws Exception {
         final var bos = new ByteArrayOutputStream();
         try (var oos = new ObjectOutputStream(bos)) {
-            oos.writeObject(source);
+            oos.writeObject(obj);
         }
 
         final var bytes = bos.toByteArray();
-        assertEquals(78, bytes.length);
+        assertEquals(expectedLength, bytes.length);
 
         try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
-            assertEquals(source, ois.readObject());
+            return assertInstanceOf(obj.getClass(), ois.readObject());
         }
     }
 }
