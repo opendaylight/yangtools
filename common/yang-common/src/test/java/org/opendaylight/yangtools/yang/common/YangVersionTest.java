@@ -7,30 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class YangVersionTest {
     @Test
     public void testGetReference() {
-        assertEquals("RFC6020", YangVersion.VERSION_1.getReference());
-        assertEquals("RFC7950", YangVersion.VERSION_1_1.getReference());
+        assertEquals("RFC6020", YangVersion.VERSION_1.reference());
+        assertEquals("RFC7950", YangVersion.VERSION_1_1.reference());
     }
 
     @Test
     public void testParse() {
-        assertEquals(Optional.empty(), YangVersion.parse(""));
-        assertEquals(Optional.empty(), YangVersion.parse("1."));
-        assertEquals(Optional.of(YangVersion.VERSION_1), YangVersion.parse("1"));
-        assertEquals(Optional.of(YangVersion.VERSION_1_1), YangVersion.parse("1.1"));
+        assertNull(YangVersion.forString(""));
+        assertNull(YangVersion.forString("1."));
+        assertEquals(YangVersion.VERSION_1, YangVersion.forString("1"));
+        assertEquals(YangVersion.VERSION_1_1, YangVersion.forString("1.1"));
     }
 
     @Test
     public void testParseNull() {
-        assertThrows(NullPointerException.class, () -> YangVersion.parse(null));
+        assertThrows(NullPointerException.class, () -> YangVersion.forString(null));
     }
 
     @Test

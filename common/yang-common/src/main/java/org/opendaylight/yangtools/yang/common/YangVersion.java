@@ -73,7 +73,7 @@ public enum YangVersion {
      * @throws NullPointerException if the string is {@code null}
      * @deprecated Use {@link #forString(String)} or {@link #ofString(String)}
      */
-    @Deprecated
+    @Deprecated(since = "11.0.0", forRemoval = true)
     public static Optional<YangVersion> parse(final @NonNull String str) {
         return Optional.ofNullable(forString(str));
     }
