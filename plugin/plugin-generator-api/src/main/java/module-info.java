@@ -10,7 +10,6 @@ module org.opendaylight.yangtools.plugin.generator.api {
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.concepts;
 
     // Annotations

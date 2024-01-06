@@ -16,17 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.repo.AbstractSchemaRepositoryTest;
 
-public class YT1193Test {
+class YT1193Test extends AbstractSchemaRepositoryTest {
     @Test
     void testDeclarationReference() throws Exception {
         final var declaredRoots = new DefaultYangParserFactory()
             .createParser(YangParserConfiguration.builder().retainDeclarationReferences(true).build())
-            .addSource(YangTextSource.forResource(getClass(), "/yt1193/foo.yang"))
-            .addSource(YangTextSource.forResource(getClass(), "/yt1193/bar.yang"))
-            .addSource(YangTextSource.forResource(getClass(), "/yt1193/baz.yang"))
+            .addSource(assertYangTextResource("/yt1193/foo.yang"))
+            .addSource(assertYangTextResource("/yt1193/bar.yang"))
+            .addSource(assertYangTextResource("/yt1193/baz.yang"))
             .buildDeclaredModel();
         assertEquals(3, declaredRoots.size());
 

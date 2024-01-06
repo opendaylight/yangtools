@@ -14,13 +14,24 @@ import com.google.common.io.CharSource;
 import java.io.IOException;
 import java.io.Reader;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
-final class DelegatedYangTextSource extends YangTextSource implements Delegator<CharSource> {
-    private final @NonNull CharSource delegate;
+@NonNullByDefault
+public final class DelegatedYangTextSource extends YangTextSource implements Delegator<CharSource> {
+    private final CharSource delegate;
 
-    DelegatedYangTextSource(final SourceIdentifier sourceId, final CharSource delegate) {
+    /**
+     * Default constructor,
+     *
+     * @param sourceId source id
+     * @param delegate Backing CharSource instance
+     * @return A new YangTextSchemaSource
+     * @throws IllegalArgumentException if the file name has invalid format
+     */
+    public DelegatedYangTextSource(final SourceIdentifier sourceId, final CharSource delegate) {
         super(sourceId);
         this.delegate = requireNonNull(delegate);
     }
@@ -36,7 +47,7 @@ final class DelegatedYangTextSource extends YangTextSource implements Delegator<
     }
 
     @Override
-    public String symbolicName() {
+    public @NonNull String symbolicName() {
         return "[" + delegate.toString() + "]";
     }
 
