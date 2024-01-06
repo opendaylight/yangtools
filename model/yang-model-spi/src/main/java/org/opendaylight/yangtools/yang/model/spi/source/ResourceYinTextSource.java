@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.io.Resources;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 
 /**
  * A resource-backed {@link YinTextSource}.
@@ -23,9 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 final class ResourceYinTextSource extends YinTextSource implements Delegator<URL> {
     private final @NonNull URL url;
 
-    ResourceYinTextSource(final SourceIdentifier sourceId, final URL url) {
-        super(sourceId);
-        this.url = requireNonNull(url);
+    public ResourceYinTextSource(final Class<?> clazz, final String resourceName) {
+        super(SourceIdentifier.ofYinFileName(resourceName.substring(resourceName.lastIndexOf('/') + 1)));
+        url = Resources.getResource(clazz, resourceName);
     }
 
     @Override

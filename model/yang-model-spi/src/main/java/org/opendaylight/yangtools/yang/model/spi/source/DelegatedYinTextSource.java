@@ -14,13 +14,28 @@ import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 
-final class DelegatedYinTextSource extends YinTextSource implements Delegator<ByteSource> {
-    private final @NonNull ByteSource delegate;
+/**
+ * A {@link YinTextSource} with a specific {@link SourceIdentifier} and backed by a {@link ByteSource}, which provides
+ * the actual {@link #openStream()} implementation.
+ *
+ * @return A new YinTextSchemaSource
+ */
+@NonNullByDefault
+public final class DelegatedYinTextSource extends YinTextSource implements Delegator<ByteSource> {
+    private final ByteSource delegate;
 
-    DelegatedYinTextSource(final SourceIdentifier sourceId, final ByteSource delegate) {
+    /**
+     * Default constructor.
+     *
+     * @param sourceId source identifier
+     * @param delegate Backing {@link ByteSource}
+     */
+    public DelegatedYinTextSource(final SourceIdentifier sourceId, final ByteSource delegate) {
         super(sourceId);
         this.delegate = requireNonNull(delegate);
     }
@@ -36,7 +51,7 @@ final class DelegatedYinTextSource extends YinTextSource implements Delegator<By
     }
 
     @Override
-    public String symbolicName() {
+    public @NonNull String symbolicName() {
         return "[" + delegate.toString() + "]";
     }
 
