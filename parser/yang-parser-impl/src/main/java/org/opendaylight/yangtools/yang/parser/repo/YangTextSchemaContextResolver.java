@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
@@ -49,8 +50,9 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
@@ -131,7 +133,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                 }
             }
 
-            text = YangTextSource.delegateForCharSource(parsedId, source);
+            text = new DelegatedYangTextSource(parsedId, source);
         } else {
             text = source;
         }
@@ -174,9 +176,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      */
     public @NonNull Registration registerSource(final @NonNull URL url)
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
-        final String path = url.getPath();
-        final String fileName = path.substring(path.lastIndexOf('/') + 1);
-        return registerSource(YangTextSource.forURL(url, guessSourceIdentifier(fileName)));
+        final var path = url.getPath();
+        final var fileName = path.substring(path.lastIndexOf('/') + 1);
+        return registerSource(new URLYangTextSource(guessSourceIdentifier(fileName), url));
     }
 
     /**

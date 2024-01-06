@@ -27,8 +27,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.ResourceYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
@@ -108,7 +110,7 @@ public final class YangParserTestUtils {
     public static EffectiveModelContext parseYangResource(final String resource, final YangParserConfiguration config,
             final Set<QName> supportedFeatures) {
         return parseYangSources(config, supportedFeatures,
-            YangTextSource.forResource(YangParserTestUtils.class, resource));
+            new ResourceYangTextSource(YangParserTestUtils.class, resource));
     }
 
     /**
@@ -201,7 +203,7 @@ public final class YangParserTestUtils {
     public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final YangParserConfiguration config, final Collection<File> files) {
         return parseSources(config, supportedFeatures,
-            files.stream().map(file -> YangTextSource.forPath(file.toPath())).collect(Collectors.toList()));
+            files.stream().map(file -> new FileYangTextSource(file.toPath())).collect(Collectors.toList()));
     }
 
     /**
@@ -276,8 +278,8 @@ public final class YangParserTestUtils {
 
     public static EffectiveModelContext parseYangResources(final Class<?> clazz, final Collection<String> resources) {
         final var sources = new ArrayList<YangTextSource>(resources.size());
-        for (final String r : resources) {
-            sources.add(YangTextSource.forResource(clazz, r));
+        for (final String resource : resources) {
+            sources.add(new ResourceYangTextSource(clazz, resource));
         }
         return parseSources(YangParserConfiguration.DEFAULT, null, sources);
     }

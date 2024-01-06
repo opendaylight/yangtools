@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,16 +21,18 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.ResourceYangTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.xml.sax.SAXException;
 
 public final class TestUtils {
@@ -47,11 +47,12 @@ public final class TestUtils {
 
     public static @NonNull List<StatementStreamSource> loadSources(final Class<?> cls, final String resourceDirectory)
             throws Exception {
+        // FIXME: do not use java.io.File here
         final var files = new File(cls.getResource(resourceDirectory).toURI())
             .listFiles(StmtTestUtils.YANG_FILE_FILTER);
         final var sources = new ArrayList<StatementStreamSource>(files.length);
         for (var file : files) {
-            sources.add(YangStatementStreamSource.create(YangTextSource.forPath(file.toPath())));
+            sources.add(YangStatementStreamSource.create(new FileYangTextSource(file.toPath())));
         }
         return sources;
     }
@@ -97,22 +98,19 @@ public final class TestUtils {
     }
 
     public static YangTextSource assertSchemaSource(final String resourcePath) {
-        try {
-            return YangTextSource.forPath(Path.of(TestUtils.class.getResource(resourcePath).toURI()));
-        } catch (URISyntaxException e) {
-            throw new AssertionError(e);
-        }
+        return new ResourceYangTextSource(TestUtils.class, resourcePath);
     }
 
     // FIXME: these remain unaudited
 
     public static EffectiveModelContext loadYinModules(final URI resourceDirectory)
             throws ReactorException, SAXException, IOException {
-        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild();
 
-        for (File file : new File(resourceDirectory).listFiles()) {
+        // FIXME: do not use java.io.File here
+        for (var file : new File(resourceDirectory).listFiles()) {
             reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSource.forPath(file.toPath()))));
+                new FileYinTextSource(file.toPath()))));
         }
 
         return reactor.buildEffective();
