@@ -14,7 +14,7 @@ import java.io.StringReader;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
 /**
  * A {@link YangTextSource} backed by a string literal.

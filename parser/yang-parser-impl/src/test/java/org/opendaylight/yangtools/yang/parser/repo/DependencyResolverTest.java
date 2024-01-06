@@ -18,10 +18,9 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangIRSourceInfoExtractor;
 
-class DependencyResolverTest {
+class DependencyResolverTest extends AbstractSchemaRepositoryTest {
     @Test
     public void testModulesWithoutRevisionAndImport() throws Exception {
         final var resolved = resolveResources("/no-revision/imported.yang", "/no-revision/imported@2012-12-12.yang",
@@ -65,8 +64,7 @@ class DependencyResolverTest {
     private static RevisionDependencyResolver resolveResources(final String... resourceNames) throws Exception {
         final var map = new HashMap<SourceIdentifier, SourceInfo>();
         for (var resourceName : resourceNames) {
-            final var info = YangIRSourceInfoExtractor.forYangText(
-                YangTextSource.forResource(DependencyResolverTest.class, resourceName));
+            final var info = YangIRSourceInfoExtractor.forYangText(assertYangTextResource(resourceName));
             map.put(info.sourceId(), info);
         }
         return new RevisionDependencyResolver(map);

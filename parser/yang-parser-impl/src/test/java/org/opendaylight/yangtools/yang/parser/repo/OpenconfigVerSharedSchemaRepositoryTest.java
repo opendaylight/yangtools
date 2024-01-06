@@ -13,25 +13,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-public class OpenconfigVerSharedSchemaRepositoryTest {
+public class OpenconfigVerSharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
     @Test
     public void testSharedSchemaRepository() throws Exception {
         final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-test");
 
-        final var bar = getImmediateYangSourceProviderFromResource(
-                "/openconfig-version/shared-schema-repository/bar@2016-01-01.yang");
+        final var bar = immediateProvider("/openconfig-version/shared-schema-repository/bar@2016-01-01.yang");
         bar.register(sharedSchemaRepository);
         bar.setResult();
-        final var foo = getImmediateYangSourceProviderFromResource(
-                "/openconfig-version/shared-schema-repository/foo.yang");
+        final var foo = immediateProvider("/openconfig-version/shared-schema-repository/foo.yang");
         foo.register(sharedSchemaRepository);
         foo.setResult();
-        final var semVer = getImmediateYangSourceProviderFromResource(
-                "/openconfig-version/shared-schema-repository/openconfig-extensions.yang");
+        final var semVer = immediateProvider("/openconfig-version/shared-schema-repository/openconfig-extensions.yang");
         semVer.register(sharedSchemaRepository);
         semVer.setResult();
 
@@ -49,11 +43,5 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
     private static void assertSchemaContext(final EffectiveModelContext schemaContext, final int moduleSize) {
         assertNotNull(schemaContext);
         assertEquals(moduleSize, schemaContext.getModules().size());
-    }
-
-    static SettableSchemaProvider<YangIRSchemaSource> getImmediateYangSourceProviderFromResource(
-            final String resourceName) throws Exception {
-        return SettableSchemaProvider.createImmediate(
-            TextToIRTransformer.transformText(YangTextSource.forResource(resourceName)), YangIRSchemaSource.class);
     }
 }

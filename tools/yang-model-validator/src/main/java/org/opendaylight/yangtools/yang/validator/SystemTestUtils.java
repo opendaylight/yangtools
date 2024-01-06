@@ -33,8 +33,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
-import org.opendaylight.yangtools.yang.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -94,18 +93,18 @@ final class SystemTestUtils {
             final List<File> libFiles,  final boolean warnForUnkeyedLists) throws IOException, YangParserException {
         checkArgument(!testFiles.isEmpty(), "No yang sources");
 
-        final YangParserConfiguration configuration = YangParserConfiguration.builder()
+        final var configuration = YangParserConfiguration.builder()
                 .warnForUnkeyedLists(warnForUnkeyedLists).build();
-        final YangParser parser = PARSER_FACTORY.createParser(configuration);
+        final var parser = PARSER_FACTORY.createParser(configuration);
         if (supportedFeatures != null) {
             parser.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
 
-        for (File file : testFiles) {
-            parser.addSource(YangTextSource.forPath(file.toPath()));
+        for (var file : testFiles) {
+            parser.addSource(new FileYangTextSource(file.toPath()));
         }
-        for (File file : libFiles) {
-            parser.addLibSource(YangTextSource.forPath(file.toPath()));
+        for (var file : libFiles) {
+            parser.addLibSource(new FileYangTextSource(file.toPath()));
         }
 
         return parser.buildEffectiveModel();

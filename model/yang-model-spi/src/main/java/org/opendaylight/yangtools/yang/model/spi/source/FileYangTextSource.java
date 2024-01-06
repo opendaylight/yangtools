@@ -14,23 +14,47 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
 /**
  * A {@link YangTextSource} backed by a file.
  */
-final class YangTextFileSource extends YangTextSource implements Delegator<Path> {
-    private final @NonNull Path path;
-    private final @NonNull Charset charset;
+@NonNullByDefault
+public final class FileYangTextSource extends YangTextSource implements Delegator<Path> {
+    private final Path path;
+    private final Charset charset;
 
-    YangTextFileSource(final SourceIdentifier sourceId, final Path path, final Charset charset) {
+    public FileYangTextSource(final SourceIdentifier sourceId, final Path path, final Charset charset) {
         super(sourceId);
-        this.path = requireNonNull(path);
+        if (!Files.isRegularFile(path)) {
+            throw new IllegalArgumentException(path + " is not a regular file");
+        }
+        this.path = path;
         this.charset = requireNonNull(charset);
+    }
+
+    /**
+     * Default constructor.
+     *
+     * @param path backing path
+     * @param charset {@link Charset} to use
+     * @throws IllegalArgumentException if the file name has invalid format or if the supplied File is not a file
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public FileYangTextSource(final Path path, final Charset charset) {
+        // FIXME: do not use '.toFile()' here
+        this(SourceIdentifier.ofYangFileName(path.toFile().getName()), path, charset);
+    }
+
+    public FileYangTextSource(final Path path) {
+        this(path, StandardCharsets.UTF_8);
     }
 
     @Override
@@ -49,7 +73,7 @@ final class YangTextFileSource extends YangTextSource implements Delegator<Path>
     }
 
     @Override
-    public String symbolicName() {
+    public @NonNull String symbolicName() {
         // FIXME: NEXT: this is forcing internal normalization. I think this boils down to providing Path back, which
         //        is essentially getDelegate() anyway. Perhaps expose it as PathAware?
         return path.toString();

@@ -13,7 +13,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,8 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.ResourceYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -67,9 +67,8 @@ public final class StmtTestUtils {
 
     public static YangStatementStreamSource sourceForResource(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(YangTextSource.forPath(Path.of(
-                StmtTestUtils.class.getResource(resourceName).toURI())));
-        } catch (IOException | YangSyntaxErrorException | URISyntaxException e) {
+            return YangStatementStreamSource.create(new ResourceYangTextSource(StmtTestUtils.class, resourceName));
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new IllegalArgumentException("Failed to create source", e);
         }
     }
@@ -117,7 +116,7 @@ public final class StmtTestUtils {
 
         final Collection<YangStatementStreamSource> sources = new ArrayList<>(files.length);
         for (File file : files) {
-            sources.add(YangStatementStreamSource.create(YangTextSource.forPath(file.toPath())));
+            sources.add(YangStatementStreamSource.create(new FileYangTextSource(file.toPath())));
         }
 
         return parseYangSources(config, supportedFeatures, sources);
@@ -147,14 +146,13 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
             final YangParserConfiguration config) throws URISyntaxException, SAXException, IOException,
             ReactorException {
-        final URL resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
-        final File[] files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
-        final StatementStreamSource[] sources = new StatementStreamSource[files.length];
+        final var resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
+        final var files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
+        final var sources = new StatementStreamSource[files.length];
         for (int i = 0; i < files.length; i++) {
-            final SourceIdentifier identifier = YinTextSource.identifierFromFilename(files[i].getName());
-
             sources[i] = YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSource.delegateForByteSource(identifier, Files.asByteSource(files[i]))));
+                new DelegatedYinTextSource(SourceIdentifier.ofYinFileName(files[i].getName()),
+                    Files.asByteSource(files[i]))));
         }
 
         return parseYinSources(config, sources);

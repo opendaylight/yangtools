@@ -15,8 +15,7 @@ import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProces
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
+import com.google.common.io.CharSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +27,10 @@ import java.util.zip.ZipFile;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,7 @@ abstract class ScannedDependency {
 
         @Override
         ImmutableList<YangTextSource> sources() {
-            return ImmutableList.of(YangTextSource.forPath(file().toPath()));
+            return ImmutableList.of(new FileYangTextSource(file().toPath()));
         }
     }
 
@@ -61,11 +63,9 @@ abstract class ScannedDependency {
                 for (String entryName : entryNames) {
                     final ZipEntry entry = requireNonNull(zip.getEntry(entryName));
 
-                    builder.add(YangTextSource.delegateForByteSource(
-                        entryName.substring(entryName.lastIndexOf('/') + 1),
-                        // FIXME: can we reasonable make this a CharSource?
-                        ByteSource.wrap(ByteStreams.toByteArray(zip.getInputStream(entry))),
-                        StandardCharsets.UTF_8));
+                    builder.add(new DelegatedYangTextSource(
+                        SourceIdentifier.ofYangFileName(entryName.substring(entryName.lastIndexOf('/') + 1)),
+                        CharSource.wrap(new String(zip.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8))));
                 }
             }
 
