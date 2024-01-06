@@ -20,8 +20,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
+import org.opendaylight.yangtools.yang.model.spi.source.ResourceYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
@@ -47,7 +47,7 @@ public abstract class AbstractSchemaRepositoryTest {
         final var sharedSchemaRepository = new SharedSchemaRepository();
         final var requiredSources = Arrays.stream(resources)
             .map(resource -> {
-                final var yangSource = assertYangTextResource(resource);
+                final var yangSource = immediateProvider(resource);
                 yangSource.register(sharedSchemaRepository);
                 yangSource.setResult();
                 return yangSource.getId();
@@ -61,13 +61,23 @@ public abstract class AbstractSchemaRepositoryTest {
             .createEffectiveModelContext(requiredSources);
     }
 
-    private static SettableSchemaProvider<YangIRSchemaSource> assertYangTextResource(final String resourceName) {
-        final YangIRSchemaSource yangSource;
+    public static final @NonNull ResourceYangTextSource assertYangTextResource(final String resourceName) {
+        return new ResourceYangTextSource(AbstractSchemaRepositoryTest.class, resourceName);
+    }
+
+    static final @NonNull YangIRSchemaSource assertYangIR(final String resourceName) {
         try {
-            yangSource = TextToIRTransformer.transformText(YangTextSource.forResource(resourceName));
+            return TextToIRTransformer.transformText(assertYangTextResource(resourceName));
         } catch (YangSyntaxErrorException | IOException e) {
             throw new AssertionError("Failed to parse " + resourceName, e);
         }
-        return SettableSchemaProvider.createImmediate(yangSource, YangIRSchemaSource.class);
+    }
+
+    static final SettableSchemaProvider<YangIRSchemaSource> immediateProvider(final String resourceName) {
+        return SettableSchemaProvider.createImmediate(assertYangIR(resourceName), YangIRSchemaSource.class);
+    }
+
+    static SettableSchemaProvider<YangIRSchemaSource> remoteProvider(final String resourceName) {
+        return SettableSchemaProvider.createRemote(assertYangIR(resourceName), YangIRSchemaSource.class);
     }
 }

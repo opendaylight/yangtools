@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.ResourceYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
@@ -54,9 +54,9 @@ class IetfYangSmiv2ExtensionPluginTest {
             .build();
         final var schema = reactor.newBuild()
             .addSources(
-                YangStatementStreamSource.create(YangTextSource.forResource(
+                YangStatementStreamSource.create(new ResourceYangTextSource(
                     IetfYangSmiv2ExtensionPluginTest.class, "/foo.yang")),
-                YangStatementStreamSource.create(YangTextSource.forResource(
+                YangStatementStreamSource.create(new ResourceYangTextSource(
                     IetfYangSmiv2ExtensionPluginTest.class, "/ietf-yang-smiv2.yang")))
             .buildEffective();
 
