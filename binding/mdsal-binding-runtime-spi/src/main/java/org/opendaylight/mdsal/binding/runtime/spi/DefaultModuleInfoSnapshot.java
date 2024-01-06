@@ -10,8 +10,6 @@ package org.opendaylight.mdsal.binding.runtime.spi;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
@@ -41,11 +39,18 @@ final class DefaultModuleInfoSnapshot implements ModuleInfoSnapshot {
     }
 
     @Override
-    public ListenableFuture<? extends YangTextSource> getSource(final SourceIdentifier sourceId) {
+    public YangTextSource yangTextSource(final SourceIdentifier sourceId) {
         final var info = moduleInfos.get(sourceId);
-        return info == null
-            ? Futures.immediateFailedFuture(new MissingSchemaSourceException(sourceId, "No source registered"))
-                : Futures.immediateFuture(new DelegatedYangTextSource(sourceId, info.getYangTextCharSource()));
+        return info == null ? null : new DelegatedYangTextSource(sourceId, info.getYangTextCharSource());
+    }
+
+    @Override
+    public YangTextSource getYangTextSource(final SourceIdentifier sourceId) throws MissingSchemaSourceException {
+        final var source = yangTextSource(sourceId);
+        if (source == null) {
+            throw new MissingSchemaSourceException(sourceId, "No source registered");
+        }
+        return source;
     }
 
     @Override

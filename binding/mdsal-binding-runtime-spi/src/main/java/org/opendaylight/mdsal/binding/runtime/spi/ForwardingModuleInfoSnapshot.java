@@ -9,14 +9,16 @@ package org.opendaylight.mdsal.binding.runtime.spi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
-import com.google.common.util.concurrent.ListenableFuture;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 
 @Beta
+@NonNullByDefault
 public abstract class ForwardingModuleInfoSnapshot extends ForwardingObject implements ModuleInfoSnapshot {
     @Override
     protected abstract ModuleInfoSnapshot delegate();
@@ -27,12 +29,17 @@ public abstract class ForwardingModuleInfoSnapshot extends ForwardingObject impl
     }
 
     @Override
-    public @NonNull EffectiveModelContext modelContext() {
+    public EffectiveModelContext modelContext() {
         return delegate().modelContext();
     }
 
     @Override
-    public ListenableFuture<? extends YangTextSource> getSource(final SourceIdentifier sourceIdentifier) {
-        return delegate().getSource(sourceIdentifier);
+    public @Nullable YangTextSource yangTextSource(final SourceIdentifier sourceId) {
+        return delegate().yangTextSource(sourceId);
+    }
+
+    @Override
+    public YangTextSource getYangTextSource(final SourceIdentifier sourceId) throws MissingSchemaSourceException {
+        return delegate().getYangTextSource(sourceId);
     }
 }
