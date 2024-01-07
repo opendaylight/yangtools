@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -108,7 +109,7 @@ public final class YangParserTestUtils {
     public static EffectiveModelContext parseYangResource(final String resource, final YangParserConfiguration config,
             final Set<QName> supportedFeatures) {
         return parseYangSources(config, supportedFeatures,
-            YangTextSource.forResource(YangParserTestUtils.class, resource));
+            new URLYangTextSource(YangParserTestUtils.class.getResource(resource)));
     }
 
     /**
@@ -275,11 +276,9 @@ public final class YangParserTestUtils {
     }
 
     public static EffectiveModelContext parseYangResources(final Class<?> clazz, final Collection<String> resources) {
-        final var sources = new ArrayList<YangTextSource>(resources.size());
-        for (final String r : resources) {
-            sources.add(YangTextSource.forResource(clazz, r));
-        }
-        return parseSources(YangParserConfiguration.DEFAULT, null, sources);
+        return parseSources(YangParserConfiguration.DEFAULT, null, resources.stream()
+            .map(resource -> new URLYangTextSource(clazz.getResource(resource)))
+            .toList());
     }
 
     /**

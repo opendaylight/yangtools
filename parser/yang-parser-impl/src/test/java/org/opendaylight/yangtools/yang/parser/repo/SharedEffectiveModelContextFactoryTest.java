@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceExcepti
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
@@ -36,8 +37,8 @@ public class SharedEffectiveModelContextFactoryTest {
 
     @BeforeEach
     public void setUp() {
-        final var source1 = YangTextSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
-        final var source2 = YangTextSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
+        final var source1 = assertYangText("/ietf/ietf-inet-types@2010-09-24.yang");
+        final var source2 = assertYangText("/ietf/iana-timezones@2012-07-09.yang");
         s1 = new SourceIdentifier("ietf-inet-types", "2010-09-24");
         s2 = new SourceIdentifier("iana-timezones", "2012-07-09");
 
@@ -60,12 +61,12 @@ public class SharedEffectiveModelContextFactoryTest {
 
     @Test
     public void testSourceRegisteredWithDifferentSI() throws Exception {
-        final var source1 = YangTextSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
-        final var source2 = YangTextSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
+        final var source1 = assertYangText("/ietf/ietf-inet-types@2010-09-24.yang");
+        final var source2 = assertYangText("/ietf/iana-timezones@2012-07-09.yang");
         s1 = source1.sourceId();
         s2 = source2.sourceId();
 
-        final var provider = SharedSchemaRepositoryTest.getImmediateYangSourceProviderFromResource(
+        final var provider = AbstractSchemaRepositoryTest.assertYangTextResource(
             "/no-revision/imported@2012-12-12.yang");
         provider.setResult();
         provider.register(repository);
@@ -86,7 +87,7 @@ public class SharedEffectiveModelContextFactoryTest {
         final SourceIdentifier s3 = new SourceIdentifier("network-topology", "2013-10-21");
 
         repository.registerSchemaSource(new TransientFailureProvider(
-            YangTextSource.forResource("/ietf/network-topology@2013-10-21.yang")),
+            assertYangText("/ietf/network-topology@2013-10-21.yang")),
             PotentialSchemaSource.create(s3, YangTextSource.class, 1));
 
         final var sharedSchemaContextFactory = new SharedEffectiveModelContextFactory(repository, config);
@@ -123,5 +124,9 @@ public class SharedEffectiveModelContextFactoryTest {
 
             return immediateFluentFuture(schemaSource);
         }
+    }
+
+    private static final URLYangTextSource assertYangText(final String resourceName) {
+        return new URLYangTextSource(AbstractSchemaRepositoryTest.class.getResource(resourceName));
     }
 }

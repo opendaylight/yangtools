@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
@@ -42,10 +42,10 @@ class ContextReferenceTest {
             .build();
 
         final var foo = reactor.newBuild()
-            .addSource(YangStatementStreamSource.create(YangTextSource.forResource(
-                ContextReferenceTest.class, "/yang-ext.yang")))
-            .addSource(YangStatementStreamSource.create(YangTextSource.forResource(
-                ContextReferenceTest.class, "/ctxref.yang")))
+            .addSource(YangStatementStreamSource.create(new URLYangTextSource(
+                ContextReferenceTest.class.getResource("/yang-ext.yang"))))
+            .addSource(YangStatementStreamSource.create(new URLYangTextSource(
+                ContextReferenceTest.class.getResource("/ctxref.yang"))))
             .buildEffective()
             .getModuleStatements()
             .get(FOO);

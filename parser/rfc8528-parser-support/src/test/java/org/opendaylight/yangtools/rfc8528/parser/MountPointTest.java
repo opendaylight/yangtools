@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
@@ -41,15 +41,16 @@ class MountPointTest {
         final var context = reactor.newBuild()
             .addLibSources(
                 YangStatementStreamSource.create(
-                    YangTextSource.forResource(MountPointTest.class, "/ietf-inet-types@2013-07-15.yang")),
+                    new URLYangTextSource(MountPointTest.class.getResource("/ietf-inet-types@2013-07-15.yang"))),
                 YangStatementStreamSource.create(
-                    YangTextSource.forResource(MountPointTest.class, "/ietf-yang-schema-mount@2019-01-14.yang")),
+                    new URLYangTextSource(MountPointTest.class.getResource("/ietf-yang-schema-mount@2019-01-14.yang"))),
                 YangStatementStreamSource.create(
-                    YangTextSource.forResource(MountPointTest.class, "/ietf-yang-types@2013-07-15.yang")))
+                    new URLYangTextSource(MountPointTest.class.getResource("/ietf-yang-types@2013-07-15.yang"))))
             .addSources(
-                YangStatementStreamSource.create(YangTextSource.forResource(MountPointTest.class, "/example-grp.yang")),
                 YangStatementStreamSource.create(
-                    YangTextSource.forResource(MountPointTest.class, "/example-uses.yang")))
+                    new URLYangTextSource(MountPointTest.class.getResource("/example-grp.yang"))),
+                YangStatementStreamSource.create(
+                    new URLYangTextSource(MountPointTest.class.getResource("/example-uses.yang"))))
             .buildEffective();
 
         assertEquals(5, context.getModules().size());
