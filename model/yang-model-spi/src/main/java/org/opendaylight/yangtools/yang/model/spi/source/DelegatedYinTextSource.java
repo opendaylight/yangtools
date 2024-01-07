@@ -14,9 +14,10 @@ import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 
 /**
- * A {@link YangTextSource} delegating to a {@link ByteSource}.
+ * A {@link YinTextSource} delegating to a {@link ByteSource}.
  */
 @NonNullByDefault
 public class DelegatedYinTextSource extends AbstractYinTextSource<ByteSource> {
