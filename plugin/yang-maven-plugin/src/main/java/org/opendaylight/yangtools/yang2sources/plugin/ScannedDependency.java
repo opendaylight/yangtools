@@ -16,7 +16,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +27,8 @@ import java.util.zip.ZipFile;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +58,14 @@ abstract class ScannedDependency {
         ImmutableList<YangTextSource> sources() throws IOException {
             final var builder = ImmutableList.<YangTextSource>builderWithExpectedSize(entryNames.size());
 
-            try (ZipFile zip = new ZipFile(file())) {
-                for (String entryName : entryNames) {
-                    final ZipEntry entry = requireNonNull(zip.getEntry(entryName));
+            try (var zip = new ZipFile(file())) {
+                for (var entryName : entryNames) {
+                    final var entry = requireNonNull(zip.getEntry(entryName));
 
-                    builder.add(YangTextSource.delegateForByteSource(
-                        entryName.substring(entryName.lastIndexOf('/') + 1),
-                        // FIXME: can we reasonable make this a CharSource?
-                        ByteSource.wrap(ByteStreams.toByteArray(zip.getInputStream(entry))),
-                        StandardCharsets.UTF_8));
+                    builder.add(new DelegatedYangTextSource(
+                        SourceIdentifier.ofYangFileName(entryName.substring(entryName.lastIndexOf('/') + 1)),
+                        ByteSource.wrap(zip.getInputStream(entry).readAllBytes())
+                            .asCharSource(StandardCharsets.UTF_8)));
                 }
             }
 
