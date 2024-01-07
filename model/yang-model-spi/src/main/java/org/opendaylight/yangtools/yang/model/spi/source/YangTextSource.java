@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
-import static org.opendaylight.yangtools.yang.common.YangNames.parseFilename;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -36,15 +33,6 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
 
     protected YangTextSource(final SourceIdentifier sourceId) {
         this.sourceId = requireNonNull(sourceId);
-    }
-
-    public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
-        checkArgument(name.endsWith(RFC6020_YANG_FILE_EXTENSION), "Filename '%s' does not end with '%s'", name,
-            RFC6020_YANG_FILE_EXTENSION);
-
-        final String baseName = name.substring(0, name.length() - RFC6020_YANG_FILE_EXTENSION.length());
-        final var parsed = parseFilename(baseName);
-        return new SourceIdentifier(parsed.getKey(), parsed.getValue());
     }
 
     /**
@@ -99,7 +87,7 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
      */
     public static @NonNull YangTextSource delegateForCharSource(final String fileName,
             final CharSource delegate) {
-        return new DelegatedYangTextSource(identifierFromFilename(fileName), delegate);
+        return new DelegatedYangTextSource(SourceIdentifier.ofYangFileName(fileName), delegate);
     }
 
     /**
@@ -112,7 +100,8 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
      * @throws NullPointerException if file is {@code null}
      */
     public static @NonNull YangTextSource forPath(final Path path) {
-        return forPath(path, identifierFromFilename(path.toFile().getName()));
+        // FIXME: do not use .toFile() here
+        return forPath(path, SourceIdentifier.ofYangFileName(path.toFile().getName()));
     }
 
     /**
@@ -140,8 +129,10 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
      */
     public static @NonNull YangTextSource forPath(final Path path, final SourceIdentifier identifier,
             final Charset charset) {
-        checkArgument(Files.isRegularFile(path), "Supplied path %s is not a regular file", path);
-        return new YangTextFileSource(identifier, path, charset);
+        if (Files.isRegularFile(path)) {
+            return new YangTextFileSource(identifier, path, charset);
+        }
+        throw new IllegalArgumentException("Supplied path " + path + " is not a regular file");
     }
 
     /**
@@ -181,9 +172,9 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
      */
     public static @NonNull YangTextSource forResource(final Class<?> clazz, final String resourceName,
             final Charset charset) {
-        final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
-        final SourceIdentifier identifier = identifierFromFilename(fileName);
-        final URL url = Resources.getResource(clazz, resourceName);
+        final var fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
+        final var identifier = SourceIdentifier.ofYangFileName(fileName);
+        final var url = Resources.getResource(clazz, resourceName);
         return new ResourceYangTextSource(identifier, url, charset);
     }
 

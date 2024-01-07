@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
@@ -18,40 +17,17 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.common.YangNames;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an {@link InputStream}.
  */
 public abstract class YinTextSource extends ByteSource implements YinSourceRepresentation {
-    private static final Logger LOG = LoggerFactory.getLogger(YinTextSource.class);
-    private static final String XML_EXTENSION = ".xml";
-
     private final @NonNull SourceIdentifier sourceId;
 
     protected YinTextSource(final SourceIdentifier sourceId) {
         this.sourceId = requireNonNull(sourceId);
-    }
-
-    public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
-        final String baseName;
-        if (name.endsWith(YangConstants.RFC6020_YIN_FILE_EXTENSION)) {
-            baseName = name.substring(0, name.length() - YangConstants.RFC6020_YIN_FILE_EXTENSION.length());
-        } else if (name.endsWith(XML_EXTENSION)) {
-            // FIXME: BUG-7061: remove this once we do not need it
-            LOG.warn("XML file {} being loaded as YIN", name);
-            baseName = name.substring(0, name.length() - XML_EXTENSION.length());
-        } else {
-            throw new IllegalArgumentException("Filename " + name + " does not have a .yin or .xml extension");
-        }
-
-        final var parsed = YangNames.parseFilename(baseName);
-        return new SourceIdentifier(parsed.getKey(), parsed.getValue());
     }
 
     @Override
@@ -96,13 +72,16 @@ public abstract class YinTextSource extends ByteSource implements YinSourceRepre
     }
 
     public static @NonNull YinTextSource forPath(final Path path) {
-        checkArgument(Files.isRegularFile(path), "Supplied path %s is not a regular file", path);
-        return new YinTextFileSource(identifierFromFilename(path.toFile().getName()), path);
+        if (Files.isRegularFile(path)) {
+            // FIXME: do not use toFile() here
+            return new YinTextFileSource(SourceIdentifier.ofYinFileName(path.toFile().getName()), path);
+        }
+        throw new IllegalArgumentException("Supplied path " + path + " is not a regular file");
     }
 
     public static @NonNull YinTextSource forResource(final Class<?> clazz, final String resourceName) {
         final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
-        return new ResourceYinTextSource(identifierFromFilename(fileName),
+        return new ResourceYinTextSource(SourceIdentifier.ofYinFileName(fileName),
             Resources.getResource(clazz, resourceName));
     }
 }

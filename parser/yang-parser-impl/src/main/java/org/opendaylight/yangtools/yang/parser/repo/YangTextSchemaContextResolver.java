@@ -233,7 +233,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     private static SourceIdentifier guessSourceIdentifier(final @NonNull String fileName) {
         try {
-            return YangTextSource.identifierFromFilename(fileName);
+            return SourceIdentifier.ofYangFileName(fileName);
         } catch (IllegalArgumentException e) {
             LOG.warn("Invalid file name format in '{}'", fileName, e);
             return new SourceIdentifier(fileName);

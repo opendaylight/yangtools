@@ -145,16 +145,16 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
-            final YangParserConfiguration config) throws URISyntaxException, SAXException, IOException,
-            ReactorException {
-        final URL resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
-        final File[] files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
-        final StatementStreamSource[] sources = new StatementStreamSource[files.length];
+            final YangParserConfiguration config)
+                throws URISyntaxException, SAXException, IOException, ReactorException {
+        final var resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
+        final var files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
+        final var sources = new StatementStreamSource[files.length];
         for (int i = 0; i < files.length; i++) {
-            final SourceIdentifier identifier = YinTextSource.identifierFromFilename(files[i].getName());
-
+            final var file = files[i];
             sources[i] = YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSource.delegateForByteSource(identifier, Files.asByteSource(files[i]))));
+                YinTextSource.delegateForByteSource(SourceIdentifier.ofYinFileName(file.getName()),
+                    Files.asByteSource(file))));
         }
 
         return parseYinSources(config, sources);
