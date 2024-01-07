@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.spi.source.YinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYinTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.xml.sax.SAXException;
 
 class YinFileStmtTest {
-
     private static final StatementStreamSource YIN_FILE = createSource("test.yin");
     private static final StatementStreamSource EXT_FILE = createSource("extension.yin");
     private static final StatementStreamSource EXT_USE_FILE = createSource("extension-use.yin");
@@ -36,7 +34,7 @@ class YinFileStmtTest {
     private static StatementStreamSource createSource(final String name) {
         try {
             return YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSource.forResource(YinFileStmtTest.class, "/semantic-statement-parser/yin/" + name)));
+                new URLYinTextSource(YinFileStmtTest.class.getResource("/semantic-statement-parser/yin/" + name))));
         } catch (SAXException | IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -62,6 +60,6 @@ class YinFileStmtTest {
         var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(INVALID_YIN_FILE_2);
         final var cause = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause();
         assertInstanceOf(SourceException.class, cause);
-        assertThat(cause.getMessage(), startsWith("Key argument 'testing-string testing-string' contains duplicates"));
+        assertThat(cause.getMessage()).startsWith("Key argument 'testing-string testing-string' contains duplicates");
     }
 }
