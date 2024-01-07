@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
@@ -20,16 +20,20 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 
-public final class YangIRSchemaSource implements YangSourceRepresentation {
-    private final @NonNull SourceIdentifier sourceId;
-    private final @NonNull IRStatement rootStatement;
+/**
+ * A {@link YangSourceRepresentation} backed by an {@link IRStatement}.
+ */
+@NonNullByDefault
+public final class YangIRSource implements YangSourceRepresentation {
+    private final SourceIdentifier sourceId;
+    private final IRStatement statement;
     private final @Nullable String symbolicName;
 
-    public YangIRSchemaSource(final @NonNull SourceIdentifier sourceId, final @NonNull IRStatement rootStatement,
+    public YangIRSource(final SourceIdentifier sourceId, final IRStatement statement,
             final @Nullable String symbolicName) {
-        final var rootKeyword = rootStatement.keyword();
+        final var rootKeyword = statement.keyword();
         if (!(rootKeyword instanceof Unqualified)) {
-            throw new StatementSourceException(refOf(sourceId, rootStatement),
+            throw new StatementSourceException(refOf(sourceId, statement),
                 "Root statement has invalid keyword " + rootKeyword);
         }
         final var rootName = rootKeyword.identifier();
@@ -38,15 +42,14 @@ public final class YangIRSchemaSource implements YangSourceRepresentation {
             case "submodule":
                 break;
             default:
-                throw new StatementSourceException(refOf(sourceId, rootStatement),
+                throw new StatementSourceException(refOf(sourceId, statement),
                     "Invalid root statement keyword " + rootName);
         }
-        if (rootStatement.argument() == null) {
-            throw new StatementSourceException(refOf(sourceId, rootStatement),
-                "Root statement does not have an argument");
+        if (statement.argument() == null) {
+            throw new StatementSourceException(refOf(sourceId, statement), "Root statement does not have an argument");
         }
         this.sourceId = requireNonNull(sourceId);
-        this.rootStatement = rootStatement;
+        this.statement = statement;
         this.symbolicName = symbolicName;
     }
 
@@ -56,13 +59,13 @@ public final class YangIRSchemaSource implements YangSourceRepresentation {
     }
 
     @Override
-    public String symbolicName() {
+    public @Nullable String symbolicName() {
         return symbolicName;
     }
 
     @Override
-    public Class<YangIRSchemaSource> getType() {
-        return YangIRSchemaSource.class;
+    public Class<YangIRSource> getType() {
+        return YangIRSource.class;
     }
 
     /**
@@ -70,8 +73,8 @@ public final class YangIRSchemaSource implements YangSourceRepresentation {
      *
      * @return Root statement.
      */
-    public @NonNull IRStatement rootStatement() {
-        return rootStatement;
+    public IRStatement statement() {
+        return statement;
     }
 
     // FIXME: hide this method

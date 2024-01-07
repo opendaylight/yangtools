@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
@@ -42,8 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 /**
  * This class represents implementation of StatementStreamSource in order to emit YANG statements using supplied
  * StatementWriter.
- *
- * @author Robert Varga
  */
 @Beta
 public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<SourceIdentifier>
@@ -73,14 +71,14 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     }
 
     /**
-     * Create a {@link YangStatementStreamSource} for a {@link YangIRSchemaSource}.
+     * Create a {@link YangStatementStreamSource} for a {@link YangIRSource}.
      *
      * @param source YangTextSchemaSource, must not be null
      * @return A new {@link YangStatementStreamSource}
      * @throws NullPointerException if {@code source} is null
      */
-    public static YangStatementStreamSource create(final YangIRSchemaSource source) {
-        return create(source.sourceId(), source.rootStatement(), source.symbolicName());
+    public static YangStatementStreamSource create(final YangIRSource source) {
+        return create(source.sourceId(), source.statement(), source.symbolicName());
     }
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final IRStatement rootStatement,
