@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -390,7 +390,7 @@ class YangToSourcesProcessor {
     @SuppressWarnings("checkstyle:illegalCatch")
     private @NonNull ProcessorModuleReactor createReactor(final List<File> yangFilesInProject,
             final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
-            final List<Entry<FileYangTextSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
+            final List<Entry<FileYangTextSource, YangIRSource>> parsed) throws MojoExecutionException {
 
         try {
             final var sourcesInProject = new ArrayList<YangTextSource>(yangFilesInProject.size());

@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 class SharedEffectiveModelContextFactoryTest {
@@ -74,7 +74,7 @@ class SharedEffectiveModelContextFactoryTest {
         // Register the same provider under source id without revision
         final var sIdWithoutRevision = new SourceIdentifier(provider.getId().name());
         repository.registerSchemaSource(provider, PotentialSchemaSource.create(sIdWithoutRevision,
-            YangIRSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
+            YangIRSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
         final var sharedSchemaContextFactory = new SharedEffectiveModelContextFactory(repository, config);
         final var schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(

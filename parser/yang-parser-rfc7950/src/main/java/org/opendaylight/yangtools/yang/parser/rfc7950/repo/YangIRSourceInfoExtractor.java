@@ -25,11 +25,11 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 
 /**
- * Utility class for extract {@link SourceInfo} from a {@link YangIRSchemaSource}.
+ * Utility class for extract {@link SourceInfo} from a {@link YangIRSource}.
  */
 public final class YangIRSourceInfoExtractor {
     private static final String BELONGS_TO = YangStmtMapping.BELONGS_TO.getStatementName().getLocalName();
@@ -54,8 +54,8 @@ public final class YangIRSourceInfoExtractor {
      * @return {@link SourceInfo}
      * @throws IllegalArgumentException If the root statement is not a valid YANG module/submodule
      */
-    public static @NonNull SourceInfo forIR(final YangIRSchemaSource source) {
-        return forIR(source.rootStatement(), source.sourceId());
+    public static @NonNull SourceInfo forIR(final YangIRSource source) {
+        return forIR(source.statement(), source.sourceId());
     }
 
     /**

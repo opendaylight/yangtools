@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
@@ -33,9 +33,9 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
         final var idNoRevision = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported.yang");
         final var id2 = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported@2012-12-12.yang");
 
-        var source = sharedSchemaRepository.getSchemaSource(idNoRevision, YangIRSchemaSource.class);
+        var source = sharedSchemaRepository.getSchemaSource(idNoRevision, YangIRSource.class);
         assertEquals(idNoRevision, source.get().sourceId());
-        source = sharedSchemaRepository.getSchemaSource(id2, YangIRSchemaSource.class);
+        source = sharedSchemaRepository.getSchemaSource(id2, YangIRSource.class);
         assertEquals(id2, source.get().sourceId());
     }
 
@@ -55,7 +55,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
         final var remoteInetTypesYang = assertYangTextResource("/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
         final var registeredSourceFuture = sharedSchemaRepository.getSchemaSource(
-            remoteInetTypesYang.getId(), YangIRSchemaSource.class);
+            remoteInetTypesYang.getId(), YangIRSource.class);
         assertFalse(registeredSourceFuture.isDone());
 
         final var fact = sharedSchemaRepository.createEffectiveModelContextFactory();
@@ -151,10 +151,10 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
         verify(immediateInetTypesYang).getSource(id);
     }
 
-    static SettableSchemaProvider<YangIRSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName)
+    static SettableSchemaProvider<YangIRSource> getRemoteYangSourceProviderFromResource(final String resourceName)
             throws Exception {
         return SettableSchemaProvider.createRemote(TextToIRTransformer.transformText(
             new URLYangTextSource(SharedSchemaRepositoryTest.class.getResource(resourceName))),
-            YangIRSchemaSource.class);
+            YangIRSource.class);
     }
 }

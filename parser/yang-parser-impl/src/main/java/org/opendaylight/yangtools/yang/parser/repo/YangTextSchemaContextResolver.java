@@ -53,7 +53,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
@@ -70,7 +70,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private final Map<QNameModule, List<ImmutableSet<String>>> registeredFeatures = new HashMap<>();
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
-    private final GuavaSchemaSourceCache<YangIRSchemaSource> cache;
+    private final GuavaSchemaSourceCache<YangIRSource> cache;
     private final SchemaSourceRegistry registry;
     private final SchemaRepository repository;
     private final Registration transReg;
@@ -85,7 +85,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         this.registry = requireNonNull(registry);
 
         transReg = registry.registerSchemaSourceListener(TextToIRTransformer.create(repository, registry));
-        cache = GuavaSchemaSourceCache.createSoftCache(registry, YangIRSchemaSource.class, SOURCE_LIFETIME);
+        cache = GuavaSchemaSourceCache.createSoftCache(registry, YangIRSource.class, SOURCE_LIFETIME);
     }
 
     public static @NonNull YangTextSchemaContextResolver create(final String name) {

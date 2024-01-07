@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 
 class MultipleRevImportBug6875Test extends AbstractSchemaRepositoryTest {
     private static final String BAR_NS = "bar";
@@ -88,7 +88,7 @@ class MultipleRevImportBug6875Test extends AbstractSchemaRepositoryTest {
     }
 
     private static void setAndRegister(final SharedSchemaRepository sharedSchemaRepository,
-            final SettableSchemaProvider<YangIRSchemaSource> source) {
+            final SettableSchemaProvider<YangIRSource> source) {
         source.register(sharedSchemaRepository);
         source.setResult();
     }

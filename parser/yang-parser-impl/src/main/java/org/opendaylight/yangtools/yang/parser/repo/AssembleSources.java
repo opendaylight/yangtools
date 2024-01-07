@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -28,10 +28,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, EffectiveModelContext> {
+final class AssembleSources implements AsyncFunction<List<YangIRSource>, EffectiveModelContext> {
     private static final Logger LOG = LoggerFactory.getLogger(AssembleSources.class);
 
-    private final @NonNull Function<YangIRSchemaSource, SourceIdentifier> getIdentifier;
+    private final @NonNull Function<YangIRSource, SourceIdentifier> getIdentifier;
     private final @NonNull SchemaContextFactoryConfiguration config;
     private final @NonNull YangParserFactory parserFactory;
 
@@ -40,12 +40,12 @@ final class AssembleSources implements AsyncFunction<List<YangIRSchemaSource>, E
         this.parserFactory = parserFactory;
         this.config = config;
         getIdentifier = switch (config.getStatementParserMode()) {
-            case DEFAULT_MODE -> YangIRSchemaSource::sourceId;
+            case DEFAULT_MODE -> YangIRSource::sourceId;
         };
     }
 
     @Override
-    public FluentFuture<EffectiveModelContext> apply(final List<YangIRSchemaSource> sources) {
+    public FluentFuture<EffectiveModelContext> apply(final List<YangIRSource> sources) {
         final var srcs = Maps.uniqueIndex(sources, getIdentifier);
         final var deps = Maps.transformValues(srcs, YangIRSourceInfoExtractor::forIR);
         LOG.debug("Resolving dependency reactor {}", deps);

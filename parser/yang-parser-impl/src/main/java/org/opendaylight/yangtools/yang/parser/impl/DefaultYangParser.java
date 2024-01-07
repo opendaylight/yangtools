@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 final class DefaultYangParser implements YangParser {
     static final @NonNull ImmutableSet<Class<? extends SourceRepresentation>> REPRESENTATIONS = ImmutableSet.of(
         // In order of preference
-        YangIRSchemaSource.class,
+        YangIRSource.class,
         YangTextSource.class,
         YinDomSource.class,
         YinXmlSource.class,
@@ -107,7 +107,7 @@ final class DefaultYangParser implements YangParser {
     static StatementStreamSource sourceToStatementStream(final SourceRepresentation source)
             throws IOException, YangSyntaxErrorException {
         requireNonNull(source);
-        if (source instanceof YangIRSchemaSource irSource) {
+        if (source instanceof YangIRSource irSource) {
             return YangStatementStreamSource.create(irSource);
         } else if (source instanceof YangTextSource yangSource) {
             return YangStatementStreamSource.create(yangSource);
