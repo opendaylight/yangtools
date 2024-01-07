@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
  * A {@link YangTextSource} delegating to a {@link ByteSource}.
  */
 @NonNullByDefault
-public class DelegatedYinTextSource extends YinTextSource implements Delegator<ByteSource> {
+public class DelegatedYinTextSource extends AbstractYinTextSource implements Delegator<ByteSource> {
     private final ByteSource delegate;
 
     /**
