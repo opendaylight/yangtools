@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceExcepti
 import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -238,7 +239,7 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
 
         @Override
         YangTextSource restoreAsType(final SourceIdentifier sourceIdentifier, final File cachedSource) {
-            return YangTextSource.forPath(cachedSource.toPath(), sourceIdentifier);
+            return new FileYangTextSource(sourceIdentifier, cachedSource.toPath(), StandardCharsets.UTF_8);
         }
     }
 

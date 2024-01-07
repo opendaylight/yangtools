@@ -12,7 +12,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,8 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -65,9 +65,9 @@ public final class StmtTestUtils {
 
     public static YangStatementStreamSource sourceForResource(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(YangTextSource.forPath(Path.of(
-                StmtTestUtils.class.getResource(resourceName).toURI())));
-        } catch (IOException | YangSyntaxErrorException | URISyntaxException e) {
+            return YangStatementStreamSource.create(new URLYangTextSource(
+                StmtTestUtils.class.getResource(resourceName)));
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new IllegalArgumentException("Failed to create source", e);
         }
     }
@@ -110,14 +110,12 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
-            final Set<QName> supportedFeatures, final File... files) throws  ReactorException, IOException,
-            YangSyntaxErrorException {
-
-        final Collection<YangStatementStreamSource> sources = new ArrayList<>(files.length);
-        for (File file : files) {
-            sources.add(YangStatementStreamSource.create(YangTextSource.forPath(file.toPath())));
+            final Set<QName> supportedFeatures, final File... files)
+                throws ReactorException, IOException, YangSyntaxErrorException {
+        final var sources = new ArrayList<YangStatementStreamSource>(files.length);
+        for (var file : files) {
+            sources.add(YangStatementStreamSource.create(new FileYangTextSource(file.toPath())));
         }
-
         return parseYangSources(config, supportedFeatures, sources);
     }
 
