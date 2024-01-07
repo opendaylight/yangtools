@@ -20,7 +20,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
-import org.opentest4j.AssertionFailedError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -37,7 +36,7 @@ abstract class AbstractXmlTest {
         try {
             doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         } catch (SAXException | IOException e) {
-            throw new AssertionFailedError(null, e);
+            throw new AssertionError(e);
         }
         doc.getDocumentElement().normalize();
         return doc;
@@ -48,7 +47,7 @@ abstract class AbstractXmlTest {
         try {
             transformer = TF.newTransformer();
         } catch (TransformerConfigurationException e) {
-            throw new AssertionFailedError(null, e);
+            throw new AssertionError(e);
         }
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
@@ -57,7 +56,7 @@ abstract class AbstractXmlTest {
         try {
             transformer.transform(new DOMSource(xml), result);
         } catch (TransformerException e) {
-            throw new AssertionFailedError(null, e);
+            throw new AssertionError(e);
         }
         return result.getWriter().toString();
     }
