@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import com.google.common.io.Files;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -24,9 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -151,10 +149,8 @@ public final class StmtTestUtils {
         final var files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
         final var sources = new StatementStreamSource[files.length];
         for (int i = 0; i < files.length; i++) {
-            final var file = files[i];
             sources[i] = YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                new DelegatedYinTextSource(SourceIdentifier.ofYinFileName(file.getName()),
-                    Files.asByteSource(file))));
+                new FileYinTextSource(files[i].toPath())));
         }
 
         return parseYinSources(config, sources);
