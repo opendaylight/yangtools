@@ -7,24 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.CharSource;
 import java.io.IOException;
 import java.io.Reader;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
 /**
  * A {@link YangTextSource} delegating to a {@link CharSource}.
  */
 @NonNullByDefault
-public class DelegatedYangTextSource extends YangTextSource implements Delegator<CharSource> {
-    private final CharSource delegate;
-
+public class DelegatedYangTextSource extends AbstractYangTextSource<CharSource> {
     /**
      * Default constructor.
      *
@@ -32,27 +28,21 @@ public class DelegatedYangTextSource extends YangTextSource implements Delegator
      * @param delegate Backing {@link CharSource} instance
      */
     public DelegatedYangTextSource(final SourceIdentifier sourceId, final CharSource delegate) {
-        super(sourceId);
-        this.delegate = requireNonNull(delegate);
-    }
-
-    @Override
-    public final CharSource getDelegate() {
-        return delegate;
+        super(sourceId, delegate);
     }
 
     @Override
     public final Reader openStream() throws IOException {
-        return delegate.openStream();
+        return getDelegate().openStream();
     }
 
     @Override
     public final @NonNull String symbolicName() {
-        return "[" + delegate.toString() + "]";
+        return "[" + getDelegate().toString() + "]";
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("delegate", delegate);
+        return super.addToStringAttributes(toStringHelper).add("delegate", getDelegate());
     }
 }
