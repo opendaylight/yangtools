@@ -17,22 +17,17 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-public class SharedSchemaRepositoryWithFeaturesTest {
+class SharedSchemaRepositoryWithFeaturesTest extends AbstractSchemaRepositoryTest {
     @Test
-    public void testSharedSchemaRepositoryWithSomeFeaturesSupported() throws Exception {
+    void testSharedSchemaRepositoryWithSomeFeaturesSupported() throws Exception {
         final var supportedFeatures = FeatureSet.of(QName.create("foobar-namespace", "test-feature-1"));
 
         final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
 
-        final var foobar = getImmediateYangSourceProviderFromResource(
-            "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
+        final var foobar = assertYangTextResource("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
@@ -60,11 +55,10 @@ public class SharedSchemaRepositoryWithFeaturesTest {
     }
 
     @Test
-    public void testSharedSchemaRepositoryWithAllFeaturesSupported() throws Exception {
+    void testSharedSchemaRepositoryWithAllFeaturesSupported() throws Exception {
         final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
 
-        final var foobar = getImmediateYangSourceProviderFromResource(
-            "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
+        final var foobar = assertYangTextResource("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
@@ -94,11 +88,10 @@ public class SharedSchemaRepositoryWithFeaturesTest {
     }
 
     @Test
-    public void testSharedSchemaRepositoryWithNoFeaturesSupported() throws Exception {
+    void testSharedSchemaRepositoryWithNoFeaturesSupported() throws Exception {
         final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
 
-        final var foobar = getImmediateYangSourceProviderFromResource(
-            "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
+        final var foobar = assertYangTextResource("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
@@ -116,16 +109,5 @@ public class SharedSchemaRepositoryWithFeaturesTest {
             module.dataChildByName(QName.create(module.getQNameModule(), "test-container-c")));
         assertInstanceOf(LeafSchemaNode.class,
             testContainerC.dataChildByName(QName.create(module.getQNameModule(), "test-leaf-c")));
-    }
-
-    private static SettableSchemaProvider<YangIRSchemaSource> getImmediateYangSourceProviderFromResource(
-            final String resourceName) throws Exception {
-        return SettableSchemaProvider.createImmediate(
-            TextToIRTransformer.transformText(YangTextSource.forResource(resourceName)), YangIRSchemaSource.class);
-    }
-
-    private static void assertSchemaContext(final SchemaContext schemaContext, final int moduleSize) {
-        assertNotNull(schemaContext);
-        assertEquals(moduleSize, schemaContext.getModules().size());
     }
 }

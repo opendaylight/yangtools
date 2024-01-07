@@ -12,10 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.CharSource;
-import com.google.common.io.Resources;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -77,76 +75,6 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
             return new YangTextFileSource(identifier, path, charset);
         }
         throw new IllegalArgumentException("Supplied path " + path + " is not a regular file");
-    }
-
-    /**
-     * Create a new {@link YangTextSource} backed by a resource available in the ClassLoader where this
-     * class resides.
-     *
-     * @param resourceName Resource name
-     * @return A new instance.
-     * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
-     */
-    public static @NonNull YangTextSource forResource(final String resourceName) {
-        return forResource(YangTextSource.class, resourceName);
-    }
-
-    /**
-     * Create a new {@link YangTextSource} backed by a resource by a resource available on the ClassLoader
-     * which loaded the specified class.
-     *
-     * @param clazz Class reference
-     * @param resourceName Resource name
-     * @return A new instance.
-     * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
-     */
-    public static @NonNull YangTextSource forResource(final Class<?> clazz, final String resourceName) {
-        return forResource(clazz, resourceName, StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Create a new {@link YangTextSource} backed by a resource by a resource available on the ClassLoader
-     * which loaded the specified class.
-     *
-     * @param clazz Class reference
-     * @param resourceName Resource name
-     * @param charset Expected character set
-     * @return A new instance.
-     * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
-     */
-    public static @NonNull YangTextSource forResource(final Class<?> clazz, final String resourceName,
-            final Charset charset) {
-        final var fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
-        final var identifier = SourceIdentifier.ofYangFileName(fileName);
-        final var url = Resources.getResource(clazz, resourceName);
-        return new ResourceYangTextSource(identifier, url, charset);
-    }
-
-
-    /**
-     * Create a new {@link YangTextSource} backed by a URL.
-     *
-     * @param url Backing URL
-     * @param identifier Source identifier
-     * @return A new instance.
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    public static @NonNull YangTextSource forURL(final URL url, final SourceIdentifier identifier) {
-        return forURL(url, identifier, StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Create a new {@link YangTextSource} backed by a URL.
-     *
-     * @param url Backing URL
-     * @param identifier Source identifier
-     * @param charset Expected character set
-     * @return A new instance.
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    public static @NonNull YangTextSource forURL(final URL url, final SourceIdentifier identifier,
-            final Charset charset) {
-        return new ResourceYangTextSource(identifier, url, charset);
     }
 
     @Override

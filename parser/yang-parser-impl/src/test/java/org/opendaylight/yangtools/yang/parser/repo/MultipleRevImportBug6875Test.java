@@ -20,10 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-public class MultipleRevImportBug6875Test {
+class MultipleRevImportBug6875Test extends AbstractSchemaRepositoryTest {
     private static final String BAR_NS = "bar";
     private static final String BAR_REV_1 = "2017-02-06";
     private static final String BAR_REV_2 = "1999-01-01";
@@ -31,13 +29,13 @@ public class MultipleRevImportBug6875Test {
     private static final String FOO_NS = "foo";
 
     @Test
-    public void testYang11() throws Exception {
+    void testYang11() throws Exception {
         final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-multiple-rev-import-test");
 
-        final var foo = getSourceProvider("/rfc7950/bug6875/yang1-1/foo.yang");
-        final var bar1 = getSourceProvider("/rfc7950/bug6875/yang1-1/bar@1999-01-01.yang");
-        final var bar2 = getSourceProvider("/rfc7950/bug6875/yang1-1/bar@2017-02-06.yang");
-        final var bar3 = getSourceProvider("/rfc7950/bug6875/yang1-1/bar@1970-01-01.yang");
+        final var foo = assertYangTextResource("/rfc7950/bug6875/yang1-1/foo.yang");
+        final var bar1 = assertYangTextResource("/rfc7950/bug6875/yang1-1/bar@1999-01-01.yang");
+        final var bar2 = assertYangTextResource("/rfc7950/bug6875/yang1-1/bar@2017-02-06.yang");
+        final var bar3 = assertYangTextResource("/rfc7950/bug6875/yang1-1/bar@1970-01-01.yang");
 
         setAndRegister(sharedSchemaRepository, foo);
         setAndRegister(sharedSchemaRepository, bar1);
@@ -69,12 +67,12 @@ public class MultipleRevImportBug6875Test {
     }
 
     @Test
-    public void testYang10() throws Exception {
+    void testYang10() throws Exception {
         final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-multiple-rev-import-test");
 
-        final var foo = getSourceProvider("/rfc7950/bug6875/yang1-0/foo.yang");
-        final var bar1 = getSourceProvider("/rfc7950/bug6875/yang1-0/bar@1999-01-01.yang");
-        final var bar2 = getSourceProvider("/rfc7950/bug6875/yang1-0/bar@2017-02-06.yang");
+        final var foo = assertYangTextResource("/rfc7950/bug6875/yang1-0/foo.yang");
+        final var bar1 = assertYangTextResource("/rfc7950/bug6875/yang1-0/bar@1999-01-01.yang");
+        final var bar2 = assertYangTextResource("/rfc7950/bug6875/yang1-0/bar@2017-02-06.yang");
 
         setAndRegister(sharedSchemaRepository, foo);
         setAndRegister(sharedSchemaRepository, bar1);
@@ -93,13 +91,6 @@ public class MultipleRevImportBug6875Test {
             final SettableSchemaProvider<YangIRSchemaSource> source) {
         source.register(sharedSchemaRepository);
         source.setResult();
-    }
-
-    private static SettableSchemaProvider<YangIRSchemaSource> getSourceProvider(final String resourceName)
-            throws Exception {
-        return SettableSchemaProvider.createImmediate(
-            TextToIRTransformer.transformText(YangTextSource.forResource(resourceName)),
-            YangIRSchemaSource.class);
     }
 
     private static QName foo(final String localName) {
