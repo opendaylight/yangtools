@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -63,8 +62,8 @@ final class RevisionImport {
                     ParserNamespaces.MODULECTX_TO_SOURCE, importedModule);
                 stmt.addToNs(ImportedVersionNamespace.INSTANCE, Empty.value(), importedModuleIdentifier);
 
-                final QNameModule mod = InferenceException.throwIfNull(
-                    stmt.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule), stmt,
+                final QNameModule mod = stmt.inferNotNull(
+                    stmt.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule),
                     "Failed to find module of %s", importedModule);
 
                 linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE, importedModuleIdentifier,
@@ -77,8 +76,7 @@ final class RevisionImport {
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 if (failed.contains(imported)) {
-                    throw new InferenceException(stmt, "Imported module [%s] was not found.",
-                        moduleName.getLocalName());
+                    throw stmt.newInferenceException("Imported module [%s] was not found.", moduleName.getLocalName());
                 }
             }
         });

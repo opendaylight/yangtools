@@ -126,9 +126,9 @@ public final class SubstatementValidator {
 
             if (cardinality == null) {
                 if (ctx.namespaceItem(ParserNamespaces.EXTENSION, key.getStatementName()) == null) {
-                    final StmtContext<?, ?, ?> root = ctx.getRoot();
-                    throw new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", key,
-                        currentStatement, root.rawArgument(),
+                    final var root = ctx.getRoot();
+                    throw new InvalidSubstatementException(ctx.sourceReference(),
+                        "%s is not valid for %s. Error in module %s (%s)", key, currentStatement, root.rawArgument(),
                         ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
                 }
 
@@ -137,8 +137,8 @@ public final class SubstatementValidator {
 
             if (cardinality.getMin() > 0) {
                 if (cardinality.getMin() > value) {
-                    final StmtContext<?, ?, ?> root = ctx.getRoot();
-                    throw new InvalidSubstatementException(ctx,
+                    final var root = ctx.getRoot();
+                    throw new InvalidSubstatementException(ctx.sourceReference(),
                         "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
                         cardinality.getMin(), value, root.rawArgument(),
                         ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
@@ -148,8 +148,8 @@ public final class SubstatementValidator {
                 missingMandatory.remove(key);
             }
             if (cardinality.getMax() < value) {
-                final StmtContext<?, ?, ?> root = ctx.getRoot();
-                throw new InvalidSubstatementException(ctx,
+                final var root = ctx.getRoot();
+                throw new InvalidSubstatementException(ctx.sourceReference(),
                     "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
                     cardinality.getMax(), value, root.rawArgument(),
                     ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));

@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -186,7 +185,7 @@ public final class UniqueStatementSupport
 
         @Override
         public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-            InferenceException.throwIf(isApplicable(), unique, "Parent list failed to reach effective model");
+            unique.inferFalse(isApplicable(), "Parent list failed to reach effective model");
         }
 
         private boolean isApplicable() {

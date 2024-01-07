@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -70,7 +69,7 @@ public final class BelongsToStatementSupport
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 if (failed.contains(belongsToPrereq)) {
-                    throw new InferenceException(belongsToCtx, "Module '%s' from belongs-to was not found",
+                    throw belongsToCtx.newInferenceException("Module '%s' from belongs-to was not found",
                         belongsToCtx.argument());
                 }
             }

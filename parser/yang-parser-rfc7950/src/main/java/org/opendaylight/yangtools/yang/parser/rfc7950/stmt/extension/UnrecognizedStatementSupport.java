@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -88,7 +87,7 @@ final class UnrecognizedStatementSupport
     @Override
     protected UnrecognizedEffectiveStatement createEffective(final Current<Object, UnrecognizedStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        throw new InferenceException(stmt, "Attempted to instantiate unrecognized effective statement %s",
+        throw stmt.newInferenceException("Attempted to instantiate unrecognized effective statement %s",
             stmt.publicDefinition());
     }
 }

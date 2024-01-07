@@ -200,7 +200,7 @@ public final class YangDataStatementSupport
                 verify(substmt instanceof DataSchemaNode, "Unexpected single child %s", substmt);
                 yield (DataSchemaNode) substmt;
             }
-            default -> throw new InvalidSubstatementException(stmt,
+            default -> throw new InvalidSubstatementException(stmt.sourceReference(),
                 "yang-data requires exactly one container data node definition, found %s", schemaSub);
         };
 

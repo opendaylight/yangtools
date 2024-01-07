@@ -73,7 +73,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -167,7 +166,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(typePrereq), stmt, "Type [%s] was not found.", typeQName);
+                stmt.inferFalse(failed.contains(typePrereq), "Type [%s] was not found.", typeQName);
             }
         });
     }
@@ -300,7 +299,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             return ((TypedefEffectiveStatement) ((StmtContext<?, ?, ?>) obj).buildEffective())
                 .asTypeEffectiveStatement();
         } else {
-            throw new InferenceException(ctx, "Unexpected base object %s", obj);
+            throw ctx.newInferenceException("Unexpected base object %s", obj);
         }
     }
 

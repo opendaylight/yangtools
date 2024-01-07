@@ -13,8 +13,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -31,8 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -57,9 +53,9 @@ abstract class AbstractIfFeatureStatementSupport
             final Mutable<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        final ModelActionBuilder verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Map<Prerequisite<?>, QName> backRef = new HashMap<>();
-        for (QName feature : stmt.getArgument().getReferencedFeatures()) {
+        final var verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var backRef = new HashMap<Prerequisite<?>, QName>();
+        for (var feature : stmt.getArgument().getReferencedFeatures()) {
             backRef.put(verifyFeatures.requiresCtx(stmt, ParserNamespaces.FEATURE, feature,
                 ModelProcessingPhase.EFFECTIVE_MODEL), feature);
         }
@@ -72,12 +68,12 @@ abstract class AbstractIfFeatureStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                final Set<QName> unresolvedFeatures = new HashSet<>();
-                for (Prerequisite<?> prereq : failed) {
+                final var unresolvedFeatures = new HashSet<QName>();
+                for (var prereq : failed) {
                     unresolvedFeatures.add(verifyNotNull(backRef.get(prereq)));
                 }
 
-                throw new InferenceException(stmt, "Failed to resolve feature references %s in \"%s\"",
+                throw stmt.newInferenceException("Failed to resolve feature references %s in \"%s\"",
                     unresolvedFeatures, stmt.rawArgument());
             }
         });

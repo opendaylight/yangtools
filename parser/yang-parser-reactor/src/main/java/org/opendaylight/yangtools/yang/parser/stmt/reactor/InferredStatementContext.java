@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OnDemandSchemaTreeStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -468,7 +467,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         @SuppressWarnings("unchecked")
         final var ret = (Mutable<QName, Y, Z>) copySubstatement(template).orElseThrow(
-            () -> new InferenceException(this, "Failed to materialize child %s template %s", qname, template));
+            () -> newInferenceException("Failed to materialize child %s template %s", qname, template));
 
         // Careful here: first add the substatement and only complete it afterwards
         final var toAdd = verifyStatement(ret);

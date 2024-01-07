@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -108,7 +107,7 @@ final class AugmentInferenceAction implements InferenceAction {
             }
         }
 
-        throw new InferenceException(augmentNode, "Augment target '%s' not found", augmentNode.argument());
+        throw augmentNode.newInferenceException("Augment target '%s' not found", augmentNode.argument());
     }
 
     @Override
@@ -176,9 +175,9 @@ final class AugmentInferenceAction implements InferenceAction {
 
         // Data definition statements must not collide on their namespace
         if (sourceCtx.producesDeclared(DataDefinitionStatement.class)) {
-            for (StmtContext<?, ?, ?> subStatement : targetCtx.allSubstatements()) {
+            for (var subStatement : targetCtx.allSubstatements()) {
                 if (subStatement.producesDeclared(DataDefinitionStatement.class)) {
-                    InferenceException.throwIf(Objects.equals(sourceCtx.argument(), subStatement.argument()), sourceCtx,
+                    sourceCtx.inferFalse(Objects.equals(sourceCtx.argument(), subStatement.argument()),
                         "An augment cannot add node named '%s' because this name is already used in target",
                         sourceCtx.rawArgument());
                 }
@@ -197,8 +196,7 @@ final class AugmentInferenceAction implements InferenceAction {
              */
             sourceCtx.allSubstatementsStream().forEach(AugmentInferenceAction::checkForMandatoryNodes);
         }
-
-        InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx), sourceCtx,
+        sourceCtx.inferFalse(StmtContextUtils.isMandatoryNode(sourceCtx),
             "An augment cannot add node '%s' because it is mandatory and in module different than target",
             sourceCtx.rawArgument());
     }

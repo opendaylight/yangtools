@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -22,12 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
  * Common interface for all statement contexts, exposing information which is always available. Note this includes only
  * stateless information -- hence we have {@link #rawArgument()} but do not have an equivalent {@code argument()}.
  */
-@Beta
+@NonNullByDefault
 public interface CommonStmtCtx {
     /**
      * See {@link StatementSupport#getPublicView()}.
      */
-    @NonNull StatementDefinition publicDefinition();
+    StatementDefinition publicDefinition();
 
     /**
      * Return true if this context produces specified {@link DeclaredStatement} representation.
@@ -56,7 +55,7 @@ public interface CommonStmtCtx {
      *
      * @return reference of statement source
      */
-    @NonNull StatementSourceReference sourceReference();
+    StatementSourceReference sourceReference();
 
     /**
      * Return the statement argument in literal format.
@@ -71,7 +70,79 @@ public interface CommonStmtCtx {
      * @return raw statement argument string
      * @throws VerifyException if this statement does not have an argument
      */
-    default @NonNull String getRawArgument() {
+    default String getRawArgument() {
         return verifyNotNull(rawArgument(), "Statement context %s does not have an argument", this);
+    }
+
+    /**
+     * Infer that an expression is {@code false}. Throws an {@link InferenceException} if {@code expression} is
+     * {@code true}.
+     *
+     * @param expression evaluated expression
+     * @param format format string, according to {@link String#format(String, Object...)}.
+     * @param args format string arguments, according to {@link String#format(String, Object...)}
+     * @throws InferenceException if the expression evaluates to {@code true}.
+     */
+    default void inferFalse(final boolean expression, final String format, final Object... args) {
+        if (expression) {
+            throw newInferenceException(format, args);
+        }
+    }
+
+    /**
+     * Infer that an expression is {@code true}. Throws an {@link InferenceException} if {@code expression} is
+     * {@code false}.
+     *
+     * @param expression evaluated expression
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @throws InferenceException if the expression evaluates to {@code false}.
+     */
+    default void inferTrue(final boolean expression, final String format, final Object... args) {
+        if (!expression) {
+            throw newInferenceException(format, args);
+        }
+    }
+
+    /**
+     * Infer that an object is not {@code null}.
+     *
+     * @param obj Object reference to be checked
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @return Object if not {@code null}
+     * @throws InferenceException if {@code obj} is {@code null}
+     */
+    default <T> T inferNotNull(final @Nullable T obj, final String format, final Object... args) {
+        if (obj == null) {
+            throw newInferenceException(format, args);
+        }
+        return obj;
+    }
+
+    /**
+     * Infer that an object is {@code null}.
+     *
+     * @param obj Object reference to be checked
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @throws InferenceException if {@code obj} is not {@code null}
+     */
+    default void inferNull(final @Nullable Object obj, final String format, final Object... args) {
+        if (obj != null) {
+            throw newInferenceException(format, args);
+        }
+    }
+
+    default InferenceException newInferenceException(final String message) {
+        return new InferenceException(sourceReference(), message);
+    }
+
+    default InferenceException newInferenceException(final String message, final Throwable cause) {
+        return new InferenceException(sourceReference(), message, cause);
+    }
+
+    default InferenceException newInferenceException(final String format, final Object... args) {
+        return new InferenceException(sourceReference(), format, args);
     }
 }

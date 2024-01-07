@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -110,9 +109,9 @@ public final class UsesStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(sourceGroupingPre), usesNode,
+                usesNode.inferFalse(failed.contains(sourceGroupingPre),
                     "Grouping '%s' was not resolved.", groupingName);
-                throw new InferenceException("Unknown error occurred.", usesNode);
+                throw usesNode.newInferenceException("Unknown error occurred.");
             }
         });
     }
@@ -250,15 +249,14 @@ public final class UsesStatementSupport
     private static void performRefine(final Mutable<?, ?, ?> refineStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
         final Object refineArgument = refineStmtCtx.argument();
         if (!(refineArgument instanceof Descendant refineDescendant)) {
-            throw new InferenceException(refineStmtCtx,
+            throw refineStmtCtx.newInferenceException(
                 "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
         }
 
         // FIXME: this really should be handled via separate inference, i.e. we first instantiate the template and when
         //        it appears, this refine will trigger on it. This reinforces the FIXME below.
         final var optRefineTargetCtx = ParserNamespaces.findSchemaTreeStatement(usesParentCtx, refineDescendant);
-        InferenceException.throwIf(optRefineTargetCtx.isEmpty(), refineStmtCtx, "Refine target node %s not found.",
-            refineDescendant);
+        refineStmtCtx.inferTrue(optRefineTargetCtx.isPresent(), "Refine target node %s not found.", refineDescendant);
 
         // FIXME: This communicates the looked-up target node to RefineStatementSupport.buildEffective(). We should do
         //        this trick through a shared namespace or similar reactor-agnostic meeting place. It really feels like

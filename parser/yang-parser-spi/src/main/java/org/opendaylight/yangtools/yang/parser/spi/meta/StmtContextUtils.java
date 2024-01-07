@@ -480,8 +480,8 @@ public final class StmtContextUtils {
                 }
         }
 
-        return internedQName(ctx, InferenceException.throwIfNull(qnameModule, ctx,
-            "Cannot resolve QNameModule for '%s'", value), localName);
+        return internedQName(ctx, ctx.inferNotNull(qnameModule, "Cannot resolve QNameModule for '%s'", value),
+            localName);
     }
 
     /**
@@ -501,8 +501,7 @@ public final class StmtContextUtils {
     public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
         return internedQName(ctx,
-            InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx,
-                "Cannot resolve QNameModule for '%s'", prefix),
+            ctx.inferNotNull(getModuleQNameByPrefix(ctx, prefix), "Cannot resolve QNameModule for '%s'", prefix),
             localName);
     }
 

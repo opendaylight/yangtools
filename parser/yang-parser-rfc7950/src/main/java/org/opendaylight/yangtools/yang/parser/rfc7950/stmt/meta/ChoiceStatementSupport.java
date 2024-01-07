@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -154,7 +153,7 @@ public final class ChoiceStatementSupport
             }
 
             // FIXME: this does not work with submodules, as they are
-            defaultCase = InferenceException.throwIfNull(findCase(qname, substatements), stmt,
+            defaultCase = stmt.inferNotNull(findCase(qname, substatements),
                 "Default statement refers to missing case %s", qname);
         } else {
             defaultCase = null;
