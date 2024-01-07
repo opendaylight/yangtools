@@ -13,8 +13,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
@@ -55,13 +53,5 @@ public abstract class YinTextSource extends ByteSource implements YinSourceRepre
      */
     protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
         return toStringHelper.add("identifier", sourceId);
-    }
-
-    public static @NonNull YinTextSource forPath(final Path path) {
-        if (Files.isRegularFile(path)) {
-            // FIXME: do not use toFile() here
-            return new YinTextFileSource(SourceIdentifier.ofYinFileName(path.toFile().getName()), path);
-        }
-        throw new IllegalArgumentException("Supplied path " + path + " is not a regular file");
     }
 }
