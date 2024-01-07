@@ -7,20 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.Reader;
 import java.io.StringReader;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
 /**
  * A {@link YangTextSource} with content readily available.
  */
-public class StringYangTextSource extends YangTextSource {
+public class StringYangTextSource extends AbstractYangTextSource<String> {
     private final @Nullable String symbolicName;
-    private final @NonNull String content;
 
     public StringYangTextSource(final SourceIdentifier sourceId, final String content) {
         this(sourceId, content, null);
@@ -28,8 +25,7 @@ public class StringYangTextSource extends YangTextSource {
 
     public StringYangTextSource(final SourceIdentifier sourceId, final String content,
             final @Nullable String symbolicName) {
-        super(sourceId);
-        this.content = requireNonNull(content);
+        super(sourceId, content);
         this.symbolicName = symbolicName;
     }
 
@@ -40,6 +36,6 @@ public class StringYangTextSource extends YangTextSource {
 
     @Override
     public final Reader openStream() {
-        return new StringReader(content);
+        return new StringReader(getDelegate());
     }
 }

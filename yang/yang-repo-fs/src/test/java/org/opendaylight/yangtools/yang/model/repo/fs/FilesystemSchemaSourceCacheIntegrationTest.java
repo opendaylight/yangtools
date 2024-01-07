@@ -14,15 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,10 +30,11 @@ import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
@@ -108,22 +106,8 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
         final SourceIdentifier runningId = new SourceIdentifier("running", "2012-12-12");
 
         sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> FluentFutures.immediateFluentFuture(
-            new YangTextSource(runningId) {
-                @Override
-                protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-                    return toStringHelper;
-                }
-
-                @Override
-                public Reader openStream() throws IOException {
-                    return new StringReader("running");
-                }
-
-                @Override
-                public String symbolicName() {
-                    return null;
-                }
-            }), PotentialSchemaSource.create(runningId, YangTextSource.class,
+            new StringYangTextSource(runningId, "running", null)),
+            PotentialSchemaSource.create(runningId, YangTextSource.class,
                 PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
 
         final TextToIRTransformer transformer = TextToIRTransformer.create(sharedSchemaRepository,
