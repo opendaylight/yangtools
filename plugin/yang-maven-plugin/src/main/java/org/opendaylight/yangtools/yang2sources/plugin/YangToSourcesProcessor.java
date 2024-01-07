@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -245,9 +246,9 @@ class YangToSourcesProcessor {
 
         final Stopwatch watch = Stopwatch.createStarted();
 
-        final List<Entry<YangTextSource, YangIRSchemaSource>> parsed = yangFilesInProject.parallelStream()
+        final var parsed = yangFilesInProject.parallelStream()
             .map(file -> {
-                final var textSource = YangTextSource.forPath(file.toPath());
+                final var textSource = new FileYangTextSource(file.toPath());
                 try {
                     return Map.entry(textSource, TextToIRTransformer.transformText(textSource));
                 } catch (YangSyntaxErrorException | IOException e) {
@@ -389,7 +390,7 @@ class YangToSourcesProcessor {
     @SuppressWarnings("checkstyle:illegalCatch")
     private @NonNull ProcessorModuleReactor createReactor(final List<File> yangFilesInProject,
             final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
-            final List<Entry<YangTextSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
+            final List<Entry<FileYangTextSource, YangIRSchemaSource>> parsed) throws MojoExecutionException {
 
         try {
             final var sourcesInProject = new ArrayList<YangTextSource>(yangFilesInProject.size());

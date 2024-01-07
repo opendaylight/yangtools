@@ -12,12 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.CharSource;
-import java.io.File;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
@@ -30,51 +25,6 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
 
     protected YangTextSource(final SourceIdentifier sourceId) {
         this.sourceId = requireNonNull(sourceId);
-    }
-
-    /**
-     * Create a new YangTextSchemaSource backed by a {@link File} with {@link SourceIdentifier} derived from the file
-     * name.
-     *
-     * @param path Backing path
-     * @return A new YangTextSchemaSource
-     * @throws IllegalArgumentException if the file name has invalid format or if the supplied File is not a file
-     * @throws NullPointerException if file is {@code null}
-     */
-    public static @NonNull YangTextSource forPath(final Path path) {
-        // FIXME: do not use .toFile() here
-        return forPath(path, SourceIdentifier.ofYangFileName(path.toFile().getName()));
-    }
-
-    /**
-     * Create a new YangTextSchemaSource backed by a {@link File} and specified {@link SourceIdentifier}.
-     *
-     * @param path Backing path
-     * @param identifier source identifier
-     * @return A new YangTextSchemaSource
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws IllegalArgumentException if the supplied path is not a regular file
-     */
-    public static @NonNull YangTextSource forPath(final Path path, final SourceIdentifier identifier) {
-        return forPath(path, identifier, StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Create a new YangTextSchemaSource backed by a {@link File} and specified {@link SourceIdentifier}.
-     *
-     * @param path Backing path
-     * @param identifier Source identifier
-     * @param charset expected stream character set
-     * @return A new YangTextSchemaSource
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws IllegalArgumentException if the supplied path is not a regular file
-     */
-    public static @NonNull YangTextSource forPath(final Path path, final SourceIdentifier identifier,
-            final Charset charset) {
-        if (Files.isRegularFile(path)) {
-            return new YangTextFileSource(identifier, path, charset);
-        }
-        throw new IllegalArgumentException("Supplied path " + path + " is not a regular file");
     }
 
     @Override

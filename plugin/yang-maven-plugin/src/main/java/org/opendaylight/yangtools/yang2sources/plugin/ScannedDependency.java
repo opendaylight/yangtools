@@ -29,6 +29,7 @@ import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ abstract class ScannedDependency {
 
         @Override
         ImmutableList<YangTextSource> sources() {
-            return ImmutableList.of(YangTextSource.forPath(file().toPath()));
+            return ImmutableList.of(new FileYangTextSource(file().toPath()));
         }
     }
 

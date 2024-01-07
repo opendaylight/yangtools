@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
@@ -202,7 +202,7 @@ public final class YangParserTestUtils {
     public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final YangParserConfiguration config, final Collection<File> files) {
         return parseSources(config, supportedFeatures,
-            files.stream().map(file -> YangTextSource.forPath(file.toPath())).collect(Collectors.toList()));
+            files.stream().map(file -> new FileYangTextSource(file.toPath())).toList());
     }
 
     /**
