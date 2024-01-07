@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
- * A {@link YinTextSource}.backed by a {@link URL}.
+ * A {@link AbstractYinTextSource}.backed by a {@link URL}.
  */
 @NonNullByDefault
-public class URLYinTextSource extends YinTextSource implements Delegator<URL> {
+public class URLYinTextSource extends AbstractYinTextSource implements Delegator<URL> {
     private final URL url;
 
     public URLYinTextSource(final SourceIdentifier sourceId, final URL url) {
