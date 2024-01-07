@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>benchmarks</artifactId>
-    <version>12.0.1-SNAPSHOT</version>
+    <version>13.0.0-SNAPSHOT</version>
 
     <properties>
         <!-- JMH-generated code does not pass SB (very noisily)-->
@@ -29,12 +29,12 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-tree-ri</artifactId>
-            <version>12.0.1-SNAPSHOT</version>
+            <version>13.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-test-util</artifactId>
-            <version>12.0.1-SNAPSHOT</version>
+            <version>13.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
