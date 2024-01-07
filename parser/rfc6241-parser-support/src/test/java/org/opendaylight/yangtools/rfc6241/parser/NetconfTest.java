@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.rfc6241.model.api.NetconfConstants;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
@@ -34,9 +34,9 @@ class NetconfTest {
             .build();
         final var context = reactor.newBuild()
             .addLibSources(YangStatementStreamSource.create(
-                YangTextSource.forResource(NetconfTest.class, "/ietf-inet-types@2013-07-15.yang")))
+                new URLYangTextSource(NetconfTest.class.getResource("/ietf-inet-types@2013-07-15.yang"))))
             .addSource(YangStatementStreamSource.create(
-                YangTextSource.forResource(NetconfTest.class, "/ietf-netconf@2011-06-01.yang")))
+                new URLYangTextSource(NetconfTest.class.getResource("/ietf-netconf@2011-06-01.yang"))))
             .buildEffective();
 
         final var module = context.findModule(NetconfConstants.RFC6241_MODULE).orElseThrow();

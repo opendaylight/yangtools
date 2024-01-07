@@ -23,11 +23,12 @@ import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceExcepti
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-public class SharedEffectiveModelContextFactoryTest {
+class SharedEffectiveModelContextFactoryTest {
     private final SharedSchemaRepository repository = new SharedSchemaRepository("test");
     private final SchemaContextFactoryConfiguration config = SchemaContextFactoryConfiguration.getDefault();
 
@@ -35,9 +36,9 @@ public class SharedEffectiveModelContextFactoryTest {
     private SourceIdentifier s2;
 
     @BeforeEach
-    public void setUp() {
-        final var source1 = YangTextSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
-        final var source2 = YangTextSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
+    void setUp() {
+        final var source1 = assertYangText("/ietf/ietf-inet-types@2010-09-24.yang");
+        final var source2 = assertYangText("/ietf/iana-timezones@2012-07-09.yang");
         s1 = new SourceIdentifier("ietf-inet-types", "2010-09-24");
         s2 = new SourceIdentifier("iana-timezones", "2012-07-09");
 
@@ -52,20 +53,20 @@ public class SharedEffectiveModelContextFactoryTest {
     }
 
     @Test
-    public void testCreateSchemaContextWithDuplicateRequiredSources() throws Exception {
+    void testCreateSchemaContextWithDuplicateRequiredSources() throws Exception {
         final var sharedSchemaContextFactory = new SharedEffectiveModelContextFactory(repository, config);
         final var schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(s1, s1, s2);
         assertNotNull(schemaContext.get());
     }
 
     @Test
-    public void testSourceRegisteredWithDifferentSI() throws Exception {
-        final var source1 = YangTextSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
-        final var source2 = YangTextSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
+    void testSourceRegisteredWithDifferentSI() throws Exception {
+        final var source1 = assertYangText("/ietf/ietf-inet-types@2010-09-24.yang");
+        final var source2 = assertYangText("/ietf/iana-timezones@2012-07-09.yang");
         s1 = source1.sourceId();
         s2 = source2.sourceId();
 
-        final var provider = SharedSchemaRepositoryTest.getImmediateYangSourceProviderFromResource(
+        final var provider = AbstractSchemaRepositoryTest.assertYangTextResource(
             "/no-revision/imported@2012-12-12.yang");
         provider.setResult();
         provider.register(repository);
@@ -82,11 +83,11 @@ public class SharedEffectiveModelContextFactoryTest {
     }
 
     @Test
-    public void testTransientFailureWhilreRetrievingSchemaSource() throws Exception {
+    void testTransientFailureWhilreRetrievingSchemaSource() throws Exception {
         final SourceIdentifier s3 = new SourceIdentifier("network-topology", "2013-10-21");
 
         repository.registerSchemaSource(new TransientFailureProvider(
-            YangTextSource.forResource("/ietf/network-topology@2013-10-21.yang")),
+            assertYangText("/ietf/network-topology@2013-10-21.yang")),
             PotentialSchemaSource.create(s3, YangTextSource.class, 1));
 
         final var sharedSchemaContextFactory = new SharedEffectiveModelContextFactory(repository, config);
@@ -99,6 +100,10 @@ public class SharedEffectiveModelContextFactoryTest {
         // check if future is invalidated and resolution of source is retried after failure
         schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
         assertNotNull(schemaContext.get());
+    }
+
+    private static URLYangTextSource assertYangText(final String resourceName) {
+        return new URLYangTextSource(AbstractSchemaRepositoryTest.class.getResource(resourceName));
     }
 
     /**

@@ -17,6 +17,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FluentFuture;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +51,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Cost
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -177,7 +179,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
         final String path = url.getPath();
         final String fileName = path.substring(path.lastIndexOf('/') + 1);
-        return registerSource(YangTextSource.forURL(url, guessSourceIdentifier(fileName)));
+        return registerSource(new URLYangTextSource(guessSourceIdentifier(fileName), url, StandardCharsets.UTF_8));
     }
 
     /**

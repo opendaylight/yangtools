@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.collect.SetMultimap;
@@ -20,8 +22,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
@@ -61,13 +63,19 @@ public abstract class AbstractSchemaRepositoryTest {
             .createEffectiveModelContext(requiredSources);
     }
 
-    private static SettableSchemaProvider<YangIRSchemaSource> assertYangTextResource(final String resourceName) {
+    static final SettableSchemaProvider<YangIRSchemaSource> assertYangTextResource(final String resourceName) {
         final YangIRSchemaSource yangSource;
         try {
-            yangSource = TextToIRTransformer.transformText(YangTextSource.forResource(resourceName));
+            yangSource = TextToIRTransformer.transformText(
+                new URLYangTextSource(AbstractSchemaRepositoryTest.class.getResource(resourceName)));
         } catch (YangSyntaxErrorException | IOException e) {
             throw new AssertionError("Failed to parse " + resourceName, e);
         }
         return SettableSchemaProvider.createImmediate(yangSource, YangIRSchemaSource.class);
+    }
+
+    static final void assertSchemaContext(final EffectiveModelContext schemaContext, final int moduleSize) {
+        assertNotNull(schemaContext);
+        assertEquals(moduleSize, schemaContext.getModuleStatements().size());
     }
 }
