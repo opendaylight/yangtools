@@ -39,6 +39,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -400,8 +401,7 @@ class YangToSourcesProcessor {
 
                 if (!astSource.sourceId().equals(textSource.sourceId())) {
                     // AST indicates a different source identifier, make sure we use that
-                    sourcesInProject.add(YangTextSource.delegateForCharSource(astSource.sourceId(),
-                        textSource));
+                    sourcesInProject.add(new DelegatedYangTextSource(astSource.sourceId(), textSource));
                 } else {
                     sourcesInProject.add(textSource);
                 }

@@ -14,29 +14,40 @@ import com.google.common.io.CharSource;
 import java.io.IOException;
 import java.io.Reader;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
-final class DelegatedYangTextSource extends YangTextSource implements Delegator<CharSource> {
-    private final @NonNull CharSource delegate;
+/**
+ * A {@link YangTextSource} delegating to a {@link CharSource}.
+ */
+@NonNullByDefault
+public class DelegatedYangTextSource extends YangTextSource implements Delegator<CharSource> {
+    private final CharSource delegate;
 
-    DelegatedYangTextSource(final SourceIdentifier sourceId, final CharSource delegate) {
+    /**
+     * Default constructor.
+     *
+     * @param sourceId {@link SourceIdentifier} of the resulting schema source
+     * @param delegate Backing {@link CharSource} instance
+     */
+    public DelegatedYangTextSource(final SourceIdentifier sourceId, final CharSource delegate) {
         super(sourceId);
         this.delegate = requireNonNull(delegate);
     }
 
     @Override
-    public CharSource getDelegate() {
+    public final CharSource getDelegate() {
         return delegate;
     }
 
     @Override
-    public Reader openStream() throws IOException {
+    public final Reader openStream() throws IOException {
         return delegate.openStream();
     }
 
     @Override
-    public String symbolicName() {
+    public final @NonNull String symbolicName() {
         return "[" + delegate.toString() + "]";
     }
 

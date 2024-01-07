@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
+import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSchemaSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -131,7 +132,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                 }
             }
 
-            text = YangTextSource.delegateForCharSource(parsedId, source);
+            text = new DelegatedYangTextSource(parsedId, source);
         } else {
             text = source;
         }

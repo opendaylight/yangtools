@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 import java.io.File;
@@ -33,61 +32,6 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
 
     protected YangTextSource(final SourceIdentifier sourceId) {
         this.sourceId = requireNonNull(sourceId);
-    }
-
-    /**
-     * Create a new YangTextSchemaSource with a specific source identifier and backed
-     * by ByteSource, which provides the actual InputStreams.
-     *
-     * @param identifier SourceIdentifier of the resulting schema source
-     * @param delegate Backing ByteSource instance
-     * @param charset Expected character set
-     * @return A new YangTextSchemaSource
-     */
-    public static @NonNull YangTextSource delegateForByteSource(final SourceIdentifier identifier,
-            final ByteSource delegate, final Charset charset) {
-        return delegateForCharSource(identifier, delegate.asCharSource(charset));
-    }
-
-    /**
-     * Create a new YangTextSchemaSource with {@link SourceIdentifier} derived from a supplied filename and backed
-     * by ByteSource, which provides the actual InputStreams.
-     *
-     * @param fileName File name
-     * @param delegate Backing ByteSource instance
-     * @return A new YangTextSchemaSource
-     * @throws IllegalArgumentException if the file name has invalid format
-     */
-    public static @NonNull YangTextSource delegateForByteSource(final String fileName,
-            final ByteSource delegate, final Charset charset) {
-        return delegateForCharSource(fileName, delegate.asCharSource(charset));
-    }
-
-    /**
-     * Create a new YangTextSchemaSource with a specific source identifier and backed
-     * by ByteSource, which provides the actual InputStreams.
-     *
-     * @param identifier SourceIdentifier of the resulting schema source
-     * @param delegate Backing CharSource instance
-     * @return A new YangTextSchemaSource
-     */
-    public static @NonNull YangTextSource delegateForCharSource(final SourceIdentifier identifier,
-            final CharSource delegate) {
-        return new DelegatedYangTextSource(identifier, delegate);
-    }
-
-    /**
-     * Create a new YangTextSchemaSource with {@link SourceIdentifier} derived from a supplied filename and backed
-     * by ByteSource, which provides the actual InputStreams.
-     *
-     * @param fileName File name
-     * @param delegate Backing CharSource instance
-     * @return A new YangTextSchemaSource
-     * @throws IllegalArgumentException if the file name has invalid format
-     */
-    public static @NonNull YangTextSource delegateForCharSource(final String fileName,
-            final CharSource delegate) {
-        return new DelegatedYangTextSource(SourceIdentifier.ofYangFileName(fileName), delegate);
     }
 
     /**
@@ -229,7 +173,7 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+    protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
         return toStringHelper.add("identifier", sourceId);
     }
 }
