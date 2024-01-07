@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalSt
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.StorageType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OnDemandSchemaTreeStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * {@link NamespaceBehaviour} handling {@link ParserNamespaces#schemaTree()}.
@@ -60,7 +59,7 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
             final StmtContext<QName, D, E> value) {
         final var prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(namespace(), key, value);
         if (prev != null) {
-            throw new SourceException(value,
+            throw value.newSourceException(
                 "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
                 value.getRoot().rawArgument(), key, prev.argument(), prev.sourceReference());
         }

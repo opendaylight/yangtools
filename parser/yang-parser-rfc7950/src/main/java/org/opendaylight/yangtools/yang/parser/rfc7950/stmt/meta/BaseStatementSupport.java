@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -68,7 +67,7 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
 
                 @Override
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    throw new InferenceException(baseStmtCtx, "Unable to resolve identity %s and base identity %s",
+                    throw baseStmtCtx.newInferenceException("Unable to resolve identity %s and base identity %s",
                         baseParentCtx.argument(), baseStmtCtx.argument());
                 }
             });

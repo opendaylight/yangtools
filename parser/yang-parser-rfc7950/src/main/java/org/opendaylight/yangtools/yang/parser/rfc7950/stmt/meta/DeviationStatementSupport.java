@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -66,8 +65,8 @@ public final class DeviationStatementSupport
             "Failed to find QName for %s", root);
         final var targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
         if (currentModule.equals(targetModule)) {
-            throw new InferenceException(ctx,
-                    "Deviation must not target the same module as the one it is defined in: %s", currentModule);
+            throw ctx.newInferenceException(
+                "Deviation must not target the same module as the one it is defined in: %s", currentModule);
         }
     }
 

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -48,9 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -162,7 +161,7 @@ public final class ListStatementSupport
             }
             for (final QName keyQName : keyStmt.argument()) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new InferenceException(stmt, "Key '%s' misses node '%s' in list '%s'",
+                    throw stmt.newInferenceException("Key '%s' misses node '%s' in list '%s'",
                         keyStmt.getDeclared().rawArgument(), keyQName.getLocalName(), stmt.argument());
                 }
                 keyDefinitionInit.add(keyQName);
@@ -219,12 +218,15 @@ public final class ListStatementSupport
         final Boolean warned = stmt.namespaceItem(ConfigListWarningNamespace.INSTANCE, ref);
         // Hacky check if we have issued a warning for the original statement
         if (warned == null) {
-            final StmtContext<?, ?, ?> ctx = stmt.caerbannog();
-            verify(ctx instanceof Mutable, "Unexpected context %s", ctx);
-            ((Mutable<?, ?, ?>) ctx).addToNs(ConfigListWarningNamespace.INSTANCE, ref, Boolean.TRUE);
-            LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
-                    + "this is fine with OpenDaylight, it can cause interoperability issues with other systems "
-                    + "[defined at {}]", stmt.argument(), ref);
+            final var ctx = stmt.caerbannog();
+            if (!(ctx instanceof Mutable<?, ?, ?> mutable)) {
+                throw new VerifyException("Unexpected context " + ctx);
+            }
+            mutable.addToNs(ConfigListWarningNamespace.INSTANCE, ref, Boolean.TRUE);
+            LOG.info("""
+                Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While this is \
+                fine with OpenDaylight, it can cause interoperability issues with other systems [defined at {}]""",
+                stmt.argument(), ref);
         }
     }
 

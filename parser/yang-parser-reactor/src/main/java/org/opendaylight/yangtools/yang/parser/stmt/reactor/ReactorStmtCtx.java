@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
@@ -529,7 +528,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             if (optConfig.isPresent()) {
                 if (optConfig.orElseThrow()) {
                     // Validity check: if parent is config=false this cannot be a config=true
-                    InferenceException.throwIf(parentConfig == EffectiveConfig.FALSE, this,
+                    inferFalse(parentConfig == EffectiveConfig.FALSE,
                         "Parent node has config=false, this node must not be specifed as config=true");
                     myConfig = EffectiveConfig.TRUE;
                 } else {

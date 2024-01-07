@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -115,7 +114,7 @@ public final class IncludeStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(requiresCtxPrerequisite), stmt,
+                stmt.inferFalse(failed.contains(requiresCtxPrerequisite),
                     "Included submodule '%s' was not found", stmt.rawArgument());
             }
         });

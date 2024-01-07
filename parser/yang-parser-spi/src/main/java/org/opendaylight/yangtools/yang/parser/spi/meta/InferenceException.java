@@ -34,19 +34,6 @@ public final class InferenceException extends StatementSourceException {
         super(source, format, args);
     }
 
-    public InferenceException(final @NonNull String message, final @NonNull CommonStmtCtx stmt) {
-        super(stmt.sourceReference(), message);
-    }
-
-    public InferenceException(final @NonNull String message, final @NonNull CommonStmtCtx stmt, final Throwable cause) {
-        super(stmt.sourceReference(), message, cause);
-    }
-
-    public InferenceException(final @NonNull CommonStmtCtx stmt, final @NonNull String format,
-            final Object... args) {
-        super(stmt.sourceReference(), format, args);
-    }
-
     /**
      * Throw an instance of this exception if an expression evaluates to true. If the expression evaluates to false,
      * this method does nothing.
@@ -62,42 +49,6 @@ public final class InferenceException extends StatementSourceException {
         if (expression) {
             throw new InferenceException(source, format, args);
         }
-    }
-
-    /**
-     * Throw an instance of this exception if an expression evaluates to true. If the expression evaluates to false,
-     * this method does nothing.
-     *
-     * @param expression Expression to be evaluated
-     * @param stmt Statement context
-     * @param format Format string, according to {@link String#format(String, Object...)}.
-     * @param args Format string arguments, according to {@link String#format(String, Object...)}
-     * @throws InferenceException if the expression evaluates to true.
-     */
-    public static void throwIf(final boolean expression, final @NonNull CommonStmtCtx stmt,
-            final @NonNull String format, final Object... args) {
-        if (expression) {
-            throw new InferenceException(stmt.sourceReference(), format, args);
-        }
-    }
-
-    /**
-     * Throw an instance of this exception if an object is null. If the object is non-null, it will
-     * be returned as the result of this method.
-     *
-     * @param obj Object reference to be checked
-     * @param stmt Statement context, not retained
-     * @param format Format string, according to {@link String#format(String, Object...)}.
-     * @param args Format string arguments, according to {@link String#format(String, Object...)}
-     * @return Object if it is not null
-     * @throws InferenceException if object is null
-     */
-    public static <T> @NonNull T throwIfNull(final @Nullable T obj, final @NonNull CommonStmtCtx stmt,
-            final @NonNull String format, final Object... args) {
-        if (obj == null) {
-            throw new InferenceException(stmt.sourceReference(), format, args);
-        }
-        return obj;
     }
 
     /**

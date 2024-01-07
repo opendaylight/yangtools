@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 class Bug4410Test extends AbstractYangTest {
     @Test
     void test() {
-        final var cause = assertInferenceExceptionDir("/bugs/bug4410",
-            startsWith("Yang model processing phase EFFECTIVE_MODEL failed [at ")).getCause();
-        assertInstanceOf(InferenceException.class, cause);
+        final var ex = assertInferenceExceptionDir("/bugs/bug4410",
+            startsWith("Yang model processing phase EFFECTIVE_MODEL failed [at "));
+        final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
         assertThat(cause.getMessage(), allOf(startsWith("Type [(foo)"), containsString("was not found")));
     }
 }

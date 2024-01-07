@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Specialization of {@link AbstractStatementSupport} for statements which carry a Boolean argument and are essentially
@@ -53,7 +52,7 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
         } else if ("false".equals(value)) {
             return Boolean.FALSE;
         } else {
-            throw new SourceException(ctx, "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
+            throw ctx.newSourceException("Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
                 statementName(), argumentName(), value);
         }
     }

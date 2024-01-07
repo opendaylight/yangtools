@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -117,7 +116,7 @@ public final class ImportStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(imported), stmt, "Imported module [%s] was not found.",
+                stmt.inferFalse(failed.contains(imported), "Imported module [%s] was not found.",
                     moduleName.getLocalName());
             }
         });
@@ -143,7 +142,7 @@ public final class ImportStatementSupport
     @Override
     protected ImportEffectiveStatement createEffective(final Current<Unqualified, ImportStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        InferenceException.throwIf(substatements.isEmpty(), stmt, "Unexpected empty effective import statement");
+        stmt.inferFalse(substatements.isEmpty(), "Unexpected empty effective import statement");
         return EffectiveStatements.createImport(stmt.declared(), substatements,
             verifyNotNull(stmt.namespaceItem(ImportedVersionNamespace.INSTANCE, Empty.value())));
     }

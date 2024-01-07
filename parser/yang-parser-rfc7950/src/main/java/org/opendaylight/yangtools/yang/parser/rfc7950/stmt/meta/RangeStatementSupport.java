@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -72,9 +71,9 @@ public final class RangeStatementSupport
             }
 
             // some of intervals overlapping
-            InferenceException.throwIf(
+            ctx.inferFalse(
                 ranges.size() > 1 && ArgumentUtils.compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
-                ctx, "Some of the value ranges in %s are not disjoint", rangeArgument);
+                "Some of the value ranges in %s are not disjoint", rangeArgument);
             ranges.add(ValueRange.of(min, max));
         }
 

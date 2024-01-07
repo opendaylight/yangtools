@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.SetMultimap;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -164,7 +162,7 @@ abstract class AbstractDeviateStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                throw new InferenceException(deviateStmtCtx.coerceParentContext(), "Deviation target '%s' not found.",
+                throw deviateStmtCtx.coerceParentContext().newInferenceException("Deviation target '%s' not found.",
                     deviationTarget);
             }
 
@@ -224,8 +222,8 @@ abstract class AbstractDeviateStatementSupport
     private static boolean isDeviationSupported(
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
-        final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.namespaceItem(
-                ParserNamespaces.MODULES_DEVIATED_BY, Empty.value());
+        final var modulesDeviatedByModules = deviateStmtCtx.namespaceItem(ParserNamespaces.MODULES_DEVIATED_BY,
+            Empty.value());
         if (modulesDeviatedByModules == null) {
             return true;
         }
@@ -244,7 +242,7 @@ abstract class AbstractDeviateStatementSupport
 
     private static void performDeviateAdd(final StmtContext<?, ?, ?> deviateStmtCtx,
             final Mutable<?, ?, ?> targetCtx) {
-        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+        for (var originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             addStatement(originalStmtCtx, targetCtx);
         }
@@ -255,12 +253,10 @@ abstract class AbstractDeviateStatementSupport
             final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
                     && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
-                for (StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
-                    InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
-                        stmtCtxToBeAdded,
-                        "Deviation cannot add substatement %s to target node %s because it is already defined "
-                        + "in target and can appear only once.",
-                        stmtToBeAdded.getStatementName(), targetCtx.argument());
+                for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
+                    stmtCtxToBeAdded.inferFalse(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()), """
+                        Deviation cannot add substatement %s to target node %s because it is already defined in target \
+                        and can appear only once.""", stmtToBeAdded.getStatementName(), targetCtx.argument());
                 }
             }
         }
@@ -270,7 +266,7 @@ abstract class AbstractDeviateStatementSupport
 
     private static void performDeviateReplace(final StmtContext<?, ?, ?> deviateStmtCtx,
             final Mutable<?, ?, ?> targetCtx) {
-        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+        for (var originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             replaceStatement(originalStmtCtx, targetCtx);
         }
@@ -288,7 +284,7 @@ abstract class AbstractDeviateStatementSupport
             return;
         }
 
-        for (StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
+        for (var targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
             if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeReplaced);
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
@@ -296,7 +292,7 @@ abstract class AbstractDeviateStatementSupport
             }
         }
 
-        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
+        for (var targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
             if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
                 targetCtxSubstatement.setUnsupported();
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
@@ -312,14 +308,14 @@ abstract class AbstractDeviateStatementSupport
             return;
         }
 
-        throw new InferenceException(stmtCtxToBeReplaced,
+        throw stmtCtxToBeReplaced.newInferenceException(
             "Deviation cannot replace substatement %s in target node %s because it does not exist in target node.",
             stmtToBeReplaced.getStatementName(), targetCtx.argument());
     }
 
     private static void performDeviateDelete(final StmtContext<?, ?, ?> deviateStmtCtx,
                 final Mutable<?, ?, ?> targetCtx) {
-        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+        for (var originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             deleteStatement(originalStmtCtx, targetCtx);
         }
@@ -330,7 +326,7 @@ abstract class AbstractDeviateStatementSupport
         final StatementDefinition stmtToBeDeleted = stmtCtxToBeDeleted.publicDefinition();
         final String stmtArgument = stmtCtxToBeDeleted.rawArgument();
 
-        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableEffectiveSubstatements()) {
+        for (var targetCtxSubstatement : targetCtx.mutableEffectiveSubstatements()) {
             if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
                     targetCtxSubstatement.rawArgument())) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeDeleted, stmtArgument);
@@ -338,7 +334,7 @@ abstract class AbstractDeviateStatementSupport
             }
         }
 
-        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
+        for (var targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
             if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
                     targetCtxSubstatement.rawArgument())) {
                 targetCtxSubstatement.setUnsupported();
@@ -369,8 +365,7 @@ abstract class AbstractDeviateStatementSupport
 
     private static void validateDeviationTarget(final StmtContext<?, ?, ?> deviateSubStmtCtx,
             final StmtContext<?, ?, ?> targetCtx) {
-        InferenceException.throwIf(!isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx,
-            targetCtx.yangVersion()), deviateSubStmtCtx,
+        deviateSubStmtCtx.inferTrue(isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx, targetCtx.yangVersion()),
             "%s is not a valid deviation target for substatement %s.", targetCtx.argument(),
             deviateSubStmtCtx.publicDefinition().getStatementName());
     }

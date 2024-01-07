@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -57,7 +56,7 @@ abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                throw new InferenceException(stmt, "Unable to resolve identity %s", stmt.argument());
+                throw stmt.newInferenceException("Unable to resolve identity %s", stmt.argument());
             }
         });
     }

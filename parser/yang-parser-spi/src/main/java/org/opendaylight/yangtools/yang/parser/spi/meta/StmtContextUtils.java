@@ -354,8 +354,8 @@ public final class StmtContextUtils {
             if (YangStmtMapping.LIST == current.publicDefinition()
                     && !current.hasSubstatement(KeyEffectiveStatement.class)) {
                 if (ModelProcessingPhase.FULL_DECLARATION.isCompletedBy(current.getCompletedPhase())) {
-                    throw new SourceException(stmt, "%s %s is defined within a list that has no key statement", name,
-                        stmt.argument());
+                    throw stmt.newSourceException("%s %s is defined within a list that has no key statement",
+                        name, stmt.argument());
                 }
 
                 // Ancestor has not completed full declaration yet missing 'key' statement may materialize later
@@ -375,7 +375,7 @@ public final class StmtContextUtils {
                 @Override
                 public void apply(final InferenceContext ctx) {
                     if (!ancestor.hasSubstatement(KeyEffectiveStatement.class)) {
-                        throw new SourceException(stmt, "%s %s is defined within a list that has no key statement",
+                        throw stmt.newSourceException("%s %s is defined within a list that has no key statement",
                             name, stmt.argument());
                     }
                 }
@@ -445,10 +445,10 @@ public final class StmtContextUtils {
     private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {
         leafStmtCtx.allSubstatements().forEach(leafSubstmtCtx -> {
             final var statementDef = leafSubstmtCtx.publicDefinition();
-            SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
-                    || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx,
-                    "%s statement is not allowed in %s leaf statement which is specified as a list key.",
-                    statementDef.getStatementName(), leafStmtCtx.argument());
+            leafStmtCtx.sourceRequireNot(
+                YangStmtMapping.IF_FEATURE.equals(statementDef) || YangStmtMapping.WHEN.equals(statementDef),
+                "%s statement is not allowed in %s leaf statement which is specified as a list key.",
+                statementDef.getStatementName(), leafStmtCtx.argument());
         });
     }
 
@@ -480,8 +480,8 @@ public final class StmtContextUtils {
                 }
         }
 
-        return internedQName(ctx, InferenceException.throwIfNull(qnameModule, ctx,
-            "Cannot resolve QNameModule for '%s'", value), localName);
+        return internedQName(ctx, ctx.inferNotNull(qnameModule, "Cannot resolve QNameModule for '%s'", value),
+            localName);
     }
 
     /**
@@ -494,15 +494,14 @@ public final class StmtContextUtils {
      * @throws SourceException if the string is not a valid YANG identifier
      */
     public static @NonNull QName parseIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(str.isEmpty(), ctx, "Identifier may not be an empty string");
+        ctx.sourceRequireNot(str.isEmpty(), "Identifier may not be an empty string");
         return internedQName(ctx, str);
     }
 
     public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
         return internedQName(ctx,
-            InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx,
-                "Cannot resolve QNameModule for '%s'", prefix),
+            ctx.inferNotNull(getModuleQNameByPrefix(ctx, prefix), "Cannot resolve QNameModule for '%s'", prefix),
             localName);
     }
 
@@ -516,7 +515,7 @@ public final class StmtContextUtils {
      * @throws SourceException if the string is not a valid YANG node identifier
      */
     public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(str.isEmpty(), ctx, "Node identifier may not be an empty string");
+        ctx.sourceRequireNot(str.isEmpty(), "Node identifier may not be an empty string");
 
         final int colon = str.indexOf(':');
         if (colon == -1) {
@@ -524,9 +523,9 @@ public final class StmtContextUtils {
         }
 
         final var prefix = str.substring(0, colon);
-        SourceException.throwIf(prefix.isEmpty(), ctx, "String '%s' has an empty prefix", str);
+        ctx.sourceRequireNot(prefix.isEmpty(), "String '%s' has an empty prefix", str);
         final var localName = str.substring(colon + 1);
-        SourceException.throwIf(localName.isEmpty(), ctx, "String '%s' has an empty identifier", str);
+        ctx.sourceRequireNot(localName.isEmpty(), "String '%s' has an empty identifier", str);
 
         return parseNodeIdentifier(ctx, prefix, localName);
     }
@@ -541,7 +540,7 @@ public final class StmtContextUtils {
         try {
             template = QName.create(module, localName);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Invalid identifier '%s'", localName);
+            throw ctx.newSourceException(e, "Invalid identifier '%s'", localName);
         }
         return template.intern();
     }
