@@ -11,32 +11,44 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
+import com.google.common.io.CharSource;
 import java.io.IOException;
 import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
-final class DelegatedYinTextSource extends YinTextSource implements Delegator<ByteSource> {
-    private final @NonNull ByteSource delegate;
+/**
+ * A {@link YangTextSource} delegating to a {@link CharSource}.
+ */
+@NonNullByDefault
+public class DelegatedYinTextSource extends YinTextSource implements Delegator<ByteSource> {
+    private final ByteSource delegate;
 
-    DelegatedYinTextSource(final SourceIdentifier sourceId, final ByteSource delegate) {
+    /**
+     * Default constructor.
+     *
+     * @param sourceId {@link SourceIdentifier} of the resulting schema source
+     * @param delegate backing {@link ByteSource} instance
+     */
+    public DelegatedYinTextSource(final SourceIdentifier sourceId, final ByteSource delegate) {
         super(sourceId);
         this.delegate = requireNonNull(delegate);
     }
 
     @Override
-    public ByteSource getDelegate() {
+    public final ByteSource getDelegate() {
         return delegate;
     }
 
     @Override
-    public InputStream openStream() throws IOException {
+    public final InputStream openStream() throws IOException {
         return delegate.openStream();
     }
 
     @Override
-    public String symbolicName() {
+    public final @NonNull String symbolicName() {
         return "[" + delegate.toString() + "]";
     }
 

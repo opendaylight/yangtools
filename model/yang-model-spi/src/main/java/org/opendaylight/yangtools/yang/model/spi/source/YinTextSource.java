@@ -58,19 +58,6 @@ public abstract class YinTextSource extends ByteSource implements YinSourceRepre
         return toStringHelper.add("identifier", sourceId);
     }
 
-    /**
-     * Create a new YinTextSchemaSource with a specific source identifier and backed
-     * by ByteSource, which provides the actual InputStreams.
-     *
-     * @param identifier SourceIdentifier of the resulting schema source
-     * @param delegate Backing ByteSource instance
-     * @return A new YinTextSchemaSource
-     */
-    public static @NonNull YinTextSource delegateForByteSource(final SourceIdentifier identifier,
-            final ByteSource delegate) {
-        return new DelegatedYinTextSource(identifier, delegate);
-    }
-
     public static @NonNull YinTextSource forPath(final Path path) {
         if (Files.isRegularFile(path)) {
             // FIXME: do not use toFile() here
