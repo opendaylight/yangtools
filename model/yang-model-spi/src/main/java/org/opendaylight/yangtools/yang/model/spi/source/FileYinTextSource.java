@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
- * A {@link YinTextSource} backed by a file.
+ * A {@link AbstractYinTextSource} backed by a file.
  */
 @NonNullByDefault
-public class FileYinTextSource extends YinTextSource implements Delegator<Path> {
+public class FileYinTextSource extends AbstractYinTextSource implements Delegator<Path> {
     private final Path path;
 
     public FileYinTextSource(final SourceIdentifier sourceId, final Path path) {
