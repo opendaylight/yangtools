@@ -7,24 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
  * A {@link YangTextSource} delegating to a {@link ByteSource}.
  */
 @NonNullByDefault
-public class DelegatedYinTextSource extends YinTextSource implements Delegator<ByteSource> {
-    private final ByteSource delegate;
-
+public class DelegatedYinTextSource extends AbstractYinTextSource<ByteSource> {
     /**
      * Default constructor.
      *
@@ -32,27 +27,21 @@ public class DelegatedYinTextSource extends YinTextSource implements Delegator<B
      * @param delegate backing {@link ByteSource} instance
      */
     public DelegatedYinTextSource(final SourceIdentifier sourceId, final ByteSource delegate) {
-        super(sourceId);
-        this.delegate = requireNonNull(delegate);
-    }
-
-    @Override
-    public final ByteSource getDelegate() {
-        return delegate;
+        super(sourceId, delegate);
     }
 
     @Override
     public final InputStream openStream() throws IOException {
-        return delegate.openStream();
+        return getDelegate().openStream();
     }
 
     @Override
     public final @NonNull String symbolicName() {
-        return "[" + delegate.toString() + "]";
+        return "[" + getDelegate().toString() + "]";
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("delegate", delegate);
+        return super.addToStringAttributes(toStringHelper).add("delegate", getDelegate());
     }
 }

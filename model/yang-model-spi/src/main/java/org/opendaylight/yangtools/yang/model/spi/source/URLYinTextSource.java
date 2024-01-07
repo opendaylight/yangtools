@@ -7,27 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
- * A {@link YinTextSource}.backed by a {@link URL}.
+ * A {@link AbstractYinTextSource}.backed by a {@link URL}.
  */
 @NonNullByDefault
-public class URLYinTextSource extends YinTextSource implements Delegator<URL> {
-    private final URL url;
-
+public class URLYinTextSource extends AbstractYinTextSource<URL> {
     public URLYinTextSource(final SourceIdentifier sourceId, final URL url) {
-        super(sourceId);
-        this.url = requireNonNull(url);
+        super(sourceId, url);
     }
 
     public URLYinTextSource(final URL url) {
@@ -35,23 +29,18 @@ public class URLYinTextSource extends YinTextSource implements Delegator<URL> {
     }
 
     @Override
-    public final URL getDelegate() {
-        return url;
-    }
-
-    @Override
     public final InputStream openStream() throws IOException {
-        return url.openStream();
+        return getDelegate().openStream();
     }
 
     @Override
     public final @NonNull String symbolicName() {
-        return url.toString();
+        return getDelegate().toString();
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("url", url);
+        return super.addToStringAttributes(toStringHelper).add("url", getDelegate());
     }
 
     private static String extractFileName(final String path) {

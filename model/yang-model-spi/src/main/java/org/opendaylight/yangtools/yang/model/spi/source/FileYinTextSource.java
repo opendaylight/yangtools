@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,22 +14,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
- * A {@link YinTextSource} backed by a file.
+ * A {@link AbstractYinTextSource} backed by a file.
  */
 @NonNullByDefault
-public class FileYinTextSource extends YinTextSource implements Delegator<Path> {
-    private final Path path;
-
+public class FileYinTextSource extends AbstractYinTextSource<Path> {
     public FileYinTextSource(final SourceIdentifier sourceId, final Path path) {
-        super(sourceId);
+        super(sourceId, path);
         if (!Files.isRegularFile(path)) {
             throw new IllegalArgumentException("Supplied path " + path + " is not a regular file");
         }
-        this.path = requireNonNull(path);
     }
 
     public FileYinTextSource(final Path path) {
@@ -40,22 +34,17 @@ public class FileYinTextSource extends YinTextSource implements Delegator<Path> 
     }
 
     @Override
-    public final Path getDelegate() {
-        return path;
-    }
-
-    @Override
     public final InputStream openStream() throws IOException {
-        return Files.newInputStream(path);
+        return Files.newInputStream(getDelegate());
     }
 
     @Override
     public final @NonNull String symbolicName() {
-        return path.toString();
+        return getDelegate().toString();
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("path", path);
+        return super.addToStringAttributes(toStringHelper).add("path", getDelegate());
     }
 }

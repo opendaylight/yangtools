@@ -5,33 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.spi.source;
-
-import static java.util.Objects.requireNonNull;
+package org.opendaylight.yangtools.yang.model.api.source;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
 import java.io.InputStream;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an {@link InputStream}.
  */
+@NonNullByDefault
 public abstract class YinTextSource extends ByteSource implements YinSourceRepresentation {
-    private final @NonNull SourceIdentifier sourceId;
-
-    protected YinTextSource(final SourceIdentifier sourceId) {
-        this.sourceId = requireNonNull(sourceId);
-    }
-
-    @Override
-    public final SourceIdentifier sourceId() {
-        return sourceId;
-    }
-
     @Override
     public final Class<YinTextSource> getType() {
         return YinTextSource.class;
@@ -51,7 +37,7 @@ public abstract class YinTextSource extends ByteSource implements YinSourceRepre
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
-        return toStringHelper.add("identifier", sourceId);
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("sourceId", sourceId());
     }
 }
