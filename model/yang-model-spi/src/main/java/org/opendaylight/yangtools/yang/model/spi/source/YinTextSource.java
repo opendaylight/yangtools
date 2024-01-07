@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Resources;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,11 +63,5 @@ public abstract class YinTextSource extends ByteSource implements YinSourceRepre
             return new YinTextFileSource(SourceIdentifier.ofYinFileName(path.toFile().getName()), path);
         }
         throw new IllegalArgumentException("Supplied path " + path + " is not a regular file");
-    }
-
-    public static @NonNull YinTextSource forResource(final Class<?> clazz, final String resourceName) {
-        final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
-        return new ResourceYinTextSource(SourceIdentifier.ofYinFileName(fileName),
-            Resources.getResource(clazz, resourceName));
     }
 }
