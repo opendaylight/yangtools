@@ -14,8 +14,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
-import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
@@ -25,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 
 @Deprecated
 @ExtendWith(MockitoExtension.class)
@@ -59,11 +57,10 @@ class GuavaSchemaSourceCacheTest {
         doReturn(registration).when(registry).registerSchemaSource(any(), any());
 
         try (var cache = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION)) {
-            final var content = "content";
-            final var source = new TestingYangSource("test", "2012-12-12", content);
-            cache.offer(source);
             final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
-            final var checkedSource = cache .getSource(sourceIdentifier);
+            final var source = new StringYangTextSource(sourceIdentifier, "content");
+            cache.offer(source);
+            final var checkedSource = cache.getSource(sourceIdentifier);
             assertNotNull(checkedSource);
             final var yangSchemaSourceRepresentation = checkedSource.get();
             assertNotNull(yangSchemaSourceRepresentation);
@@ -89,11 +86,11 @@ class GuavaSchemaSourceCacheTest {
         try (var cache1 = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION)) {
             try (var cache2 = GuavaSchemaSourceCache.createSoftCache(registry, REPRESENTATION, LIFETIME, UNITS)) {
                 final var content = "content";
-                final var source = new TestingYangSource("test", "2012-12-12", content);
+                final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
+                final var source = new StringYangTextSource(sourceIdentifier, content);
                 cache1.offer(source);
                 cache2.offer(source);
 
-                final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
                 final var checkedSource = cache1.getSource(sourceIdentifier);
                 final var checkedSource2 = cache2.getSource(sourceIdentifier);
                 assertNotNull(checkedSource);
@@ -101,30 +98,6 @@ class GuavaSchemaSourceCacheTest {
 
                 assertEquals(checkedSource.get(), checkedSource2.get());
             }
-        }
-    }
-
-    private static class TestingYangSource extends YangTextSource {
-        private final String content;
-
-        TestingYangSource(final String name, final String revision, final String content) {
-            super(new SourceIdentifier(name, revision));
-            this.content = content;
-        }
-
-        @Override
-        public StringReader openStream() {
-            return new StringReader(content);
-        }
-
-        @Override
-        public String symbolicName() {
-            return null;
-        }
-
-        @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return toStringHelper;
         }
     }
 }

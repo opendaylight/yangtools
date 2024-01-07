@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.test.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
@@ -23,13 +25,16 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
@@ -373,7 +378,7 @@ public final class YangParserTestUtils {
      */
     public static EffectiveModelContext parseYang(final String... sources) {
         return parseSources(YangParserConfiguration.DEFAULT, null,
-            Arrays.stream(sources).map(LiteralYangTextSource::ofLiteral).toList());
+            Arrays.stream(sources).map(YangParserTestUtils::createYangTextSource).toList());
     }
 
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
@@ -385,5 +390,30 @@ public final class YangParserTestUtils {
             throw new IllegalArgumentException("Failed to open resource directory " + resourcePath, e);
         }
         return Arrays.asList(new File(directoryPath).listFiles(YANG_FILE_FILTER));
+    }
+
+
+    /**
+     * Create a new {@link YangTextSource} backed by a String input.
+     *
+     * @param sourceString YANG file as a String
+     * @return A new instance.
+     * @throws NullPointerException if {@code sourceString} is {@code null}
+     * @throws IllegalArgumentException if {@code sourceString} does not a valid YANG body, given a rather restrictive
+     *         view of what is valid.
+     */
+    private static @NonNull StringYangTextSource createYangTextSource(final String sourceString) {
+        // First line of a YANG file looks as follows:
+        //   `module module-name {`
+        // therefore in order to extract the name of the module from a plain string, we are interested in the second
+        // word of the first line
+        final var firstLine = sourceString.substring(0, sourceString.indexOf("{")).strip().split(" ");
+        final var moduleOrSubmoduleString = firstLine[0].strip();
+        checkArgument(moduleOrSubmoduleString.equals("module") || moduleOrSubmoduleString.equals("submodule"));
+
+        final String arg = firstLine[1].strip();
+        final var localName = UnresolvedQName.tryLocalName(arg);
+        checkArgument(localName != null);
+        return new StringYangTextSource(new SourceIdentifier(localName), sourceString, arg);
     }
 }

@@ -19,15 +19,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
 /**
  * A {@link YangTextSource} backed by a file.
  */
 @NonNullByDefault
-public class FileYangTextSource extends YangTextSource implements Delegator<Path> {
-    private final Path path;
+public class FileYangTextSource extends AbstractYangTextSource<Path> {
     private final Charset charset;
 
     /**
@@ -41,11 +40,10 @@ public class FileYangTextSource extends YangTextSource implements Delegator<Path
      * @throws IllegalArgumentException if the supplied path is not a regular file
      */
     public FileYangTextSource(final SourceIdentifier sourceId, final Path path, final Charset charset) {
-        super(sourceId);
+        super(sourceId, path);
         if (!Files.isRegularFile(path)) {
             throw new IllegalArgumentException("Supplied path " + path + " is not a regular file");
         }
-        this.path = requireNonNull(path);
         this.charset = requireNonNull(charset);
     }
 
@@ -61,24 +59,19 @@ public class FileYangTextSource extends YangTextSource implements Delegator<Path
     }
 
     @Override
-    public final Path getDelegate() {
-        return path;
-    }
-
-    @Override
     public final Reader openStream() throws IOException {
-        return new InputStreamReader(Files.newInputStream(path), charset);
+        return new InputStreamReader(Files.newInputStream(getDelegate()), charset);
     }
 
     @Override
     public final @NonNull String symbolicName() {
         // FIXME: NEXT: this is forcing internal normalization. I think this boils down to providing Path back, which
         //        is essentially getDelegate() anyway. Perhaps expose it as PathAware?
-        return path.toString();
+        return getDelegate().toString();
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("path", path);
+        return super.addToStringAttributes(toStringHelper).add("path", getDelegate());
     }
 }

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
 @ExtendWith(MockitoExtension.class)
 class FilenameResolutionTest extends AbstractCodeGeneratorTest {
