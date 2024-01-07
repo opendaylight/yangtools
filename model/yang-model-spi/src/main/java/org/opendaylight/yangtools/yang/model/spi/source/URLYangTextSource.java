@@ -18,20 +18,18 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
 /**
  * A {@link YangTextSource} backed by a {@link URL}.
  */
 @NonNullByDefault
-public class URLYangTextSource extends YangTextSource implements Delegator<URL> {
-    private final URL url;
+public class URLYangTextSource extends AbstractYangTextSource<URL> {
     private final Charset charset;
 
     public URLYangTextSource(final SourceIdentifier sourceId, final URL url, final Charset charset) {
-        super(sourceId);
-        this.url = requireNonNull(url);
+        super(sourceId, url);
         this.charset = requireNonNull(charset);
     }
 
@@ -47,22 +45,17 @@ public class URLYangTextSource extends YangTextSource implements Delegator<URL> 
 
     @Override
     public final Reader openStream() throws IOException {
-        return new InputStreamReader(url.openStream(), charset);
+        return new InputStreamReader(getDelegate().openStream(), charset);
     }
 
     @Override
     public final @NonNull String symbolicName() {
-        return url.toString();
-    }
-
-    @Override
-    public final URL getDelegate() {
-        return url;
+        return getDelegate().toString();
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("url", url);
+        return super.addToStringAttributes(toStringHelper).add("url", getDelegate());
     }
 
     private static String extractFileName(final String path) {

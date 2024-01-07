@@ -21,13 +21,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,10 +37,11 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -66,20 +62,19 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void testCacheAndRestore() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
-            YangTextSource.class, storageDir);
+        final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
 
-        final String content = "content1";
-        final YangTextSource source = new TestingYangSource("test", "2012-12-12", content);
+        final var content = "content1";
+        final var source = new StringYangTextSource(new SourceIdentifier("test", "2012-12-12"), content);
         cache.offer(source);
 
-        final String content2 = "content2";
-        final YangTextSource source2 = new TestingYangSource("test2", null, content);
+        final var content2 = "content2";
+        final var source2 = new StringYangTextSource(new SourceIdentifier("test2"), content);
         cache.offer(source2);
 
-        final List<File> storedFiles = getFilesFromCache();
+        final var storedFiles = getFilesFromCache();
         assertEquals(2, storedFiles.size());
-        final Collection<String> fileNames = filesToFilenamesWithoutRevision(storedFiles);
+        final var fileNames = filesToFilenamesWithoutRevision(storedFiles);
 
         assertThat(fileNames, both(hasItem("test2")).and(hasItem("test@2012-12-12")));
 
@@ -97,7 +92,7 @@ public class FilesystemSchemaSourceCacheTest {
         verify(registry, times(4)).registerSchemaSource(any(SchemaSourceProvider.class),
             any(PotentialSchemaSource.class));
 
-        final List<File> storedFilesAfterNewCache = getFilesFromCache();
+        final var storedFilesAfterNewCache = getFilesFromCache();
         assertEquals(2, storedFilesAfterNewCache.size());
     }
 
@@ -111,35 +106,32 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void testCacheDuplicate() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
-            YangTextSource.class, storageDir);
+        final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
 
-        final String content = "content1";
-        final YangTextSource source = new TestingYangSource("test", null, content);
+        final var content = "content1";
+        final var source = new StringYangTextSource(new SourceIdentifier("test"), content);
         // Double offer
         cache.offer(source);
         cache.offer(source);
 
-        final List<File> storedFiles = getFilesFromCache();
+        final var storedFiles = getFilesFromCache();
         assertEquals(1, storedFiles.size());
         verify(registry).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
     }
 
     @Test
     public void testCacheMultipleRevisions() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
-            YangTextSource.class, storageDir);
+        final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
 
-        final String content = "content1";
-        final YangTextSource source = new TestingYangSource("test", null, content);
-        final YangTextSource source2 = new TestingYangSource("test", "2012-12-12", content);
-        final YangTextSource source3 = new TestingYangSource("test", "2013-12-12", content);
+        final var source = new StringYangTextSource(new SourceIdentifier("test"), "content1");
+        final var source2 = new StringYangTextSource(new SourceIdentifier("test", "2012-12-12"), "content2");
+        final var source3 = new StringYangTextSource(new SourceIdentifier("test", "2013-12-12"), "content3");
         // Double offer
         cache.offer(source);
         cache.offer(source2);
         cache.offer(source3);
 
-        final List<File> storedFiles = getFilesFromCache();
+        final var storedFiles = getFilesFromCache();
         assertEquals(3, storedFiles.size());
 
         assertThat(filesToFilenamesWithoutRevision(storedFiles), both(hasItem("test"))
@@ -151,101 +143,67 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void sourceIdToFileEmptyRevWithEmptyDir() {
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test");
-        final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, storageDir);
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSource.class, sourceIdToFile);
+        final var sourceIdentifier = new SourceIdentifier("test");
+        final var sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, storageDir);
+        final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, sourceIdToFile);
         assertNotNull(cache);
-        final List<File> storedFiles = Arrays.asList(sourceIdToFile.listFiles());
+        final var storedFiles = Arrays.asList(sourceIdToFile.listFiles());
         assertEquals(0, storedFiles.size());
     }
 
     @Test
     public void sourceIdToFileEmptyRevWithOneItemInDir() {
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSource.class, storageDir);
-        final String content = "content1";
-        final YangTextSource source = new TestingYangSource("test", "2013-12-12", content);
+        final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
+        final var source = new StringYangTextSource(new SourceIdentifier("test", "2013-12-12"), "content1");
         cache.offer(source);
 
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test");
-        final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier,
-                storageDir);
+        final var sourceIdentifier = new SourceIdentifier("test");
+        final var sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, storageDir);
         assertNotNull(sourceIdToFile);
-        final List<File> storedFiles = Arrays.asList(storageDir.listFiles());
+        final var storedFiles = Arrays.asList(storageDir.listFiles());
         assertEquals(1, storedFiles.size());
     }
 
     @Test
     public void sourceIdToFileEmptyRevWithMoreItemsInDir() {
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSource.class, storageDir);
-        final String content = "content1";
-        final YangTextSource source = new TestingYangSource("test", "2012-12-12", content);
-        final YangTextSource source2 = new TestingYangSource("test", "2013-12-12", content);
+        final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
+        final var source = new StringYangTextSource(new SourceIdentifier("test", "2012-12-12"), "content1");
+        final var source2 = new StringYangTextSource(new SourceIdentifier("test", "2013-12-12"), "content1");
         cache.offer(source);
         cache.offer(source2);
 
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test");
-        final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, storageDir);
+        final var sourceIdentifier = new SourceIdentifier("test");
+        final var sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, storageDir);
         assertNotNull(sourceIdToFile);
-        final List<File> storedFiles = Arrays.asList(storageDir.listFiles());
+        final var storedFiles = Arrays.asList(storageDir.listFiles());
         assertEquals(2, storedFiles.size());
     }
 
     @Test
     public void test() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSource.class, storageDir);
-        final String content = "content1";
-        final YangTextSource source = new TestingYangSource("test", "2013-12-12", content);
+        final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
+        final var sourceIdentifier = new SourceIdentifier("test", "2013-12-12");
+        final var source = new StringYangTextSource(sourceIdentifier, "content1", null);
         cache.offer(source);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "2013-12-12");
-        final ListenableFuture<? extends YangTextSource> checked = cache.getSource(sourceIdentifier);
+        final var checked = cache.getSource(sourceIdentifier);
         assertNotNull(checked);
         assertTrue(checked.isDone());
-        final YangTextSource checkedGet = checked.get();
+        final var checkedGet = checked.get();
         assertEquals(sourceIdentifier, checkedGet.sourceId());
     }
 
     @Test
     public void test1() throws Exception {
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(registry,
-                YangTextSource.class, storageDir);
-        final String content = "content1";
-        final YangTextSource source = new TestingYangSource("test", "2013-12-12", content);
+        final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
+        final var sourceIdentifier = new SourceIdentifier("test1", "2012-12-12");
+        final var source = new StringYangTextSource(sourceIdentifier, "content1");
         cache.offer(source);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test1", "2012-12-12");
-        final ListenableFuture<? extends YangTextSource> checked = cache.getSource(sourceIdentifier);
+        final var checked = cache.getSource(sourceIdentifier);
         assertNotNull(checked);
         assertThrows(ExecutionException.class, () -> checked.get());
     }
 
     private List<File> getFilesFromCache() {
         return Arrays.asList(storageDir.listFiles());
-    }
-
-    private static class TestingYangSource extends YangTextSource {
-        private final String content;
-
-        TestingYangSource(final String name, final String revision, final String content) {
-            super(new SourceIdentifier(name, revision));
-            this.content = content;
-        }
-
-        @Override
-        protected MoreObjects.ToStringHelper addToStringAttributes(final MoreObjects.ToStringHelper toStringHelper) {
-            return toStringHelper;
-        }
-
-        @Override
-        public Reader openStream() throws IOException {
-            return new StringReader(content);
-        }
-
-        @Override
-        public String symbolicName() {
-            return null;
-        }
     }
 }

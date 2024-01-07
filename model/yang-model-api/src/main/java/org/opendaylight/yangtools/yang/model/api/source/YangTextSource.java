@@ -5,36 +5,22 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.spi.source;
-
-import static java.util.Objects.requireNonNull;
+package org.opendaylight.yangtools.yang.model.api.source;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.CharSource;
-import java.io.InputStream;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
+import java.io.Reader;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as an {@link InputStream}.
+ * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as a {@link Reader}.
  */
+@NonNullByDefault
 public abstract class YangTextSource extends CharSource implements YangSourceRepresentation {
-    private final @NonNull SourceIdentifier sourceId;
-
-    protected YangTextSource(final SourceIdentifier sourceId) {
-        this.sourceId = requireNonNull(sourceId);
-    }
-
     @Override
     public final Class<YangTextSource> getType() {
         return YangTextSource.class;
-    }
-
-    @Override
-    public final SourceIdentifier sourceId() {
-        return sourceId;
     }
 
     @Override
@@ -51,7 +37,7 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
-        return toStringHelper.add("identifier", sourceId);
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("identifier", sourceId());
     }
 }
