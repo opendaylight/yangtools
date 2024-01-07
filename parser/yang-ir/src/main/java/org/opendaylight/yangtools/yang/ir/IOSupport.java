@@ -13,6 +13,9 @@ import java.io.DataOutput;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 
+/**
+ * Support methods for reading and writing {@link IRStatement}s.
+ */
 @Beta
 public final class IOSupport {
     private static final int MAGICK = 0xAF57BA07;

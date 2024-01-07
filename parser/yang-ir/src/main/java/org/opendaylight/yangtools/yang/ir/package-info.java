@@ -15,4 +15,5 @@
  * which represents a single YANG statement. Every YANG file is required to contain exactly one top-level statement,
  * {@code module} or {@code submodule}, hence an IRStatement also represents the significant contents of a YANG file.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.ir;
