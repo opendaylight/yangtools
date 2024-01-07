@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -153,7 +153,7 @@ public final class StmtTestUtils {
         for (int i = 0; i < files.length; i++) {
             final var file = files[i];
             sources[i] = YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSource.delegateForByteSource(SourceIdentifier.ofYinFileName(file.getName()),
+                new DelegatedYinTextSource(SourceIdentifier.ofYinFileName(file.getName()),
                     Files.asByteSource(file))));
         }
 
