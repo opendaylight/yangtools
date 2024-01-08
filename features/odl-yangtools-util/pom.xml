@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-util</artifactId>
-    <version>13.0.0</version>
+    <version>13.0.1-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Utilities</name>
     <description>YANG Tools common concepts and utilities</description>
