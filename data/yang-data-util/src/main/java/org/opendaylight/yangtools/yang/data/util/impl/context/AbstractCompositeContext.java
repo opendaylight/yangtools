@@ -14,12 +14,12 @@ import java.util.concurrent.ConcurrentMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-public abstract sealed class AbstractCompositeContext extends AbstractContext implements Composite
+public abstract sealed class AbstractCompositeContext extends AbstractContext implements DataSchemaContext.Composite
         permits ListItemContext, ContainerContext {
     // FIXME: ImmutableMaps with compare-and-swap updates
     private final ConcurrentMap<PathArgument, AbstractContext> byArg = new ConcurrentHashMap<>();
