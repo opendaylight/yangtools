@@ -95,7 +95,7 @@ public abstract sealed class AbstractContext implements DataSchemaContext
             case AnydataSchemaNode anydata -> new OpaqueContext(anydata);
             case AnyxmlSchemaNode anyxml -> new OpaqueContext(anyxml);
             case ChoiceSchemaNode choice -> new ChoiceContext(choice);
-            case ContainerLike containerLike -> new ContainerContext(containerLike);
+            case ContainerLike containerLike -> ContainerContext.of(containerLike);
             case LeafSchemaNode leaf -> new LeafContext(leaf);
             case LeafListSchemaNode leafList -> new LeafListContext(leafList);
             case ListSchemaNode list -> fromListSchemaNode(list);
@@ -109,7 +109,7 @@ public abstract sealed class AbstractContext implements DataSchemaContext
             case AnydataSchemaNode anydata -> new OpaqueContext(anydata);
             case AnyxmlSchemaNode anyxml -> new OpaqueContext(anyxml);
             case ChoiceSchemaNode choice -> new ChoiceContext(choice);
-            case ContainerLike containerLike -> new ContainerContext(containerLike);
+            case ContainerLike containerLike -> ContainerContext.of(containerLike);
             case LeafSchemaNode leaf -> new LeafContext(leaf);
             case LeafListSchemaNode leafList -> new LeafListContext(leafList);
             case ListSchemaNode list -> fromListSchemaNode(list);

@@ -9,12 +9,14 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -30,6 +32,7 @@ import org.opendaylight.yangtools.yang.data.util.context.AbstractCompositeContex
 import org.opendaylight.yangtools.yang.data.util.context.AbstractContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractPathMixinContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractValueContext;
+import org.opendaylight.yangtools.yang.data.util.context.ContainerContext;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -47,7 +50,8 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
     /**
      * A {@link DataSchemaContext} containing other {@link DataSchemaContext}s.
      */
-    sealed interface Composite extends DataSchemaContext permits PathMixin, AbstractCompositeContext {
+    sealed interface Composite extends DataSchemaContext
+            permits PathMixin, AbstractCompositeContext, MandatoryEnforcementPoint {
         /**
          * Find a child node identifier by its {@link PathArgument}.
          *
@@ -166,6 +170,11 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
          */
         // FIXME: YANGTOOLS-1528: return yang.data.api.type.NormalizedType
         @NonNull TypeDefinition<?> type();
+    }
+
+    sealed interface MandatoryEnforcementPoint extends Composite permits ContainerContext.WithMandatory {
+
+        List<YangNetconfError> enforceMandatory(boolean configFalse, NormalizedNode data);
     }
 
     /**
