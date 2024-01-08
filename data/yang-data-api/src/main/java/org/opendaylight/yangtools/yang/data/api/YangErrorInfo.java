@@ -48,7 +48,7 @@ public final class YangErrorInfo {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return obj == this || obj instanceof YangErrorInfo && value.equals(((YangErrorInfo) obj).value);
+        return obj == this || obj instanceof YangErrorInfo other && value.equals(other.value);
     }
 
     @Override
