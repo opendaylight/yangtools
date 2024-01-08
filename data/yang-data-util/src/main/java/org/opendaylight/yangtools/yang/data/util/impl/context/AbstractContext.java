@@ -92,7 +92,7 @@ public abstract sealed class AbstractContext implements DataSchemaContext
 
     public static @NonNull AbstractContext of(final @NonNull DataSchemaNode schema) {
         if (schema instanceof ContainerLike containerLike) {
-            return new ContainerContext(containerLike);
+            return ContainerContext.of(containerLike);
         } else if (schema instanceof ListSchemaNode list) {
             return fromListSchemaNode(list);
         } else if (schema instanceof LeafSchemaNode leaf) {
@@ -113,7 +113,7 @@ public abstract sealed class AbstractContext implements DataSchemaContext
     // FIXME: do we tolerate null argument? do we tolerate unknown subclasses?
     private static @Nullable AbstractContext lenientOf(final @Nullable DataSchemaNode schema) {
         if (schema instanceof ContainerLike containerLike) {
-            return new ContainerContext(containerLike);
+            return ContainerContext.of(containerLike);
         } else if (schema instanceof ListSchemaNode list) {
             return fromListSchemaNode(list);
         } else if (schema instanceof LeafSchemaNode leaf) {

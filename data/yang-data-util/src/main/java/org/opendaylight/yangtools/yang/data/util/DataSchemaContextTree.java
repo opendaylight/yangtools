@@ -48,7 +48,7 @@ public final class DataSchemaContextTree {
 
     private DataSchemaContextTree(final EffectiveModelContext modelContext) {
         this.modelContext = requireNonNull(modelContext);
-        root = new ContainerContext(modelContext);
+        root = ContainerContext.of(modelContext);
     }
 
     public static @NonNull DataSchemaContextTree from(final @NonNull EffectiveModelContext ctx) {
