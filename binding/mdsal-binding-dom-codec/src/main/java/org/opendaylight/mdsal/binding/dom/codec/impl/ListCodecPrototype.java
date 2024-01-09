@@ -8,15 +8,15 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * A prototype for {@link ListCodecContext}.
  */
 sealed class ListCodecPrototype extends DataObjectCodecPrototype<ListRuntimeType> permits MapCodecPrototype {
-    ListCodecPrototype(final Item<?> item, final ListRuntimeType type, final CodecContextFactory factory) {
-        super(item, NodeIdentifier.create(type.statement().argument()), type, factory);
+    ListCodecPrototype(final DataObjectStep<?> step, final ListRuntimeType type, final CodecContextFactory factory) {
+        super(step, NodeIdentifier.create(type.statement().argument()), type, factory);
     }
 
     @Override

@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Key;
 import org.opendaylight.yangtools.yang.binding.KeyAware;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -65,7 +65,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private <T extends YangInstanceIdentifier.PathArgument> T enter(final Class<?> name, final Class<T> identifier) {
+    private <T extends PathArgument> T enter(final Class<?> name, final Class<T> identifier) {
         final var current = current();
         final CodecContext next;
         if (current == null) {
@@ -80,7 +80,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
         return identifier.cast(next.getDomPathArgument());
     }
 
-    private <T extends YangInstanceIdentifier.PathArgument> T enter(final String localName, final Class<T> identifier) {
+    private <T extends PathArgument> T enter(final String localName, final Class<T> identifier) {
         final var current = current();
         final var next = ((AbstractDataObjectCodecContext<?, ?>) current).getLeafChild(localName);
         schema.push(next);

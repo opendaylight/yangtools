@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -307,14 +307,14 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     @Override
-    public InstanceIdentifier.PathArgument deserializePathArgument(final PathArgument arg) {
+    public DataObjectStep<?> deserializePathArgument(final PathArgument arg) {
         checkArgument(getDomPathArgument().equals(arg));
         return bindingArg();
     }
 
     @Override
-    public PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
-        checkArgument(bindingArg().equals(arg));
+    public PathArgument serializePathArgument(final DataObjectStep<?> step) {
+        checkArgument(bindingArg().equals(step));
         return getDomPathArgument();
     }
 

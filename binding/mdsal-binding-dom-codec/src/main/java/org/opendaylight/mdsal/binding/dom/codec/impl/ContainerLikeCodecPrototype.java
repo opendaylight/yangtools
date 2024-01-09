@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -16,9 +16,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 sealed class ContainerLikeCodecPrototype extends DataObjectCodecPrototype<ContainerLikeRuntimeType<?, ?>>
         permits StructuralContainerCodecPrototype {
-    ContainerLikeCodecPrototype(final Item<?> item, final ContainerLikeRuntimeType<?, ?> type,
+    ContainerLikeCodecPrototype(final DataObjectStep<?> step, final ContainerLikeRuntimeType<?, ?> type,
             final CodecContextFactory factory) {
-        super(item, NodeIdentifier.create(type.statement().argument()), type, factory);
+        super(step, NodeIdentifier.create(type.statement().argument()), type, factory);
     }
 
     @Override

@@ -22,9 +22,9 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.Key;
 import org.opendaylight.yangtools.yang.binding.KeyAware;
+import org.opendaylight.yangtools.yang.binding.KeyStep;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -122,8 +122,8 @@ abstract sealed class IdentifiableItemCodec {
 
     private static final Logger LOG = LoggerFactory.getLogger(IdentifiableItemCodec.class);
 
-    private final Class<?> identifiable;
-    private final QName qname;
+    private final @NonNull Class<?> identifiable;
+    private final @NonNull QName qname;
 
     private IdentifiableItemCodec(final ListEffectiveStatement schema, final Class<? extends Key<?>> keyClass,
             final Class<?> identifiable) {
@@ -145,12 +145,12 @@ abstract sealed class IdentifiableItemCodec {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    final @NonNull IdentifiableItem<?, ?> domToBinding(final NodeIdentifierWithPredicates input) {
-        return IdentifiableItem.of((Class) identifiable, (Key) deserializeIdentifier(requireNonNull(input)));
+    final @NonNull KeyStep<?, ?> domToBinding(final NodeIdentifierWithPredicates input) {
+        return new KeyStep(identifiable, deserializeIdentifier(requireNonNull(input)));
     }
 
-    final @NonNull NodeIdentifierWithPredicates bindingToDom(final IdentifiableItem<?, ?> input) {
-        return serializeIdentifier(qname, input.getKey());
+    final @NonNull NodeIdentifierWithPredicates bindingToDom(final KeyStep<?, ?> input) {
+        return serializeIdentifier(qname, input.key());
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")

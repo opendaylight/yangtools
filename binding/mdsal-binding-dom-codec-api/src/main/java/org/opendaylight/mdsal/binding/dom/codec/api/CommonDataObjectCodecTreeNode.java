@@ -10,8 +10,10 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Common interface shared between {@link BindingDataObjectCodecTreeNode} and {@link BindingAugmentationCodecTreeNode}.
@@ -21,27 +23,26 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  */
 public interface CommonDataObjectCodecTreeNode<T extends DataObject> extends BindingDataContainerCodecTreeNode<T> {
     /**
-     * Serializes path argument for current node.
+     * Serializes the instance identifier step for current node.
      *
-     * @param arg Binding Path Argument, may be null if Binding Instance Identifier does not have a representation for
-     *            current node (e.g. choice or case).
-     * @return Yang Path Argument, may be null if Yang Instance Identifier does not have representation for current node
-     *         (e.g. case).
+     * @param step {@link DataObjectStep}, may be null if {@link InstanceIdentifier} does not have a representation for
+     *             current node (e.g. choice or case).
+     * @return {@link PathArgument}, may be null if {@link YangInstanceIdentifier} does not have representation for
+     *         current node (e.g. case).
      * @throws IllegalArgumentException If supplied {@code arg} is not valid.
      */
     @Beta
-    YangInstanceIdentifier.@Nullable PathArgument serializePathArgument(InstanceIdentifier.@Nullable PathArgument arg);
+    @Nullable PathArgument serializePathArgument(@Nullable DataObjectStep<?> step);
 
     /**
-     * Deserializes path argument for current node.
+     * Deserializes {@link PathArgument} for current node.
      *
-     * @param arg Yang Path Argument, may be null if Yang Instance Identifier does not have
-     *         representation for current node (e.g. case).
-     * @return Binding Path Argument, may be null if Binding Instance Identifier does not have
-     *        representation for current node (e.g. choice or case).
+     * @param arg a {@link PathArgument}, may be null if {@link YangInstanceIdentifier} does not have a representation
+     *            for current node (e.g. case).
+     * @return {@link DataObjectStep}, may be null if {@link InstanceIdentifier} does not have a representation for
+     *         current node (e.g. choice or case).
      * @throws IllegalArgumentException If supplied {@code arg} is not valid.
      */
     @Beta
-    InstanceIdentifier.@Nullable PathArgument deserializePathArgument(
-            YangInstanceIdentifier.@Nullable PathArgument arg);
+    @Nullable DataObjectStep<?> deserializePathArgument(@Nullable PathArgument arg);
 }

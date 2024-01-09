@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
@@ -183,9 +182,9 @@ public class InstanceIdentifierTest {
 
     @Test
     public void keyOfTest() {
-        final Key<?> identifier = mock(Key.class);
-        assertEquals(identifier, InstanceIdentifier.keyOf(
-                new KeyedInstanceIdentifier(KeyAware.class, ImmutableList.of(), false, 0, identifier)));
+        final var key = new NodeKey(42);
+        assertEquals(key, InstanceIdentifier.keyOf(
+            new KeyedInstanceIdentifier<>(new KeyStep<>(Node.class, key), ImmutableList.of(), false, 0)));
     }
 
     @Test

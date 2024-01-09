@@ -33,10 +33,10 @@ import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -216,7 +216,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
     }
 
     @Override
-    public CodecContext yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
+    public CodecContext yangPathArgumentChild(final PathArgument arg) {
         return ((CaseCodecContext<?>) super.yangPathArgumentChild(arg)).yangPathArgumentChild(arg);
     }
 
@@ -241,20 +241,14 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
     }
 
     @Override
-    public CommonDataObjectCodecContext<?, ?> bindingPathArgumentChild(final PathArgument arg,
-            final List<YangInstanceIdentifier.PathArgument> builder) {
-        final var caseType = arg.getCaseType();
-        final var type = arg.getType();
-        final DataContainerCodecContext<?, ?, ?> caze;
-        if (caseType.isPresent()) {
-            // Non-ambiguous addressing this should not pose any problems
-            caze = getStreamChild(caseType.orElseThrow());
-        } else {
-            caze = getCaseByChildClass(type);
-        }
-
-        caze.addYangPathArgument(arg, builder);
-        return caze.bindingPathArgumentChild(arg, builder);
+    public CommonDataObjectCodecContext<?, ?> bindingPathArgumentChild(final DataObjectStep<?> step,
+            final List<PathArgument> builder) {
+        final var caseType = step.caseType();
+        // Prefer non-ambiguous addressing, which should not pose any problems. Otherwise fall back to checking for
+        // ambiguities
+        final var caze = caseType != null ? getStreamChild(caseType) : getCaseByChildClass(step.type());
+        caze.addYangPathArgument(step, builder);
+        return caze.bindingPathArgumentChild(step, builder);
     }
 
     private DataContainerCodecContext<?, ?, ?> getCaseByChildClass(final @NonNull Class<? extends DataObject> type) {

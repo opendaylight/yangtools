@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import java.io.ObjectStreamException;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -17,17 +16,21 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <T> Target data type
  * @param <K> Target key type
  */
-public class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K extends Key<T>>
+public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K extends Key<T>>
         extends InstanceIdentifier<T> {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 2L;
 
-    private final K key;
+    private final @NonNull KeyStep<K, T> lastStep;
 
-    KeyedInstanceIdentifier(final Class<@NonNull T> type, final Iterable<PathArgument> pathArguments,
-            final boolean wildcarded, final int hash, final K key) {
-        super(type, pathArguments, wildcarded, hash);
-        this.key = key;
+    KeyedInstanceIdentifier(final KeyStep<K, T> lastStep, final Iterable<DataObjectStep<?>> pathArguments,
+            final boolean wildcarded, final int hash) {
+        super(lastStep.type(), pathArguments, wildcarded, hash);
+        this.lastStep = lastStep;
+    }
+
+    @NonNull KeyStep<K, T> lastStep() {
+        return lastStep;
     }
 
     /**
@@ -36,29 +39,22 @@ public class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K exten
      *
      * @return Key associated with this instance identifier.
      */
-    public final K getKey() {
-        return key;
+    public @NonNull K getKey() {
+        return lastStep.key();
     }
 
     @Override
-    public final KeyedBuilder<T, K> builder() {
+    public KeyedBuilder<T, K> builder() {
         return new KeyedBuilder<>(this);
     }
 
     @Override
-    protected boolean fastNonEqual(final InstanceIdentifier<?> other) {
-        final KeyedInstanceIdentifier<?, ?> kii = (KeyedInstanceIdentifier<?, ?>) other;
-
-        /*
-         * We could do an equals() here, but that may actually be expensive.
-         * equals() in superclass falls back to a full compare, which will
-         * end up running that equals anyway, so do not bother here.
-         */
-        return key == null != (kii.key == null);
+    boolean keyEquals(final InstanceIdentifier<?> other) {
+        return getKey().equals(((KeyedInstanceIdentifier<?, ?>) other).getKey());
     }
 
-    @Serial
-    private Object writeReplace() throws ObjectStreamException {
-        return new KeyedInstanceIdentifierV2<>(this);
+    @Override
+    Object writeReplace() throws ObjectStreamException {
+        return new KIIv4<>(this);
     }
 }

@@ -76,6 +76,7 @@ import org.opendaylight.yangtools.yang.binding.BaseNotification;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.Key;
 import org.opendaylight.yangtools.yang.binding.KeyAware;
@@ -429,23 +430,23 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @NonNull DataContainerCodecContext<?, ?, ?> getCodecContextNode(final InstanceIdentifier<?> binding,
             final List<PathArgument> builder) {
         final var it = binding.getPathArguments().iterator();
-        final var arg = it.next();
+        final var step = it.next();
 
-        DataContainerCodecContext<?, ?, ?> current;
-        final var caseType = arg.getCaseType();
-        if (caseType.isPresent()) {
-            final @NonNull Class<? extends DataObject> type = caseType.orElseThrow();
-            final var choice = choicesByClass.getUnchecked(type);
-            choice.addYangPathArgument(arg, builder);
-            final var caze = choice.getStreamChild(type);
-            caze.addYangPathArgument(arg, builder);
-            current = caze.bindingPathArgumentChild(arg, builder);
+        final DataContainerCodecContext<?, ?, ?> start;
+        final var caseType = step.caseType();
+        if (caseType != null) {
+            final var choice = choicesByClass.getUnchecked(caseType);
+            choice.addYangPathArgument(step, builder);
+            final var caze = choice.getStreamChild(caseType);
+            caze.addYangPathArgument(step, builder);
+            start = caze.bindingPathArgumentChild(step, builder);
         } else {
-            final var child = getStreamChild(arg.getType());
-            child.addYangPathArgument(arg, builder);
-            current = child;
+            final var child = getStreamChild(step.type());
+            child.addYangPathArgument(step, builder);
+            start = child;
         }
 
+        var current = start;
         while (it.hasNext()) {
             current = current.bindingPathArgumentChild(it.next(), builder);
         }
@@ -465,7 +466,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
      * @throws IllegalArgumentException if {@code dom} is empty
      */
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
-            final @Nullable Collection<InstanceIdentifier.PathArgument> bindingArguments) {
+            final @Nullable Collection<DataObjectStep<?>> bindingArguments) {
         final var it = dom.getPathArguments().iterator();
         if (!it.hasNext()) {
             throw new IllegalArgumentException("Path may not be empty");
@@ -885,7 +886,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             return null;
         }
 
-        final var builder = new ArrayList<InstanceIdentifier.PathArgument>();
+        final var builder = new ArrayList<DataObjectStep<?>>();
         final var codec = getCodecContextNode(path, builder);
         if (codec == null) {
             if (data != null) {

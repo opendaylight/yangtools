@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 
 /**
  * Common superclass for {@link DataObjectCodecPrototype} and {@link AugmentationCodecPrototype}.
@@ -22,19 +22,20 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeType>
         extends DataContainerPrototype<CommonDataObjectCodecContext<?, R>, R>
         permits AugmentationCodecPrototype, DataObjectCodecPrototype {
-    private final @NonNull Item<?> bindingArg;
+    private final @NonNull DataObjectStep<?> step;
 
-    CommonDataObjectCodecPrototype(final Item<?> bindingArg, final R runtimeType, final CodecContextFactory factory) {
+    CommonDataObjectCodecPrototype(final DataObjectStep<?> step, final R runtimeType,
+            final CodecContextFactory factory) {
         super(factory, runtimeType);
-        this.bindingArg = requireNonNull(bindingArg);
+        this.step = requireNonNull(step);
     }
 
     @Override
     final Class<? extends DataObject> javaClass() {
-        return bindingArg.getType();
+        return step.type();
     }
 
-    final @NonNull Item<?> getBindingArg() {
-        return bindingArg;
+    final @NonNull DataObjectStep<?> getBindingArg() {
+        return step;
     }
 }

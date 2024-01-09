@@ -10,15 +10,15 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.binding.KeyAware;
 
 /**
  * A prototype for a {@link MapCodecContext}.
  */
 final class MapCodecPrototype extends ListCodecPrototype {
-    MapCodecPrototype(final Item<?> item, final ListRuntimeType type, final CodecContextFactory factory) {
-        super(item, type, factory);
+    MapCodecPrototype(final DataObjectStep<?> step, final ListRuntimeType type, final CodecContextFactory factory) {
+        super(step, type, factory);
         final var clazz = javaClass();
         checkArgument(KeyAware.class.isAssignableFrom(clazz), "%s is not KeyAware", clazz);
     }

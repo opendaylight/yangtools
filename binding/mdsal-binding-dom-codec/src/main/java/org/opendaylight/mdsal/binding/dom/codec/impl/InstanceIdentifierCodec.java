@@ -11,12 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.KeylessStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -31,12 +31,12 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
 
     @Override
     public <T extends DataObject> InstanceIdentifier<T> toBinding(final YangInstanceIdentifier domPath) {
-        final List<InstanceIdentifier.PathArgument> builder = new ArrayList<>();
-        final BindingDataObjectCodecTreeNode<?> codec = context.getCodecContextNode(domPath, builder);
+        final var builder = new ArrayList<DataObjectStep<?>>();
+        final var codec = context.getCodecContextNode(domPath, builder);
         if (codec == null) {
             return null;
         }
-        if (codec instanceof ListCodecContext && Iterables.getLast(builder) instanceof InstanceIdentifier.Item) {
+        if (codec instanceof ListCodecContext && Iterables.getLast(builder) instanceof KeylessStep) {
             // We ended up in list, but without key, which means it represent list as a whole,
             // which is not binding representable.
             return null;
@@ -47,7 +47,7 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
 
     @Override
     public @NonNull YangInstanceIdentifier fromBinding(@NonNull final InstanceIdentifier<?> bindingPath) {
-        final List<PathArgument> domArgs = new ArrayList<>();
+        final var domArgs = new ArrayList<PathArgument>();
         context.getCodecContextNode(bindingPath, domArgs);
         return YangInstanceIdentifier.of(domArgs);
     }

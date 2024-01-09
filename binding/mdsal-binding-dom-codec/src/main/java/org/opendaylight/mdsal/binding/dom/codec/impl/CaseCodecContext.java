@@ -7,13 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.List;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -23,7 +21,7 @@ final class CaseCodecContext<D extends DataObject> extends DataObjectCodecContex
     }
 
     @Override
-    void addYangPathArgument(final List<YangInstanceIdentifier.PathArgument> builder, final PathArgument arg) {
+    void addYangPathArgument(final List<PathArgument> builder, final DataObjectStep<?> step) {
         // NOOP
     }
 
@@ -38,14 +36,18 @@ final class CaseCodecContext<D extends DataObject> extends DataObjectCodecContex
     }
 
     @Override
-    public YangInstanceIdentifier.PathArgument serializePathArgument(final PathArgument arg) {
-        checkArgument(arg == null, "Unexpected argument %s", arg);
+    public PathArgument serializePathArgument(final DataObjectStep<?> step) {
+        if (step != null) {
+            throw new IllegalArgumentException("Unexpected argument " + step);
+        }
         return null;
     }
 
     @Override
-    public PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        checkArgument(arg == null, "Unexpected argument %s", arg);
+    public DataObjectStep<?> deserializePathArgument(final PathArgument arg) {
+        if (arg != null) {
+            throw new IllegalArgumentException("Unexpected argument " + arg);
+        }
         return null;
     }
 }

@@ -8,15 +8,15 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 
 /**
  * A prototype for a {@link StructuralContainerCodecContext}.
  */
 final class StructuralContainerCodecPrototype extends ContainerLikeCodecPrototype {
-    StructuralContainerCodecPrototype(final Item<?> item, final ContainerRuntimeType container,
+    StructuralContainerCodecPrototype(final DataObjectStep<?> step, final ContainerRuntimeType container,
             final CodecContextFactory factory) {
-        super(item, container, factory);
+        super(step, container, factory);
     }
 
     @Override

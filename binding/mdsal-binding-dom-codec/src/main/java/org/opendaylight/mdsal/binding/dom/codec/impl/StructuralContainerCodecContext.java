@@ -13,7 +13,7 @@ import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.NodeStep;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 
 /**
@@ -37,7 +37,7 @@ final class StructuralContainerCodecContext<D extends DataObject> extends Contai
 
     StructuralContainerCodecContext(final Class<D> cls, final ContainerRuntimeType type,
             final CodecContextFactory factory) {
-        this(new StructuralContainerCodecPrototype(Item.of(cls), type, factory));
+        this(new StructuralContainerCodecPrototype(new NodeStep<>(cls), type, factory));
     }
 
     StructuralContainerCodecContext(final StructuralContainerCodecPrototype prototype) {

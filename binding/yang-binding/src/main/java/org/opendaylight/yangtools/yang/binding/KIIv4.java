@@ -11,18 +11,21 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
-import java.io.Serial;
 
-final class KeyedInstanceIdentifierV2<T extends KeyAware<K> & DataObject, K extends Key<T>>
-        extends InstanceIdentifierV3<T> {
+final class KIIv4<T extends KeyAware<K> & DataObject, K extends Key<T>> extends IIv4<T> {
     @java.io.Serial
     private static final long serialVersionUID = 2L;
 
     private K key;
 
     @SuppressWarnings("redundantModifier")
-    public KeyedInstanceIdentifierV2() {
+    public KIIv4() {
         // For Externalizable
+    }
+
+    KIIv4(final KeyedInstanceIdentifier<T, K> source) {
+        super(source);
+        key = source.getKey();
     }
 
     @Override
@@ -37,7 +40,7 @@ final class KeyedInstanceIdentifierV2<T extends KeyAware<K> & DataObject, K exte
         key = (K) in.readObject();
     }
 
-    @Serial
+    @java.io.Serial
     @Override
     Object readResolve() throws ObjectStreamException {
         return new KeyedInstanceIdentifier<>(new KeyStep<>(getTargetType(), key), getPathArguments(),

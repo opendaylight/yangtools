@@ -8,25 +8,24 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.binding.test.mock.Node;
+import org.opendaylight.yangtools.yang.binding.test.mock.NodeKey;
 
 public class KeyedInstanceIdentifierTest {
-
     @Test
     public void basicTest() {
-        final Key<?> key = mock(Key.class);
-        final KeyedInstanceIdentifier<?, ?> keyedInstanceIdentifier =
-                new KeyedInstanceIdentifier(KeyAware.class, ImmutableList.of(), false, 0, key);
+        final var key = new NodeKey(0);
+        final var keyed = new KeyedInstanceIdentifier<>(new KeyStep<>(Node.class, key), ImmutableList.of(),
+            false, 0);
 
-        assertEquals(key, keyedInstanceIdentifier.getKey());
+        assertEquals(key, keyed.getKey());
+        assertTrue(keyed.keyEquals(keyed.builder().build()));
 
-        assertFalse(keyedInstanceIdentifier.fastNonEqual(keyedInstanceIdentifier.builder().build()));
-        assertTrue(new KeyedInstanceIdentifier(KeyAware.class, ImmutableList.of(), false, 0, null)
-                .fastNonEqual(keyedInstanceIdentifier.builder().build()));
+        final var keyless = new InstanceIdentifier<>(Node.class, ImmutableList.of(), true, 0);
+        assertTrue(keyless.keyEquals(keyed.builder().build()));
     }
 }

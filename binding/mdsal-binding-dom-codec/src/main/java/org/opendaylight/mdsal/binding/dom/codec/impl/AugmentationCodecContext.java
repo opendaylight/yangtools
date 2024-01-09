@@ -18,7 +18,7 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTree
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -55,15 +55,15 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    public PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
-        if (!bindingArg().equals(arg)) {
-            throw new IllegalArgumentException("Unexpected argument " + arg);
+    public PathArgument serializePathArgument(final DataObjectStep<?> step) {
+        if (!bindingArg().equals(step)) {
+            throw new IllegalArgumentException("Unexpected argument " + step);
         }
         return null;
     }
 
     @Override
-    public InstanceIdentifier.PathArgument deserializePathArgument(final PathArgument arg) {
+    public DataObjectStep<?> deserializePathArgument(final PathArgument arg) {
         if (arg != null) {
             throw new IllegalArgumentException("Unexpected argument " + arg);
         }
@@ -97,7 +97,7 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    void addYangPathArgument(final List<PathArgument> builder, final InstanceIdentifier.PathArgument arg) {
+    void addYangPathArgument(final List<PathArgument> builder, final DataObjectStep<?> step) {
         // No-op
     }
 

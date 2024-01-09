@@ -12,7 +12,8 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> extends CommonDataObjectCodecPrototype<T>
@@ -24,10 +25,10 @@ abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> e
     @SuppressWarnings("unchecked")
     DataObjectCodecPrototype(final Class<?> cls, final NodeIdentifier yangArg, final T type,
             final CodecContextFactory factory) {
-        this(Item.of((Class<? extends DataObject>) cls), yangArg, type, factory);
+        this(InstanceIdentifier.createStep((Class<? extends DataObject>) cls), yangArg, type, factory);
     }
 
-    DataObjectCodecPrototype(final Item<?> bindingArg, final NodeIdentifier yangArg, final T type,
+    DataObjectCodecPrototype(final DataObjectStep<?> bindingArg, final NodeIdentifier yangArg, final T type,
             final CodecContextFactory factory) {
         super(bindingArg, type, factory);
         this.yangArg = requireNonNull(yangArg);

@@ -8,18 +8,17 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import java.io.Externalizable;
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
-class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
-    @Serial
-    private static final long serialVersionUID = 3L;
+sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
 
     private @Nullable Iterable<DataObjectStep<?>> pathArguments;
     private @Nullable Class<T> targetType;
@@ -27,8 +26,15 @@ class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
     private int hash;
 
     @SuppressWarnings("redundantModifier")
-    public InstanceIdentifierV3() {
+    public IIv4() {
         // For Externalizable
+    }
+
+    IIv4(final InstanceIdentifier<T> source) {
+        pathArguments = source.pathArguments;
+        targetType = source.getTargetType();
+        wildcarded = source.isWildcarded();
+        hash = source.hashCode();
     }
 
     final int getHash() {
@@ -49,7 +55,13 @@ class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
 
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
-        throw new NotSerializableException(InstanceIdentifierV3.class.getName());
+        out.writeObject(targetType);
+        out.writeBoolean(wildcarded);
+        out.writeInt(hash);
+        out.writeInt(Iterables.size(pathArguments));
+        for (var o : pathArguments) {
+            out.writeObject(o);
+        }
     }
 
     @Override

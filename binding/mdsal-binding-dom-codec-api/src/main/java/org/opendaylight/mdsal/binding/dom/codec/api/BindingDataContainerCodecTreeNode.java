@@ -14,9 +14,9 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingContract;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * A {@link BindingObjectCodecTreeNode} which corresponds to a {@link DataContainer} construct.
@@ -76,31 +76,26 @@ public non-sealed interface BindingDataContainerCodecTreeNode<T extends DataCont
     }
 
     /**
-     * Returns nested node context using supplied YANG Instance Identifier.
+     * Returns nested node context using supplied {@link PathArgument}.
      *
-     * @param child
-     *            Yang Instance Identifier Argument
+     * @param child a {@link PathArgument}
      * @return Context of child
-     * @throws IllegalArgumentException
-     *             If supplied argument does not represent valid child.
+     * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
-    @NonNull BindingCodecTreeNode yangPathArgumentChild(YangInstanceIdentifier.@NonNull PathArgument child);
+    @NonNull BindingCodecTreeNode yangPathArgumentChild(@NonNull PathArgument child);
 
     /**
-     * Returns nested node context using supplied Binding Instance Identifier and adds YANG instance identifiers to
+     * Returns nested node context using supplied DataObjectStep and adds YANG instance identifiers to
      * the supplied list.
      *
-     * @param arg
-     *            Binding Instance Identifier Argument
-     * @param builder
-     *            Mutable instance of list, which is appended by YangInstanceIdentifiers
-     *            as tree is walked. Use null if such side-product is not needed.
-     * @return Context of child
-     * @throws IllegalArgumentException
-     *             If supplied argument does not represent valid child.
+     * @param step A {@link DataObjectStep}
+     * @param builder a mutable List to receive {@link PathArgument}s. Use {@code null} if such side-product is not
+     *                needed.
+     * @return A {@link CommonDataObjectCodecTreeNode}
+     * @throws IllegalArgumentException if supplied argument does not represent valid child.
      */
-    @NonNull CommonDataObjectCodecTreeNode<?> bindingPathArgumentChild(InstanceIdentifier.@NonNull PathArgument arg,
-            @Nullable List<YangInstanceIdentifier.PathArgument> builder);
+    @NonNull CommonDataObjectCodecTreeNode<?> bindingPathArgumentChild(@NonNull DataObjectStep<?> step,
+            @Nullable List<PathArgument> builder);
 
     /**
      * Return a summary of addressability of potential children. Binding specification does not allow all DOM tree

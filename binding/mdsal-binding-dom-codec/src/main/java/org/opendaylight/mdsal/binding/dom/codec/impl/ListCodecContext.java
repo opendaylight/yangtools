@@ -14,7 +14,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.NodeStep;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 sealed class ListCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ListRuntimeType>
         permits MapCodecContext {
     ListCodecContext(final Class<D> cls, final ListRuntimeType list, final CodecContextFactory factory) {
-        this(new ListCodecPrototype(Item.of(cls), list, factory));
+        this(new ListCodecPrototype(new NodeStep<>(cls), list, factory));
     }
 
     ListCodecContext(final ListCodecPrototype prototype) {

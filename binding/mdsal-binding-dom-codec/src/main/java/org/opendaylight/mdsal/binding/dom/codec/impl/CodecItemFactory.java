@@ -10,8 +10,8 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -25,10 +25,11 @@ sealed class CodecItemFactory {
 
         @Override
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        Item<?> createItem(final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
+        DataObjectStep<?> createItem(final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
             // FIXME: MDSAL-697: see overridden method for further guidance
             return childSchema instanceof AddedByUsesAware aware && aware.isAddedByUses()
-                ? Item.of((Class) bindingClass, (Class) childClass) : super.createItem(childClass, childSchema);
+                ? InstanceIdentifier.createStep((Class) bindingClass, (Class) childClass)
+                    : super.createItem(childClass, childSchema);
         }
     }
 
@@ -44,9 +45,8 @@ sealed class CodecItemFactory {
     //        receiving childSchema from it via findChildSchemaDefinition, we should be able to receive the equivalent
     //        of Map.Entry<Item, DataSchemaNode>, along with the override we create here. One more input we may need to
     //        provide is our bindingClass().
-    @SuppressWarnings("unchecked")
-    Item<?> createItem(final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
-        return Item.of((Class<? extends DataObject>) childClass);
+    DataObjectStep<?> createItem(final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
+        return InstanceIdentifier.createStep((Class) childClass);
     }
 
     static @NonNull CodecItemFactory of() {
