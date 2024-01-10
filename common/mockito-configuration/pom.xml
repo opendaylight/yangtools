@@ -24,17 +24,16 @@
     <packaging>jar</packaging><!-- not needed in OSGi -->
     <name>${project.artifactId}</name>
 
+    <properties>
+        <maven.javadoc.failOnWarnings>true</maven.javadoc.failOnWarnings>
+    </properties>
+
     <dependencies>
         <!-- all those dependencies will be in test scope as mockito-configuration should be referenced as test scope dependency -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-annotations</artifactId>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

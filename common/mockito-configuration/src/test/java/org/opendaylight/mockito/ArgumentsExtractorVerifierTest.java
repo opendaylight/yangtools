@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.mockito.configuration;
+package org.opendaylight.mockito;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,16 +21,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ArgumentsExtractorVerifierTest {
     @Mock
-    List<String> mockedList;
+    private List<String> mockedList;
 
     @Test
     void test() {
         doReturn(Boolean.TRUE).when(mockedList).add(any(String.class));
-        final String argument = "something";
+        final var argument = "something";
         mockedList.add(argument);
         // retrieve argument
-        final ArgumentsExtractorVerifier argumentsExtractorVerifier = new ArgumentsExtractorVerifier();
+        final var argumentsExtractorVerifier = new ArgumentsExtractorVerifier();
         verify(mockedList, argumentsExtractorVerifier).add(any(String.class));
-        assertArrayEquals(new Object[]{argument}, argumentsExtractorVerifier.getArguments());
+        assertArrayEquals(new Object[]{ argument }, argumentsExtractorVerifier.getArguments());
     }
 }

@@ -5,20 +5,25 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.mockito.configuration;
+package org.opendaylight.mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
 import java.io.Closeable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class DefaultAnswerTest {
+    @Mock
+    private Closeable mock;
+
     @Test
     void testAnswering() {
-        final var mock = mock(Closeable.class);
         final var e = assertThrows(UnstubbedMethodException.class, mock::close);
-        assertEquals("closeable.close(); was not stubbed", e.getMessage());
+        assertEquals("mock.close(); was not stubbed", e.getMessage());
     }
 }

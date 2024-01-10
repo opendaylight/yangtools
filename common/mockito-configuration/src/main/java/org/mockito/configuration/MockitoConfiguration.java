@@ -8,13 +8,14 @@
 package org.mockito.configuration;
 
 import org.mockito.stubbing.Answer;
+import org.opendaylight.mockito.MoreAnswers;
 
 /**
- * Configuration customization for Mockito. Change default answer to {@link ThrowsUnstubbedMethodException}.
+ * Configuration customization for Mockito. Change default answer to  {@link MoreAnswers#THROWS_UNSTUBBED_METHOD}.
  */
 public class MockitoConfiguration extends DefaultMockitoConfiguration {
     @Override
     public Answer<Object> getDefaultAnswer() {
-        return new ThrowsUnstubbedMethodException();
+        return MoreAnswers.THROWS_UNSTUBBED_METHOD;
     }
 }

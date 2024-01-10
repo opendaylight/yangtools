@@ -5,15 +5,23 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.mockito.configuration;
+package org.opendaylight.mockito;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Exception to be thrown on unstubbed method call.
  */
-public class UnstubbedMethodException extends RuntimeException {
+public final class UnstubbedMethodException extends RuntimeException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Default constructor.
+     *
+     * @param message detail message
+     */
     public UnstubbedMethodException(final String message) {
-        super(message);
+        super(requireNonNull(message));
     }
 }
