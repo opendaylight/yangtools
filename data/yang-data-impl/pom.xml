@@ -18,26 +18,10 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <!-- FIXME: do not export data.impl -->
-                        <!-- FIXME: use OSGi annotations when we have R7 -->
-                        <Export-Package>
-                            {local-packages},
-                            org.opendaylight.yangtools.yang.data.impl.*,
-                            ;-split-package:=error
-                        </Export-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <properties>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -102,4 +86,25 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <!-- FIXME: do not export data.impl -->
+                        <!-- FIXME: use OSGi annotations when we have R7 -->
+                        <Export-Package>
+                            {local-packages},
+                            org.opendaylight.yangtools.yang.data.impl.*,
+                            ;-split-package:=error
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

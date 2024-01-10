@@ -21,6 +21,11 @@
     <name>${project.artifactId}</name>
     <description>RFC7952 metamodel</description>
 
+    <properties>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>

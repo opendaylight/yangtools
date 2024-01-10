@@ -21,6 +21,10 @@
     <description>Netty utilities for Common YANG definitions</description>
     <url>https://wiki.opendaylight.org/display/ODL/YANG+Tools</url>
 
+    <properties>
+        <maven.javadoc.failOnWarnings>true</maven.javadoc.failOnWarnings>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.eclipse.jdt</groupId>

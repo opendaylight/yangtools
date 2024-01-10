@@ -20,6 +20,11 @@
     <artifactId>yang-validation-tool</artifactId>
     <version>13.0.1-SNAPSHOT</version>
 
+    <properties>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
