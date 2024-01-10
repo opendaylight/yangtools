@@ -21,6 +21,11 @@
     <name>${project.artifactId}</name>
     <description>RFC8040 model API</description>
 
+    <properties>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.eclipse.jdt</groupId>

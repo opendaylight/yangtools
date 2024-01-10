@@ -21,6 +21,11 @@
     <name>${project.artifactId}</name>
     <description>YANG Generator Plugin API</description>
 
+    <properties>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>

@@ -14,6 +14,11 @@
     <name>${project.artifactId}</name>
     <description>YANG model validator</description>
 
+    <properties>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

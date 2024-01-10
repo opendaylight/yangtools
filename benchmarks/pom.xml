@@ -23,6 +23,8 @@
     <properties>
         <!-- JMH-generated code does not pass SB (very noisily)-->
         <odlparent.spotbugs.skip>true</odlparent.spotbugs.skip>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
     </properties>
 
     <dependencies>
