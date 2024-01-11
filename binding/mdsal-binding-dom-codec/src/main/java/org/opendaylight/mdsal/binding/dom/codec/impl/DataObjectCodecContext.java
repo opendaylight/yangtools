@@ -134,7 +134,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
 
         // Deal with augmentations, which are not something we analysis provides
         final var augPathToBinding = new HashMap<NodeIdentifier, Class<?>>();
-        final var augClassToProto = new HashMap<Class<?>, AugmentationCodecPrototype>();
+        final var augClassToProto = new HashMap<Class<?>, AugmentationCodecPrototype<?>>();
         for (var augment : possibleAugmentations) {
             final var augProto = loadAugmentPrototype(augment);
             if (augProto != null) {
@@ -187,13 +187,13 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
          * and walk all stream child and compare augmentations classes if they are equivalent. When we find a match
          * we'll cache it so we do not need to perform reflection operations again.
          */
-        final var local = (ImmutableMap<Class<?>, AugmentationCodecPrototype>) MISMATCHED_AUGMENTED.getAcquire(this);
+        final var local = (ImmutableMap<Class<?>, AugmentationCodecPrototype<?>>) MISMATCHED_AUGMENTED.getAcquire(this);
         final var mismatched = local.get(childClass);
         return mismatched != null ? mismatched : loadMismatchedAugmentation(local, childClass);
     }
 
-    private @Nullable AugmentationCodecPrototype loadMismatchedAugmentation(
-            final ImmutableMap<Class<?>, AugmentationCodecPrototype> oldMismatched,
+    private @Nullable AugmentationCodecPrototype<?> loadMismatchedAugmentation(
+            final ImmutableMap<Class<?>, AugmentationCodecPrototype<?>> oldMismatched,
             final @NonNull Class<?> childClass) {
         @SuppressWarnings("rawtypes")
         final Class<?> augTarget = findAugmentationTarget((Class) childClass);
@@ -211,9 +211,9 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         return null;
     }
 
-    private @NonNull AugmentationCodecPrototype cacheMismatched(
-            final @NonNull ImmutableMap<Class<?>, AugmentationCodecPrototype> oldMismatched,
-            final @NonNull Class<?> childClass, final @NonNull AugmentationCodecPrototype prototype) {
+    private @NonNull AugmentationCodecPrototype<?> cacheMismatched(
+            final @NonNull ImmutableMap<Class<?>, AugmentationCodecPrototype<?>> oldMismatched,
+            final @NonNull Class<?> childClass, final @NonNull AugmentationCodecPrototype<?> prototype) {
         var expected = oldMismatched;
         while (true) {
             final var newMismatched =
@@ -222,7 +222,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
                     .put(childClass, prototype)
                     .build();
 
-            final var witness = (ImmutableMap<Class<?>, AugmentationCodecPrototype>)
+            final var witness = (ImmutableMap<Class<?>, AugmentationCodecPrototype<?>>)
                 MISMATCHED_AUGMENTED.compareAndExchangeRelease(this, expected, newMismatched);
             if (witness == expected) {
                 LOG.trace("Cached mismatched augmentation {} -> {} in {}", childClass, prototype, this);
@@ -250,7 +250,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         return cls.equals(loaded);
     }
 
-    private @Nullable AugmentationCodecPrototype loadAugmentPrototype(final AugmentRuntimeType augment) {
+    private @Nullable AugmentationCodecPrototype<?> loadAugmentPrototype(final AugmentRuntimeType augment) {
         // FIXME: in face of deviations this code should be looking at declared view, i.e. all possibilities at augment
         //        declaration site
         final var childPaths = augment.statement()
@@ -271,7 +271,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             throw new IllegalStateException(
                 "RuntimeContext references type " + javaType + " but failed to load its class", e);
         }
-        return new AugmentationCodecPrototype(augClass, augment, factory, childPaths);
+        return new AugmentationCodecPrototype<>(augClass, augment, factory, childPaths);
     }
 
     @Override

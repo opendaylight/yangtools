@@ -33,7 +33,7 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
 
     private final MethodHandle proxyConstructor;
 
-    private AugmentationCodecContext(final AugmentationCodecPrototype prototype,
+    private AugmentationCodecContext(final AugmentationCodecPrototype<D> prototype,
             final DataContainerAnalysis<AugmentRuntimeType> analysis) {
         super(prototype, analysis);
 
@@ -50,7 +50,7 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
         proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
     }
 
-    AugmentationCodecContext(final AugmentationCodecPrototype prototype) {
+    AugmentationCodecContext(final AugmentationCodecPrototype<D> prototype) {
         this(prototype, new DataContainerAnalysis<>(prototype, CodecItemFactory.of()));
     }
 
@@ -73,7 +73,7 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
     @SuppressWarnings("checkstyle:illegalCatch")
     @Override
     public D filterFrom(final DataContainerNode parentData) {
-        for (var childArg : ((AugmentationCodecPrototype) prototype()).getChildArgs()) {
+        for (var childArg : ((AugmentationCodecPrototype<?>) prototype()).getChildArgs()) {
             if (parentData.childByArg(childArg) != null) {
                 try {
                     return (D) proxyConstructor.invokeExact(this, parentData);

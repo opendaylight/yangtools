@@ -12,17 +12,17 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.NodeStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-final class AugmentationCodecPrototype extends CommonDataObjectCodecPrototype<AugmentRuntimeType> {
+final class AugmentationCodecPrototype<T extends Augmentation<?>>
+        extends CommonDataObjectCodecPrototype<AugmentRuntimeType> {
     private final @NonNull ImmutableSet<NodeIdentifier> childArgs;
 
-    @SuppressWarnings("unchecked")
-    AugmentationCodecPrototype(final @NonNull Class<?> cls, final AugmentRuntimeType type,
+    AugmentationCodecPrototype(final @NonNull Class<T> cls, final AugmentRuntimeType type,
             final CodecContextFactory factory, final ImmutableSet<NodeIdentifier> childArgs) {
-        super(new NodeStep<>((Class<? extends DataObject>) cls), type, factory);
+        super(new NodeStep<>(cls), type, factory);
         this.childArgs = requireNonNull(childArgs);
     }
 
