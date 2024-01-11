@@ -7,9 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static java.util.Objects.requireNonNull;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -21,34 +18,22 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * Base implementation of {@link CommonDataObjectCodecTreeNode}.
  */
 abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
-        extends DataContainerCodecContext<D, T> implements CommonDataObjectCodecTreeNode<D>
+        extends DataContainerCodecContext<D, T, CommonDataObjectCodecPrototype<T>>
+        implements CommonDataObjectCodecTreeNode<D>
         permits AbstractDataObjectCodecContext, ChoiceCodecContext {
-    final @NonNull CommonDataObjectCodecPrototype<T> prototype;
-
     CommonDataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype) {
-        super(prototype.runtimeType());
-        this.prototype = requireNonNull(prototype);
+        super(prototype);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public final Class<D> getBindingClass() {
-        return Class.class.cast(prototype.javaClass());
-    }
-
-    @Override
-    protected final CodecContextFactory factory() {
-        return prototype.contextFactory();
-    }
-
-    @Override
-    protected final T type() {
-        return prototype.runtimeType();
+        return Class.class.cast(prototype().javaClass());
     }
 
     @Override
     protected NodeIdentifier getDomPathArgument() {
-        return prototype.getYangArg();
+        return prototype().getYangArg();
     }
 
     /**
@@ -59,6 +44,6 @@ abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T exten
     }
 
     protected final PathArgument bindingArg() {
-        return prototype.getBindingArg();
+        return prototype().getBindingArg();
     }
 }

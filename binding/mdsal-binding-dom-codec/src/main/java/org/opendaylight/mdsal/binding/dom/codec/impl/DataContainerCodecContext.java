@@ -62,7 +62,8 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract sealed class DataContainerCodecContext<D extends DataContainer, T extends CompositeRuntimeType>
+abstract sealed class DataContainerCodecContext<D extends DataContainer, R extends CompositeRuntimeType,
+        P extends DataContainerPrototype<?, R>>
         extends CodecContext implements BindingDataContainerCodecTreeNode<D>
         permits CommonDataObjectCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecContext.class);
@@ -77,6 +78,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, T exten
         }
     }
 
+    private final @NonNull P prototype;
     private final @NonNull ChildAddressabilitySummary childAddressabilitySummary;
 
     // Accessed via a VarHandle
@@ -84,18 +86,19 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, T exten
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile DataContainerSerializer eventStreamSerializer;
 
-    DataContainerCodecContext(final T type) {
-        childAddressabilitySummary = computeChildAddressabilitySummary(type.statement());
+    DataContainerCodecContext(final P prototype) {
+        this.prototype = requireNonNull(prototype);
+        childAddressabilitySummary = computeChildAddressabilitySummary(prototype.runtimeType().statement());
+    }
+
+    final @NonNull P prototype() {
+        return prototype;
     }
 
     @Override
     public final ChildAddressabilitySummary getChildAddressabilitySummary() {
         return childAddressabilitySummary;
     }
-
-    protected abstract @NonNull CodecContextFactory factory();
-
-    protected abstract @NonNull T type();
 
     // Non-final for ChoiceCodecContext
     @Override
@@ -160,7 +163,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, T exten
         return getClass().getSimpleName() + " [" + getBindingClass() + "]";
     }
 
-    static final <T extends DataObject, C extends DataContainerCodecContext<T, ?> & BindingNormalizedNodeCodec<T>>
+    static final <T extends DataObject, C extends DataContainerCodecContext<T, ?, ?> & BindingNormalizedNodeCodec<T>>
             @NonNull BindingNormalizedNodeCachingCodec<T> createCachingCodec(final C context,
                 final ImmutableCollection<Class<? extends BindingObject>> cacheSpecifier) {
         return cacheSpecifier.isEmpty() ? new NonCachingCodec<>(context)
@@ -194,7 +197,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, T exten
     @CheckReturnValue
     private IllegalArgumentException childNullException(final QName child, final String message, final Object... args) {
         final var module = child.getModule();
-        if (!factory().getRuntimeContext().modelContext().findModule(module).isPresent()) {
+        if (!prototype().contextFactory().getRuntimeContext().modelContext().findModule(module).isPresent()) {
             return new MissingSchemaException("Module " + module + " is not present in current schema context.");
         }
         return new IncorrectNestingException(message, args);
@@ -203,7 +206,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, T exten
     @CheckReturnValue
     private @NonNull IllegalArgumentException childNullException(final Class<?> childClass, final String message,
             final Object... args) {
-        return childNullException(factory().getRuntimeContext(), childClass, message, args);
+        return childNullException(prototype().contextFactory().getRuntimeContext(), childClass, message, args);
     }
 
     @CheckReturnValue
@@ -236,7 +239,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, T exten
 
     // Split out to aid inlining
     private DataContainerSerializer loadEventStreamSerializer() {
-        final DataContainerSerializer loaded = factory().getEventStreamSerializer(getBindingClass());
+        final DataContainerSerializer loaded = prototype().contextFactory().getEventStreamSerializer(getBindingClass());
         final Object witness = EVENT_STREAM_SERIALIZER.compareAndExchangeRelease(this, null, loaded);
         return witness == null ? loaded : (DataContainerSerializer) witness;
     }

@@ -72,11 +72,11 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
     NotificationCodecContext(final Class<?> notificationClass, final NotificationRuntimeType type,
             final CodecContextFactory factory) {
         super(new Prototype<>(notificationClass, type, factory));
-        final Class<D> bindingClass = getBindingClass();
+        final var bindingClass = getBindingClass();
 
-        final Class<?> awareClass = CodecPackage.EVENT_AWARE.generateClass(factory().getLoader(), bindingClass,
-            (loader, fqcn, bindingInterface) -> {
-                final Class<?> codecImpl = CodecPackage.CODEC.getGeneratedClass(loader, bindingClass);
+        final var eventAwareClass = CodecPackage.EVENT_AWARE.generateClass(prototype().contextFactory().getLoader(),
+            bindingClass, (loader, fqcn, bindingInterface) -> {
+                final var codecImpl = CodecPackage.CODEC.getGeneratedClass(loader, bindingClass);
 
                 return GeneratorResult.of(new ByteBuddy()
                     .subclass(codecImpl, ConstructorStrategy.Default.NO_CONSTRUCTORS)
@@ -93,7 +93,7 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
 
         final MethodHandle ctor;
         try {
-            ctor = MethodHandles.publicLookup().findConstructor(awareClass, CONSTRUCTOR_TYPE);
+            ctor = MethodHandles.publicLookup().findConstructor(eventAwareClass, CONSTRUCTOR_TYPE);
         } catch (IllegalAccessException | NoSuchMethodException e) {
             throw new LinkageError("Failed to acquire constructor", e);
         }

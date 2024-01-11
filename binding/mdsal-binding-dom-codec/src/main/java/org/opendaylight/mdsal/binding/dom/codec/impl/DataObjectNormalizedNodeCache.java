@@ -16,11 +16,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * A cache of NormalizedNodes corresponding to a particular DataObject instantiation.
  */
 final class DataObjectNormalizedNodeCache
-        extends AbstractBindingNormalizedNodeCache<DataObject, DataContainerCodecContext<?, ?>> {
+        extends AbstractBindingNormalizedNodeCache<DataObject, DataContainerCodecContext<?, ?, ?>> {
     private final AbstractBindingNormalizedNodeCacheHolder cacheHolder;
 
     DataObjectNormalizedNodeCache(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
-            final DataContainerCodecContext<?, ?> rootContext) {
+            final DataContainerCodecContext<?, ?, ?> rootContext) {
         super(rootContext);
         this.cacheHolder = requireNonNull(cacheHolder, "cacheHolder");
     }

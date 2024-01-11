@@ -151,10 +151,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 return new DataContainerSerializer(BindingCodecContext.this, streamers.get(key));
             }
         });
-    private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?>> childrenByClass =
+    private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public DataContainerCodecContext<?, ?> load(final Class<? extends DataObject> key) {
+            public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> key) {
                 final var childSchema = context.getTypes().bindingChild(JavaTypeName.create(key));
                 if (childSchema instanceof ContainerLikeRuntimeType containerLike) {
                     if (childSchema instanceof ContainerRuntimeType container
@@ -177,10 +177,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         });
 
     // FIXME: this could also be a leaf!
-    private final LoadingCache<QName, DataContainerCodecContext<?, ?>> childrenByDomArg =
+    private final LoadingCache<QName, DataContainerCodecContext<?, ?, ?>> childrenByDomArg =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public DataContainerCodecContext<?, ?> load(final QName qname) throws ClassNotFoundException {
+            public DataContainerCodecContext<?, ?, ?> load(final QName qname) throws ClassNotFoundException {
                 final var type = context.getTypes();
                 final var child = type.schemaTreeChild(qname);
                 if (child == null) {
@@ -426,12 +426,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return new BindingToNormalizedStreamWriter(getActionCodec(action).output(), domWriter);
     }
 
-    @NonNull DataContainerCodecContext<?,?> getCodecContextNode(final InstanceIdentifier<?> binding,
+    @NonNull DataContainerCodecContext<?, ?, ?> getCodecContextNode(final InstanceIdentifier<?> binding,
             final List<PathArgument> builder) {
         final var it = binding.getPathArguments().iterator();
         final var arg = it.next();
 
-        DataContainerCodecContext<?, ?> current;
+        DataContainerCodecContext<?, ?, ?> current;
         final var caseType = arg.getCaseType();
         if (caseType.isPresent()) {
             final @NonNull Class<? extends DataObject> type = caseType.orElseThrow();

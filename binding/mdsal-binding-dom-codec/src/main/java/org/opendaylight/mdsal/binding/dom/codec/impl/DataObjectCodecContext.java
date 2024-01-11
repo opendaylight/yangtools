@@ -32,7 +32,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentableRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -105,6 +104,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
 
         // Final bits: generate the appropriate class, As a side effect we identify what Augmentations are possible
         final List<AugmentRuntimeType> possibleAugmentations;
+        final var loader = prototype().contextFactory().getLoader();
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             // Verify we have the appropriate backing runtimeType
             final var runtimeType = prototype.runtimeType();
@@ -114,12 +114,12 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             }
 
             possibleAugmentations = augmentableRuntimeType.augments();
-            generatedClass = CodecDataObjectGenerator.generateAugmentable(factory().getLoader(), bindingClass,
-                analysis.leafContexts, analysis.daoProperties, keyMethod);
+            generatedClass = CodecDataObjectGenerator.generateAugmentable(loader, bindingClass, analysis.leafContexts,
+                analysis.daoProperties, keyMethod);
         } else {
             possibleAugmentations = List.of();
-            generatedClass = CodecDataObjectGenerator.generate(factory().getLoader(), bindingClass,
-                analysis.leafContexts, analysis.daoProperties, keyMethod);
+            generatedClass = CodecDataObjectGenerator.generate(loader, bindingClass, analysis.leafContexts,
+                analysis.daoProperties, keyMethod);
         }
 
         // All done: acquire the constructor: it is supposed to be public
@@ -239,7 +239,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     private boolean belongsToRuntimeContext(final Class<?> cls) {
-        final BindingRuntimeContext ctx = factory().getRuntimeContext();
+        final var ctx = prototype().contextFactory().getRuntimeContext();
         final Class<?> loaded;
         try {
             loaded = ctx.loadClass(Type.of(cls));
@@ -262,7 +262,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             return null;
         }
 
-        final var factory = factory();
+        final var factory = prototype().contextFactory();
         final GeneratedType javaType = augment.javaType();
         final Class<? extends Augmentation<?>> augClass;
         try {

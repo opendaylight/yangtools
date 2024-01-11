@@ -39,7 +39,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
     private final BindingToNormalizedStreamWriter delegate;
 
     private CachingNormalizedNodeSerializer(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
-            final DataContainerCodecContext<?, ?> subtreeRoot) {
+            final DataContainerCodecContext<?, ?, ?> subtreeRoot) {
         this.cacheHolder = requireNonNull(cacheHolder);
         delegate = new BindingToNormalizedStreamWriter(subtreeRoot, domWriter);
     }
@@ -53,7 +53,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
      * @return Normalized Node representation of data.
      */
     static NormalizedNode serializeUsingStreamWriter(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
-            final DataContainerCodecContext<?, ?> subtreeRoot, final DataObject data) {
+            final DataContainerCodecContext<?, ?, ?> subtreeRoot, final DataObject data) {
         final var writer = new CachingNormalizedNodeSerializer(cacheHolder, subtreeRoot);
         try {
             subtreeRoot.eventStreamSerializer().serialize(data, writer);
@@ -120,7 +120,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
     private AbstractBindingNormalizedNodeCache<DataObject, ?> getCacheSerializer(
             final Class<? extends DataObject> type) {
         if (cacheHolder.isCached(type)) {
-            final var currentCtx = (DataContainerCodecContext<?, ?>) delegate.current();
+            final var currentCtx = (DataContainerCodecContext<?, ?, ?>) delegate.current();
             if (type.equals(currentCtx.getBindingClass())) {
                 return cacheHolder.getCachingSerializer(currentCtx);
             }

@@ -60,7 +60,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     @Override
     public final WithStatus getSchema() {
         // FIXME: Bad cast, we should be returning an EffectiveStatement perhaps?
-        return (WithStatus) type().statement();
+        return (WithStatus) prototype().runtimeType().statement();
     }
 
     @Override
@@ -80,7 +80,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
 
             final var caseType = arg.getCaseType();
             final var type = arg.getType();
-            final DataContainerCodecContext<?, ?> caze;
+            final DataContainerCodecContext<?, ?, ?> caze;
             if (caseType.isPresent()) {
                 // Non-ambiguous addressing this should not pose any problems
                 caze = choice.getStreamChild(caseType.orElseThrow());

@@ -204,7 +204,7 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
     @Override
     public WithStatus getSchema() {
         // FIXME: Bad cast, we should be returning an EffectiveStatement perhaps?
-        return (WithStatus) type().statement();
+        return (WithStatus) prototype().runtimeType().statement();
     }
 
     @Override
@@ -269,7 +269,7 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
         return createCachingCodec(this, cacheSpecifier);
     }
 
-    DataContainerCodecContext<?, ?> getCaseByChildClass(final @NonNull Class<? extends DataObject> type) {
+    DataContainerCodecContext<?, ?, ?> getCaseByChildClass(final @NonNull Class<? extends DataObject> type) {
         var result = byCaseChildClass.get(type);
         if (result == null) {
             // We have not found an unambiguous result, try ambiguous ones

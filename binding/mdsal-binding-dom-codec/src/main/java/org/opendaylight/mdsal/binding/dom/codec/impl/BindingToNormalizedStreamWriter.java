@@ -37,7 +37,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     private final @NonNull NormalizedNodeStreamWriter delegate;
     private final CodecContext rootContext;
 
-    BindingToNormalizedStreamWriter(final DataContainerCodecContext<?, ?> rootContext,
+    BindingToNormalizedStreamWriter(final DataContainerCodecContext<?, ?, ?> rootContext,
             final NormalizedNodeStreamWriter delegate) {
         this.rootContext = requireNonNull(rootContext);
         this.delegate = requireNonNull(delegate);
@@ -71,7 +71,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
         if (current == null) {
             // Entry of first node
             next = rootContext;
-        } else if (current instanceof DataContainerCodecContext<?, ?> currentContainer) {
+        } else if (current instanceof DataContainerCodecContext<?, ?, ?> currentContainer) {
             next = currentContainer.getStreamChild((Class) name);
         } else {
             throw new IllegalArgumentException("Could not start node " + name + " in non-container " + current);

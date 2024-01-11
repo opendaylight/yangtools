@@ -27,7 +27,7 @@ abstract class AbstractBindingNormalizedNodeCacheHolder {
             @Override
             public AbstractBindingNormalizedNodeCache load(final CodecContext key) {
                 // FIXME: Use a switch expression once we have https://openjdk.org/jeps/441
-                if (key instanceof DataContainerCodecContext<?, ?> dataContainer) {
+                if (key instanceof DataContainerCodecContext<?, ?, ?> dataContainer) {
                     return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this,
                         dataContainer);
                 }

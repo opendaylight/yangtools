@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 class CachingNormalizedNodeCodec<D extends DataObject,
-        C extends DataContainerCodecContext<D, ?> & BindingNormalizedNodeCodec<D>>
+        C extends DataContainerCodecContext<D, ?, ?> & BindingNormalizedNodeCodec<D>>
         extends AbstractBindingNormalizedNodeCacheHolder implements BindingNormalizedNodeCachingCodec<D> {
     private final @NonNull C context;
 
