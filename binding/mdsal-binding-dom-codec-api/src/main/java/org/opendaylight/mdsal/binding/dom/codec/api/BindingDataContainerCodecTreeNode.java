@@ -47,7 +47,7 @@ public non-sealed interface BindingDataContainerCodecTreeNode<T extends DataCont
      * @return Context of child or {@code null} is supplied class is not applicable in context.
      * @throws NullPointerException if {@code childClass} is {@code null}
      */
-    <E extends DataObject> @Nullable CommonDataObjectCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
+    <E extends DataObject> @Nullable BindingDataContainerCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
 
     default <A extends Augmentation<?>> @Nullable BindingAugmentationCodecTreeNode<A> streamAugmentation(
             final @NonNull Class<A> childClass) {

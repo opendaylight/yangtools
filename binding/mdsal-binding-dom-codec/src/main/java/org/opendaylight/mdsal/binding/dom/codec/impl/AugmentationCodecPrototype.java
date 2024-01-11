@@ -27,7 +27,7 @@ final class AugmentationCodecPrototype extends CommonDataObjectCodecPrototype<Au
     }
 
     @Override
-    NodeIdentifier getYangArg() {
+    NodeIdentifier yangArg() {
         throw new UnsupportedOperationException("Augmentation does not have PathArgument address");
     }
 

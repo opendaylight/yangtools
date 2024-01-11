@@ -150,13 +150,13 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     @Override
-    final CommonDataObjectCodecPrototype<?> pathChildPrototype(final Class<? extends DataObject> argType) {
+    final DataContainerPrototype<?, ?> pathChildPrototype(final Class<? extends DataObject> argType) {
         final var child = super.pathChildPrototype(argType);
         return child != null ? child : augmentToPrototype.get(argType);
     }
 
     @Override
-    final CommonDataObjectCodecPrototype<?> streamChildPrototype(final Class<?> childClass) {
+    final DataContainerPrototype<?, ?> streamChildPrototype(final Class<?> childClass) {
         final var child = super.streamChildPrototype(childClass);
         if (child == null && Augmentation.class.isAssignableFrom(childClass)) {
             return getAugmentationProtoByClass(childClass);

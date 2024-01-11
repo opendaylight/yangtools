@@ -26,6 +26,7 @@ import org.opendaylight.mdsal.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
+import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
@@ -42,8 +43,8 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerAnalysis.class);
 
     // Needed for DataContainerCodecContext
-    final @NonNull ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byStreamClass;
-    final @NonNull ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byBindingArgClass;
+    final @NonNull ImmutableMap<Class<?>, DataContainerPrototype<?, ?>> byStreamClass;
+    final @NonNull ImmutableMap<Class<?>, DataContainerPrototype<?, ?>> byBindingArgClass;
     final @NonNull ImmutableMap<NodeIdentifier, CodecContextSupplier> byYang;
     final @NonNull ImmutableMap<String, ValueNodeCodecContext> leafNodes;
 
@@ -73,8 +74,8 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
         }
         leafNodes = leafBuilder.build();
 
-        final var byBindingArgClassBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
-        final var byStreamClassBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
+        final var byBindingArgClassBuilder = new HashMap<Class<?>, DataContainerPrototype<?, ?>>();
+        final var byStreamClassBuilder = new HashMap<Class<?>, DataContainerPrototype<?, ?>>();
         final var daoPropertiesBuilder = new HashMap<Class<?>, PropertyInfo>();
         for (var childDataObj : clsToMethod.entrySet()) {
             final var method = childDataObj.getValue();
@@ -91,14 +92,11 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
 
             final var childProto = getChildPrototype(runtimeType, factory, itemFactory, retClass);
             byStreamClassBuilder.put(childProto.javaClass(), childProto);
-            byYangBuilder.put(childProto.getYangArg(), childProto);
+            byYangBuilder.put(childProto.yangArg(), childProto);
 
-            // FIXME: It really feels like we should be specializing DataContainerCodecPrototype so as to ditch
-            //        createInstance() and then we could do an instanceof check instead.
-            if (childProto.runtimeType() instanceof ChoiceRuntimeType) {
-                final var choice = (ChoiceCodecContext<?>) childProto.getCodecContext();
-                for (var cazeChild : choice.getCaseChildrenClasses()) {
-                    byBindingArgClassBuilder.put(cazeChild, childProto);
+            if (childProto instanceof ChoiceCodecPrototype<?> choiceProto) {
+                for (var cazeChild : choiceProto.getCodecContext().getCaseChildrenClasses()) {
+                    byBindingArgClassBuilder.put(cazeChild, choiceProto);
                 }
             }
         }
@@ -127,7 +125,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
         daoProperties = ImmutableMap.copyOf(daoPropertiesBuilder);
     }
 
-    private static @NonNull CommonDataObjectCodecPrototype<?> getChildPrototype(final CompositeRuntimeType type,
+    private static @NonNull DataContainerPrototype<?, ?> getChildPrototype(final CompositeRuntimeType type,
             final CodecContextFactory factory, final CodecItemFactory itemFactory,
             final Class<? extends DataContainer> childClass) {
         final var child = type.bindingChild(JavaTypeName.create(childClass));
@@ -135,6 +133,11 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
             throw DataContainerCodecContext.childNullException(factory.getRuntimeContext(), childClass,
                 "Node %s does not have child named %s", type, childClass);
         }
+
+        if (child instanceof ChoiceRuntimeType choice) {
+            return new ChoiceCodecPrototype<>(factory, choice, childClass.asSubclass(ChoiceIn.class));
+        }
+
         final var item = itemFactory.createItem(childClass, child.statement());
         if (child instanceof ContainerLikeRuntimeType containerLike) {
             if (child instanceof ContainerRuntimeType container
@@ -145,13 +148,10 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
         } else if (child instanceof ListRuntimeType list) {
             return list.keyType() != null ? new MapCodecPrototype(item, list, factory)
                 : new ListCodecPrototype(item, list, factory);
-        } else if (child instanceof ChoiceRuntimeType choice) {
-            return new ChoiceCodecPrototype(item, choice, factory);
         } else {
             throw new UnsupportedOperationException("Unhandled type " + child);
         }
     }
-
 
     // FIXME: MDSAL-780: these methods perform analytics using java.lang.reflect to acquire the basic shape of the
     //                   class. This is not exactly AOT friendly, as most of the information should be provided by

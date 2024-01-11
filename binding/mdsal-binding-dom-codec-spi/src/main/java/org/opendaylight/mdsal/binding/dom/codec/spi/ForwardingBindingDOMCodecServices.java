@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataContainerCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
@@ -251,7 +252,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public <E extends DataObject> CommonDataObjectCodecTreeNode<E> getStreamChild(final Class<E> childClass) {
+    public <E extends DataObject> BindingDataContainerCodecTreeNode<E> getStreamChild(final Class<E> childClass) {
         return delegate().getStreamChild(childClass);
     }
 }

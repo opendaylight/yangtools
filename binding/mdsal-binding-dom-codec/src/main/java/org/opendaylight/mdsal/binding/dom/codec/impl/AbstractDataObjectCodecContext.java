@@ -43,8 +43,8 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
         extends CommonDataObjectCodecContext<D, T>
         permits AugmentationCodecContext, DataObjectCodecContext {
-    private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byBindingArgClass;
-    private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byStreamClass;
+    private final ImmutableMap<Class<?>, DataContainerPrototype<?, ?>> byBindingArgClass;
+    private final ImmutableMap<Class<?>, DataContainerPrototype<?, ?>> byStreamClass;
     private final ImmutableMap<NodeIdentifier, CodecContextSupplier> byYang;
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
 
@@ -64,7 +64,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     }
 
     @Override
-    CommonDataObjectCodecPrototype<?> streamChildPrototype(final Class<?> childClass) {
+    DataContainerPrototype<?, ?> streamChildPrototype(final Class<?> childClass) {
         return byStreamClass.get(childClass);
     }
 
@@ -75,27 +75,17 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
         final var context = childNonNull(pathChildPrototype(argType), argType,
             "Class %s is not valid child of %s", argType, getBindingClass())
             .getCodecContext();
-        if (context instanceof ChoiceCodecContext<?> choice) {
-            choice.addYangPathArgument(arg, builder);
-
-            final var caseType = arg.getCaseType();
-            final var type = arg.getType();
-            final DataContainerCodecContext<?, ?, ?> caze;
-            if (caseType.isPresent()) {
-                // Non-ambiguous addressing this should not pose any problems
-                caze = choice.getStreamChild(caseType.orElseThrow());
-            } else {
-                caze = choice.getCaseByChildClass(type);
-            }
-
-            caze.addYangPathArgument(arg, builder);
-            return caze.bindingPathArgumentChild(arg, builder);
-        }
         context.addYangPathArgument(arg, builder);
-        return context;
+        if (context instanceof CommonDataObjectCodecContext<?, ?> dataObject) {
+            return dataObject;
+        } else if (context instanceof ChoiceCodecContext<?> choice) {
+            return choice.bindingPathArgumentChild(arg, builder);
+        } else {
+            throw new IllegalStateException("Unhandled context " + context);
+        }
     }
 
-    @Nullable CommonDataObjectCodecPrototype<?> pathChildPrototype(final @NonNull Class<? extends DataObject> argType) {
+    @Nullable DataContainerPrototype<?, ?> pathChildPrototype(final @NonNull Class<? extends DataObject> argType) {
         return byBindingArgClass.get(argType);
     }
 

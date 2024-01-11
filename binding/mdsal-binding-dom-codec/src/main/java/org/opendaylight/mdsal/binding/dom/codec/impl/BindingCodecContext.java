@@ -167,7 +167,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     return list.keyType() == null ? new ListCodecContext<>(key, list, BindingCodecContext.this)
                         : MapCodecContext.of(key, list, BindingCodecContext.this);
                 } else if (childSchema instanceof ChoiceRuntimeType choice) {
-                    return new ChoiceCodecContext<>(key, choice, BindingCodecContext.this);
+                    return new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), choice, BindingCodecContext.this);
                 } else if (childSchema == null) {
                     throw DataContainerCodecContext.childNullException(context, key, "%s is not top-level item.", key);
                 } else {
@@ -753,10 +753,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends DataObject> CommonDataObjectCodecContext<E, ?> getStreamChild(final Class<E> childClass) {
+    public <E extends DataObject> DataContainerCodecContext<E, ?, ?> getStreamChild(final Class<E> childClass) {
         final var result = Notification.class.isAssignableFrom(childClass) ? getNotificationContext(childClass)
             : getOrRethrow(childrenByClass, childClass);
-        return (CommonDataObjectCodecContext<E, ?>) result;
+        return (DataContainerCodecContext<E, ?, ?>) result;
     }
 
     @Override

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> extends CommonDataObjectCodecPrototype<T>
-        permits CaseCodecPrototype, ChoiceCodecPrototype, ContainerLikeCodecPrototype, ListCodecPrototype,
+        permits CaseCodecPrototype, ContainerLikeCodecPrototype, ListCodecPrototype,
                 NotificationCodecContext.Prototype {
     private final @NonNull NodeIdentifier yangArg;
 
@@ -34,7 +34,7 @@ abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> e
     }
 
     @Override
-    final NodeIdentifier getYangArg() {
+    final NodeIdentifier yangArg() {
         return yangArg;
     }
 }

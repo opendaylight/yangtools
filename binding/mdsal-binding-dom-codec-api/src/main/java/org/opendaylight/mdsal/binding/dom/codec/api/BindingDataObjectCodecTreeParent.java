@@ -46,7 +46,7 @@ public interface BindingDataObjectCodecTreeParent<T> {
      * @throws NullPointerException if {@code childClass} is {@code null}
      * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
-    <E extends DataObject> @NonNull CommonDataObjectCodecTreeNode<E> getStreamChild(@NonNull Class<E> childClass);
+    <E extends DataObject> @NonNull BindingDataContainerCodecTreeNode<E> getStreamChild(@NonNull Class<E> childClass);
 
     default <A extends Augmentation<?>> @NonNull BindingAugmentationCodecTreeNode<A> getStreamAugmentation(
             final @NonNull Class<A> childClass) {

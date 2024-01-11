@@ -12,7 +12,6 @@ import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * Base implementation of {@link CommonDataObjectCodecTreeNode}.
@@ -20,20 +19,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
         extends DataContainerCodecContext<D, T, CommonDataObjectCodecPrototype<T>>
         implements CommonDataObjectCodecTreeNode<D>
-        permits AbstractDataObjectCodecContext, ChoiceCodecContext {
+        permits AbstractDataObjectCodecContext {
     CommonDataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype) {
         super(prototype);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public final Class<D> getBindingClass() {
-        return Class.class.cast(prototype().javaClass());
-    }
-
-    @Override
-    protected NodeIdentifier getDomPathArgument() {
-        return prototype().getYangArg();
     }
 
     /**

@@ -13,7 +13,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * Common superclass for {@link DataObjectCodecPrototype} and {@link AugmentationCodecPrototype}.
@@ -38,6 +37,4 @@ abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeT
     final @NonNull Item<?> getBindingArg() {
         return bindingArg;
     }
-
-    abstract @NonNull NodeIdentifier getYangArg();
 }

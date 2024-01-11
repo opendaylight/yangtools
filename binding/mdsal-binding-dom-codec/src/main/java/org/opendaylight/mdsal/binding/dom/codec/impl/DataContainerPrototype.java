@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * A prototype for codecs dealing with {@link DataContainer}s.
@@ -19,8 +20,9 @@ import org.opendaylight.yangtools.yang.binding.DataContainer;
  * @param <C> {@link CodecContext} type
  * @param <R> {@link CompositeRuntimeType} type
  */
-abstract sealed class DataContainerPrototype<C extends CodecContext, R extends CompositeRuntimeType>
-        extends LazyCodecContextSupplier<C> permits CommonDataObjectCodecPrototype {
+abstract sealed class DataContainerPrototype<C extends DataContainerCodecContext<?, R, ?>,
+        R extends CompositeRuntimeType>
+        extends LazyCodecContextSupplier<C> permits ChoiceCodecPrototype, CommonDataObjectCodecPrototype {
     private final @NonNull CodecContextFactory contextFactory;
     private final @NonNull R runtimeType;
 
@@ -53,4 +55,6 @@ abstract sealed class DataContainerPrototype<C extends CodecContext, R extends C
      * @return the generated binding class this prototype corresponds to
      */
     abstract @NonNull Class<? extends DataContainer> javaClass();
+
+    abstract @NonNull NodeIdentifier yangArg();
 }

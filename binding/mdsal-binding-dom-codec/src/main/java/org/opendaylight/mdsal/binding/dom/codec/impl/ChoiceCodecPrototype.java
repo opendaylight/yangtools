@@ -7,20 +7,40 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * A prototype for {@link ChoiceCodecContext}.
  */
-final class ChoiceCodecPrototype extends DataObjectCodecPrototype<ChoiceRuntimeType> {
-    ChoiceCodecPrototype(final Item<?> item, final ChoiceRuntimeType type, final CodecContextFactory factory) {
-        super(item, NodeIdentifier.create(type.statement().argument()), type, factory);
+final class ChoiceCodecPrototype<T extends ChoiceIn<?>>
+        extends DataContainerPrototype<ChoiceCodecContext<T>, ChoiceRuntimeType> {
+    private final @NonNull NodeIdentifier yangArg;
+    private final @NonNull Class<T> javaClass;
+
+    ChoiceCodecPrototype(final CodecContextFactory contextFactory, final ChoiceRuntimeType runtimeType,
+            final Class<T> javaClass) {
+        super(contextFactory, runtimeType);
+        this.javaClass = requireNonNull(javaClass);
+        yangArg = NodeIdentifier.create(runtimeType.statement().argument());
     }
 
     @Override
-    ChoiceCodecContext<?> createInstance() {
+    Class<T> javaClass() {
+        return javaClass;
+    }
+
+    @Override
+    NodeIdentifier yangArg() {
+        return yangArg;
+    }
+
+    @Override
+    ChoiceCodecContext<T> createInstance() {
         return new ChoiceCodecContext<>(this);
     }
 }
