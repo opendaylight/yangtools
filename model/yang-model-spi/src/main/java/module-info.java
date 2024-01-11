@@ -21,6 +21,7 @@ module org.opendaylight.yangtools.yang.model.spi {
     requires org.slf4j;
 
     // Annotations
-    requires static com.github.spotbugs.annotations;
     requires static transitive org.eclipse.jdt.annotation;
+    requires static com.github.spotbugs.annotations;
+    requires static org.osgi.annotation.bundle;
 }

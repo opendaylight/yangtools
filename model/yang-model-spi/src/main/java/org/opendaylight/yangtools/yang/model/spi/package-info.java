@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * Various utilities dealing with sources of YANG and YIN models.
+ * Various base classes for implementing YANG model constructs..
  */
 @org.osgi.annotation.bundle.Export
-package org.opendaylight.yangtools.yang.model.spi.source;
+package org.opendaylight.yangtools.yang.model.spi;
