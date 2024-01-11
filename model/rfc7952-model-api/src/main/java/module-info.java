@@ -5,6 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+/**
+ * Object model of RFC7952 metadata statements.
+ */
 // 'rfc7952' in the name ends with a digit
 @SuppressWarnings("module")
 module org.opendaylight.yangtools.rfc7952.model.api {
@@ -16,4 +19,5 @@ module org.opendaylight.yangtools.rfc7952.model.api {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }

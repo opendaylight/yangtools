@@ -9,7 +9,6 @@
  * YANG metamodel extensions to support metadata, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>. For SchemaNode world entry space is defined via
  * {@link org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode}'s static methods.
- *
- * @author Robert Varga
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc7952.model.api;
