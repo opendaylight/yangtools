@@ -116,8 +116,8 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
             .<Class<?>, CommonDataObjectCodecPrototype<?>>build();
 
         // Load case statements valid in this choice and keep track of their names
-        final var choiceType = prototype.getType();
-        final var factory = prototype.getFactory();
+        final var choiceType = prototype.runtimeType();
+        final var factory = prototype.contextFactory();
         final var localCases = new HashSet<JavaTypeName>();
         for (var caseType : choiceType.validCaseChildren()) {
             @SuppressWarnings("unchecked")
@@ -148,7 +148,7 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
             if (cases.size() != 1) {
                 // Sort all possibilities by their FQCN to retain semi-predictable results
                 final var list = new ArrayList<>(entry.getValue());
-                list.sort(Comparator.comparing(proto -> proto.getBindingClass().getCanonicalName()));
+                list.sort(Comparator.comparing(proto -> proto.javaClass().getCanonicalName()));
                 ambiguousByCaseBuilder.putAll(entry.getKey(), list);
             } else {
                 unambiguousByCaseBuilder.put(entry.getKey(), cases.iterator().next());
@@ -282,8 +282,8 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
                         Ambiguous reference {} to child of {} resolved to {}, the first case in {} This mapping is \
                         not guaranteed to be stable and is subject to variations based on runtime circumstances. \
                         Please see the stack trace for hints about the source of ambiguity.""",
-                        type, bindingArg(), result.getBindingClass(),
-                        Lists.transform(inexact, CommonDataObjectCodecPrototype::getBindingClass), new Throwable());
+                        type, bindingArg(), result.javaClass(),
+                        Lists.transform(inexact, CommonDataObjectCodecPrototype::javaClass), new Throwable());
                 }
             }
         }

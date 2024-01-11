@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class CaseCodecContext<D extends DataObject> extends DataObjectCodecContext<D, CaseRuntimeType> {
     CaseCodecContext(final CaseCodecPrototype prototype) {
-        super(prototype, CodecItemFactory.of(prototype.getBindingClass()));
+        super(prototype, CodecItemFactory.of(prototype.javaClass()));
     }
 
     @Override

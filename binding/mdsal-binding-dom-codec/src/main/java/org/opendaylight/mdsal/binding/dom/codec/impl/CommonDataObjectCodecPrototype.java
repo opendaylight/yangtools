@@ -11,31 +11,27 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-abstract sealed class CommonDataObjectCodecPrototype<T extends CompositeRuntimeType>
-        extends LazyCodecContextSupplier<CommonDataObjectCodecContext<?, T>>
+/**
+ * Common superclass for {@link DataObjectCodecPrototype} and {@link AugmentationCodecPrototype}.
+ *
+ * @param <R> {@link CompositeRuntimeType} type
+ */
+abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeType>
+        extends DataContainerPrototype<CommonDataObjectCodecContext<?, R>, R>
         permits AugmentationCodecPrototype, DataObjectCodecPrototype {
-    private final @NonNull T type;
-    private final @NonNull CodecContextFactory factory;
     private final @NonNull Item<?> bindingArg;
 
-    CommonDataObjectCodecPrototype(final Item<?> bindingArg, final T type, final CodecContextFactory factory) {
+    CommonDataObjectCodecPrototype(final Item<?> bindingArg, final R runtimeType, final CodecContextFactory factory) {
+        super(factory, runtimeType);
         this.bindingArg = requireNonNull(bindingArg);
-        this.type = requireNonNull(type);
-        this.factory = requireNonNull(factory);
     }
 
-    final @NonNull T getType() {
-        return type;
-    }
-
-    final @NonNull CodecContextFactory getFactory() {
-        return factory;
-    }
-
-    final @NonNull Class<?> getBindingClass() {
+    @Override
+    final Class<? extends DataObject> javaClass() {
         return bindingArg.getType();
     }
 

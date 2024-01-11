@@ -52,7 +52,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
     final @NonNull ImmutableMap<Class<?>, PropertyInfo> daoProperties;
 
     DataContainerAnalysis(final CommonDataObjectCodecPrototype<R> prototype, final CodecItemFactory itemFactory) {
-        this(prototype.getBindingClass(), prototype.getType(), prototype.getFactory(), itemFactory);
+        this(prototype.javaClass(), prototype.runtimeType(), prototype.contextFactory(), itemFactory);
     }
 
     DataContainerAnalysis(final Class<?> bindingClass, final R runtimeType, final CodecContextFactory factory,
@@ -90,12 +90,12 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
             daoPropertiesBuilder.put(retClass, new PropertyInfo.Getter(method));
 
             final var childProto = getChildPrototype(runtimeType, factory, itemFactory, retClass);
-            byStreamClassBuilder.put(childProto.getBindingClass(), childProto);
+            byStreamClassBuilder.put(childProto.javaClass(), childProto);
             byYangBuilder.put(childProto.getYangArg(), childProto);
 
             // FIXME: It really feels like we should be specializing DataContainerCodecPrototype so as to ditch
             //        createInstance() and then we could do an instanceof check instead.
-            if (childProto.getType() instanceof ChoiceRuntimeType) {
+            if (childProto.runtimeType() instanceof ChoiceRuntimeType) {
                 final var choice = (ChoiceCodecContext<?>) childProto.getCodecContext();
                 for (var cazeChild : choice.getCaseChildrenClasses()) {
                     byBindingArgClassBuilder.put(cazeChild, childProto);

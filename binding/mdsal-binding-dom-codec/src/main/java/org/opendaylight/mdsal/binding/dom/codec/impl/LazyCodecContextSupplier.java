@@ -17,8 +17,10 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <C> {@link CodecContext} type
  */
-public abstract sealed class LazyCodecContextSupplier<C extends CodecContext> implements CodecContextSupplier
-        permits CommonDataObjectCodecPrototype {
+abstract sealed class LazyCodecContextSupplier<C extends CodecContext> implements CodecContextSupplier
+        // Note: while we could merge this class into DataContainerCodecPrototype, we want to keep the lazy-loading part
+        //       separate in case we need to non-DataContainer contexts.
+        permits DataContainerPrototype {
     private static final VarHandle INSTANCE;
 
     static {

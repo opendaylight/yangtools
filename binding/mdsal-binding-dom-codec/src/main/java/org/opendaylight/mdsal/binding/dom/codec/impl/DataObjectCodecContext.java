@@ -107,7 +107,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         final List<AugmentRuntimeType> possibleAugmentations;
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             // Verify we have the appropriate backing runtimeType
-            final var runtimeType = prototype.getType();
+            final var runtimeType = prototype.runtimeType();
             if (!(runtimeType instanceof AugmentableRuntimeType augmentableRuntimeType)) {
                 throw new VerifyException(
                     "Unexpected type %s backing augmenable %s".formatted(runtimeType, bindingClass));
@@ -138,7 +138,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         for (var augment : possibleAugmentations) {
             final var augProto = loadAugmentPrototype(augment);
             if (augProto != null) {
-                final var augBindingClass = augProto.getBindingClass();
+                final var augBindingClass = augProto.javaClass();
                 for (var childPath : augProto.getChildArgs()) {
                     augPathToBinding.putIfAbsent(childPath, augBindingClass);
                 }
@@ -201,8 +201,8 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         // context would load.
         if (getBindingClass().equals(augTarget) && belongsToRuntimeContext(childClass)) {
             for (var realChild : augmentToPrototype.values()) {
-                if (Augmentation.class.isAssignableFrom(realChild.getBindingClass())
-                        && isSubstitutionFor(childClass, realChild.getBindingClass())) {
+                final var realClass = realChild.javaClass();
+                if (Augmentation.class.isAssignableFrom(realClass) && isSubstitutionFor(childClass, realClass)) {
                     return cacheMismatched(oldMismatched, childClass, realChild);
                 }
             }

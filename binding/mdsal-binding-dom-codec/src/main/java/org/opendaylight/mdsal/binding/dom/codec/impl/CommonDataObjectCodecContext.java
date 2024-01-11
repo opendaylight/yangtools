@@ -26,24 +26,24 @@ abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T exten
     final @NonNull CommonDataObjectCodecPrototype<T> prototype;
 
     CommonDataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype) {
-        super(prototype.getType());
+        super(prototype.runtimeType());
         this.prototype = requireNonNull(prototype);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public final Class<D> getBindingClass() {
-        return Class.class.cast(prototype.getBindingClass());
+        return Class.class.cast(prototype.javaClass());
     }
 
     @Override
     protected final CodecContextFactory factory() {
-        return prototype.getFactory();
+        return prototype.contextFactory();
     }
 
     @Override
     protected final T type() {
-        return prototype.getType();
+        return prototype.runtimeType();
     }
 
     @Override

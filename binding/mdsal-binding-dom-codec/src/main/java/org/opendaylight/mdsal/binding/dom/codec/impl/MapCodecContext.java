@@ -62,7 +62,7 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends DataObject & K
     }
 
     static @NonNull MapCodecContext<?, ?> of(final MapCodecPrototype prototype) {
-        final var bindingClass = prototype.getBindingClass();
+        final var bindingClass = prototype.javaClass();
         final Method keyMethod;
         try {
             keyMethod = bindingClass.getMethod(Naming.KEY_AWARE_KEY_NAME);
@@ -70,8 +70,8 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends DataObject & K
             throw new IllegalStateException("Required method not available", e);
         }
 
-        final var type = prototype.getType();
-        final var codec = prototype.getFactory().getPathArgumentCodec(bindingClass, type);
+        final var type = prototype.runtimeType();
+        final var codec = prototype.contextFactory().getPathArgumentCodec(bindingClass, type);
 
         return type.statement().ordering() == Ordering.SYSTEM ? new Unordered<>(prototype, keyMethod, codec)
             : new Ordered<>(prototype, keyMethod, codec);

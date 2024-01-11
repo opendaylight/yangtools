@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.binding.KeyAware;
 final class MapCodecPrototype extends ListCodecPrototype {
     MapCodecPrototype(final Item<?> item, final ListRuntimeType type, final CodecContextFactory factory) {
         super(item, type, factory);
-        final var clazz = getBindingClass();
+        final var clazz = javaClass();
         checkArgument(KeyAware.class.isAssignableFrom(clazz), "%s is not KeyAware", clazz);
     }
 
