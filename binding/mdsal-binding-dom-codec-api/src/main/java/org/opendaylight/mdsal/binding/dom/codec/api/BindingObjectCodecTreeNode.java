@@ -9,14 +9,14 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.BindingObject;
 
 @Beta
-public interface BindingObjectCodecTreeNode<T extends BindingObject> extends BindingCodecTreeNode {
+public sealed interface BindingObjectCodecTreeNode extends BindingCodecTreeNode
+        permits BindingDataContainerCodecTreeNode, BindingOpaqueObjectCodecTreeNode, BindingTypeObjectCodecTreeNode {
     /**
      * Returns binding class which represents API of current schema node.
      *
      * @return interface which defines API of binding representation of data.
      */
-    @NonNull Class<T> getBindingClass();
+    @NonNull Class<?> getBindingClass();
 }

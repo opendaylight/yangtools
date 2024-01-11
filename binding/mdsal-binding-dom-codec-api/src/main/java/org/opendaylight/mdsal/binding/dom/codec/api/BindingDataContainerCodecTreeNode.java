@@ -11,7 +11,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.BindingObject;
+import org.opendaylight.yangtools.yang.binding.BindingContract;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -23,11 +23,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  *
  * @param <T> DataContainer type
  */
-public interface BindingDataContainerCodecTreeNode<T extends BindingObject & DataContainer>
-        extends BindingObjectCodecTreeNode<T>, BindingDataObjectCodecTreeParent<Empty> {
+public non-sealed interface BindingDataContainerCodecTreeNode<T extends DataContainer>
+        extends BindingObjectCodecTreeNode, BindingDataObjectCodecTreeParent<Empty> {
     /**
      * Returns binding class of interface which represents API of current schema node. The result is same as invoking
-     * {@link DataContainer#implementedInterface()} on instance of data.
+     * {@link BindingContract#implementedInterface()} on instance of data.
      *
      * @return interface which defines API of binding representation of data.
      */

@@ -38,19 +38,19 @@ abstract class AbstractBindingNormalizedNodeCacheHolder {
             }
         });
 
-    private final ImmutableSet<Class<? extends BindingObject>> cacheSpec;
+    private final ImmutableSet<Class<?>> cacheSpec;
 
-    AbstractBindingNormalizedNodeCacheHolder(final ImmutableSet<Class<? extends BindingObject>> cacheSpec) {
+    AbstractBindingNormalizedNodeCacheHolder(final ImmutableSet<Class<?>> cacheSpec) {
         this.cacheSpec = requireNonNull(cacheSpec);
     }
 
     @SuppressWarnings("unchecked")
-    <T extends BindingObject, C extends CodecContext & BindingObjectCodecTreeNode<?>>
+    <T extends BindingObject, C extends CodecContext & BindingObjectCodecTreeNode>
             AbstractBindingNormalizedNodeCache<T, C> getCachingSerializer(final C childCtx) {
         return isCached(childCtx.getBindingClass()) ? caches.getUnchecked(childCtx) : null;
     }
 
-    final boolean isCached(final Class<? extends BindingObject> type) {
+    final boolean isCached(final Class<?> type) {
         return cacheSpec.contains(type);
     }
 }

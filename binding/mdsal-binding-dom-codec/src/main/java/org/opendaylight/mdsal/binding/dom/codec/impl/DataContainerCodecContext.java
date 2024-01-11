@@ -62,7 +62,7 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract sealed class DataContainerCodecContext<D extends BindingObject & DataContainer, T extends CompositeRuntimeType>
+abstract sealed class DataContainerCodecContext<D extends DataContainer, T extends CompositeRuntimeType>
         extends CodecContext implements BindingDataContainerCodecTreeNode<D>
         permits CommonDataObjectCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecContext.class);

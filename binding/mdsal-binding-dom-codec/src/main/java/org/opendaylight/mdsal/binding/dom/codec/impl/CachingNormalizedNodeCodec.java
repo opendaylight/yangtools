@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCodec;
-import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -22,7 +21,7 @@ class CachingNormalizedNodeCodec<D extends DataObject,
         extends AbstractBindingNormalizedNodeCacheHolder implements BindingNormalizedNodeCachingCodec<D> {
     private final @NonNull C context;
 
-    CachingNormalizedNodeCodec(final C context, final ImmutableSet<Class<? extends BindingObject>> cacheSpec) {
+    CachingNormalizedNodeCodec(final C context, final ImmutableSet<Class<?>> cacheSpec) {
         super(cacheSpec);
         this.context = requireNonNull(context);
     }
@@ -35,7 +34,7 @@ class CachingNormalizedNodeCodec<D extends DataObject,
     @Override
     public NormalizedNode serialize(final D data) {
         // Serialize data using stream writer with child cache enable or using the cache if it is available
-        final AbstractBindingNormalizedNodeCache<D, ?> cache = getCachingSerializer(context);
+        final var cache = getCachingSerializer(context);
         return cache == null ? CachingNormalizedNodeSerializer.serializeUsingStreamWriter(this, context, data)
                 : cache.get(data);
     }

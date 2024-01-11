@@ -17,5 +17,5 @@ import org.opendaylight.yangtools.yang.binding.YangData;
  */
 public interface BindingYangDataCodecTreeNode<T extends YangData<T>>
         extends BindingDataContainerCodecTreeNode<T>, BindingYangDataCodec<T> {
-    // Just a combination of thwo interfaces
+    // just a class hierarchy thing
 }

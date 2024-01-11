@@ -11,7 +11,8 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.binding.TypeObject;
 
 @Beta
-public interface BindingTypeObjectCodecTreeNode<T extends TypeObject> extends BindingObjectCodecTreeNode<T>,
-        BindingNormalizedNodeCodec<T> {
-
+public non-sealed interface BindingTypeObjectCodecTreeNode<T extends TypeObject>
+        extends BindingObjectCodecTreeNode, BindingNormalizedNodeCodec<T> {
+    @Override
+    Class<T> getBindingClass();
 }
