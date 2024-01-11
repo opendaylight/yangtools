@@ -82,7 +82,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     protected final Object codecMember(final VarHandle handle, final CodecContextSupplier supplier) {
         final Object cached = handle.getAcquire(this);
-        return cached != null ? unmaskNull(cached) : loadMember(handle, supplier.get());
+        return cached != null ? unmaskNull(cached) : loadMember(handle, supplier.getCodecContext());
     }
 
     protected final @NonNull Object codecMemberOrEmpty(final @Nullable Object value,

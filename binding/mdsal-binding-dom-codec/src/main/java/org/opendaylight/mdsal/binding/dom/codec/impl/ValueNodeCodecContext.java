@@ -53,7 +53,7 @@ abstract sealed class ValueNodeCodecContext extends CodecContext implements Code
     }
 
     @Override
-    public final CodecContext get() {
+    public final CodecContext getCodecContext() {
         return this;
     }
 

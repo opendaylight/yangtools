@@ -238,7 +238,7 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
             return null;
         }
         final var caze = byYangCaseChild.get(first.name());
-        return ((CaseCodecContext<D>) caze.get()).deserialize(data);
+        return ((CaseCodecContext<D>) caze.getCodecContext()).deserialize(data);
     }
 
     @Override
@@ -288,7 +288,8 @@ final class ChoiceCodecContext<D extends DataObject> extends CommonDataObjectCod
             }
         }
 
-        return childNonNull(result, type, "Class %s is not child of any cases for %s", type, bindingArg()).get();
+        return childNonNull(result, type, "Class %s is not child of any cases for %s", type, bindingArg())
+            .getCodecContext();
     }
 
     /**

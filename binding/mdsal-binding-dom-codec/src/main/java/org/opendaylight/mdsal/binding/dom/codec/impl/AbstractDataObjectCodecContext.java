@@ -74,7 +74,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
         final var argType = arg.getType();
         final var context = childNonNull(pathChildPrototype(argType), argType,
             "Class %s is not valid child of %s", argType, getBindingClass())
-            .get();
+            .getCodecContext();
         if (context instanceof ChoiceCodecContext<?> choice) {
             choice.addYangPathArgument(arg, builder);
 

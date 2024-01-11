@@ -108,7 +108,7 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
         } else {
             supplier = null;
         }
-        return childNonNull(supplier, arg, "Argument %s is not valid child of %s", arg, getSchema()).get();
+        return childNonNull(supplier, arg, "Argument %s is not valid child of %s", arg, getSchema()).getCodecContext();
     }
 
     abstract @Nullable CodecContextSupplier yangChildSupplier(@NonNull NodeIdentifier arg);
@@ -150,7 +150,7 @@ abstract sealed class DataContainerCodecContext<D extends BindingObject & DataCo
     @Override
     public final <C extends DataObject> CommonDataObjectCodecContext<C, ?> streamChild(final Class<C> childClass) {
         final var childProto = streamChildPrototype(requireNonNull(childClass));
-        return childProto == null ? null : (CommonDataObjectCodecContext<C, ?>) childProto.get();
+        return childProto == null ? null : (CommonDataObjectCodecContext<C, ?>) childProto.getCodecContext();
     }
 
     abstract @Nullable CommonDataObjectCodecPrototype<?> streamChildPrototype(@NonNull Class<?> childClass);
