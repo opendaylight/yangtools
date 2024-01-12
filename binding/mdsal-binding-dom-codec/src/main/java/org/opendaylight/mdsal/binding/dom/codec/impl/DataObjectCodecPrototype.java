@@ -21,11 +21,9 @@ abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> e
                 NotificationCodecContext.Prototype {
     private final @NonNull NodeIdentifier yangArg;
 
-    // FIXME: this should not be needed
-    @SuppressWarnings("unchecked")
     DataObjectCodecPrototype(final Class<?> cls, final NodeIdentifier yangArg, final T type,
             final CodecContextFactory factory) {
-        this(InstanceIdentifier.createStep((Class<? extends DataObject>) cls), yangArg, type, factory);
+        this(InstanceIdentifier.createStep(cls.asSubclass(DataObject.class)), yangArg, type, factory);
     }
 
     DataObjectCodecPrototype(final DataObjectStep<?> bindingArg, final NodeIdentifier yangArg, final T type,

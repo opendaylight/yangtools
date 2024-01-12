@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
@@ -28,9 +30,14 @@ import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.DataObjectStep;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +59,17 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
     final @NonNull ImmutableMap<Method, ValueNodeCodecContext> leafContexts;
     final @NonNull ImmutableMap<Class<?>, PropertyInfo> daoProperties;
 
-    DataContainerAnalysis(final CommonDataObjectCodecPrototype<R> prototype, final CodecItemFactory itemFactory) {
-        this(prototype.javaClass(), prototype.runtimeType(), prototype.contextFactory(), itemFactory);
+    DataContainerAnalysis(final CommonDataObjectCodecPrototype<R> prototype) {
+        this(prototype.javaClass(), prototype.runtimeType(), prototype.contextFactory(), null);
+    }
+
+    DataContainerAnalysis(final CommonDataObjectCodecPrototype<R> prototype,
+            final Class<? extends DataObject> caseClass) {
+        this(prototype.javaClass(), prototype.runtimeType(), prototype.contextFactory(), requireNonNull(caseClass));
     }
 
     DataContainerAnalysis(final Class<?> bindingClass, final R runtimeType, final CodecContextFactory factory,
-            final CodecItemFactory itemFactory) {
+            final @Nullable Class<? extends DataObject> caseClass) {
         leafContexts = factory.getLeafNodes(bindingClass, runtimeType.statement());
 
         // Reflection-based on the passed class
@@ -90,7 +102,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
             // Record getter method
             daoPropertiesBuilder.put(retClass, new PropertyInfo.Getter(method));
 
-            final var childProto = getChildPrototype(runtimeType, factory, itemFactory, retClass);
+            final var childProto = getChildPrototype(runtimeType, factory, caseClass, retClass);
             byStreamClassBuilder.put(childProto.javaClass(), childProto);
             byYangBuilder.put(childProto.yangArg(), childProto);
 
@@ -126,7 +138,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
     }
 
     private static @NonNull DataContainerPrototype<?, ?> getChildPrototype(final CompositeRuntimeType type,
-            final CodecContextFactory factory, final CodecItemFactory itemFactory,
+            final CodecContextFactory factory, final @Nullable Class<? extends DataObject> caseClass,
             final Class<? extends DataContainer> childClass) {
         final var child = type.bindingChild(JavaTypeName.create(childClass));
         if (child == null) {
@@ -138,7 +150,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
             return new ChoiceCodecPrototype<>(factory, choice, childClass.asSubclass(ChoiceIn.class));
         }
 
-        final var item = itemFactory.createItem(childClass, child.statement());
+        final var item = createItem(caseClass, childClass, child.statement());
         if (child instanceof ContainerLikeRuntimeType containerLike) {
             if (child instanceof ContainerRuntimeType container
                 && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isEmpty()) {
@@ -151,6 +163,19 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
         } else {
             throw new UnsupportedOperationException("Unhandled type " + child);
         }
+    }
+
+    // FIXME: MDSAL-697: move this method into BindingRuntimeContext
+    //        This method is only called from loadChildPrototype() and exists only to be overridden by
+    //        CaseNodeCodecContext. Since we are providing childClass and our schema to BindingRuntimeContext and
+    //        receiving childSchema from it via findChildSchemaDefinition, we should be able to receive the equivalent
+    //        of Map.Entry<Item, DataSchemaNode>, along with the override we create here. One more input we may need to
+    //        provide is our bindingClass().
+    private static @NonNull DataObjectStep<?> createItem(final @Nullable Class<? extends DataObject> caseClass,
+            final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
+        return caseClass != null && childSchema instanceof AddedByUsesAware aware && aware.isAddedByUses()
+            ? InstanceIdentifier.createStep((Class) caseClass, (Class) childClass)
+                : InstanceIdentifier.createStep((Class) childClass);
     }
 
     // FIXME: MDSAL-780: these methods perform analytics using java.lang.reflect to acquire the basic shape of the

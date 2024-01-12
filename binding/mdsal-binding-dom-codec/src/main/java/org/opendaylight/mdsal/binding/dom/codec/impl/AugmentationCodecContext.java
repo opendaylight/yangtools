@@ -50,7 +50,7 @@ final class AugmentationCodecContext<A extends Augmentation<?>>
     }
 
     AugmentationCodecContext(final AugmentationCodecPrototype<A> prototype) {
-        this(prototype, new DataContainerAnalysis<>(prototype, CodecItemFactory.of()));
+        this(prototype, new DataContainerAnalysis<>(prototype));
     }
 
     @Override

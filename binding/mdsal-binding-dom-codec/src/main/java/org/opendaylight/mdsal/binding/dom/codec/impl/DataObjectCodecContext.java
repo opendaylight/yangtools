@@ -85,15 +85,16 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     private volatile ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
 
     DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype) {
-        this(prototype, CodecItemFactory.of());
+        this(prototype, new DataContainerAnalysis<>(prototype), null);
     }
 
-    DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype, final CodecItemFactory itemFactory) {
-        this(prototype, new DataContainerAnalysis<>(prototype, itemFactory), null);
+    DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype,
+            final Class<? extends DataObject> caseClass) {
+        this(prototype, new DataContainerAnalysis<>(prototype, caseClass), null);
     }
 
     DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype, final Method keyMethod) {
-        this(prototype, new DataContainerAnalysis<>(prototype, CodecItemFactory.of()), keyMethod);
+        this(prototype, new DataContainerAnalysis<>(prototype), keyMethod);
     }
 
     private DataObjectCodecContext(final CommonDataObjectCodecPrototype<T> prototype,

@@ -9,15 +9,16 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import java.util.List;
 import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
+import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class CaseCodecContext<D extends DataObject> extends DataObjectCodecContext<D, CaseRuntimeType> {
-    CaseCodecContext(final CaseCodecPrototype prototype) {
-        super(prototype, CodecItemFactory.of(prototype.javaClass()));
+final class CaseCodecContext<C extends ChoiceIn<?> & DataObject> extends DataObjectCodecContext<C, CaseRuntimeType> {
+    CaseCodecContext(final CaseCodecPrototype<C> prototype) {
+        super(prototype, prototype.javaClass());
     }
 
     @Override
@@ -26,7 +27,7 @@ final class CaseCodecContext<D extends DataObject> extends DataObjectCodecContex
     }
 
     @Override
-    public D deserialize(final NormalizedNode data) {
+    public C deserialize(final NormalizedNode data) {
         return createBindingProxy(checkDataArgument(ChoiceNode.class, data));
     }
 
