@@ -21,6 +21,6 @@ public interface BindingCodecTreeNode {
      *
      * @return A schema node.
      */
-    // FIXME: 12.0.0: we should be able to do better
+    @Deprecated(since = "13.0.0", forRemoval = true)
     @NonNull WithStatus getSchema();
 }
