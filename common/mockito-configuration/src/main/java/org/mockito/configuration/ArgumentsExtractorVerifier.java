@@ -21,6 +21,13 @@ import org.mockito.verification.VerificationMode;
 public class ArgumentsExtractorVerifier implements VerificationMode {
     private Object[] arguments = null;
 
+    /**
+     * Default constructor.
+     */
+    public ArgumentsExtractorVerifier() {
+        // Nothing else
+    }
+
     @Override
     public void verify(final VerificationData data) {
         List<Invocation> actualInvocations =

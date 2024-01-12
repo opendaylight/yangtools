@@ -13,6 +13,13 @@ import org.mockito.stubbing.Answer;
  * Configuration customization for Mockito. Change default answer to {@link ThrowsUnstubbedMethodException}.
  */
 public class MockitoConfiguration extends DefaultMockitoConfiguration {
+    /**
+     * Default constructor.
+     */
+    public MockitoConfiguration() {
+        // Nothing else
+    }
+
     @Override
     public Answer<Object> getDefaultAnswer() {
         return new ThrowsUnstubbedMethodException();
