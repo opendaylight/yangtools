@@ -14,6 +14,13 @@ import org.opendaylight.mockito.MoreAnswers;
  * Configuration customization for Mockito. Change default answer to  {@link MoreAnswers#THROWS_UNSTUBBED_METHOD}.
  */
 public class MockitoConfiguration extends DefaultMockitoConfiguration {
+    /**
+     * Default constructor.
+     */
+    public MockitoConfiguration() {
+        // Nothing else
+    }
+
     @Override
     public Answer<Object> getDefaultAnswer() {
         return MoreAnswers.THROWS_UNSTUBBED_METHOD;
