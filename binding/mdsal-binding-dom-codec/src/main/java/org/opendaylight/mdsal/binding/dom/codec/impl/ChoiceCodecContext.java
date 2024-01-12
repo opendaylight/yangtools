@@ -226,7 +226,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
     }
 
     @Override
-    protected T deserializeObject(final NormalizedNode normalizedNode) {
+    T deserializeObject(final NormalizedNode normalizedNode) {
         final var casted = checkDataArgument(ChoiceNode.class, normalizedNode);
         final var it = casted.body().iterator();
         if (!it.hasNext()) {

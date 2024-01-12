@@ -49,7 +49,7 @@ sealed class ListCodecContext<D extends DataObject> extends DataObjectCodecConte
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode node) {
+    Object deserializeObject(final NormalizedNode node) {
         if (node instanceof MapNode map) {
             return fromMap(map);
         } else if (node instanceof MapEntryNode mapEntry) {

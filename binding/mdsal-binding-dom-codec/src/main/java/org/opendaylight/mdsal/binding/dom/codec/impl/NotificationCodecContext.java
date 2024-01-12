@@ -117,11 +117,6 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
         return verifyNotNull(ret);
     }
 
-    @Override
-    protected Object deserializeObject(final NormalizedNode normalizedNode) {
-        return deserialize(normalizedNode);
-    }
-
     /**
      * Prototype for a {@code notification}. This class only exists because DataContainerCodecContext requires a
      * prototype.

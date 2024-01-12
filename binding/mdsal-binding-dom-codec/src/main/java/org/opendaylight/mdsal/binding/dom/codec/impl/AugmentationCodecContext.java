@@ -92,7 +92,7 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode normalizedNode) {
+    Object deserializeObject(final NormalizedNode normalizedNode) {
         return filterFrom(checkDataArgument(DataContainerNode.class, normalizedNode));
     }
 
@@ -102,7 +102,7 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    protected NodeIdentifier getDomPathArgument() {
+    NodeIdentifier getDomPathArgument() {
         return null;
     }
 

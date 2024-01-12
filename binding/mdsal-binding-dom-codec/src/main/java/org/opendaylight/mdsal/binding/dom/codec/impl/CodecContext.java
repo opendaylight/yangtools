@@ -31,7 +31,7 @@ abstract sealed class CodecContext implements BindingCodecTreeNode
      *
      * @return NodeIdentifier of node, or {@code null} if not applicable
      */
-    protected abstract @Nullable NodeIdentifier getDomPathArgument();
+    abstract @Nullable NodeIdentifier getDomPathArgument();
 
     /**
      * Return the default value object. Implementations of this method are explicitly allowed to throw unchecked
@@ -43,5 +43,5 @@ abstract sealed class CodecContext implements BindingCodecTreeNode
         return null;
     }
 
-    protected abstract Object deserializeObject(NormalizedNode normalizedNode);
+    abstract Object deserializeObject(NormalizedNode normalizedNode);
 }

@@ -36,19 +36,19 @@ abstract sealed class ValueNodeCodecContext extends CodecContext implements Code
     }
 
     private final @NonNull NodeIdentifier yangIdentifier;
+    private final @NonNull DataSchemaNode dataSchema;
     private final @NonNull String getterName;
-    private final @NonNull DataSchemaNode schema;
     private final Object defaultObject;
 
-    ValueNodeCodecContext(final DataSchemaNode schema, final String getterName, final Object defaultObject) {
-        yangIdentifier = NodeIdentifier.create(schema.getQName());
+    ValueNodeCodecContext(final DataSchemaNode dataSchema, final String getterName, final Object defaultObject) {
         this.getterName = requireNonNull(getterName);
-        this.schema = requireNonNull(schema);
+        this.dataSchema = requireNonNull(dataSchema);
+        yangIdentifier = NodeIdentifier.create(dataSchema.getQName());
         this.defaultObject = defaultObject;
     }
 
     @Override
-    protected final NodeIdentifier getDomPathArgument() {
+    final NodeIdentifier getDomPathArgument() {
         return yangIdentifier;
     }
 
@@ -65,7 +65,7 @@ abstract sealed class ValueNodeCodecContext extends CodecContext implements Code
 
     @Override
     public final DataSchemaNode getSchema() {
-        return schema;
+        return dataSchema;
     }
 
     @Override

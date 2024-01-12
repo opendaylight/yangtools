@@ -29,9 +29,4 @@ sealed class ContainerLikeCodecContext<D extends DataObject>
     public final D deserialize(final NormalizedNode data) {
         return createBindingProxy(checkDataArgument(ContainerNode.class, data));
     }
-
-    @Override
-    protected final Object deserializeObject(final NormalizedNode normalizedNode) {
-        return deserialize(normalizedNode);
-    }
 }

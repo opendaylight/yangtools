@@ -103,7 +103,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
 
     // overridden in AugmentationCodecContext
     @Override
-    protected NodeIdentifier getDomPathArgument() {
+    NodeIdentifier getDomPathArgument() {
         return prototype.yangArg();
     }
 
