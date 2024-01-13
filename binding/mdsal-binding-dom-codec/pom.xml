@@ -11,9 +11,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.opendaylight.mdsal</groupId>
-        <artifactId>dom-parent</artifactId>
+        <artifactId>bundle-parent</artifactId>
         <version>13.0.0-SNAPSHOT</version>
-        <relativePath>../../dom/dom-parent</relativePath>
+        <relativePath>../../bundle-parent</relativePath>
     </parent>
 
     <artifactId>mdsal-binding-dom-codec</artifactId>
