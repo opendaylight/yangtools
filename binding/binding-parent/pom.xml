@@ -22,6 +22,8 @@
 
     <properties>
         <spotbugs.onlyAnalyze>!org.opendaylight.yang.gen.-</spotbugs.onlyAnalyze>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
     </properties>
 
     <build>
