@@ -26,8 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecTest {
 
@@ -64,7 +63,7 @@ public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecT
     }
 
     private void verifyIdentityWasTranslatedToBindingCorrectly(final QName identityQname, final UnionType union) {
-        final ContainerNode top = Builders.containerBuilder()
+        final ContainerNode top = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
             .withChild(ImmutableNodes.leafNode(NodeIdentifier.create(UNION_LEAF_QNAME), identityQname))
             .build();

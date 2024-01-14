@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableMap;
 import java.time.Instant;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TwoLevelListChanged;
@@ -20,29 +19,29 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yangtools.yang.binding.EventInstantAware;
+import org.opendaylight.yangtools.yang.binding.util.BindingMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 public class NotificationProcessingTest extends AbstractBindingCodecTest {
     private static final QName NAME = QName.create(TopLevelList.QNAME, "name");
 
     private static TwoLevelListChanged createTestBindingData() {
-        final TopLevelListKey key = new TopLevelListKey("test");
         return new TwoLevelListChangedBuilder()
-                .setTopLevelList(ImmutableMap.of(key, new TopLevelListBuilder().withKey(key).build()))
-                .build();
+            .setTopLevelList(BindingMap.of(new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()))
+            .build();
     }
 
     private static ContainerNode createTestDomData() {
-        return Builders.containerBuilder()
+        return ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(TwoLevelListChanged.QNAME))
-                .withChild(Builders.mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(NodeIdentifier.create(TopLevelList.QNAME))
-                    .withChild(Builders.mapEntryBuilder()
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
                         .withNodeIdentifier(NodeIdentifierWithPredicates.of(TopLevelList.QNAME, NAME, "test"))
                         .build())
                     .build())
@@ -52,7 +51,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNotificationToNormalized() {
-        final ContainerNode dom = codecContext.toNormalizedNodeNotification(createTestBindingData());
+        final var dom = codecContext.toNormalizedNodeNotification(createTestBindingData());
         assertEquals(createTestDomData(), dom);
     }
 
@@ -66,7 +65,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
 
     @Test
     public void testNormalizedToNotificationWithInstant() {
-        final Instant instant = Instant.now();
+        final var instant = Instant.now();
         final var bindingDeserialized = codecContext.fromNormalizedNodeNotification(
             Absolute.of(TwoLevelListChanged.QNAME), createTestDomData(), instant);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);

@@ -12,7 +12,7 @@ import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.yang.binding.OpaqueData;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 
 final class AnydataCodecContext<T extends OpaqueObject<T>> extends AbstractOpaqueCodecContext<T> {
@@ -27,7 +27,7 @@ final class AnydataCodecContext<T extends OpaqueObject<T>> extends AbstractOpaqu
     }
 
     private <M> @NonNull AnydataNode<M> buildAnydata(final OpaqueData<M> opaqueData) {
-        return Builders.anydataBuilder(opaqueData.getObjectModel())
+        return ImmutableNodes.newAnydataBuilder(opaqueData.getObjectModel())
             .withNodeIdentifier(getDomPathArgument())
             .withValue(opaqueData.getData())
             .build();

@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         }
     }
 
-    private final ImmutableMap<Class<?>, AugmentationCodecPrototype> augmentToPrototype;
+    private final ImmutableMap<Class<?>, AugmentationCodecPrototype<?>> augmentToPrototype;
     private final ImmutableMap<NodeIdentifier, Class<?>> yangToAugmentClass;
     private final @NonNull Class<? extends CodecDataObject<?>> generatedClass;
     private final MethodHandle proxyConstructor;
@@ -176,12 +176,12 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         return child;
     }
 
-    private @Nullable AugmentationCodecPrototype getAugmentationProtoByClass(final @NonNull Class<?> augmClass) {
+    private @Nullable AugmentationCodecPrototype<?> getAugmentationProtoByClass(final @NonNull Class<?> augmClass) {
         final var childProto = augmentToPrototype.get(augmClass);
         return childProto != null ? childProto : mismatchedAugmentationByClass(augmClass);
     }
 
-    private @Nullable AugmentationCodecPrototype mismatchedAugmentationByClass(final @NonNull Class<?> childClass) {
+    private @Nullable AugmentationCodecPrototype<?> mismatchedAugmentationByClass(final @NonNull Class<?> childClass) {
         /*
          * It is potentially mismatched valid augmentation - we look up equivalent augmentation using reflection
          * and walk all stream child and compare augmentations classes if they are equivalent. When we find a match
@@ -281,12 +281,12 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
          * Due to augmentation fields are at same level as direct children the data of each augmentation needs to be
          * aggregated into own container node, then only deserialized using associated prototype.
          */
-        final var builders = new HashMap<Class<?>, DataContainerNodeBuilder>();
+        final var builders = new HashMap<Class<?>, DataContainerNodeBuilder<?, ?>>();
         for (var childValue : data.body()) {
             final var bindingClass = yangToAugmentClass.get(childValue.name());
             if (bindingClass != null) {
                 builders.computeIfAbsent(bindingClass,
-                    key -> Builders.containerBuilder()
+                    key -> ImmutableNodes.newContainerBuilder()
                         .withNodeIdentifier(new NodeIdentifier(data.name().getNodeType())))
                         .addChild(childValue);
             }

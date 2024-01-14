@@ -15,8 +15,7 @@ import org.opendaylight.yang.gen.v1.mdsal552.norev.RefTestOutput;
 import org.opendaylight.yang.gen.v1.mdsal552.norev.RefTestOutputBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 public class Mdsal552Test extends AbstractBindingCodecTest {
@@ -26,7 +25,7 @@ public class Mdsal552Test extends AbstractBindingCodecTest {
 
     @Test
     public void testLeafrefEnumerationToNormalized() {
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(RefTestOutput.QNAME))
             .withChild(ImmutableNodes.leafNode(OUTPUTREF, OutputA.DownTest.getName()))
             .build(),
@@ -36,7 +35,7 @@ public class Mdsal552Test extends AbstractBindingCodecTest {
     @Test
     public void testLeafrefEnumerationFromNormalized() {
         assertEquals(new RefTestOutputBuilder().setOutputref(OutputA.DownTest).build(),
-            codecContext.fromNormalizedNodeRpcData(OUTPUT_PATH, Builders.containerBuilder()
+            codecContext.fromNormalizedNodeRpcData(OUTPUT_PATH, ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(RefTestOutput.QNAME))
                 .withChild(ImmutableNodes.leafNode(OUTPUTREF, OutputA.DownTest.getName()))
                 .build()));

@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.NodeStep;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 /**
  * A {@link ContainerLikeCodecContext} specialized for {@code container}s which do not have a presence statement.
@@ -51,7 +51,7 @@ final class StructuralContainerCodecContext<D extends DataObject> extends Contai
 
     private @NonNull D loadEmptyObject() {
         final var local = createBindingProxy(
-            Builders.containerBuilder().withNodeIdentifier(getDomPathArgument()).build());
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(getDomPathArgument()).build());
         final var witness = (D) EMPTY_OBJECT.compareAndExchangeRelease(this, null, local);
         return witness != null ? witness : local;
     }

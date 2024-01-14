@@ -58,6 +58,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
     }
 
     @Override
+    @Deprecated(since = "13.0.0", forRemoval = true)
     public final WithStatus getSchema() {
         // FIXME: Bad cast, we should be returning an EffectiveStatement perhaps?
         return (WithStatus) prototype().runtimeType().statement();

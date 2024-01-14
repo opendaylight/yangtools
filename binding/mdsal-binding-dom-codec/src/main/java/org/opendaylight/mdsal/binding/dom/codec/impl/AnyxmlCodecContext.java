@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 
 final class AnyxmlCodecContext<T extends OpaqueObject<T>> extends AbstractOpaqueCodecContext<T> {
@@ -27,9 +27,9 @@ final class AnyxmlCodecContext<T extends OpaqueObject<T>> extends AbstractOpaque
 
     @Override
     AnyxmlNode<?> serializedData(final OpaqueData<?> opaqueData) {
-        final Class<?> model = opaqueData.getObjectModel();
+        final var model = opaqueData.getObjectModel();
         verify(DOMSource.class.isAssignableFrom(model), "Cannot just yet support object model %s", model);
-        return Builders.anyXmlBuilder()
+        return ImmutableNodes.newAnyxmlBuilder(DOMSource.class)
             .withNodeIdentifier(getDomPathArgument())
             .withValue((DOMSource) opaqueData.getData())
             .build();

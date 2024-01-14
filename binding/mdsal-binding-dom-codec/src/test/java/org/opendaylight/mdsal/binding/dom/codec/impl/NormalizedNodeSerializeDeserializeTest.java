@@ -13,17 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.top;
 import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.topLevelList;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafSetBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafSetEntryBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.mapBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.orderedLeafSetBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.orderedMapBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -61,9 +50,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodecTest {
     public static final String TOP_LEVEL_LIST_FOO_KEY_VALUE = "foo";
@@ -107,7 +96,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     }
 
     private static ContainerNode getEmptyTop() {
-        return containerBuilder().withNodeIdentifier(new NodeIdentifier(TOP_QNAME)).build();
+        return ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TOP_QNAME)).build();
     }
 
     private static final QName AGUMENT_STRING_Q = QName.create(TOP_QNAME, "augmented-string");
@@ -118,7 +107,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     @Test
     public void equalsWithAugment() {
         final ContainerNode topNormalizedWithAugments =
-            getNormalizedTopWithChildren(leafNode(AGUMENT_STRING_Q, AUGMENT_STRING_VALUE));
+            getNormalizedTopWithChildren(ImmutableNodes.leafNode(AGUMENT_STRING_Q, AUGMENT_STRING_VALUE));
         final ContainerNode topNormalized = getEmptyTop();
 
         final var entry = codecContext.fromNormalizedNode(BI_TOP_PATH, topNormalized);
@@ -151,8 +140,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     @Test
     public void equalsWithMultipleAugments() {
         final ContainerNode topNormalizedWithAugments = getNormalizedTopWithChildren(
-            leafNode(AGUMENT_STRING_Q, AUGMENT_STRING_VALUE),
-            leafNode(AUGMENT_INT_Q, AUGMENT_INT_VALUE));
+            ImmutableNodes.leafNode(AGUMENT_STRING_Q, AUGMENT_STRING_VALUE),
+            ImmutableNodes.leafNode(AUGMENT_INT_Q, AUGMENT_INT_VALUE));
         final var entryWithAugments = codecContext.fromNormalizedNode(BI_TOP_PATH, topNormalizedWithAugments);
         Top topWithAugments = topWithAugments(Map.of(
             Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build(),
@@ -170,12 +159,15 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     }
 
     private static ContainerNode getNormalizedTopWithChildren(final DataContainerChild... children) {
-        final var builder = containerBuilder();
-        for (DataContainerChild child : children) {
+        final var builder = ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TOP_QNAME));
+        for (var child : children) {
             builder.withChild(child);
         }
-        return builder.withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-                    .withChild(mapNodeBuilder(TOP_LEVEL_LIST_QNAME).build()).build();
+        return builder
+            .withChild(ImmutableNodes.newSystemMapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TOP_LEVEL_LIST_QNAME))
+                .build())
+            .build();
     }
 
     private static Top topWithAugments(
@@ -190,21 +182,22 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     @Test
     public void listWithKeysToNormalized() {
         final var entry = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, topLevelList(TOP_LEVEL_LIST_FOO_KEY));
-        assertEquals(mapEntryBuilder()
+        assertEquals(ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
                 TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
+            .withChild(ImmutableNodes.leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
             .build(),
             entry.node());
     }
 
     @Test
     public void listWithKeysFromNormalized() {
-        final var entry = codecContext.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH, mapEntryBuilder()
-            .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
-                TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .build());
+        final var entry = codecContext.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH,
+            ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
+                    TOP_LEVEL_LIST_FOO_KEY_VALUE))
+                .withChild(ImmutableNodes.leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
+                .build());
         assertEquals(topLevelList(TOP_LEVEL_LIST_FOO_KEY), entry.getValue());
     }
 
@@ -213,23 +206,24 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         final var entry = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST,
             topLevelList(TOP_LEVEL_LIST_FOO_KEY,
                 new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build()));
-        assertEquals(mapEntryBuilder()
+        assertEquals(ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
                 TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(leafNode(SIMPLE_VALUE_QNAME, "simpleValue")) // augmentation child
+            .withChild(ImmutableNodes.leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
+            .withChild(ImmutableNodes.leafNode(SIMPLE_VALUE_QNAME, "simpleValue")) // augmentation child
             .build(),
             entry.node());
     }
 
     @Test
     public void leafOnlyAugmentationFromNormalized() {
-        final var entry = codecContext.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH, mapEntryBuilder()
-            .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
-                TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(leafNode(SIMPLE_VALUE_QNAME, "simpleValue")) // augmentation child
-            .build());
+        final var entry = codecContext.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH,
+            ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
+                    TOP_LEVEL_LIST_FOO_KEY_VALUE))
+                .withChild(ImmutableNodes.leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
+                .withChild(ImmutableNodes.leafNode(SIMPLE_VALUE_QNAME, "simpleValue")) // augmentation child
+                .build());
         assertEquals(
             topLevelList(TOP_LEVEL_LIST_FOO_KEY,
                 new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build()),
@@ -240,14 +234,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     public void orderedleafListToNormalized() {
         final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Top.class),
             new TopBuilder().setTopLevelOrderedLeafList(List.of("foo")).build());
-        assertEquals(containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-            .withChild(orderedLeafSetBuilder()
+            .withChild(ImmutableNodes.newUserLeafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME))
-                .withChild(leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME, "foo"))
-                    .withValue("foo")
-                    .build())
+                .withChild(ImmutableNodes.leafSetEntry(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME, "foo"))
                 .build())
             .build(),
             entry.node());
@@ -257,14 +248,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     public void leafListToNormalized() {
         final var entry = codecContext.toNormalizedDataObject(
             InstanceIdentifier.create(Top.class), new TopBuilder().setTopLevelLeafList(Set.of("foo")).build());
-        assertEquals(containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-            .withChild(leafSetBuilder()
+            .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TOP_LEVEL_LEAF_LIST_QNAME))
-                .withChild(leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(TOP_LEVEL_LEAF_LIST_QNAME, "foo"))
-                    .withValue("foo")
-                    .build())
+                .withChild(ImmutableNodes.leafSetEntry(TOP_LEVEL_LEAF_LIST_QNAME, "foo"))
                 .build())
             .build(),
             entry.node());
@@ -272,14 +260,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void leafListFromNormalized() {
-        final var entry = codecContext.fromNormalizedNode(BI_TOP_PATH, containerBuilder()
+        final var entry = codecContext.fromNormalizedNode(BI_TOP_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-            .withChild(leafSetBuilder()
+            .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TOP_LEVEL_LEAF_LIST_QNAME))
-                .withChild(leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(TOP_LEVEL_LEAF_LIST_QNAME, "foo"))
-                    .withValue("foo")
-                    .build())
+                .withChild(ImmutableNodes.leafSetEntry(TOP_LEVEL_LEAF_LIST_QNAME, "foo"))
                 .build())
             .build());
         assertEquals(new TopBuilder().setTopLevelLeafList(Set.of("foo")).build(), entry.getValue());
@@ -287,13 +272,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void orderedLeafListFromNormalized() {
-        final var entry = codecContext.fromNormalizedNode(BI_TOP_PATH, containerBuilder()
+        final var entry = codecContext.fromNormalizedNode(BI_TOP_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-            .withChild(orderedLeafSetBuilder()
+            .withChild(ImmutableNodes.newUserLeafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME))
-                .withChild(leafSetEntryBuilder()
-                    .withNodeIdentifier(new NodeWithValue<>(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME, "foo"))
-                    .withValue("foo").build())
+                .withChild(ImmutableNodes.leafSetEntry(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME, "foo"))
                 .build())
             .build());
         assertEquals(new TopBuilder().setTopLevelOrderedLeafList(List.of("foo")).build(), entry.getValue());
@@ -307,13 +290,13 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                     .setExtendedId(new ExtendedIdBuilder().setId("identifier_value").build())
                     .build())
                 .build());
-        assertEquals(containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(CHOICE_CONTAINER_QNAME))
-            .withChild(choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(CHOICE_IDENTIFIER_QNAME))
-                .withChild(containerBuilder()
+                .withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(EXTENDED_ID_QNAME))
-                    .withChild(leafNode(CHOICE_IDENTIFIER_ID_QNAME, "identifier_value"))
+                    .withChild(ImmutableNodes.leafNode(CHOICE_IDENTIFIER_ID_QNAME, "identifier_value"))
                     .build())
                 .build())
             .build(),
@@ -333,11 +316,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
         final YangInstanceIdentifier yangInstanceIdentifierOuter = YangInstanceIdentifier.of(
             containerIdentifierQname4798);
-        final ContainerNode containerNodeOuter = containerBuilder()
+        final ContainerNode containerNodeOuter = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(containerIdentifierQname4798))
-            .withChild(containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(nestedContainerOuterQname))
-                .withChild(leafNode(nestedContainerLeafOuterQname, "bar"))
+                .withChild(ImmutableNodes.leafNode(nestedContainerLeafOuterQname, "bar"))
                 .build())
             .build();
         final Entry<InstanceIdentifier<?>, DataObject> entryContainer = codecContext.fromNormalizedNode(
@@ -359,16 +342,24 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                 .node(nestedContainerValidQname)
                 .node(nestedListQname4798)
                 .node(nodeIdentifierWithPredicates4798);
-        final ContainerNode containerNodeValid = containerBuilder()
+        final ContainerNode containerNodeValid = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(containerIdentifierQname4798))
-            .withChild(choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(choiceIdentifierQname4798))
-                .withChild(containerBuilder()
+                .withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(nestedContainerValidQname))
-                    .withChild(mapBuilder()
+                    .withChild(ImmutableNodes.newSystemMapBuilder()
                         .withNodeIdentifier(new NodeIdentifier(nestedListQname4798))
-                        .withChild(mapEntry(nestedListQname4798, nestedListKeyQname4798, "foo"))
-                        .withChild(mapEntry(nestedListQname4798, nestedListKeyQname4798, "bar"))
+                        .withChild(ImmutableNodes.newMapEntryBuilder()
+                            .withNodeIdentifier(
+                                NodeIdentifierWithPredicates.of(nestedListQname4798, nestedListKeyQname4798, "foo"))
+                            .withChild(ImmutableNodes.leafNode(nestedListKeyQname4798, "foo"))
+                            .build())
+                        .withChild(ImmutableNodes.newMapEntryBuilder()
+                            .withNodeIdentifier(
+                                NodeIdentifierWithPredicates.of(nestedListQname4798, nestedListKeyQname4798, "bar"))
+                            .withChild(ImmutableNodes.leafNode(nestedListKeyQname4798, "bar"))
+                            .build())
                         .build())
                     .build())
                 .build())
@@ -379,14 +370,22 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
             .getMessage();
         assertEquals("Expecting either a MapEntryNode or an UnkeyedListEntryNode, not ContainerNode", msg);
 
-        final ContainerNode containerNode4798 = containerBuilder()
+        final ContainerNode containerNode4798 = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(containerIdentifierQname4798))
-            .withChild(choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(choiceIdentifierQname4798))
-                .withChild(mapBuilder()
+                .withChild(ImmutableNodes.newSystemMapBuilder()
                     .withNodeIdentifier(new NodeIdentifier(nestedListQname4798))
-                    .withChild(mapEntry(nestedListQname4798, nestedListKeyQname4798, "foo"))
-                    .withChild(mapEntry(nestedListQname4798, nestedListKeyQname4798, "bar"))
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
+                        .withNodeIdentifier(
+                            NodeIdentifierWithPredicates.of(nestedListQname4798, nestedListKeyQname4798, "foo"))
+                        .withChild(ImmutableNodes.leafNode(nestedListKeyQname4798, "foo"))
+                        .build())
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
+                        .withNodeIdentifier(
+                            NodeIdentifierWithPredicates.of(nestedListQname4798, nestedListKeyQname4798, "bar"))
+                        .withChild(ImmutableNodes.leafNode(nestedListKeyQname4798, "bar"))
+                        .build())
                     .build())
                 .build())
             .build();
@@ -399,13 +398,13 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void choiceFromNormalized() {
-        final ContainerNode choiceContainerBI = containerBuilder()
+        final ContainerNode choiceContainerBI = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(CHOICE_CONTAINER_QNAME))
-            .withChild(choiceBuilder()
+            .withChild(ImmutableNodes.newChoiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(CHOICE_IDENTIFIER_QNAME))
-                .withChild(containerBuilder()
+                .withChild(ImmutableNodes.newContainerBuilder()
                     .withNodeIdentifier(new NodeIdentifier(EXTENDED_ID_QNAME))
-                    .withChild(leafNode(CHOICE_IDENTIFIER_ID_QNAME, "identifier_value"))
+                    .withChild(ImmutableNodes.leafNode(CHOICE_IDENTIFIER_ID_QNAME, "identifier_value"))
                     .build())
                 .build())
             .build();
@@ -424,14 +423,22 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                 new NestedListBuilder().withKey(new NestedListKey("foo")).build(),
                 new NestedListBuilder().withKey(new NestedListKey("bar")).build()))
             .build());
-        assertEquals(mapEntryBuilder()
+        assertEquals(ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME,
                 TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(orderedMapBuilder()
+            .withChild(ImmutableNodes.leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
+            .withChild(ImmutableNodes.newUserMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(NESTED_LIST_QNAME))
-                .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
-                .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar"))
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(
+                        NodeIdentifierWithPredicates.of(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
+                    .withChild(ImmutableNodes.leafNode(NESTED_LIST_KEY_QNAME, "foo"))
+                    .build())
+                .withChild(ImmutableNodes.newMapEntryBuilder()
+                    .withNodeIdentifier(
+                        NodeIdentifierWithPredicates.of(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar"))
+                    .withChild(ImmutableNodes.leafNode(NESTED_LIST_KEY_QNAME, "bar"))
+                    .build())
                 .build())
             .build(),
             entry.node());
@@ -439,16 +446,25 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void orderedLisFromNormalized() {
-        final var entry = codecContext.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH, mapEntryBuilder()
-            .withNodeIdentifier(NodeIdentifierWithPredicates.of(
-                TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-            .withChild(orderedMapBuilder()
-                .withNodeIdentifier(new NodeIdentifier(NESTED_LIST_QNAME))
-                .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
-                .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar"))
-                .build())
-            .build());
+        final var entry = codecContext.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH,
+            ImmutableNodes.newMapEntryBuilder()
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(
+                    TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
+                .withChild(ImmutableNodes.leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
+                .withChild(ImmutableNodes.newUserMapBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(NESTED_LIST_QNAME))
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
+                        .withNodeIdentifier(
+                            NodeIdentifierWithPredicates.of(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
+                        .withChild(ImmutableNodes.leafNode(NESTED_LIST_KEY_QNAME, "foo"))
+                        .build())
+                    .withChild(ImmutableNodes.newMapEntryBuilder()
+                        .withNodeIdentifier(
+                            NodeIdentifierWithPredicates.of(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar"))
+                        .withChild(ImmutableNodes.leafNode(NESTED_LIST_KEY_QNAME, "bar"))
+                        .build())
+                    .build())
+                .build());
         assertEquals(new TopLevelListBuilder()
             .withKey(TOP_LEVEL_LIST_FOO_KEY)
             .setNestedList(List.of(
@@ -486,12 +502,16 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
         final var biResult = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Top.class), top);
 
-        final var topNormalized = containerBuilder()
+        final var topNormalized = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-            .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id) // choice 1
-                .withChild(choiceBuilder().withNodeIdentifier(augmentChoice2Id) // choice 2
-                    .withChild(containerBuilder().withNodeIdentifier(containerId)
-                        .withChild(leafNode(leafQName, "leaf-value")).build())
+            .withChild(ImmutableNodes.newChoiceBuilder()
+                .withNodeIdentifier(augmentChoice1Id)
+                .withChild(ImmutableNodes.newChoiceBuilder()
+                    .withNodeIdentifier(augmentChoice2Id)
+                    .withChild(ImmutableNodes.newContainerBuilder()
+                        .withNodeIdentifier(containerId)
+                        .withChild(ImmutableNodes.leafNode(leafQName, "leaf-value"))
+                        .build())
                     .build())
                 .build())
             .build();

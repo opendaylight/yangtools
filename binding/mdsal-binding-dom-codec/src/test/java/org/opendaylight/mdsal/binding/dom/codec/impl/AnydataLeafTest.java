@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -49,13 +49,13 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
         final Element element = doc.createElement("foo");
         domSource = new DOMSource(element);
 
-        cont = Builders.containerBuilder()
-                .withNodeIdentifier(CONT_NODE_ID)
-                .withChild(Builders.anydataBuilder(DOMSource.class)
-                    .withNodeIdentifier(new NodeIdentifier(ContAny.QNAME))
-                    .withValue(domSource)
-                    .build())
-                .build();
+        cont = ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(CONT_NODE_ID)
+            .withChild(ImmutableNodes.newAnydataBuilder(DOMSource.class)
+                .withNodeIdentifier(new NodeIdentifier(ContAny.QNAME))
+                .withValue(domSource)
+                .build())
+            .build();
     }
 
     @Test

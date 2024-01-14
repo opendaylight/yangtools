@@ -64,6 +64,7 @@ abstract sealed class ValueNodeCodecContext extends CodecContext implements Code
     abstract ValueCodec<Object, Object> getValueCodec();
 
     @Override
+    @Deprecated(since = "13.0.0", forRemoval = true)
     public final DataSchemaNode getSchema() {
         return dataSchema;
     }

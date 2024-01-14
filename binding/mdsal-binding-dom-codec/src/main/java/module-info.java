@@ -36,6 +36,7 @@ module org.opendaylight.mdsal.binding.dom.codec.impl {
     requires org.opendaylight.yangtools.yang.binding;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.api;
+    requires org.opendaylight.yangtools.yang.data.spi;
     requires org.opendaylight.yangtools.yang.data.impl;
     requires org.opendaylight.yangtools.yang.data.util;
     requires org.opendaylight.yangtools.yang.model.api;

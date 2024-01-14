@@ -17,8 +17,7 @@ import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.Bar;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.BarBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 public class Mdsal668Test extends AbstractBindingCodecTest {
     private static final NodeIdentifier FOO = new NodeIdentifier(Foo.QNAME);
@@ -26,17 +25,14 @@ public class Mdsal668Test extends AbstractBindingCodecTest {
 
     @Test
     public void testLeaflistLeafref() {
-        assertEquals(Builders.containerBuilder()
+        assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(FOO)
-            .withChild(Builders.containerBuilder()
+            .withChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(Bar.QNAME))
-                .withChild(Builders.leafSetBuilder()
+                .withChild(ImmutableNodes.newSystemLeafSetBuilder()
                     .withNodeIdentifier(new NodeIdentifier(Bar.QNAME))
-                    .withChild(Builders.leafSetEntryBuilder()
-                        // FIXME: MDSAL-670: these should get translated to YangInstanceIdentifier.of(FOO)
-                        .withNodeIdentifier(new NodeWithValue<>(Bar.QNAME, FOO_IID))
-                        .withValue(FOO_IID)
-                        .build())
+                    // FIXME: MDSAL-670: these should get translated to YangInstanceIdentifier.of(FOO)
+                    .withChild(ImmutableNodes.leafSetEntry(Bar.QNAME, FOO_IID))
                     .build())
                 .build())
             .build(),

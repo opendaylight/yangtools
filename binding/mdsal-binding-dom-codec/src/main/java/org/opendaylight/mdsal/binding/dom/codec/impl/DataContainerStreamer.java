@@ -80,7 +80,7 @@ public abstract class DataContainerStreamer<T extends DataContainer> {
             final DataContainerSerializer caseStreamer = registry.getSerializer(caseClass.asSubclass(DataObject.class));
             if (caseStreamer != null) {
                 if (tryCache(writer, (DataObject) value)) {
-                    caseStreamer.serialize((DataObject) value, writer);
+                    caseStreamer.serialize(value, writer);
                 }
             } else {
                 LOG.warn("No serializer for case {} is available in registry {}", caseClass, registry);
