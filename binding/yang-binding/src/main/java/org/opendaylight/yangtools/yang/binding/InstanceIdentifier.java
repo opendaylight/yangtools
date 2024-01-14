@@ -189,8 +189,6 @@ public sealed class InstanceIdentifier<T extends DataObject>
      *
      * <p>
      * And you wanted to obtain the Instance identifier which represented Nodes you would do it like so,
-     *
-     * <p>
      * <pre>
      *      identifier.firstIdentifierOf(Nodes.class)
      * </pre>
