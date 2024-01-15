@@ -47,7 +47,18 @@ public abstract sealed class AbstractNormalizedNode<T extends NormalizedNode> im
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(toStringClass())).toString();
+    }
+
+    /**
+     * Return the {@link #toString()} class identity of this object. Default implementation defers to
+     * {@link #getClass()}. Override may be needed to hide implementation-internal class hierarchy -- for example if
+     * providing different implementations of {@link LeafNode} for {@code String} and {@code byte[]} values.
+     *
+     * @return the {@link #toString()} class identity of this object
+     */
+    protected @NonNull Class<?> toStringClass() {
+        return getClass();
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {

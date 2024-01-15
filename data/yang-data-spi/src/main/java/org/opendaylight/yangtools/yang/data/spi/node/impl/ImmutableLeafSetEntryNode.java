@@ -83,4 +83,9 @@ public abstract sealed class ImmutableLeafSetEntryNode<T> extends AbstractLeafSe
     protected final T value() {
         return name.getValue();
     }
+
+    @Override
+    protected final Class<?> toStringClass() {
+        return ImmutableLeafSetEntryNode.class;
+    }
 }
