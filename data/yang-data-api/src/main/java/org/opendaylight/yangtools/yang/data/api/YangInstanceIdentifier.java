@@ -25,6 +25,7 @@ import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
@@ -484,8 +485,8 @@ public abstract sealed class YangInstanceIdentifier
             return 0;
         }
 
-        if (byte[].class.equals(value.getClass())) {
-            return Arrays.hashCode((byte[]) value);
+        if (value instanceof byte[] bytes) {
+            return Arrays.hashCode(bytes);
         }
 
         if (value.getClass().isArray()) {
@@ -498,7 +499,7 @@ public abstract sealed class YangInstanceIdentifier
             return hash;
         }
 
-        return Objects.hashCode(value);
+        return value.hashCode();
     }
 
     private int loadHashCode() {
@@ -948,16 +949,14 @@ public abstract sealed class YangInstanceIdentifier
         @Override
         @SuppressWarnings("checkstyle:equalsHashCode")
         public boolean equals(final Object obj) {
-            if (!super.equals(obj)) {
-                return false;
-            }
-            final NodeWithValue<?> other = (NodeWithValue<?>) obj;
-            return Objects.deepEquals(value, other.value);
+            return super.equals(obj) && Objects.deepEquals(value, ((NodeWithValue<?>) obj).value);
         }
 
         @Override
         public String toString() {
-            return super.toString() + '[' + value + ']';
+            final var str = super.toString();
+            return value instanceof byte[] bytes ? str + "[b64:" + Base64.getEncoder().encodeToString(bytes) + ']'
+                : str + '[' + value + ']';
         }
 
         @Override

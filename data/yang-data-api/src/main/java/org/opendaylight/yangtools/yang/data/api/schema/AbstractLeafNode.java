@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * Abstract base class for {@link LeafNode} implementations.
  */
-public abstract non-sealed class AbstractLeafNode<T> extends AbstractNormalizedSimpleValueNode<LeafNode<T>, T>
+public abstract non-sealed class AbstractLeafNode<T> extends AbstractValueNode<LeafNode<T>, T>
         implements LeafNode<T> {
     @Override
     @SuppressWarnings("unchecked")

@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * Abstract base class for {@link LeafSetEntryNode} implementations.
  */
 public abstract non-sealed class AbstractLeafSetEntryNode<T>
-        extends AbstractNormalizedSimpleValueNode<LeafSetEntryNode<T>, T> implements LeafSetEntryNode<T> {
+        extends AbstractValueNode<LeafSetEntryNode<T>, T> implements LeafSetEntryNode<T> {
     @Override
     @SuppressWarnings("unchecked")
     protected final Class<LeafSetEntryNode<T>> implementedType() {

@@ -12,7 +12,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  *
  * @param <V> Value of node, which needs to be a well-published simple value type.
  */
-public sealed interface ValueNode<V> extends NormalizedNode permits LeafNode, LeafSetEntryNode {
+public sealed interface ValueNode<V> extends NormalizedNode permits LeafNode, LeafSetEntryNode, AbstractValueNode {
     /**
      * {@inheritDoc}
      *

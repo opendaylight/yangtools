@@ -65,4 +65,9 @@ public abstract sealed class ImmutableLeafNode<T> extends AbstractLeafNode<T> {
     protected final T value() {
         return value;
     }
+
+    @Override
+    protected final Class<?> toStringClass() {
+        return ImmutableLeafNode.class;
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 abstract sealed class AbstractNormalizedSimpleValueNode<N extends NormalizedNode, V>
         extends AbstractNormalizedValueNode<N, V>
-        permits AbstractAnydataNode, AbstractAnyxmlNode, AbstractLeafNode, AbstractLeafSetEntryNode {
+        permits AbstractAnydataNode, AbstractAnyxmlNode, AbstractValueNode {
     @Override
     protected final int valueHashCode() {
         return value().hashCode();
