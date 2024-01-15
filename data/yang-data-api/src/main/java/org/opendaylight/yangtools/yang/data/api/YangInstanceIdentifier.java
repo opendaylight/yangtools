@@ -477,8 +477,8 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
             return 0;
         }
 
-        if (byte[].class.equals(value.getClass())) {
-            return Arrays.hashCode((byte[]) value);
+        if (value instanceof byte[] bytes) {
+            return Arrays.hashCode(bytes);
         }
 
         if (value.getClass().isArray()) {
@@ -491,7 +491,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
             return hash;
         }
 
-        return Objects.hashCode(value);
+        return value.hashCode();
     }
 
     private int loadHashCode() {
@@ -946,16 +946,13 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         @Override
         @SuppressWarnings("checkstyle:equalsHashCode")
         public boolean equals(final Object obj) {
-            if (!super.equals(obj)) {
-                return false;
-            }
-            final NodeWithValue<?> other = (NodeWithValue<?>) obj;
-            return Objects.deepEquals(value, other.value);
+            return super.equals(obj) && Objects.deepEquals(value, ((NodeWithValue<?>) obj).value);
         }
 
         @Override
         public String toString() {
-            return super.toString() + '[' + value + ']';
+            final var str = super.toString();
+            return value instanceof byte[] bytes ? str + '[' + Arrays.toString(bytes) + ']' : str + '[' + value + ']';
         }
 
         @Override

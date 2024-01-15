@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.PrettyTree;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
@@ -64,11 +65,26 @@ public abstract class AbstractNormalizedNode<I extends PathArgument, T extends N
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(toStringClass())).toString();
+    }
+
+    /**
+     * Return the {@link #toString()} class identity of this object. Default implementation defers to
+     * {@link #getClass()}. Override may be needed to hide implementation-internal class hierarchy -- for example if
+     * providing different implementations of {@link LeafNode} for {@code String} and {@code byte[]} values.
+     *
+     * @return the {@link #toString()} class identity of this object
+     */
+    protected @NonNull Class<?> toStringClass() {
+        return getClass();
+    }
+
+    protected @NonNull Object toStringBody() {
+        return body();
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("name", name).add("body", body());
+        return toStringHelper.add("name", name()).add("body", toStringBody());
     }
 
     protected abstract @NonNull Class<T> implementedType();

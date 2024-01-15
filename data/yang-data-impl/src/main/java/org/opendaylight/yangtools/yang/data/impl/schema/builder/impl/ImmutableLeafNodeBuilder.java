@@ -45,6 +45,11 @@ public class ImmutableLeafNodeBuilder<T>
         protected final Class<LeafNode<?>> implementedType() {
             return (Class) LeafNode.class;
         }
+
+        @Override
+        protected final Class<?> toStringClass() {
+            return ImmutableLeafNode.class;
+        }
     }
 
     private static final class ImmutableBinaryLeafNode extends ImmutableLeafNode<byte[]> {
