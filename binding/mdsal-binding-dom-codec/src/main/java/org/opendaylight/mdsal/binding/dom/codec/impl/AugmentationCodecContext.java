@@ -17,23 +17,22 @@ import java.util.Map;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
-        extends AbstractDataObjectCodecContext<D, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<D> {
+final class AugmentationCodecContext<A extends Augmentation<?>>
+        extends AbstractDataObjectCodecContext<A, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<A> {
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
         AbstractDataObjectCodecContext.class, DataContainerNode.class);
-    private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
+    private static final MethodType AUGMENTATION_TYPE = MethodType.methodType(Augmentation.class,
         AugmentationCodecContext.class, DataContainerNode.class);
 
     private final MethodHandle proxyConstructor;
 
-    private AugmentationCodecContext(final AugmentationCodecPrototype<D> prototype,
+    private AugmentationCodecContext(final AugmentationCodecPrototype<A> prototype,
             final DataContainerAnalysis<AugmentRuntimeType> analysis) {
         super(prototype, analysis);
 
@@ -47,10 +46,10 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
             throw new LinkageError("Failed to find contructor for class " + bindingClass, e);
         }
 
-        proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
+        proxyConstructor = ctor.asType(AUGMENTATION_TYPE);
     }
 
-    AugmentationCodecContext(final AugmentationCodecPrototype<D> prototype) {
+    AugmentationCodecContext(final AugmentationCodecPrototype<A> prototype) {
         this(prototype, new DataContainerAnalysis<>(prototype, CodecItemFactory.of()));
     }
 
@@ -72,11 +71,11 @@ final class AugmentationCodecContext<D extends DataObject & Augmentation<?>>
 
     @SuppressWarnings("checkstyle:illegalCatch")
     @Override
-    public D filterFrom(final DataContainerNode parentData) {
+    public A filterFrom(final DataContainerNode parentData) {
         for (var childArg : ((AugmentationCodecPrototype<?>) prototype()).getChildArgs()) {
             if (parentData.childByArg(childArg) != null) {
                 try {
-                    return (D) proxyConstructor.invokeExact(this, parentData);
+                    return (A) proxyConstructor.invokeExact(this, parentData);
                 } catch (final Throwable e) {
                     Throwables.throwIfUnchecked(e);
                     throw new IllegalStateException(e);
