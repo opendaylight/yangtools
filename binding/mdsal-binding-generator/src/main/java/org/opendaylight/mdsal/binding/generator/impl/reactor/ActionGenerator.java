@@ -10,11 +10,13 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 import java.util.List;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
+import org.opendaylight.yangtools.yang.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
@@ -40,17 +42,29 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @Override
-    ParameterizedType implementedType(final TypeBuilderFactory builderFactory, final GeneratedType input,
-            final GeneratedType output) {
+    void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder builder,
+            final GeneratedType input, final GeneratedType output) {
         final var parent = getParent();
         final var parentType = Type.of(parent.typeName());
         if (parent instanceof ListGenerator list) {
             final var keyGen = list.keyGenerator();
             if (keyGen != null) {
-                return BindingTypes.keyedListAction(parentType, keyGen.getGeneratedType(builderFactory), input, output);
+                final var keyType = keyGen.getGeneratedType(builderFactory);
+                builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
+                builder.addMethod(Naming.RPC_INVOKE_NAME).setAbstract(true)
+                    .addParameter(BindingTypes.keyedInstanceIdentifier(parentType, keyType), "path")
+                    .addParameter(input, "input")
+                    .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
+                    .addAnnotation(OVERRIDE_ANNOTATION);
+                return;
             }
         }
-        return BindingTypes.action(parentType, input, output);
+        builder.addImplementsType(BindingTypes.action(parentType, input, output));
+        builder.addMethod(Naming.RPC_INVOKE_NAME).setAbstract(true)
+            .addParameter(BindingTypes.instanceIdentifier(parentType), "path")
+            .addParameter(input, "input")
+            .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
+            .addAnnotation(OVERRIDE_ANNOTATION);
     }
 
     @Override

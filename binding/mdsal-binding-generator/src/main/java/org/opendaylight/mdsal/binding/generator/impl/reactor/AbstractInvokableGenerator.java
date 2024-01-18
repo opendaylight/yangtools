@@ -7,10 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
+import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
@@ -39,9 +38,11 @@ abstract class AbstractInvokableGenerator<S extends SchemaTreeEffectiveStatement
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
-        builder.addImplementsType(implementedType(builderFactory,
-            getChild(this, InputEffectiveStatement.class).getOriginal().getGeneratedType(builderFactory),
-            getChild(this, OutputEffectiveStatement.class).getOriginal().getGeneratedType(builderFactory)));
+        final var inputType = getChild(this, InputEffectiveStatement.class).getOriginal()
+            .getGeneratedType(builderFactory);
+        final var outputType = getChild(this, OutputEffectiveStatement.class).getOriginal()
+            .getGeneratedType(builderFactory);
+        addImplementedType(builderFactory, builder, inputType, outputType);
         builder.addAnnotation(FUNCTIONAL_INTERFACE_ANNOTATION);
         defaultImplementedInterace(builder);
 
@@ -54,6 +55,6 @@ abstract class AbstractInvokableGenerator<S extends SchemaTreeEffectiveStatement
         return builder.build();
     }
 
-    abstract @NonNull ParameterizedType implementedType(TypeBuilderFactory builderFactory, GeneratedType input,
-        GeneratedType output);
+    abstract void addImplementedType(TypeBuilderFactory builderFactory, GeneratedTypeBuilder builder,
+        GeneratedType input, GeneratedType output);
 }
