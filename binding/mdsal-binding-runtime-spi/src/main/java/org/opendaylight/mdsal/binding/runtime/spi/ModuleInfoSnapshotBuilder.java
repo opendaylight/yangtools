@@ -109,10 +109,8 @@ public final class ModuleInfoSnapshotBuilder {
             final var source = ModuleInfoSnapshotResolver.toYangTextSource(info);
             mappedInfos.put(source.sourceId(), info);
 
-            final Class<?> infoClass = info.getClass();
-            final String infoRoot = Naming.getModelRootPackageName(infoClass.getPackage().getName())
-                .replace(Naming.SVC_PACKAGE_PREFIX, Naming.PACKAGE_PREFIX);
-            classLoaders.put(infoRoot, infoClass.getClassLoader());
+            final String infoRoot = Naming.getRootPackageName(info.getName().getModule());
+            classLoaders.put(infoRoot, info.getClass().getClassLoader());
             namespaces.put(infoRoot, info.getName().getModule());
 
             try {

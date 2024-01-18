@@ -197,9 +197,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
             final var reg = regs.get(0);
             final var info = reg.info;
             moduleInfos.put(source, info);
-            final var infoClass = info.getClass();
-            classLoaders.put(Naming.getModelRootPackageName(infoClass.getPackage().getName()),
-                infoClass.getClassLoader());
+            classLoaders.put(Naming.getRootPackageName(info.getName().getModule()), info.getClass().getClassLoader());
         }
 
         final var next = new DefaultModuleInfoSnapshot(modelContext, moduleInfos, classLoaders);
