@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-validation-tool</artifactId>
-    <version>13.0.1-SNAPSHOT</version>
+    <version>13.0.1</version>
 
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
@@ -30,7 +30,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>13.0.1-SNAPSHOT</version>
+                <version>13.0.1</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
