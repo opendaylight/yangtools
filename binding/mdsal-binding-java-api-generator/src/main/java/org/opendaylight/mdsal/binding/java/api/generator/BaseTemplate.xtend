@@ -344,7 +344,7 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
            «ENDIF»
        «ENDIF»
 
-       «val fieldUpperCase = fieldName.toUpperCase(Locale.ENGLISH)»
+       «val fieldUpperCase = fieldName.toUpperCase(Locale.ROOT)»
        «FOR currentConstant : type.getConstantDefinitions»
            «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
                && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»
