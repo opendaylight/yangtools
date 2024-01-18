@@ -21,7 +21,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spotbugs.onlyAnalyze>!org.opendaylight.yang.gen.-</spotbugs.onlyAnalyze>
+        <spotbugs.onlyAnalyze>!org.opendaylight.yang.gen.-,!org.opendaylight.yang.svc.-</spotbugs.onlyAnalyze>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
     </properties>
