@@ -51,7 +51,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
             if (keyGen != null) {
                 final var keyType = keyGen.getGeneratedType(builderFactory);
                 builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
-                builder.addMethod(Naming.RPC_INVOKE_NAME).setAbstract(true)
+                builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
                     .addParameter(BindingTypes.keyedInstanceIdentifier(parentType, keyType), "path")
                     .addParameter(input, "input")
                     .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
@@ -60,7 +60,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
             }
         }
         builder.addImplementsType(BindingTypes.action(parentType, input, output));
-        builder.addMethod(Naming.RPC_INVOKE_NAME).setAbstract(true)
+        builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
             .addParameter(BindingTypes.instanceIdentifier(parentType), "path")
             .addParameter(input, "input")
             .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
