@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +23,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -71,10 +68,13 @@ abstract class UniqueValidator<T> implements Immutable {
 
         @Override
         Map<Descendant, @Nullable Object> indexValues(final Object values) {
-            final Map<Descendant, @Nullable Object> index = Maps.newHashMapWithExpectedSize(descendants.size());
-            final Iterator<?> it = ((UniqueValues) values).iterator();
-            for (Object obj : descendants) {
-                verify(index.put(decodeDescendant(obj), it.next()) == null);
+            final var index = Maps.<Descendant, @Nullable Object>newHashMapWithExpectedSize(descendants.size());
+            final var it = ((UniqueValues) values).iterator();
+            for (var obj : descendants) {
+                final var prev = index.put(decodeDescendant(obj), it.next());
+                if (prev != null) {
+                    throw new VerifyException("Unexpected collision with " + prev);
+                }
             }
             return index;
         }
@@ -132,8 +132,7 @@ abstract class UniqueValidator<T> implements Immutable {
      * @return Decoded path
      */
     private static @NonNull ImmutableList<NodeIdentifier> decodePath(final Object obj) {
-        return obj instanceof NodeIdentifier ? ImmutableList.of((NodeIdentifier) obj)
-            : (ImmutableList<NodeIdentifier>) obj;
+        return obj instanceof NodeIdentifier nid ? ImmutableList.of(nid) : (ImmutableList<NodeIdentifier>) obj;
     }
 
     private static @NonNull Descendant decodeDescendant(final Object obj) {
@@ -161,24 +160,28 @@ abstract class UniqueValidator<T> implements Immutable {
      * @return Value for the descendant
      */
     private static @Nullable Object extractValue(final DataContainerNode data, final List<NodeIdentifier> path) {
-        DataContainerNode current = data;
-        final Iterator<NodeIdentifier> it = path.iterator();
+        var current = data;
+        final var it = path.iterator();
         while (true) {
-            final NodeIdentifier step = it.next();
-            final DataContainerChild next = current.childByArg(step);
+            final var step = it.next();
+            final var next = current.childByArg(step);
             if (next == null) {
                 return null;
             }
 
             if (!it.hasNext()) {
-                checkState(next instanceof LeafNode, "Unexpected node %s at %s", next, path);
-                final Object value = next.body();
-                LOG.trace("Resolved {} to value {}", path, value);
-                return value;
+                if (next instanceof LeafNode<?> leaf) {
+                    final var value = next.body();
+                    LOG.trace("Resolved {} to value {}", path, value);
+                    return value;
+                }
+                throw new IllegalStateException("Unexpected non-leaf node " + next + " at " + path);
             }
 
-            checkState(next instanceof DataContainerNode, "Unexpected node %s in %s", next, path);
-            current = (DataContainerNode) next;
+            if (!(next instanceof DataContainerNode nextContainer)) {
+                throw new IllegalStateException("Unexpected non-container node " + next + " at " + path);
+            }
+            current = nextContainer;
         }
     }
 }
