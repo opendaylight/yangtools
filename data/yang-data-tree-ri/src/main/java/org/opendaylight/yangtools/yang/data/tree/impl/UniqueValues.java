@@ -19,8 +19,12 @@ import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * A vector of values associated with a unique constraint. This is almost an {@link ArrayList}, except it is
- * unmodifiable.
+ * unmodifiable. The only way to construct this instance is through {@link #COLLECTOR}. This should be used only in case
+ * of more than one value.
  */
+// Design note: this could have been a List, because the order matters, but it does not matter much, we are expected
+// to be compared against ourselves -- and we treat byte[] specially, breaking reflexivity of equality. We could also go
+// for Collection, but at this point nobody cares about size().
 final class UniqueValues implements Immutable, Iterable<Object> {
     static final Collector<Object, ?, UniqueValues> COLLECTOR = Collector.of(ArrayList::new, ArrayList::add,
         (left, right) -> {
@@ -59,7 +63,7 @@ final class UniqueValues implements Immutable, Iterable<Object> {
     }
 
     private static String toString(final Object[] objects) {
-        final StringBuilder sb = new StringBuilder();
+        final var sb = new StringBuilder();
         sb.append('[').append(BinaryValue.wrapToString(objects[0]));
         for (int i = 1; i < objects.length; ++i) {
             sb.append(", ").append(BinaryValue.wrapToString(objects[i]));
