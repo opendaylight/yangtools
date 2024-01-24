@@ -65,6 +65,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     @Override
     @Deprecated
     public DataTree create(final DataTreeConfiguration treeConfig) {
+        // FIXME: TreeNode type depends on apply operation -- hence we positively need an initial EffectiveModelContext
         return new InMemoryDataTree(BaseTreeNode.of(createRoot(treeConfig.getRootPath()),
             Version.initial(treeConfig.isVersionInfoTrackingEnabled())), treeConfig, null);
     }

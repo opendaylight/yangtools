@@ -20,6 +20,10 @@ final class BinaryValue implements Immutable {
         this.value = requireNonNull(value);
     }
 
+    static Object unwrap(final Object value) {
+        return value instanceof BinaryValue binary ? binary.value : value;
+    }
+
     static Object wrap(final Object value) {
         return value instanceof byte[] bytes ? new BinaryValue(bytes) : value;
     }
