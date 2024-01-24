@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -276,7 +277,13 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      */
     abstract @NonNull T getSchema();
 
-    @NonNull MutableTreeNode openMeta(final TreeNode meta, final Version subtreeVersion) {
+    @NonNullByDefault
+    TreeNode newMeta(final NormalizedNode data, final Version version) {
+        return TreeNode.of(data, version);
+    }
+
+    @NonNullByDefault
+    MutableTreeNode openMeta(final TreeNode meta, final Version subtreeVersion) {
         if (meta instanceof RawTreeNode raw) {
             final var ret = raw.toMutable();
             ret.setSubtreeVersion(subtreeVersion);
