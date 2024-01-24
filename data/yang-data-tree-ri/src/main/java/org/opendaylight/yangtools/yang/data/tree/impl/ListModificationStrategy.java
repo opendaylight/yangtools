@@ -66,7 +66,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final TreeNode currentMeta, final Version version) {
-        final var newValueMeta = TreeNode.of(newValue, version);
+        final var newValueMeta = newMeta(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
         }
