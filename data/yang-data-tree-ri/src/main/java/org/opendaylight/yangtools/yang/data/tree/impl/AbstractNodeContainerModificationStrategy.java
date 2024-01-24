@@ -14,6 +14,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -85,7 +86,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      * {@link #checkTouchApplicable(ModificationPath, NodeModification, TreeNode, Version)}
      * It is okay to use a global constant, as the delegate will ignore it anyway.
      */
-    private static final Version FAKE_VERSION = Version.initial();
+    private static final @NonNull Version FAKE_VERSION = Version.initial();
 
     private final NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
@@ -165,7 +166,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final TreeNode currentMeta, final Version version) {
-        final var newValueMeta = TreeNode.of(newValue, version);
+        final var newValueMeta = newMeta(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
         }
@@ -377,8 +378,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         return null;
     }
 
-    static final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
-        return TreeNode.of(emptyNode, FAKE_VERSION);
+    @NonNullByDefault
+    final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
+        return newMeta(emptyNode, FAKE_VERSION);
     }
 
     @Override
