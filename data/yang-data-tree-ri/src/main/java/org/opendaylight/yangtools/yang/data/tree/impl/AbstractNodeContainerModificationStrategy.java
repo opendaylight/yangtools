@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.api.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.BaseTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
@@ -186,7 +185,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final var result = mutateChildren(newValueMeta.toMutable(version), support.createBuilder(newValue), version,
+        final var result = mutateChildren(openMeta(newValueMeta, version), support.createBuilder(newValue), version,
             modification.getChildren());
 
         // We are good to go except one detail: this is a single logical write, but
@@ -341,19 +340,6 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         return currentMeta;
     }
 
-    @NonNullByDefault
-    static final BaseTreeNode newMeta(final NormalizedNode data, final Version version) {
-        return BaseTreeNode.of(data, version);
-    }
-
-    @NonNullByDefault
-    private static MutableTreeNode openMeta(final TreeNode meta, final Version nextSubtreeVersion) {
-        if (meta instanceof BaseTreeNode base) {
-            return base.toMutable(nextSubtreeVersion);
-        }
-        throw new VerifyException("Unexpected meta " + meta);
-    }
-
     @Override
     protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final TreeNode currentMeta, final Version version) throws DataValidationFailedException {
@@ -389,7 +375,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     }
 
     @NonNullByDefault
-    static final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
+    final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
         return newMeta(emptyNode, FAKE_VERSION);
     }
 

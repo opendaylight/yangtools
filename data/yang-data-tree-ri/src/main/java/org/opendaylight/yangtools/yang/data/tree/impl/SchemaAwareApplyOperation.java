@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -25,6 +27,8 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.BaseTreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
@@ -273,6 +277,19 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @return A model node
      */
     abstract @NonNull T getSchema();
+
+    @NonNullByDefault
+    TreeNode newMeta(final NormalizedNode data, final Version version) {
+        return BaseTreeNode.of(data, version);
+    }
+
+    @NonNullByDefault
+    MutableTreeNode openMeta(final TreeNode meta, final Version subtreeVersion) {
+        if (meta instanceof BaseTreeNode base) {
+            return base.toMutable(subtreeVersion);
+        }
+        throw new VerifyException("Unexpected meta " + meta);
+    }
 
     /**
      * Checks if supplied schema node belong to specified Data Tree type. All nodes belong to the operational tree,
