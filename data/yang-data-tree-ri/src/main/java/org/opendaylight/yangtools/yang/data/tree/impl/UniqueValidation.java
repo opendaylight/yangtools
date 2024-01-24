@@ -17,10 +17,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -85,7 +82,7 @@ final class UniqueValidation extends AbstractValidation {
     }
 
     private <T extends @NonNull Exception> void enforceOnData(final NormalizedNode data,
-            final ExceptionSupplier<T> exceptionSupplier) throws T {
+            final UniqueExceptionSupplier<T> exceptionSupplier) throws T {
         final var sw = Stopwatch.createStarted();
         if (!(data instanceof NormalizedNodeContainer<?> dataContainer)) {
             throw new VerifyException("Unexpected data " + data.prettyTree());
@@ -139,11 +136,5 @@ final class UniqueValidation extends AbstractValidation {
             checkState(next instanceof DataNodeContainer, "Unexpected non-container %s for %s", next, descendant);
             current = (DataNodeContainer) next;
         }
-    }
-
-    @FunctionalInterface
-    @NonNullByDefault
-    interface ExceptionSupplier<T extends Exception> {
-        T get(String message, Map<Descendant, @Nullable Object> values);
     }
 }
