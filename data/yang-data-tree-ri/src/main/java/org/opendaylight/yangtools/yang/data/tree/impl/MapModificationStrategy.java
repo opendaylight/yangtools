@@ -9,20 +9,51 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.AbstractNodeContainerModificationStrategy.Invisible;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class MapModificationStrategy extends Invisible<ListSchemaNode> {
+sealed class MapModificationStrategy extends Invisible<ListSchemaNode> {
+    private static final class WithUnique extends MapModificationStrategy {
+        private final Object extractors;
+
+        WithUnique(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
+                final DataTreeConfiguration treeConfig, final MapNode emptyNode, final List<?> extractors) {
+            super(support, schema, treeConfig, emptyNode);
+            this.extractors = extractors.size() == 1 ? extractors.get(0) : extractors;
+        }
+
+        @Override
+        TreeNode newMeta(final NormalizedNode data, final Version version) {
+            // FIXME: establish indexen
+            return new UniqueTreeNode(super.newMeta(data, version), null);
+        }
+
+        @Override
+        MutableTreeNode openMeta(final TreeNode meta, final Version subtreeVersion) {
+            if (meta instanceof UniqueTreeNode unique) {
+                final var ret = unique.toMutable();
+                ret.setSubtreeVersion(subtreeVersion);
+                return ret;
+            } else {
+                throw new IllegalStateException("Unsupported " + meta);
+            }
+        }
+    }
+
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UserMapNode> ORDERED_SUPPORT =
         new NormalizedNodeContainerSupport<>(UserMapNode.class, ChildTrackingPolicy.ORDERED,
             BUILDER_FACTORY::newUserMapBuilder, BUILDER_FACTORY::newUserMapBuilder);
@@ -49,6 +80,15 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
             support = UNORDERED_SUPPORT;
             emptyNode = BUILDER_FACTORY.newSystemMapBuilder().withNodeIdentifier(name).build();
         }
+        if (treeConfig.isUniqueIndexEnabled()) {
+            final var extractors = schema.getUniqueConstraints().stream()
+                .map(unique -> null)
+                .collect(Collectors.toList());
+            if (!extractors.isEmpty()) {
+                return new WithUnique(support, schema, treeConfig, emptyNode, extractors);
+            }
+        }
+
         return new MapModificationStrategy(support, schema, treeConfig, emptyNode);
     }
 
