@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -273,6 +274,11 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @return A model node
      */
     abstract @NonNull T getSchema();
+
+    @NonNullByDefault
+    TreeNode newMeta(final NormalizedNode data, final Version version) {
+        return TreeNode.of(data, version);
+    }
 
     /**
      * Checks if supplied schema node belong to specified Data Tree type. All nodes belong to the operational tree,
