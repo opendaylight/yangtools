@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
@@ -100,6 +102,45 @@ class OrderedListTest {
         delete2();
         modification3();
         modification4();
+    }
+
+    @Test
+    void itemsReorderSingleTransaction() throws DataValidationFailedException {
+        final var listPath = YangInstanceIdentifier.of(parentContainer, childContainer, parentOrderedList);
+        final var key1 = "key-1";
+        final var key2 = "key-2";
+        final var path1 = listPath.node(createParentOrderedListEntryPath(key1));
+        final var listItem1 = createParentOrderedListEntry(key1, "value-1");
+        final var path2 = listPath.node(createParentOrderedListEntryPath(key2));
+        final var listItem2 = createParentOrderedListEntry(key2, "value-2");
+
+        // ordered list of two items
+        final var modification1 = inMemoryDataTree.takeSnapshot().newModification();
+        modification1.write(path1, listItem1);
+        modification1.write(path2, listItem2);
+        modification1.ready();
+        inMemoryDataTree.commit(inMemoryDataTree.prepare(modification1));
+        final var data1 = inMemoryDataTree.takeSnapshot().readNode(listPath).orElse(null);
+        final var mapNode1 = Assertions.assertInstanceOf(UserMapNode.class, data1);
+        Assertions.assertEquals(2, mapNode1.size());
+        Assertions.assertEquals(key1, mapNode1.childAt(0).name().getValue(parentKeyLeaf));
+        Assertions.assertEquals(key2, mapNode1.childAt(1).name().getValue(parentKeyLeaf));
+
+        // items order change via delete then re-insert within same transaction
+        final var modification2 = inMemoryDataTree.takeSnapshot().newModification();
+        modification2.delete(path1);
+        modification2.delete(path2);
+        modification2.write(path2, listItem2);
+        modification2.write(path1, listItem1);
+        modification2.ready();
+        inMemoryDataTree.commit(inMemoryDataTree.prepare(modification2));
+
+        final var data2 = inMemoryDataTree.takeSnapshot().readNode(listPath).orElse(null);
+        final var mapNode2 = Assertions.assertInstanceOf(UserMapNode.class, data2);
+        Assertions.assertEquals(2, mapNode2.size());
+        // failure, the order remain same
+        Assertions.assertEquals(key2, mapNode2.childAt(0).name().getValue(parentKeyLeaf));
+        Assertions.assertEquals(key1, mapNode2.childAt(1).name().getValue(parentKeyLeaf));
     }
 
     public void modification1() throws DataValidationFailedException {
