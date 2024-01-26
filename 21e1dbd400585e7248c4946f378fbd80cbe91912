@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e752eeb_db0f80d7",
+        "filename": "common/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Bits.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-01-26T18:32:21Z",
+      "side": 1,
+      "message": "so ... we\u0027ll need to separate this out a bit more.\n\nThis should be an interface, not a final class. As for implementation, one of it will be the current yang-binding classes (which are using booleans). Another implementation will be hosted in ... yang-data-spi, probably.",
+      "range": {
+        "startLine": 32,
+        "startChar": 19,
+        "endLine": 32,
+        "endChar": 23
+      },
+      "revId": "21e1dbd400585e7248c4946f378fbd80cbe91912",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
