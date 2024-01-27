@@ -34,12 +34,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 class AugmentTest extends AbstractYangTest {
-    private static final QNameModule FOO = QNameModule.create(
-        XMLNamespace.of("urn:opendaylight.foo"), Revision.of("2013-10-13"));
-    private static final QNameModule BAR = QNameModule.create(
-        XMLNamespace.of("urn:opendaylight.bar"), Revision.of("2013-10-14"));
-    private static final QNameModule BAZ = QNameModule.create(
-        XMLNamespace.of("urn:opendaylight.baz"), Revision.of("2013-10-15"));
+    private static final QNameModule FOO = QNameModule.of("urn:opendaylight.foo", "2013-10-13");
+    private static final QNameModule BAR = QNameModule.of("urn:opendaylight.bar", "2013-10-14");
+    private static final QNameModule BAZ = QNameModule.of("urn:opendaylight.baz", "2013-10-15");
 
     private static final QName Q0 = QName.create(BAR, "interfaces");
     private static final QName Q1 = QName.create(BAR, "ifEntry");

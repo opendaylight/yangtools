@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -28,8 +27,8 @@ import org.opendaylight.yangtools.yang.model.api.Submodule;
 
 @ExtendWith(MockitoExtension.class)
 class ModuleDependencySortTest {
-    static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"));
-    static final QNameModule BAR_MODULE = QNameModule.create(XMLNamespace.of("bar"));
+    static final QNameModule FOO_MODULE = QNameModule.of("foo");
+    static final QNameModule BAR_MODULE = QNameModule.of("bar");
 
     @Mock
     Module fooNoRev;
@@ -46,8 +45,8 @@ class ModuleDependencySortTest {
     @BeforeEach
     void before() {
         doReturn("foo").when(fooNoRev).getName();
-        doReturn(FOO_MODULE.getNamespace()).when(fooNoRev).getNamespace();
-        doReturn(FOO_MODULE.getRevision()).when(fooNoRev).getRevision();
+        doReturn(FOO_MODULE.namespace()).when(fooNoRev).getNamespace();
+        doReturn(FOO_MODULE.findRevision()).when(fooNoRev).getRevision();
         doReturn(Set.of()).when(fooNoRev).getImports();
         doReturn(Set.of()).when(fooNoRev).getSubmodules();
     }
@@ -63,8 +62,8 @@ class ModuleDependencySortTest {
         doReturn(Optional.empty()).when(fooNoRevImport).getRevision();
 
         doReturn("bar").when(bar).getName();
-        doReturn(BAR_MODULE.getNamespace()).when(bar).getNamespace();
-        doReturn(BAR_MODULE.getRevision()).when(bar).getRevision();
+        doReturn(BAR_MODULE.namespace()).when(bar).getNamespace();
+        doReturn(BAR_MODULE.findRevision()).when(bar).getRevision();
         doReturn(YangVersion.VERSION_1).when(bar).getYangVersion();
         doReturn(Set.of()).when(bar).getImports();
         doReturn(Set.of(barSubmodule)).when(bar).getSubmodules();

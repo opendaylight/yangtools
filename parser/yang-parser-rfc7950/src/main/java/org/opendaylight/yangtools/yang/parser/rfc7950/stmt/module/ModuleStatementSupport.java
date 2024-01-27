@@ -141,7 +141,7 @@ public final class ModuleStatementSupport
         stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
 
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
-        final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
+        final QNameModule qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
 
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
         stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
@@ -154,11 +154,11 @@ public final class ModuleStatementSupport
             "Namespace of the module [%s] is missing", stmt.argument());
 
         final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
-        final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate).intern();
+        final QNameModule qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
         final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
                 stmt.namespaceItem(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
-            throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.getNamespace(),
+            throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.namespace(),
                 possibleDuplicateModule.sourceReference());
         }
 

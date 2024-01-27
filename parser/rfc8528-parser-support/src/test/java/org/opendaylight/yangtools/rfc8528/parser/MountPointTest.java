@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
@@ -24,8 +23,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSo
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
 class MountPointTest {
-    private static final QNameModule EXAMPLE_USES =
-        QNameModule.create(XMLNamespace.of("http://example.org/example-uses"));
+    private static final QNameModule EXAMPLE_USES = QNameModule.of("http://example.org/example-uses");
     private static final QName EXAMPLE_CONT = QName.create(EXAMPLE_USES, "cont");
     private static final QName EXAMPLE_GRP = QName.create(EXAMPLE_USES, "grp");
     private static final QName EXAMPLE_GRP_CONT = QName.create(EXAMPLE_USES, "grp-cont");

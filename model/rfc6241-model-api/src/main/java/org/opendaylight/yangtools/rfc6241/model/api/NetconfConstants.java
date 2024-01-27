@@ -26,7 +26,7 @@ public final class NetconfConstants {
     /**
      * Runtime RFC6241 identity.
      */
-    public static final QNameModule RFC6241_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC6241_REVISION).intern();
+    public static final QNameModule RFC6241_MODULE = QNameModule.of(MODULE_NAMESPACE, RFC6241_REVISION).intern();
 
     /**
      * Normative prefix to use when importing {@link #MODULE_NAME}.

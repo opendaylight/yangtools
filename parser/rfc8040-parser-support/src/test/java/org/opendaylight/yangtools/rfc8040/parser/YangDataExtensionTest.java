@@ -46,7 +46,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
             "/yang-data-extension-test/foobar.yang");
 
     private static final Revision REVISION = Revision.of("2017-06-01");
-    private static final QNameModule FOO_QNAMEMODULE = QNameModule.create(XMLNamespace.of("foo"), REVISION);
+    private static final QNameModule FOO_QNAMEMODULE = QNameModule.of(XMLNamespace.of("foo"), REVISION);
 
     @Test
     void testYangData() throws Exception {

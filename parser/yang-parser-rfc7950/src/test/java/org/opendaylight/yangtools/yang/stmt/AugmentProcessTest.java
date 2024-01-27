@@ -18,7 +18,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -36,35 +35,27 @@ class AugmentProcessTest extends AbstractYangTest {
     private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
-    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(XMLNamespace.of("root"));
-    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(XMLNamespace.of("aug"));
+    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.of("root");
+    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.of("aug");
 
-    private final QName augParent1 = QName.create(AUGMENTED_QNAME_MODULE,
-        "aug-parent1");
-    private final QName augParent2 = QName.create(AUGMENTED_QNAME_MODULE,
-        "aug-parent2");
-    private final QName contTarget = QName.create(AUGMENTED_QNAME_MODULE,
-        "cont-target");
+    private final QName augParent1 = QName.create(AUGMENTED_QNAME_MODULE, "aug-parent1");
+    private final QName augParent2 = QName.create(AUGMENTED_QNAME_MODULE, "aug-parent2");
+    private final QName contTarget = QName.create(AUGMENTED_QNAME_MODULE, "cont-target");
 
-    private final QName contAdded1 = QName.create(ROOT_QNAME_MODULE,
-        "cont-added1");
-    private final QName contAdded2 = QName.create(ROOT_QNAME_MODULE,
-        "cont-added2");
+    private final QName contAdded1 = QName.create(ROOT_QNAME_MODULE, "cont-added1");
+    private final QName contAdded2 = QName.create(ROOT_QNAME_MODULE, "cont-added2");
 
     private final QName list1 = QName.create(ROOT_QNAME_MODULE, "list1");
     private final QName axml = QName.create(ROOT_QNAME_MODULE, "axml");
 
-    private final QName contGrp = QName.create(ROOT_QNAME_MODULE,
-        "cont-grp");
-    private final QName axmlGrp = QName.create(ROOT_QNAME_MODULE,
-        "axml-grp");
+    private final QName contGrp = QName.create(ROOT_QNAME_MODULE, "cont-grp");
+    private final QName axmlGrp = QName.create(ROOT_QNAME_MODULE, "axml-grp");
 
     private final QName augCont1 = QName.create(ROOT_QNAME_MODULE, "aug-cont1");
     private final QName augCont2 = QName.create(ROOT_QNAME_MODULE, "aug-cont2");
 
     private final QName grpCont2 = QName.create(ROOT_QNAME_MODULE, "grp-cont2");
-    private final QName grpCont22 = QName.create(ROOT_QNAME_MODULE,
-        "grp-cont22");
+    private final QName grpCont22 = QName.create(ROOT_QNAME_MODULE, "grp-cont22");
     private final QName grpAdd = QName.create(ROOT_QNAME_MODULE, "grp-add");
 
     private static final StatementStreamSource MULTIPLE_AUGMENT = sourceForResource(

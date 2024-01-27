@@ -29,7 +29,7 @@ public final class SubscribedNotificationsConstants {
     /**
      * Runtime RFC8639 identity.
      */
-    public static final QNameModule RFC8639_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC8639_REVISION).intern();
+    public static final QNameModule RFC8639_MODULE = QNameModule.of(MODULE_NAMESPACE, RFC8639_REVISION).intern();
 
     /**
      * Normative prefix to use when importing {@link #MODULE_NAME}.

@@ -15,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
@@ -28,10 +26,9 @@ class Bug4610Test extends AbstractYangTest {
     @Test
     void test() {
         final var context = assertEffectiveModelDir("/bugs/bug4610");
-        final Revision revision = Revision.of("2015-12-12");
 
         // Original
-        final QName c1Bar = QName.create(QNameModule.create(XMLNamespace.of("bar"), revision), "c1");
+        final QName c1Bar = QName.create(QNameModule.of("bar", "2015-12-12"), "c1");
         final ContainerEffectiveStatement g1container = findContainer(context, QName.create(c1Bar, "g1"), c1Bar);
         final QName g1argument = g1container.argument();
         final ContainerStatement g1original = g1container.getDeclared();
@@ -40,7 +37,7 @@ class Bug4610Test extends AbstractYangTest {
         assertEquals(g1argument, g2container.argument());
         assertSame(g1original, g2container.getDeclared());
 
-        final QName c1Foo = QName.create(QNameModule.create(XMLNamespace.of("foo"), revision), "c1");
+        final QName c1Foo = QName.create(QNameModule.of("foo", "2015-12-12"), "c1");
         final ContainerEffectiveStatement g3container = findContainer(context, QName.create(c1Foo, "g3"), c1Foo);
         assertNotEquals(g1argument, g3container.argument());
         assertSame(g1original, g3container.getDeclared());

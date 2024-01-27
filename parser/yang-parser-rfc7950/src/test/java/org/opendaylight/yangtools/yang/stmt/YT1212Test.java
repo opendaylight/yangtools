@@ -11,23 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 class YT1212Test extends AbstractYangTest {
     @Test
     void testActiontatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/anyxml.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1212/anyxml.yang").getModuleStatement(QNameModule.of("foo"));
 
         final AnyxmlEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -45,8 +40,7 @@ class YT1212Test extends AbstractYangTest {
 
     @Test
     void testLeafStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/leaf.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1212/leaf.yang").getModuleStatement(QNameModule.of("foo"));
 
         final LeafEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -64,14 +58,14 @@ class YT1212Test extends AbstractYangTest {
 
     @Test
     void testContainerStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1212/container.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1212/container.yang")
+            .getModuleStatement(QNameModule.of("foo"));
 
-        final NotificationEffectiveStatement notif =
-            module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
-        final List<GroupingEffectiveStatement> groupings = notif.effectiveSubstatements().stream()
-            .filter(GroupingEffectiveStatement.class::isInstance).map(GroupingEffectiveStatement.class::cast)
-            .collect(Collectors.toList());
+        final var notif = module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+        final var groupings = notif.effectiveSubstatements().stream()
+            .filter(GroupingEffectiveStatement.class::isInstance)
+            .map(GroupingEffectiveStatement.class::cast)
+            .toList();
         assertEquals(2, groupings.size());
         final GroupingEffectiveStatement grp = groupings.get(0);
         assertEquals("grp", grp.argument().getLocalName());

@@ -29,7 +29,7 @@ public final class SchemaMountConstants {
     /**
      * Runtime RFC8528 identity.
      */
-    public static final QNameModule RFC8528_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC8528_REVISION).intern();
+    public static final QNameModule RFC8528_MODULE = QNameModule.of(MODULE_NAMESPACE, RFC8528_REVISION).intern();
 
     /**
      * Normative prefix to use when importing {@link #MODULE_NAME}.

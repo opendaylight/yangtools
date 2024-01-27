@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.odlext.model.api.MountEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSo
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
 class MountTest {
-    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"));
+    private static final QNameModule FOO = QNameModule.of("foo");
 
     @Test
     void test() throws Exception {

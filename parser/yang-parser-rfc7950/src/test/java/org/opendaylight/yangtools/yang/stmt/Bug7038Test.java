@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -24,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 class Bug7038Test extends AbstractYangTest {
     @Test
     void unknownNodeTest() {
-        final var bar = assertEffectiveModelDir("/bugs/bug7038")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("bar"))).getDeclared();
+        final var bar = assertEffectiveModelDir("/bugs/bug7038").getModuleStatement(QNameModule.of("bar"))
+            .getDeclared();
         final var decimal64 = bar.findFirstDeclaredSubstatement(UnrecognizedStatement.class).orElseThrow();
         assertEquals("decimal64", decimal64.argument());
         assertEquals(QName.create("foo", "decimal64"), decimal64.statementDefinition().getStatementName());

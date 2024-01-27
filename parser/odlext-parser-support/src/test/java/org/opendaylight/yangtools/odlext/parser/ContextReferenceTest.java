@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.odlext.model.api.ContextInstanceEffectiveState
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
@@ -28,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSo
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
 class ContextReferenceTest {
-    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"));
+    private static final QNameModule FOO = QNameModule.of("foo");
     private static final QName LEAF_TYPE = QName.create(FOO, "leaf-type");
     private static final QName LIST_TYPE = QName.create(FOO, "list-type");
 

@@ -29,7 +29,7 @@ public final class YangDataConstants {
     /**
      * Runtime RFC8040 identity.
      */
-    public static final QNameModule RFC8040_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC8040_REVISION).intern();
+    public static final QNameModule RFC8040_MODULE = QNameModule.of(MODULE_NAMESPACE, RFC8040_REVISION).intern();
 
     /**
      * Normative prefix to use when importing {@link #MODULE_NAME}.

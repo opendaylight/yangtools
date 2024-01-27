@@ -96,7 +96,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      *         <code>namespace</code> and no revision.
      */
     default Optional<Module> findModule(final @NonNull XMLNamespace namespace) {
-        return findModule(QNameModule.create(namespace));
+        return findModule(QNameModule.of(namespace));
     }
 
     /**
@@ -108,7 +108,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      *         <code>namespace</code> and <code>revision</code>.
      */
     default Optional<Module> findModule(final @NonNull XMLNamespace namespace, final @Nullable Revision revision) {
-        return findModule(QNameModule.create(namespace, revision));
+        return findModule(QNameModule.ofRevision(namespace, revision));
     }
 
     /**
@@ -121,7 +121,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      */
     default Optional<Module> findModule(final @NonNull XMLNamespace namespace,
             final @NonNull Optional<Revision> revision) {
-        return findModule(QNameModule.create(namespace, revision));
+        return findModule(QNameModule.ofRevision(namespace, revision.orElse(null)));
     }
 
     /**

@@ -19,8 +19,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -34,8 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 class YangParserSimpleTest extends AbstractYangTest {
-    private static final XMLNamespace NS = XMLNamespace.of("urn:opendaylight:simple-nodes");
-    private static final QNameModule SN = QNameModule.create(NS, Revision.of("2013-07-30"));
+    private static final QNameModule SN = QNameModule.of("urn:opendaylight:simple-nodes", "2013-07-30");
     private static final QName SN_NODES = QName.create(SN, "nodes");
 
     private static Module MODULE;

@@ -27,7 +27,7 @@ public final class OpenDaylightExtensionsConstants {
     /**
      * Runtime baseline identity.
      */
-    public static final QNameModule ORIGINAL_MODULE = QNameModule.create(MODULE_NAMESPACE, ORIGINAL_REVISION).intern();
+    public static final QNameModule ORIGINAL_MODULE = QNameModule.of(MODULE_NAMESPACE, ORIGINAL_REVISION).intern();
 
     private OpenDaylightExtensionsConstants() {
         // Hidden on purpose

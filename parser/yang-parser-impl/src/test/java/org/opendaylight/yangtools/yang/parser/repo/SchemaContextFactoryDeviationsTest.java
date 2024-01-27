@@ -19,8 +19,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 
@@ -31,18 +29,14 @@ public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepository
     private static final String FOOBAR = "/bug9195/foobar.yang";
     private static final String BAR_INVALID = "/bug9195/bar-invalid.yang";
     private static final String BAZ_INVALID = "/bug9195/baz-invalid.yang";
-    private static final XMLNamespace FOO_NS = XMLNamespace.of("foo-ns");
-    private static final XMLNamespace BAR_NS = XMLNamespace.of("bar-ns");
-    private static final XMLNamespace BAZ_NS = XMLNamespace.of("baz-ns");
-    private static final Revision REVISION = Revision.of("2017-05-16");
-    private static final QNameModule FOO_MODULE = QNameModule.create(FOO_NS, REVISION);
+    private static final QNameModule FOO_MODULE = QNameModule.of("foo-ns", "2017-05-16");
     private static final QName MY_FOO_CONT_A = QName.create(FOO_MODULE, "my-foo-cont-a");
     private static final QName MY_FOO_CONT_B = QName.create(FOO_MODULE, "my-foo-cont-b");
     private static final QName MY_FOO_CONT_C = QName.create(FOO_MODULE, "my-foo-cont-c");
-    private static final QNameModule BAR_MODULE = QNameModule.create(BAR_NS, REVISION);
+    private static final QNameModule BAR_MODULE = QNameModule.of("bar-ns", "2017-05-16");
     private static final QName MY_BAR_CONT_A = QName.create(BAR_MODULE, "my-bar-cont-a");
     private static final QName MY_BAR_CONT_B = QName.create(BAR_MODULE, "my-bar-cont-b");
-    private static final QNameModule BAZ_MODULE = QNameModule.create(BAZ_NS, REVISION);
+    private static final QNameModule BAZ_MODULE = QNameModule.of("baz-ns", "2017-05-16");
 
     @Test
     public void testDeviationsSupportedInSomeModules() {

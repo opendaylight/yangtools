@@ -12,17 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 
 class YT1209Test extends AbstractYangTest {
     @Test
     void testWhenStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1209/when.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1209/when.yang").getModuleStatement(QNameModule.of("foo"));
 
         final LeafEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
