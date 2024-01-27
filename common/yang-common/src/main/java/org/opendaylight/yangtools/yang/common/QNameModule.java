@@ -138,7 +138,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @throws NullPointerException if any argument is {@code null}
      * @deprecated Use {@link #ofRevision(XMLNamespace, Revision)} instead
      */
-    @Deprecated(since = "12.0.1", forRemoval = true)
+    @Deprecated(since = "13.0.1", forRemoval = true)
     public static @NonNull QNameModule create(final XMLNamespace namespace, final Optional<Revision> revision) {
         return ofRevision(namespace, revision.orElse(null));
     }
@@ -151,7 +151,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @throws NullPointerException if {@code namespace} is null
      * @deprecated Use {@link #of(XMLNamespace)} instead
      */
-    @Deprecated(since = "12.0.1", forRemoval = true)
+    @Deprecated(since = "13.0.1", forRemoval = true)
     public static @NonNull QNameModule create(final XMLNamespace namespace) {
         return of(namespace);
     }
@@ -165,7 +165,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @throws NullPointerException if any argument is {@code null}
      * @deprecated Use {@link #ofRevision(XMLNamespace, Revision)} instead
      */
-    @Deprecated(since = "12.0.1", forRemoval = true)
+    @Deprecated(since = "13.0.1", forRemoval = true)
     public static @NonNull QNameModule create(final XMLNamespace namespace, final @Nullable Revision revision) {
         return ofRevision(namespace, revision);
     }
@@ -197,7 +197,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return XMLNamespace of the namespace of the module
      * @deprecated Use {@link #namespace()} instead.
      */
-    @Deprecated(since = "12.0.1", forRemoval = true)
+    @Deprecated(since = "13.0.1", forRemoval = true)
     public @NonNull XMLNamespace getNamespace() {
         return namespace();
     }
@@ -235,7 +235,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return date of the module revision which is specified as argument of YANG Module {@code revision} keyword
      * @deprecated Use {@link #findRevision()} or {@link #revision()} instead.
      */
-    @Deprecated(since = "12.0.1", forRemoval = true)
+    @Deprecated(since = "13.0.1", forRemoval = true)
     public @NonNull Optional<Revision> getRevision() {
         return findRevision();
     }
