@@ -42,8 +42,7 @@ public final class XPathSupport {
 
         if (ctx.yangVersion().compareTo(parsed.getYangVersion()) < 0) {
             LOG.warn("{} features required in {} context to parse expression '{}' [at {}]",
-                parsed.getYangVersion().getReference(), ctx.yangVersion().getReference(), xpath,
-                ctx.sourceReference());
+                parsed.getYangVersion().reference(), ctx.yangVersion().reference(), xpath, ctx.sourceReference());
         }
         return parsed;
     }

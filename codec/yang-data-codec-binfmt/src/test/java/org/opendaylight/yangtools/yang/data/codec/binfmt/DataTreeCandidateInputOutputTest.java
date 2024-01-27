@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
@@ -70,17 +70,19 @@ class DataTreeCandidateInputOutputTest {
     @Test
     void testWriteRoot() throws Exception {
         assertSerialization(createCandidate(mod -> mod.write(YangInstanceIdentifier.of(),
-            ImmutableNodes.containerNode(SchemaContext.NAME))));
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME)).build())));
     }
 
     @Test
     void testWrite() throws Exception {
-        assertSerialization(createCandidate(mod -> mod.write(BAR_PATH, ImmutableNodes.containerNode(BAR))));
+        assertSerialization(createCandidate(mod -> mod.write(BAR_PATH,
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(BAR)).build())));
     }
 
     @Test
     void testDelete() throws Exception {
-        createCandidate(mod -> mod.write(BAR_PATH, ImmutableNodes.containerNode(BAR)));
+        createCandidate(mod -> mod.write(BAR_PATH,
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(BAR)).build()));
         assertSerialization(createCandidate(mod -> mod.delete(BAR_PATH)));
     }
 
@@ -98,7 +100,7 @@ class DataTreeCandidateInputOutputTest {
     @Test
     void testUnmodifiedRoot() throws Exception {
         assertSerialization(createCandidate(mod -> mod.merge(YangInstanceIdentifier.of(),
-            ImmutableNodes.containerNode(SchemaContext.NAME))));
+            ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME)).build())));
     }
 
     @Test
