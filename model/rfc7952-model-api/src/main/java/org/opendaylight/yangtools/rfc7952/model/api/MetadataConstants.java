@@ -29,7 +29,7 @@ public final class MetadataConstants {
     /**
      * Runtime RFC7952 identity.
      */
-    public static final QNameModule RFC7952_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC7952_REVISION).intern();
+    public static final QNameModule RFC7952_MODULE = QNameModule.of(MODULE_NAMESPACE, RFC7952_REVISION).intern();
 
     /**
      * Normative prefix to use when importing {@link #MODULE_NAME}.

@@ -12,8 +12,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -29,10 +27,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 final class TestingNormalizedNodeStructuresCreator {
-    private static final QNameModule COMPLEX_JSON =
-        QNameModule.create(XMLNamespace.of("ns:complex:json"), Revision.of("2014-08-11"));
-    private static final QNameModule COMPLEX_JSON_AUG =
-        QNameModule.create(XMLNamespace.of("ns:complex:json:augmentation"), Revision.of("2014-08-14"));
+    private static final QNameModule COMPLEX_JSON = QNameModule.of("ns:complex:json", "2014-08-11");
+    private static final QNameModule COMPLEX_JSON_AUG = QNameModule.of("ns:complex:json:augmentation", "2014-08-14");
 
     private TestingNormalizedNodeStructuresCreator() {
         // Hidden on purpose

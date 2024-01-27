@@ -108,7 +108,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      *             annotations.
      */
     @Deprecated
-    public static final QNameModule LEGACY_ATTRIBUTE_NAMESPACE = QNameModule.create(XMLNamespace.of("")).intern();
+    public static final QNameModule LEGACY_ATTRIBUTE_NAMESPACE = QNameModule.of("").intern();
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlParserStream.class);
     private static final String XML_STANDARD_VERSION = "1.0";
@@ -513,7 +513,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
                     final XMLNamespace nsUri;
                     try {
-                        nsUri = rawXmlNamespace(elementNS).getNamespace();
+                        nsUri = rawXmlNamespace(elementNS).namespace();
                     } catch (IllegalArgumentException e) {
                         throw new XMLStreamException("Failed to convert namespace " + xmlElementName, in.getLocation(),
                             e);
@@ -617,7 +617,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             }
 
             LOG.warn("Encountered unknown element {} from YANG Library namespace", localName);
-        } else if (SchemaMountConstants.RFC8528_MODULE.getNamespace().equals(namespace)) {
+        } else if (SchemaMountConstants.MODULE_NAMESPACE.equals(namespace)) {
             mount.setSchemaMounts(child);
             return;
         }
@@ -716,6 +716,6 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private QNameModule rawXmlNamespace(final String xmlNamespace) {
-        return rawNamespaces.computeIfAbsent(xmlNamespace, nsUri -> QNameModule.create(XMLNamespace.of(nsUri)));
+        return rawNamespaces.computeIfAbsent(xmlNamespace, QNameModule::of);
     }
 }

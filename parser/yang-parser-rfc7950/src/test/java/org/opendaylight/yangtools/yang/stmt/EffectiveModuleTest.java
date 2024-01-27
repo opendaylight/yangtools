@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 class EffectiveModuleTest {
-    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(XMLNamespace.of("root-ns"));
+    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.of("root-ns");
     private static final QName CONT = QName.create(ROOT_MODULE_QNAME, "cont");
     private static final QName FEATURE1 = QName.create(ROOT_MODULE_QNAME, "feature1");
     private static final Revision REVISION = Revision.of("2000-01-01");
@@ -74,7 +74,7 @@ class EffectiveModuleTest {
         assertEquals(1, deviations.size());
         final var deviationStmt = deviations.iterator().next();
         assertNotNull(deviationStmt);
-        final var importedContQName = QName.create(QNameModule.create(XMLNamespace.of("imported"), REVISION), "cont");
+        final var importedContQName = QName.create(QNameModule.of(XMLNamespace.of("imported"), REVISION), "cont");
         assertEquals(Absolute.of(importedContQName), deviationStmt.getTargetPath());
         assertEquals(DeviateKind.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());
         assertEquals(Optional.of("deviate reference"), deviationStmt.getReference());

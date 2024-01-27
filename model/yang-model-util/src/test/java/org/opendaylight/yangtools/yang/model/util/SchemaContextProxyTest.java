@@ -591,7 +591,7 @@ class SchemaContextProxyTest {
     private static Module mockModule(final String name, final Revision rev) {
         final var mod = mockModule(name);
 
-        doReturn(QNameModule.create(mod.getNamespace(), rev)).when(mod).getQNameModule();
+        doReturn(QNameModule.ofRevision(mod.getNamespace(), rev)).when(mod).getQNameModule();
         doReturn(Optional.ofNullable(rev)).when(mod).getRevision();
         doReturn(mod.getQNameModule().toString()).when(mod).toString();
 
@@ -616,7 +616,7 @@ class SchemaContextProxyTest {
         doReturn(Optional.of(REVISION)).when(mockedModule).getRevision();
         final var newNamespace = XMLNamespace.of(NAMESPACE + ":" + name);
         doReturn(newNamespace).when(mockedModule).getNamespace();
-        doReturn(QNameModule.create(newNamespace, REVISION)).when(mockedModule).getQNameModule();
+        doReturn(QNameModule.of(newNamespace, REVISION)).when(mockedModule).getQNameModule();
         doReturn(Set.of()).when(mockedModule).getSubmodules();
         doReturn(mockedModule.getQNameModule().toString()).when(mockedModule).toString();
         mockModuleImport(mockedModule);

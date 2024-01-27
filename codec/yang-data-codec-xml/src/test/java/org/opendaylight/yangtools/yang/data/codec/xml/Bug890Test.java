@@ -18,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -32,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Bug890Test {
-    private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2018-07-10"));
+    private static final QNameModule FOO_MODULE = QNameModule.of("foo", "2018-07-10");
     private static final QName OUTGOING_LABELS_QNAME = QName.create(FOO_MODULE, "outgoing-labels");
     private static final QName INDEX_QNAME = QName.create(FOO_MODULE, "index");
 

@@ -15,17 +15,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1297Test {
     private static final QNameModule RESTCONF =
-        QNameModule.create(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-restconf"), Revision.of("2017-01-26"));
+        QNameModule.of("urn:ietf:params:xml:ns:yang:ietf-restconf", "2017-01-26");
     private static final QNameModule BAD_MODULE =
-        QNameModule.create(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-restconf"), Revision.of("2018-01-26"));
+        QNameModule.of("urn:ietf:params:xml:ns:yang:ietf-restconf", "2018-01-26");
 
     private static EffectiveModelContext context;
 

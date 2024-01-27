@@ -59,7 +59,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
         final var features = ImmutableSet.<QName>builder();
 
         for (var module : moduleSet.modules().values()) {
-            final var namespace = QNameModule.create(module.namespace(), module.identifier().revision());
+            final var namespace = QNameModule.ofRevision(module.namespace(), module.identifier().revision());
             for (var feat : module.features()) {
                 features.add(feat.bindTo(namespace));
             }

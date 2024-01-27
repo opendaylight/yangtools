@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
@@ -29,7 +27,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1472Test {
     private static final QNameModule RESTCONF_MODULE =
-        QNameModule.create(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-restconf"), Revision.of("2017-01-26"));
+        QNameModule.of("urn:ietf:params:xml:ns:yang:ietf-restconf", "2017-01-26");
     private static final YangDataName ERRORS_NAME = new YangDataName(RESTCONF_MODULE, "yang-errors");
     private static final NodeIdentifier ERROR_NID = NodeIdentifier.create(QName.create(RESTCONF_MODULE, "error"));
 

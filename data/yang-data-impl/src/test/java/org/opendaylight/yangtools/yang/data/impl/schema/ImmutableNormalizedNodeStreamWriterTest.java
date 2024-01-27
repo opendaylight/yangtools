@@ -17,8 +17,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -64,7 +62,7 @@ class ImmutableNormalizedNodeStreamWriterTest {
 
     @Test
     void testImmutableNormalizedNodeStreamWriter() throws IOException {
-        bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"), Revision.of("1970-01-01"));
+        bazModule = QNameModule.of("baz-namespace", "1970-01-01");
 
         outerContainer = QName.create(bazModule, "outer-container");
 

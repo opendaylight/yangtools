@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwar
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -39,7 +38,7 @@ class StringPatternCheckingCodecTest {
             }""");
         assertNotNull(schemaContext);
 
-        final var testModuleQName = QNameModule.create(XMLNamespace.of("string-pattern-checking-codec-test"));
+        final var testModuleQName = QNameModule.of("string-pattern-checking-codec-test");
 
         final var testModule = schemaContext.findModules("string-pattern-checking-codec-test").iterator().next();
         final var testContainer = (ContainerSchemaNode) testModule.getDataChildByName(

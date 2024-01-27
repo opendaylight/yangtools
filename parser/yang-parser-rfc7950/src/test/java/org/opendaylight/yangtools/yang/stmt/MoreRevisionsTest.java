@@ -43,7 +43,7 @@ class MoreRevisionsTest extends AbstractYangTest {
     void readAndParseYangFileTest() {
         final var result = assertEffectiveModel("/semantic-statement-parser/revisions/more-revisions-test.yang");
         final var moduleByName = result.getModules().iterator().next();
-        assertEquals("2015-06-07", moduleByName.getQNameModule().getRevision().orElseThrow().toString());
+        assertEquals(Revision.of("2015-06-07"), moduleByName.getQNameModule().revision());
     }
 
     @Test
@@ -88,9 +88,9 @@ class MoreRevisionsTest extends AbstractYangTest {
         final Revision rev20130516 = Revision.of("2013-05-16");
         final Revision rev20130715 = Revision.of("2013-07-15");
 
-        final QNameModule yangTypes20100924 = QNameModule.create(yangTypesNS, rev20100924);
-        final QNameModule yangTypes20130516 = QNameModule.create(yangTypesNS, rev20130516);
-        final QNameModule yangTypes20130715 = QNameModule.create(yangTypesNS, rev20130715);
+        final QNameModule yangTypes20100924 = QNameModule.of(yangTypesNS, rev20100924);
+        final QNameModule yangTypes20130516 = QNameModule.of(yangTypesNS, rev20130516);
+        final QNameModule yangTypes20130715 = QNameModule.of(yangTypesNS, rev20130715);
 
         final QName dateTimeTypeDef20100924 = QName.create(yangTypes20100924, "date-and-time");
         final QName dateTimeTypeDef20130516 = QName.create(yangTypes20130516, "date-and-time");
@@ -149,9 +149,9 @@ class MoreRevisionsTest extends AbstractYangTest {
         final Revision rev20130516 = Revision.of("2013-05-16");
         final Revision rev20130715 = Revision.of("2013-07-15");
 
-        final QNameModule yangTypes20100924 = QNameModule.create(yangTypesNS, rev20100924);
-        final QNameModule yangTypes20130516 = QNameModule.create(yangTypesNS, rev20130516);
-        final QNameModule yangTypes20130715 = QNameModule.create(yangTypesNS, rev20130715);
+        final QNameModule yangTypes20100924 = QNameModule.of(yangTypesNS, rev20100924);
+        final QNameModule yangTypes20130516 = QNameModule.of(yangTypesNS, rev20130516);
+        final QNameModule yangTypes20130715 = QNameModule.of(yangTypesNS, rev20130715);
 
         final QName dateTimeTypeDef20100924 = QName.create(yangTypes20100924, "date-and-time");
         final QName dateTimeTypeDef20130516 = QName.create(yangTypes20130516, "date-and-time");
@@ -168,11 +168,11 @@ class MoreRevisionsTest extends AbstractYangTest {
         checkInterfacesModuleSimpleTest(context, rev20100924, dateTimeTypeDef20100924);
     }
 
-    private static void checkInterfacesModuleSimpleTest(final EffectiveModelContext context,
-        final Revision rev20100924, final QName dateTimeTypeDef20100924) {
+    private static void checkInterfacesModuleSimpleTest(final EffectiveModelContext context, final Revision rev20100924,
+            final QName dateTimeTypeDef20100924) {
         XMLNamespace interfacesNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-interfaces");
         Revision rev20121115 = Revision.of("2012-11-15");
-        final QNameModule interfacesNS20121115 = QNameModule.create(interfacesNS, rev20121115);
+        final QNameModule interfacesNS20121115 = QNameModule.of(interfacesNS, rev20121115);
         QName lastChange = QName.create(interfacesNS20121115, "last-change");
 
         var interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).orElseThrow();
@@ -189,8 +189,7 @@ class MoreRevisionsTest extends AbstractYangTest {
 
     private static void checkNetconfMonitoringModuleSimpleTest(final EffectiveModelContext context,
         final Revision rev20130715, final QName dateTimeTypeDef20130715) {
-        final XMLNamespace monitoringNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
-        final QNameModule monitoring19700101 = QNameModule.create(monitoringNS);
+        final QNameModule monitoring19700101 = QNameModule.of("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
         QName lockedTime = QName.create(monitoring19700101, "locked-time");
 
         var monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").orElseThrow();

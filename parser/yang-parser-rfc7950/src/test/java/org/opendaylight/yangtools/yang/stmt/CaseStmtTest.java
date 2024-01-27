@@ -47,8 +47,8 @@ class CaseStmtTest extends AbstractYangTest {
         rootBar = schema.findModule("bar", rev).orElseThrow();
         assertNotNull(rootFoo);
         assertNotNull(rootBar);
-        qnameFoo = QNameModule.create(XMLNamespace.of("foo"), rev);
-        qnameBar = QNameModule.create(XMLNamespace.of("bar"), rev);
+        qnameFoo = QNameModule.of(XMLNamespace.of("foo"), rev);
+        qnameBar = QNameModule.of(XMLNamespace.of("bar"), rev);
         assertNotNull(qnameFoo);
         assertNotNull(qnameBar);
     }

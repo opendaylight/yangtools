@@ -13,14 +13,12 @@ import com.google.common.annotations.Beta;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.PrettyTree;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 
 @Beta
 public final class NormalizedNodePrettyTree extends PrettyTree implements Immutable {
@@ -91,10 +89,10 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
     private static boolean appendNamespace(final StringBuilder sb, final QNameModule parent,
             final QNameModule current) {
         if (!current.equals(parent)) {
-            sb.append('(').append(current.getNamespace());
-            final Optional<Revision> rev = current.getRevision();
-            if (rev.isPresent()) {
-                sb.append('@').append(rev.orElseThrow());
+            sb.append('(').append(current.namespace());
+            final var rev = current.revision();
+            if (rev != null) {
+                sb.append('@').append(rev);
             }
             sb.append(')');
             return true;

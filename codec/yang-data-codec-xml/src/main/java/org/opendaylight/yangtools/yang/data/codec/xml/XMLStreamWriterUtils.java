@@ -103,7 +103,7 @@ abstract class XMLStreamWriterUtils {
     static String encode(final @NonNull ValueWriter writer, final @NonNull QName qname, final QNameModule parent)
             throws XMLStreamException {
         //in case parent is present and same as element namespace write value without namespace
-        if (qname.getNamespace().equals(parent.getNamespace())) {
+        if (qname.getNamespace().equals(parent.namespace())) {
             return qname.getLocalName();
         }
 

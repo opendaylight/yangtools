@@ -15,12 +15,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class IdentityCodecUtilTest {
-    private static final QNameModule MODULE = QNameModule.create(XMLNamespace.of("yangtools846"));
+    private static final QNameModule MODULE = QNameModule.of("yangtools846");
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeAll

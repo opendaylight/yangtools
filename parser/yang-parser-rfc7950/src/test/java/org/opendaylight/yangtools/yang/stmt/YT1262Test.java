@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
@@ -27,7 +26,7 @@ class YT1262Test extends AbstractYangTest {
     @Test
     void testTypedefNamespaces() {
         final var modelContext = assertEffectiveModelDir("/bugs/YT1262");
-        final var module = modelContext.getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = modelContext.getModuleStatement(QNameModule.of("foo"));
         assertTypedef(module, "fdef");
         assertTypedef(module, "sdef");
         assertTypedef(module.findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow(), "gdef");

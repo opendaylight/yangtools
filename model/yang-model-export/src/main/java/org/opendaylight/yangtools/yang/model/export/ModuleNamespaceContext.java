@@ -36,7 +36,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
 
         final var namespaces = ImmutableListMultimap.<String, String>builder();
         for (var entry : module.namespacePrefixes()) {
-            namespaces.put(entry.getKey().getNamespace().toString(), entry.getValue());
+            namespaces.put(entry.getKey().namespace().toString(), entry.getValue());
         }
         namespaceToPrefix = namespaces.build();
     }
@@ -50,7 +50,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
             case XMLConstants.XML_NS_PREFIX -> XMLConstants.XML_NS_URI;
             case XMLConstants.XMLNS_ATTRIBUTE -> XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
             default -> module.findReachableModule(prefix)
-                .map(importedModule -> importedModule.localQNameModule().getNamespace().toString())
+                .map(importedModule -> importedModule.localQNameModule().namespace().toString())
                 .orElse(XMLConstants.NULL_NS_URI);
         };
     }
@@ -90,7 +90,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
 
         final String prefix = module.findNamespacePrefix(namespace)
             .orElseThrow(() -> new IllegalArgumentException("Module " + namespace + " does not map to a prefix"));
-        return Map.entry(prefix, namespace.getNamespace().toString());
+        return Map.entry(prefix, namespace.namespace().toString());
     }
 
     Collection<Entry<String, ModuleEffectiveStatement>> importedModules() {

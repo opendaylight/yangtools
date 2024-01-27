@@ -22,7 +22,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -71,7 +70,7 @@ public class NormalizedNodesToXmlTest extends AbstractXmlTest {
 
     @BeforeEach
     void setup() {
-        bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"));
+        bazModule = QNameModule.of("baz-namespace");
 
         outerContainer = QName.create(bazModule, "outer-container");
 

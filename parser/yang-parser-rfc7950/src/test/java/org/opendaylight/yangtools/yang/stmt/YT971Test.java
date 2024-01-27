@@ -14,8 +14,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -23,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 
 class YT971Test extends AbstractYangTest {
-    private static final QNameModule NAMESPACE = QNameModule.create(XMLNamespace.of("test"), Revision.of("2019-03-25"));
+    private static final QNameModule NAMESPACE = QNameModule.of("test", "2019-03-25");
 
     @Test
     void testEscapeLexer() {

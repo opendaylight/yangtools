@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Bug7844Test {
@@ -121,7 +120,7 @@ class Bug7844Test {
         final var referencingChilds = leafRefContext.getReferencingChilds();
         assertEquals(7, referencingChilds.size());
 
-        final var bazQNameModule = QNameModule.create(XMLNamespace.of(BAZ_NS));
+        final var bazQNameModule = QNameModule.of(BAZ_NS);
         final var expectedPathToBazTarget = LeafRefPath.create(true,
                 new QNameWithPredicateImpl(bazQNameModule, "root", ImmutableList.of()),
                 new QNameWithPredicateImpl(bazQNameModule, "target", ImmutableList.of()));
@@ -133,7 +132,7 @@ class Bug7844Test {
         assertLeafRef(referencingChilds.get(bar("my-leafref-in-bar")), expectedPathToBazTarget);
         assertLeafRef(referencingChilds.get(bar("my-leafref-in-bar-2")), expectedPathToBazTarget);
 
-        final var barQNameModule = QNameModule.create(XMLNamespace.of(BAR_NS));
+        final var barQNameModule = QNameModule.of(BAR_NS);
         final var expectedPathToBarTarget = LeafRefPath.create(true,
                 new QNameWithPredicateImpl(barQNameModule, "bar-target", ImmutableList.of()));
         assertLeafRef(referencingChilds.get(foo("direct-leafref")), expectedPathToBarTarget);

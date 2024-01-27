@@ -75,10 +75,9 @@ class QNameWithPredicateBuilder implements Mutable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof QNameWithPredicateBuilder)) {
+        if (!(obj instanceof final QNameWithPredicateBuilder other)) {
             return false;
         }
-        final QNameWithPredicateBuilder other = (QNameWithPredicateBuilder) obj;
         return Objects.equals(localName, other.localName) &&  moduleQname.equals(other.moduleQname);
     }
 
@@ -91,17 +90,20 @@ class QNameWithPredicateBuilder implements Mutable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final var sb = new StringBuilder();
 
         if (moduleQname != null) {
-            sb.append('(').append(moduleQname.getNamespace());
-            sb.append("?revision=").append(moduleQname.getRevision());
+            sb.append('(').append(moduleQname.namespace());
+            final var rev = moduleQname.revision();
+            if (rev != null) {
+                sb.append("?revision=").append(rev);
+            }
             sb.append(')');
         }
 
         sb.append(localName);
 
-        for (final QNamePredicate predicate : qnamePredicates) {
+        for (var predicate : qnamePredicates) {
             sb.append(predicate);
         }
 

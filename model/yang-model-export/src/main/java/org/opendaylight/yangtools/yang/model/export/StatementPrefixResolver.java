@@ -142,7 +142,7 @@ final class StatementPrefixResolver {
         if (obj != null) {
             return decodeEntry(obj, stmt);
         }
-        if (module.getRevision().isPresent()) {
+        if (module.revision() != null) {
             throw new IllegalArgumentException("Failed to find prefix for statement " + stmt);
         }
 
@@ -155,8 +155,8 @@ final class StatementPrefixResolver {
         Entry<QNameModule, ?> match = null;
         for (var entry : lookup.entrySet()) {
             final var ns = entry.getKey();
-            if (module.equals(ns.withoutRevision()) && (match == null
-                    || Revision.compare(match.getKey().getRevision(), ns.getRevision()) < 0)) {
+            if (module.equals(ns.withoutRevision())
+                && (match == null || Revision.compare(match.getKey().revision(), ns.revision()) < 0)) {
                 match = entry;
             }
         }

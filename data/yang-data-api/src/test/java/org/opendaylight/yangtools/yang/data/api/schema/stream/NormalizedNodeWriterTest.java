@@ -17,12 +17,9 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -39,22 +36,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 
-public class NormalizedNodeWriterTest {
-    private QNameModule bazModule;
-    private QName myKeyedList;
-    private QName myKeyLeaf;
-    private QName myLeafList;
-
-    @BeforeEach
-    public void setUp() {
-        bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"), Revision.of("1970-01-01"));
-        myKeyedList = QName.create(bazModule, "my-keyed-list");
-        myKeyLeaf = QName.create(bazModule, "my-key-leaf");
-        myLeafList = QName.create(bazModule, "my-leaf-list");
-    }
+class NormalizedNodeWriterTest {
+    private final QNameModule bazModule = QNameModule.of("baz-namespace", "1970-01-01");
+    private final QName myKeyedList = QName.create(bazModule, "my-keyed-list");
+    private final QName myKeyLeaf = QName.create(bazModule, "my-key-leaf");
+    private final QName myLeafList = QName.create(bazModule, "my-leaf-list");
 
     @Test
-    public void testNormalizedNodeWriter() throws IOException {
+    void testNormalizedNodeWriter() throws IOException {
         final var loggingNormalizedNodeStreamWriter = new LoggingNormalizedNodeStreamWriter();
         final var orderedNormalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
                 loggingNormalizedNodeStreamWriter);

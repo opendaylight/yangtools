@@ -59,7 +59,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
     @Override
     public void writeValue(final XMLStreamWriter ctx, final QName value) throws XMLStreamException {
         final var prefixes = new NamespacePrefixes(ctx.getNamespaceContext(), pref);
-        final var str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.getNamespace()));
+        final var str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.namespace()));
 
         for (var entry : prefixes.emittedPrefixes()) {
             ctx.writeNamespace(entry.getValue(), entry.getKey().toString());

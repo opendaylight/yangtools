@@ -22,8 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -40,8 +38,8 @@ class AnyXmlWithParamsParsingTest {
     private static final InputStream EDIT_CONFIG = XmlToNormalizedNodesTest.class.getResourceAsStream(
             "/anyxml-support/params/edit.xml");
 
-    private static final QNameModule IETF_NETCONF = QNameModule.create(
-        XMLNamespace.of("urn:ietf:params:xml:ns:netconf:base:1.0"), Revision.of("2011-06-01"));
+    private static final QNameModule IETF_NETCONF =
+        QNameModule.of("urn:ietf:params:xml:ns:netconf:base:1.0", "2011-06-01");
 
     @Test
     void testAnyXmlWithParams() throws Exception {

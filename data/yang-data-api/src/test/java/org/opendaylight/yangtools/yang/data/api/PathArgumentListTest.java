@@ -19,23 +19,21 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-public class PathArgumentListTest {
+class PathArgumentListTest {
     private static final PathArgumentList LIST = new StackedPathArguments(YangInstanceIdentifier.of(),
         List.of(new NodeIdentifier(QName.create("foo", "foo"))));
 
     @Test
-    public void testIsEmpty() {
+    void testIsEmpty() {
         assertFalse(LIST.isEmpty());
     }
 
     @Test
-    public void testProtections() {
+    void testProtections() {
         assertThrows(UnsupportedOperationException.class, () -> LIST.remove(null));
         assertThrows(UnsupportedOperationException.class, () -> LIST.addAll(List.of()));
         assertThrows(UnsupportedOperationException.class, () -> LIST.removeAll(List.of()));
@@ -45,9 +43,8 @@ public class PathArgumentListTest {
     }
 
     @Test
-    public void testPathArgument() {
-        final QNameModule qNameModule = QNameModule.create(XMLNamespace.of("urn:opendaylight.test2"),
-            Revision.of("2015-08-08"));
+    void testPathArgument() {
+        final QNameModule qNameModule = QNameModule.of("urn:opendaylight.test2", "2015-08-08");
         final QName qNameRoot = QName.create(qNameModule, "root");
         final QName qNameList = QName.create(qNameModule, "list");
         final QName qNameLeaf = QName.create(qNameModule, "leaf-a");

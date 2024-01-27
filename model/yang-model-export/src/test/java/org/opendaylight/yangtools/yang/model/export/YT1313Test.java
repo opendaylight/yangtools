@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1313Test {
@@ -59,7 +58,7 @@ public class YT1313Test {
                 type string;
               }
             }""")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("bar")));
+            .getModuleStatement(QNameModule.of("bar"));
 
         final StatementPrefixResolver resolver = StatementPrefixResolver.forModule(bar);
         assertNotNull(resolver);

@@ -19,9 +19,6 @@ import javax.xml.transform.dom.DOMResult;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -33,9 +30,8 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xmlunit.builder.DiffBuilder;
 
 class Bug5446Test extends AbstractXmlTest {
-    private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2015-11-05"));
-    private static final QName ROOT_QNAME = QName.create(FOO_MODULE, "root");
-    private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
+    private static final QName ROOT_QNAME = QName.create("foo", "2015-11-05", "root");
+    private static final QName IP_ADDRESS_QNAME = QName.create(ROOT_QNAME, "ip-address");
 
     @Test
     void test() throws Exception {

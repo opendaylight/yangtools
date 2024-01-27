@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -43,11 +42,9 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
 class XmlToNormalizedNodesTest {
+    private static final QName PARENT_CONTAINER = QName.create("foo-namespace", "parent-container");
 
-    private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo-namespace"));
-    private static final QName PARENT_CONTAINER = QName.create(FOO_MODULE, "parent-container");
-
-    private static final QNameModule BAZ_MODULE = QNameModule.create(XMLNamespace.of("baz-namespace"));
+    private static final QNameModule BAZ_MODULE = QNameModule.of("baz-namespace");
     private static final QName OUTER_CONTAINER = QName.create(BAZ_MODULE, "outer-container");
 
     private static final QName MY_CONTAINER_1 = QName.create(BAZ_MODULE, "my-container-1");

@@ -12,12 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 
 class Bug4231Test {
-    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2015-09-02"));
+    private static final QNameModule FOO = QNameModule.of("foo", "2015-09-02");
 
     @Test
     void test() throws Exception {

@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -24,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Bug8675Test {
-    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2017-06-13"));
+    private static final QNameModule FOO = QNameModule.of("foo", "2017-06-13");
 
     private static EffectiveModelContext schemaContext;
 

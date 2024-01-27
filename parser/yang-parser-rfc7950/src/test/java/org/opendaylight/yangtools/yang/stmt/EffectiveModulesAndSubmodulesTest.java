@@ -43,7 +43,7 @@ class EffectiveModulesAndSubmodulesTest {
     private static final StatementStreamSource SUBMODULE_TO_SUBMODULE_1 = sourceForResource(
         "/stmt-test/submodules/submodule-to-submodule-1.yang");
 
-    private static final QNameModule ROOT = QNameModule.create(XMLNamespace.of("root-module"));
+    private static final QNameModule ROOT = QNameModule.of("root-module");
 
     @Test
     void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {

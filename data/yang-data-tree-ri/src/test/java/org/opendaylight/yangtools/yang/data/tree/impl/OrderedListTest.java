@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -47,7 +46,7 @@ class OrderedListTest {
 
     @BeforeEach
     void setup() {
-        testModule = QNameModule.create(XMLNamespace.of("ordered-list-modification-test"));
+        testModule = QNameModule.of("ordered-list-modification-test");
         parentContainer = QName.create(testModule, "parent-container");
         childContainer = QName.create(testModule, "child-container");
         parentOrderedList = QName.create(testModule, "parent-ordered-list");

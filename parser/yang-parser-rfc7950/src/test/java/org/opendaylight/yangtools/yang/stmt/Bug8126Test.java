@@ -24,8 +24,7 @@ class Bug8126Test extends AbstractYangTest {
 
     @Test
     void testValidAugments() {
-        final var fooModule = assertEffectiveModelDir("/bugs/bug8126/valid")
-            .getModuleStatement(QNameModule.create(FOO_NS));
+        final var fooModule = assertEffectiveModelDir("/bugs/bug8126/valid").getModuleStatement(QNameModule.of(FOO_NS));
         assertInstanceOf(LeafSchemaNode.class, fooModule.findSchemaTreeNode(
             foo("root"), bar("my-container"), bar("my-choice"), bar("one"), bar("one"), bar("mandatory-leaf"))
             .orElseThrow());

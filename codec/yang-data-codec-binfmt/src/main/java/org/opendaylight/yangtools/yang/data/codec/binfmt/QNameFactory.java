@@ -19,8 +19,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 final class QNameFactory {
@@ -97,7 +95,7 @@ final class QNameFactory {
         }
 
         QNameModule toQNameModule() {
-            return QNameModule.create(XMLNamespace.of(namespace), Revision.ofNullable(revision));
+            return QNameModule.ofRevision(namespace, revision);
         }
     }
 

@@ -63,7 +63,7 @@ abstract class JSONStreamWriterContext {
         final StringBuilder sb = new StringBuilder();
         // Prepend module name if namespaces do not match
         final QNameModule module = qname.getModule();
-        if (!module.getNamespace().equals(getNamespace())) {
+        if (!module.namespace().equals(getNamespace())) {
             final var name = schema.findModuleStatement(module)
                 .map(mod -> mod.argument().getLocalName())
                 .orElseThrow(() -> new IllegalArgumentException("Could not find module for namespace " + module));

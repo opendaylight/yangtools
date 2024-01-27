@@ -14,16 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Bug8083Test {
-    private static final QNameModule FOOBAR = QNameModule.create(XMLNamespace.of("foobar-ns"));
-    private static final QNameModule BAZ = QNameModule.create(XMLNamespace.of("baz-ns"));
-    private static final QNameModule ZAB = QNameModule.create(XMLNamespace.of("zab-ns"));
+    private static final QNameModule FOOBAR = QNameModule.of("foobar-ns");
+    private static final QNameModule BAZ = QNameModule.of("baz-ns");
+    private static final QNameModule ZAB = QNameModule.of("zab-ns");
 
     @Test
     void testInstanceIdentifierPathWithEmptyListKey() throws Exception {

@@ -23,9 +23,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -37,8 +35,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class NormalizedNodeXmlTranslationTest extends AbstractXmlTest {
-    private static final QNameModule MODULE = QNameModule.create(
-        XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:controller:test"), Revision.of("2014-03-13"));
+    private static final QNameModule MODULE =
+        QNameModule.of("urn:opendaylight:params:xml:ns:yang:controller:test", "2014-03-13");
 
     private static ContainerNode augmentChoiceHell2() {
         final var container = getNodeIdentifier("container");

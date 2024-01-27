@@ -14,13 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
 class YangTypes2StmtTest extends AbstractYangTest {
-    private static final QNameModule TYPES2_MODULE = QNameModule.create(XMLNamespace.of("types2"));
+    private static final QNameModule TYPES2_MODULE = QNameModule.of("types2");
 
     private static final QName LF_DECIMAL = QName.create(TYPES2_MODULE, "lf-decimal");
     private static final QName LF_MY_STRING = QName.create(TYPES2_MODULE, "lf-my-string");

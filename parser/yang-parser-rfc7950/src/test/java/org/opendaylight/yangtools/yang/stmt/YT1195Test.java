@@ -12,23 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 class YT1195Test extends AbstractYangTest {
     @Test
     void testKeyStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1195/key.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
-
-        final ListEffectiveStatement grpFoo = module
-            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+        final var module = assertEffectiveModel("/bugs/YT1195/key.yang").getModuleStatement(QNameModule.of("foo"));
+        final var grpFoo = module.findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
             .findFirstEffectiveSubstatement(ListEffectiveStatement.class).orElseThrow();
-        final ListEffectiveStatement foo = module
-            .findFirstEffectiveSubstatement(ListEffectiveStatement.class).orElseThrow();
+        final var foo = module.findFirstEffectiveSubstatement(ListEffectiveStatement.class).orElseThrow();
 
         // The statements should not be the same due history being part of ListSchemaNode
         assertNotSame(foo, grpFoo);

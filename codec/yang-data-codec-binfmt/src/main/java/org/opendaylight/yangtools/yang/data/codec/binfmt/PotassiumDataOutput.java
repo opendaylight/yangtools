@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -31,7 +30,6 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -562,10 +560,10 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
         final Integer code = moduleCodeMap.get(module);
         if (code == null) {
             moduleCodeMap.put(module, moduleCodeMap.size());
-            encodeString(module.getNamespace().toString());
-            final Optional<Revision> rev = module.getRevision();
-            if (rev.isPresent()) {
-                encodeString(rev.orElseThrow().toString());
+            encodeString(module.namespace().toString());
+            final var rev = module.revision();
+            if (rev != null) {
+                encodeString(rev.toString());
             } else {
                 output.writeByte(PotassiumValue.STRING_EMPTY);
             }

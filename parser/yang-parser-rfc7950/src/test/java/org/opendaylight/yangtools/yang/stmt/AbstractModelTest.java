@@ -13,8 +13,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
@@ -22,12 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  * Abstract base class for tests of the model context available in {@code src/test/resources/model}.
  */
 public abstract class AbstractModelTest extends AbstractYangTest {
-    private static final QNameModule FOO_NS =
-        QNameModule.create(XMLNamespace.of("urn:opendaylight.foo"), Revision.of("2013-02-27"));
-    private static final QNameModule BAR_NS =
-        QNameModule.create(XMLNamespace.of("urn:opendaylight.bar"), Revision.of("2013-07-03"));
-    private static final QNameModule BAZ_NS =
-        QNameModule.create(XMLNamespace.of("urn:opendaylight.baz"), Revision.of("2013-02-27"));
+    private static final QNameModule FOO_NS = QNameModule.of("urn:opendaylight.foo", "2013-02-27");
+    private static final QNameModule BAR_NS = QNameModule.of("urn:opendaylight.bar", "2013-07-03");
+    private static final QNameModule BAZ_NS = QNameModule.of("urn:opendaylight.baz", "2013-02-27");
 
     static EffectiveModelContext CTX;
     static Module FOO;

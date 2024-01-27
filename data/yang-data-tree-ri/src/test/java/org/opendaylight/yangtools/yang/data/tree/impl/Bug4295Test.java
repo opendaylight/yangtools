@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -42,7 +41,7 @@ class Bug4295Test {
 
     @Test
     void test() throws DataValidationFailedException {
-        foo = QNameModule.create(XMLNamespace.of("foo"));
+        foo = QNameModule.of("foo");
         root = QName.create(foo, "root");
         subRoot = QName.create(foo, "sub-root");
         outerList = QName.create(foo, "outer-list");

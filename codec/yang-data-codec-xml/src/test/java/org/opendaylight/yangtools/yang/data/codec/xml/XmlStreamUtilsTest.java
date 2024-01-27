@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -69,7 +67,7 @@ class XmlStreamUtilsTest {
 
     @Test
     void testWriteIdentityRef() throws Exception {
-        final QNameModule parent = QNameModule.create(XMLNamespace.of("parent:uri"), Revision.of("2000-01-01"));
+        final QNameModule parent = QNameModule.of("parent:uri", "2000-01-01");
 
         String xmlAsString = createXml(writer -> {
             writer.writeStartElement("element");

@@ -16,12 +16,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class DataSchemaContextTreeTest {
-    private static final QNameModule MODULE = QNameModule.create(XMLNamespace.of("dataschemacontext"));
+    private static final QNameModule MODULE = QNameModule.of("dataschemacontext");
     private static final QName FOO = QName.create(MODULE, "foo");
     private static final QName BAR = QName.create(MODULE, "bar");
     private static final QName BAZ = QName.create(MODULE, "baz");

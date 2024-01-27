@@ -31,10 +31,10 @@ abstract class AbstractQNameWithPredicate implements Immutable, QNameWithPredica
 
         final QNameModule moduleQname = getModuleQname();
         if (moduleQname != null) {
-            sb.append('(').append(moduleQname.getNamespace());
-            final var rev = moduleQname.getRevision();
-            if (rev.isPresent()) {
-                sb.append("?revision=").append(rev.orElseThrow());
+            sb.append('(').append(moduleQname.namespace());
+            final var rev = moduleQname.revision();
+            if (rev != null) {
+                sb.append("?revision=").append(rev);
             }
             sb.append(')');
         }
