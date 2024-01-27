@@ -21,8 +21,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -329,8 +327,7 @@ class GroupingTest extends AbstractModelTest {
         assertNotNull(gz);
         assertNotNull(gzz);
 
-        final var expectedModule = QNameModule.create(XMLNamespace.of("urn:grouping:cascade-uses"),
-            Revision.of("2013-07-18"));
+        final var expectedModule = QNameModule.of("urn:grouping:cascade-uses", "2013-07-18");
 
         // grouping-U
         var childNodes = gu.getChildNodes();

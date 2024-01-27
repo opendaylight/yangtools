@@ -22,10 +22,10 @@ public interface QNameModuleAware {
     @NonNull QNameModule getQNameModule();
 
     default @NonNull XMLNamespace getNamespace() {
-        return getQNameModule().getNamespace();
+        return getQNameModule().namespace();
     }
 
     default @NonNull Optional<Revision> getRevision() {
-        return getQNameModule().getRevision();
+        return getQNameModule().findRevision();
     }
 }

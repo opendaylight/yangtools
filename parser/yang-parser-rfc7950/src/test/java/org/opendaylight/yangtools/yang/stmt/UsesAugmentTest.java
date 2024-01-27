@@ -18,8 +18,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -34,10 +32,10 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
 class UsesAugmentTest extends AbstractYangTest {
-    private static final QNameModule UG = QNameModule.create(
-        XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:uses-grouping"), Revision.of("2013-07-30"));
-    private static final QNameModule GD = QNameModule.create(
-        XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:grouping-definitions"), Revision.of("2013-09-04"));
+    private static final QNameModule UG =
+        QNameModule.of("urn:opendaylight:params:xml:ns:yang:uses-grouping", "2013-07-30");
+    private static final QNameModule GD =
+        QNameModule.of("urn:opendaylight:params:xml:ns:yang:grouping-definitions", "2013-09-04");
 
     private static EffectiveModelContext CONTEXT;
 

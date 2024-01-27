@@ -19,9 +19,9 @@ class TwoRevisionsTest extends AbstractYangTest {
     void testTwoRevisions() {
         var it = assertEffectiveModelDir("/ietf").findModuleStatements("network-topology").iterator();
         assertTrue(it.hasNext());
-        assertEquals(Revision.ofNullable("2013-10-21"), it.next().localQNameModule().getRevision());
+        assertEquals(Revision.of("2013-10-21"), it.next().localQNameModule().revision());
         assertTrue(it.hasNext());
-        assertEquals(Revision.ofNullable("2013-07-12"), it.next().localQNameModule().getRevision());
+        assertEquals(Revision.of("2013-07-12"), it.next().localQNameModule().revision());
         assertFalse(it.hasNext());
     }
 }

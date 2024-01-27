@@ -12,13 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
 class Bug6771Test extends AbstractYangTest {
-    private static final QNameModule NS = QNameModule.create(XMLNamespace.of("http://www.example.com/typedef-bug"));
+    private static final QNameModule NS = QNameModule.of("http://www.example.com/typedef-bug");
     private static final QName ROOT = QName.create(NS, "root");
     private static final QName CONT_B = QName.create(NS, "container-b");
     private static final QName LEAF_CONT_B = QName.create(NS, "leaf-container-b");

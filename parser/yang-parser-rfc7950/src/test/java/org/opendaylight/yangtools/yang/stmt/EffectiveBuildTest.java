@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -25,12 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class EffectiveBuildTest {
-
     private static final StatementStreamSource SIMPLE_MODULE = sourceForResource(
         "/stmt-test/effective-build/simple-module.yang");
-    private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.create(XMLNamespace.of("simple.yang"));
-    private static final StatementStreamSource YANG_EXT = sourceForResource(
-        "/stmt-test/extensions/yang-ext.yang");
+    private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.of("simple.yang");
+    private static final StatementStreamSource YANG_EXT = sourceForResource("/stmt-test/extensions/yang-ext.yang");
 
     @Test
     void effectiveBuildTest() throws ReactorException {

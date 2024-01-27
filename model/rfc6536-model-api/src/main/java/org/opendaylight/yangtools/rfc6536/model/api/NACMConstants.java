@@ -33,12 +33,12 @@ public final class NACMConstants {
     /**
      * Runtime RFC6536 identity.
      */
-    public static final QNameModule RFC6536_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC6536_REVISION).intern();
+    public static final QNameModule RFC6536_MODULE = QNameModule.of(MODULE_NAMESPACE, RFC6536_REVISION).intern();
 
     /**
      * Runtime RFC8341 identity.
      */
-    public static final QNameModule RFC8341_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC8341_REVISION).intern();
+    public static final QNameModule RFC8341_MODULE = QNameModule.of(MODULE_NAMESPACE, RFC8341_REVISION).intern();
 
     /**
      * Normative prefix to use when importing {@link #MODULE_NAME}.

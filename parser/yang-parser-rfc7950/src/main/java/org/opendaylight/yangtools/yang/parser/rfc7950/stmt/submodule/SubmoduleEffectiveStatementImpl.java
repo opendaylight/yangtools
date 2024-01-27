@@ -70,7 +70,8 @@ final class SubmoduleEffectiveStatementImpl
 
         final Optional<Revision> submoduleRevision = findFirstEffectiveSubstatementArgument(
             RevisionEffectiveStatement.class);
-        qnameModule = QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision).intern();
+        qnameModule = QNameModule.ofRevision(belongsToModuleQName.namespace(), submoduleRevision.orElse(null))
+            .intern();
 
         /*
          * Because of possible circular chains of includes between submodules we can

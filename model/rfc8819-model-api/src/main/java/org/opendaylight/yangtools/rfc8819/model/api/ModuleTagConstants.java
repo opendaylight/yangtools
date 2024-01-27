@@ -17,7 +17,7 @@ public final class ModuleTagConstants {
     private static final XMLNamespace RFC8819_NAMESPACE =
             XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-module-tags").intern();
     private static final Revision RFC8819_REVISION = Revision.of("2021-01-04");
-    public static final QNameModule RFC8819_MODULE = QNameModule.create(RFC8819_NAMESPACE, RFC8819_REVISION).intern();
+    public static final QNameModule RFC8819_MODULE = QNameModule.of(RFC8819_NAMESPACE, RFC8819_REVISION).intern();
 
     private ModuleTagConstants() {
         // Hidden on purpose

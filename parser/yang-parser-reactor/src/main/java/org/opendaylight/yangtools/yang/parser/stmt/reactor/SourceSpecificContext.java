@@ -212,7 +212,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         final var module = root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root);
         if (module != null) {
             // creates SourceIdentifier for a module
-            return new SourceIdentifier(unqualified, module.getRevision().orElse(null));
+            return new SourceIdentifier(unqualified, module.revision());
         }
 
         // creates SourceIdentifier for a submodule
@@ -466,7 +466,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             return null;
         }
 
-        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.create(value)));
+        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.of(value)));
         return preLinkagePrefixes;
     }
 

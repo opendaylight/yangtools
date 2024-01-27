@@ -20,8 +20,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -36,19 +34,14 @@ class Bug8307Test {
     private static final StatementStreamSource BAR_INVALID_MODULE = sourceForResource("/bugs/bug8307/bar-invalid.yang");
     private static final StatementStreamSource BAZ_INVALID_MODULE = sourceForResource("/bugs/bug8307/baz-invalid.yang");
 
-    private static final XMLNamespace FOO_NS = XMLNamespace.of("foo-ns");
-    private static final XMLNamespace BAR_NS = XMLNamespace.of("bar-ns");
-    private static final XMLNamespace BAZ_NS = XMLNamespace.of("baz-ns");
-
-    private static final Revision REVISION = Revision.of("2017-05-16");
-    private static final QNameModule FOO = QNameModule.create(FOO_NS, REVISION);
+    private static final QNameModule FOO = QNameModule.of("foo-ns", "2017-05-16");
     private static final QName MY_FOO_CONT_A = QName.create(FOO, "my-foo-cont-a");
     private static final QName MY_FOO_CONT_B = QName.create(FOO, "my-foo-cont-b");
     private static final QName MY_FOO_CONT_C = QName.create(FOO, "my-foo-cont-c");
-    private static final QNameModule BAR = QNameModule.create(BAR_NS, REVISION);
+    private static final QNameModule BAR = QNameModule.of("bar-ns", "2017-05-16");
     private static final QName MY_BAR_CONT_A = QName.create(BAR, "my-bar-cont-a");
     private static final QName MY_BAR_CONT_B = QName.create(BAR, "my-bar-cont-b");
-    private static final QNameModule BAZ = QNameModule.create(BAZ_NS, REVISION);
+    private static final QNameModule BAZ = QNameModule.of("baz-ns", "2017-05-16");
     private static final QName MY_BAZ_CONT = QName.create(BAZ, "my-baz-cont");
 
     @Test

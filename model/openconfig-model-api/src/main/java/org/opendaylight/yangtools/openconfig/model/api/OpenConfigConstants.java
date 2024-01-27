@@ -39,23 +39,23 @@ public final class OpenConfigConstants {
     /**
     * Runtime identity of model which exposed regexp-posix.
     */
-    public static final QNameModule REGEXP_POSIX_MODULE = QNameModule.create(MODULE_NAMESPACE, REGEXP_POSIX_REVISION)
+    public static final QNameModule REGEXP_POSIX_MODULE = QNameModule.of(MODULE_NAMESPACE, REGEXP_POSIX_REVISION)
             .intern();
     /**
      * Runtime identity of initial model.
      */
-    public static final QNameModule SEMVER_MODULE = QNameModule.create(MODULE_NAMESPACE, SEMVER_REVISION).intern();
+    public static final QNameModule SEMVER_MODULE = QNameModule.of(MODULE_NAMESPACE, SEMVER_REVISION).intern();
 
     /**
      * Runtime identity of model which exposed encrypted-value.
      */
-    public static final QNameModule ENCRYPTED_VALUE_MODULE = QNameModule.create(MODULE_NAMESPACE,
-        ENCRYPTED_VALUE_REVISION).intern();
+    public static final QNameModule ENCRYPTED_VALUE_MODULE = QNameModule.of(MODULE_NAMESPACE, ENCRYPTED_VALUE_REVISION)
+            .intern();
 
     /**
      * Runtime identity of model which exposed encrypted-value.
      */
-    public static final QNameModule HASHED_VALUE_MODULE = QNameModule.create(MODULE_NAMESPACE, HASHED_VALUE_REVISION)
+    public static final QNameModule HASHED_VALUE_MODULE = QNameModule.of(MODULE_NAMESPACE, HASHED_VALUE_REVISION)
             .intern();
 
     /**

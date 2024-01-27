@@ -26,7 +26,7 @@ public final class IetfYangSmiv2Constants {
     /**
      * Runtime RFC6643 identity.
      */
-    public static final QNameModule RFC6643_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC6643_REVISION).intern();
+    public static final QNameModule RFC6643_MODULE = QNameModule.of(MODULE_NAMESPACE, RFC6643_REVISION).intern();
 
     /**
      * Normative prefix to use when importing {@link #MODULE_NAME}.

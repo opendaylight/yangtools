@@ -12,11 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -25,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
@@ -33,11 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 class YT1208Test extends AbstractYangTest {
     @Test
     void testAugmentStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/augment.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/augment.yang").getModuleStatement(QNameModule.of("foo"));
 
-        final NotificationEffectiveStatement notif = module
-            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+        final var notif = module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
 
         final AugmentEffectiveStatement grpAug = notif
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -53,11 +47,9 @@ class YT1208Test extends AbstractYangTest {
 
     @Test
     void testCaseStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/case.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/case.yang").getModuleStatement(QNameModule.of("foo"));
 
-        final NotificationEffectiveStatement notif = module
-            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+        final var notif = module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
 
         final CaseEffectiveStatement grpBar = notif
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -73,11 +65,9 @@ class YT1208Test extends AbstractYangTest {
 
     @Test
     void testChoiceStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/choice.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/choice.yang").getModuleStatement(QNameModule.of("foo"));
 
-        final NotificationEffectiveStatement notif = module
-            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+        final var notif = module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
 
         final ChoiceEffectiveStatement grpBar = notif
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -91,11 +81,9 @@ class YT1208Test extends AbstractYangTest {
 
     @Test
     void testGroupingStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/grouping.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/grouping.yang").getModuleStatement(QNameModule.of("foo"));
 
-        final NotificationEffectiveStatement notif = module
-            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+        final var notif = module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
 
         final GroupingEffectiveStatement grpBar = notif
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -111,12 +99,10 @@ class YT1208Test extends AbstractYangTest {
 
     @Test
     void testLeafStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/leaf.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/leaf.yang").getModuleStatement(QNameModule.of("foo"));
         assertNotNull(module);
 
-        final NotificationEffectiveStatement notif = module
-            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+        final var notif = module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
 
         final LeafEffectiveStatement grpBar = notif
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -130,11 +116,9 @@ class YT1208Test extends AbstractYangTest {
 
     @Test
     void testLeafListStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/leaflist.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/leaflist.yang").getModuleStatement(QNameModule.of("foo"));
 
-        final NotificationEffectiveStatement notif = module
-            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+        final var notif = module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
 
         final LeafListEffectiveStatement grpBar = notif
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -148,11 +132,9 @@ class YT1208Test extends AbstractYangTest {
 
     @Test
     void testListStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/list.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/list.yang").getModuleStatement(QNameModule.of("foo"));
 
-        final NotificationEffectiveStatement notif = module
-            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+        final var notif = module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
 
         final ListEffectiveStatement grpBar = notif
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -166,8 +148,7 @@ class YT1208Test extends AbstractYangTest {
 
     @Test
     void testTypedefStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/typedef.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/typedef.yang").getModuleStatement(QNameModule.of("foo"));
 
         final TypedefEffectiveStatement grpBar = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -182,11 +163,9 @@ class YT1208Test extends AbstractYangTest {
 
     @Test
     void testUsesStatementReuse() {
-        final ModuleEffectiveStatement module = assertEffectiveModel("/bugs/YT1208/uses.yang")
-            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
+        final var module = assertEffectiveModel("/bugs/YT1208/uses.yang").getModuleStatement(QNameModule.of("foo"));
         assertNotNull(module);
-        final List<GroupingEffectiveStatement> groupings = module
-            .streamEffectiveSubstatements(GroupingEffectiveStatement.class).collect(Collectors.toList());
+        final var groupings = module.streamEffectiveSubstatements(GroupingEffectiveStatement.class).toList();
         assertEquals(2, groupings.size());
         final ContainerEffectiveStatement grpFoo = groupings.get(1)
             .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow();
