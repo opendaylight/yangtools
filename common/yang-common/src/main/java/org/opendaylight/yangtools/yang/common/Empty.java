@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import java.io.Serial;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.io.Serializable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -17,9 +20,11 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @NonNullByDefault
 public final class Empty implements Immutable, Serializable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
-    private static final Empty INSTANCE = new Empty();
+    private static final Empty VALUE = new Empty();
+    private static final CompletionStage<Empty> COMPLETED_FUTURE = CompletableFuture.completedFuture(VALUE);
+    private static final ListenableFuture<Empty> IMMEDIATE_FUTURE = Futures.immediateFuture(VALUE);
 
     private Empty() {
         // Hidden on purpose
@@ -31,7 +36,25 @@ public final class Empty implements Immutable, Serializable {
      * @return Empty value.
      */
     public static Empty value()  {
-        return INSTANCE;
+        return VALUE;
+    }
+
+    /**
+     * Return a {@link CompletionStage} completed with {@link #value()}.
+     *
+     * @return A completed CompletionStage
+     */
+    public static CompletionStage<Empty> completedFuture() {
+        return COMPLETED_FUTURE;
+    }
+
+    /**
+     * Return a {@link ListenableFuture} completed with {@link #value()}.
+     *
+     * @return A completed ListenableFuture
+     */
+    public static ListenableFuture<Empty> immediateFuture() {
+        return IMMEDIATE_FUTURE;
     }
 
     @Override
@@ -39,9 +62,9 @@ public final class Empty implements Immutable, Serializable {
         return "empty";
     }
 
-    @Serial
+    @java.io.Serial
     @SuppressWarnings("static-method")
     private Object readResolve() {
-        return INSTANCE;
+        return VALUE;
     }
 }
