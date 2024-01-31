@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -57,6 +58,16 @@ public final class Empty implements Immutable, Serializable {
      */
     public static ListenableFuture<Empty> immediateFuture() {
         return IMMEDIATE_FUTURE;
+    }
+
+    @Override
+    public int hashCode() {
+        return 1337;
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return this == obj;
     }
 
     @Override
