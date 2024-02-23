@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.test.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
@@ -18,14 +16,13 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -55,7 +52,7 @@ public final class YangParserTestUtils {
     private static final @NonNull YangParserFactory PARSER_FACTORY;
 
     static {
-        final Iterator<@NonNull YangParserFactory> it = ServiceLoader.load(YangParserFactory.class).iterator();
+        final var it = ServiceLoader.load(YangParserFactory.class).iterator();
         if (!it.hasNext()) {
             throw new IllegalStateException("No YangParserFactory found");
         }
@@ -74,7 +71,7 @@ public final class YangParserTestUtils {
      *
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResource(final String resource) {
+    public static @NonNull EffectiveModelContext parseYangResource(final String resource) {
         return parseYangResource(resource, YangParserConfiguration.DEFAULT);
     }
 
@@ -85,7 +82,8 @@ public final class YangParserTestUtils {
      * @param config parser configuration
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResource(final String resource, final YangParserConfiguration config) {
+    public static @NonNull EffectiveModelContext parseYangResource(final String resource,
+            final YangParserConfiguration config) {
         return parseYangResource(resource, config, null);
     }
 
@@ -98,7 +96,8 @@ public final class YangParserTestUtils {
      *                          model are resolved
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResource(final String resource, final Set<QName> supportedFeatures) {
+    public static @NonNull EffectiveModelContext parseYangResource(final String resource,
+            final Set<QName> supportedFeatures) {
         return parseYangResource(resource, YangParserConfiguration.DEFAULT, supportedFeatures);
     }
 
@@ -111,8 +110,8 @@ public final class YangParserTestUtils {
      * @param config parser configuration
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResource(final String resource, final YangParserConfiguration config,
-            final Set<QName> supportedFeatures) {
+    public static @NonNull EffectiveModelContext parseYangResource(final String resource,
+            final YangParserConfiguration config, final Set<QName> supportedFeatures) {
         return parseYangSources(config, supportedFeatures,
             new URLYangTextSource(YangParserTestUtils.class.getResource(resource)));
     }
@@ -124,7 +123,7 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangFiles(final File... files) {
+    public static @NonNull EffectiveModelContext parseYangFiles(final File... files) {
         return parseYangFiles(Arrays.asList(files));
     }
 
@@ -135,7 +134,7 @@ public final class YangParserTestUtils {
      * @param files collection of YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangFiles(final Collection<File> files) {
+    public static @NonNull EffectiveModelContext parseYangFiles(final Collection<File> files) {
         return parseYangFiles(YangParserConfiguration.DEFAULT, files);
     }
 
@@ -148,11 +147,12 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures, final File... files) {
+    public static @NonNull EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
+            final File... files) {
         return parseYangFiles(supportedFeatures, Arrays.asList(files));
     }
 
-    public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
+    public static @NonNull EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final Collection<File> files) {
         return parseYangFiles(supportedFeatures, YangParserConfiguration.DEFAULT, files);
     }
@@ -164,7 +164,8 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangFiles(final YangParserConfiguration config, final File... files) {
+    public static @NonNull EffectiveModelContext parseYangFiles(final YangParserConfiguration config,
+            final File... files) {
         return parseYangFiles(config, Arrays.asList(files));
     }
 
@@ -175,7 +176,7 @@ public final class YangParserTestUtils {
      * @param files collection of YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangFiles(final YangParserConfiguration config,
+    public static @NonNull EffectiveModelContext parseYangFiles(final YangParserConfiguration config,
             final Collection<File> files) {
         return parseYangFiles(null, config, files);
     }
@@ -189,7 +190,7 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
+    public static @NonNull EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final YangParserConfiguration config, final File... files) {
         return parseYangFiles(supportedFeatures, config, Arrays.asList(files));
     }
@@ -204,7 +205,7 @@ public final class YangParserTestUtils {
      * @return effective schema context
      */
     //  FIXME: use Java.nio.file.Path
-    public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
+    public static @NonNull EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final YangParserConfiguration config, final Collection<File> files) {
         return parseSources(config, supportedFeatures,
             files.stream().map(file -> new FileYangTextSource(file.toPath())).toList());
@@ -217,7 +218,7 @@ public final class YangParserTestUtils {
      * @param resourcePath relative path to the directory with YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath) {
+    public static @NonNull EffectiveModelContext parseYangResourceDirectory(final String resourcePath) {
         return parseYangResourceDirectory(resourcePath, YangParserConfiguration.DEFAULT);
     }
 
@@ -228,7 +229,7 @@ public final class YangParserTestUtils {
      * @param config parser configuration
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
+    public static @NonNull EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final YangParserConfiguration config) {
         return parseYangResourceDirectory(resourcePath, null, config);
     }
@@ -242,7 +243,7 @@ public final class YangParserTestUtils {
      *                          models are resolved
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
+    public static @NonNull EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final Set<QName> supportedFeatures) {
         return parseYangResourceDirectory(resourcePath, supportedFeatures, YangParserConfiguration.DEFAULT);
     }
@@ -257,7 +258,7 @@ public final class YangParserTestUtils {
      * @return effective schema context
      */
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
-    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
+    public static @NonNull EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final Set<QName> supportedFeatures, final YangParserConfiguration config) {
         final URI directoryPath;
         try {
@@ -276,11 +277,12 @@ public final class YangParserTestUtils {
      * @param resources Resource names to be looked up
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResources(final Class<?> clazz, final String... resources) {
+    public static @NonNull EffectiveModelContext parseYangResources(final Class<?> clazz, final String... resources) {
         return parseYangResources(clazz, Arrays.asList(resources));
     }
 
-    public static EffectiveModelContext parseYangResources(final Class<?> clazz, final Collection<String> resources) {
+    public static @NonNull EffectiveModelContext parseYangResources(final Class<?> clazz,
+            final Collection<String> resources) {
         return parseSources(YangParserConfiguration.DEFAULT, null, resources.stream()
             .map(resource -> new URLYangTextSource(clazz.getResource(resource)))
             .toList());
@@ -296,8 +298,8 @@ public final class YangParserTestUtils {
      *                          models are resolved
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResources(final List<String> yangDirs, final List<String> yangFiles,
-            final Set<QName> supportedFeatures) {
+    public static @NonNull EffectiveModelContext parseYangResources(final List<String> yangDirs,
+            final List<String> yangFiles, final Set<QName> supportedFeatures) {
         return parseYangResources(yangDirs, yangFiles, supportedFeatures, YangParserConfiguration.DEFAULT);
     }
 
@@ -309,7 +311,7 @@ public final class YangParserTestUtils {
      * @param config parser configuration
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
+    public static @NonNull EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
             final List<String> yangResources, final YangParserConfiguration config) {
         return parseYangResources(yangResourceDirs, yangResources, null, config);
     }
@@ -324,7 +326,7 @@ public final class YangParserTestUtils {
      * @param config parser configuration
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
+    public static @NonNull EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
             final List<String> yangResources, final Set<QName> supportedFeatures,
             final YangParserConfiguration config) {
         final List<File> allYangFiles = new ArrayList<>();
@@ -343,12 +345,12 @@ public final class YangParserTestUtils {
         return parseYangFiles(supportedFeatures, config, allYangFiles);
     }
 
-    public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
+    public static @NonNull EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final YangTextSource... sources) {
         return parseSources(config, supportedFeatures, Arrays.asList(sources));
     }
 
-    public static EffectiveModelContext parseSources(final YangParserConfiguration config,
+    public static @NonNull EffectiveModelContext parseSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final Collection<? extends SourceRepresentation> sources) {
         final YangParser parser = PARSER_FACTORY.createParser(config);
         if (supportedFeatures != null) {
@@ -376,7 +378,7 @@ public final class YangParserTestUtils {
      * @param sources list of yang sources in plain string
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYang(final String... sources) {
+    public static @NonNull EffectiveModelContext parseYang(final String... sources) {
         return parseSources(YangParserConfiguration.DEFAULT, null,
             Arrays.stream(sources).map(YangParserTestUtils::createYangTextSource).toList());
     }
@@ -391,7 +393,6 @@ public final class YangParserTestUtils {
         }
         return Arrays.asList(new File(directoryPath).listFiles(YANG_FILE_FILTER));
     }
-
 
     /**
      * Create a new {@link YangTextSource} backed by a String input.
@@ -409,11 +410,12 @@ public final class YangParserTestUtils {
         // word of the first line
         final var firstLine = sourceString.substring(0, sourceString.indexOf("{")).strip().split(" ");
         final var moduleOrSubmoduleString = firstLine[0].strip();
-        checkArgument(moduleOrSubmoduleString.equals("module") || moduleOrSubmoduleString.equals("submodule"));
-
-        final String arg = firstLine[1].strip();
-        final var localName = UnresolvedQName.tryLocalName(arg);
-        checkArgument(localName != null);
-        return new StringYangTextSource(new SourceIdentifier(localName), sourceString, arg);
+        return switch (moduleOrSubmoduleString) {
+            case "module", "submodule" -> {
+                final String arg = firstLine[1].strip();
+                yield new StringYangTextSource(new SourceIdentifier(Unqualified.of(arg)), sourceString, arg);
+            }
+            default -> throw new IllegalArgumentException("Unknown statement " + moduleOrSubmoduleString);
+        };
     }
 }
