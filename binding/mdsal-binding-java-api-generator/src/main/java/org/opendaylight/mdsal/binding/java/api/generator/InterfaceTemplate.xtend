@@ -299,11 +299,14 @@ class InterfaceTemplate extends BaseTemplate {
              * @throws «NPE.importedName» if {@code obj} is {@code null}
              */
             static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedNonNull» obj) {
-                final int prime = 31;
                 int result = 1;
-                «FOR property : typeAnalysis.value»
-                    result = prime * result + «property.importedUtilClass».hashCode(obj.«property.getterMethodName»());
-                «ENDFOR»
+                «val props = typeAnalysis.value»
+                «IF !props.empty»
+                    final int prime = 31;
+                    «FOR property : props»
+                        result = prime * result + «property.importedUtilClass».hashCode(obj.«property.getterMethodName»());
+                    «ENDFOR»
+                «ENDIF»
                 «IF augmentable»
                     for (var augmentation : obj.augmentations().values()) {
                         result += augmentation.hashCode();

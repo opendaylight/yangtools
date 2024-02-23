@@ -51,8 +51,8 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(final test.@NonNull test obj) {
-                final int prime = 31;
                 int result = 1;
+                final int prime = 31;
                 result = prime * result + Objects.hashCode(obj.getTest());
                 return result;
             }
@@ -78,8 +78,8 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(final test.@NonNull test obj) {
-                final int prime = 31;
                 int result = 1;
+                final int prime = 31;
                 result = prime * result + Objects.hashCode(obj.getTest1());
                 result = prime * result + Objects.hashCode(obj.getTest2());
                 return result;
@@ -101,7 +101,6 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(final test.@NonNull test obj) {
-                final int prime = 31;
                 int result = 1;
                 for (var augmentation : obj.augmentations().values()) {
                     result += augmentation.hashCode();
@@ -125,8 +124,8 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(final test.@NonNull test obj) {
-                final int prime = 31;
                 int result = 1;
+                final int prime = 31;
                 result = prime * result + Objects.hashCode(obj.getTest());
                 for (var augmentation : obj.augmentations().values()) {
                     result += augmentation.hashCode();
@@ -150,8 +149,8 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(final test.@NonNull test obj) {
-                final int prime = 31;
                 int result = 1;
+                final int prime = 31;
                 result = prime * result + Objects.hashCode(obj.getTest1());
                 result = prime * result + Objects.hashCode(obj.getTest2());
                 for (var augmentation : obj.augmentations().values()) {
