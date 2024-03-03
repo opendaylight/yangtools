@@ -382,7 +382,7 @@
                         <link>https://junit.org/junit5/docs/current/api/</link>
                         <link>https://hamcrest.org/JavaHamcrest/javadoc/2.2/</link>
                         <link>https://www.slf4j.org/apidocs/</link>
-                        <link>https://guava.dev/releases/32.0.1-jre/api/docs/</link>
+                        <link>https://guava.dev/releases/32.1.3-jre/api/docs/</link>
 
                         <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/13.0.11/</link>
                     </links>
