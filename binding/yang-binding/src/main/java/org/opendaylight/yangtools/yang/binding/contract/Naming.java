@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.binding.contract;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -207,7 +208,7 @@ public final class Naming {
             // Revision is in format 2017-10-26, we want the output to be 171026, which is a matter of picking the
             // right characters.
             final String rev = revision.toString();
-            checkArgument(rev.length() == 10, "Unsupported revision %s", rev);
+            verify(rev.length() == 10, "Revision.toString() resulted in unexpected '%s'", rev);
             builder.append("rev").append(rev, 2, 4).append(rev, 5, 7).append(rev.substring(8));
         } else {
             // No-revision packages are special
