@@ -13,7 +13,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
@@ -31,7 +30,7 @@ final class TopLevelJavaGeneratedType extends AbstractJavaGeneratedType {
     }
 
     @Override
-    String localTypeName(@NonNull final JavaTypeName type) {
+    String localTypeName(final JavaTypeName type) {
         // Locally-anchored type, this is simple: just strip the first local name component and concat the others
         final Iterator<String> it = type.localNameComponents().iterator();
         it.next();
