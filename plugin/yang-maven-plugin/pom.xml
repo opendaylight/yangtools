@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-maven-plugin</artifactId>
-    <version>13.0.2-SNAPSHOT</version>
+    <version>13.0.2</version>
     <packaging>maven-plugin</packaging>
     <description>
         This plugin is a wrapper for "yang to source code" generation.
@@ -44,7 +44,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>13.0.2-SNAPSHOT</version>
+                <version>13.0.2</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
