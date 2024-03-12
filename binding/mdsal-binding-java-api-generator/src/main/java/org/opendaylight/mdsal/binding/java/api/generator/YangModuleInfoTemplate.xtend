@@ -97,7 +97,7 @@ final class YangModuleInfoTemplate {
             @«JavaFileTemplate.GENERATED»("mdsal-binding-generator")
             public final class «MODULE_INFO_CLASS_NAME» extends ResourceYangModuleInfo {
                 «val rev = module.revision»
-                private static final @NonNull QName NAME = QName.create("«module.QNameModule.namespace.toString»", «IF rev.present»"«rev.orElseThrow.toString»", «ENDIF»"«module.name»").intern();
+                private static final @NonNull QName NAME = QName.create("«module.QNameModule.namespace().toString»", «IF rev.present»"«rev.orElseThrow.toString»", «ENDIF»"«module.name»").intern();
                 private static final @NonNull YangModuleInfo INSTANCE = new «MODULE_INFO_CLASS_NAME»();
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
@@ -256,7 +256,7 @@ final class YangModuleInfoTemplate {
 
             private static final class «className»Info extends ResourceYangModuleInfo {
                 «val rev = submodule.revision»
-                private final @NonNull QName NAME = QName.create("«submodule.QNameModule.namespace.toString»", «
+                private final @NonNull QName NAME = QName.create("«submodule.QNameModule.namespace().toString»", «
                 IF rev.present»"«rev.orElseThrow.toString»", «ENDIF»"«submodule.name»").intern();
                 private static final @NonNull YangModuleInfo INSTANCE = new «className»Info();
 
