@@ -149,6 +149,16 @@ public final class Revision implements Comparable<Revision>, Immutable, Serializ
         return this == obj || obj instanceof Revision other && str.equals(other.str);
     }
 
+    /**
+     * Return the revision string according to
+     * <a href="https://www.rfc-editor.org/rfc/rfc7950.html#section-7.1.9">RFC7950, section 7.1.9</a>. The string is
+     * guaranteed to be composed on 10 ASCII characters in {@code YYYY-MM-DD} format. The items are guaranteed to be
+     * decimal numbers. There are no further guarantees as to convertibility to an actual calendar date, as this method
+     * can validly return {@code "2019-02-29"} (even if 2019 is not a leap year) or {@code "2022-12-32"} (even if no
+     * month has 32 days).
+     *
+     * @return A string in {@code YYYY-MM-DD} format
+     */
     @Override
     public String toString() {
         return str;
