@@ -20,7 +20,6 @@ import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.regex.qual.Regex;
@@ -35,7 +34,6 @@ import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
 @Beta
@@ -186,7 +184,7 @@ public final class Naming {
     }
 
     private static @NonNull String getRootPackageName(final StringBuilder builder, final QNameModule module) {
-        String namespace = module.getNamespace().toString();
+        String namespace = module.namespace().toString();
         namespace = COLON_SLASH_SLASH.matcher(namespace).replaceAll(QUOTED_DOT);
 
         final char[] chars = namespace.toCharArray();
@@ -204,11 +202,11 @@ public final class Naming {
             builder.append('.');
         }
 
-        final Optional<Revision> optRev = module.getRevision();
-        if (optRev.isPresent()) {
+        final var revision = module.revision();
+        if (revision != null) {
             // Revision is in format 2017-10-26, we want the output to be 171026, which is a matter of picking the
             // right characters.
-            final String rev = optRev.orElseThrow().toString();
+            final String rev = revision.toString();
             checkArgument(rev.length() == 10, "Unsupported revision %s", rev);
             builder.append("rev").append(rev, 2, 4).append(rev, 5, 7).append(rev.substring(8));
         } else {

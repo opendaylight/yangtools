@@ -16,7 +16,6 @@ import org.opendaylight.yang.gen.v1.mdsal767.norev.One$F;
 import org.opendaylight.yang.svc.v1.mdsal767.norev.YangModuleInfoImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 
 class ModuleInfoSnapshotBuilderTest {
@@ -29,7 +28,7 @@ class ModuleInfoSnapshotBuilderTest {
         final var snapshot = snapshotBuilder.build();
         final var modelContext = snapshot.modelContext();
         final var modules = modelContext.getModuleStatements();
-        final var module = modules.get(QNameModule.create(XMLNamespace.of("mdsal767")));
+        final var module = modules.get(QNameModule.of("mdsal767"));
         assertEquals(1, module.features().size());
         final var feature = module.features().stream().findAny().orElseThrow();
         assertEquals(QName.create("mdsal767", "one"), feature.argument());

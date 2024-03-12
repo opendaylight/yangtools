@@ -179,7 +179,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         // Alright, now let's find out which sources got captured
         final var sources = new HashSet<SourceIdentifier>();
         for (var entry : modelContext.getModuleStatements().entrySet()) {
-            final var revision = entry.getKey().getRevision().orElse(null);
+            final var revision = entry.getKey().revision();
             final var module = entry.getValue();
 
             sources.add(new SourceIdentifier(module.argument(), revision));

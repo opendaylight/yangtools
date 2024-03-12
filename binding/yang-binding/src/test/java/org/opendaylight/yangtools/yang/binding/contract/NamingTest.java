@@ -14,8 +14,6 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
 public class NamingTest {
@@ -57,8 +55,8 @@ public class NamingTest {
         assertEquals("org.opendaylight.yang.gen.v1.test.uri.rev171026",
             Naming.getRootPackageName(QName.create("test:URI", "2017-10-26", "test")));
         assertEquals("org.opendaylight.yang.gen.v1.urn.m.o.d.u.l.e.n.a.m.e.t.e.s.t._case._1digit.rev130910",
-            Naming.getRootPackageName(QNameModule.create(
-                XMLNamespace.of("urn:m*o+d,u;l=e.n/a-m@e.t$e#s't.case.1digit"), Revision.of("2013-09-10"))));
+            Naming.getRootPackageName(QNameModule.ofRevision(
+                "urn:m*o+d,u;l=e.n/a-m@e.t$e#s't.case.1digit", "2013-09-10")));
         assertEquals("_1testpublic", Naming.normalizePackageName("1testpublic"));
         assertEquals("Test", Naming.getGetterSuffix(QName.create("test", "test")));
         assertEquals("XmlClass", Naming.getGetterSuffix(QName.create("test", "class")));
@@ -117,7 +115,7 @@ public class NamingTest {
 
     @Test
     public void yangDataMapping() {
-        final var ns = QNameModule.create(XMLNamespace.of("unused"));
+        final var ns = QNameModule.of("unused");
 
         // single ascii compliant non-conflicting word - remain as is
         assertEquals("single", Naming.mapYangDataName(new YangDataName(ns, "single")));
