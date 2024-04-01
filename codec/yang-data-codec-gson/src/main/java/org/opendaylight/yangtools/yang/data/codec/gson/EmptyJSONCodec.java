@@ -13,11 +13,10 @@ import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.Empty;
 
 final class EmptyJSONCodec implements JSONCodec<Empty> {
-
     static final EmptyJSONCodec INSTANCE = new EmptyJSONCodec();
 
     private EmptyJSONCodec() {
-
+        // Hidden on purpose
     }
 
     @Override
@@ -26,7 +25,7 @@ final class EmptyJSONCodec implements JSONCodec<Empty> {
     }
 
     @Override
-    public Empty parseValue(final Object ctx, final String input) {
+    public Empty parseValue(final String input) {
         return Empty.value();
     }
 

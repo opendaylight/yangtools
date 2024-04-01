@@ -363,7 +363,7 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private Object translateValueByType(final String value, final DataSchemaNode node) {
         if (node instanceof TypedDataSchemaNode typedNode) {
-            return codecs.codecFor(typedNode, stack).parseValue(null, value);
+            return codecs.codecFor(typedNode, stack).parseValue(value);
         }
         throw new IllegalArgumentException("Unexpected node " + node);
     }
