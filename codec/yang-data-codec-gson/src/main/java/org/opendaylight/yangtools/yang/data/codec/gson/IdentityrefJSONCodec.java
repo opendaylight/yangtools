@@ -34,7 +34,7 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
     }
 
     @Override
-    public QName parseValue(final Object ctx, final String value) {
+    public QName parseValue(final String value) {
         return IdentityCodecUtil.parseIdentity(value, context, prefix -> {
             if (prefix.isEmpty()) {
                 return parentModule;

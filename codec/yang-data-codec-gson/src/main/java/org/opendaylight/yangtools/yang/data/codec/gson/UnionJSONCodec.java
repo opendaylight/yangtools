@@ -79,11 +79,11 @@ abstract sealed class UnionJSONCodec<T> implements JSONCodec<T> {
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public final T parseValue(final Object ctx, final String str) {
-        for (JSONCodec<?> codec : codecs) {
+    public final T parseValue(final String str) {
+        for (var codec : codecs) {
             final Object ret;
             try {
-                ret = codec.parseValue(ctx, str);
+                ret = codec.parseValue(str);
             } catch (RuntimeException e) {
                 LOG.debug("Codec {} did not accept input '{}'", codec, str, e);
                 continue;
@@ -98,14 +98,14 @@ abstract sealed class UnionJSONCodec<T> implements JSONCodec<T> {
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
     public final void writeValue(final JsonWriter ctx, final T value) throws IOException {
-        for (JSONCodec<?> codec : codecs) {
+        for (var codec : codecs) {
             if (!codec.getDataType().isInstance(value)) {
                 LOG.debug("Codec {} cannot accept input {}, skipping it", codec, value);
                 continue;
             }
 
             @SuppressWarnings("unchecked")
-            final JSONCodec<Object> objCodec = (JSONCodec<Object>) codec;
+            final var objCodec = (JSONCodec<Object>) codec;
             try {
                 objCodec.writeValue(ctx, value);
                 return;

@@ -27,4 +27,24 @@ public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWrite
      */
     @Override
     void writeValue(JsonWriter ctx, T value) throws IOException;
+
+    /**
+     * {@inheritDoc}.
+     *
+     * @deprecated Use {@link #parseValue(String)} instead.
+     */
+    @Override
+    @Deprecated
+    default T parseValue(final Object ctx, final String str) {
+        return parseValue(str);
+    }
+
+    /**
+     * Parse a String representation into its native format.
+     *
+     * @param str String representation
+     * @return Value in native format
+     * @throws IllegalArgumentException if the value does not parse or pass type validation
+     */
+    T parseValue(String str);
 }
