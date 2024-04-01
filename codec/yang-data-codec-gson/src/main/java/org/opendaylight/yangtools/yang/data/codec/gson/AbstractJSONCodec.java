@@ -31,7 +31,7 @@ abstract sealed class AbstractJSONCodec<T> implements JSONCodec<T>
     }
 
     @Override
-    public final T parseValue(final Object ctx, final String str) {
+    public final T parseValue(final String str) {
         return codec.deserialize(str);
     }
 

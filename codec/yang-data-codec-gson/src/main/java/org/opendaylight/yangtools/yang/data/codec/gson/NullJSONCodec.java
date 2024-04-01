@@ -26,7 +26,7 @@ final class NullJSONCodec implements JSONCodec<Object> {
     }
 
     @Override
-    public Object parseValue(final Object ctx, final String str) {
+    public Object parseValue(final String str) {
         LOG.warn("Call of the deserializeString method on null codec. No operation performed.");
         return null;
     }

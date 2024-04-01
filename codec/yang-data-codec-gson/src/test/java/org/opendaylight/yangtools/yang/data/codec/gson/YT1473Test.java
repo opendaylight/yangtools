@@ -144,7 +144,7 @@ class YT1473Test {
         verify(writer).value(captor.capture());
 
         assertEquals(expected, captor.getValue());
-        assertEquals(id, CODEC.parseValue(null, expected));
+        assertEquals(id, CODEC.parseValue(expected));
     }
 
     private static YangInstanceIdentifier buildYangInstanceIdentifier(final QName node, final QName key,

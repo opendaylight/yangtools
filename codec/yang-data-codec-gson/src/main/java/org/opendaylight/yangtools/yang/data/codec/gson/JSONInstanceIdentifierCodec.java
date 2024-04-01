@@ -84,9 +84,9 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
             final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
         if (schemaNode instanceof LeafSchemaNode leafSchemaNode) {
-            return codecFactory.codecFor(leafSchemaNode, resolver).parseValue(null, value);
+            return codecFactory.codecFor(leafSchemaNode, resolver).parseValue(value);
         } else if (schemaNode instanceof LeafListSchemaNode leafListSchemaNode) {
-            return codecFactory.codecFor(leafListSchemaNode, resolver).parseValue(null, value);
+            return codecFactory.codecFor(leafListSchemaNode, resolver).parseValue(value);
         }
         throw new IllegalArgumentException("schemaNode " + schemaNode
                 + " must be of type LeafSchemaNode or LeafListSchemaNode");
@@ -98,7 +98,7 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
     }
 
     @Override
-    public final YangInstanceIdentifier parseValue(final Object ctx, final String str) {
+    public final YangInstanceIdentifier parseValue(final String str) {
         return deserialize(str);
     }
 
