@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
  *
  * @param <T> Normalized value type
  */
-public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWriter>
+public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Void, JsonWriter>
         permits AbstractJSONCodec, EmptyJSONCodec, IdentityrefJSONCodec, InstanceIdentifierJSONCodec, UnionJSONCodec {
     /**
      * {@inheritDoc}.
@@ -47,7 +47,7 @@ public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWrite
      */
     @Override
     @Deprecated
-    default T parseValue(final Object ctx, final String str) {
+    default T parseValue(final Void ctx, final String str) {
         return parseValue(str);
     }
 
