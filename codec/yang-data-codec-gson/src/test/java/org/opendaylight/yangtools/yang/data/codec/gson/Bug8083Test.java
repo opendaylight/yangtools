@@ -11,14 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
@@ -250,12 +249,13 @@ class Bug8083Test {
     }
 
     private static String writeInstanceIdentifier(final JSONCodecFactorySupplier supplier) throws IOException {
-        final var writer = mock(JsonWriter.class);
-        final var captor = ArgumentCaptor.forClass(String.class);
-        doReturn(writer).when(writer).value(captor.capture());
+        final var writer = mock(JSONValueWriter.class);
+        doNothing().when(writer).writeString(any());
 
         getCodec(supplier).writeValue(writer, TEST_IID);
-        verify(writer).value(any(String.class));
+
+        final var captor = ArgumentCaptor.forClass(String.class);
+        verify(writer).writeString(captor.capture());
         return captor.getValue();
     }
 }
