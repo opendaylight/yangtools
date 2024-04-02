@@ -32,7 +32,7 @@ final class EmptyJSONCodec implements JSONCodec<Empty> {
     @Override
     public void writeValue(final JsonWriter ctx, final Empty value) throws IOException {
         ctx.beginArray();
-        ctx.value((String) null);
+        ctx.nullValue();
         ctx.endArray();
     }
 }
