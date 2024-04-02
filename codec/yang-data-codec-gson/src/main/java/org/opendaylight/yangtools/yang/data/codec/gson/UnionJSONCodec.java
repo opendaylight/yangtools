@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -97,7 +96,7 @@ abstract sealed class UnionJSONCodec<T> implements JSONCodec<T> {
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public final void writeValue(final JsonWriter ctx, final T value) throws IOException {
+    public final void writeValue(final JSONValueWriter ctx, final T value) throws IOException {
         for (var codec : codecs) {
             if (!codec.getDataType().isInstance(value)) {
                 LOG.debug("Codec {} cannot accept input {}, skipping it", codec, value);

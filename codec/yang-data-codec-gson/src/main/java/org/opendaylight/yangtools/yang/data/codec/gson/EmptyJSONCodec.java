@@ -5,10 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.Empty;
 
@@ -30,9 +28,7 @@ final class EmptyJSONCodec implements JSONCodec<Empty> {
     }
 
     @Override
-    public void writeValue(final JsonWriter ctx, final Empty value) throws IOException {
-        ctx.beginArray();
-        ctx.nullValue();
-        ctx.endArray();
+    public void writeValue(final JSONValueWriter ctx, final Empty value) throws IOException {
+        ctx.writeEmpty();
     }
 }

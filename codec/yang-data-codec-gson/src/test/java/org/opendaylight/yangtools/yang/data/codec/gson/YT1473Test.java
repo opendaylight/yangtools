@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.stream.JsonWriter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -211,11 +210,12 @@ class YT1473Test {
     }
 
     private static void assertSerdes(final String expected, final YangInstanceIdentifier id) throws Exception {
-        final var writer = mock(JsonWriter.class);
-        final var captor = ArgumentCaptor.forClass(String.class);
-        doReturn(writer).when(writer).value(anyString());
+        final var writer = mock(JSONValueWriter.class);
+        doNothing().when(writer).writeString(any());
         CODEC.writeValue(writer, id);
-        verify(writer).value(captor.capture());
+
+        final var captor = ArgumentCaptor.forClass(String.class);
+        verify(writer).writeString(captor.capture());
 
         assertEquals(expected, captor.getValue());
         assertEquals(id, CODEC.parseValue(expected));
