@@ -17,27 +17,14 @@ import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
  *
  * @param <T> Normalized value type
  */
-public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Void, JsonWriter>
+public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Void, JSONValueWriter>
         permits AbstractJSONCodec, EmptyJSONCodec, IdentityrefJSONCodec, InstanceIdentifierJSONCodec, UnionJSONCodec {
     /**
      * {@inheritDoc}.
      *
      * @throws IOException if the write fails
-     * @deprecated Use {@link #writeValue(JSONValueWriter, Object)} instead.
      */
     @Override
-    @Deprecated(since = "13.0.3", forRemoval = true)
-    default void writeValue(final JsonWriter writer, final T value) throws IOException {
-        writeValue(new DefaultJSONValueWriter(writer), value);
-    }
-
-    /**
-     * Serialize specified value with specified {@link JSONValueWriter}.
-     *
-     * @param ctx Write context
-     * @param value Value in native format
-     * @throws IOException if the write fails
-     */
     void writeValue(JSONValueWriter ctx, T value) throws IOException;
 
     /**
