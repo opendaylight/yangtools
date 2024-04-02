@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
 /**
@@ -60,4 +61,13 @@ public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWrite
      * @throws IllegalArgumentException if the value does not parse or pass type validation
      */
     T parseValue(String str);
+
+    /**
+     * Return the {@link JSONValue} representation of a native value.
+     *
+     * @param value Value in native format
+     * @return A {@link JSONValue}
+     * @throws IllegalArgumentException if the value does not parse or pass type validation
+     */
+    @NonNull JSONValue unparseValue(T value);
 }

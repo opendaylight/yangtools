@@ -28,6 +28,11 @@ final class EmptyJSONCodec implements JSONCodec<Empty> {
     }
 
     @Override
+    public JSONValue unparseValue(final Empty value) {
+        return JSONValue.EMPTY;
+    }
+
+    @Override
     public void writeValue(final JSONValueWriter ctx, final Empty value) throws IOException {
         ctx.writeEmpty();
     }

@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.codec.gson.JSONValue.Kind;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -99,6 +100,11 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
     @Override
     public final YangInstanceIdentifier parseValue(final String str) {
         return deserialize(str);
+    }
+
+    @Override
+    public JSONValue unparseValue(final YangInstanceIdentifier value) {
+        return new JSONValue(serialize(value), Kind.STRING);
     }
 
     @Override
