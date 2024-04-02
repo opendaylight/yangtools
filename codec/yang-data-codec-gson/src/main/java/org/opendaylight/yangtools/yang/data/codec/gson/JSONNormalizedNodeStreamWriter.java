@@ -93,6 +93,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private final NormalizedNodeStreamWriterStack tracker;
     private final JSONCodecFactory codecs;
     private final JsonWriter writer;
+    private final DefaultJSONValueWriter valueWriter;
     private JSONStreamWriterContext context;
 
     JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
@@ -101,6 +102,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         codecs = requireNonNull(codecFactory);
         this.tracker = requireNonNull(tracker);
         context = requireNonNull(rootContext);
+        valueWriter = new DefaultJSONValueWriter(writer);
     }
 
     /**
@@ -456,7 +458,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @SuppressWarnings("unchecked")
     private void writeValue(final Object value, final JSONCodec<?> codec) throws IOException {
-        ((JSONCodec<Object>) codec).writeValue(writer, value);
+        ((JSONCodec<Object>) codec).writeValue(valueWriter, value);
     }
 
     private void writeAnydataValue(final Object value) throws IOException {

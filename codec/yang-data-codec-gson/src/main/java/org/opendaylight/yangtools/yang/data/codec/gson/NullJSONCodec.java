@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.gson.stream.JsonWriter;
-import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +30,7 @@ final class NullJSONCodec implements JSONCodec<Object> {
     }
 
     @Override
-    public void writeValue(final JsonWriter ctx, final Object value) throws IOException {
+    public void writeValue(final JSONValueWriter ctx, final Object value) {
         // NOOP since codec is unknown.
         LOG.warn("Call of the serializeToWriter method on null codec. No operation performed.");
     }

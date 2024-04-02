@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
@@ -20,7 +19,7 @@ final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
     }
 
     @Override
-    public void writeValue(final JsonWriter ctx, final Boolean value) throws IOException {
-        ctx.value(value.booleanValue());
+    public void writeValue(final JSONValueWriter ctx, final Boolean value) throws IOException {
+        ctx.writeBoolean(value);
     }
 }

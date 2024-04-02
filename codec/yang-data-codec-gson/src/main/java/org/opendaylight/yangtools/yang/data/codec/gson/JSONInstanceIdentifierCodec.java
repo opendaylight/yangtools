@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -103,13 +102,13 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractModuleStringIn
     }
 
     @Override
-    public final void writeValue(final JsonWriter ctx, final YangInstanceIdentifier value) throws IOException {
+    public final void writeValue(final JSONValueWriter ctx, final YangInstanceIdentifier value) throws IOException {
         final String str;
         try {
             str = serialize(value);
         } catch (IllegalArgumentException e) {
             throw new IOException("Failed to encode instance-identifier", e);
         }
-        ctx.value(str);
+        ctx.writeString(str);
     }
 }
