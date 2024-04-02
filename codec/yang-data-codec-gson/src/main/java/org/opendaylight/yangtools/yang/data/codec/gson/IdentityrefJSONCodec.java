@@ -14,6 +14,7 @@ import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.codec.gson.JSONValue.Kind;
 import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -46,9 +47,18 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
     }
 
     @Override
+    public JSONValue unparseValue(final QName value) {
+        return new JSONValue(encode(value), Kind.STRING);
+    }
+
+    @Override
     public void writeValue(final JSONValueWriter ctx, final QName value) throws IOException {
-        ctx.writeString(QNameCodecUtil.encodeQName(value, uri -> context.findModuleStatement(uri)
+        ctx.writeString(encode(value));
+    }
+
+    private @NonNull String encode(final QName value) {
+        return QNameCodecUtil.encodeQName(value, uri -> context.findModuleStatement(uri)
             .map(module -> module.argument().getLocalName())
-            .orElseThrow(() -> new IllegalArgumentException("Cannot find module for " + uri))));
+            .orElseThrow(() -> new IllegalArgumentException("Cannot find module for " + uri)));
     }
 }
