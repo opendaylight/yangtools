@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -46,15 +45,9 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
         }).getQName();
     }
 
-    /**
-     * Serialize QName with specified JsonWriter.
-     *
-     * @param writer JsonWriter
-     * @param value QName
-     */
     @Override
-    public void writeValue(final JsonWriter writer, final QName value) throws IOException {
-        writer.value(QNameCodecUtil.encodeQName(value, uri -> context.findModuleStatement(uri)
+    public void writeValue(final JSONValueWriter ctx, final QName value) throws IOException {
+        ctx.writeString(QNameCodecUtil.encodeQName(value, uri -> context.findModuleStatement(uri)
             .map(module -> module.argument().getLocalName())
             .orElseThrow(() -> new IllegalArgumentException("Cannot find module for " + uri))));
     }

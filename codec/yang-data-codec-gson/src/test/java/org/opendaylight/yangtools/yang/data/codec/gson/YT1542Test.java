@@ -22,7 +22,7 @@ class YT1542Test {
     void writeInstanceIdentifierReportsIOException() {
         final var codec = JSONCodecFactorySupplier.RFC7951.createSimple(YangParserTestUtils.parseYang())
             .instanceIdentifierCodec();
-        final var ex = assertThrows(IOException.class, () -> codec.writeValue(null,
+        final var ex = assertThrows(IOException.class, () -> codec.writeValue((JSONValueWriter) null,
             YangInstanceIdentifier.of(QName.create("foo", "bar"))));
         assertEquals("Failed to encode instance-identifier", ex.getMessage());
         assertInstanceOf(IllegalArgumentException.class, ex.getCause());

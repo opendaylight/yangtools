@@ -24,9 +24,22 @@ public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWrite
      * {@inheritDoc}.
      *
      * @throws IOException if the write fails
+     * @deprecated Use {@link #writeValue(JSONValueWriter, Object)} instead.
      */
     @Override
-    void writeValue(JsonWriter ctx, T value) throws IOException;
+    @Deprecated(since = "13.0.3", forRemoval = true)
+    default void writeValue(final JsonWriter writer, final T value) throws IOException {
+        writeValue(new DefaultJSONValueWriter(writer), value);
+    }
+
+    /**
+     * Serialize specified value with specified {@link JSONValueWriter}.
+     *
+     * @param ctx Write context
+     * @param value Value in native format
+     * @throws IOException if the write fails
+     */
+    void writeValue(JSONValueWriter ctx, T value) throws IOException;
 
     /**
      * {@inheritDoc}.
