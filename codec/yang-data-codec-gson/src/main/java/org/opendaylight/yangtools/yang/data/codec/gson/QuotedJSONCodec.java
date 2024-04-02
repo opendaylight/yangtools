@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.data.codec.gson.JSONValue.Kind;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
 /**
@@ -18,6 +19,11 @@ import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 final class QuotedJSONCodec<T> extends AbstractJSONCodec<T> {
     QuotedJSONCodec(final DataStringCodec<T> codec) {
         super(codec);
+    }
+
+    @Override
+    public JSONValue unparseValue(final T value) {
+        return new JSONValue(serialize(value), Kind.STRING);
     }
 
     @Override

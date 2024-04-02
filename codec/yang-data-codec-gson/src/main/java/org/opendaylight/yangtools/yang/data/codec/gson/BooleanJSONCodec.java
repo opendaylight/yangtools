@@ -22,4 +22,9 @@ final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
     public void writeValue(final JSONValueWriter ctx, final Boolean value) throws IOException {
         ctx.writeBoolean(value);
     }
+
+    @Override
+    public JSONValue unparseValue(final Boolean value) {
+        return value ? JSONValue.TRUE : JSONValue.FALSE;
+    }
 }

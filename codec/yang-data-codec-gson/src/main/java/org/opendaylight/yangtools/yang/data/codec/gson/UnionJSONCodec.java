@@ -98,21 +98,40 @@ abstract sealed class UnionJSONCodec<T> implements JSONCodec<T> {
     @SuppressWarnings("checkstyle:illegalCatch")
     public final void writeValue(final JSONValueWriter ctx, final T value) throws IOException {
         for (var codec : codecs) {
-            if (!codec.getDataType().isInstance(value)) {
+            if (codec.getDataType().isInstance(value)) {
+                @SuppressWarnings("unchecked")
+                final var objCodec = (JSONCodec<Object>) codec;
+                try {
+                    objCodec.writeValue(ctx, value);
+                    return;
+                } catch (RuntimeException e) {
+                    LOG.debug("Codec {} failed to serialize {}", codec, value, e);
+                }
+            } else {
                 LOG.debug("Codec {} cannot accept input {}, skipping it", codec, value);
-                continue;
-            }
-
-            @SuppressWarnings("unchecked")
-            final var objCodec = (JSONCodec<Object>) codec;
-            try {
-                objCodec.writeValue(ctx, value);
-                return;
-            } catch (RuntimeException e) {
-                LOG.debug("Codec {} failed to serialize {}", codec, value, e);
             }
         }
 
         throw new IllegalArgumentException("No codecs could serialize" + value);
+    }
+
+
+    @Override
+    public JSONValue unparseValue(final Object value) {
+        for (var codec : codecs) {
+            if (codec.getDataType().isInstance(value)) {
+                @SuppressWarnings("unchecked")
+                final var objCodec = (JSONCodec<Object>) codec;
+                try {
+                    return objCodec.unparseValue(value);
+                } catch (RuntimeException e) {
+                    LOG.debug("Codec {} failed to unparse {}", codec, value, e);
+                }
+            } else {
+                LOG.debug("Codec {} cannot accept input {}, skipping it", codec, value);
+            }
+        }
+
+        throw new IllegalArgumentException("No codecs could unparse" + value);
     }
 }

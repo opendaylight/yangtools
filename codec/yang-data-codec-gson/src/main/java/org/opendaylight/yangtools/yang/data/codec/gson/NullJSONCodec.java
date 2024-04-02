@@ -34,4 +34,9 @@ final class NullJSONCodec implements JSONCodec<Object> {
         // NOOP since codec is unknown.
         LOG.warn("Call of the serializeToWriter method on null codec. No operation performed.");
     }
+
+    @Override
+    public JSONValue unparseValue(final Object value) {
+        throw new UnsupportedOperationException();
+    }
 }
