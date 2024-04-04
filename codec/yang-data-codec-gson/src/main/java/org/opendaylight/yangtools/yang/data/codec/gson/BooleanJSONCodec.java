@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import java.io.IOException;
-import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
+import org.opendaylight.yangtools.yang.data.util.codec.DataStringCodec;
 
 /**
  * A {@link JSONCodec} which does not need double quotes in output representation.

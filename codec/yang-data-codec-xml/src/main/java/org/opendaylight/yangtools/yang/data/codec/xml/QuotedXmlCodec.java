@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
+import org.opendaylight.yangtools.yang.data.util.codec.DataStringCodec;
 
 final class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
     QuotedXmlCodec(final DataStringCodec<T> codec) {
