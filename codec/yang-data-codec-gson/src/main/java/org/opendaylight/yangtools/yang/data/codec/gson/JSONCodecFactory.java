@@ -61,7 +61,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -217,12 +216,6 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     @Override
     protected final JSONCodec<?> unionCodec(final UnionTypeDefinition type, final List<JSONCodec<?>> codecs) {
         return UnionJSONCodec.create(type, codecs);
-    }
-
-    @Override
-    @Deprecated(since = "13.0.3", forRemoval = true)
-    protected final JSONCodec<?> unknownCodec(final UnknownTypeDefinition type) {
-        return NullJSONCodec.INSTANCE;
     }
 
     // Returns a one-off factory for the purposes of normalizing an anydata tree.

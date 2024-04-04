@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,15 +155,10 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
 
     protected abstract T unionCodec(UnionTypeDefinition type, List<T> codecs);
 
-    @Deprecated(since = "13.0.3", forRemoval = true)
-    protected abstract T unknownCodec(UnknownTypeDefinition type);
-
     private T getSimpleCodecFor(final TypeDefinition<?> type) {
         // These types are expected to be fully-shared
         if (type instanceof EmptyTypeDefinition emptyType) {
             return emptyCodec(emptyType);
-        } else if (type instanceof UnknownTypeDefinition unknownType) {
-            return unknownCodec(unknownType);
         }
 
         // Now deal with simple types. Note we consider union composed of purely simple types a simple type itself.

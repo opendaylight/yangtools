@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
 /**
  * A thread-safe factory for instantiating {@link XmlCodec}s.
@@ -199,11 +198,5 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     @Override
     protected XmlCodec<?> unionCodec(final UnionTypeDefinition type, final List<XmlCodec<?>> codecs) {
         return UnionXmlCodec.create(type, codecs);
-    }
-
-    @Override
-    @Deprecated(since = "13.0.3", forRemoval = true)
-    protected XmlCodec<?> unknownCodec(final UnknownTypeDefinition type) {
-        return NullXmlCodec.INSTANCE;
     }
 }
