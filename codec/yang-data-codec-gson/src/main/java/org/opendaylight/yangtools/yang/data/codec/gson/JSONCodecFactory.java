@@ -220,6 +220,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     }
 
     @Override
+    @Deprecated(since = "13.0.3", forRemoval = true)
     protected final JSONCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullJSONCodec.INSTANCE;
     }

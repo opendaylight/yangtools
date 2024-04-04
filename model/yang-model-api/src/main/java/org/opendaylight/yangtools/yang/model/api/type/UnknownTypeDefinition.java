@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
+@Deprecated(since = "13.0.3", forRemoval = true)
 public interface UnknownTypeDefinition extends TypeDefinition<UnknownTypeDefinition> {
 
     List<RangeConstraint<?>> getRangeConstraints();

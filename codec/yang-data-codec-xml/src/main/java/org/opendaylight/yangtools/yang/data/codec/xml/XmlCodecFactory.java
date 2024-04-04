@@ -202,6 +202,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     }
 
     @Override
+    @Deprecated(since = "13.0.3", forRemoval = true)
     protected XmlCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullXmlCodec.INSTANCE;
     }

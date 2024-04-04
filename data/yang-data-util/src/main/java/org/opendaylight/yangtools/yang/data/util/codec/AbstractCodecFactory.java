@@ -156,6 +156,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
 
     protected abstract T unionCodec(UnionTypeDefinition type, List<T> codecs);
 
+    @Deprecated(since = "13.0.3", forRemoval = true)
     protected abstract T unknownCodec(UnknownTypeDefinition type);
 
     private T getSimpleCodecFor(final TypeDefinition<?> type) {

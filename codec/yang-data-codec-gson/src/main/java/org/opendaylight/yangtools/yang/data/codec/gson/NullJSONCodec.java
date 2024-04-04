@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "13.0.3", forRemoval = true)
 final class NullJSONCodec implements JSONCodec<Object> {
     static final NullJSONCodec INSTANCE = new NullJSONCodec();
     private static final Logger LOG = LoggerFactory.getLogger(NullJSONCodec.class);

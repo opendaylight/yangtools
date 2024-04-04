@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "13.0.3", forRemoval = true)
 final class NullXmlCodec implements XmlCodec<Object> {
     static final NullXmlCodec INSTANCE = new NullXmlCodec();
     private static final Logger LOG = LoggerFactory.getLogger(NullXmlCodec.class);
