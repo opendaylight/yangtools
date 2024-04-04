@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.data.spi.codec.AbstractDataStringCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;

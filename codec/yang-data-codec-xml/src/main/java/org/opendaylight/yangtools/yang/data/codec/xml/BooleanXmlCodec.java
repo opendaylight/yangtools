@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
+import org.opendaylight.yangtools.yang.data.spi.codec.DataStringCodec;
 
 final class BooleanXmlCodec extends AbstractXmlCodec<Boolean> {
     BooleanXmlCodec(final DataStringCodec<Boolean> codec) {
