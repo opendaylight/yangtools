@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.data.impl.codec;
+package org.opendaylight.yangtools.yang.data.spi.codec;
 
 import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;

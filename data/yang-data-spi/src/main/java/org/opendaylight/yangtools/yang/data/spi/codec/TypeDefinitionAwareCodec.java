@@ -5,13 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.codec;
+package org.opendaylight.yangtools.yang.data.spi.codec;
 
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.spi.codec.AbstractDataStringCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> extends AbstractDataStringCodec<J> {
     private static final boolean ENABLE_UNION_CODEC =
-        !Boolean.getBoolean("org.opendaylight.yangtools.yang.data.impl.codec.disable-union");
+        !Boolean.getBoolean("org.opendaylight.yangtools.yang.data.spi.codec.disable-union");
 
     static {
         if (!ENABLE_UNION_CODEC) {

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.codec;
+package org.opendaylight.yangtools.yang.data.spi.codec;
 
 import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;

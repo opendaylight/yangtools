@@ -21,6 +21,8 @@ import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
+import org.opendaylight.yangtools.yang.data.spi.codec.DecimalStringCodec;
+import org.opendaylight.yangtools.yang.data.spi.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 

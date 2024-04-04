@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import javax.xml.namespace.NamespaceContext;
-import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.spi.codec.DataStringCodec;
+import org.opendaylight.yangtools.yang.data.spi.codec.TypeDefinitionAwareCodec;
 
 /**
  * Abstract base implementation of {@link XmlCodec}, which wraps a {@link TypeDefinitionAwareCodec}.

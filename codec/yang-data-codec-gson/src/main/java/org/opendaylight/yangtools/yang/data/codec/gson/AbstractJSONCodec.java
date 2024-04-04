@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.spi.codec.DataStringCodec;
+import org.opendaylight.yangtools.yang.data.spi.codec.TypeDefinitionAwareCodec;
 
 /**
  * Abstract base implementation of {@link JSONCodec}, which wraps a {@link TypeDefinitionAwareCodec}.
