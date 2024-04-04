@@ -18,9 +18,8 @@ import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
  * @param <T> Normalized value type
  */
 public sealed interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWriter>
-        permits AbstractJSONCodec, EmptyJSONCodec, IdentityrefJSONCodec, NullJSONCodec, UnionJSONCodec,
-                // FIXME: rename this guy
-                JSONInstanceIdentifierCodec {
+        permits AbstractJSONCodec, EmptyJSONCodec, IdentityrefJSONCodec, InstanceIdentifierJSONCodec, UnionJSONCodec,
+                NullJSONCodec {
     /**
      * {@inheritDoc}.
      *

@@ -72,7 +72,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     @Deprecated(since = "12.0.0", forRemoval = true)
     static final class Lhotka02 extends JSONCodecFactory {
         Lhotka02(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
-            super(context, cache, JSONInstanceIdentifierCodec.Lhotka02::new);
+            super(context, cache, InstanceIdentifierJSONCodec.Lhotka02::new);
         }
 
         @Override
@@ -93,7 +93,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
 
     static final class RFC7951 extends JSONCodecFactory {
         RFC7951(final @NonNull  EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
-            super(context, cache, JSONInstanceIdentifierCodec.RFC7951::new);
+            super(context, cache, InstanceIdentifierJSONCodec.RFC7951::new);
         }
 
         @Override
@@ -112,13 +112,13 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
         }
     }
 
-    private final @NonNull JSONInstanceIdentifierCodec iidCodec;
+    private final @NonNull InstanceIdentifierJSONCodec iidCodec;
 
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
         justification = "https://github.com/spotbugs/spotbugs/issues/1867")
     private JSONCodecFactory(final @NonNull EffectiveModelContext context,
             final @NonNull CodecCache<JSONCodec<?>> cache,
-            final BiFunction<EffectiveModelContext, JSONCodecFactory, @NonNull JSONInstanceIdentifierCodec> iidCodec) {
+            final BiFunction<EffectiveModelContext, JSONCodecFactory, @NonNull InstanceIdentifierJSONCodec> iidCodec) {
         super(context, cache);
         this.iidCodec = verifyNotNull(iidCodec.apply(context, this));
     }

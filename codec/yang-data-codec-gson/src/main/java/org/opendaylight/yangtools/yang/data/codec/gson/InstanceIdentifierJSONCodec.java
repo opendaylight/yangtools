@@ -25,15 +25,15 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
-abstract sealed class JSONInstanceIdentifierCodec extends AbstractStringInstanceIdentifierCodec
+abstract sealed class InstanceIdentifierJSONCodec extends AbstractStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
-    static final class Lhotka02 extends JSONInstanceIdentifierCodec {
+    static final class Lhotka02 extends InstanceIdentifierJSONCodec {
         Lhotka02(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
             super(context, jsonCodecFactory);
         }
     }
 
-    static final class RFC7951 extends JSONInstanceIdentifierCodec {
+    static final class RFC7951 extends InstanceIdentifierJSONCodec {
         RFC7951(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
             super(context, jsonCodecFactory);
         }
@@ -55,7 +55,7 @@ abstract sealed class JSONInstanceIdentifierCodec extends AbstractStringInstance
     private final JSONCodecFactory codecFactory;
     private final EffectiveModelContext context;
 
-    JSONInstanceIdentifierCodec(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
+    InstanceIdentifierJSONCodec(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
         this.context = requireNonNull(context);
         dataContextTree = DataSchemaContextTree.from(context);
         codecFactory = requireNonNull(jsonCodecFactory);
