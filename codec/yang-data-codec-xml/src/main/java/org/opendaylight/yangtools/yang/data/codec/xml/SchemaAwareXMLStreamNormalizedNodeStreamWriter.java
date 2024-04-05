@@ -24,15 +24,18 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.NormalizedNodeStreamWriterStack;
-import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
@@ -92,15 +95,16 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
 
     @Override
     public void endNode() throws IOException {
-        final Object schema = tracker.endNode();
-        if (schema instanceof ListSchemaNode || schema instanceof LeafListSchemaNode) {
+        final var schema = tracker.endNode();
+        if (schema instanceof ListEffectiveStatement || schema instanceof LeafListEffectiveStatement) {
             // For lists, we only emit end element on the inner frame
-            final Object parent = tracker.getParent();
-            if (parent == schema) {
+            if (tracker.currentStatement() == schema) {
                 endElement();
             }
-        } else if (schema instanceof ContainerLike || schema instanceof LeafSchemaNode
-                || schema instanceof AnydataSchemaNode || schema instanceof AnyxmlSchemaNode) {
+        } else if (schema instanceof ContainerEffectiveStatement || schema instanceof LeafEffectiveStatement
+                || schema instanceof AnydataEffectiveStatement || schema instanceof AnyxmlEffectiveStatement
+                || schema instanceof InputEffectiveStatement || schema instanceof OutputEffectiveStatement
+                || schema instanceof NotificationEffectiveStatement) {
             endElement();
         }
     }
@@ -150,10 +154,10 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
 
     @Override
     public void scalarValue(final Object value) throws IOException {
-        final Object current = tracker.getParent();
+        final var current = tracker.currentStatement();
         if (current instanceof TypedDataSchemaNode typedSchema) {
             writeValue(value, typedSchema);
-        } else if (current instanceof AnydataSchemaNode) {
+        } else if (current instanceof AnydataEffectiveStatement) {
             anydataValue(value);
         } else {
             throw new IllegalStateException("Unexpected scalar value " + value + " with " + current);
@@ -162,8 +166,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
 
     @Override
     public void domSourceValue(final DOMSource value) throws IOException {
-        final Object current = tracker.getParent();
-        checkState(current instanceof AnyxmlSchemaNode, "Unexpected value %s with %s", value, current);
+        final var current = tracker.currentStatement();
+        checkState(current instanceof AnyxmlEffectiveStatement, "Unexpected value %s with %s", value, current);
         anyxmlValue(value);
     }
 
