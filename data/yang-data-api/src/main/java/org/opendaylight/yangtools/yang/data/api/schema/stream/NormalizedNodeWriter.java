@@ -40,10 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is an experimental iterator over a {@link NormalizedNode}. This is essentially
- * the opposite of a {@link XMLStreamReader} -- unlike instantiating an iterator over
- * the backing data, this encapsulates a {@link NormalizedNodeStreamWriter} and allows
- * us to write multiple nodes.
+ * This is an experimental iterator over a {@link NormalizedNode}. This is essentially the opposite of a
+ * {@link XMLStreamReader} -- unlike instantiating an iterator over the backing data, this encapsulates a
+ * {@link NormalizedNodeStreamWriter} and allows us to write multiple nodes.
  */
 @Beta
 public class NormalizedNodeWriter implements Closeable, Flushable {
