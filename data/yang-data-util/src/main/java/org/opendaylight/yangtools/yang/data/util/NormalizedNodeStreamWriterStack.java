@@ -13,7 +13,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -25,22 +24,23 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -57,9 +57,9 @@ import org.slf4j.LoggerFactory;
 public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeStreamWriterStack.class);
 
-    private final Deque<DataSchemaNode> schemaStack = new ArrayDeque<>();
+    private final Deque<EffectiveStatement<?, ?>> schemaStack = new ArrayDeque<>();
     private final SchemaInferenceStack dataTree;
-    private final DataNodeContainer root;
+    private final Object root;
 
     private NormalizedNodeStreamWriterStack(final EffectiveModelContext context) {
         dataTree = SchemaInferenceStack.of(context);
@@ -70,7 +70,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         this.dataTree = requireNonNull(dataTree);
         if (!dataTree.isEmpty()) {
             final var current = dataTree.currentStatement();
-            if (current instanceof DataNodeContainer container) {
+            if (current instanceof DataTreeAwareEffectiveStatement container) {
                 root = container;
             } else {
                 throw new IllegalArgumentException("Cannot instantiate on " + current);
@@ -175,23 +175,20 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         return schema == null ? root : schema;
     }
 
-    private @NonNull SchemaNode enterDataTree(final PathArgument name) {
+    private @NonNull DataTreeEffectiveStatement<?> enterDataTree(final PathArgument name) {
         final var qname = name.getNodeType();
         final var stmt = dataTree.enterDataTree(qname);
-        if (!(stmt instanceof SchemaNode ret)) {
-            throw new VerifyException("Unexpected result " + stmt);
+        if (getParent() instanceof ChoiceEffectiveStatement choice) {
+            final var check = choice.findDataTreeNode(qname).orElse(null);
+            verify(check == stmt, "Data tree result %s does not match choice result %s", stmt, check);
         }
-        if (getParent() instanceof ChoiceSchemaNode choice) {
-            final var check = choice.findDataSchemaChild(qname).orElse(null);
-            verify(check == ret, "Data tree result %s does not match choice result %s", ret, check);
-        }
-        return ret;
+        return stmt;
     }
 
-    private <T extends DataSchemaNode> @NonNull T enterDataTree(final PathArgument name,
+    private <T extends DataTreeEffectiveStatement<?>> @NonNull T enterDataTree(final PathArgument name,
             final @NonNull Class<T> expectedClass, final @NonNull String humanString) {
         final var schema = enterDataTree(name);
-        final T casted;
+        final @NonNull T casted;
         try {
             casted = expectedClass.cast(schema);
         } catch (ClassCastException e) {
@@ -202,32 +199,32 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     }
 
     public void startList(final PathArgument name) {
-        enterDataTree(name, ListSchemaNode.class, "a list");
+        enterDataTree(name, ListEffectiveStatement.class, "a list");
     }
 
     public void startListItem(final PathArgument name) throws IOException {
-        if (!(getParent() instanceof ListSchemaNode parentList)) {
+        if (!(getParent() instanceof ListEffectiveStatement parentList)) {
             throw new IllegalArgumentException("List item is not appropriate");
         }
         schemaStack.push(parentList);
     }
 
     public void startLeafNode(final NodeIdentifier name) throws IOException {
-        enterDataTree(name, LeafSchemaNode.class, "a leaf");
+        enterDataTree(name, LeafEffectiveStatement.class, "a leaf");
     }
 
     public void startLeafSet(final NodeIdentifier name) {
-        enterDataTree(name, LeafListSchemaNode.class, "a leaf-list");
+        enterDataTree(name, LeafListEffectiveStatement.class, "a leaf-list");
     }
 
-    private @NonNull LeafListSchemaNode leafSetEntryNode(final QName qname) {
+    private @NonNull LeafListEffectiveStatement leafSetEntryNode(final QName qname) {
         final Object parent = getParent();
-        if (parent instanceof LeafListSchemaNode leafList) {
+        if (parent instanceof LeafListEffectiveStatement leafList) {
             return leafList;
         }
-        if (parent instanceof DataNodeContainer parentContainer) {
-            final var child = parentContainer.dataChildByName(qname);
-            if (child instanceof LeafListSchemaNode childLeafList) {
+        if (parent instanceof DataTreeAwareEffectiveStatement parentContainer) {
+            final var child = parentContainer.findDataTreeNode(qname).orElse(null);
+            if (child instanceof LeafListEffectiveStatement childLeafList) {
                 return childLeafList;
             }
             throw new IllegalArgumentException(
@@ -242,42 +239,47 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
 
     public void startChoiceNode(final NodeIdentifier name) {
         LOG.debug("Enter choice {}", name);
-        final var stmt = dataTree.enterChoice(name.getNodeType());
-        if (stmt instanceof ChoiceSchemaNode choice) {
-            schemaStack.push(choice);
-        } else {
-            throw new VerifyException("Node " + stmt + " is not a choice");
-        }
+        schemaStack.push(dataTree.enterChoice(name.getNodeType()));
     }
 
-    public @NonNull ContainerLike startContainerNode(final NodeIdentifier name) {
+    public @NonNull DataTreeAwareEffectiveStatement<QName, ?> startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
 
-        final ContainerLike schema;
-        if (schemaStack.isEmpty() && root instanceof NotificationDefinition notification
-            && name.getNodeType().equals(notification.getQName())) {
+        final DataTreeAwareEffectiveStatement<QName, ?> ret;
+        if (schemaStack.isEmpty() && root instanceof NotificationEffectiveStatement notification
+            && name.getNodeType().equals(notification.argument())) {
             // Special case for stacks initialized at notification. We pretend the first container is contained within
             // itself.
             // FIXME: 8.0.0: factor this special case out to something more reasonable, like being initialized at the
             //               Notification's parent and knowing to enterSchemaTree() instead of enterDataTree().
-            schema = notification.toContainerLike();
-            schemaStack.push(schema);
+            ret = notification;
         } else {
-            schema = enterDataTree(name, ContainerLike.class, "a container");
+            final var child = enterDataTree(name);
+            if (child instanceof ContainerEffectiveStatement container) {
+                ret = container;
+            } else if (child instanceof InputEffectiveStatement input) {
+                ret = input;
+            } else if (child instanceof OutputEffectiveStatement output) {
+                ret = output;
+            } else {
+                dataTree.exitToDataTree();
+                throw new IllegalArgumentException("Node " + child + " is not a container");
+            }
         }
 
-        return schema;
+        schemaStack.push(ret);
+        return ret;
     }
 
     public void startAnyxmlNode(final NodeIdentifier name) {
-        enterDataTree(name, AnyxmlSchemaNode.class, "anyxml");
+        enterDataTree(name, AnyxmlEffectiveStatement.class, "anyxml");
     }
 
     public void startAnydataNode(final NodeIdentifier name) {
-        enterDataTree(name, AnydataSchemaNode.class, "anydata");
+        enterDataTree(name, AnydataEffectiveStatement.class, "anydata");
     }
 
-    public Object endNode() {
+    public EffectiveStatement<?, ?> endNode() {
         final var ret = schemaStack.pop();
         // If this is a data tree node, make sure it is updated. Before that, though, we need to check if this is not
         // actually listEntry -> list or leafListEntry -> leafList exit.
