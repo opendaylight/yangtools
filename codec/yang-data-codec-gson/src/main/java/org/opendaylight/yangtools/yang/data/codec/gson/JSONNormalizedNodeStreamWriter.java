@@ -30,12 +30,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MountPointExtension;
 import org.opendaylight.yangtools.yang.data.util.NormalizedNodeStreamWriterStack;
-import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.w3c.dom.Element;
@@ -77,10 +78,14 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     /**
-     * RFC6020 deviation: we are not required to emit empty containers unless they
-     * are marked as 'presence'.
+     * RFC6020 deviation: we are not required to emit empty containers unless they are marked as 'presence'.
      */
-    private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
+    private static final boolean DEFAULT_EMIT_EMPTY_OBJECTS;
+
+    static {
+        // Initialized in a static block to make this a run-time rather than compile-time constant
+        DEFAULT_EMIT_EMPTY_OBJECTS = true;
+    }
 
     @Regex
     private static final String NUMBER_STRING = "-?\\d+(\\.\\d+)?";
@@ -94,10 +99,12 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private final JSONCodecFactory codecs;
     private final JsonWriter writer;
     private final DefaultJSONValueWriter valueWriter;
+
     private JSONStreamWriterContext context;
 
-    JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
-            final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
+    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory,
+            final NormalizedNodeStreamWriterStack tracker, final JsonWriter writer,
+            final JSONStreamWriterRootContext rootContext) {
         this.writer = requireNonNull(writer);
         codecs = requireNonNull(codecFactory);
         this.tracker = requireNonNull(tracker);
@@ -335,15 +342,12 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         context = new JSONStreamWriterListContext(context, name);
     }
 
-    /*
-     * Warning suppressed due to static final constant which triggers a warning
-     * for the call to schema.isPresenceContainer().
-     */
     @Override
     public final void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        final boolean isPresence = tracker.startContainerNode(name) instanceof ContainerSchemaNode container
-            ? container.isPresenceContainer() : DEFAULT_EMIT_EMPTY_CONTAINERS;
-        context = new JSONStreamWriterNamedObjectContext(context, name, isPresence);
+        final boolean emitIfEmpty = tracker.startContainerNode(name) instanceof ContainerEffectiveStatement container
+            ? container.findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isPresent()
+                : DEFAULT_EMIT_EMPTY_OBJECTS;
+        context = new JSONStreamWriterNamedObjectContext(context, name, emitIfEmpty);
     }
 
     @Override
@@ -355,7 +359,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startListItem(name);
-        context = new JSONStreamWriterObjectContext(context, name, DEFAULT_EMIT_EMPTY_CONTAINERS);
+        context = new JSONStreamWriterObjectContext(context, name, DEFAULT_EMIT_EMPTY_OBJECTS);
     }
 
     @Override
@@ -368,7 +372,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
             throws IOException {
         tracker.startListItem(identifier);
-        context = new JSONStreamWriterObjectContext(context, identifier, DEFAULT_EMIT_EMPTY_CONTAINERS);
+        context = new JSONStreamWriterObjectContext(context, identifier, DEFAULT_EMIT_EMPTY_OBJECTS);
     }
 
     @Override
@@ -439,7 +443,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         final Object current = tracker.getParent();
         if (current instanceof TypedDataSchemaNode typed) {
             writeValue(value, codecs.codecFor(typed, tracker));
-        } else if (current instanceof AnydataSchemaNode) {
+        } else if (current instanceof AnydataEffectiveStatement) {
             writeAnydataValue(value);
         } else {
             throw new IllegalStateException(String.format("Cannot emit scalar %s for %s", value, current));
@@ -449,7 +453,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void domSourceValue(final DOMSource value) throws IOException {
         final Object current = tracker.getParent();
-        checkState(current instanceof AnyxmlSchemaNode, "Cannot emit DOMSource %s for %s", value, current);
+        checkState(current instanceof AnyxmlEffectiveStatement, "Cannot emit DOMSource %s for %s", value, current);
         // FIXME: should have a codec based on this :)
         writeAnyXmlValue(value);
     }
