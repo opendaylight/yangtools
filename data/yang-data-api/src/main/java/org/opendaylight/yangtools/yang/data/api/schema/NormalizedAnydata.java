@@ -48,7 +48,7 @@ public interface NormalizedAnydata extends Immutable {
     }
 
     default void writeTo(final NormalizedNodeStreamWriter writer, final boolean orderKeyLeaves) throws IOException {
-        NormalizedNodeWriter.forStreamWriter(writer, orderKeyLeaves).write(getData()).flush();
+        new NormalizedNodeWriter(writer, !orderKeyLeaves).write(getData()).flush();
     }
 
     static NormalizedAnydata of(final EffectiveStatementInference inference, final NormalizedNode data) {
