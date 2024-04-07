@@ -45,10 +45,9 @@ class NormalizedNodeWriterTest {
     @Test
     void testNormalizedNodeWriter() throws IOException {
         final var loggingNormalizedNodeStreamWriter = new LoggingNormalizedNodeStreamWriter();
-        final var orderedNormalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-                loggingNormalizedNodeStreamWriter);
+        final var orderedNormalizedNodeWriter = new NormalizedNodeWriter(loggingNormalizedNodeStreamWriter);
 
-        assertEquals(loggingNormalizedNodeStreamWriter, orderedNormalizedNodeWriter.getWriter());
+        assertEquals(loggingNormalizedNodeStreamWriter, orderedNormalizedNodeWriter.writer);
 
         final var mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
         doReturn(new NodeWithValue<>(myLeafList, "leaflist-value-1")).when(mockedLeafSetEntryNode).name();
@@ -94,7 +93,7 @@ class NormalizedNodeWriterTest {
         orderedNormalizedNodeWriter.flush();
         orderedNormalizedNodeWriter.close();
 
-        try (var nnWriter = NormalizedNodeWriter.forStreamWriter(loggingNormalizedNodeStreamWriter, false)) {
+        try (var nnWriter = new NormalizedNodeWriter(loggingNormalizedNodeStreamWriter, true)) {
             assertNotNull(nnWriter.write(mockedMapEntryNode));
         }
     }

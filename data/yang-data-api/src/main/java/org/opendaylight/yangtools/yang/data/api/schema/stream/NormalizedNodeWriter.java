@@ -11,21 +11,16 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Iterables;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -45,17 +40,31 @@ import org.slf4j.LoggerFactory;
  * {@link NormalizedNodeStreamWriter} and allows us to write multiple nodes.
  */
 @Beta
+@NonNullByDefault
 public class NormalizedNodeWriter implements Closeable, Flushable {
     private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeWriter.class);
 
-    private final @NonNull NormalizedNodeStreamWriter writer;
+    protected final NormalizedNodeStreamWriter writer;
+    private final MapBodyOrder mapBodyOrder;
 
-    protected NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
-        this.writer = requireNonNull(writer);
+    /**
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
+     *
+     * @param writer Back-end writer
+     */
+    public NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
+        this(writer, false);
     }
 
-    protected final NormalizedNodeStreamWriter getWriter() {
-        return writer;
+    /**
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}, optionally using iteration order to emit
+     * {@link MapEntryNode} bodies.
+     *
+     * @param writer Back-end writer
+     */
+    public NormalizedNodeWriter(final NormalizedNodeStreamWriter writer, final boolean iterationOrder) {
+        this.writer = requireNonNull(writer);
+        mapBodyOrder = iterationOrder ? IterationMapBodyOrder.INSTANCE : DefaultMapBodyOrder.INSTANCE;
     }
 
     /**
@@ -63,9 +72,11 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      *
      * @param writer Back-end writer
      * @return A new instance.
+     * @deprecated Use {@link #NormalizedNodeWriter(NormalizedNodeStreamWriter)} instead.
      */
+    @Deprecated(forRemoval = true, since = "13.0.3")
     public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer) {
-        return forStreamWriter(writer, true);
+        return new NormalizedNodeWriter(writer);
     }
 
     /**
@@ -80,10 +91,24 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @param writer Back-end writer
      * @param orderKeyLeaves whether the returned instance should be RFC6020 XML compliant.
      * @return A new instance.
+     * @deprecated Use {@link #NormalizedNodeWriter(NormalizedNodeStreamWriter, boolean)} instead. Note the boolean's
+     *             meaning is inverted.
      */
+    @Deprecated(forRemoval = true, since = "13.0.3")
     public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer,
             final boolean orderKeyLeaves) {
-        return orderKeyLeaves ? new OrderedNormalizedNodeWriter(writer) : new NormalizedNodeWriter(writer);
+        return new NormalizedNodeWriter(writer, !orderKeyLeaves);
+    }
+
+    @Override
+    public final void flush() throws IOException {
+        writer.flush();
+    }
+
+    @Override
+    public final void close() throws IOException {
+        writer.flush();
+        writer.close();
     }
 
     /**
@@ -95,39 +120,28 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @throws IOException when thrown from the backing writer.
      */
     public NormalizedNodeWriter write(final NormalizedNode node) throws IOException {
-        if (wasProcessedAsCompositeNode(node)) {
-            return this;
-        }
-
-        if (wasProcessAsSimpleNode(node)) {
-            return this;
-        }
-
-        throw new IllegalStateException("It wasn't possible to serialize node " + node);
-    }
-
-    @Override
-    public void flush() throws IOException {
-        writer.flush();
-    }
-
-    @Override
-    public void close() throws IOException {
-        writer.flush();
-        writer.close();
-    }
-
-    protected boolean wasProcessAsSimpleNode(final NormalizedNode node) throws IOException {
-        if (node instanceof LeafSetEntryNode<?> nodeAsLeafList) {
-            writer.startLeafSetEntryNode(nodeAsLeafList.name());
-            writer.scalarValue(nodeAsLeafList.body());
-            writer.endNode();
-            return true;
-        } else if (node instanceof LeafNode<?> nodeAsLeaf) {
-            writer.startLeafNode(nodeAsLeaf.name());
-            writer.scalarValue(nodeAsLeaf.body());
-            writer.endNode();
-            return true;
+        if (node instanceof ContainerNode n) {
+            writeContainer(n);
+        } else if (node instanceof MapEntryNode n) {
+            writeMapEntry(n);
+        } else if (node instanceof UnkeyedListEntryNode n) {
+            writeUnkeyedListEntry(n);
+        } else if (node instanceof ChoiceNode n) {
+            writeChoice(n);
+        } else if (node instanceof UnkeyedListNode n) {
+            writeUnkeyedList(n);
+        } else if (node instanceof UserMapNode n) {
+            writeUserMap(n);
+        } else if (node instanceof SystemMapNode n) {
+            writeSystemMap(n);
+        } else if (node instanceof UserLeafSetNode<?> n) {
+            writeUserLeafSet(n);
+        } else if (node instanceof SystemLeafSetNode<?> n) {
+            writeSystemLeafSet(n);
+        } else if (node instanceof LeafSetEntryNode<?> n) {
+            writeLeafSetEntry(n);
+        } else if (node instanceof LeafNode<?> n) {
+            writeLeaf(n);
         } else if (node instanceof AnyxmlNode<?> anyxmlNode) {
             final Class<?> model = anyxmlNode.bodyObjectModel();
             if (writer.startAnyxmlNode(anyxmlNode.name(), model)) {
@@ -139,107 +153,91 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
                     writer.scalarValue(value);
                 }
                 writer.endNode();
-                return true;
+            } else {
+                LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
             }
-
-            LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
         } else if (node instanceof AnydataNode<?> anydata) {
             final Class<?> model = anydata.bodyObjectModel();
             if (writer.startAnydataNode(anydata.name(), model)) {
                 writer.scalarValue(anydata.body());
                 writer.endNode();
-                return true;
+            } else {
+                LOG.debug("Writer {} does not support anydata in form of {}", writer, model);
             }
-
-            LOG.debug("Writer {} does not support anydata in form of {}", writer, model);
+        } else {
+            throw new IllegalStateException("Unhandled " + node.contract());
         }
 
-        return false;
+        return this;
+    }
+
+    protected void writeChoice(final ChoiceNode node) throws IOException {
+        writer.startChoiceNode(node.name(), node.size());
+        writeChildren(node.body());
+    }
+
+    protected void writeContainer(final ContainerNode node) throws IOException {
+        writer.startContainerNode(node.name(), node.size());
+        writeChildren(node.body());
+    }
+
+    protected void writeLeaf(final LeafNode<?> node) throws IOException {
+        writer.startLeafNode(node.name());
+        writer.scalarValue(node.body());
+        writer.endNode();
+    }
+
+    protected void writeLeafSetEntry(final LeafSetEntryNode<?> node) throws IOException {
+        writer.startLeafSetEntryNode(node.name());
+        writer.scalarValue(node.body());
+        writer.endNode();
+    }
+
+    protected void writeMapEntry(final MapEntryNode node) throws IOException {
+        writer.startMapEntryNode(node.name(), node.size());
+        writeChildren(node.body());
+    }
+
+    protected void writeSystemMap(final SystemMapNode node) throws IOException {
+        writer.startMapNode(node.name(), node.size());
+        writeChildren(node.body());
+    }
+
+    protected void writeUnkeyedList(final UnkeyedListNode node) throws IOException {
+        writer.startUnkeyedList(node.name(), node.size());
+        writeChildren(node.body());
+    }
+
+    protected void writeUnkeyedListEntry(final UnkeyedListEntryNode node) throws IOException {
+        writer.startUnkeyedListItem(node.name(), node.size());
+        writeChildren(node.body());
+    }
+
+    protected void writeUserLeafSet(final UserLeafSetNode<?> node) throws IOException {
+        writer.startOrderedLeafSet(node.name(), node.size());
+        writeChildren(node.body());
+    }
+
+    protected void writeSystemLeafSet(final SystemLeafSetNode<?> node) throws IOException {
+        writer.startLeafSet(node.name(), node.size());
+        writeChildren(node.body());
+    }
+
+    protected void writeUserMap(final UserMapNode node) throws IOException {
+        writer.startOrderedMapNode(node.name(), node.size());
+        writeChildren(node.body());
     }
 
     /**
      * Emit events for all children and then emit an endNode() event.
      *
      * @param children Child iterable
-     * @return True
      * @throws IOException when the writer reports it
      */
-    protected boolean writeChildren(final Iterable<? extends NormalizedNode> children) throws IOException {
+    protected void writeChildren(final Iterable<? extends NormalizedNode> children) throws IOException {
         for (var child : children) {
             write(child);
         }
-
         writer.endNode();
-        return true;
-    }
-
-    protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-        writer.startMapEntryNode(node.name(), node.size());
-        return writeChildren(node.body());
-    }
-
-    protected boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
-        if (node instanceof ContainerNode n) {
-            writer.startContainerNode(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof MapEntryNode n) {
-            return writeMapEntryNode(n);
-        } else if (node instanceof UnkeyedListEntryNode n) {
-            writer.startUnkeyedListItem(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof ChoiceNode n) {
-            writer.startChoiceNode(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof UnkeyedListNode n) {
-            writer.startUnkeyedList(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof UserMapNode n) {
-            writer.startOrderedMapNode(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof SystemMapNode n) {
-            writer.startMapNode(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof UserLeafSetNode<?> n) {
-            writer.startOrderedLeafSet(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof SystemLeafSetNode<?> n) {
-            writer.startLeafSet(n.name(), n.size());
-            return writeChildren(n.body());
-        }
-        return false;
-    }
-
-    private static final class OrderedNormalizedNodeWriter extends NormalizedNodeWriter {
-        private static final Logger LOG = LoggerFactory.getLogger(OrderedNormalizedNodeWriter.class);
-
-        OrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
-            super(writer);
-        }
-
-        @Override
-        protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-            final NormalizedNodeStreamWriter nnWriter = getWriter();
-            nnWriter.startMapEntryNode(node.name(), node.size());
-
-            final Set<QName> qnames = node.name().keySet();
-            // Write out all the key children
-            for (final QName qname : qnames) {
-                final DataContainerChild child = node.childByArg(new NodeIdentifier(qname));
-                if (child != null) {
-                    write(child);
-                } else {
-                    LOG.info("No child for key element {} found", qname);
-                }
-            }
-
-            // Write all the rest
-            return writeChildren(Iterables.filter(node.body(), input -> {
-                if (qnames.contains(input.name().getNodeType())) {
-                    LOG.debug("Skipping key child {}", input);
-                    return false;
-                }
-                return true;
-            }));
-        }
     }
 }
