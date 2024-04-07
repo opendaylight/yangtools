@@ -122,16 +122,8 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
 
         //Set current schemaNode
         try (var sns = new SchemaNodeSetter(dataSchemaNode)) {
-            if (node == null) {
-                return this;
-            }
-
-            if (wasProcessedAsCompositeNode(node)) {
-                return this;
-            }
-
-            if (wasProcessAsSimpleNode(node)) {
-                return this;
+            if (node != null) {
+                return write(node);
             }
         }
 
@@ -145,8 +137,8 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     }
 
     @Override
-    protected boolean writeChildren(final Iterable<? extends NormalizedNode> children) throws IOException {
-        return writeChildren(children, currentSchemaNode, true);
+    protected void writeChildren(final Iterable<? extends NormalizedNode> children) throws IOException {
+        writeChildren(children, currentSchemaNode, true);
     }
 
     private boolean writeChildren(final Iterable<? extends NormalizedNode> children, final SchemaNode parentSchemaNode,
@@ -180,7 +172,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             }
         }
         if (endParent) {
-            getWriter().endNode();
+            writer.endNode();
         }
         return true;
     }
