@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
@@ -72,9 +71,9 @@ class NormalizedNodeWriterTest {
     @Test
     void testNormalizedNodeWriter() throws IOException {
         final var loggingWriter = new LoggingNormalizedNodeStreamWriter();
-        try (var writer = NormalizedNodeWriter.forStreamWriter(loggingWriter, true)) {
+        try (var writer = new NormalizedNodeWriter(loggingWriter, true)) {
 
-            assertEquals(loggingWriter, writer.getWriter());
+            assertSame(loggingWriter, writer.writer);
 
             doReturn(new NodeWithValue<>(QNAME1, "leaflist-value-1")).when(leafSetEntry).name();
             doReturn("leaflist-value-1").when(leafSetEntry).body();
@@ -126,7 +125,7 @@ class NormalizedNodeWriterTest {
             writer.flush();
         }
 
-        try (var writer = NormalizedNodeWriter.forStreamWriter(loggingWriter, false)) {
+        try (var writer = new NormalizedNodeWriter(loggingWriter, false)) {
             assertSame(writer, writer.write(mapEntry));
         }
     }

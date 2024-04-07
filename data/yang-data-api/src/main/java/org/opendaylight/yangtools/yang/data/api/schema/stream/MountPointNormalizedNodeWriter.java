@@ -45,7 +45,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
 
         @Override
         void writeMountPoint(final NormalizedMountPoint mountPoint) throws IOException {
-            try (var writer = forStreamWriter(mountWriter.startMountPoint(mountPoint.label(), mountPoint.context()))) {
+            try (var writer = of(mountWriter.startMountPoint(mountPoint.label(), mountPoint.context()))) {
                 // FIXME: this does not deal with metadata nor nested mount points. For that we need a
                 //        writer.write(NormalizedTree) method, which in turn requires more integration.
                 writer.write(mountPoint.data());
@@ -57,12 +57,12 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
         super(writer);
     }
 
-    public static @NonNull MountPointNormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer) {
+    public static @NonNull MountPointNormalizedNodeWriter of(final NormalizedNodeStreamWriter writer) {
         final var mountWriter = writer.extension(MountPointExtension.class);
-        return mountWriter == null ? new Filtering(writer) : new Forwarding(writer, mountWriter);
+        return mountWriter == null ? filteringOf(writer) : new Forwarding(writer, mountWriter);
     }
 
-    public static @NonNull MountPointNormalizedNodeWriter filteringFor(final NormalizedNodeStreamWriter writer) {
+    public static @NonNull MountPointNormalizedNodeWriter filteringOf(final NormalizedNodeStreamWriter writer) {
         return new Filtering(writer);
     }
 
@@ -75,12 +75,13 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     @Override
-    protected final boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
+    public final MountPointNormalizedNodeWriter write(final NormalizedNode node) throws IOException {
         if (node instanceof NormalizedMountPoint mountPoint) {
             writeMountPoint(mountPoint);
-            return true;
+        } else {
+            super.write(node);
         }
-        return super.wasProcessedAsCompositeNode(node);
+        return this;
     }
 
     abstract void writeMountPoint(NormalizedMountPoint mountPoint) throws IOException;
