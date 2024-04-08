@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -24,13 +24,21 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class YangInstanceIdentifierWriterTest {
     private static EffectiveModelContext CONTEXT;
+
+    @Mock
+    private ContainerNode containerNode;
+    @Mock
+    private LeafNode<String> leafNode;
+    @Mock
+    private LeafSetEntryNode<String> leafSetEntry1;
+    @Mock
+    private LeafSetEntryNode<String> leafSetEntry2;
 
     @BeforeAll
     public static void beforeAll() {
@@ -218,17 +226,15 @@ public class YangInstanceIdentifierWriterTest {
 
         try (var iidWriter = YangInstanceIdentifierWriter.open(streamWriter, CONTEXT, path)) {
             try (var nnWriter = new NormalizedNodeWriter(streamWriter)) {
-                final QName leafQname = QName.create("test", "leaf");
+                final var leafQname = QName.create("test", "leaf");
 
-                final LeafSetEntryNode<?> leafNode = mock(LeafSetEntryNode.class);
-                doReturn(new NodeWithValue<>(leafQname, "test-value")).when(leafNode).name();
-                doReturn("test-value").when(leafNode).body();
-                nnWriter.write(leafNode);
+                doReturn(new NodeWithValue<>(leafQname, "test-value")).when(leafSetEntry1).name();
+                doReturn("test-value").when(leafSetEntry1).body();
+                nnWriter.write(leafSetEntry1);
 
-                final LeafSetEntryNode<?> leafNode2 = mock(LeafSetEntryNode.class);
-                doReturn(new NodeWithValue<>(leafQname, "test-value-2")).when(leafNode2).name();
-                doReturn("test-value-2").when(leafNode2).body();
-                nnWriter.write(leafNode2);
+                doReturn(new NodeWithValue<>(leafQname, "test-value-2")).when(leafSetEntry2).name();
+                doReturn("test-value-2").when(leafSetEntry2).body();
+                nnWriter.write(leafSetEntry2);
             }
         }
 
@@ -244,15 +250,11 @@ public class YangInstanceIdentifierWriterTest {
             """, streamWriter.result());
     }
 
-    private static NormalizedNode mockedPayload() {
-        final ContainerNode containerNode = mock(ContainerNode.class);
-        final LeafNode<?> leafNode = mock(LeafNode.class);
-
+    private ContainerNode mockedPayload() {
         doReturn(new NodeIdentifier(QName.create("test", "payload-container"))).when(containerNode).name();
         doReturn(Set.of(leafNode)).when(containerNode).body();
         doReturn(new NodeIdentifier(QName.create("test", "payload-leaf"))).when(leafNode).name();
         doReturn("leaf-value").when(leafNode).body();
-
         return containerNode;
     }
 }

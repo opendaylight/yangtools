@@ -42,6 +42,7 @@ public final class NormalizedNodes {
      * @param node A normalized node subtree, may not be null
      * @return A Map of NormalizedNode/DuplicateEntry relationships.
      */
+    // FIXME: relocate to yang-data-util, where this can have a proper test suite
     public static Map<NormalizedNode, DuplicateEntry> findDuplicates(final @NonNull NormalizedNode node) {
         return Maps.filterValues(DuplicateFinder.findDuplicates(node), input -> !input.getDuplicates().isEmpty());
     }
