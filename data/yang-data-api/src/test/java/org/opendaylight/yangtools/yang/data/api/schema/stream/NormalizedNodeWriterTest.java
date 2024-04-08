@@ -8,18 +8,19 @@
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -29,6 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -36,66 +38,102 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 
+@ExtendWith(MockitoExtension.class)
 class NormalizedNodeWriterTest {
-    private final QNameModule bazModule = QNameModule.of("baz-namespace", "1970-01-01");
-    private final QName myKeyedList = QName.create(bazModule, "my-keyed-list");
-    private final QName myKeyLeaf = QName.create(bazModule, "my-key-leaf");
-    private final QName myLeafList = QName.create(bazModule, "my-leaf-list");
+    private static final NodeIdentifier NODE_ID = new NodeIdentifier(QName.create("test", "nodeId"));
+    private static final QName QNAME1 = QName.create("test", "qname1");
+    private static final QName QNAME2 = QName.create("test", "qname2");
+
+    @Mock
+    private DOMSourceAnyxmlNode anyxml;
+    @Mock
+    private ChoiceNode choice;
+    @Mock
+    private ContainerNode container;
+    @Mock
+    private LeafNode<String> leaf;
+    @Mock
+    private LeafSetEntryNode<String> leafSetEntry;
+    @Mock
+    private MapEntryNode mapEntry;
+    @Mock
+    private SystemLeafSetNode<String> systemLeafSet;
+    @Mock
+    private SystemMapNode systemMap;
+    @Mock
+    private UnkeyedListEntryNode unkeyedListEntry;
+    @Mock
+    private UnkeyedListNode unkeyedList;
+    @Mock
+    private UserLeafSetNode<String> userLeafSet;
+    @Mock
+    private UserMapNode userMap;
 
     @Test
     void testNormalizedNodeWriter() throws IOException {
-        final var loggingNormalizedNodeStreamWriter = new LoggingNormalizedNodeStreamWriter();
-        final var orderedNormalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
-                loggingNormalizedNodeStreamWriter);
+        final var loggingWriter = new LoggingNormalizedNodeStreamWriter();
+        try (var writer = NormalizedNodeWriter.forStreamWriter(loggingWriter, true)) {
 
-        assertEquals(loggingNormalizedNodeStreamWriter, orderedNormalizedNodeWriter.getWriter());
+            assertEquals(loggingWriter, writer.getWriter());
 
-        final var mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
-        doReturn(new NodeWithValue<>(myLeafList, "leaflist-value-1")).when(mockedLeafSetEntryNode).name();
-        doReturn("leaflist-value-1").when(mockedLeafSetEntryNode).body();
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafSetEntryNode));
+            doReturn(new NodeWithValue<>(QNAME1, "leaflist-value-1")).when(leafSetEntry).name();
+            doReturn("leaflist-value-1").when(leafSetEntry).body();
+            assertSame(writer, writer.write(leafSetEntry));
 
-        final var mockedLeafNode = mock(LeafNode.class);
-        doReturn("leaf-value-1").when(mockedLeafNode).body();
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafNode));
+            doReturn("leaf-value-1").when(leaf).body();
+            doReturn(NODE_ID).when(leaf).name();
+            assertSame(writer, writer.write(leaf));
 
-        final var mockedAnyXmlNode = mock(DOMSourceAnyxmlNode.class);
-        doCallRealMethod().when(mockedAnyXmlNode).bodyObjectModel();
-        doReturn(new DOMSource()).when(mockedAnyXmlNode).body();
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedAnyXmlNode));
+            doCallRealMethod().when(anyxml).bodyObjectModel();
+            doReturn(NODE_ID).when(anyxml).name();
+            doReturn(new DOMSource()).when(anyxml).body();
+            assertSame(writer, writer.write(anyxml));
 
-        final var mockedContainerNode = mock(ContainerNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedContainerNode));
+            mockContainer(container);
+            assertSame(writer, writer.write(container));
 
-        final var mockedMapEntryNode = mock(MapEntryNode.class);
-        doReturn(NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "list-key-value-1"))
-                .when(mockedMapEntryNode).name();
-        doReturn(null).when(mockedMapEntryNode).childByArg(any(NodeIdentifier.class));
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedMapEntryNode));
+            doReturn(NodeIdentifierWithPredicates.of(QNAME1, NODE_ID.getNodeType(), "list-key-value-1"))
+                .when(mapEntry).name();
+            doReturn(leaf).when(mapEntry).childByArg(NODE_ID);
+            doReturn(1).when(mapEntry).size();
+            doReturn(List.of(leaf)).when(mapEntry).body();
+            assertSame(writer, writer.write(mapEntry));
 
-        final var mockedUnkeyedListEntryNode = mock(UnkeyedListEntryNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedUnkeyedListEntryNode));
+            mockContainer(unkeyedListEntry);
+            assertSame(writer, writer.write(unkeyedListEntry));
 
-        assertNotNull(orderedNormalizedNodeWriter.write(mock(ChoiceNode.class)));
+            mockContainer(choice);
+            assertSame(writer, writer.write(choice));
 
-        final var mockedUnkeyedListNode = mock(UnkeyedListNode.class);
-        final var value = Set.of(mockedUnkeyedListEntryNode);
-        doReturn(value).when(mockedUnkeyedListNode).body();
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedUnkeyedListNode));
+            final var value = Set.of(unkeyedListEntry);
+            doReturn(NODE_ID).when(unkeyedList).name();
+            doReturn(1).when(unkeyedList).size();
+            doReturn(value).when(unkeyedList).body();
+            assertSame(writer, writer.write(unkeyedList));
 
-        assertNotNull(orderedNormalizedNodeWriter.write(mock(UserMapNode.class)));
+            mockContainer(userMap);
+            assertSame(writer, writer.write(userMap));
 
-        assertNotNull(orderedNormalizedNodeWriter.write(mock(SystemMapNode.class)));
+            mockContainer(systemMap);
+            assertSame(writer, writer.write(systemMap));
 
-        assertNotNull(orderedNormalizedNodeWriter.write(mock(UserLeafSetNode.class)));
+            mockContainer(userLeafSet);
+            assertSame(writer, writer.write(userLeafSet));
 
-        assertNotNull(orderedNormalizedNodeWriter.write(mock(SystemLeafSetNode.class)));
+            mockContainer(systemLeafSet);
+            assertSame(writer, writer.write(systemLeafSet));
 
-        orderedNormalizedNodeWriter.flush();
-        orderedNormalizedNodeWriter.close();
-
-        try (var nnWriter = NormalizedNodeWriter.forStreamWriter(loggingNormalizedNodeStreamWriter, false)) {
-            assertNotNull(nnWriter.write(mockedMapEntryNode));
+            writer.flush();
         }
+
+        try (var writer = NormalizedNodeWriter.forStreamWriter(loggingWriter, false)) {
+            assertSame(writer, writer.write(mapEntry));
+        }
+    }
+
+    private static void mockContainer(final NormalizedContainer<?> container) {
+        doReturn(NODE_ID).when(container).name();
+        doReturn(0).when(container).size();
+        doReturn(List.of()).when(container).body();
     }
 }

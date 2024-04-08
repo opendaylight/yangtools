@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -17,11 +16,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1433Test {
+class YT1433Test {
     private static EffectiveModelContext CONTEXT;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         CONTEXT = YangParserTestUtils.parseYang("""
             module foo {
               namespace foo;
@@ -54,7 +53,7 @@ public class YT1433Test {
     }
 
     @Test
-    public void testContainerAugmentContainer() throws IOException {
+    void testContainerAugmentContainer() throws Exception {
         final FormattingNormalizedNodeStreamWriter streamWriter = new FormattingNormalizedNodeStreamWriter();
 
         final QName bar = QName.create("foo", "bar");
@@ -83,7 +82,7 @@ public class YT1433Test {
     }
 
     @Test
-    public void testChoiceAugmentCointainer() throws IOException {
+    void testChoiceAugmentCointainer() throws Exception {
         final FormattingNormalizedNodeStreamWriter streamWriter = new FormattingNormalizedNodeStreamWriter();
 
         final QName bar = QName.create("bar", "bar");
