@@ -12,6 +12,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
+// FIXME: relocate to yang-data-util, where this can have a proper test suite
 final class DuplicateFinder {
     private final Map<NormalizedNode, DuplicateEntry> identities = new IdentityHashMap<>();
     private final Map<NormalizedNode, DuplicateEntry> duplicates = new HashMap<>();
@@ -21,11 +22,11 @@ final class DuplicateFinder {
     }
 
     private void findDuplicates(final YangInstanceIdentifier path, final NormalizedNode node) {
-        final DuplicateEntry i = identities.get(node);
+        final var i = identities.get(node);
         if (i == null) {
-            final DuplicateEntry d = duplicates.get(node);
+            final var d = duplicates.get(node);
             if (d == null) {
-                final DuplicateEntry n = new DuplicateEntry(path);
+                final var n = new DuplicateEntry(path);
                 identities.put(node, n);
                 duplicates.put(node, n);
             } else {
@@ -33,7 +34,7 @@ final class DuplicateFinder {
             }
 
             if (node instanceof NormalizedNodeContainer<?> container) {
-                for (NormalizedNode child : container.body()) {
+                for (var child : container.body()) {
                     findDuplicates(path.node(child.name()), child);
                 }
             }
@@ -43,9 +44,8 @@ final class DuplicateFinder {
     }
 
     /**
-     * Recursively scan a {@link NormalizedNode} instance and its children and
-     * produce a collection of {@link DuplicateEntry} objects. Each holds the
-     * original definition path and a list of hard/softlinks.
+     * Recursively scan a {@link NormalizedNode} instance and its children and produce a collection of
+     * {@link DuplicateEntry} objects. Each holds the original definition path and a list of hard/softlinks.
      *
      * @param node Root node, may not be null.
      * @return List of entries
