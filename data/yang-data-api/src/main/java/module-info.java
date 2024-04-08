@@ -24,6 +24,6 @@ module org.opendaylight.yangtools.yang.data.api {
     // Annotations
     requires static transitive java.compiler;
     requires static transitive org.eclipse.jdt.annotation;
+    requires static transitive org.immutables.value.annotations;
     requires static com.github.spotbugs.annotations;
-    requires static org.immutables.value.annotations;
 }
