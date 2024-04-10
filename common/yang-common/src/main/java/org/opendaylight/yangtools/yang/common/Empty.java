@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- * Dedicated singleton type for YANG's {@code type empty} value.
+ * Dedicated type for YANG's {@code type empty} value.
  */
 @NonNullByDefault
 public final class Empty implements Immutable, Serializable {
@@ -65,7 +65,9 @@ public final class Empty implements Immutable, Serializable {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return this == obj;
+        // Note: this is nominally a singleton, but due to it being Serializable multiple instances might be created
+        //       via hand-crafted serialization streams. We therefore do not rely on '==' but on 'instanceof' check.
+        return obj instanceof Empty;
     }
 
     @Override
