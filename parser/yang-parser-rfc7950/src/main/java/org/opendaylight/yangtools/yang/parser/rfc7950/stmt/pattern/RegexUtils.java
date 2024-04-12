@@ -360,7 +360,9 @@ final class RegexUtils {
      */
     static String getJavaRegexFromXSD(final String xsdRegex) {
         // Note: we are using a non-capturing group to deal with internal structure issues, like branches and similar.
-        return "^(?:" + fixUnicodeScriptPattern(escapeChars(xsdRegex)) + ")$";
+        final var escapeChars = escapeChars(xsdRegex);
+        final var rawPattern = xsdRegExpToJava(escapeChars);
+        return "^(?:" + fixUnicodeScriptPattern(rawPattern) + ")$";
     }
 
     /*
@@ -450,5 +452,20 @@ final class RegexUtils {
             }
         }
         return result.toString();
+    }
+
+    private static String xsdRegExpToJava(final String xsd) {
+        String fixed = xsd;
+        fixed = fixed.replaceAll(java.util.regex.Pattern.quote("\\c"),
+            Matcher.quoteReplacement("[-._:A-Za-z0-9]"));
+        fixed = fixed.replaceAll(java.util.regex.Pattern.quote("\\C"),
+            Matcher.quoteReplacement("[^-._:A-Za-z0-9]"));
+        fixed = fixed.replaceAll(java.util.regex.Pattern.quote("\\i"),
+            Matcher.quoteReplacement("[_:A-Za-z]"));
+        fixed = fixed.replaceAll(java.util.regex.Pattern.quote("\\I"),
+            Matcher.quoteReplacement("[^_:A-Za-z]"));
+        fixed = fixed.replaceAll(java.util.regex.Pattern.quote("-["),
+            Matcher.quoteReplacement("&&[^"));
+        return fixed;
     }
 }
