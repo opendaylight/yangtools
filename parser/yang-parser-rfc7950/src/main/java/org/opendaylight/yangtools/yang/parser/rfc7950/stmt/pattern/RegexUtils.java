@@ -347,6 +347,24 @@ final class RegexUtils {
         .build();
 
     private static final int UNICODE_SCRIPT_FIX_COUNTER = 30;
+    private static final String COLON_UNDERSCORE_STRING = ":_";
+    private static final String LETTER_CHAR = "A-Za-z";
+    @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
+    // In this case is better to see the Unicode values defined in this variable, as the XSD definition for
+    // NAME_START_CHAR is specified by Unicode values. https://www.w3.org/TR/xml/#NT-NameStartChar.
+    private static final String NAME_START_CHAR = COLON_UNDERSCORE_STRING + LETTER_CHAR + "\u00C0-\u00D6\u00D8-\u00F6"
+        + "\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF"
+        + "\uFDF0-\uFFFD"
+        + "\ud800\udc00-\udb7f\udfff"; //  [#x10000-#xEFFFF]
+    @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
+    // In this case is better to see the Unicode values defined in this variable, as the XSD definition for NAME_CHAR
+    // is specified by Unicode values. https://www.w3.org/TR/xml/#NT-NameChar.
+    private static final String NAME_CHAR = NAME_START_CHAR + "-.0-9\u00B7\u0300-\u036F\u203F-\u2040";
+    private static final String XSD_NAME_CHAR = Pattern.quote("\\c");
+    private static final String XSD_NOT_NAME_CHAR = Pattern.quote("\\C");
+    private static final String XSD_INITIAL_NAME_CHAR = Pattern.quote("\\i");
+    private static final String XSD_NOT_INITIAL_NAME_CHAR = Pattern.quote("\\I");
+    private static final String XSD_CHAR_CLASS_SUBTRACTION = Pattern.quote("-[");
 
     private RegexUtils() {
         // Hidden on purpose
@@ -359,8 +377,11 @@ final class RegexUtils {
      * @return Java-compatible regex
      */
     static String getJavaRegexFromXSD(final String xsdRegex) {
+        final var escapedChars = escapeChars(xsdRegex);
+        final var replacedMultiChar = replaceMultiCharacterEscapeElements(escapedChars);
+        final var replacedClassSubtraction = replaceCharacterClassSubtraction(replacedMultiChar);
         // Note: we are using a non-capturing group to deal with internal structure issues, like branches and similar.
-        return "^(?:" + fixUnicodeScriptPattern(escapeChars(xsdRegex)) + ")$";
+        return "^(?:" + fixUnicodeScriptPattern(replacedClassSubtraction) + ")$";
     }
 
     /*
@@ -450,5 +471,24 @@ final class RegexUtils {
             }
         }
         return result.toString();
+    }
+
+    private static String replaceMultiCharacterEscapeElements(final String xsd) {
+        var result = xsd;
+        // Replaces multi-character escape elements in the provided XSD pattern based on:
+        // https://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#dt-ccesN
+        result = result.replaceAll(XSD_NAME_CHAR, "[" + NAME_CHAR + "]");
+        result = result.replaceAll(XSD_NOT_NAME_CHAR, "[^" + NAME_CHAR + "]");
+        result = result.replaceAll(XSD_INITIAL_NAME_CHAR, "[" + COLON_UNDERSCORE_STRING + LETTER_CHAR + "]");
+        result = result.replaceAll(XSD_NOT_INITIAL_NAME_CHAR, "[^" + COLON_UNDERSCORE_STRING + LETTER_CHAR + "]");
+        return result;
+    }
+
+    private static String replaceCharacterClassSubtraction(final String xsd) {
+        var result = xsd;
+        // Replaces character class subtraction in the provided XSD pattern based on:
+        // https://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#dt-subchargroup
+        result = result.replaceAll(XSD_CHAR_CLASS_SUBTRACTION, "&&[^");
+        return result;
     }
 }
