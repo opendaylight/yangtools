@@ -50,6 +50,12 @@ module bar {
         }
     }
 
+    typedef string-ext5 {
+        type string-ext4 {
+            pattern "[\i-[:]][\c-[:]]*";
+        }
+    }
+
     typedef multiple-pattern-string {
         type string {
             pattern "[A-Z]*-%22!^^";

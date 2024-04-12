@@ -184,6 +184,16 @@ class YangParserTest extends AbstractModelTest {
         assertEquals("^(?:[e-z]*)$", pattern.getJavaPatternString());
         assertEquals(1, type.getLengthConstraint().orElseThrow().getAllowedRanges().asRanges().size());
 
+        final StringTypeDefinition baseType5 = type.getBaseType();
+        assertEquals(barQName("string-ext5"), baseType5.getQName());
+        assertEquals(Optional.empty(), baseType5.getUnits());
+        assertEquals(Optional.empty(), baseType5.getDefaultValue());
+        patterns = baseType5.getPatternConstraints();
+        assertEquals(1, patterns.size());
+        pattern = patterns.iterator().next();
+        assertEquals("^(?:[\\i-[:]][\\c-[:]]*)$", pattern.getJavaPatternString());
+        assertEquals(1, baseType5.getLengthConstraint().orElseThrow().getAllowedRanges().asRanges().size());
+
         final StringTypeDefinition baseType1 = type.getBaseType();
         assertEquals(barQName("string-ext3"), baseType1.getQName());
         assertEquals(Optional.empty(), baseType1.getUnits());
