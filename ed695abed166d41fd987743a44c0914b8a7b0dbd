@@ -91,6 +91,29 @@
       },
       "revId": "ed695abed166d41fd987743a44c0914b8a7b0dbd",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25281c79_648c84a0",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/XsdSpecificsIntoJavaRegexTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-04-14T22:01:53Z",
+      "side": 1,
+      "message": "Please do not make up random test names.\nThis patch has an issue.\nThat issue should be translated to a test class name.\nSee other tests in this artifact.",
+      "range": {
+        "startLine": 20,
+        "startChar": 6,
+        "endLine": 20,
+        "endChar": 35
+      },
+      "revId": "ed695abed166d41fd987743a44c0914b8a7b0dbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
