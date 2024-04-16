@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangIRSourceInfoExtra
 
 class DependencyResolverTest {
     @Test
-    public void testModulesWithoutRevisionAndImport() throws Exception {
+    void testModulesWithoutRevisionAndImport() throws Exception {
         final var resolved = resolveResources("/no-revision/imported.yang", "/no-revision/imported@2012-12-12.yang",
             "/no-revision/top@2012-10-10.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
@@ -35,7 +35,7 @@ class DependencyResolverTest {
     }
 
     @Test
-    public void testSubmoduleNoModule() throws Exception {
+    void testSubmoduleNoModule() throws Exception {
         // Subfoo does not have parent in reactor
         final var resolved = resolveResources("/model/subfoo.yang", "/model/bar.yang", "/model/baz.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
@@ -50,7 +50,7 @@ class DependencyResolverTest {
     }
 
     @Test
-    public void testSubmodule() throws Exception {
+    void testSubmodule() throws Exception {
         final var resolved = resolveResources("/model/subfoo.yang", "/model/foo.yang", "/model/bar.yang",
             "/model/baz.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
