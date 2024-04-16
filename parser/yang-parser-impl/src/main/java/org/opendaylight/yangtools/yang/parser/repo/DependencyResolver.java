@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Sets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Inter-module dependency resolved. Given a set of schema source identifiers and their
- * corresponding dependency information, the {@link #create(Map)} method creates a
- * a view of how consistent the dependencies are. In particular, this detects whether
- * any imports are unsatisfied.
+ * Inter-module dependency resolved. Given a set of schema source identifiers and their corresponding dependency
+ * information, the {@link #create(Map)} method creates a a view of how consistent the dependencies are. In particular,
+ * this detects whether any import/include/belongs-to statements are unsatisfied.
  */
 // FIXME: improve this class to track and expose how wildcard imports were resolved.
 //        That information will allow us to track "damage" to dependency resolution
@@ -37,10 +37,12 @@ abstract class DependencyResolver {
     private final ImmutableList<SourceIdentifier> unresolvedSources;
     private final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports;
 
-    protected DependencyResolver(final Map<SourceIdentifier, SourceInfo> depInfo) {
+    DependencyResolver(final Map<SourceIdentifier, SourceInfo> depInfo) {
         final var resolved = Sets.<SourceIdentifier>newHashSetWithExpectedSize(depInfo.size());
         final var pending = new HashMap<>(depInfo);
+        final var submodules = new ArrayList<Submodule>();
 
+        // First pass: resolve 'include' and 'import' statements for each source
         boolean progress;
         do {
             progress = false;
@@ -54,9 +56,26 @@ abstract class DependencyResolver {
                     resolved.add(sourceId);
                     it.remove();
                     progress = true;
+
+                    // Stash submodules for second pass
+                    if (dep instanceof Submodule submodule) {
+                        submodules.add(submodule);
+                    }
                 }
             }
         } while (progress);
+
+        // Second pass: validate 'belongs-to' in submodules
+        for (var submodule : submodules) {
+            final var belongsTo = submodule.belongsTo();
+            if (!isKnown(resolved, belongsTo)) {
+                // belongs-to check failed, move the source back to pending
+                final var sourceId = submodule.sourceId();
+                LOG.debug("Source {} is missing belongs-to {}", sourceId, belongsTo);
+                pending.put(sourceId, submodule);
+                resolved.remove(sourceId);
+            }
+        }
 
         resolvedSources = ImmutableList.copyOf(resolved);
         unresolvedSources = ImmutableList.copyOf(pending.keySet());
@@ -122,13 +141,6 @@ abstract class DependencyResolver {
         for (var dep : info.includes()) {
             if (!isKnown(resolved, dep)) {
                 LOG.debug("Source {} is missing include {}", info.sourceId(), dep);
-                return false;
-            }
-        }
-        if (info instanceof Submodule submodule) {
-            final var dep = submodule.belongsTo();
-            if (!isKnown(resolved, dep)) {
-                LOG.debug("Source {} is missing belongs-to {}", info.sourceId(), dep);
                 return false;
             }
         }
