@@ -55,10 +55,10 @@ class DependencyResolverTest {
             "/model/baz.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("bar", "2013-07-03"),
-            new SourceIdentifier("baz", "2013-02-27"));
-        assertThat(resolved.unresolvedSources()).containsExactlyInAnyOrder(
+            new SourceIdentifier("baz", "2013-02-27"),
             new SourceIdentifier("foo", "2013-02-27"),
             new SourceIdentifier("subfoo", "2013-02-27"));
+        assertEquals(List.of(), resolved.unresolvedSources());
         assertEquals(ImmutableMultimap.of(), resolved.unsatisfiedImports());
     }
 
