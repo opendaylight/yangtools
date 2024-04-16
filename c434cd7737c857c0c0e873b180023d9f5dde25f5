@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "c69daf25_4ebb5a7f",
         "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
@@ -20,10 +21,10 @@
         "endChar": 62
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "987f049e_1a8a29a1",
         "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
@@ -44,10 +45,10 @@
         "endChar": 62
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": false
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "63107099_e9d0475f",
         "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
@@ -67,10 +68,10 @@
         "endChar": 51
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "d28d6daf_29b3c594",
         "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
@@ -91,10 +92,10 @@
         "endChar": 51
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": false
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "e4d58757_8323f89e",
         "filename": "yang/rfc8528-data-api/src/main/java/org/opendaylight/yangtools/rfc8528/data/api/MountPointIdentifier.java",
@@ -114,10 +115,10 @@
         "endChar": 20
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "d312dc5d_46b89e31",
         "filename": "yang/rfc8528-data-api/src/main/java/org/opendaylight/yangtools/rfc8528/data/api/MountPointIdentifier.java",
@@ -138,10 +139,10 @@
         "endChar": 20
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": false
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "1d5b02fa_2a6a19fc",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
@@ -161,10 +162,10 @@
         "endChar": 51
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "4eda010b_13af94d0",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
@@ -185,10 +186,10 @@
         "endChar": 51
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": false
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "0e3d9600_eb52626b",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
@@ -208,10 +209,10 @@
         "endChar": 47
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "7bcc6f30_5d58dd26",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
@@ -232,10 +233,10 @@
         "endChar": 47
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": false
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "06321858_c436c293",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
@@ -255,10 +256,10 @@
         "endChar": 42
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "20b352b2_f3afee3a",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
@@ -279,10 +280,10 @@
         "endChar": 42
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": false
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "c69bb3be_f5338ff1",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
@@ -302,10 +303,10 @@
         "endChar": 99
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "dd98467f_fdea8e3b",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
@@ -326,10 +327,10 @@
         "endChar": 99
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": false
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "d1eff1f7_d68db7d0",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/NormalizedNode.java",
@@ -349,10 +350,10 @@
         "endChar": 52
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "88024d82_085b3ca7",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/NormalizedNode.java",
@@ -373,10 +374,10 @@
         "endChar": 52
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": false
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "429018e9_eb8f264c",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/NormalizedNode.java",
@@ -396,10 +397,10 @@
         "endChar": 36
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": true,
       "key": {
         "uuid": "16e2730a_fe5d3207",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/NormalizedNode.java",
@@ -420,8 +421,31 @@
         "endChar": 36
       },
       "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
-      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
-      "unresolved": true
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e70a076a_62416cb5",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/NormalizedNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-04-16T09:39:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "16e2730a_fe5d3207",
+      "range": {
+        "startLine": 87,
+        "startChar": 4,
+        "endLine": 87,
+        "endChar": 36
+      },
+      "revId": "c434cd7737c857c0c0e873b180023d9f5dde25f5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
