@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-data</artifactId>
-    <version>13.0.4-SNAPSHOT</version>
+    <version>13.0.4</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Data Reference Implementation</name>
     <description>YANG modeled data implementation</description>
