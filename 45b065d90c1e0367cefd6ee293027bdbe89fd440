@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7ab08490_771ef168",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 1927
+      },
+      "writtenOn": "2024-04-18T00:46:19Z",
+      "side": 1,
+      "message": "The backslash may not be part of the escape character - it could be a backslash escaped with a preceding backslash - for example\n```\npattern \u0027\\\\c\u0027;\n```\nshould match `\\c` (backslash followed by character `c`) but the replacement will change the patthen to `\\[NAME_CHAR]` escaping `[`.",
+      "revId": "45b065d90c1e0367cefd6ee293027bdbe89fd440",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "05548726_1c68ecf0",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 1927
+      },
+      "writtenOn": "2024-04-18T00:46:19Z",
+      "side": 1,
+      "message": "`-` is not a metacharacter and a normal character outside charClassExpr so \n```\npattern \u0027a-[a-c]\u0027;\n```\nsould match `a-b` but after the replacement it won\u0027t.",
+      "revId": "45b065d90c1e0367cefd6ee293027bdbe89fd440",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fdad931b_16e0635b",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/Bug1571Test.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1927
+      },
+      "writtenOn": "2024-04-18T00:46:19Z",
+      "side": 1,
+      "message": "I think the file name should be \u0027YT1571Test.java\u0027 since it\u0027s Jira YANGTOOLS-1571.\nSee examples here: https://github.com/opendaylight/yangtools/tree/master/parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt",
+      "revId": "45b065d90c1e0367cefd6ee293027bdbe89fd440",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
