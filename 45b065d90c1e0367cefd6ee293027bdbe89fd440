@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2cffffaa_408c54c3",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-04-22T16:14:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ab08490_771ef168",
+      "revId": "45b065d90c1e0367cefd6ee293027bdbe89fd440",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "05548726_1c68ecf0",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e14ad35_76151e0e",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-04-22T16:14:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05548726_1c68ecf0",
+      "revId": "45b065d90c1e0367cefd6ee293027bdbe89fd440",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fdad931b_16e0635b",
@@ -48,6 +84,24 @@
       "writtenOn": "2024-04-18T00:46:19Z",
       "side": 1,
       "message": "I think the file name should be \u0027YT1571Test.java\u0027 since it\u0027s Jira YANGTOOLS-1571.\nSee examples here: https://github.com/opendaylight/yangtools/tree/master/parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt",
+      "revId": "45b065d90c1e0367cefd6ee293027bdbe89fd440",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0d4528d_c069a461",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/Bug1571Test.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-04-22T16:14:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fdad931b_16e0635b",
       "revId": "45b065d90c1e0367cefd6ee293027bdbe89fd440",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
