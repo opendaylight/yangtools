@@ -67,6 +67,23 @@
       "message": "Duplicate line",
       "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e44da23_33215764",
+        "filename": "tools/yang-validation-tool/dependency-reduced-pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1927
+      },
+      "writtenOn": "2024-04-22T21:42:39Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be added.",
+      "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
