@@ -377,7 +377,7 @@
                         <link>http://www.slf4j.org/apidocs/</link>
                         <link>https://google.github.io/guava/releases/31.1-jre/api/docs/</link>
 
-                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/12.0.10/</link>
+                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/12.0.11/</link>
                     </links>
                     <groups>
                         <group>
