@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ce63bd2b_06dd1b54",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-04-24T09:06:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e6a2bb6_14fe6514",
+      "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "60f6d368_94878cb2",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-04-22T21:20:51Z",
       "side": 1,
       "message": "Should be replaced only when the preceding backslash is a escaping backslash, not escaped.\n\nFor example, string `\\i`, or Java string `\"\\\\i\"`, should match the pattern `\\\\i` (or in Java string `\"\\\\\\\\i\"`) like this:\n\n```\n    final var javaRegexFromXSD \u003d RegexUtils.getJavaRegexFromXSD(\"\\\\\\\\i\");\n    final var pattern \u003d Pattern.compile(javaRegexFromXSD);\n    assertTrue(pattern.matcher(\"\\\\i\").find());\n```",
+      "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9333728_7f18b4a8",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-04-24T09:06:13Z",
+      "side": 1,
+      "message": "Resolved by negative look behind.",
+      "parentUuid": "60f6d368_94878cb2",
       "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "117285cc_34aa0e62",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-04-24T09:06:13Z",
+      "side": 1,
+      "message": "I resolved this using a negative look behind pattern \"(?\u003c!\\\\)\". This ensures that the matched string will not contain \u0027\\\u0027 before the actual pattern.",
+      "parentUuid": "ba4af2cc_05732168",
+      "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1d4a194e_136b6e69",
@@ -69,6 +123,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d0ff398_2ba714b4",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-04-24T09:06:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d4a194e_136b6e69",
+      "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8e44da23_33215764",
@@ -82,6 +154,24 @@
       "writtenOn": "2024-04-22T21:42:39Z",
       "side": 1,
       "message": "This shouldn\u0027t be added.",
+      "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc8efeb4_bdb356bc",
+        "filename": "tools/yang-validation-tool/dependency-reduced-pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-04-24T09:06:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e44da23_33215764",
       "revId": "065b9f1950a38458528ef9114beaa3ec92de0632",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
