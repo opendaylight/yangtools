@@ -19,7 +19,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>data-aggregator</artifactId>
-    <version>13.0.5</version>
+    <version>13.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
