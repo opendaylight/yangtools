@@ -20,6 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 
 final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountConstraintAware>
         extends AbstractValidation {
+    @FunctionalInterface
+    @NonNullByDefault
+    interface ExceptionSupplier<T extends Exception> {
+        T get(int actual, String message);
+    }
+
     private final int minElements;
     private final int maxElements;
 
@@ -51,12 +57,6 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     void enforceOnData(final ModificationPath path, final NormalizedNode data) throws RequiredElementCountException {
         enforceOnData(data, (actual, message) -> new RequiredElementCountException(path.toInstanceIdentifier(),
             minElements, maxElements, actual, message));
-    }
-
-    @FunctionalInterface
-    @NonNullByDefault
-    interface ExceptionSupplier<T extends Exception> {
-        T get(int actual, String message);
     }
 
     private <X extends @NonNull Exception> void enforceOnData(final NormalizedNode value,
