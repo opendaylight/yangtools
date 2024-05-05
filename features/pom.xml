@@ -28,6 +28,8 @@
     </properties>
 
     <modules>
+        <module>parent</module>
+
         <!-- Stable features -->
         <module>odl-yangtools-codec</module>
         <module>odl-yangtools-common</module>

@@ -10,30 +10,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>template-feature-parent</artifactId>
-        <version>13.1.2</version>
-        <relativePath/>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>feature-parent</artifactId>
+        <version>13.0.6-SNAPSHOT</version>
+        <relativePath>../parent</relativePath>
     </parent>
 
-    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-data-api</artifactId>
-    <version>13.0.6-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: Data API</name>
     <description>YANG modeled data APIs</description>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yangtools-artifacts</artifactId>
-                <version>${project.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
