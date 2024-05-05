@@ -11,7 +11,7 @@
 
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>single-feature-parent</artifactId>
+        <artifactId>template-feature-parent</artifactId>
         <version>13.1.2</version>
         <relativePath/>
     </parent>

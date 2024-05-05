@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-export">
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-parser-api/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-export">
+        <feature version="{{semVerRange}}">odl-yangtools-parser-api</feature>
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-export/{{versionAsInProject}}</bundle>
+    </feature>
+</features>

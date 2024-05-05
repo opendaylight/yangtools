@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-codec">
+    <repository>mvn:org.opendaylight.odlparent/odl-gson/{{versionAsInProject}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.odlparent/odl-stax2-api/{{versionAsInProject}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-data/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-codec">
+        <feature version="[12,14)">odl-gson</feature>
+        <feature version="[12,14)">odl-stax2-api</feature>
+        <feature version="{{semVerRange}}">odl-yangtools-data</feature>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-binfmt/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-gson/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-xml/{{versionAsInProject}}</bundle>
+    </feature>
+</features>

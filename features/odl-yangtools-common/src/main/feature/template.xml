@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-common">
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-util/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-common">
+        <feature version="{{semVerRange}}">odl-yangtools-util</feature>
+        <bundle>mvn:org.opendaylight.yangtools/yang-common/{{versionAsInProject}}</bundle>
+    </feature>
+</features>

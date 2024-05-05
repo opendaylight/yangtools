@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-parser">
+    <repository>mvn:org.opendaylight.odlparent/odl-antlr4/{{versionAsInProject}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-parser-api/{{versionAsInProject}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-xpath/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-parser">
+        <feature version="[12,14)">odl-antlr4</feature>
+        <feature version="{{semVerRange}}">odl-yangtools-parser-api</feature>
+        <feature version="{{semVerRange}}">odl-yangtools-xpath</feature>
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-ri/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/odlext-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/openconfig-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc6241-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc6536-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc6643-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc7952-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8040-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8528-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8639-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8819-parser-support/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-reactor/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-rfc7950/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-spi/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-repo-fs/{{versionAsInProject}}</bundle>
+    </feature>
+</features>

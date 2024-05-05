@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-parser-api">
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-common/{{versionAsInProject}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-xpath-api/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-parser-api">
+        <feature version="{{semVerRange}}">odl-yangtools-common</feature>
+        <feature version="{{semVerRange}}">odl-yangtools-xpath-api</feature>
+        <bundle>mvn:org.opendaylight.yangtools/odlext-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/openconfig-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc6241-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc6536-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc6643-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc7952-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8040-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8528-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8639-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8819-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-spi/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-ir/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-util/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-repo-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-repo-spi/{{versionAsInProject}}</bundle>
+    </feature>
+</features>

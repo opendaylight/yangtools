@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-data-api">
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-parser-api/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-data-api">
+        <feature version="{{semVerRange}}">odl-yangtools-parser-api</feature>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-spi/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-tree-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-tree-spi/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-util/{{versionAsInProject}}</bundle>
+    </feature>
+</features>

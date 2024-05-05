@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-yangtools-util">
-    <feature name="odl-yangtools-util">
-        <feature version="[13,14)">odl-guava</feature>
-        <feature version="[1,2)">pt-triemap</feature>
-    </feature>
-</features>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-xpath-api">
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-common/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-xpath-api">
+        <feature version="{{semVerRange}}">odl-yangtools-common</feature>
+        <bundle>mvn:org.opendaylight.yangtools/yang-xpath-api/{{versionAsInProject}}</bundle>
+    </feature>
+</features>
