@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>13.0.3</version>
+        <version>13.0.4-SNAPSHOT</version>
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
@@ -77,7 +77,7 @@
                                 <dependency>
                                     <groupId>org.opendaylight.mdsal</groupId>
                                     <artifactId>mdsal-binding-java-api-generator</artifactId>
-                                    <version>13.0.3</version>
+                                    <version>13.0.4-SNAPSHOT</version>
                                 </dependency>
                             </dependencies>
                             <executions>
