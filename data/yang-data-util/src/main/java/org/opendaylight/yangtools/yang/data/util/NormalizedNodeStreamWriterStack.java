@@ -60,7 +60,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
 
     private final Deque<EffectiveStatement<?, ?>> schemaStack = new ArrayDeque<>();
     private final SchemaInferenceStack dataTree;
-    private final Object root;
+    private final @NonNull Object root;
 
     private NormalizedNodeStreamWriterStack(final EffectiveModelContext context) {
         dataTree = SchemaInferenceStack.of(context);
@@ -180,10 +180,15 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         return schemaStack.peek();
     }
 
+    private @NonNull Object currentStatementOrRoot() {
+        final var stmt = currentStatement();
+        return stmt != null ? stmt : root;
+    }
+
     private @NonNull DataTreeEffectiveStatement<?> enterDataTree(final PathArgument name) {
         final var qname = name.getNodeType();
         final var stmt = dataTree.enterDataTree(qname);
-        if (currentStatement() instanceof ChoiceEffectiveStatement choice) {
+        if (currentStatementOrRoot() instanceof ChoiceEffectiveStatement choice) {
             final var check = choice.findDataTreeNode(qname).orElse(null);
             verify(check == stmt, "Data tree result %s does not match choice result %s", stmt, check);
         }
@@ -208,10 +213,12 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     }
 
     public void startListItem(final PathArgument name) throws IOException {
-        if (!(currentStatement() instanceof ListEffectiveStatement parentList)) {
-            throw new IllegalArgumentException("List item is not appropriate");
+        final var parent = currentStatementOrRoot();
+        if (parent instanceof ListEffectiveStatement parentList) {
+            schemaStack.push(parentList);
+        } else {
+            throw new IllegalArgumentException("List item is not appropriate under " + parent);
         }
-        schemaStack.push(parentList);
     }
 
     public void startLeafNode(final NodeIdentifier name) throws IOException {
