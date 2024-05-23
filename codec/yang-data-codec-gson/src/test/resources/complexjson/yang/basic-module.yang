@@ -1,0 +1,82 @@
+module basic-model {
+  namespace "http://example.com/basic-model";
+  prefix bm;
+
+  container interfaces {
+    list interface {
+      key "name";
+      leaf name {
+        type string;
+      }
+      container config {
+        leaf name {
+          type string;
+        }
+        leaf type {
+          type string;
+        }
+        leaf mtu {
+          type uint16;
+        }
+        leaf loopback-mode {
+          type boolean;
+        }
+        leaf enabled {
+          type boolean;
+        }
+      }
+      container ethernet {
+        container config {
+          leaf auto-negotiate {
+            type boolean;
+          }
+          leaf port-speed {
+            type string;
+          }
+          leaf enable-flow-control {
+            type boolean;
+          }
+          leaf aggregate-id {
+            type string;
+          }
+        }
+        container switched-vlan {
+          container config {
+            leaf interface-mode {
+              type string;
+            }
+            leaf native-vlan {
+              type uint16;
+            }
+            leaf access-vlan {
+              type uint16;
+            }
+          }
+        }
+      }
+      container aggregation {
+        container config {
+          leaf lag-type {
+            type string;
+          }
+          leaf min-links {
+            type uint8;
+          }
+        }
+        container switched-vlan {
+          container config {
+            leaf interface-mode {
+              type string;
+            }
+            leaf native-vlan {
+              type uint16;
+            }
+            leaf access-vlan {
+              type uint16;
+            }
+          }
+        }
+      }
+    }
+  }
+}
