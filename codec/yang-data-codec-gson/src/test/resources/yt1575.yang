@@ -1,0 +1,13 @@
+module yt1575 {
+  namespace "http://example.com/yt1575";
+  prefix yt1575;
+
+  container testContainer {
+    list testList {
+      key "name";
+      leaf name {
+        type string;
+      }
+    }
+  }
+}
