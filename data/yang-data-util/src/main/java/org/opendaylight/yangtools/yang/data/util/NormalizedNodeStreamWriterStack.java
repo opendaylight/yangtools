@@ -172,12 +172,12 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     }
 
     /**
-     * Return the current {@link EffectiveStatement}, or {@code null}.
+     * Return the current {@link EffectiveStatement}, or {@code root}.
      *
-     * @return the current {@link EffectiveStatement}, or {@code null}
+     * @return the current {@link EffectiveStatement}, or {@code root}
      */
-    public @Nullable EffectiveStatement<?, ?> currentStatement() {
-        return schemaStack.peek();
+    public @Nullable Object currentStatement() {
+        return schemaStack.peek() == null ? root : schemaStack.peek();
     }
 
     private @NonNull DataTreeEffectiveStatement<?> enterDataTree(final PathArgument name) {
