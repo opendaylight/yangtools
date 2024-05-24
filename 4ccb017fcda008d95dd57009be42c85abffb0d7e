@@ -16,6 +16,24 @@
       "message": "missing corresponding test\nwhy do we need to return root?",
       "revId": "4ccb017fcda008d95dd57009be42c85abffb0d7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6df4023_365e5c48",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 9136
+      },
+      "writtenOn": "2024-05-24T13:54:06Z",
+      "side": 1,
+      "message": "I have added test demonstrating when the root is used.\nIt is based of the test in Lighty.io:\nhttps://github.com/PANTHEONtech/lighty/blob/main/lighty-modules/lighty-gnmi/lighty-gnmi-sb/src/test/java/io/lighty/gnmi/southbound/mountpoint/codecs/YangInstanceNormToGnmiUpdateCodecTest.java#L51",
+      "parentUuid": "698850b5_fb776993",
+      "revId": "4ccb017fcda008d95dd57009be42c85abffb0d7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
