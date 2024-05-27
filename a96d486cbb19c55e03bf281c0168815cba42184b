@@ -16,6 +16,52 @@
       "message": "recheck",
       "revId": "a96d486cbb19c55e03bf281c0168815cba42184b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "253129c2_19b409ea",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/StreamToNormalizedNodeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-05-27T09:00:10Z",
+      "side": 1,
+      "message": "this should be in a separate file, it shares absolutely nothing with the other test cases",
+      "range": {
+        "startLine": 116,
+        "startChar": 9,
+        "endLine": 116,
+        "endChar": 50
+      },
+      "revId": "a96d486cbb19c55e03bf281c0168815cba42184b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e8b867c_a50a5ca2",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/StreamToNormalizedNodeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-05-27T09:00:10Z",
+      "side": 1,
+      "message": "isn\u0027t this supposed to point to parent?",
+      "range": {
+        "startLine": 150,
+        "startChar": 12,
+        "endLine": 150,
+        "endChar": 52
+      },
+      "revId": "a96d486cbb19c55e03bf281c0168815cba42184b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
