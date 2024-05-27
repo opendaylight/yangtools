@@ -64,6 +64,54 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ded5abb9_ffc47cbe",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamNestedWriterTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 9136
+      },
+      "writtenOn": "2024-05-27T15:25:10Z",
+      "side": 1,
+      "message": "renamed",
+      "parentUuid": "bee926cd_b4e8bde8",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 53
+      },
+      "revId": "b122722a2af96f46f6d30aacf1589cfe9f4744d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3efe141_16c5265d",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamNestedWriterTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 9136
+      },
+      "writtenOn": "2024-05-27T15:25:10Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "5f74ae62_4b0870fb",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 6
+      },
+      "revId": "b122722a2af96f46f6d30aacf1589cfe9f4744d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2076297e_0dde0f79",
@@ -77,6 +125,30 @@
       "writtenOn": "2024-05-27T12:32:15Z",
       "side": 1,
       "message": "please do not make up model names.\nthis is a single module test, so:\n- this module should be yt1575, same for namespace, and prefix\n- not in directory\n- this module should be absolutely minimal required to repro",
+      "range": {
+        "startLine": 1,
+        "startChar": 7,
+        "endLine": 1,
+        "endChar": 17
+      },
+      "revId": "b122722a2af96f46f6d30aacf1589cfe9f4744d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba738c58_75ac69e1",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1575/basic-module.yang",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 9136
+      },
+      "writtenOn": "2024-05-27T15:25:10Z",
+      "side": 1,
+      "message": "Hopefully all resolved in latest patch.",
+      "parentUuid": "2076297e_0dde0f79",
       "range": {
         "startLine": 1,
         "startChar": 7,
