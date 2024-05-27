@@ -16,6 +16,75 @@
       "message": "resolved",
       "revId": "b122722a2af96f46f6d30aacf1589cfe9f4744d9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bee926cd_b4e8bde8",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamNestedWriterTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-05-27T12:32:15Z",
+      "side": 1,
+      "message": "YT1575Test, just like we use for single-issue things",
+      "range": {
+        "startLine": 24,
+        "startChar": 13,
+        "endLine": 24,
+        "endChar": 53
+      },
+      "revId": "b122722a2af96f46f6d30aacf1589cfe9f4744d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f74ae62_4b0870fb",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamNestedWriterTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-05-27T12:32:15Z",
+      "side": 1,
+      "message": "needlessly public",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 6
+      },
+      "revId": "b122722a2af96f46f6d30aacf1589cfe9f4744d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2076297e_0dde0f79",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1575/basic-module.yang",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-05-27T12:32:15Z",
+      "side": 1,
+      "message": "please do not make up model names.\nthis is a single module test, so:\n- this module should be yt1575, same for namespace, and prefix\n- not in directory\n- this module should be absolutely minimal required to repro",
+      "range": {
+        "startLine": 1,
+        "startChar": 7,
+        "endLine": 1,
+        "endChar": 17
+      },
+      "revId": "b122722a2af96f46f6d30aacf1589cfe9f4744d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
