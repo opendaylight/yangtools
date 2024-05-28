@@ -4,8 +4,8 @@
     <repository>mvn:org.opendaylight.odlparent/odl-stax2-api/{{versionAsInProject}}/xml/features</repository>
     <repository>mvn:org.opendaylight.yangtools/odl-yangtools-data/{{versionAsInProject}}/xml/features</repository>
     <feature name="odl-yangtools-codec">
-        <feature version="[12,14)">odl-gson</feature>
-        <feature version="[12,14)">odl-stax2-api</feature>
+        <feature version="[12,15)">odl-gson</feature>
+        <feature version="[12,15)">odl-stax2-api</feature>
         <feature version="{{semVerRange}}">odl-yangtools-data</feature>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-binfmt/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-gson/{{versionAsInProject}}</bundle>
