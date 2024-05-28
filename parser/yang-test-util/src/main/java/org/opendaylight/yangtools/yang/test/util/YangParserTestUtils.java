@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.test.util;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -250,8 +249,7 @@ public final class YangParserTestUtils {
      * @param config parser configuration
      * @return effective schema context
      */
-    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
-    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
+    public static @NonNull EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final Set<QName> supportedFeatures, final YangParserConfiguration config) {
         final URI directoryPath;
         try {
@@ -377,7 +375,6 @@ public final class YangParserTestUtils {
             Arrays.stream(sources).map(LiteralYangTextSchemaSource::ofLiteral).toList());
     }
 
-    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
     private static Collection<File> getYangFiles(final String resourcePath) {
         final URI directoryPath;
         try {
