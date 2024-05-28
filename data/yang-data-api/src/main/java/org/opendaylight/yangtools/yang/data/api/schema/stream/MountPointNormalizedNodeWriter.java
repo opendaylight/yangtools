@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMountPoint;
@@ -66,8 +65,6 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
         return new Filtering(writer);
     }
 
-    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-        justification = "SpotBugs does not grok checkArgument()")
     public static @NonNull MountPointNormalizedNodeWriter forwardingFor(final NormalizedNodeStreamWriter writer) {
         final var mountWriter = writer.extension(MountPointExtension.class);
         checkArgument(mountWriter != null, "Writer %s does not support mount points", writer);

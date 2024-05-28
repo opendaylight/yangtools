@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import static java.util.Objects.requireNonNull;
@@ -65,7 +64,7 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
     protected abstract X newWithCause(String message, Throwable cause);
 
     @Override
-    @SuppressFBWarnings({"BC_UNCONFIRMED_CAST_OF_RETURN_VALUE", "NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"})
+    @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
     public X apply(final Exception input) {
 
         // If exception is of the specified type,return it.
