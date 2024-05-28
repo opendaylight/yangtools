@@ -16,7 +16,6 @@
  * primary entry point is defined in
  * {@link org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueSchemaNode#isPresentIn(
  * org.opendaylight.yangtools.yang.model.api.SchemaNode)}.
- *
- * @author Robert Varga
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.openconfig.model.api;
