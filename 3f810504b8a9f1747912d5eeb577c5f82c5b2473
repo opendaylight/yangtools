@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c0f3f34_64feddcc",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-05-29T09:24:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b8e6b393_27155aae",
+      "range": {
+        "startLine": 365,
+        "startChar": 38,
+        "endLine": 365,
+        "endChar": 60
+      },
+      "revId": "3f810504b8a9f1747912d5eeb577c5f82c5b2473",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b90d5bf2_c3608f12",
@@ -47,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7937d499_906c2df4",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-05-29T09:24:21Z",
+      "side": 1,
+      "message": "This part will look like:\n```\nprivate static final String NAME_CHAR \u003d NAME_START_CHAR + \"-.0-9·̀-ͯ‿-⁀;\n```\n\nProbably give less information than Unicode value.",
+      "parentUuid": "b90d5bf2_c3608f12",
+      "range": {
+        "startLine": 366,
+        "startChar": 34,
+        "endLine": 366,
+        "endChar": 63
+      },
+      "revId": "3f810504b8a9f1747912d5eeb577c5f82c5b2473",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d6f1dd50_268c7afb",
@@ -60,6 +108,30 @@
       "writtenOn": "2024-05-27T17:35:18Z",
       "side": 1,
       "message": "hmm... doesn\u0027t this need a non-capturing group like other negations?",
+      "range": {
+        "startLine": 483,
+        "startChar": 62,
+        "endLine": 483,
+        "endChar": 64
+      },
+      "revId": "3f810504b8a9f1747912d5eeb577c5f82c5b2473",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1efaebba_f84b032e",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-05-29T09:24:21Z",
+      "side": 1,
+      "message": "In this section, I only need to replace the XSD pattern with a Java-compatible pattern. Creating a non-capturing or capturing group seems unnecessary.",
+      "parentUuid": "d6f1dd50_268c7afb",
       "range": {
         "startLine": 483,
         "startChar": 62,
