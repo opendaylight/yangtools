@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2babbc35_98b4b06c",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/YT1575Test.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 9136
+      },
+      "writtenOn": "2024-05-29T11:00:22Z",
+      "side": 1,
+      "message": "Changed to Pantheon",
+      "parentUuid": "0a7d5190_5f50a9dd",
+      "range": {
+        "startLine": 2,
+        "startChar": 22,
+        "endLine": 2,
+        "endChar": 35
+      },
+      "revId": "d9d8fbfb07bab5aab526d686c823cd81172547fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "69b96e3a_9e7a0546",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-05-29T10:28:54Z",
       "side": 1,
       "message": "final here and below?",
+      "range": {
+        "startLine": 25,
+        "startChar": 8,
+        "endLine": 25,
+        "endChar": 11
+      },
+      "revId": "d9d8fbfb07bab5aab526d686c823cd81172547fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7c3c2a1_330ea5ce",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/YT1575Test.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 9136
+      },
+      "writtenOn": "2024-05-29T11:00:22Z",
+      "side": 1,
+      "message": "resolved",
+      "parentUuid": "69b96e3a_9e7a0546",
       "range": {
         "startLine": 25,
         "startChar": 8,
