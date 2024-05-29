@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0a7d5190_5f50a9dd",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/YT1575Test.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2024-05-29T10:30:24Z",
+      "side": 1,
+      "message": "why Cisco Systems?",
+      "range": {
+        "startLine": 2,
+        "startChar": 22,
+        "endLine": 2,
+        "endChar": 35
+      },
+      "revId": "d9d8fbfb07bab5aab526d686c823cd81172547fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "69b96e3a_9e7a0546",
         "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/YT1575Test.java",
         "patchSetId": 7
