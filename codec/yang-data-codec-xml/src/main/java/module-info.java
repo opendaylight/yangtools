@@ -16,8 +16,10 @@ module org.opendaylight.yangtools.yang.data.codec.xml {
     requires com.google.common;
     requires org.codehaus.stax2;
     requires org.opendaylight.yangtools.util;
-    requires org.opendaylight.yangtools.yang.model.util;
+    requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.impl;
+    requires org.opendaylight.yangtools.yang.data.spi;
+    requires org.opendaylight.yangtools.yang.model.util;
     requires org.opendaylight.yangtools.rfc7952.model.api;
     requires org.opendaylight.yangtools.rfc8528.model.api;
     requires org.slf4j;
@@ -25,5 +27,4 @@ module org.opendaylight.yangtools.yang.data.codec.xml {
     // Annotations
     requires static com.google.errorprone.annotations;
     requires static org.eclipse.jdt.annotation;
-    requires org.opendaylight.yangtools.yang.data.spi;
 }
