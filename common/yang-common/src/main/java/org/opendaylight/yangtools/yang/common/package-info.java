@@ -14,7 +14,8 @@
  *   <li>a {@link QName}</li>
  *   <li>a Java-native representation of a YANG string, {@link DerivedString}</li>
  *   <li>a Java-native representations of numeric YANG types, like {@link Uint64}, {@link Decimal64} and
- *     {@link Empty}</li>
+ *       {@link Empty}</li>
+ *   <li>markers for a Java-native representations of {@code anydata} and {@anyxml} values, {@link OpaqueValue}</li>
  * </ul>
  */
 @Export

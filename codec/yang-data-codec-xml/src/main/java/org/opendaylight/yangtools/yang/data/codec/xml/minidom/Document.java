@@ -17,11 +17,17 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.OpaqueValue;
 
 /**
  * A complete XML document. It has exactly one {@link document element #element()}.
  */
-public interface Document {
+public interface Document extends OpaqueValue<Document> {
+    @Override
+    default Class<Document> representation() {
+        return Document.class;
+    }
+
     /**
      * Return this document's root {@link Element}.
      *
