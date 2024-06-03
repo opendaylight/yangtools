@@ -13,13 +13,13 @@
     <parent>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>binding-parent</artifactId>
-        <version>13.0.4-SNAPSHOT</version>
+        <version>13.0.4</version>
         <relativePath>../binding-parent</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mdsal-binding-test-model</artifactId>
-    <version>13.0.4-SNAPSHOT</version>
+    <version>13.0.4</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
