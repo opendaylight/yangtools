@@ -7,7 +7,6 @@
  */
 /**
  * YANG metamodel extensions to support OpenDaylight extensions as defined in yang-ext.yang.
- *
- * @author Robert Varga
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.odlext.model.api;

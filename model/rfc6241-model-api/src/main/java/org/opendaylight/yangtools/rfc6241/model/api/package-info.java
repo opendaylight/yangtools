@@ -9,4 +9,5 @@
  * YANG metamodel extensions to support NETCONF, filters as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc6241.model.api;

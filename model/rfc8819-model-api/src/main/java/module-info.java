@@ -14,4 +14,5 @@ module org.opendaylight.yangtools.rfc8819.model.api {
 
     // Annotations
     requires static org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }

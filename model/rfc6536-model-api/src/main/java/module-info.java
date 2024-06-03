@@ -15,4 +15,5 @@ module org.opendaylight.yangtools.rfc6536.model.api {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }

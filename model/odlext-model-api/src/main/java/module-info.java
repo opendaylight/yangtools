@@ -14,4 +14,5 @@ module org.opendaylight.yangtools.odlext.model.api {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }
