@@ -15,4 +15,5 @@ module org.opendaylight.yangtools.yang.model.export {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }

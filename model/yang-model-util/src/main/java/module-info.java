@@ -19,4 +19,5 @@ module org.opendaylight.yangtools.yang.model.util {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }

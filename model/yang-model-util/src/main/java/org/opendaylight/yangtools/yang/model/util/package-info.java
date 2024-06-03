@@ -8,4 +8,5 @@
 /**
  * Utility classes and implementations for concepts defined in yang-model-api.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.model.util;
