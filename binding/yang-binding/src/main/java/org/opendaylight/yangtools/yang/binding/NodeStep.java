@@ -19,9 +19,6 @@ import org.eclipse.jdt.annotation.Nullable;
 public record NodeStep<T extends DataObject>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType) implements ExactDataObjectStep<T> {
-    @java.io.Serial
-    private static final long serialVersionUID = 0;
-
     public NodeStep {
         checkType(type, false);
         checkCaseType(caseType);

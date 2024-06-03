@@ -23,9 +23,6 @@ public record KeyStep<K extends Key<T>, T extends KeyAware<K> & DataObject>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType,
         @NonNull K key) implements ExactDataObjectStep<T>, KeyAware<K> {
-    @java.io.Serial
-    private static final long serialVersionUID = 0;
-
     public KeyStep {
         NodeStep.checkType(type, true);
         NodeStep.checkCaseType(caseType);

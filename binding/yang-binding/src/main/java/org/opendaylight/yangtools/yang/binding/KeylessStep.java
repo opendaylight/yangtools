@@ -20,9 +20,6 @@ import org.eclipse.jdt.annotation.Nullable;
 public record KeylessStep<T extends KeyAware<?> & DataObject>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType) implements DataObjectStep<T> {
-    @java.io.Serial
-    private static final long serialVersionUID = 0;
-
     public KeylessStep {
         NodeStep.checkType(type, true);
         NodeStep.checkCaseType(caseType);
