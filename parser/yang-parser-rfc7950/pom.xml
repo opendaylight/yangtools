@@ -24,6 +24,7 @@
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
+        <spotbugs.onlyAnalyze>!org.opendaylight.yangtools.yang.parser.antlr.-</spotbugs.onlyAnalyze>
     </properties>
 
     <dependencies>
