@@ -21,6 +21,10 @@
     <name>${project.artifactId}</name>
     <description>RFC6020/RFC7950 parser support</description>
 
+    <properties>
+        <spotbugs.onlyAnalyze>!org.opendaylight.yangtools.yang.parser.antlr.-</spotbugs.onlyAnalyze>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
