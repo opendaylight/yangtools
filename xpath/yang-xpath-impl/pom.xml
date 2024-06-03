@@ -21,6 +21,10 @@
     <name>${project.artifactId}</name>
     <description>YANG XPath parser</description>
 
+    <properties>
+        <spotbugs.onlyAnalyze>!org.opendaylight.yangtools.yang.xpath.antlr.-</spotbugs.onlyAnalyze>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
