@@ -154,7 +154,7 @@ abstract class AbstractYT1027Test {
 
     abstract String expectedUint64();
 
-    final NormalizedNode fromJSON(final String input) throws IOException {
+    final NormalizedNode fromJSON(final String input) {
         final var result = new NormalizationResultHolder();
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var jsonParser = JsonParserStream.create(streamWriter, codecFactory());

@@ -291,7 +291,7 @@ public class OffsetMapTest {
     }
 
     @Test
-    void testEmptyMutable() throws CloneNotSupportedException {
+    void testEmptyMutable() {
         final var map = MutableOffsetMap.ordered();
         assertTrue(map.isEmpty());
 
@@ -404,7 +404,7 @@ public class OffsetMapTest {
     }
 
     @Test
-    void testCloneableFlipping() throws CloneNotSupportedException {
+    void testCloneableFlipping() {
         final var source = createMap().toModifiableMap();
 
         // Must clone before mutation
@@ -439,7 +439,7 @@ public class OffsetMapTest {
     }
 
     @Test
-    void testCloneableFlippingUnordered() throws CloneNotSupportedException {
+    void testCloneableFlippingUnordered() {
         final var source = unorderedMap().toModifiableMap();
 
         // Must clone before mutation
