@@ -343,13 +343,13 @@ class TypeTest {
     }
 
     @Test
-    void unionTypeTest() throws IllegalAccessException, InstantiationException {
-        final BaseDecimalType baseDecimalType1 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(Q_NAME)
+    void unionTypeTest() {
+        final var baseDecimalType1 = assertInstanceOf(BaseDecimalType.class, BaseTypes.decimalTypeBuilder(Q_NAME)
                 .setFractionDigits(1)
-                .buildType();
-        final BaseDecimalType baseDecimalType2 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(Q_NAME)
+                .buildType());
+        final var baseDecimalType2 = assertInstanceOf(BaseDecimalType.class, BaseTypes.decimalTypeBuilder(Q_NAME)
                 .setFractionDigits(1)
-                .buildType();
+                .buildType());
         final UnionTypeBuilder unionTypeBuilder1 = BaseTypes.unionTypeBuilder(Q_NAME);
         final UnionTypeBuilder unionTypeBuilder2 = BaseTypes.unionTypeBuilder(Q_NAME);
         unionTypeBuilder1.addType(baseDecimalType1);

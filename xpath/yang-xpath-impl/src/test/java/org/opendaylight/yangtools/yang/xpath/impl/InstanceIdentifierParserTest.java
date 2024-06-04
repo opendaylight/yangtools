@@ -119,7 +119,7 @@ class InstanceIdentifierParserTest {
     }
 
     private static void assertParsed(final Absolute parsed, final AbstractQName expectedQName,
-            final @Nullable YangExpr expectedLeft, final @Nullable YangExpr expectedRight) throws Exception {
+            final @Nullable YangExpr expectedLeft, final @Nullable YangExpr expectedRight) {
         final var step = assertInstanceOf(QNameStep.class, extractFirstStep(parsed));
         assertEquals(expectedQName, step.getQName());
 

@@ -134,7 +134,7 @@ class SchemaContextProxyTest {
      * M2<-(NullRev)M3
      */
     @Test
-    void testBasicNullRevision() throws Exception {
+    void testBasicNullRevision() {
         final var moduleConfig = mockModule(CONFIG_NAME, Revision.of("2013-04-05"));
         final var module2 = mockModule(MODULE2_NAME, Revision.of("2014-06-17"));
         final var module20 = mockModule(MODULE2_NAME, null);
@@ -273,7 +273,7 @@ class SchemaContextProxyTest {
      * M2 <- M3 M4=M3(Different revision)
      */
     @Test
-    void testBasicRevisionChange() throws Exception {
+    void testBasicRevisionChange() {
         var moduleConfig = mockModule(CONFIG_NAME);
         var module2 = mockModule(MODULE2_NAME);
         var module3 = mockModule(MODULE3_NAME);

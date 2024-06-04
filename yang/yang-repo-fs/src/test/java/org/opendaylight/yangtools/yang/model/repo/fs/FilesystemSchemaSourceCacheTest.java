@@ -107,7 +107,7 @@ class FilesystemSchemaSourceCacheTest {
     }
 
     @Test
-    void testCacheDuplicate() throws Exception {
+    void testCacheDuplicate() {
         final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
 
         final var content = "content1";
@@ -122,7 +122,7 @@ class FilesystemSchemaSourceCacheTest {
     }
 
     @Test
-    void testCacheMultipleRevisions() throws Exception {
+    void testCacheMultipleRevisions() {
         final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
 
         final var source = new StringYangTextSource(new SourceIdentifier("test"), "content1");
@@ -191,7 +191,7 @@ class FilesystemSchemaSourceCacheTest {
     }
 
     @Test
-    void test1() throws Exception {
+    void test1() {
         final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
         final var source = new StringYangTextSource(new SourceIdentifier("test1", "2013-12-12"), "content1");
         cache.offer(source);

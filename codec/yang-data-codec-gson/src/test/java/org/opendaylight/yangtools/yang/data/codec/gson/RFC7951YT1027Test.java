@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,17 +27,17 @@ class RFC7951YT1027Test extends AbstractYT1027Test {
     }
 
     @Test
-    void testDecimalUnquotedParsing() throws IOException {
+    void testDecimalUnquotedParsing() {
         assertEquals(DECIMAL_DATA, fromJSON(UNQUOTED_DECIMAL));
     }
 
     @Test
-    void testInt64UnquotedParsing() throws IOException {
+    void testInt64UnquotedParsing() {
         assertEquals(INT64_DATA, fromJSON(UNQUOTED_INT64));
     }
 
     @Test
-    void testUint64UnquotedParsing() throws IOException {
+    void testUint64UnquotedParsing() {
         assertEquals(UINT64_DATA, fromJSON(UNQUOTED_UINT64));
     }
 

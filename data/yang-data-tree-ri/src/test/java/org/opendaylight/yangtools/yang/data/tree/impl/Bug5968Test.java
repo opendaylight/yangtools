@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -76,7 +74,7 @@ class Bug5968Test {
     }
 
     private static DataTree initDataTree(final EffectiveModelContext schemaContext, final boolean withMapNode)
-            throws DataValidationFailedException {
+            throws Exception {
         final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
@@ -103,7 +101,7 @@ class Bug5968Test {
     }
 
     @Test
-    void writeInvalidContainerTest() throws DataValidationFailedException {
+    void writeInvalidContainerTest() throws Exception {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final var myList = createMap(true);
@@ -126,7 +124,7 @@ class Bug5968Test {
     }
 
     @Test
-    void writeInvalidMapTest() throws DataValidationFailedException {
+    void writeInvalidMapTest() throws Exception {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         writeMap(modificationTree, true);
@@ -144,7 +142,7 @@ class Bug5968Test {
     }
 
     @Test
-    void writeInvalidMapEntryTest() throws DataValidationFailedException {
+    void writeInvalidMapEntryTest() throws Exception {
         final var inMemoryDataTree = initDataTree(SCHEMA_CONTEXT, true);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
@@ -163,7 +161,7 @@ class Bug5968Test {
     }
 
     private static void writeMap(final DataTreeModification modificationTree, final boolean mandatoryDataMissing) {
-        modificationTree.write(YangInstanceIdentifier.of(ROOT).node(MY_LIST), createMap(mandatoryDataMissing));
+        modificationTree.write(YangInstanceIdentifier.of(ROOT, MY_LIST), createMap(mandatoryDataMissing));
     }
 
     private static SystemMapNode createMap(final boolean mandatoryDataMissing) {
@@ -175,34 +173,36 @@ class Bug5968Test {
     }
 
     private static void writeMapEntry(final DataTreeModification modificationTree, final Object listIdValue,
-            final Object mandatoryLeafValue, final Object commonLeafValue) throws DataValidationFailedException {
+            final Object mandatoryLeafValue, final Object commonLeafValue) throws Exception {
         final var taskEntryNode = mandatoryLeafValue == null ? createMapEntry(listIdValue, commonLeafValue)
                 : createMapEntry(listIdValue, mandatoryLeafValue, commonLeafValue);
 
         modificationTree.write(
-                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
-                        .node(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue))),
-                taskEntryNode);
+            YangInstanceIdentifier.of(ROOT, MY_LIST)
+                .node(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, listIdValue)),
+            taskEntryNode);
     }
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object mandatoryLeafValue,
             final Object commonLeafValue) {
         return ImmutableNodes.newMapEntryBuilder()
-                .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
-                .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
-                .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF, mandatoryLeafValue))
-                .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue)).build();
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, listIdValue))
+            .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
+            .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF, mandatoryLeafValue))
+            .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue))
+            .build();
     }
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object commonLeafValue) {
         return ImmutableNodes.newMapEntryBuilder()
-                .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
-                .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
-                .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue)).build();
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, LIST_ID, listIdValue))
+            .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
+            .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue))
+            .build();
     }
 
     @Test
-    void writeValidContainerTest() throws DataValidationFailedException {
+    void writeValidContainerTest() throws Exception {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final var myList = createMap(false);
@@ -218,7 +218,7 @@ class Bug5968Test {
     }
 
     @Test
-    void writeValidMapTest() throws DataValidationFailedException {
+    void writeValidMapTest() throws Exception {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         writeMap(modificationTree, false);
@@ -230,7 +230,7 @@ class Bug5968Test {
     }
 
     @Test
-    void writeValidMapEntryTest() throws DataValidationFailedException {
+    void writeValidMapEntryTest() throws Exception {
         final var inMemoryDataTree = initDataTree(SCHEMA_CONTEXT, true);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 

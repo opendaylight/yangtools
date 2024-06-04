@@ -130,17 +130,17 @@ abstract class AbstractYT1027Test {
     }
 
     @Test
-    public void testDecimalParsing() throws IOException {
+    public void testDecimalParsing() {
         assertEquals(DECIMAL_DATA, fromJSON(expectedDecimal()));
     }
 
     @Test
-    public void testInt64Parsing() throws IOException {
+    public void testInt64Parsing() {
         assertEquals(INT64_DATA, fromJSON(expectedInt64()));
     }
 
     @Test
-    public void testUint64Parsing() throws IOException {
+    public void testUint64Parsing() {
         assertEquals(UINT64_DATA, fromJSON(expectedUint64()));
     }
 

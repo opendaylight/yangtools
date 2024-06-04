@@ -32,7 +32,7 @@ class Bug6883Test extends AbstractYangTest {
     }
 
     @Test
-    void test() throws Exception {
+    void test() {
         final var topAnyData = assertAnyData("top");
         assertEquals(Status.DEPRECATED, topAnyData.getStatus());
         assertEquals(Optional.of("top anydata"), topAnyData.getDescription());

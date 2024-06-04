@@ -134,7 +134,7 @@ class YT891Test {
     }
 
     @Test
-    void testInvalid() throws Exception {
+    void testInvalid() {
         assertThrows(LeafRefDataValidationFailedException.class, () -> {
             final var writeModification = dataTree.takeSnapshot().newModification();
             writeModification.write(FOO_TOP_ID, fooTopWithList("name2"));
@@ -153,7 +153,7 @@ class YT891Test {
     }
 
     @Test
-    void testGroupingWithLeafrefInvalid() throws Exception {
+    void testGroupingWithLeafrefInvalid() {
         assertThrows(LeafRefDataValidationFailedException.class, () -> {
             final var writeModification = dataTree.takeSnapshot().newModification();
             writeModification.write(BAZ_TOP_ID, bazTop());
