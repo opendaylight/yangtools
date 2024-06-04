@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.collect.ImmutableMap;
@@ -113,16 +114,11 @@ class Bug5968MergeTest {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.merge(YangInstanceIdentifier.of(ROOT), root.build());
 
-        try {
-            modificationTree.ready();
-            inMemoryDataTree.validate(modificationTree);
-            final var prepare = inMemoryDataTree.prepare(modificationTree);
-            inMemoryDataTree.commit(prepare);
-            fail("Should fail due to missing mandatory leaf.");
-        } catch (final IllegalArgumentException e) {
-            assertEquals("Node (bug5968?revision=2016-07-28)my-list[{(bug5968?revision=2016-07-28)list-id=1}] is "
-                + "missing mandatory descendant /(bug5968?revision=2016-07-28)mandatory-leaf", e.getMessage());
-        }
+        modificationTree.ready();
+        inMemoryDataTree.validate(modificationTree);
+        final var ex = assertThrows(IllegalArgumentException.class, () -> inMemoryDataTree.prepare(modificationTree));
+        assertEquals("Node (bug5968?revision=2016-07-28)my-list[{(bug5968?revision=2016-07-28)list-id=1}] is "
+            + "missing mandatory descendant /(bug5968?revision=2016-07-28)mandatory-leaf", ex.getMessage());
     }
 
     @Test
@@ -131,16 +127,11 @@ class Bug5968MergeTest {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         mergeMap(modificationTree, true);
 
-        try {
-            modificationTree.ready();
-            inMemoryDataTree.validate(modificationTree);
-            final var prepare = inMemoryDataTree.prepare(modificationTree);
-            inMemoryDataTree.commit(prepare);
-            fail("Should fail due to missing mandatory leaf.");
-        } catch (final IllegalArgumentException e) {
-            assertEquals("Node (bug5968?revision=2016-07-28)my-list[{(bug5968?revision=2016-07-28)list-id=1}] is "
-                + "missing mandatory descendant /(bug5968?revision=2016-07-28)mandatory-leaf", e.getMessage());
-        }
+        modificationTree.ready();
+        inMemoryDataTree.validate(modificationTree);
+        final var ex = assertThrows(IllegalArgumentException.class, () -> inMemoryDataTree.prepare(modificationTree));
+        assertEquals("Node (bug5968?revision=2016-07-28)my-list[{(bug5968?revision=2016-07-28)list-id=1}] is "
+            + "missing mandatory descendant /(bug5968?revision=2016-07-28)mandatory-leaf", ex.getMessage());
     }
 
     @Test
@@ -167,7 +158,7 @@ class Bug5968MergeTest {
         modificationTree.merge(YangInstanceIdentifier.of(ROOT, MY_LIST), createMap(mandatoryDataMissing));
     }
 
-    private static SystemMapNode createMap(final boolean mandatoryDataMissing) throws DataValidationFailedException {
+    private static SystemMapNode createMap(final boolean mandatoryDataMissing) {
         return ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_LIST))
             .withChild(mandatoryDataMissing ? createMapEntry("1", "common-value")
@@ -176,7 +167,7 @@ class Bug5968MergeTest {
     }
 
     private static void mergeMapEntry(final DataTreeModification modificationTree, final Object listIdValue,
-            final Object mandatoryLeafValue, final Object commonLeafValue) throws DataValidationFailedException {
+            final Object mandatoryLeafValue, final Object commonLeafValue) {
         final var taskEntryNode = mandatoryLeafValue == null ? createMapEntry(listIdValue, commonLeafValue)
                 : createMapEntry(listIdValue, mandatoryLeafValue, commonLeafValue);
 

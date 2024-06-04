@@ -80,11 +80,16 @@ final class IOConstantsV1 {
     static final int ARG_TYPE_CONCAT_S32   = 0x07;
     static final int ARG_TYPE_MASK         = ARG_TYPE_CONCAT_S32;
 
-    static final int STR_DEF_UTF           = 0x00; // writeUTF(), <16384
-    static final int STR_DEF_U8            = 0x10; // byte + UTF
-    static final int STR_DEF_U16           = 0x20; // short + UTF
-    static final int STR_DEF_S32           = 0x30; // int + UTF
-    static final int STR_DEF_CHARS         = 0x40; // writeChars()
+    // writeUTF(), <16384
+    static final int STR_DEF_UTF           = 0x00;
+    // byte + UTF
+    static final int STR_DEF_U8            = 0x10;
+    // short + UTF
+    static final int STR_DEF_U16           = 0x20;
+    // int + UTF
+    static final int STR_DEF_S32           = 0x30;
+    // writeChars()
+    static final int STR_DEF_CHARS         = 0x40;
     static final int STR_REF_U8            = 0x50;
     static final int STR_REF_U16           = 0x60;
     static final int STR_REF_S32           = 0x70;

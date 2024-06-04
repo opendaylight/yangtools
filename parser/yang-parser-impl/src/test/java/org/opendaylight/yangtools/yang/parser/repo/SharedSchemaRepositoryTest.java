@@ -40,7 +40,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
     }
 
     private static SourceIdentifier loadAndRegisterSource(final SharedSchemaRepository sharedSchemaRepository,
-            final String resourceName) throws Exception {
+            final String resourceName) {
         final var sourceProvider = assertYangTextResource(resourceName);
         sourceProvider.setResult();
         final var idNoRevision = sourceProvider.getId();
@@ -110,7 +110,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
     }
 
     @Test
-    void testFailedSchemaContext() throws Exception {
+    void testFailedSchemaContext() {
         final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
         final var remoteInetTypesYang = assertYangTextResource("/ietf/ietf-inet-types@2010-09-24.yang");

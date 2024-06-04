@@ -70,7 +70,7 @@ class Bug2690Test extends AbstractTestModelTest {
     }
 
     @Test
-    void testDeleteStructuralAndWriteChild() throws DataValidationFailedException {
+    void testDeleteStructuralAndWriteChild() {
         final var modificationTree = setupTestDeleteStructuralAndWriteChild();
         verifyTestDeleteStructuralAndWriteChild(modificationTree);
     }

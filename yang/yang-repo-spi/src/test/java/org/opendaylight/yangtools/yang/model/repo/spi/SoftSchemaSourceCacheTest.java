@@ -58,7 +58,7 @@ class SoftSchemaSourceCacheTest {
     }
 
     @Test
-    void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
+    void inMemorySchemaSourceCacheNullGetSourcestest() {
         try (var cache = new SoftSchemaSourceCache<>(registry, REPRESENTATION)) {
             final var sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
             final var checkedSource = cache.getSource(sourceIdentifier);

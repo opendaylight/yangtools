@@ -150,7 +150,7 @@ class NormalizedNodeStreamReaderWriterTest {
     }
 
     @Test
-    void testInvalidNormalizedNodeStream() throws Exception {
+    void testInvalidNormalizedNodeStream() {
         final var ex = assertThrows(InvalidNormalizedNodeStreamException.class,
             () -> NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(new byte[] { 1, 2, 3})));
         assertEquals("Invalid signature marker: 1", ex.getMessage());

@@ -67,7 +67,7 @@ class MultipleRevImportBug6875Test extends AbstractSchemaRepositoryTest {
     }
 
     @Test
-    void testYang10() throws Exception {
+    void testYang10() {
         final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-multiple-rev-import-test");
 
         final var foo = assertYangTextResource("/rfc7950/bug6875/yang1-0/foo.yang");

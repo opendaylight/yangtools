@@ -112,7 +112,7 @@ class YT821Test {
     }
 
     @Test
-    void testInvalidRefFromAugmentation() throws Exception {
+    void testInvalidRefFromAugmentation() {
         assertThrows(LeafRefDataValidationFailedException.class, () -> {
             final var writeModification = dataTree.takeSnapshot().newModification();
             writeModification.write(ROOT_ID, refFromAug("foo2"));
@@ -135,7 +135,7 @@ class YT821Test {
     }
 
     @Test
-    void testInvalidRefInContainerFromAugmentation() throws Exception {
+    void testInvalidRefInContainerFromAugmentation() {
         assertThrows(LeafRefDataValidationFailedException.class, () -> {
             final var writeModification = dataTree.takeSnapshot().newModification();
             writeModification.write(ROOT_ID, refInContainer("foo2"));
