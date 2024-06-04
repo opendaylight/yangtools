@@ -7,15 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.DataInput;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.NotSerializableException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.time.format.DateTimeFormatter;
@@ -200,33 +195,5 @@ public final class Revision implements RevisionUnion {
 
     static void throwNSE() throws NotSerializableException {
         throw new NotSerializableException(Revision.class.getName());
-    }
-
-    @Deprecated(since = "12.0.0", forRemoval = true)
-    private static final class Proxy implements Externalizable {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        private Revision revision;
-
-        @SuppressWarnings("checkstyle:redundantModifier")
-        public Proxy() {
-            // For Externalizable
-        }
-
-        @Override
-        public void writeExternal(final ObjectOutput out) throws IOException {
-            throw new NotSerializableException(Proxy.class.getName());
-        }
-
-        @Override
-        public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-            revision = Revision.of((String) in.readObject());
-        }
-
-        @java.io.Serial
-        private Object readResolve() {
-            return requireNonNull(revision);
-        }
     }
 }
