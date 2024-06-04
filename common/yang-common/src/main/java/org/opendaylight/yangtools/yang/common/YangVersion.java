@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -66,35 +65,11 @@ public enum YangVersion {
     }
 
     /**
-     * Parse a YANG version from its textual representation.
-     *
-     * @param str String to parse
-     * @return An Optional YANG version
-     * @throws NullPointerException if the string is {@code null}
-     * @deprecated Use {@link #forString(String)} or {@link #ofString(String)}
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    public static Optional<YangVersion> parse(final @NonNull String str) {
-        return Optional.ofNullable(forString(str));
-    }
-
-    /**
      * Return the normative reference defining this YANG version.
      *
      * @return Normative reference.
      */
     public @NonNull String reference() {
-        return reference;
-    }
-
-    /**
-     * Return the normative reference defining this YANG version.
-     *
-     * @return Normative reference.
-     * @deprecated Use {@link #reference()} instead
-     */
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    public @NonNull String getReference() {
         return reference;
     }
 
