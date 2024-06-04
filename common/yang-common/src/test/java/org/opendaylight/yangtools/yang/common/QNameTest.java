@@ -13,21 +13,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-public class QNameTest {
+class QNameTest {
     private static final String NAMESPACE = "urn:foo";
     private static final String REVISION = "2013-12-24";
     private static final String LOCALNAME = "bar";
     private static final XMLNamespace NS = XMLNamespace.of(NAMESPACE);
 
     @Test
-    public void testStringSerialization() throws Exception {
+    void testStringSerialization() {
         var qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
         assertEquals("(urn:foo?revision=2013-12-24)bar", qname.toString());
         assertEquals(qname, QName.create(qname.toString()));
     }
 
     @Test
-    public void testStringSerializationNoRevision() throws Exception {
+    void testStringSerializationNoRevision() {
         // no revision
         var qname = QName.create(NS, LOCALNAME);
         assertEquals("(urn:foo)bar", qname.toString());
@@ -35,7 +35,7 @@ public class QNameTest {
     }
 
     @Test
-    public void testIllegalLocalNames() {
+    void testIllegalLocalNames() {
         assertThrows(NullPointerException.class, () -> QName.create(NS, null));
         assertThrows(IllegalArgumentException.class, () -> QName.create(NS, ""));
         assertThrows(IllegalArgumentException.class, () -> QName.create(NS, "("));
@@ -45,7 +45,7 @@ public class QNameTest {
     }
 
     @Test
-    public void testCompareTo() throws Exception {
+    void testCompareTo() {
         final String A = "a";
         final String B = "b";
 
@@ -74,7 +74,7 @@ public class QNameTest {
     }
 
     @Test
-    public void testQName() {
+    void testQName() {
         final var qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
         final var qname1 = QName.create(NAMESPACE, LOCALNAME);
         final var qname2 = QName.create(qname1, LOCALNAME);
@@ -86,7 +86,7 @@ public class QNameTest {
     }
 
     @Test
-    public void testQNameModule() throws Exception {
+    void testQNameModule() {
         final var qnameModule = QNameModule.of(NS, Revision.of("2000-01-01"));
         assertEquals("QNameModule{ns=urn:foo, rev=2000-01-01}", qnameModule.toString());
     }

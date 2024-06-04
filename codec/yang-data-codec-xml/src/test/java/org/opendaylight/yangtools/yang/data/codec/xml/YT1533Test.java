@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1533Test {
     @Test
-    void testInvalidChild() throws Exception {
+    void testInvalidChild() {
         final var context = YangParserTestUtils.parseYang("""
             module foo {
               namespace foo;

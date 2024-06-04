@@ -41,7 +41,7 @@ abstract class AbstractAnydataTest extends AbstractXmlTest {
     static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeAll
-    static final void beforeAll() throws Exception {
+    static final void beforeAll() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module test-anydata {
               yang-version 1.1;

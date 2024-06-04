@@ -50,7 +50,7 @@ class ThreadPoolExecutorTest {
     }
 
     @Test
-    void testFastThreadPoolRejectingTask() throws InterruptedException {
+    void testFastThreadPoolRejectingTask() {
         assertThrows(RejectedExecutionException.class, () -> {
             executor = SpecialExecutors.newBoundedFastThreadPool(1, 1, "TestPool", getClass());
 
@@ -74,7 +74,7 @@ class ThreadPoolExecutorTest {
     }
 
     @Test
-    void testCachedThreadRejectingTask() throws InterruptedException {
+    void testCachedThreadRejectingTask() {
         assertThrows(RejectedExecutionException.class, () -> {
             ExecutorService localExecutor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool", getClass());
 
@@ -94,7 +94,7 @@ class ThreadPoolExecutorTest {
     void testThreadPoolExecution(final ExecutorService executorToTest, final int numTasksToRun,
             final String expThreadPrefix, final long taskDelay) throws InterruptedException {
 
-        this.executor = executorToTest;
+        executor = executorToTest;
 
         LOG.debug("Testing {} with {} tasks.", executorToTest.getClass().getSimpleName(), numTasksToRun);
 
@@ -160,10 +160,10 @@ class ThreadPoolExecutorTest {
         Task(final CountDownLatch tasksRunLatch, final CountDownLatch blockLatch) {
             this.tasksRunLatch = tasksRunLatch;
             this.blockLatch = blockLatch;
-            this.taskCountPerThread = null;
-            this.threadError = null;
-            this.expThreadPrefix = null;
-            this.delay = 0;
+            taskCountPerThread = null;
+            threadError = null;
+            expThreadPrefix = null;
+            delay = 0;
         }
 
         @Override

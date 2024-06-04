@@ -146,7 +146,7 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseDataBadType() throws Exception {
+    void parseDataBadType() {
         final var error = assertError(() -> PARSER.parseData(Inference.ofDataTreePath(MODEL_CONTEXT, FOO), stream("""
             {
               "foo:foo" : {
@@ -158,7 +158,7 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseDataBadRootElement() throws Exception {
+    void parseDataBadRootElement() {
         assertMismatchedError("(foo)foo", "(foo)bar",
             () -> PARSER.parseData(Inference.ofDataTreePath(MODEL_CONTEXT, FOO), stream("""
                 {
@@ -169,7 +169,7 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseDataBadInference() throws Exception {
+    void parseDataBadInference() {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterSchemaTree(THUD);
 
@@ -179,7 +179,7 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseDataEmptyInference() throws Exception {
+    void parseDataEmptyInference() {
         final var inference = Inference.of(MODEL_CONTEXT);
 
         final var ex = assertThrows(IllegalArgumentException.class, () -> PARSER.parseData(inference, stream("")));
@@ -275,7 +275,7 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseChildDataListEntryNone() throws Exception {
+    void parseChildDataListEntryNone() {
         final var error = assertError(() -> PARSER.parseChildData(Inference.of(MODEL_CONTEXT), stream("""
             {
               "foo:baz" : [
@@ -287,7 +287,7 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseChildDataListEntryTwo() throws Exception {
+    void parseChildDataListEntryTwo() {
         final var error = assertError(() -> PARSER.parseChildData(Inference.of(MODEL_CONTEXT), stream("""
             {
               "foo:baz" : [
@@ -324,7 +324,7 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseInputRpcBadRootElement() throws Exception {
+    void parseInputRpcBadRootElement() {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterSchemaTree(THUD);
 
@@ -379,7 +379,7 @@ class InputStreamNormalizerTest {
     }
 
     @Test
-    void parseOutputRpcBadRootElement() throws Exception {
+    void parseOutputRpcBadRootElement() {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterSchemaTree(THUD);
 
