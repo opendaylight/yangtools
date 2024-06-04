@@ -130,47 +130,6 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     }
 
     /**
-     * Create a new QName module instance with specified namespace/revision.
-     *
-     * @param namespace Module namespace
-     * @param revision Module revision
-     * @return A new, potentially shared, QNameModule instance
-     * @throws NullPointerException if any argument is {@code null}
-     * @deprecated Use {@link #ofRevision(XMLNamespace, Revision)} instead
-     */
-    @Deprecated(since = "13.0.1", forRemoval = true)
-    public static @NonNull QNameModule create(final XMLNamespace namespace, final Optional<Revision> revision) {
-        return ofRevision(namespace, revision.orElse(null));
-    }
-
-    /**
-     * Create a new QName module instance with specified namespace and no revision.
-     *
-     * @param namespace Module namespace
-     * @return A new, potentially shared, QNameModule instance
-     * @throws NullPointerException if {@code namespace} is null
-     * @deprecated Use {@link #of(XMLNamespace)} instead
-     */
-    @Deprecated(since = "13.0.1", forRemoval = true)
-    public static @NonNull QNameModule create(final XMLNamespace namespace) {
-        return of(namespace);
-    }
-
-    /**
-     * Create a new QName module instance with specified namespace/revision.
-     *
-     * @param namespace Module namespace
-     * @param revision Module revision
-     * @return A new, potentially shared, QNameModule instance
-     * @throws NullPointerException if any argument is {@code null}
-     * @deprecated Use {@link #ofRevision(XMLNamespace, Revision)} instead
-     */
-    @Deprecated(since = "13.0.1", forRemoval = true)
-    public static @NonNull QNameModule create(final XMLNamespace namespace, final @Nullable Revision revision) {
-        return ofRevision(namespace, revision);
-    }
-
-    /**
      * Read a QNameModule from a DataInput. The format is expected to match the output format of
      * {@link #writeTo(DataOutput)}.
      *
@@ -189,17 +148,6 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      */
     public @NonNull XMLNamespace namespace() {
         return namespace;
-    }
-
-    /**
-     * Returns the namespace of the module which is specified as argument of YANG Module {@code namespace} keyword.
-     *
-     * @return XMLNamespace of the namespace of the module
-     * @deprecated Use {@link #namespace()} instead.
-     */
-    @Deprecated(since = "13.0.1", forRemoval = true)
-    public @NonNull XMLNamespace getNamespace() {
-        return namespace();
     }
 
     /**
@@ -227,17 +175,6 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      */
     public @NonNull Optional<Revision> findRevision() {
         return revUnion.findRevision();
-    }
-
-    /**
-     * Returns the revision date for the module.
-     *
-     * @return date of the module revision which is specified as argument of YANG Module {@code revision} keyword
-     * @deprecated Use {@link #findRevision()} or {@link #revision()} instead.
-     */
-    @Deprecated(since = "13.0.1", forRemoval = true)
-    public @NonNull Optional<Revision> getRevision() {
-        return findRevision();
     }
 
     /**

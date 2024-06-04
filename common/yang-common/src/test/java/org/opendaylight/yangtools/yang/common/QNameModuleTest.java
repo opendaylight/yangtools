@@ -9,15 +9,14 @@ package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 class QNameModuleTest {
     @Test
     void hashCodeValues() {
-        final var mod1 = QNameModule.create(XMLNamespace.of("foo"), Optional.empty());
+        final var mod1 = QNameModule.of(XMLNamespace.of("foo"), NotRevision.of());
         assertEquals(3149755, mod1.hashCode());
-        final var mod2 = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2024-01-26"));
+        final var mod2 = QNameModule.of(XMLNamespace.of("foo"), Revision.of("2024-01-26"));
         assertEquals(-610191810, mod2.hashCode());
     }
 }
