@@ -173,7 +173,7 @@ class Bug5968Test {
     }
 
     private static void writeMapEntry(final DataTreeModification modificationTree, final Object listIdValue,
-            final Object mandatoryLeafValue, final Object commonLeafValue) throws Exception {
+            final Object mandatoryLeafValue, final Object commonLeafValue) {
         final var taskEntryNode = mandatoryLeafValue == null ? createMapEntry(listIdValue, commonLeafValue)
                 : createMapEntry(listIdValue, mandatoryLeafValue, commonLeafValue);
 

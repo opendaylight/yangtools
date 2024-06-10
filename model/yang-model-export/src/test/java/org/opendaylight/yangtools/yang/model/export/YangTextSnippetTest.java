@@ -23,7 +23,7 @@ public class YangTextSnippetTest {
     }
 
     @Test
-    public void testSubmoduleNamespaces() throws Exception {
+    public void testSubmoduleNamespaces() {
         assertFormat(YangParserTestUtils.parseYang("""
             module module1 {
               yang-version "1.1";

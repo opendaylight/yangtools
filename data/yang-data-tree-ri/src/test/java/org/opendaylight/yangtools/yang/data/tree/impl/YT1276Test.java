@@ -117,7 +117,7 @@ class YT1276Test {
     }
 
     @Test
-    void testBazWithAugmentedCaseWithoutMandatoryLeaf() throws DataValidationFailedException {
+    void testBazWithAugmentedCaseWithoutMandatoryLeaf() {
         assertThrows(IllegalArgumentException.class, () -> {
             applyOperation(mod -> {
                 mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()
@@ -149,7 +149,7 @@ class YT1276Test {
     }
 
     @Test
-    void testWithAugmentedNestedBazWithhoutMandatoryLeaf() throws DataValidationFailedException {
+    void testWithAugmentedNestedBazWithhoutMandatoryLeaf() {
         assertThrows(IllegalArgumentException.class, () -> {
             applyOperation(mod -> {
                 mod.write(YangInstanceIdentifier.of(BAR), ImmutableNodes.newContainerBuilder()

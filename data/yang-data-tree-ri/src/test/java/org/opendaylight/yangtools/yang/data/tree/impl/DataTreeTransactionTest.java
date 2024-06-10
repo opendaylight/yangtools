@@ -40,7 +40,7 @@ class DataTreeTransactionTest extends AbstractTestModelTest {
     }
 
     @Test
-    void testUnsealedValidate() throws DataValidationFailedException {
+    void testUnsealedValidate() {
         assertThrows(IllegalArgumentException.class, () -> {
             final DataTreeModification mod = tree.takeSnapshot().newModification();
             tree.validate(mod);
@@ -48,7 +48,7 @@ class DataTreeTransactionTest extends AbstractTestModelTest {
     }
 
     @Test
-    void testUnsealedPrepare() throws DataValidationFailedException {
+    void testUnsealedPrepare() {
         assertThrows(IllegalArgumentException.class, () -> {
             final DataTreeModification mod = tree.takeSnapshot().newModification();
             tree.prepare(mod);

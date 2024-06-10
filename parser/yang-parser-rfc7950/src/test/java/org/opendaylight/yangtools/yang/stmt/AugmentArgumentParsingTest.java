@@ -71,7 +71,7 @@ class AugmentArgumentParsingTest {
     }
 
     @Test
-    void invalidAugEmptyTest() throws ReactorException {
+    void invalidAugEmptyTest() {
         final ReactorException ex = assertReactorThrows(INVALID_EMPTY);
         final Throwable cause = ex.getCause();
         assertInstanceOf(SourceException.class, cause);
@@ -79,7 +79,7 @@ class AugmentArgumentParsingTest {
     }
 
     @Test
-    void invalidAugXPathTest() throws ReactorException {
+    void invalidAugXPathTest() {
         final ReactorException ex = assertReactorThrows(INVALID_XPATH);
         final Throwable cause = ex.getCause();
         assertInstanceOf(SourceException.class, cause);

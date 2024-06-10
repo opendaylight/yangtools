@@ -268,7 +268,7 @@ class DataTreeCandidatesAggregateTest {
     }
 
     @Test
-    void testUnmodifiedUnmodified() throws NoSuchFieldException {
+    void testUnmodifiedUnmodified() {
         final var parentNode = normalizedNode("container");
         final var childNode = normalizedNode("child");
 

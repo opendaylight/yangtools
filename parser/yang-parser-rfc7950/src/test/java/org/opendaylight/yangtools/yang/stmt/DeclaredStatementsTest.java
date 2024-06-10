@@ -139,7 +139,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final CaseStatement caseStatement = caseStatements.iterator().next();
         final QName caseStatementName = caseStatement.argument();
         assertNotNull(caseStatementName);
-        final WhenStatement caseStatementWhen = caseStatement.getWhenStatement().orElseThrow();
+        assertNotNull(caseStatement.getWhenStatement().orElseThrow());
         final var caseStatementIfFeatures = caseStatement.getIfFeatures();
         assertNotNull(caseStatementIfFeatures);
         assertEquals(1, caseStatementIfFeatures.size());
@@ -150,7 +150,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertTrue(caseStatement.getDescription().isPresent());
         assertTrue(caseStatement.getReference().isPresent());
 
-        final WhenStatement whenStatement = choiceStatement.getWhenStatement().orElseThrow();
+        assertNotNull(choiceStatement.getWhenStatement().orElseThrow());
 
         final var ifFeatureStatements = choiceStatement.getIfFeatures();
         assertNotNull(ifFeatureStatements);

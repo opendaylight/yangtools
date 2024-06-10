@@ -30,7 +30,7 @@ public abstract class AbstractModelTest extends AbstractYangTest {
     static Module BAZ;
 
     @BeforeAll
-    static void beforeClass() throws Exception {
+    static void beforeClass() {
         CTX = assertEffectiveModelDir("/model");
         assertEquals(3, CTX.getModules().size());
 

@@ -188,7 +188,7 @@ class OrderedListTest {
         assertTrue(readNode.isPresent());
     }
 
-    public void modification3() throws DataValidationFailedException {
+    public void modification3() {
         final var parentOrderedListNode = ImmutableNodes.newUserMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(parentOrderedList))
             .withChild(createParentOrderedListEntry("pkval1", "plfval1"))
