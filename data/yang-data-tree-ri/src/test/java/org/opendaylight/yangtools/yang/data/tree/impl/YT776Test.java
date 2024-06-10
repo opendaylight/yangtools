@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -137,7 +136,7 @@ class YT776Test {
     }
 
     @Test
-    void testEmptyAttributes() throws DataValidationFailedException {
+    void testEmptyAttributes() {
         final var mod = write(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BOX)
             .withChild(ImmutableNodes.newSystemMapBuilder()
@@ -156,7 +155,7 @@ class YT776Test {
     }
 
     @Test
-    void testOneAttribute() throws DataValidationFailedException {
+    void testOneAttribute() throws Exception {
         writeAndCommit(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BOX)
             .withChild(ImmutableNodes.newSystemMapBuilder()
@@ -174,7 +173,7 @@ class YT776Test {
     }
 
     @Test
-    void testTwoAttributes() throws DataValidationFailedException {
+    void testTwoAttributes() throws Exception {
         writeAndCommit(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BOX)
             .withChild(ImmutableNodes.newSystemMapBuilder()
@@ -193,7 +192,7 @@ class YT776Test {
     }
 
     @Test
-    void testThreeAttributes() throws DataValidationFailedException {
+    void testThreeAttributes() {
         final var mod = write(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BOX)
             .withChild(ImmutableNodes.newSystemMapBuilder()
@@ -217,7 +216,7 @@ class YT776Test {
     }
 
     @Test
-    void testEmptyAndMergeOne() throws DataValidationFailedException {
+    void testEmptyAndMergeOne() throws Exception {
         final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BOX)
@@ -248,7 +247,7 @@ class YT776Test {
     }
 
     @Test
-    void testEmptyAndMergeOneWithListTouched() throws DataValidationFailedException {
+    void testEmptyAndMergeOneWithListTouched() throws Exception {
         final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(BOX)
@@ -281,7 +280,7 @@ class YT776Test {
     }
 
     @Test
-    void testDisappearInChoice() throws DataValidationFailedException {
+    void testDisappearInChoice() throws Exception {
         var mod = dataTree.takeSnapshot().newModification();
         // Initialize choice with list
         mod.write(YangInstanceIdentifier.of(BOX), ImmutableNodes.newContainerBuilder()
@@ -313,13 +312,13 @@ class YT776Test {
         return mod;
     }
 
-    private void writeAndCommit(final ContainerNode data) throws DataValidationFailedException {
+    private void writeAndCommit(final ContainerNode data) throws Exception {
         final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), data);
         commit(mod);
     }
 
-    private void commit(final DataTreeModification mod) throws DataValidationFailedException {
+    private void commit(final DataTreeModification mod) throws Exception {
         mod.ready();
         dataTree.validate(mod);
         dataTree.commit(dataTree.prepare(mod));

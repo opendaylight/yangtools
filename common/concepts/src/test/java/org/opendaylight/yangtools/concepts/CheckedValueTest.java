@@ -31,28 +31,28 @@ public class CheckedValueTest {
     }
 
     public void testExceptionGet() {
-        final CheckedValue<?, ?> value = CheckedValue.ofException(new Exception());
+        final var value = CheckedValue.ofException(new Exception());
         assertThrows(IllegalStateException.class, () -> value.get());
     }
 
     @Test
     public void testValueException() {
-        final CheckedValue<?, ?> value = CheckedValue.ofValue("foo");
+        final var value = CheckedValue.ofValue("foo");
         assertThrows(IllegalStateException.class, () -> value.getException());
     }
 
     @Test
     public void testGet() {
-        final String value = "foo";
-        final CheckedValue<String, ?> val = CheckedValue.ofValue(value);
+        final var value = "foo";
+        final var val = CheckedValue.ofValue(value);
         assertTrue(val.isPresent());
         assertSame(value, val.get());
     }
 
     @Test
     public void testThrowableGetThrowable() {
-        final Exception cause = new Exception();
-        final CheckedValue<?, ?> val = CheckedValue.ofException(cause);
+        final var cause = new Exception();
+        final var val = CheckedValue.ofException(cause);
         assertFalse(val.isPresent());
         assertSame(cause, val.getException());
     }
@@ -66,12 +66,11 @@ public class CheckedValueTest {
 
     @Test
     public void testEqualsHashCode() {
-        final CheckedValue<String, ?> fooVal = CheckedValue.ofValue("foo");
-        final CheckedValue<String, ?> fooVal2 = CheckedValue.ofValue("foo");
-        final CheckedValue<Integer, ?> oneVal = CheckedValue.ofValue(1);
-        final CheckedValue<?, ?> errBar = CheckedValue.ofException(new NullPointerException("bar"));
-        final CheckedValue<?, ?> errFoo = CheckedValue.ofException(new NullPointerException("foo"));
-        final CheckedValue<?, ?> errFoo2 = CheckedValue.ofException(new NullPointerException("foo"));
+        final var fooVal = CheckedValue.ofValue("foo");
+        final var fooVal2 = CheckedValue.ofValue("foo");
+        final var oneVal = CheckedValue.ofValue(1);
+        final var errBar = CheckedValue.ofException(new NullPointerException("bar"));
+        final var errFoo = CheckedValue.ofException(new NullPointerException("foo"));
 
         assertFalse(fooVal.equals(null));
         assertFalse(fooVal.equals("foo"));
@@ -128,7 +127,7 @@ public class CheckedValueTest {
 
     @Test
     public void testExceptionMap() {
-        final CheckedValue<Object, ?> errVal = CheckedValue.ofException(new NullPointerException());
+        final var errVal = CheckedValue.ofException(new NullPointerException());
         @SuppressWarnings("unchecked")
         final Function<Object, Object> mapper = mock(Function.class);
         doReturn(null).when(mapper).apply(any(Object.class));

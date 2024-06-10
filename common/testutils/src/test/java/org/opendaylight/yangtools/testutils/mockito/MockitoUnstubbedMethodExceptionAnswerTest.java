@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 
 class MockitoUnstubbedMethodExceptionAnswerTest {
     @Test
-    void testAnswering() throws Exception {
+    void testAnswering() {
         Closeable mock = Mockito.mock(Closeable.class, MoreAnswers.exception());
         String message = assertThrows(UnstubbedMethodException.class, mock::close).getMessage();
         assertEquals("close() is not stubbed in mock of java.io.Closeable", message);

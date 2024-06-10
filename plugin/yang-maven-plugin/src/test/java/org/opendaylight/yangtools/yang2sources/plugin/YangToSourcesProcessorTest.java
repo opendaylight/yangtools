@@ -47,7 +47,7 @@ class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
     }
 
     @Test
-    void excludeFilesTest() throws Exception {
+    void excludeFilesTest() {
         final var excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
 
         assertMojoExecution(

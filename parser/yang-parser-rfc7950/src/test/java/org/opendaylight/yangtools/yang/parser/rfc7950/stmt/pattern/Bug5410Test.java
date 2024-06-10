@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -105,7 +104,7 @@ class Bug5410Test {
     }
 
     @Test
-    void testInvalidXSDRegexes() throws UnsupportedEncodingException {
+    void testInvalidXSDRegexes() {
         testInvalidPattern("$^a^[$^\\]", "Unclosed character class");
         testInvalidPattern("$(\\)", "Unclosed group");
     }

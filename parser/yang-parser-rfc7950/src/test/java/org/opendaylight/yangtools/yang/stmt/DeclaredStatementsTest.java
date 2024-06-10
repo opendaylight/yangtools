@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -23,8 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -44,7 +43,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
@@ -55,7 +53,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 
 class DeclaredStatementsTest extends AbstractYangTest {
@@ -63,20 +60,21 @@ class DeclaredStatementsTest extends AbstractYangTest {
     void testDeclaredAnyXml() {
         final var schemaContext = assertEffectiveModel("/declared-statements-test/anyxml-declared-test.yang");
 
-        final Module testModule = schemaContext.findModules("anyxml-declared-test").iterator().next();
+        final var testModule = schemaContext.findModules("anyxml-declared-test").iterator().next();
         assertNotNull(testModule);
 
-        final AnyxmlSchemaNode anyxmlSchemaNode = (AnyxmlSchemaNode) testModule.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "foobar"));
-        assertNotNull(anyxmlSchemaNode);
-        final AnyxmlStatement anyxmlStatement = ((AnyxmlEffectiveStatement) anyxmlSchemaNode).getDeclared();
+        final var anyxmlSchemaNode = assertInstanceOf(AnyxmlSchemaNode.class,
+            testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "foobar")));
+        final var anyxmlStatement = anyxmlSchemaNode.asEffectiveStatement().getDeclared();
+        assertNotNull(anyxmlStatement);
 
         final QName name = anyxmlStatement.argument();
         assertNotNull(name);
 
-        final WhenStatement whenStatement = anyxmlStatement.getWhenStatement().orElseThrow();
+        final var whenStatement = anyxmlStatement.getWhenStatement().orElseThrow();
         assertNotNull(whenStatement.argument());
-        final DescriptionStatement whenStatementDescription = whenStatement.getDescription().orElseThrow();
+        final var whenStatementDescription = whenStatement.getDescription().orElseThrow();
+        assertNotNull(whenStatementDescription.argument());
         assertTrue(whenStatement.getReference().isPresent());
 
         final var ifFeatureStatements = anyxmlStatement.getIfFeatures();
@@ -88,7 +86,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var mustStatements = anyxmlStatement.getMustStatements();
         assertNotNull(mustStatements);
         assertEquals(1, mustStatements.size());
-        final MustStatement mustStatement = mustStatements.iterator().next();
+        final var mustStatement = mustStatements.iterator().next();
         assertNotNull(mustStatement.argument());
         assertTrue(mustStatement.getErrorAppTagStatement().isPresent());
         assertTrue(mustStatement.getErrorMessageStatement().isPresent());
@@ -310,7 +308,8 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final QName name = containerStatement.argument();
         assertNotNull(name);
 
-        final WhenStatement containerStatementWhen = containerStatement.getWhenStatement().orElseThrow();
+        final var containerStatementWhen = containerStatement.getWhenStatement().orElseThrow();
+        assertNotNull(containerStatementWhen);
 
         final var containerStatementIfFeatures = containerStatement.getIfFeatures();
         assertNotNull(containerStatementIfFeatures);

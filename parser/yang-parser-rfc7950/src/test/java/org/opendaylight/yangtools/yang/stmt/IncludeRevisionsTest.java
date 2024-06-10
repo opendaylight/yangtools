@@ -39,7 +39,7 @@ class IncludeRevisionsTest {
     }
 
     @Test
-    void revsUnequalTest() throws Exception {
+    void revsUnequalTest() {
         var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(UNEQUAL_REV, UNEQUAL_ROOT);
         var ex = assertThrows(SomeModifiersUnresolvedException.class, reactor::build);
         assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
