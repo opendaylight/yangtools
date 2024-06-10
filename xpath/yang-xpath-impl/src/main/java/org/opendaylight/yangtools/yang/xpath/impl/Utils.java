@@ -37,7 +37,7 @@ final class Utils {
             qname = colon != -1 ? Qualified.of(text.substring(0, colon), text.substring(colon + 1))
                     : Unqualified.of(text);
         } catch (IllegalArgumentException e) {
-            throw wrapException(e, "Cannot interpret %s as a QName", expr);
+            throw cannotInterpret(expr, e);
         }
 
         return YangQNameExpr.of(qname.intern());
@@ -54,7 +54,7 @@ final class Utils {
 
             return YangQNameExpr.of(namespaceContext.createQName(text.substring(0, colon), text.substring(colon + 1)));
         } catch (IllegalArgumentException e) {
-            throw wrapException(e, "Cannot interpret %s as a QName", expr);
+            throw cannotInterpret(expr, e);
         }
     }
 
@@ -68,7 +68,7 @@ final class Utils {
             qname = colon == -1 ? QName.create(defaultNamespace, text).intern()
                     : namespaceContext.createQName(text.substring(0, colon), text.substring(colon + 1));
         } catch (IllegalArgumentException e) {
-            throw wrapException(e, "Cannot interpret %s as a QName", expr);
+            throw cannotInterpret(expr, e);
         }
 
         return YangQNameExpr.of(qname);
@@ -76,8 +76,12 @@ final class Utils {
 
     static XPathExpressionException wrapException(final @Nullable Throwable cause, final String format,
             final Object... args) {
-        final XPathExpressionException ret = new XPathExpressionException(String.format(format, args));
+        final var ret = new XPathExpressionException(format.formatted(args));
         ret.initCause(cause);
         return ret;
+    }
+
+    private static XPathExpressionException cannotInterpret(final YangLiteralExpr expr, final Throwable cause) {
+        return wrapException(cause, "Cannot interpret %s as a QName", expr);
     }
 }
