@@ -109,11 +109,11 @@ public final class IRSupport {
     }
 
     private IRArgument createConcatenation(final ArgumentContext argument) {
-        final List<Single> parts = new ArrayList<>();
+        final var parts = new ArrayList<Single>();
 
-        for (ParseTree child : argument.children) {
+        for (var child : argument.children) {
             verify(child instanceof TerminalNode, "Unexpected argument component %s", child);
-            final Token token = ((TerminalNode) child).getSymbol();
+            final var token = ((TerminalNode) child).getSymbol();
             switch (token.getType()) {
                 case YangStatementParser.SEP:
                     // Separator, just skip it over
@@ -131,7 +131,7 @@ public final class IRSupport {
                     parts.add(createDoubleQuoted(token));
                     break;
                 default:
-                    throw new VerifyException("Unexpected token " + token);
+                    throw unexpectedToken(token);
             }
         }
 
@@ -139,13 +139,13 @@ public final class IRSupport {
     }
 
     private Single createQuoted(final ArgumentContext argument) {
-        final ParseTree child = argument.getChild(0);
+        final var child = argument.getChild(0);
         verify(child instanceof TerminalNode, "Unexpected literal %s", child);
-        final Token token = ((TerminalNode) child).getSymbol();
+        final var token = ((TerminalNode) child).getSymbol();
         return switch (token.getType()) {
             case YangStatementParser.DQUOT_STRING -> createDoubleQuoted(token);
             case YangStatementParser.SQUOT_STRING -> createSingleQuoted(token);
-            default -> throw new VerifyException("Unexpected token " + token);
+            default -> throw unexpectedToken(token);
         };
     }
 
@@ -164,7 +164,7 @@ public final class IRSupport {
     private Single createSimple(final ArgumentContext argument) {
         final ParseTree child = argument.getChild(0);
         if (child instanceof TerminalNode terminal) {
-            final Token token = terminal.getSymbol();
+            final var token = terminal.getSymbol();
             return switch (token.getType()) {
                 // This is as simple as it gets: we are dealing with an identifier here.
                 case YangStatementParser.IDENTIFIER -> idenArguments.computeIfAbsent(strOf(token),
@@ -172,7 +172,7 @@ public final class IRSupport {
                 // This is an empty string, the difference between double and single quotes does not exist. Single
                 // quotes have more stringent semantics, hence use those.
                 case YangStatementParser.DQUOT_END, YangStatementParser.SQUOT_END -> IRArgument.empty();
-                default -> throw new VerifyException("Unexpected token " + token);
+                default -> throw unexpectedToken(token);
             };
         }
 
@@ -277,5 +277,9 @@ public final class IRSupport {
             ret = prev;
         }
         return ret;
+    }
+
+    private static VerifyException unexpectedToken(final Token token) {
+        return new VerifyException("Unexpected token " + token);
     }
 }
