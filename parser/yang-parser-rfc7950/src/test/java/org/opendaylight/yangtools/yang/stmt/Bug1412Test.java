@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
  */
 class Bug1412Test extends AbstractYangTest {
     @Test
-    void test() throws Exception {
+    void test() {
         final Module bug1412 = assertEffectiveModelDir("/bugs/bug1412").findModules("bug1412").iterator().next();
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(

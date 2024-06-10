@@ -23,10 +23,9 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 
 class Bug5481Test extends AbstractYangTest {
     @Test
-    void test() throws Exception {
+    void test() {
         final var context = assertEffectiveModelDir("/bugs/bug5481");
-        ContainerSchemaNode topContainer = verifyTopContainer(context);
-        verifyExtendedLeaf(topContainer);
+        verifyExtendedLeaf(verifyTopContainer(context));
     }
 
     private static ContainerSchemaNode verifyTopContainer(final EffectiveModelContext context) {

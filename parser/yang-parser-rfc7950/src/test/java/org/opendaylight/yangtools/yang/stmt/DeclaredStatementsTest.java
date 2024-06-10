@@ -57,7 +57,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 class DeclaredStatementsTest extends AbstractYangTest {
     @Test
@@ -139,7 +138,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final CaseStatement caseStatement = caseStatements.iterator().next();
         final QName caseStatementName = caseStatement.argument();
         assertNotNull(caseStatementName);
-        final WhenStatement caseStatementWhen = caseStatement.getWhenStatement().orElseThrow();
+        assertNotNull(caseStatement.getWhenStatement().orElseThrow());
         final var caseStatementIfFeatures = caseStatement.getIfFeatures();
         assertNotNull(caseStatementIfFeatures);
         assertEquals(1, caseStatementIfFeatures.size());
@@ -150,7 +149,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertTrue(caseStatement.getDescription().isPresent());
         assertTrue(caseStatement.getReference().isPresent());
 
-        final WhenStatement whenStatement = choiceStatement.getWhenStatement().orElseThrow();
+        assertNotNull(choiceStatement.getWhenStatement().orElseThrow());
 
         final var ifFeatureStatements = choiceStatement.getIfFeatures();
         assertNotNull(ifFeatureStatements);
@@ -162,7 +161,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
     }
 
     @Test
-    void testDeclaredAugment() throws ReactorException {
+    void testDeclaredAugment() {
         final var schemaContext = assertEffectiveModel("/declared-statements-test/augment-declared-test.yang");
 
         final var testModule = schemaContext.findModules("augment-declared-test").iterator().next();
@@ -184,7 +183,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
     }
 
     @Test
-    void testDeclaredModuleAndSubmodule() throws ReactorException {
+    void testDeclaredModuleAndSubmodule() {
         final var schemaContext = assertEffectiveModel("/declared-statements-test/parent-module-declared-test.yang",
             "/declared-statements-test/child-module-declared-test.yang");
 
@@ -296,7 +295,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
     }
 
     @Test
-    void testDeclaredContainer() throws ReactorException {
+    void testDeclaredContainer() {
         final var schemaContext = assertEffectiveModel("/declared-statements-test/container-declared-test.yang");
 
         final Module testModule = schemaContext.findModules("container-declared-test").iterator().next();

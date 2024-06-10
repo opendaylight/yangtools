@@ -145,8 +145,7 @@ class Bug5968MergeTest {
             + "mandatory descendant /(bug5968?revision=2016-07-28)mandatory-leaf", ex.getMessage());
     }
 
-    private static void mergeMap(final DataTreeModification modificationTree, final boolean mandatoryDataMissing)
-        throws Exception {
+    private static void mergeMap(final DataTreeModification modificationTree, final boolean mandatoryDataMissing) {
         modificationTree.merge(YangInstanceIdentifier.of(ROOT, MY_LIST), createMap(mandatoryDataMissing));
     }
 
@@ -313,7 +312,7 @@ class Bug5968MergeTest {
     }
 
     @Test
-    void invalidMultiStepsWriteAndMergeTest() throws Exception {
+    void invalidMultiStepsWriteAndMergeTest() {
         final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 

@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 class NotificationStmtTest extends AbstractYangTest {
     @Test
-    void notificationTest() throws Exception {
+    void notificationTest() {
         final var result = assertEffectiveModel("/model/baz.yang", "/model/bar.yang");
 
         final var testModule = result.findModules("baz").iterator().next();

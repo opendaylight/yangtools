@@ -122,7 +122,7 @@ class CaseAugmentTest {
     }
 
     @Test
-    void testWriteConflict() throws DataValidationFailedException {
+    void testWriteConflict() {
         final var modificationTree = initDataTree().takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))

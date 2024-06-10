@@ -19,7 +19,7 @@ class Bug7954Test extends AbstractYangTest {
     }
 
     @Test
-    void testParsingTheSameSubmoduleTwice() throws Exception {
+    void testParsingTheSameSubmoduleTwice() {
         assertSourceException(startsWith("Submodule name collision: subbar."), "/bugs/bug7954/bar.yang",
             "/bugs/bug7954/subbar.yang", "/bugs/bug7954/subbar.yang");
     }

@@ -37,7 +37,7 @@ class Bug5946Test extends AbstractYangTest {
     private static final SchemaNodeIdentifier C_L3_ID = SchemaNodeIdentifier.Descendant.of(C, L3);
 
     @Test
-    void test() throws Exception {
+    void test() {
         final var context = assertEffectiveModel("/bugs/bug5946/foo.yang");
 
         var uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
@@ -71,7 +71,7 @@ class Bug5946Test extends AbstractYangTest {
     }
 
     @Test
-    void testInvalid() throws Exception {
+    void testInvalid() {
         assertSourceException(
             startsWith("Unique statement argument '/simple-unique/l1' contains schema node identifier "
                 + "'/simple-unique/l1' which is not in the descendant node identifier form."),

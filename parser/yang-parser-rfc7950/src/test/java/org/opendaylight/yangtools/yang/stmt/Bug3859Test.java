@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 class Bug3859Test extends AbstractYangTest {
     @Test
-    void test() throws Exception {
+    void test() {
         assertEquals(1, assertEffectiveModelDir("/bugs/bug3859").findModules("reference-in-unknown").size());
     }
 }

@@ -56,7 +56,7 @@ class Bug6669Test extends AbstractYangTest {
     }
 
     @Test
-    void testValidAugment3() throws Exception {
+    void testValidAugment3() {
         final var context = assertEffectiveModelDir("/bugs/bug6669/valid/test3");
         assertInstanceOf(ListSchemaNode.class,
             context.findDataTreeChild(ROOT, BAR, BAR_1, BAR_2, QName.create(BAR_NS, REV, "l")).orElseThrow());

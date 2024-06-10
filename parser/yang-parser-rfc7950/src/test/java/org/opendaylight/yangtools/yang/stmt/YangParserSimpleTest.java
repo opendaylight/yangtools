@@ -38,7 +38,7 @@ class YangParserSimpleTest extends AbstractYangTest {
     private static Module MODULE;
 
     @BeforeAll
-    static void beforeClass() throws Exception {
+    static void beforeClass() {
         MODULE = assertEffectiveModelDir("/simple-test").findModules("simple-nodes").iterator().next();
     }
 

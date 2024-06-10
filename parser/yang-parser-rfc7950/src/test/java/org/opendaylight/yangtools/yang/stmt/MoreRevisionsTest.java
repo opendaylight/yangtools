@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 class MoreRevisionsTest extends AbstractYangTest {
     private static final String TED_20130712 = "/semantic-statement-parser/two-revisions/ted@2013-07-12.yang";
@@ -60,7 +59,7 @@ class MoreRevisionsTest extends AbstractYangTest {
     }
 
     @Test
-    void moreRevisionsListKeyTest() throws ReactorException {
+    void moreRevisionsListKeyTest() {
         assertEffectiveModel(TED_20130712, TED_20131021, ISIS_20130712, ISIS_20131021, L3_20130712, L3_20131021,
             IETF_TYPES, NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021);
     }

@@ -427,7 +427,7 @@ class GroupingTest extends AbstractModelTest {
     }
 
     @Test
-    void testAddedByUsesLeafTypeQName() throws Exception {
+    void testAddedByUsesLeafTypeQName() {
         final var loadModules = assertEffectiveModelDir("/added-by-uses-leaf-test");
         assertEquals(2, loadModules.getModules().size());
 

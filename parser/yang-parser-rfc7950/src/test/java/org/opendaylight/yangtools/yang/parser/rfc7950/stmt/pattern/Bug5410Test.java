@@ -141,8 +141,7 @@ class Bug5410Test {
     }
 
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
-    private static void testInvalidPattern(final String xsdRegex, final String expectedMessage)
-            throws UnsupportedEncodingException {
+    private static void testInvalidPattern(final String xsdRegex, final String expectedMessage) {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));

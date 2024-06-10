@@ -21,7 +21,7 @@ class Bug7879Test extends AbstractYangTest {
     private static final XMLNamespace NS = XMLNamespace.of("my-model-ns");
 
     @Test
-    void test() throws Exception {
+    void test() {
         final var module = assertEffectiveModelDir("/bugs/bug7879").getModuleStatement(qn("my-model"));
 
         assertInstanceOf(ContainerSchemaNode.class, module.findSchemaTreeNode(

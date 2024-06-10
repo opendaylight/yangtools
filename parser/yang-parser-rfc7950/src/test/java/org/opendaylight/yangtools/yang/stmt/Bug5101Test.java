@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 
 class Bug5101Test extends AbstractYangTest {
     @Test
-    void test() throws Exception {
+    void test() {
         final var module = assertEffectiveModel("/bugs/bug5101.yang")
             .getModuleStatement(QName.create("foo", "2016-01-29", "foo"));
 

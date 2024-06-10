@@ -47,7 +47,7 @@ class Bug7480Test {
     }
 
     @Test
-    void missingRelevantImportTest() throws Exception {
+    void missingRelevantImportTest() {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
         final var message = ex.getSuppressed().length > 0 ? ex.getSuppressed()[0].getMessage()

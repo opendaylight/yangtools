@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 class YT1482Test extends AbstractYangDataTest {
     @Test
-    void duplicateNamesAreRejected() throws Exception {
+    void duplicateNamesAreRejected() {
         final var action = REACTOR.newBuild().addSources(IETF_RESTCONF_MODULE, sourceForResource("/yt1482.yang"));
 
         final var ex = assertThrows(SomeModifiersUnresolvedException.class, action::buildEffective);

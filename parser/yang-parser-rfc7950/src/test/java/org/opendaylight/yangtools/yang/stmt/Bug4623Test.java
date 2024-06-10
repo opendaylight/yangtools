@@ -25,7 +25,7 @@ class Bug4623Test extends AbstractYangTest {
     private static Module TYPES;
 
     @BeforeAll
-    static void beforeClass() throws Exception {
+    static void beforeClass() {
         // given
         TYPES = assertEffectiveModelDir("/bugs/bug4623").findModules("types").iterator().next();
     }

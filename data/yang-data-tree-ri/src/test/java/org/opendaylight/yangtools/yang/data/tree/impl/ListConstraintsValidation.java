@@ -172,7 +172,7 @@ class ListConstraintsValidation {
     }
 
     @Test
-    void minMaxListFail() throws DataValidationFailedException {
+    void minMaxListFail() {
         assertThrows(DataValidationFailedException.class, () -> {
             var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 

@@ -25,7 +25,7 @@ class Bug6240Test extends AbstractYangTest {
     private static final String REV = "2016-07-19";
 
     @Test
-    void testModels() throws Exception {
+    void testModels() {
         final var context = assertEffectiveModelDir("/bugs/bug6240/correct");
 
         final var modules = context.getModules();

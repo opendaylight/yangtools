@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
  */
 class Bug1413Test extends AbstractYangTest {
     @Test
-    void test() throws Exception {
+    void test() {
         var extensions = assertEffectiveModelDir("/bugs/bug1413").findModules("bug1413").iterator().next()
             .getExtensionSchemaNodes();
         assertEquals(1, extensions.size());

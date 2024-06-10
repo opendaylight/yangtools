@@ -307,7 +307,7 @@ class YT776Test {
         commit(mod);
     }
 
-    private DataTreeModification write(final ContainerNode data) throws DataValidationFailedException {
+    private DataTreeModification write(final ContainerNode data) {
         final var mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.of(BOX), data);
         return mod;

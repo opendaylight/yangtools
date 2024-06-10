@@ -21,9 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class IncludeResolutionTest {
@@ -43,7 +41,7 @@ class IncludeResolutionTest {
         "/semantic-statement-parser/include-arg-parsing/missing-parent.yang");
 
     @Test
-    void includeTest() throws ReactorException {
+    void includeTest() throws Exception {
         var result = RFC7950Reactors.defaultReactor().newBuild()
             .addSources(ROOT, SUBMODULE1, SUBMODULE2)
             .build();
@@ -64,7 +62,7 @@ class IncludeResolutionTest {
     }
 
     @Test
-    void missingIncludedSourceTest3() throws SourceException, ReactorException {
+    void missingIncludedSourceTest3() {
         var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(MISSING_PARENT_MODULE);
         assertNull(assertFailedSourceLinkage(reactor::build,
             "Module 'Unqualified{localName=foo}' from belongs-to was not found [at ").getCause());

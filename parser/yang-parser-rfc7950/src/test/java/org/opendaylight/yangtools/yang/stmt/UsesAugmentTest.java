@@ -40,7 +40,7 @@ class UsesAugmentTest extends AbstractYangTest {
     private static EffectiveModelContext CONTEXT;
 
     @BeforeAll
-    static void beforeClass() throws Exception {
+    static void beforeClass() {
         CONTEXT = assertEffectiveModelDir("/grouping-test");
     }
 
@@ -101,7 +101,7 @@ class UsesAugmentTest extends AbstractYangTest {
      * @throws Exception if exception occurs
      */
     @Test
-    void testAugmentInUses() throws Exception {
+    void testAugmentInUses() {
         final Module testModule = CONTEXT.findModules("uses-grouping").iterator().next();
 
         // * notification pcreq
@@ -404,7 +404,7 @@ class UsesAugmentTest extends AbstractYangTest {
     }
 
     @Test
-    void testTypedefs() throws Exception {
+    void testTypedefs() {
         final Module testModule = CONTEXT.findModules("grouping-definitions").iterator().next();
         final Collection<? extends TypeDefinition<?>> types = testModule.getTypeDefinitions();
 

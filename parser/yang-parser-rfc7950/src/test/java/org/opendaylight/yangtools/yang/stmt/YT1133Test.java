@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 class YT1133Test extends AbstractYangTest {
     @Test
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
-    void testAugmentKeys() throws Exception {
+    void testAugmentKeys() {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final EffectiveModelContext ctx;

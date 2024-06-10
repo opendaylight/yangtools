@@ -11,13 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Closeable;
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class MockitoUnstubbedMethodExceptionAnswerTest {
     @Test
-    void testAnswering() throws IOException {
+    void testAnswering() throws Exception {
         Closeable mock = Mockito.mock(Closeable.class, MoreAnswers.exception());
         String message = assertThrows(UnstubbedMethodException.class, mock::close).getMessage();
         assertEquals("close() is not stubbed in mock of java.io.Closeable", message);

@@ -45,7 +45,7 @@ class AugmentTest extends AbstractYangTest {
     private static EffectiveModelContext AUGMENT_IN_AUGMENT;
 
     @BeforeAll
-    static void beforeClass() throws Exception {
+    static void beforeClass() {
         AUGMENT_IN_AUGMENT = assertEffectiveModelDir("/augment-test/augment-in-augment");
     }
 
@@ -250,7 +250,7 @@ class AugmentTest extends AbstractYangTest {
     }
 
     @Test
-    void testAugmentRpc() throws Exception {
+    void testAugmentRpc() {
         final EffectiveModelContext context = assertEffectiveModelDir("/augment-test/rpc");
         final XMLNamespace NS_BAR = XMLNamespace.of("urn:opendaylight:bar");
         final XMLNamespace NS_FOO = XMLNamespace.of("urn:opendaylight:foo");
@@ -318,7 +318,7 @@ class AugmentTest extends AbstractYangTest {
     }
 
     @Test
-    void testAugmentInUsesResolving() throws Exception {
+    void testAugmentInUsesResolving() {
         final EffectiveModelContext context = assertEffectiveModelDir("/augment-test/augment-in-uses");
         assertEquals(1, context.getModules().size());
 
