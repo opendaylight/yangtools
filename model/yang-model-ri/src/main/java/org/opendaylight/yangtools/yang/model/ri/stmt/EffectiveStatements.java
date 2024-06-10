@@ -308,7 +308,7 @@ public final class EffectiveStatements {
         } else if (original instanceof EmptyAnydataEffectiveStatement empty) {
             return new EmptyAnydataEffectiveStatement(empty, argument, flags);
         } else {
-            throw new IllegalArgumentException("Unsupported original " + original);
+            throw unsupportedOriginal(original);
         }
     }
 
@@ -325,7 +325,7 @@ public final class EffectiveStatements {
         } else if (original instanceof EmptyAnyxmlEffectiveStatement empty) {
             return new EmptyAnyxmlEffectiveStatement(empty, argument, flags);
         } else {
-            throw new IllegalArgumentException("Unsupported original " + original);
+            throw unsupportedOriginal(original);
         }
     }
 
@@ -540,7 +540,7 @@ public final class EffectiveStatements {
         } else if (original instanceof UndeclaredInputEffectiveStatement undeclared) {
             return new UndeclaredInputEffectiveStatement(undeclared, argument, flags);
         } else {
-            throw new IllegalArgumentException("Unsupported original " + original);
+            throw unsupportedOriginal(original);
         }
     }
 
@@ -568,7 +568,7 @@ public final class EffectiveStatements {
         } else if (original instanceof UndeclaredLeafEffectiveStatement undeclared) {
             return new UndeclaredLeafEffectiveStatement(undeclared, argument, flags);
         } else {
-            throw new IllegalArgumentException("Unsupported original " + original);
+            throw unsupportedOriginal(original);
         }
     }
 
@@ -589,7 +589,7 @@ public final class EffectiveStatements {
             // Promote to slim
             return new SlimLeafListEffectiveStatement(empty, argument, flags);
         } else {
-            throw new IllegalArgumentException("Unsupported original " + original);
+            throw unsupportedOriginal(original);
         }
     }
 
@@ -621,7 +621,7 @@ public final class EffectiveStatements {
         } else if (original instanceof EmptyListEffectiveStatement empty) {
             return new RegularListEffectiveStatement(empty, argument, flags);
         } else {
-            throw new IllegalArgumentException("Unsupported original " + original);
+            throw unsupportedOriginal(original);
         }
     }
 
@@ -699,7 +699,7 @@ public final class EffectiveStatements {
             return new UndeclaredOutputEffectiveStatement(undeclared, argument,
                 flags);
         } else {
-            throw new IllegalArgumentException("Unsupported original " + original);
+            throw unsupportedOriginal(original);
         }
     }
 
@@ -916,5 +916,9 @@ public final class EffectiveStatements {
             throw new IllegalArgumentException("Unsupported original null");
         }
         return cast;
+    }
+
+    private static IllegalArgumentException unsupportedOriginal(final EffectiveStatement<?, ?> original) {
+        return new IllegalArgumentException("Unsupported original " + original);
     }
 }
