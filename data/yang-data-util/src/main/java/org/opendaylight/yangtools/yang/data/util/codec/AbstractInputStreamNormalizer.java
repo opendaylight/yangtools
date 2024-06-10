@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationExcep
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizationResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
@@ -68,7 +69,7 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         final var stack = checkInferenceNotEmpty(inference);
         final var stmt = stack.currentStatement();
         if (!(stmt instanceof DataTreeEffectiveStatement<?> dataStmt)) {
-            throw new IllegalArgumentException("Invalid inference statement " + stmt);
+            throw invalidStatement(stmt);
         }
 
         final NormalizationResult<?> data;
@@ -134,7 +135,6 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
                     "Exactly one instance of " + dataName.getNodeType() + " is required, " + size + " supplied");
             }
 
-
             prefix.add(dataName);
             data = body.iterator().next();
             if (metadata != null) {
@@ -162,7 +162,7 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         } else if (stmt instanceof ActionEffectiveStatement action) {
             expected = action.input().argument();
         } else {
-            throw new IllegalArgumentException("Invalid inference statement " + stmt);
+            throw invalidStatement(stmt);
         }
         return parseInputOutput(stream, stack, expected);
     }
@@ -178,7 +178,7 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         } else if (stmt instanceof ActionEffectiveStatement action) {
             expected = action.output().argument();
         } else {
-            throw new IllegalArgumentException("Invalid inference statement " + stmt);
+            throw invalidStatement(stmt);
         }
         return parseInputOutput(stream, stack, expected);
     }
@@ -231,5 +231,9 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         }
         throw NormalizationException.ofMessage(
             "Payload name " + qname + " is different from identifier name " + expected);
+    }
+
+    private static @NonNull IllegalArgumentException invalidStatement(final EffectiveStatement<?, ?> stmt) {
+        return new IllegalArgumentException("Invalid inference statement " + stmt);
     }
 }
