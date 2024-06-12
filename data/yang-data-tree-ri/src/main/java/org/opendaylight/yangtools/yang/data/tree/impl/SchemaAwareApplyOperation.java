@@ -50,25 +50,18 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
         if (!belongsToTree(treeConfig.getTreeType(), schemaNode)) {
             throw new ExcludedDataSchemaNodeException(schemaNode + " does not belong to configuration tree");
         }
-        if (schemaNode instanceof ContainerSchemaNode container) {
-            return ContainerModificationStrategy.of(container, treeConfig);
-        } else if (schemaNode instanceof ListSchemaNode list) {
-            return fromListSchemaNode(list, treeConfig);
-        } else if (schemaNode instanceof ChoiceSchemaNode choice) {
-            return new ChoiceModificationStrategy(choice, treeConfig);
-        } else if (schemaNode instanceof LeafListSchemaNode leafList) {
-            return MinMaxElementsValidation.from(new LeafSetModificationStrategy(leafList, treeConfig));
-        } else if (schemaNode instanceof LeafSchemaNode leaf) {
-            return new ValueNodeModificationStrategy<>(LeafNode.class, leaf);
-        } else if (schemaNode instanceof AnydataSchemaNode anydata) {
-            return new ValueNodeModificationStrategy<>(AnydataNode.class, anydata);
-        } else if (schemaNode instanceof AnyxmlSchemaNode anyxml) {
-            return new ValueNodeModificationStrategy<>(AnyxmlNode.class, anyxml);
-        } else if (schemaNode instanceof SchemaContext context) {
-            return new ContainerModificationStrategy.Structural(context, treeConfig);
-        } else {
-            throw new IllegalStateException("Unsupported schema " + schemaNode);
-        }
+        return switch (schemaNode) {
+            case AnydataSchemaNode anydata -> new ValueNodeModificationStrategy<>(AnydataNode.class, anydata);
+            case AnyxmlSchemaNode anyxml -> new ValueNodeModificationStrategy<>(AnyxmlNode.class, anyxml);
+            case ChoiceSchemaNode choice -> new ChoiceModificationStrategy(choice, treeConfig);
+            case ContainerSchemaNode container -> ContainerModificationStrategy.of(container, treeConfig);
+            case LeafSchemaNode leaf -> new ValueNodeModificationStrategy<>(LeafNode.class, leaf);
+            case LeafListSchemaNode leafList ->
+                MinMaxElementsValidation.from(new LeafSetModificationStrategy(leafList, treeConfig));
+            case ListSchemaNode list -> fromListSchemaNode(list, treeConfig);
+            case SchemaContext context -> new ContainerModificationStrategy.Structural(context, treeConfig);
+            default -> throw new IllegalStateException("Unsupported schema " + schemaNode);
+        };
     }
 
     static void checkConflicting(final ModificationPath path, final boolean condition, final String message)

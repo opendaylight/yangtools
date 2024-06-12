@@ -11,26 +11,22 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
-import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunction;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunctionCallExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
@@ -70,14 +66,11 @@ final class LeafRefPathParserImpl {
     }
 
     LeafRefPath parseLeafRefPath(final PathExpression path) {
-        final Steps steps = path.getSteps();
-        if (steps instanceof LocationPathSteps) {
-            return parseLocationPath(((LocationPathSteps) steps).getLocationPath());
-        } else if (steps instanceof DerefSteps) {
-            throw new UnsupportedOperationException("deref() leafrefs are not implemented yet");
-        } else {
-            throw new IllegalStateException("Unsupported steps " + steps);
-        }
+        return switch (path.getSteps()) {
+            case LocationPathSteps location -> parseLocationPath(location.getLocationPath());
+            case DerefSteps deref ->
+                throw new UnsupportedOperationException("deref() leafrefs are not implemented yet");
+        };
     }
 
     private LeafRefPath parseLocationPath(final YangLocationPath locationPath) {
@@ -86,63 +79,60 @@ final class LeafRefPathParserImpl {
             locationPath.isAbsolute());
     }
 
-    private static Deque<QNameWithPredicate> createPathSteps(final QNameModule localModule,
+    private static ArrayDeque<QNameWithPredicate> createPathSteps(final QNameModule localModule,
             final ImmutableList<Step> steps) {
-        final Deque<QNameWithPredicate> path = new ArrayDeque<>(steps.size());
-        for (Step step : steps) {
+        final var path = new ArrayDeque<QNameWithPredicate>(steps.size());
+        for (var step : steps) {
             switch (step.getAxis()) {
-                case CHILD:
-                    checkState(step instanceof QNameStep, "Unsupported step %s", step);
-                    path.add(adaptChildStep((QNameStep) step, localModule));
-                    break;
-                case PARENT:
-                    path.add(QNameWithPredicate.UP_PARENT);
-                    break;
-                default:
-                    throw new IllegalStateException("Unsupported axis in step " + step);
+                case CHILD -> {
+                    if (step instanceof QNameStep qname) {
+                        path.add(adaptChildStep(qname, localModule));
+                    } else {
+                        throw new IllegalStateException("Unsupported step " + step);
+                    }
+                }
+                case PARENT -> path.add(QNameWithPredicate.UP_PARENT);
+                default -> throw new IllegalStateException("Unsupported axis in step " + step);
             }
         }
         return path;
     }
 
     private static QNameWithPredicate adaptChildStep(final QNameStep step, final QNameModule localModule) {
-        final QName qname = resolve(step.getQName(), localModule);
-        final Set<YangExpr> predicates = step.getPredicates();
+        final var qname = resolve(step.getQName(), localModule);
+        final var predicates = step.getPredicates();
         if (predicates.isEmpty()) {
             return new SimpleQNameWithPredicate(qname);
         }
 
-        final QNameWithPredicateBuilder builder = new QNameWithPredicateBuilder(qname.getModule(),
-            qname.getLocalName());
+        final var builder = new QNameWithPredicateBuilder(qname.getModule(), qname.getLocalName());
 
-        for (YangExpr pred : predicates) {
-            final QNamePredicateBuilder predBuilder = new QNamePredicateBuilder();
+        for (var pred : predicates) {
+            final var predBuilder = new QNamePredicateBuilder();
 
-            if (pred instanceof YangBinaryExpr) {
-                final YangBinaryExpr eqPred = (YangBinaryExpr) pred;
+            if (pred instanceof YangBinaryExpr eqPred) {
                 checkState(eqPred.getOperator() == YangBinaryOperator.EQUALS);
 
-                final YangExpr left = eqPred.getLeftExpr();
+                final var left = eqPred.getLeftExpr();
                 checkState(left instanceof YangQNameExpr, "Unsupported left expression %s", left);
                 predBuilder.setIdentifier(resolve(((YangQNameExpr) left).getQName(), localModule));
 
-                final YangExpr right = eqPred.getRightExpr();
-                if (right instanceof YangPathExpr) {
-                    final YangPathExpr rightPath = (YangPathExpr) right;
-                    final YangExpr filter = rightPath.getFilterExpr();
-                    if (filter instanceof YangFunctionCallExpr) {
-                        checkState(YangFunction.CURRENT.getIdentifier().equals(
-                            ((YangFunctionCallExpr) filter).getName()));
-                    } else {
-                        throw new IllegalStateException("Unhandled filter " + filter);
+                final var right = eqPred.getRightExpr();
+                switch (right) {
+                    case YangPathExpr rightPath -> {
+                        final var filter = rightPath.getFilterExpr();
+                        switch (filter) {
+                            case YangFunctionCallExpr call -> {
+                                checkState(YangFunction.CURRENT.getIdentifier().equals(call.getName()));
+                                final var location = rightPath.getLocationPath().orElseThrow(
+                                    () -> new IllegalStateException("Missing locationPath in " + rightPath));
+                                predBuilder.setPathKeyExpression(LeafRefPath.create(
+                                    createPathSteps(localModule, location.getSteps()), false));
+                            }
+                            default -> throw new IllegalStateException("Unhandled filter " + filter);
+                        }
                     }
-
-                    final Relative location = rightPath.getLocationPath()
-                            .orElseThrow(() -> new IllegalStateException("Missing locationPath in " + rightPath));
-                    predBuilder.setPathKeyExpression(LeafRefPath.create(
-                        createPathSteps(localModule, location.getSteps()), false));
-                } else {
-                    throw new UnsupportedOperationException("Not implemented for " + right);
+                    default -> throw new UnsupportedOperationException("Not implemented for " + right);
                 }
             }
 
@@ -152,24 +142,22 @@ final class LeafRefPathParserImpl {
         return builder.build();
     }
 
-    private static QName resolve(final AbstractQName qname, final QNameModule localModule) {
-        if (qname instanceof QName) {
-            return (QName) qname;
-        } else if (qname instanceof Unqualified) {
+    private static QName resolve(final AbstractQName aqname, final QNameModule localModule) {
+        return switch (aqname) {
+            case QName qname -> qname;
+            case Qualified qualified -> throw new IllegalStateException("Unhandled unresolved QName " + qualified);
             // Bind to namespace. Note we expect to perform frequent matching, hence we are interning the result
-            return ((Unqualified) qname).bindTo(localModule).intern();
-        } else {
-            throw new IllegalStateException("Unhandled unresolved QName " + qname);
-        }
+            case Unqualified unqualified -> unqualified.bindTo(localModule).intern();
+        };
     }
 
     /**
      * Find the first definition of supplied leafref type and return the module which contains this definition.
      */
     private static QNameModule getBaseModule(final LeafrefTypeDefinition leafrefType) {
-        LeafrefTypeDefinition current = leafrefType;
+        var current = leafrefType;
         while (true) {
-            final LeafrefTypeDefinition base = current.getBaseType();
+            final var base = current.getBaseType();
             if (base == null) {
                 return current.getQName().getModule();
             }

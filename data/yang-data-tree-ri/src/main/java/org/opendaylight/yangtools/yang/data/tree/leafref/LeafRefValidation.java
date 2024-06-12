@@ -14,16 +14,13 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -161,19 +158,21 @@ public final class LeafRefValidation {
     private void validateNodeData(final NormalizedNode node, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
-        if (node instanceof LeafNode) {
-            validateLeafNodeData((LeafNode<?>) node, referencedByCtx, referencingCtx, modificationType, current);
-        } else if (node instanceof LeafSetNode) {
-            validateLeafSetNodeData((LeafSetNode<?>) node, referencedByCtx, referencingCtx, modificationType, current);
-        } else if (node instanceof ChoiceNode) {
-            validateChoiceNodeData((ChoiceNode) node, referencedByCtx, referencingCtx, modificationType, current);
-        } else if (node instanceof DataContainerNode) {
-            validateDataContainerNodeData((DataContainerNode) node, referencedByCtx, referencingCtx, modificationType,
-                current);
-        } else if (node instanceof MapNode) {
-            validateMapNodeData((MapNode) node, referencedByCtx, referencingCtx, modificationType, current);
+        switch (node) {
+            case LeafNode<?> leaf ->
+                validateLeafNodeData(leaf, referencedByCtx, referencingCtx, modificationType, current);
+            case LeafSetNode<?> leafSet ->
+                validateLeafSetNodeData(leafSet, referencedByCtx, referencingCtx, modificationType, current);
+            case ChoiceNode choice ->
+                validateChoiceNodeData(choice, referencedByCtx, referencingCtx, modificationType, current);
+            case DataContainerNode container ->
+                validateDataContainerNodeData(container, referencedByCtx, referencingCtx, modificationType, current);
+            case MapNode map ->
+                validateMapNodeData(map, referencedByCtx, referencingCtx, modificationType, current);
+            default -> {
+                // FIXME: check UnkeyedListNode case
+            }
         }
-        // FIXME: check UnkeyedListNode case
     }
 
     private void validateLeafNodeData(final LeafNode<?> node, final LeafRefContext referencedByCtx,
@@ -191,7 +190,7 @@ public final class LeafRefValidation {
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
         if (referencedByCtx != null || referencingCtx != null) {
-            for (final NormalizedNode leafSetEntry : node.body()) {
+            for (var leafSetEntry : node.body()) {
                 if (referencedByCtx != null && referencedByCtx.isReferenced()) {
                     validateLeafRefTargetNodeData(leafSetEntry, referencedByCtx, modificationType);
                 }
@@ -205,7 +204,7 @@ public final class LeafRefValidation {
     private void validateChoiceNodeData(final ChoiceNode node, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
-        for (final DataContainerChild child : node.body()) {
+        for (var child : node.body()) {
             final QName qname = child.name().getNodeType();
             final LeafRefContext childReferencedByCtx = referencedByCtx == null ? null
                     : findReferencedByCtxUnderChoice(referencedByCtx, qname);
@@ -240,21 +239,20 @@ public final class LeafRefValidation {
     private void validateChildNodeData(final DataContainerChild child, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
-        final QName qname = child.name().getNodeType();
-        final LeafRefContext childReferencedByCtx = referencedByCtx == null ? null
+        final var qname = child.name().getNodeType();
+        final var childReferencedByCtx = referencedByCtx == null ? null
                 : referencedByCtx.getReferencedChildByName(qname);
-        final LeafRefContext childReferencingCtx = referencingCtx == null ? null
-                : referencingCtx.getReferencingChildByName(qname);
+        final var childReferencingCtx = referencingCtx == null ? null : referencingCtx.getReferencingChildByName(qname);
         if (childReferencedByCtx != null || childReferencingCtx != null) {
-            validateNodeData(child, childReferencedByCtx, childReferencingCtx, modificationType, current.node(
-                child.name()));
+            validateNodeData(child, childReferencedByCtx, childReferencingCtx, modificationType,
+                current.node(child.name()));
         }
     }
 
     private static LeafRefContext findReferencingCtxUnderChoice(final LeafRefContext referencingCtx,
             final QName qname) {
-        for (final LeafRefContext child : referencingCtx.getReferencingChilds().values()) {
-            final LeafRefContext referencingChildByName = child.getReferencingChildByName(qname);
+        for (var child : referencingCtx.getReferencingChilds().values()) {
+            final var referencingChildByName = child.getReferencingChildByName(qname);
             if (referencingChildByName != null) {
                 return referencingChildByName;
             }
@@ -264,8 +262,8 @@ public final class LeafRefValidation {
 
     private static LeafRefContext findReferencedByCtxUnderChoice(final LeafRefContext referencedByCtx,
             final QName qname) {
-        for (final LeafRefContext child : referencedByCtx.getReferencedByChilds().values()) {
-            final LeafRefContext referencedByChildByName = child.getReferencedChildByName(qname);
+        for (var child : referencedByCtx.getReferencedByChilds().values()) {
+            final var referencedByChildByName = child.getReferencedChildByName(qname);
             if (referencedByChildByName != null) {
                 return referencedByChildByName;
             }
@@ -276,20 +274,22 @@ public final class LeafRefValidation {
     private void validateLeafRefTargetNodeData(final NormalizedNode leaf, final LeafRefContext
             referencedByCtx, final ModificationType modificationType) {
         if (!validatedLeafRefCtx.add(referencedByCtx)) {
-            LOG.trace("Operation [{}] validate data of leafref TARGET node: name[{}] = value[{}] -> SKIP: Already "
-                    + "validated", modificationType, referencedByCtx.getNodeName(), leaf.body());
+            LOG.trace(
+                "Operation [{}] validate data of leafref TARGET node: name[{}] = value[{}] -> SKIP: Already validated",
+                modificationType, referencedByCtx.getNodeName(), leaf.body());
             return;
         }
 
         LOG.trace("Operation [{}] validate data of leafref TARGET node: name[{}] = value[{}]", modificationType,
             referencedByCtx.getNodeName(), leaf.body());
-        final Set<LeafRefContext> leafRefs = referencedByCtx.getAllReferencedByLeafRefCtxs().values().stream()
-                .filter(LeafRefContext::isReferencing).collect(Collectors.toSet());
+        final var leafRefs = referencedByCtx.getAllReferencedByLeafRefCtxs().values().stream()
+                .filter(LeafRefContext::isReferencing)
+                .collect(Collectors.toSet());
         if (leafRefs.isEmpty()) {
             return;
         }
 
-        final Set<Object> leafRefTargetNodeValues = extractRootValues(referencedByCtx);
+        final var leafRefTargetNodeValues = extractRootValues(referencedByCtx);
         leafRefs.forEach(leafRefContext -> {
             extractRootValues(leafRefContext).forEach(leafRefsValue -> {
                 if (leafRefTargetNodeValues.contains(leafRefsValue)) {
@@ -316,8 +316,7 @@ public final class LeafRefValidation {
 
     private void validateLeafRefNodeData(final NormalizedNode leaf, final LeafRefContext referencingCtx,
             final ModificationType modificationType, final YangInstanceIdentifier current) {
-        final Set<Object> values = computeValues(root, createPath(referencingCtx.getAbsoluteLeafRefTargetPath()),
-            current);
+        final var values = computeValues(root, createPath(referencingCtx.getAbsoluteLeafRefTargetPath()), current);
         if (values.contains(leaf.body())) {
             LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
                 referencingCtx.getNodeName(), leaf.body(), SUCCESS);
@@ -333,15 +332,15 @@ public final class LeafRefValidation {
                 referencingCtx.getAbsoluteLeafRefTargetPath()));
     }
 
-    private Set<Object> computeValues(final NormalizedNode node, final Deque<QNameWithPredicate> path,
+    private Set<Object> computeValues(final NormalizedNode node, final ArrayDeque<QNameWithPredicate> path,
             final YangInstanceIdentifier current) {
-        final HashSet<Object> values = new HashSet<>();
+        final var values = new HashSet<>();
         addValues(values, node, ImmutableList.of(), path, current);
         return values;
     }
 
     private void addValues(final Set<Object> values, final NormalizedNode node,
-            final List<QNamePredicate> nodePredicates, final Deque<QNameWithPredicate> path,
+            final List<QNamePredicate> nodePredicates, final ArrayDeque<QNameWithPredicate> path,
             final YangInstanceIdentifier current) {
         if (node instanceof ValueNode) {
             values.add(node.body());
@@ -363,7 +362,7 @@ public final class LeafRefValidation {
         if (node instanceof DataContainerNode dataContainer) {
             processChildNode(values, dataContainer, pathArgument, next.getQNamePredicates(), path, current);
         } else if (node instanceof MapNode map) {
-            Stream<MapEntryNode> entries = map.body().stream();
+            var entries = map.body().stream();
             if (!nodePredicates.isEmpty() && current != null) {
                 entries = entries.filter(createMapEntryPredicate(nodePredicates, current));
             }
@@ -374,8 +373,8 @@ public final class LeafRefValidation {
     }
 
     private void processChildNode(final Set<Object> values, final DataContainerNode parent,
-            final NodeIdentifier arg, final List<QNamePredicate> nodePredicates, final Deque<QNameWithPredicate> path,
-            final YangInstanceIdentifier current) {
+            final NodeIdentifier arg, final List<QNamePredicate> nodePredicates,
+            final ArrayDeque<QNameWithPredicate> path, final YangInstanceIdentifier current) {
         final var child = parent.childByArg(arg);
         if (child == null) {
             // FIXME: YANGTOOLS-901. We have SchemaContext nearby, hence we should be able to cache how to get
@@ -412,9 +411,9 @@ public final class LeafRefValidation {
     }
 
     private void addNextValues(final Set<Object> values, final DataContainerChild node,
-            final List<QNamePredicate> nodePredicates, final Deque<QNameWithPredicate> path,
+            final List<QNamePredicate> nodePredicates, final ArrayDeque<QNameWithPredicate> path,
             final YangInstanceIdentifier current) {
-        final QNameWithPredicate element = path.pop();
+        final var element = path.pop();
         try {
             addValues(values, node, nodePredicates, path, current);
         } finally {
@@ -433,10 +432,10 @@ public final class LeafRefValidation {
 
     private static Optional<NormalizedNode> findParentNode(
             final Optional<NormalizedNode> root, final YangInstanceIdentifier path) {
-        Optional<NormalizedNode> currentNode = root;
-        final Iterator<PathArgument> pathIterator = path.getPathArguments().iterator();
+        var currentNode = root;
+        final var pathIterator = path.getPathArguments().iterator();
         while (pathIterator.hasNext()) {
-            final PathArgument childPathArgument = pathIterator.next();
+            final var childPathArgument = pathIterator.next();
             if (pathIterator.hasNext() && currentNode.isPresent()) {
                 currentNode = NormalizedNodes.getDirectChild(currentNode.orElseThrow(), childPathArgument);
             } else {
@@ -446,8 +445,8 @@ public final class LeafRefValidation {
         return Optional.empty();
     }
 
-    private static Deque<QNameWithPredicate> createPath(final LeafRefPath path) {
-        final Deque<QNameWithPredicate> ret = new ArrayDeque<>();
+    private static ArrayDeque<QNameWithPredicate> createPath(final LeafRefPath path) {
+        final var ret = new ArrayDeque<QNameWithPredicate>();
         path.getPathTowardsRoot().forEach(ret::push);
         return ret;
     }
