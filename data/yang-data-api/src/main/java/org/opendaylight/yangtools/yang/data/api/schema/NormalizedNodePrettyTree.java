@@ -11,13 +11,11 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.Locale;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.PrettyTree;
 import org.opendaylight.yangtools.concepts.PrettyTreeAware;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 @Beta
@@ -39,50 +37,49 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
         appendIndent(sb, depth);
         sb.append(simpleName.toLowerCase(Locale.ROOT).charAt(0)).append(simpleName, 1, simpleName.length()).append(' ');
 
-        final QName qname = node.name().getNodeType();
-        final QNameModule currentNamespace = qname.getModule();
+        final var qname = node.name().getNodeType();
+        final var currentNamespace = qname.getModule();
         appendNamespace(sb, parentNamespace, currentNamespace);
         sb.append(qname.getLocalName()).append(' ');
 
-        if (node instanceof NormalizedNodeContainer) {
-            final NormalizedNodeContainer<?> container = (NormalizedNodeContainer<?>) node;
-            sb.append("= {");
+        switch (node) {
+            case NormalizedNodeContainer<?> container -> {
+                sb.append("= {");
 
-            final Iterator<? extends NormalizedNode> it = container.body().iterator();
-            if (it.hasNext()) {
-                final int childIndent = depth + 1;
-                do {
+                final var it = container.body().iterator();
+                if (it.hasNext()) {
+                    final int childIndent = depth + 1;
+                    do {
+                        sb.append('\n');
+                        appendNode(sb, childIndent, currentNamespace, it.next());
+                    } while (it.hasNext());
+
                     sb.append('\n');
-                    appendNode(sb, childIndent, currentNamespace, it.next());
-                } while (it.hasNext());
-
-                sb.append('\n');
-                appendIndent(sb, depth);
-            }
-            sb.append('}');
-        } else if (node instanceof ValueNode) {
-            sb.append("= ");
-            final Object value = node.body();
-            if (value instanceof byte[]) {
-                sb.append("(byte[])").append(Base64.getEncoder().encodeToString((byte[]) value));
-            } else if (value instanceof String) {
-                appendString(sb, (String) value);
-            } else {
-                sb.append(value);
-            }
-        } else if (node instanceof ForeignDataNode) {
-            final ForeignDataNode<?> data = (ForeignDataNode<?>) node;
-            final Object body = data.body();
-            if (body instanceof PrettyTreeAware) {
-                sb.append("= {\n");
-                ((PrettyTreeAware) body).prettyTree().appendTo(sb, depth + 1);
-                appendIndent(sb, depth);
+                    appendIndent(sb, depth);
+                }
                 sb.append('}');
-            } else {
-                sb.append("= (").append(data.bodyObjectModel().getName()).append(')');
             }
-        } else {
-            throw new IllegalStateException("Unhandled node " + node);
+            case ValueNode<?> valueNode -> {
+                sb.append("= ");
+                final var value = valueNode.body();
+                switch (value) {
+                    case byte[] bytes -> sb.append("(byte[])").append(Base64.getEncoder().encodeToString(bytes));
+                    case String str -> appendString(sb, str);
+                    default -> sb.append(value);
+                }
+            }
+            case ForeignDataNode<?> data -> {
+                switch (data.body()) {
+                    case PrettyTreeAware body -> {
+                        sb.append("= {\n");
+                        body.prettyTree().appendTo(sb, depth + 1);
+                        appendIndent(sb, depth);
+                        sb.append('}');
+                    }
+                    default -> sb.append("= (").append(data.bodyObjectModel().getName()).append(')');
+                }
+            }
+            default -> throw new IllegalStateException("Unhandled node " + node);
         }
     }
 
