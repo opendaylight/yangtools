@@ -14,6 +14,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.SequencedSet;
 import java.util.Set;
 import java.util.Spliterator;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,10 +23,10 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- * A {@link Set} containing a single value. For some reason neither Java nor Guava provide direct access to the retained
- * element -- which is desirable in some situations, as is the case in {@link SharedSingletonMap#entrySet()}.
+ * A {@link SequencedSet} containing a single value. For some reason neither Java nor Guava provide direct access to the
+ * retained element -- which is desirable in some situations, as is the case in {@link SharedSingletonMap#entrySet()}.
  */
-public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Serializable {
+public abstract sealed class SingletonSet<E> implements SequencedSet<E>, Immutable, Serializable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
@@ -38,8 +39,25 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
      * Return the single element contained in this set.
      *
      * @return This set's element.
+     * @deprecated Use {@link #getFirst()} instead.
      */
-    public abstract E getElement();
+    @Deprecated(since = "14.0.0", forRemoval = true)
+    public final E getElement() {
+        return getFirst();
+    }
+
+    @Override
+    public abstract E getFirst();
+
+    @Override
+    public final E getLast() {
+        return getFirst();
+    }
+
+    @Override
+    public final SingletonSet<E> reversed() {
+        return this;
+    }
 
     @Override
     public final int size() {
@@ -53,7 +71,7 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
 
     @Override
     public final @NonNull Iterator<E> iterator() {
-        return Iterators.singletonIterator(getElement());
+        return Iterators.singletonIterator(getFirst());
     }
 
     @Override
@@ -61,18 +79,18 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
 
     @Override
     public final @NonNull Object[] toArray() {
-        return new Object[] { getElement() };
+        return new Object[] { getFirst() };
     }
 
     @SuppressWarnings({ "unchecked", "checkstyle:parameterName" })
     @Override
     public final <T> @NonNull T[] toArray(final T[] a) {
         if (a.length > 0) {
-            a[0] = (T)getElement();
+            a[0] = (T)getFirst();
             return a;
         }
 
-        return (T[]) new Object[] {getElement()};
+        return (T[]) new Object[] { getFirst() };
     }
 
     @Override
@@ -112,6 +130,16 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
     }
 
     @Override
+    public final E removeFirst() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final E removeLast() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public final void clear() {
         throw new UnsupportedOperationException();
     }
@@ -127,14 +155,14 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
 
     @java.io.Serial
     final Object writeReplace() {
-        return new SSv1(getElement());
+        return new SSv1(getFirst());
     }
 
     @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION",
         justification = "https://github.com/spotbugs/spotbugs/issues/1954")
     private boolean otherContains(final @NonNull Collection<?> other) {
         try {
-            return other.contains(getElement());
+            return other.contains(getFirst());
         } catch (ClassCastException | NullPointerException e) {
             return false;
         }
@@ -158,7 +186,7 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
         }
 
         @Override
-        public E getElement() {
+        public E getFirst() {
             return null;
         }
 
@@ -191,14 +219,14 @@ public abstract sealed class SingletonSet<E> implements Set<E>, Immutable, Seria
         }
 
         @Override
-        public @NonNull E getElement() {
+        public @NonNull E getFirst() {
             return element;
         }
 
         @Override
         @SuppressWarnings("checkstyle:equalsHashCode")
         public int hashCode() {
-            return getElement().hashCode();
+            return element.hashCode();
         }
 
         @Override
