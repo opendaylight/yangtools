@@ -45,15 +45,16 @@ public abstract sealed class ImmutableLeafSetEntryNode<T> extends AbstractLeafSe
     }
 
     public static <T> @NonNull ImmutableLeafSetEntryNode<T> of(final NodeWithValue<T> name) {
-        final var nameValue = name.getValue();
-        if (nameValue instanceof byte[]) {
-            @SuppressWarnings("unchecked")
-            final var ret = (ImmutableLeafSetEntryNode<T>) new Binary((NodeWithValue<byte[]>) name);
-            return ret;
-        } else if (nameValue instanceof YangInstanceIdentifier yiid && yiid.isEmpty()) {
-            throw new IllegalArgumentException("Leafset entry node value cannot be an empty instance identifier");
-        }
-        return new Regular<>(name);
+        return switch (name.getValue()) {
+            case byte[] bytes -> {
+                @SuppressWarnings("unchecked")
+                final var ret = (ImmutableLeafSetEntryNode<T>) new Binary((NodeWithValue<byte[]>) name);
+                yield ret;
+            }
+            case YangInstanceIdentifier yiid when yiid.isEmpty() ->
+                throw new IllegalArgumentException("Leafset entry node value cannot be an empty instance identifier");
+            default -> new Regular<>(name);
+        };
     }
 
     public static <T> @NonNull ImmutableLeafSetEntryNode<T> of(final NodeWithValue<T> name, final T body) {

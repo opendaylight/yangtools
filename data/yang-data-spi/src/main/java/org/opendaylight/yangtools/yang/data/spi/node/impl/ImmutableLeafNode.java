@@ -46,14 +46,16 @@ public abstract sealed class ImmutableLeafNode<T> extends AbstractLeafNode<T> {
     }
 
     public static <T> @NonNull ImmutableLeafNode<T> of(final NodeIdentifier identifier, final T value) {
-        if (value instanceof byte[] bytes) {
-            @SuppressWarnings("unchecked")
-            final var ret = (ImmutableLeafNode<T>) new Binary(identifier, bytes);
-            return ret;
-        } else if (value instanceof YangInstanceIdentifier yiid && yiid.isEmpty()) {
-            throw new IllegalArgumentException("Leaf node value cannot be an empty instance identifier");
-        }
-        return new Regular<>(identifier, value);
+        return switch (value) {
+            case byte[] bytes -> {
+                @SuppressWarnings("unchecked")
+                final var ret = (ImmutableLeafNode<T>) new Binary(identifier, bytes);
+                yield ret;
+            }
+            case YangInstanceIdentifier yiid when yiid.isEmpty() ->
+                throw new IllegalArgumentException("Leaf node value cannot be an empty instance identifier");
+            default -> new Regular<>(identifier, value);
+        };
     }
 
     @Override
