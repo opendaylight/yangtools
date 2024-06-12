@@ -103,7 +103,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         @Override
         UnmodifiableMapPhase<K, V> modifiedMap(final List<K> keys, final V[] values) {
-            final ImmutableMap<K, Integer> offsets = OffsetMapCache.unorderedOffsets(keys);
+            final var offsets = OffsetMapCache.unorderedOffsets(keys);
             return new ImmutableOffsetMap.Unordered<>(offsets, OffsetMapCache.adjustedArray(offsets, keys, values));
         }
 
@@ -148,8 +148,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final Map<K, V> source) {
         this(offsets, new Object[offsets.size()]);
 
-        for (Entry<K, V> e : source.entrySet()) {
-            objects[verifyNotNull(offsets.get(e.getKey()))] = requireNonNull(e.getValue());
+        for (var entry : source.entrySet()) {
+            objects[verifyNotNull(offsets.get(entry.getKey()))] = requireNonNull(entry.getValue());
         }
 
         needClone = false;
@@ -163,13 +163,11 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
      * @throws NullPointerException if {@code map} is null
      */
     public static <K, V> @NonNull MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> map) {
-        if (map instanceof Ordered<K, V> ordered) {
-            return ordered.clone();
-        } else if (map instanceof ImmutableOffsetMap<K, V> om) {
-            return new Ordered<>(om.offsets(), om.objects());
-        } else {
-            return new Ordered<>(map);
-        }
+        return switch (map) {
+            case Ordered<K, V> ordered -> ordered.clone();
+            case ImmutableOffsetMap<K, V> iom -> new Ordered<>(iom.offsets(), iom.objects());
+            default -> new Ordered<>(map);
+        };
     }
 
     /**
@@ -180,13 +178,11 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
      * @throws NullPointerException if {@code map} is null
      */
     public static <K, V> @NonNull MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> map) {
-        if (map instanceof Unordered<K, V> unordered) {
-            return unordered.clone();
-        } else if (map instanceof ImmutableOffsetMap<K, V> om) {
-            return new Unordered<>(om.offsets(), om.objects());
-        } else {
-            return new Unordered<>(map);
-        }
+        return switch (map) {
+            case Unordered<K, V> unordered -> unordered.clone();
+            case ImmutableOffsetMap<K, V> iom -> new Unordered<>(iom.offsets(), iom.objects());
+            default -> new Unordered<>(map);
+        };
     }
 
     /**
@@ -227,9 +223,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     @Override
     public final boolean containsKey(final Object key) {
-        final Integer offset = offsets.get(key);
+        final var offset = offsets.get(key);
         if (offset != null) {
-            final Object obj = objects[offset];
+            final var obj = objects[offset];
             if (!REMOVED.equals(obj)) {
                 return obj != null;
             }
@@ -240,9 +236,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     @Override
     public final V get(final Object key) {
-        final Integer offset = offsets.get(key);
+        final var offset = offsets.get(key);
         if (offset != null) {
-            final Object obj = objects[offset];
+            final var obj = objects[offset];
 
             /*
              * This is a bit tricky:  Ordered will put REMOVED to removed objects to retain strict insertion order.
@@ -251,7 +247,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
              */
             if (!REMOVED.equals(obj)) {
                 @SuppressWarnings("unchecked")
-                final V ret = (V)obj;
+                final var ret = (V)obj;
                 return ret;
             }
         }
@@ -271,9 +267,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     @Override
     public final V put(final K key, final V value) {
         requireNonNull(value);
-        final Integer offset = offsets.get(requireNonNull(key));
+        final var offset = offsets.get(requireNonNull(key));
         if (offset != null) {
-            final Object obj = objects[offset];
+            final var obj = objects[offset];
 
             /*
              * Put which can potentially replace something in objects. Replacing an object does not cause iterators
@@ -282,7 +278,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
              */
             if (!REMOVED.equals(obj)) {
                 @SuppressWarnings("unchecked")
-                final V ret = (V)obj;
+                final var ret = (V)obj;
 
                 cloneArray();
                 objects[offset] = value;
@@ -307,9 +303,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     @Override
     public final V remove(final Object key) {
-        final Integer offset = offsets.get(key);
+        final var offset = offsets.get(key);
         if (offset != null) {
-            final Object obj = objects[offset];
+            final var obj = objects[offset];
 
             /*
              * A previous remove() may have indicated that the objects slot cannot be reused. In that case we need
@@ -319,7 +315,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
                 cloneArray();
 
                 @SuppressWarnings("unchecked")
-                final V ret = (V)obj;
+                final var ret = (V)obj;
                 objects[offset] = removedObject();
                 if (ret != null) {
                     modCount++;
@@ -332,7 +328,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         if (newKeys == null) {
             return null;
         }
-        final V ret = newKeys.remove(key);
+        final var ret = newKeys.remove(key);
         if (ret != null) {
             modCount++;
         }
@@ -365,7 +361,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
             // We have ended up with no removed objects, hence this cast is safe
             @SuppressWarnings("unchecked")
-            final V[] values = (V[])objects;
+            final var values = (V[])objects;
 
             /*
              * TODO: we could track the ImmutableOffsetMap from which this one was instantiated and if we do not
@@ -384,13 +380,13 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
 
         // Construct the set of keys
-        final List<K> keyset = new ArrayList<>(s);
+        final var keyset = new ArrayList<K>(s);
         if (removed != 0) {
             if (removed != offsets.size()) {
-                for (Entry<K, Integer> e : offsets.entrySet()) {
-                    final Object o = objects[e.getValue()];
-                    if (o != null && !REMOVED.equals(o)) {
-                        keyset.add(e.getKey());
+                for (var entry : offsets.entrySet()) {
+                    final Object obj = objects[entry.getValue()];
+                    if (obj != null && !REMOVED.equals(obj)) {
+                        keyset.add(entry.getKey());
                     }
                 }
             }
@@ -403,15 +399,15 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         // Construct the values
         @SuppressWarnings("unchecked")
-        final V[] values = (V[])new Object[keyset.size()];
+        final var values = (V[])new Object[keyset.size()];
         int offset = 0;
         if (removed != 0) {
             if (removed != offsets.size()) {
-                for (Entry<K, Integer> e : offsets.entrySet()) {
-                    final Object o = objects[e.getValue()];
-                    if (o != null && !REMOVED.equals(o)) {
+                for (var entry : offsets.entrySet()) {
+                    final var obj = objects[entry.getValue()];
+                    if (obj != null && !REMOVED.equals(obj)) {
                         @SuppressWarnings("unchecked")
-                        final V v = (V) o;
+                        final var v = (V) obj;
                         values[offset++] = v;
                     }
                 }
@@ -421,7 +417,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             offset = offsets.size();
         }
         if (newKeys != null) {
-            for (V v : newKeys.values()) {
+            for (var v : newKeys.values()) {
                 values[offset++] = v;
             }
         }
@@ -448,10 +444,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     public final int hashCode() {
         int result = 0;
 
-        for (Entry<K, Integer> e : offsets.entrySet()) {
-            final Object v = objects[e.getValue()];
+        for (var entry : offsets.entrySet()) {
+            final Object v = objects[entry.getValue()];
             if (v != null) {
-                result += e.getKey().hashCode() ^ v.hashCode();
+                result += entry.getKey().hashCode() ^ v.hashCode();
             }
         }
 
@@ -463,15 +459,15 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof Map)) {
+        if (!(obj instanceof Map<?, ?> other)) {
             return false;
         }
 
-        if (obj instanceof ImmutableOffsetMap<?, ?> om) {
+        if (other instanceof ImmutableOffsetMap<?, ?> om) {
             if (noNewKeys() && offsets.equals(om.offsets())) {
                 return Arrays.deepEquals(objects, om.objects());
             }
-        } else if (obj instanceof MutableOffsetMap<?, ?> om && offsets.equals(om.offsets)) {
+        } else if (other instanceof MutableOffsetMap<?, ?> om && offsets.equals(om.offsets)) {
             return Arrays.deepEquals(objects, om.objects) && equalNewKeys(om);
         }
 
@@ -492,17 +488,17 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         try {
             if (newKeys != null) {
                 // Ensure all newKeys are present. Note newKeys is guaranteed to not contain a null value.
-                for (Entry<K, V> e : newKeys.entrySet()) {
-                    if (!e.getValue().equals(other.get(e.getKey()))) {
+                for (var entry : newKeys.entrySet()) {
+                    if (!entry.getValue().equals(other.get(entry.getKey()))) {
                         return false;
                     }
                 }
             }
 
             // Ensure all objects are present
-            for (Entry<K, Integer> e : offsets.entrySet()) {
-                final Object val = objects[e.getValue()];
-                if (val != null && !REMOVED.equals(val) && !val.equals(other.get(e.getKey()))) {
+            for (var entry : offsets.entrySet()) {
+                final var val = objects[entry.getValue()];
+                if (val != null && !REMOVED.equals(val) && !val.equals(other.get(entry.getKey()))) {
                     return false;
                 }
             }
@@ -546,7 +542,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             return new AbstractSetIterator<>() {
                 @Override
                 public Entry<K, V> next() {
-                    final K key = nextKey();
+                    final var key = nextKey();
                     return new SimpleEntry<>(key, get(key));
                 }
             };
@@ -565,7 +561,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             }
 
             @SuppressWarnings("unchecked")
-            final Entry<K,V> e = (Entry<K,V>) o;
+            final var e = (Entry<K, V>) o;
             if (e.getValue() == null) {
                 return false;
             }
@@ -576,8 +572,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         @Override
         @SuppressWarnings("checkstyle:parameterName")
         public boolean add(final Entry<K, V> e) {
-            final V v = requireNonNull(e.getValue());
-            final V p = MutableOffsetMap.this.put(e.getKey(), v);
+            final var v = requireNonNull(e.getValue());
+            final var p = MutableOffsetMap.this.put(e.getKey(), v);
             return !v.equals(p);
         }
 
@@ -589,7 +585,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             }
 
             @SuppressWarnings("unchecked")
-            final Entry<K,V> e = (Entry<K,V>) o;
+            final var e = (Entry<K,V>) o;
             if (e.getValue() == null) {
                 return false;
             }
@@ -639,10 +635,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         private void updateNextKey() {
             while (oldIterator.hasNext()) {
-                final Entry<K, Integer> e = oldIterator.next();
-                final Object obj = objects[e.getValue()];
+                final var entry = oldIterator.next();
+                final var obj = objects[entry.getValue()];
                 if (obj != null && !REMOVED.equals(obj)) {
-                    nextKey = e.getKey();
+                    nextKey = entry.getKey();
                     return;
                 }
             }
@@ -666,7 +662,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         public final void remove() {
             checkModCount();
             checkState(currentKey != null);
-            final Integer offset = offsets.get(currentKey);
+            final var offset = offsets.get(currentKey);
             if (offset != null) {
                 cloneArray();
                 objects[offset] = removedObject();
