@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -234,13 +235,12 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
     public static @NonNull SchemaInferenceStack ofInference(final EffectiveStatementInference inference) {
         if (inference.statementPath().isEmpty()) {
             return new SchemaInferenceStack(inference.modelContext());
-        } else if (inference instanceof SchemaTreeInference sti) {
-            return ofInference(sti);
-        } else if (inference instanceof Inference inf) {
-            return inf.toSchemaInferenceStack();
-        } else {
-            throw new IllegalArgumentException("Unsupported Inference " + inference);
         }
+        return switch (inference) {
+            case SchemaTreeInference sti -> ofInference(sti);
+            case Inference inf -> inf.toSchemaInferenceStack();
+            default -> throw new IllegalArgumentException("Unsupported Inference " + inference);
+        };
     }
 
     /**
@@ -661,14 +661,10 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
      * @throws VerifyException if path expression is invalid
      */
     public @NonNull EffectiveStatement<?, ?> resolvePathExpression(final PathExpression path) {
-        final var steps = path.getSteps();
-        if (steps instanceof LocationPathSteps location) {
-            return resolveLocationPath(location.getLocationPath());
-        } else if (steps instanceof DerefSteps deref) {
-            return resolveDeref(deref);
-        } else {
-            throw new VerifyException("Unhandled steps " + steps);
-        }
+        return switch (path.getSteps()) {
+            case LocationPathSteps location -> resolveLocationPath(location.getLocationPath());
+            case DerefSteps deref -> resolveDeref(deref);
+        };
     }
 
     private @NonNull EffectiveStatement<?, ?> resolveDeref(final DerefSteps deref) {
@@ -740,19 +736,18 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
         return verifyNotNull(current);
     }
 
-    private @NonNull EffectiveStatement<?, ?> enterChild(final QNameStep step, final QNameModule defaultNamespace) {
-        final var toResolve = step.getQName();
-        final QName qname;
-        if (toResolve instanceof QName qnameToResolve) {
-            qname = qnameToResolve;
-        } else if (toResolve instanceof Unqualified unqual) {
-            if (defaultNamespace == null) {
-                throw new IllegalArgumentException("Can not find target module of step " + step);
+    private @NonNull DataTreeEffectiveStatement<?> enterChild(final QNameStep step,
+            final QNameModule defaultNamespace) {
+        final var qname = switch (step.getQName()) {
+            case QName qnameToResolve -> qnameToResolve;
+            case Unqualified unqual -> {
+                if (defaultNamespace == null) {
+                    throw new IllegalArgumentException("Can not find target module of step " + step);
+                }
+                yield unqual.bindTo(defaultNamespace);
             }
-            qname = unqual.bindTo(defaultNamespace);
-        } else {
-            throw new VerifyException("Unexpected child step QName " + toResolve);
-        }
+            case Qualified qual -> throw new VerifyException("Unexpected child step QName " + qual);
+        };
         return enterDataTree(qname);
     }
 
@@ -990,14 +985,14 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
 
     private void resolveDataTreeSteps(final @NonNull QName nodeIdentifier) {
         final var parent = deque.peekLast();
-        if (parent == null) {
-            final var module = getModule(nodeIdentifier);
-            resolveDataTreeSteps(module, nodeIdentifier);
-            currentModule = module;
-        } else if (parent instanceof SchemaTreeAwareEffectiveStatement<?, ?> schemaTreeParent) {
-            resolveDataTreeSteps(schemaTreeParent, nodeIdentifier);
-        } else {
-            throw new VerifyException("Unexpected parent " + parent);
+        switch (parent) {
+            case null -> {
+                final var module = getModule(nodeIdentifier);
+                resolveDataTreeSteps(module, nodeIdentifier);
+                currentModule = module;
+            }
+            case SchemaTreeAwareEffectiveStatement<?, ?> schemaTree -> resolveDataTreeSteps(schemaTree, nodeIdentifier);
+            default -> throw new VerifyException("Unexpected parent " + parent);
         }
     }
 
@@ -1073,16 +1068,15 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
     private static @NonNull String describeParent(final @NonNull EffectiveStatement<?, ?> parent) {
         // Add just enough information to be useful without being overly-verbose. Note we want to expose namespace
         // information, so that we understand what revisions we are dealing with
-        if (parent instanceof SchemaTreeEffectiveStatement) {
-            return "schema parent " + parent.argument();
-        } else if (parent instanceof GroupingEffectiveStatement) {
-            return "grouping " + parent.argument();
-        } else if (parent instanceof ModuleEffectiveStatement module) {
-            return "module " + module.argument().bindTo(module.localQNameModule());
-        } else {
-            // Shorthand for QNames, should provide enough context
-            final var arg = parent.argument();
-            return "parent " + (arg instanceof QName qname ? qname : parent);
-        }
+        return switch (parent) {
+            case GroupingEffectiveStatement grouping -> "grouping " + grouping.argument();
+            case ModuleEffectiveStatement module -> "module " + module.argument().bindTo(module.localQNameModule());
+            case SchemaTreeEffectiveStatement<?> schemaTree -> "schema parent " + schemaTree.argument();
+            default -> {
+                // Shorthand for QNames, should provide enough context
+                final var arg = parent.argument();
+                yield "parent " + (arg instanceof QName qname ? qname : parent);
+            }
+        };
     }
 }
