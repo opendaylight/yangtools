@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -90,113 +89,114 @@ public final class YangInstanceIdentifierWriter implements AutoCloseable {
             }
 
             final var arg = it.next();
-            if (arg instanceof NodeWithValue<?> nodeId) {
-                if (!(parent instanceof LeafListSchemaNode)) {
-                    throw new IOException(parent + " does not support leaf-list entry " + arg);
-                }
-                if (!reuse) {
-                    throw new IOException(parent + " is already at its entry, cannot enter " + arg);
-                }
-
-                reuse = false;
-                terminal = true;
-                writer.startLeafSetEntryNode(nodeId);
-            } else if (arg instanceof NodeIdentifierWithPredicates nodeId) {
-                if (!(parent instanceof ListSchemaNode list)) {
-                    throw new IOException(parent + " does not support map entry " + arg);
-                }
-                if (!reuse) {
-                    throw new IOException(parent + " is already at its entry, cannot enter " + arg);
-                }
-                if (!list.getQName().equals(nodeId.getNodeType())) {
-                    throw new IOException(parent + " expects a matching map entry, cannot enter " + arg);
-                }
-
-                final var key = list.getKeyDefinition();
-                if (key.isEmpty()) {
-                    throw new IOException(parent + " does not expect map entry " + arg);
-                }
-                if (key.size() != nodeId.size()) {
-                    throw new IOException(parent + " expects " + key.size() + " predicates, cannot use " + arg);
-                }
-
-                reuse = false;
-                writer.startMapEntryNode(normalizePredicates(nodeId, key), 1);
-            } else if (arg instanceof NodeIdentifier nodeId) {
-                if (reuse) {
-                    if (!(parent instanceof ListSchemaNode list)) {
-                        throw new IOException(parent + " expects an identifiable entry, cannot enter " + arg);
+            switch (arg) {
+                case NodeWithValue<?> nodeId -> {
+                    if (!(parent instanceof LeafListSchemaNode)) {
+                        throw new IOException(parent + " does not support leaf-list entry " + arg);
                     }
-
-                    if (!list.getKeyDefinition().isEmpty()) {
-                        throw new IOException(parent + " expects a map entry, cannot enter " + arg);
-                    }
-                    if (!list.getQName().equals(nodeId.getNodeType())) {
-                        throw new IOException(parent + " expects a matching entry, cannot enter " + arg);
+                    if (!reuse) {
+                        throw new IOException(parent + " is already at its entry, cannot enter " + arg);
                     }
 
                     reuse = false;
-                    writer.startUnkeyedListItem(nodeId, 1);
-                    endNodes++;
-                    continue;
+                    terminal = true;
+                    writer.startLeafSetEntryNode(nodeId);
                 }
-
-                final DataSchemaNode child;
-                if (parent instanceof DataNodeContainer container) {
-                    child = container.dataChildByName(nodeId.getNodeType());
-                } else if (parent instanceof ChoiceSchemaNode choice) {
-                    child = choice.findDataSchemaChild(nodeId.getNodeType()).orElse(null);
-                } else {
-                    throw new IOException("Unhandled parent " + parent + " when looking up " + arg);
-                }
-
-                if (child == null) {
-                    throw new IOException("Failed to find child " + arg + " in parent " + parent);
-                }
-
-                // FIXME: check & repair augmentations (brr!)
-
-                if (child instanceof ContainerLike) {
-                    parent = child;
-                    writer.startContainerNode(nodeId, 1);
-                } else if (child instanceof ListSchemaNode list) {
-                    parent = child;
-                    reuse = true;
-                    if (list.getKeyDefinition().isEmpty()) {
-                        writer.startUnkeyedList(nodeId, 1);
-                    } else if (list.isUserOrdered()) {
-                        writer.startOrderedMapNode(nodeId, 1);
-                    } else {
-                        writer.startMapNode(nodeId, 1);
+                case NodeIdentifierWithPredicates nodeId -> {
+                    if (!(parent instanceof ListSchemaNode list)) {
+                        throw new IOException(parent + " does not support map entry " + arg);
                     }
-                } else if (child instanceof LeafSchemaNode) {
-                    parent = child;
-                    terminal = true;
-                    writer.startLeafNode(nodeId);
-                } else if (child instanceof ChoiceSchemaNode) {
-                    parent = child;
-                    writer.startChoiceNode(nodeId, 1);
-                } else if (child instanceof LeafListSchemaNode leafList) {
-                    parent = child;
-                    reuse = true;
-                    if (leafList.isUserOrdered()) {
-                        writer.startOrderedLeafSet(nodeId, 1);
-                    } else {
-                        writer.startLeafSet(nodeId, 1);
+                    if (!reuse) {
+                        throw new IOException(parent + " is already at its entry, cannot enter " + arg);
                     }
-                } else if (child instanceof AnydataSchemaNode) {
-                    parent = child;
-                    terminal = true;
-                    writer.startAnydataNode(nodeId, NormalizedAnydata.class);
-                } else if (child instanceof AnyxmlSchemaNode) {
-                    parent = child;
-                    terminal = true;
-                    writer.startAnyxmlNode(nodeId, DOMSource.class);
-                } else {
-                    throw new IOException("Unhandled child " + child);
+                    if (!list.getQName().equals(nodeId.getNodeType())) {
+                        throw new IOException(parent + " expects a matching map entry, cannot enter " + arg);
+                    }
+
+                    final var key = list.getKeyDefinition();
+                    if (key.isEmpty()) {
+                        throw new IOException(parent + " does not expect map entry " + arg);
+                    }
+                    if (key.size() != nodeId.size()) {
+                        throw new IOException(parent + " expects " + key.size() + " predicates, cannot use " + arg);
+                    }
+
+                    reuse = false;
+                    writer.startMapEntryNode(normalizePredicates(nodeId, key), 1);
                 }
-            } else {
-                throw new IOException("Unhandled argument " + arg);
+                case NodeIdentifier nodeId -> {
+                    if (reuse) {
+                        if (!(parent instanceof ListSchemaNode list)) {
+                            throw new IOException(parent + " expects an identifiable entry, cannot enter " + arg);
+                        }
+
+                        if (!list.getKeyDefinition().isEmpty()) {
+                            throw new IOException(parent + " expects a map entry, cannot enter " + arg);
+                        }
+                        if (!list.getQName().equals(nodeId.getNodeType())) {
+                            throw new IOException(parent + " expects a matching entry, cannot enter " + arg);
+                        }
+
+                        reuse = false;
+                        writer.startUnkeyedListItem(nodeId, 1);
+                        endNodes++;
+                        continue;
+                    }
+
+                    final var child = switch (parent) {
+                        case DataNodeContainer container -> container.dataChildByName(nodeId.getNodeType());
+                        case ChoiceSchemaNode choice -> choice.findDataSchemaChild(nodeId.getNodeType()).orElse(null);
+                        default -> throw new IOException("Unhandled parent " + parent + " when looking up " + arg);
+                    };
+
+                    parent = switch (child) {
+                        case null -> throw new IOException("Failed to find child " + arg + " in parent " + parent);
+                        case AnydataSchemaNode anydata -> {
+                            writer.startAnydataNode(nodeId, NormalizedAnydata.class);
+                            terminal = true;
+                            yield anydata;
+                        }
+                        case AnyxmlSchemaNode anyxml -> {
+                            writer.startAnyxmlNode(nodeId, DOMSource.class);
+                            terminal = true;
+                            yield anyxml;
+                        }
+                        case ChoiceSchemaNode choice -> {
+                            writer.startChoiceNode(nodeId, 1);
+                            yield choice;
+                        }
+                        case ContainerLike containerLike -> {
+                            writer.startContainerNode(nodeId, 1);
+                            yield containerLike;
+                        }
+                        case LeafSchemaNode leaf -> {
+                            writer.startLeafNode(nodeId);
+                            terminal = true;
+                            yield leaf;
+                        }
+                        case LeafListSchemaNode leafList -> {
+                            if (leafList.isUserOrdered()) {
+                                writer.startOrderedLeafSet(nodeId, 1);
+                            } else {
+                                writer.startLeafSet(nodeId, 1);
+                            }
+                            reuse = true;
+                            yield leafList;
+                        }
+                        case ListSchemaNode list -> {
+                            if (list.getKeyDefinition().isEmpty()) {
+                                writer.startUnkeyedList(nodeId, 1);
+                            } else if (list.isUserOrdered()) {
+                                writer.startOrderedMapNode(nodeId, 1);
+                            } else {
+                                writer.startMapNode(nodeId, 1);
+                            }
+                            reuse = true;
+                            yield list;
+                        }
+                        default -> throw new IOException("Unhandled child " + child);
+                    };
+                }
             }
 
             endNodes++;
