@@ -14,10 +14,8 @@ import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tech.pantheon.triemap.MutableTrieMap;
 import tech.pantheon.triemap.TrieMap;
 
 /**
@@ -47,7 +45,7 @@ public final class MapAdaptor {
     }
 
     private static int getProperty(final String name, final int defaultValue) {
-        final int val = Integer.getInteger(name, defaultValue).intValue();
+        final int val = Integer.getInteger(name, defaultValue);
         if (val > 0) {
             return val;
         }
@@ -109,10 +107,10 @@ public final class MapAdaptor {
      */
     @SuppressWarnings("static-method")
     public <K, V> Map<K, V> takeSnapshot(final Map<K, V> input) {
-        if (input instanceof ReadOnlyTrieMap) {
-            return ((ReadOnlyTrieMap<K, V>)input).toReadWrite();
-        }
+        return input instanceof ReadOnlyTrieMap<K, V> rotm ? rotm.toReadWrite() : toReadWrite(input);
+    }
 
+    private static <K, V> Map<K, V> toReadWrite(final Map<K, V> input) {
         LOG.trace("Converting input {} to a HashMap", input);
 
         /*
@@ -124,32 +122,25 @@ public final class MapAdaptor {
         final Map<K, V> ret;
         final int size = input.size();
         if (size <= 6) {
-            final int target;
-            switch (size) {
-                case 0:
-                case 1:
-                    target = 1;
-                    break;
-                case 2:
-                    target = 2;
-                    break;
-                case 3:
-                    target = 4;
-                    break;
-                default:
-                    target = 8;
-            }
-
+            final var target = switch (size) {
+                case 0, 1 -> 1;
+                case 2 -> 2;
+                case 3 -> 4;
+                default -> 8;
+            };
             ret = new HashMap<>(target);
             ret.putAll(input);
-        } else if (input instanceof HashMap) {
-            // HashMap supports cloning, but we want to make sure we trim it down if entries were removed, so we do
-            // this only after having checked for small sizes.
-            @SuppressWarnings("unchecked")
-            final Map<K, V> tmp = (Map<K, V>) ((HashMap<K, V>) input).clone();
-            ret = tmp;
         } else {
-            ret = new HashMap<>(input);
+            ret = switch (input) {
+                case HashMap<K, V> hm -> {
+                    // HashMap supports cloning, but we want to make sure we trim it down if entries were removed, so we
+                    // do this only after having checked for small sizes.
+                    @SuppressWarnings("unchecked")
+                    final var tmp = (Map<K, V>) hm.clone();
+                    yield tmp;
+                }
+                default -> new HashMap<>(input);
+            };
         }
 
         LOG.trace("Read-write HashMap is {}", ret);
@@ -157,8 +148,7 @@ public final class MapAdaptor {
     }
 
     /**
-     * Input will be thrown away, result will be retained for read-only access or
-     * {@link #takeSnapshot(Map)} purposes.
+     * Input will be thrown away, result will be retained for read-only access or {@link #takeSnapshot(Map)} purposes.
      *
      * @param input non-optimized (read-write) map
      * @return optimized read-only map
@@ -183,8 +173,8 @@ public final class MapAdaptor {
          * We retain the persistent map as long as it holds at least
          * persistMinItems
          */
-        if (input instanceof ReadWriteTrieMap && size >= persistMinItems) {
-            return ((ReadWriteTrieMap<K, V>)input).toReadOnly();
+        if (input instanceof ReadWriteTrieMap<K, V> rwtm && size >= persistMinItems) {
+            return rwtm.toReadOnly();
         }
 
         /*
@@ -193,8 +183,8 @@ public final class MapAdaptor {
          * map.
          */
         if (useSingleton && size == 1) {
-            final Entry<K, V> e = input.entrySet().iterator().next();
-            final Map<K, V> ret = Collections.singletonMap(e.getKey(), e.getValue());
+            final var e = input.entrySet().iterator().next();
+            final var ret = Collections.singletonMap(e.getKey(), e.getValue());
             LOG.trace("Reducing input {} to singleton map {}", input, ret);
             return ret;
         }
@@ -208,7 +198,7 @@ public final class MapAdaptor {
             }
 
             LOG.trace("Copying input {} to a HashMap ({} entries)", input, size);
-            final Map<K, V> ret = new HashMap<>(input);
+            final var ret = new HashMap<>(input);
             LOG.trace("Read-only HashMap is {}", ret);
             return ret;
         }
@@ -222,9 +212,9 @@ public final class MapAdaptor {
          * which will maintain the size for us.
          */
         LOG.trace("Copying input {} to a TrieMap ({} entries)", input, size);
-        final MutableTrieMap<K, V> map = TrieMap.create();
+        final var map = TrieMap.<K, V>create();
         map.putAll(input);
-        final Map<K, V> ret = new ReadOnlyTrieMap<>(map, size);
+        final var ret = new ReadOnlyTrieMap<>(map, size);
         LOG.trace("Read-only TrieMap is {}", ret);
         return ret;
     }
