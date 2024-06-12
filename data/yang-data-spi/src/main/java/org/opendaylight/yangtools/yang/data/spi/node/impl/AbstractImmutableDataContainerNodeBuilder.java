@@ -105,13 +105,13 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
 
     private void checkDirty() {
         if (dirty) {
-            if (value instanceof UnmodifiableMapPhase) {
-                value = ((UnmodifiableMapPhase<NodeIdentifier, Object>) value).toModifiableMap();
-            } else if (value instanceof CloneableMap) {
-                value = ((CloneableMap<NodeIdentifier, Object>) value).createMutableClone();
-            } else {
-                value = newHashMap(value);
-            }
+            @SuppressWarnings("unchecked")
+            final var tmp = (Map<NodeIdentifier, Object>) switch (value) {
+                case UnmodifiableMapPhase<?, ?> ump -> ump.toModifiableMap();
+                case CloneableMap<?, ?> cm -> cm.createMutableClone();
+                default -> newHashMap(value);
+            };
+            value = tmp;
             dirty = false;
         }
     }
@@ -119,7 +119,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     @Override
     public DataContainerNodeBuilder<I, R> withValue(final Collection<DataContainerChild> withValue) {
         // TODO Replace or putAll ?
-        for (final DataContainerChild dataContainerChild : withValue) {
+        for (var dataContainerChild : withValue) {
             withChild(dataContainerChild);
         }
         return this;
