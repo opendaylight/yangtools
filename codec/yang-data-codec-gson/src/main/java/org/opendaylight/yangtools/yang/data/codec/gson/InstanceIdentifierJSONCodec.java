@@ -81,14 +81,13 @@ abstract sealed class InstanceIdentifierJSONCodec extends AbstractStringInstance
     @Override
     protected final Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
             final String value) {
-        requireNonNull(schemaNode, "schemaNode cannot be null");
-        if (schemaNode instanceof LeafSchemaNode leafSchemaNode) {
-            return codecFactory.codecFor(leafSchemaNode, resolver).parseValue(value);
-        } else if (schemaNode instanceof LeafListSchemaNode leafListSchemaNode) {
-            return codecFactory.codecFor(leafListSchemaNode, resolver).parseValue(value);
-        }
-        throw new IllegalArgumentException("schemaNode " + schemaNode
+        final var codec = switch (schemaNode) {
+            case LeafSchemaNode leaf -> codecFactory.codecFor(leaf, resolver);
+            case LeafListSchemaNode leafList -> codecFactory.codecFor(leafList, resolver);
+            default -> throw new IllegalArgumentException("schemaNode " + schemaNode
                 + " must be of type LeafSchemaNode or LeafListSchemaNode");
+        };
+        return codec.parseValue(value);
     }
 
     @Override
