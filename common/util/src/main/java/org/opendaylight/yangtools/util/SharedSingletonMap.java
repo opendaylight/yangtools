@@ -144,7 +144,7 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
     }
 
     public final Entry<K, V> getEntry() {
-        return new SimpleImmutableEntry<>(keySet.getElement(), value);
+        return new SimpleImmutableEntry<>(keySet.getFirst(), value);
     }
 
     @Override
@@ -213,7 +213,7 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
     @Override
     public final int hashCode() {
         if (hashCode == 0) {
-            hashCode = keySet.getElement().hashCode() ^ value.hashCode();
+            hashCode = keySet.getFirst().hashCode() ^ value.hashCode();
         }
         return hashCode;
     }
@@ -221,12 +221,12 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
     @Override
     public final boolean equals(final Object obj) {
         return this == obj || obj instanceof Map<?, ?> other && other.size() == 1
-            && value.equals(other.get(keySet.getElement()));
+            && value.equals(other.get(keySet.getFirst()));
     }
 
     @Override
     public final String toString() {
-        return "{" + keySet.getElement() + '=' + value + '}';
+        return "{" + keySet.getFirst() + '=' + value + '}';
     }
 
     @SuppressWarnings("unchecked")
