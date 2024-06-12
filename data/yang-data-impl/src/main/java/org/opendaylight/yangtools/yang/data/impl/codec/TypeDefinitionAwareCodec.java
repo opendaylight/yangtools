@@ -64,40 +64,24 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> e
 
     // FIXME: do we want an Optional or a throws instead of @Nullable here?
     public static @Nullable TypeDefinitionAwareCodec<?, ?> fromType(final TypeDefinition<?> typeDefinition) {
-        if (typeDefinition instanceof BinaryTypeDefinition binaryType) {
-            return BinaryStringCodec.from(binaryType);
-        } else if (typeDefinition instanceof BitsTypeDefinition bitsType) {
-            return BitsStringCodec.from(bitsType);
-        } else if (typeDefinition instanceof BooleanTypeDefinition booleanType) {
-            return BooleanStringCodec.from(booleanType);
-        } else if (typeDefinition instanceof DecimalTypeDefinition decimalType) {
-            return  DecimalStringCodec.from(decimalType);
-        } else if (typeDefinition instanceof EmptyTypeDefinition emptyType) {
-            return new EmptyStringCodec(emptyType);
-        } else if (typeDefinition instanceof EnumTypeDefinition enumType) {
-            return EnumStringCodec.from(enumType);
-        } else if (typeDefinition instanceof Int8TypeDefinition int8Type) {
-            return AbstractIntegerStringCodec.from(int8Type);
-        } else if (typeDefinition instanceof Int16TypeDefinition int16Type) {
-            return AbstractIntegerStringCodec.from(int16Type);
-        } else if (typeDefinition instanceof Int32TypeDefinition int32Type) {
-            return AbstractIntegerStringCodec.from(int32Type);
-        } else if (typeDefinition instanceof Int64TypeDefinition int64Type) {
-            return AbstractIntegerStringCodec.from(int64Type);
-        } else if (typeDefinition instanceof StringTypeDefinition stringType) {
-            return StringStringCodec.from(stringType);
-        } else if (typeDefinition instanceof Uint8TypeDefinition uint8Type) {
-            return AbstractIntegerStringCodec.from(uint8Type);
-        } else if (typeDefinition instanceof Uint16TypeDefinition uint16Type) {
-            return AbstractIntegerStringCodec.from(uint16Type);
-        } else if (typeDefinition instanceof Uint32TypeDefinition uint32Type) {
-            return AbstractIntegerStringCodec.from(uint32Type);
-        } else if (typeDefinition instanceof Uint64TypeDefinition uint64Type) {
-            return AbstractIntegerStringCodec.from(uint64Type);
-        } else if (ENABLE_UNION_CODEC && typeDefinition instanceof UnionTypeDefinition unionType) {
-            return UnionStringCodec.from(unionType);
-        } else {
-            return null;
-        }
+        return switch (typeDefinition) {
+            case BinaryTypeDefinition binaryType -> BinaryStringCodec.from(binaryType);
+            case BitsTypeDefinition bitsType -> BitsStringCodec.from(bitsType);
+            case BooleanTypeDefinition booleanType -> BooleanStringCodec.from(booleanType);
+            case DecimalTypeDefinition decimalType -> DecimalStringCodec.from(decimalType);
+            case EmptyTypeDefinition emptyType -> new EmptyStringCodec(emptyType);
+            case EnumTypeDefinition enumType -> EnumStringCodec.from(enumType);
+            case Int8TypeDefinition int8Type -> AbstractIntegerStringCodec.from(int8Type);
+            case Int16TypeDefinition int16Type -> AbstractIntegerStringCodec.from(int16Type);
+            case Int32TypeDefinition int32Type -> AbstractIntegerStringCodec.from(int32Type);
+            case Int64TypeDefinition int64Type -> AbstractIntegerStringCodec.from(int64Type);
+            case StringTypeDefinition stringType -> StringStringCodec.from(stringType);
+            case Uint8TypeDefinition uint8Type -> AbstractIntegerStringCodec.from(uint8Type);
+            case Uint16TypeDefinition uint16Type -> AbstractIntegerStringCodec.from(uint16Type);
+            case Uint32TypeDefinition uint32Type -> AbstractIntegerStringCodec.from(uint32Type);
+            case Uint64TypeDefinition uint64Type -> AbstractIntegerStringCodec.from(uint64Type);
+            case UnionTypeDefinition unionType when ENABLE_UNION_CODEC -> UnionStringCodec.from(unionType);
+            default -> null;
+        };
     }
 }
