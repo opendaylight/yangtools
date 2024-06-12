@@ -211,14 +211,10 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
 
     @Override
     void writePathArgumentInternal(final PathArgument pathArgument) throws IOException {
-        if (pathArgument instanceof NodeIdentifier nid) {
-            writeNodeIdentifier(nid);
-        } else if (pathArgument instanceof NodeIdentifierWithPredicates nip) {
-            writeNodeIdentifierWithPredicates(nip);
-        } else if (pathArgument instanceof NodeWithValue<?> niv) {
-            writeNodeWithValue(niv);
-        } else {
-            throw new IOException("Unhandled PathArgument " + pathArgument);
+        switch (pathArgument) {
+            case NodeIdentifier nid -> writeNodeIdentifier(nid);
+            case NodeIdentifierWithPredicates nip -> writeNodeIdentifierWithPredicates(nip);
+            case NodeWithValue<?> niv -> writeNodeWithValue(niv);
         }
     }
 
