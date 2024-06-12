@@ -288,42 +288,28 @@ final class PotassiumDataOutput extends AbstractNormalizedNodeDataOutput {
     }
 
     private void writeObject(final @NonNull Object value) throws IOException {
-        if (value instanceof String str) {
-            writeValue(str);
-        } else if (value instanceof Boolean bool) {
-            writeValue(bool);
-        } else if (value instanceof Byte byteVal) {
-            writeValue(byteVal);
-        } else if (value instanceof Short shortVal) {
-            writeValue(shortVal);
-        } else if (value instanceof Integer intVal) {
-            writeValue(intVal);
-        } else if (value instanceof Long longVal) {
-            writeValue(longVal);
-        } else if (value instanceof Uint8 uint8) {
-            writeValue(uint8);
-        } else if (value instanceof Uint16 uint16) {
-            writeValue(uint16);
-        } else if (value instanceof Uint32 uint32) {
-            writeValue(uint32);
-        } else if (value instanceof Uint64 uint64) {
-            writeValue(uint64);
-        } else if (value instanceof QName qname) {
-            writeQNameInternal(qname);
-        } else if (value instanceof YangInstanceIdentifier id) {
-            writeValue(id);
-        } else if (value instanceof byte[] bytes) {
-            writeValue(bytes);
-        } else if (value instanceof Empty) {
-            output.writeByte(PotassiumValue.EMPTY);
-        } else if (value instanceof Set<?> set) {
-            writeValue(set);
-        } else if (value instanceof Decimal64 decimal) {
-            output.writeByte(PotassiumValue.DECIMAL64);
-            output.writeByte(decimal.scale());
-            WritableObjects.writeLong(output, decimal.unscaledValue());
-        } else {
-            throw new IOException("Unhandled value type " + value.getClass());
+        switch (value) {
+            case String val -> writeValue(val);
+            case Boolean val -> writeValue(val);
+            case Byte val -> writeValue(val);
+            case Short val -> writeValue(val);
+            case Integer val -> writeValue(val);
+            case Long val -> writeValue(val);
+            case Uint8 val -> writeValue(val);
+            case Uint16 val -> writeValue(val);
+            case Uint32 val -> writeValue(val);
+            case Uint64 val -> writeValue(val);
+            case QName val -> writeQNameInternal(val);
+            case YangInstanceIdentifier val -> writeValue(val);
+            case byte[] val -> writeValue(val);
+            case Empty val -> output.writeByte(PotassiumValue.EMPTY);
+            case Set<?> val -> writeValue(val);
+            case Decimal64 val -> {
+                output.writeByte(PotassiumValue.DECIMAL64);
+                output.writeByte(val.scale());
+                WritableObjects.writeLong(output, val.unscaledValue());
+            }
+            default -> throw new IOException("Unhandled value type " + value.getClass());
         }
     }
 
