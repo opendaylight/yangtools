@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Set;
+import java.util.SequencedSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public final class RegularKeyStatement extends AbstractKeyStatement {
     private final @NonNull Object substatements;
 
-    public RegularKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument,
+    public RegularKeyStatement(final @NonNull String rawArgument, final @NonNull SequencedSet<QName> argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, argument);
         this.substatements = maskList(substatements);

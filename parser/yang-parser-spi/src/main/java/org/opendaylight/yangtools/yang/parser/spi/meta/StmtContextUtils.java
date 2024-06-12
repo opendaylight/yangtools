@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
+import java.util.SequencedSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -438,7 +438,7 @@ public final class StmtContextUtils {
     }
 
     private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
-            final StmtContext<Set<QName>, ?, ?> keyStmtCtx) {
+            final StmtContext<SequencedSet<QName>, ?, ?> keyStmtCtx) {
         return keyStmtCtx.getArgument().contains(leafStmtCtx.argument());
     }
 

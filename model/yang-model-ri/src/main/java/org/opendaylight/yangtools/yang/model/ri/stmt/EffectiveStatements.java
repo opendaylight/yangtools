@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
+import java.util.SequencedSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -550,7 +550,7 @@ public final class EffectiveStatements {
         return new DeclaredInputEffectiveStatement(declared, substatements, argument, flags);
     }
 
-    public static KeyEffectiveStatement createKey(final KeyStatement declared, final Set<QName> argument,
+    public static KeyEffectiveStatement createKey(final KeyStatement declared, final SequencedSet<QName> argument,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             return argument.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
