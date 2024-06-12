@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.SequencedSet;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Ordering;
@@ -428,7 +429,7 @@ public final class DeclaredStatements {
         return substatements.isEmpty() ? createInput(argument) : new RegularInputStatement(argument, substatements);
     }
 
-    public static KeyStatement createKey(final String rawArgument, final Set<QName> argument,
+    public static KeyStatement createKey(final String rawArgument, final SequencedSet<QName> argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyKeyStatement(rawArgument, argument)
             : new RegularKeyStatement(rawArgument, argument, substatements);

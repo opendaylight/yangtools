@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Set;
+import java.util.SequencedSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code key} statement.
  */
-public interface KeyEffectiveStatement extends EffectiveStatement<Set<QName>, KeyStatement> {
+public interface KeyEffectiveStatement extends EffectiveStatement<SequencedSet<QName>, KeyStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
         return YangStmtMapping.KEY;
@@ -29,5 +29,5 @@ public interface KeyEffectiveStatement extends EffectiveStatement<Set<QName>, Ke
      * Iteration order of the returned set is required to match the order in which key components were declared.
      */
     @Override
-    Set<QName> argument();
+    SequencedSet<QName> argument();
 }

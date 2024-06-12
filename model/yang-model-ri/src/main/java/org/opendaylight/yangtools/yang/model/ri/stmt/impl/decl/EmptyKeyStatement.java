@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
-import java.util.Set;
+import java.util.SequencedSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public final class EmptyKeyStatement extends AbstractKeyStatement {
-    public EmptyKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument) {
+    public EmptyKeyStatement(final @NonNull String rawArgument, final @NonNull SequencedSet<QName> argument) {
         super(rawArgument, argument);
     }
 }

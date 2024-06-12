@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
+import java.util.SequencedSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
@@ -18,33 +17,33 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
 
 abstract class AbstractKeyEffectiveStatement
-        extends AbstractDeclaredEffectiveStatement.Default<Set<QName>, KeyStatement>
+        extends AbstractDeclaredEffectiveStatement.Default<SequencedSet<QName>, KeyStatement>
         implements KeyEffectiveStatement {
     abstract static class Foreign extends AbstractKeyEffectiveStatement {
         // Polymorphic, with single value or a collection
         private final Object argument;
 
-        Foreign(final KeyStatement declared, final Set<QName> argument) {
+        Foreign(final KeyStatement declared, final SequencedSet<QName> argument) {
             super(declared);
-            this.argument = maskSet(argument);
+            this.argument = maskSequencedSet(argument);
         }
 
         @Override
-        public final Set<QName> argument() {
-            return unmaskSet(argument);
+        public final SequencedSet<QName> argument() {
+            return unmaskSequencedSet(argument);
         }
 
-        private static @NonNull Object maskSet(final @NonNull Set<QName> set) {
-            return set.size() == 1 ? set.iterator().next() : set;
+        private static @NonNull Object maskSequencedSet(final @NonNull SequencedSet<QName> set) {
+            return set.size() == 1 ? set.getFirst() : set;
         }
 
         @SuppressWarnings("unchecked")
-        private static @NonNull Set<QName> unmaskSet(final @NonNull Object masked) {
-            if (masked instanceof Set) {
-                return (Set<QName>) masked;
-            }
-            verify(masked instanceof QName, "Unexpected argument %s", masked);
-            return ImmutableSet.of((QName) masked);
+        private static @NonNull SequencedSet<QName> unmaskSequencedSet(final @NonNull Object masked) {
+            return switch (masked) {
+                case SequencedSet<?> set -> (SequencedSet<QName>) set;
+                case QName qname -> ImmutableSet.of(qname);
+                default -> throw new VerifyException("Unexpected argument " + masked);
+            };
         }
     }
 
@@ -54,7 +53,7 @@ abstract class AbstractKeyEffectiveStatement
         }
 
         @Override
-        public final Set<QName> argument() {
+        public final SequencedSet<QName> argument() {
             return getDeclared().argument();
         }
     }

@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import java.util.Set;
+import java.util.SequencedSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 
 public final class EmptyForeignKeyEffectiveStatement extends AbstractKeyEffectiveStatement.Foreign {
-    public EmptyForeignKeyEffectiveStatement(final KeyStatement declared, final Set<QName> argument) {
+    public EmptyForeignKeyEffectiveStatement(final KeyStatement declared, final SequencedSet<QName> argument) {
         super(declared, argument);
     }
 }
