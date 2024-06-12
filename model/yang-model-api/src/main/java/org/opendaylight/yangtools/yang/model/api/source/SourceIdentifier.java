@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangNames;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class of YANG Schema source identifiers. Source identifiers are designated to be carry only necessary
@@ -32,8 +30,6 @@ import org.slf4j.LoggerFactory;
 public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision revision) implements Identifier {
     @java.io.Serial
     private static final long serialVersionUID = 3L;
-
-    private static final Logger LOG = LoggerFactory.getLogger(SourceIdentifier.class);
 
     /**
      * Creates new YANG Schema source identifier for sources with or without a revision.
