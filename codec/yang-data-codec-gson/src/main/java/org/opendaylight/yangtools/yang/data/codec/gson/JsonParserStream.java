@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,18 +80,14 @@ public final class JsonParserStream implements Closeable, Flushable {
         this.lenient = lenient;
 
         if (!stack.isEmpty()) {
-            final EffectiveStatement<?, ?> parent = stack.currentStatement();
-            if (parent instanceof DataSchemaNode data) {
-                parentNode = data;
-            } else if (parent instanceof OperationDefinition oper) {
-                parentNode = oper.toContainerLike();
-            } else if (parent instanceof NotificationDefinition notif) {
-                parentNode = notif.toContainerLike();
-            } else if (parent instanceof YangDataSchemaNode yangData) {
-                parentNode = yangData.toContainerLike();
-            } else {
-                throw new IllegalArgumentException("Illegal parent node " + parent);
-            }
+            final var parent = stack.currentStatement();
+            parentNode = switch (parent) {
+                case DataSchemaNode data -> data;
+                case OperationDefinition oper -> oper.toContainerLike();
+                case NotificationDefinition notif -> notif.toContainerLike();
+                case YangDataSchemaNode yangData -> yangData.toContainerLike();
+                default -> throw new IllegalArgumentException("Illegal parent node " + parent);
+            };
         } else {
             parentNode = stack.modelContext();
         }
