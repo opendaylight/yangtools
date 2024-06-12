@@ -34,7 +34,8 @@ class SingletonSetTest {
         assertEquals(1, s.size());
         assertFalse(s.contains(""));
         assertTrue(s.contains(null));
-        assertNull(s.getElement());
+        assertNull(s.getFirst());
+        assertNull(s.getLast());
         assertEquals(0, s.hashCode());
         assertEquals(s, Collections.singleton(null));
         assertNotEquals(s, Collections.singleton(""));
@@ -54,7 +55,8 @@ class SingletonSetTest {
         assertFalse(s.contains(null));
         assertTrue(s.contains(ELEMENT));
 
-        assertSame(ELEMENT, s.getElement());
+        assertSame(ELEMENT, s.getFirst());
+        assertSame(ELEMENT, s.getLast());
         assertEquals(ELEMENT.hashCode(), s.hashCode());
         assertEquals(s, Set.of(ELEMENT));
         assertNotEquals(s, Set.of(""));

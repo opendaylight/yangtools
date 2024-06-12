@@ -88,7 +88,7 @@ public abstract sealed class SharedSingletonMapTemplate<K> extends ImmutableMapT
         }
 
         final var entry = it.next();
-        final var expected = keySet.getElement();
+        final var expected = keySet.getFirst();
         final var actual = entry.getKey();
         if (!expected.equals(actual)) {
             throw new IllegalArgumentException("Unexpected key " + actual + ", expecting " + expected);
