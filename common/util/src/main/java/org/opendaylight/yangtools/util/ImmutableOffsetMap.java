@@ -14,7 +14,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.Serializable;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.AbstractSet;
 import java.util.Arrays;
 import java.util.Collection;
@@ -113,7 +112,7 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
      * @throws NullPointerException if {@code map} or any of its elements is null.
      */
     public static <K, V> @NonNull Map<K, V> orderedCopyOf(final @NonNull Map<K, V> map) {
-        final Map<K, V> common = commonCopy(map);
+        final var common = commonCopy(map);
         if (common != null) {
             return common;
         }
@@ -121,11 +120,11 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
         final int size = map.size();
         if (size == 1) {
             // Efficient single-entry implementation
-            final Entry<K, V> e = map.entrySet().iterator().next();
-            return SharedSingletonMap.orderedOf(e.getKey(), e.getValue());
+            final var entry = map.entrySet().iterator().next();
+            return SharedSingletonMap.orderedOf(entry.getKey(), entry.getValue());
         }
 
-        final ImmutableMap<K, Integer> offsets = OffsetMapCache.orderedOffsets(map.keySet());
+        final var offsets = OffsetMapCache.orderedOffsets(map.keySet());
         return new Ordered<>(offsets, createArray(offsets, map));
     }
 
@@ -144,47 +143,41 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
      * @throws NullPointerException if {@code map} or any of its elements is null.
      */
     public static <K, V> @NonNull Map<K, V> unorderedCopyOf(final @NonNull Map<K, V> map) {
-        final Map<K, V> common = commonCopy(map);
+        final var common = commonCopy(map);
         if (common != null) {
             return common;
         }
 
         if (map.size() == 1) {
             // Efficient single-entry implementation
-            final Entry<K, V> e = map.entrySet().iterator().next();
-            return SharedSingletonMap.unorderedOf(e.getKey(), e.getValue());
+            final var entry = map.entrySet().iterator().next();
+            return SharedSingletonMap.unorderedOf(entry.getKey(), entry.getValue());
         }
 
-        final ImmutableMap<K, Integer> offsets = OffsetMapCache.unorderedOffsets(map.keySet());
+        final var offsets = OffsetMapCache.unorderedOffsets(map.keySet());
         return new Unordered<>(offsets, createArray(offsets, map));
     }
 
     private static <K, V> V[] createArray(final ImmutableMap<K, Integer> offsets, final Map<K, V> map) {
         @SuppressWarnings("unchecked")
-        final V[] array = (V[]) new Object[offsets.size()];
-        for (Entry<K, V> e : map.entrySet()) {
-            array[verifyNotNull(offsets.get(e.getKey()))] = e.getValue();
+        final var array = (V[]) new Object[offsets.size()];
+        for (var entry : map.entrySet()) {
+            array[verifyNotNull(offsets.get(entry.getKey()))] = entry.getValue();
         }
         return array;
     }
 
     private static <K, V> @Nullable Map<K, V> commonCopy(final @NonNull Map<K, V> map) {
-        // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
-        if (map instanceof ImmutableOffsetMap || map instanceof SharedSingletonMap) {
-            return map;
-        }
-
-        // Familiar and efficient to copy
-        if (map instanceof MutableOffsetMap<K, V> mop) {
-            return mop.toUnmodifiableMap();
-        }
-
-        if (map.isEmpty()) {
+        return switch (map) {
+            // Prevent a copy.
+            // Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
+            case ImmutableOffsetMap<K, V> iom -> iom;
+            case SharedSingletonMap<K, V> ssm -> ssm;
+            // Familiar and efficient to copy
+            case MutableOffsetMap<K, V> mop -> mop.toUnmodifiableMap();
             // Shares a single object
-            return ImmutableMap.of();
-        }
-
-        return null;
+            default -> map.isEmpty() ? ImmutableMap.of() : null;
+        };
     }
 
     @Override
@@ -204,8 +197,8 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
         }
 
         int result = 0;
-        for (Entry<K, Integer> e : offsets.entrySet()) {
-            result += e.getKey().hashCode() ^ objects[e.getValue()].hashCode();
+        for (var entry : offsets.entrySet()) {
+            result += entry.getKey().hashCode() ^ objects[entry.getValue()].hashCode();
         }
 
         hashCode = result;
@@ -238,8 +231,8 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
 
         try {
             // Ensure all objects are present
-            for (Entry<K, Integer> e : offsets.entrySet()) {
-                if (!objects[e.getValue()].equals(other.get(e.getKey()))) {
+            for (var entry : offsets.entrySet()) {
+                if (!objects[entry.getValue()].equals(other.get(entry.getKey()))) {
                     return false;
                 }
             }
@@ -258,7 +251,7 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
 
     @Override
     public final boolean containsValue(final Object value) {
-        for (Object o : objects) {
+        for (var o : objects) {
             if (value.equals(o)) {
                 return true;
             }
@@ -310,8 +303,8 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
 
     @Override
     public final String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        final Iterator<K> it = offsets.keySet().iterator();
+        final var sb = new StringBuilder("{");
+        final var it = offsets.keySet().iterator();
         int offset = 0;
         while (it.hasNext()) {
             sb.append(it.next()).append('=').append(objects[offset++]);
@@ -335,7 +328,7 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
         @Override
         public @NonNull Iterator<Entry<K, V>> iterator() {
-            final Iterator<Entry<K, Integer>> it = offsets.entrySet().iterator();
+            final var it = offsets.entrySet().iterator();
             return new UnmodifiableIterator<>() {
                 @Override
                 public boolean hasNext() {
@@ -344,8 +337,8 @@ public abstract sealed class ImmutableOffsetMap<K, V> implements UnmodifiableMap
 
                 @Override
                 public Entry<K, V> next() {
-                    final Entry<K, Integer> e = it.next();
-                    return new SimpleImmutableEntry<>(e.getKey(), objects[e.getValue()]);
+                    final var keyOffset = it.next();
+                    return Map.entry(keyOffset.getKey(), objects[keyOffset.getValue()]);
                 }
             };
         }
