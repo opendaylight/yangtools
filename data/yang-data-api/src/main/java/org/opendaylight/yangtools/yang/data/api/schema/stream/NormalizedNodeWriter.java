@@ -119,43 +119,49 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean wasProcessAsSimpleNode(final NormalizedNode node) throws IOException {
-        if (node instanceof LeafSetEntryNode<?> nodeAsLeafList) {
-            writer.startLeafSetEntryNode(nodeAsLeafList.name());
-            writer.scalarValue(nodeAsLeafList.body());
-            writer.endNode();
-            return true;
-        } else if (node instanceof LeafNode<?> nodeAsLeaf) {
-            writer.startLeafNode(nodeAsLeaf.name());
-            writer.scalarValue(nodeAsLeaf.body());
-            writer.endNode();
-            return true;
-        } else if (node instanceof AnyxmlNode<?> anyxmlNode) {
-            final Class<?> model = anyxmlNode.bodyObjectModel();
-            if (writer.startAnyxmlNode(anyxmlNode.name(), model)) {
-                final Object value = node.body();
-                if (DOMSource.class.isAssignableFrom(model)) {
-                    verify(value instanceof DOMSource, "Inconsistent anyxml node %s", anyxmlNode);
-                    writer.domSourceValue((DOMSource) value);
+        return switch (node) {
+            case LeafSetEntryNode<?> nodeAsLeafList -> {
+                writer.startLeafSetEntryNode(nodeAsLeafList.name());
+                writer.scalarValue(nodeAsLeafList.body());
+                writer.endNode();
+                yield true;
+            }
+            case LeafNode<?> nodeAsLeaf -> {
+                writer.startLeafNode(nodeAsLeaf.name());
+                writer.scalarValue(nodeAsLeaf.body());
+                writer.endNode();
+                yield true;
+            }
+            case AnyxmlNode<?> anyxmlNode -> {
+                final var model = anyxmlNode.bodyObjectModel();
+                if (writer.startAnyxmlNode(anyxmlNode.name(), model)) {
+                    final Object value = node.body();
+                    if (DOMSource.class.isAssignableFrom(model)) {
+                        verify(value instanceof DOMSource, "Inconsistent anyxml node %s", anyxmlNode);
+                        writer.domSourceValue((DOMSource) value);
+                    } else {
+                        writer.scalarValue(value);
+                    }
+                    writer.endNode();
+                    yield true;
                 } else {
-                    writer.scalarValue(value);
+                    LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
+                    yield false;
                 }
-                writer.endNode();
-                return true;
             }
-
-            LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
-        } else if (node instanceof AnydataNode<?> anydata) {
-            final Class<?> model = anydata.bodyObjectModel();
-            if (writer.startAnydataNode(anydata.name(), model)) {
-                writer.scalarValue(anydata.body());
-                writer.endNode();
-                return true;
+            case AnydataNode<?> anydata -> {
+                final var model = anydata.bodyObjectModel();
+                if (writer.startAnydataNode(anydata.name(), model)) {
+                    writer.scalarValue(anydata.body());
+                    writer.endNode();
+                    yield true;
+                } else {
+                    LOG.debug("Writer {} does not support anydata in form of {}", writer, model);
+                    yield false;
+                }
             }
-
-            LOG.debug("Writer {} does not support anydata in form of {}", writer, model);
-        }
-
-        return false;
+            default -> false;
+        };
     }
 
     /**
@@ -180,34 +186,42 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
-        if (node instanceof ContainerNode n) {
-            writer.startContainerNode(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof MapEntryNode n) {
-            return writeMapEntryNode(n);
-        } else if (node instanceof UnkeyedListEntryNode n) {
-            writer.startUnkeyedListItem(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof ChoiceNode n) {
-            writer.startChoiceNode(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof UnkeyedListNode n) {
-            writer.startUnkeyedList(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof UserMapNode n) {
-            writer.startOrderedMapNode(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof SystemMapNode n) {
-            writer.startMapNode(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof UserLeafSetNode<?> n) {
-            writer.startOrderedLeafSet(n.name(), n.size());
-            return writeChildren(n.body());
-        } else if (node instanceof SystemLeafSetNode<?> n) {
-            writer.startLeafSet(n.name(), n.size());
-            return writeChildren(n.body());
-        }
-        return false;
+        return switch (node) {
+            case ContainerNode n -> {
+                writer.startContainerNode(n.name(), n.size());
+                yield writeChildren(n.body());
+            }
+            case MapEntryNode n -> writeMapEntryNode(n);
+            case UnkeyedListEntryNode n -> {
+                writer.startUnkeyedListItem(n.name(), n.size());
+                yield writeChildren(n.body());
+            }
+            case ChoiceNode n -> {
+                writer.startChoiceNode(n.name(), n.size());
+                yield writeChildren(n.body());
+            }
+            case UnkeyedListNode n -> {
+                writer.startUnkeyedList(n.name(), n.size());
+                yield writeChildren(n.body());
+            }
+            case UserMapNode n -> {
+                writer.startOrderedMapNode(n.name(), n.size());
+                yield writeChildren(n.body());
+            }
+            case SystemMapNode n -> {
+                writer.startMapNode(n.name(), n.size());
+                yield writeChildren(n.body());
+            }
+            case UserLeafSetNode<?> n -> {
+                writer.startOrderedLeafSet(n.name(), n.size());
+                yield writeChildren(n.body());
+            }
+            case SystemLeafSetNode<?> n -> {
+                writer.startLeafSet(n.name(), n.size());
+                yield writeChildren(n.body());
+            }
+            default -> false;
+        };
     }
 
     private static final class OrderedNormalizedNodeWriter extends NormalizedNodeWriter {
