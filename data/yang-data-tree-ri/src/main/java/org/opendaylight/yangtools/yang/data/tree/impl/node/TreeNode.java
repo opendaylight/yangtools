@@ -57,15 +57,15 @@ public abstract class TreeNode implements Identifiable<PathArgument>, StoreTreeN
      * @return new AbstractTreeNode instance, covering the data tree provided
      */
     public static final TreeNode of(final NormalizedNode data, final Version version) {
-        if (data instanceof DistinctNodeContainer) {
-            @SuppressWarnings("unchecked")
-            final DistinctNodeContainer<?, NormalizedNode> container = (DistinctNodeContainer<?, NormalizedNode>) data;
-            return new SimpleContainerNode(container, version);
-        } else if (data instanceof OrderedNodeContainer) {
-            return new SimpleContainerNode(data, version);
-        } else {
-            return new ValueNode(data, version);
-        }
+        return switch (data) {
+            case DistinctNodeContainer<?, ?> distinct -> {
+                @SuppressWarnings("unchecked")
+                final var container = (DistinctNodeContainer<?, NormalizedNode>) data;
+                yield new SimpleContainerNode(container, version);
+            }
+            case OrderedNodeContainer<?> ordered -> new SimpleContainerNode(ordered, version);
+            default -> new ValueNode(data, version);
+        };
     }
 
     @Override
