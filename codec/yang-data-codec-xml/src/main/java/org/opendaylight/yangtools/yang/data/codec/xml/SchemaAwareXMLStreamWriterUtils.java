@@ -30,8 +30,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     }
 
     @Override
-    String encodeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
-            throws XMLStreamException {
+    String encode(final ValueWriter writer, final YangInstanceIdentifier value) throws XMLStreamException {
         final var serializer = new InstanceIdentifierSerializer(DataSchemaContextTree.from(modelContext),
             writer.getNamespaceContext(), pref);
         final var str = serializer.serialize(value);

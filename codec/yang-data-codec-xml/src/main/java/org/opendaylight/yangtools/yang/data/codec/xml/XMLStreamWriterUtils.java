@@ -47,18 +47,18 @@ abstract class XMLStreamWriterUtils {
      */
     String encodeValue(final @NonNull ValueWriter writer, final @NonNull TypeDefinition<?> type,
             final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
-        if (type instanceof IdentityrefTypeDefinition identityref) {
-            return encode(writer, identityref, value, parent);
-        } else if (type instanceof InstanceIdentifierTypeDefinition instanceIdentifier) {
-            return encode(writer, instanceIdentifier, value);
-        } else if (value instanceof QName qname && isIdentityrefUnion(type)) {
-            // Ugly special-case form unions with identityrefs
-            return encode(writer, qname, parent);
-        } else if (value instanceof YangInstanceIdentifier instanceIdentifier && isInstanceIdentifierUnion(type)) {
-            return encodeInstanceIdentifier(writer, instanceIdentifier);
-        } else {
-            return serialize(type, value);
-        }
+        return switch (type) {
+            case IdentityrefTypeDefinition identityref -> encode(writer, identityref, value, parent);
+            case InstanceIdentifierTypeDefinition instanceIdentifier -> encode(writer, instanceIdentifier, value);
+            default -> switch (value) {
+                case QName qname when isIdentityrefUnion(type) -> {
+                    // Ugly special-case form unions with identityrefs
+                    yield encode(writer, qname, parent);
+                }
+                case YangInstanceIdentifier iid when isInstanceIdentifierUnion(type) -> encode(writer, iid);
+                default -> serialize(type, value);
+            };
+        };
     }
 
     private static boolean isIdentityrefUnion(final TypeDefinition<?> type) {
@@ -130,7 +130,7 @@ abstract class XMLStreamWriterUtils {
     private String encode(final @NonNull ValueWriter writer, final @NonNull InstanceIdentifierTypeDefinition type,
             final @NonNull Object value) throws XMLStreamException {
         if (value instanceof YangInstanceIdentifier instanceIdentifier) {
-            return encodeInstanceIdentifier(writer, instanceIdentifier);
+            return encode(writer, instanceIdentifier);
         }
 
         final var qname = type.getQName();
@@ -139,6 +139,6 @@ abstract class XMLStreamWriterUtils {
         return value.toString();
     }
 
-    abstract String encodeInstanceIdentifier(@NonNull ValueWriter writer, YangInstanceIdentifier value)
+    abstract String encode(@NonNull ValueWriter writer, YangInstanceIdentifier value)
             throws XMLStreamException;
 }

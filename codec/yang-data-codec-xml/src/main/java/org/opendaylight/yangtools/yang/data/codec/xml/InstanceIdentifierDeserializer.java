@@ -47,16 +47,12 @@ final class InstanceIdentifierDeserializer extends AbstractInstanceIdentifierCod
     @Override
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
             final String value) {
-        requireNonNull(schemaNode, "schemaNode cannot be null");
-        final XmlCodec<?> objectXmlCodec;
-        if (schemaNode instanceof LeafSchemaNode leafSchemaNode) {
-            objectXmlCodec = codecFactory.codecFor(leafSchemaNode, resolver);
-        } else if (schemaNode instanceof LeafListSchemaNode leafListSchemaNode) {
-            objectXmlCodec = codecFactory.codecFor(leafListSchemaNode, resolver);
-        } else {
-            throw new IllegalArgumentException("schemaNode " + schemaNode
-                    + " must be of type LeafSchemaNode or LeafListSchemaNode");
-        }
+        final var objectXmlCodec = switch (schemaNode) {
+            case LeafSchemaNode leaf -> codecFactory.codecFor(leaf, resolver);
+            case LeafListSchemaNode leafList -> codecFactory.codecFor(leafList, resolver);
+            default -> throw new IllegalArgumentException("schemaNode " + schemaNode
+                + " must be of type LeafSchemaNode or LeafListSchemaNode");
+        };
         return objectXmlCodec.parseValue(namespaceContext, value);
     }
 }

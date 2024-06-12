@@ -80,6 +80,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
@@ -147,23 +148,17 @@ public final class XmlParserStream implements Closeable, Flushable {
         this.codecs = requireNonNull(codecs);
         this.stack = requireNonNull(stack);
         this.strictParsing = strictParsing;
+        parentNode = stack.isEmpty() ? stack.modelContext() : coerceAsParent(stack.currentStatement());
+    }
 
-        if (!stack.isEmpty()) {
-            final var stmt = stack.currentStatement();
-            if (stmt instanceof DataSchemaNode data) {
-                parentNode = data;
-            } else if (stmt instanceof OperationDefinition oper) {
-                parentNode = oper.toContainerLike();
-            } else if (stmt instanceof NotificationDefinition notif) {
-                parentNode = notif.toContainerLike();
-            } else if (stmt instanceof YangDataSchemaNode yangData) {
-                parentNode = yangData.toContainerLike();
-            } else {
-                throw new IllegalArgumentException("Illegal parent node " + stmt);
-            }
-        } else {
-            parentNode = stack.modelContext();
-        }
+    private static DataSchemaNode coerceAsParent(final EffectiveStatement<?, ?> stmt) {
+        return switch (stmt) {
+            case DataSchemaNode data -> data;
+            case OperationDefinition oper -> oper.toContainerLike();
+            case NotificationDefinition notif -> notif.toContainerLike();
+            case YangDataSchemaNode yangData -> yangData.toContainerLike();
+            default -> throw new IllegalArgumentException("Illegal parent node " + stmt);
+        };
     }
 
     /**
@@ -519,8 +514,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                             e);
                     }
 
-                    final Deque<DataSchemaNode> childDataSchemaNodes =
-                            ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
+                    final var childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
+                        xmlElementName, nsUri);
                     if (!childDataSchemaNodes.isEmpty()) {
                         final boolean elementList = isElementList(childDataSchemaNodes);
                         if (!added && !elementList) {
@@ -530,9 +525,9 @@ public final class XmlParserStream implements Closeable, Flushable {
                         }
 
                         // We have a match, proceed with it
-                        final QName qname = childDataSchemaNodes.peekLast().getQName();
-                        final AbstractNodeDataWithSchema<?> child = ((CompositeNodeDataWithSchema<?>) parent).addChild(
-                            childDataSchemaNodes, elementList ? ChildReusePolicy.REUSE : ChildReusePolicy.NOOP);
+                        final var qname = childDataSchemaNodes.peekLast().getQName();
+                        final var child = ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes,
+                            elementList ? ChildReusePolicy.REUSE : ChildReusePolicy.NOOP);
                         stack.enterDataTree(qname);
                         read(in, child, rootElement);
                         stack.exit();
@@ -543,17 +538,14 @@ public final class XmlParserStream implements Closeable, Flushable {
                         // Parent can potentially hold a mount point, let's see if there is a label present. We
                         // explicitly unmask Optional to null so as to not to lead us on to functional programming,
                         // because ...
-                        final MountPointSchemaNode mount;
-                        if (parentSchema instanceof ContainerSchemaNode container) {
-                            mount = MountPointSchemaNode.streamAll(container).findFirst().orElse(null);
-                        } else if (parentSchema instanceof ListSchemaNode list) {
-                            mount = MountPointSchemaNode.streamAll(list).findFirst().orElse(null);
-                        } else if (parentSchema instanceof ContainerLike) {
-                            mount = null;
-                        } else {
-                            throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema,
+                        final var mount = switch (parentSchema) {
+                            case ContainerSchemaNode container ->
+                                MountPointSchemaNode.streamAll(container).findFirst().orElse(null);
+                            case ListSchemaNode list -> MountPointSchemaNode.streamAll(list).findFirst().orElse(null);
+                            case ContainerLike containerLike -> null;
+                            default -> throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema,
                                 in.getLocation());
-                        }
+                        };
 
                         if (mount != null) {
                             final var label = mount.asEffectiveStatement().argument();
@@ -672,21 +664,27 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Object translateValueByType(final Object value, final DataSchemaNode node,
             final NamespaceContext namespaceCtx) {
-        if (node instanceof AnyxmlSchemaNode) {
-            checkArgument(value instanceof Document);
-            /*
-             * FIXME: Figure out some YANG extension dispatch, which will reuse JSON parsing or XML parsing -
-             *        anyxml is not well-defined in JSON.
-             */
-            return new DOMSource(((Document) value).getDocumentElement());
-        } else if (node instanceof AnydataSchemaNode) {
-            checkArgument(value instanceof Document);
-            return new DOMSourceAnydata(new DOMSource(((Document) value).getDocumentElement()));
-        } else if (node instanceof TypedDataSchemaNode typedNode) {
-            checkArgument(value instanceof String);
-            return codecs.codecFor(typedNode, stack).parseValue(namespaceCtx, (String) value);
-        } else {
-            throw new IllegalStateException("Unhandled schema " + node);
+        return switch (node) {
+            // FIXME: Figure out some YANG extension dispatch, which will reuse JSON parsing or XML parsing -
+            //        anyxml is not well-defined in JSON.
+            case AnydataSchemaNode anydata ->
+                new DOMSourceAnydata(new DOMSource(checkDocument(value).getDocumentElement()));
+            case AnyxmlSchemaNode anyxml -> new DOMSource(checkDocument(value).getDocumentElement());
+            case TypedDataSchemaNode typedNode ->
+                codecs.codecFor(typedNode, stack).parseValue(namespaceCtx, checkValue(String.class, value));
+            default -> throw new IllegalStateException("Unhandled schema " + node);
+        };
+    }
+
+    private static Document checkDocument(final Object value) {
+        return checkValue(Document.class, value);
+    }
+
+    private static <T> T checkValue(final Class<T> type, final Object value) {
+        try {
+            return type.cast(requireNonNull(value));
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Unexpected value while expecting a " + type.getName(), e);
         }
     }
 

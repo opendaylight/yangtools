@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
 
 /**
  * A {@link NormalizedNodeStreamWriter} which translates the events into an {@link XMLStreamWriter}, resulting in an
@@ -289,26 +288,28 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
     }
 
     final void anydataValue(final Object value) throws IOException {
-        if (value instanceof DOMSourceAnydata) {
-            try {
-                facade.anydataWriteStreamReader(((DOMSourceAnydata) value).toStreamReader());
-            } catch (XMLStreamException e) {
-                throw new IOException("Unable to transform anydata value: " + value, e);
+        switch (value) {
+            case DOMSourceAnydata domSource -> {
+                try {
+                    facade.anydataWriteStreamReader(domSource.toStreamReader());
+                } catch (XMLStreamException e) {
+                    throw new IOException("Unable to transform anydata value: " + value, e);
+                }
             }
-        } else if (value instanceof NormalizedAnydata) {
-            try {
-                facade.emitNormalizedAnydata((NormalizedAnydata) value);
-            } catch (XMLStreamException e) {
-                throw new IOException("Unable to emit anydata value: " + value, e);
+            case NormalizedAnydata normalized -> {
+                try {
+                    facade.emitNormalizedAnydata(normalized);
+                } catch (XMLStreamException e) {
+                    throw new IOException("Unable to emit anydata value: " + value, e);
+                }
             }
-        } else {
-            throw new IllegalStateException("Unexpected anydata value " + value);
+            default -> throw new IllegalStateException("Unexpected anydata value " + value);
         }
     }
 
     final void anyxmlValue(final DOMSource domSource) throws IOException {
         if (domSource != null) {
-            final Node domNode = requireNonNull(domSource.getNode());
+            final var domNode = requireNonNull(domSource.getNode());
             try {
                 facade.anyxmlWriteStreamReader(new DOMSourceXMLStreamReader(domSource));
             } catch (XMLStreamException e) {

@@ -155,12 +155,11 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     public void scalarValue(final Object value) throws IOException {
         final var current = tracker.currentStatement();
-        if (current instanceof TypedDataSchemaNode typedSchema) {
-            writeValue(value, typedSchema);
-        } else if (current instanceof AnydataEffectiveStatement) {
-            anydataValue(value);
-        } else {
-            throw new IllegalStateException("Unexpected scalar value " + value + " with " + current);
+        switch (current) {
+            case TypedDataSchemaNode typedSchema -> writeValue(value, typedSchema);
+            case AnydataEffectiveStatement anyData -> anydataValue(value);
+            case null, default ->
+                throw new IllegalStateException("Unexpected scalar value " + value + " with " + current);
         }
     }
 
