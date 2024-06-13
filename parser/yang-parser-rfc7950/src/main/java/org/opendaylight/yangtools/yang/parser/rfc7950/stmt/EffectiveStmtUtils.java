@@ -154,8 +154,8 @@ public final class EffectiveStmtUtils {
                     && defaultValues.remove(effectiveSubstatement.argument())
                     && containsIfFeature(effectiveSubstatement)) {
                 return true;
-            } else if (effectiveSubstatement instanceof TypeEffectiveStatement && isAnyDefaultValueMarkedWithIfFeature(
-                    (TypeEffectiveStatement<?>) effectiveSubstatement, defaultValues)) {
+            } else if (effectiveSubstatement instanceof TypeEffectiveStatement<?> tes
+                && isAnyDefaultValueMarkedWithIfFeature(tes, defaultValues)) {
                 return true;
             }
         }
