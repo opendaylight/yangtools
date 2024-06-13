@@ -434,13 +434,16 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Featu
                 boolean negative = false;
                 boolean positive = false;
                 for (var expr : exprs) {
-                    if (expr instanceof Present) {
-                        positive = true;
-                    } else if (expr instanceof Absent) {
-                        negative = true;
-                    } else {
-                        requireNonNull(expr);
-                        negative = positive = true;
+                    switch (expr) {
+                        case Present present -> {
+                            positive = true;
+                        }
+                        case Absent absent -> {
+                            negative = true;
+                        }
+                        case AbstractArray<?> array -> {
+                            negative = positive = true;
+                        }
                     }
                 }
 
@@ -452,11 +455,9 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Featu
 
                 // All expressions are either positive or negative, hence we can combine them efficiently
                 final var qnames = exprs.stream()
-                    .map(expr -> {
-                        if (expr instanceof Single single) {
-                            return single.qname;
-                        }
-                        throw new VerifyException("Unexpected expression " + expr);
+                    .map(expr -> switch (expr) {
+                        case Single single -> single.qname;
+                        case AbstractArray<?> array -> throw new VerifyException("Unexpected expression " + array);
                     })
                     .collect(ImmutableSet.toImmutableSet())
                     .toArray(new QName[0]);
