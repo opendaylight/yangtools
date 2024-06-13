@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -49,47 +50,34 @@ public final class DerivedTypes {
 
     public static @NonNull DerivedTypeBuilder<?> derivedTypeBuilder(final @NonNull TypeDefinition<?> baseType,
             final @NonNull QName qname) {
-        if (baseType instanceof BinaryTypeDefinition) {
-            return derivedBinaryBuilder((BinaryTypeDefinition) baseType, qname);
-        } else if (baseType instanceof BitsTypeDefinition) {
-            return derivedBitsBuilder((BitsTypeDefinition) baseType, qname);
-        } else if (baseType instanceof BooleanTypeDefinition) {
-            return derivedBooleanBuilder((BooleanTypeDefinition) baseType, qname);
-        } else if (baseType instanceof DecimalTypeDefinition) {
-            return derivedDecimalBuilder((DecimalTypeDefinition) baseType, qname);
-        } else if (baseType instanceof EmptyTypeDefinition) {
-            return derivedEmptyBuilder((EmptyTypeDefinition) baseType, qname);
-        } else if (baseType instanceof EnumTypeDefinition) {
-            return derivedEnumerationBuilder((EnumTypeDefinition) baseType, qname);
-        } else if (baseType instanceof IdentityrefTypeDefinition) {
-            return derivedIdentityrefBuilder((IdentityrefTypeDefinition) baseType, qname);
-        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            return derivedInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, qname);
-        } else if (baseType instanceof Int8TypeDefinition) {
-            return derivedInt8Builder((Int8TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Int16TypeDefinition) {
-            return derivedInt16Builder((Int16TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Int32TypeDefinition) {
-            return derivedInt32Builder((Int32TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Int64TypeDefinition) {
-            return derivedInt64Builder((Int64TypeDefinition) baseType, qname);
-        } else if (baseType instanceof LeafrefTypeDefinition) {
-            return derivedLeafrefBuilder((LeafrefTypeDefinition) baseType, qname);
-        } else if (baseType instanceof StringTypeDefinition) {
-            return derivedStringBuilder((StringTypeDefinition) baseType, qname);
-        } else if (baseType instanceof UnionTypeDefinition) {
-            return derivedUnionBuilder((UnionTypeDefinition) baseType, qname);
-        } else if (baseType instanceof Uint8TypeDefinition) {
-            return derivedUint8Builder((Uint8TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Uint16TypeDefinition) {
-            return derivedUint16Builder((Uint16TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Uint32TypeDefinition) {
-            return derivedUint32Builder((Uint32TypeDefinition) baseType, qname);
-        } else if (baseType instanceof Uint64TypeDefinition) {
-            return derivedUint64Builder((Uint64TypeDefinition) baseType, qname);
-        } else {
-            throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
-        }
+        return typeBuilderOf(baseType, qname);
+    }
+
+    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "ungrokked pattern cast")
+    private static @NonNull DerivedTypeBuilder<?> typeBuilderOf(final @NonNull TypeDefinition<?> baseType,
+            final @NonNull QName qname) {
+        return switch (baseType) {
+            case BinaryTypeDefinition def -> derivedBinaryBuilder(def, qname);
+            case BitsTypeDefinition def -> derivedBitsBuilder(def, qname);
+            case BooleanTypeDefinition def -> derivedBooleanBuilder(def, qname);
+            case DecimalTypeDefinition def -> derivedDecimalBuilder(def, qname);
+            case EmptyTypeDefinition def -> derivedEmptyBuilder(def, qname);
+            case EnumTypeDefinition def -> derivedEnumerationBuilder(def, qname);
+            case IdentityrefTypeDefinition def -> derivedIdentityrefBuilder(def, qname);
+            case InstanceIdentifierTypeDefinition def -> derivedInstanceIdentifierBuilder(def, qname);
+            case Int8TypeDefinition def -> derivedInt8Builder(def, qname);
+            case Int16TypeDefinition def -> derivedInt16Builder(def, qname);
+            case Int32TypeDefinition def -> derivedInt32Builder(def, qname);
+            case Int64TypeDefinition def -> derivedInt64Builder(def, qname);
+            case LeafrefTypeDefinition def -> derivedLeafrefBuilder(def, qname);
+            case StringTypeDefinition def -> derivedStringBuilder(def, qname);
+            case UnionTypeDefinition def -> derivedUnionBuilder(def, qname);
+            case Uint8TypeDefinition def -> derivedUint8Builder(def, qname);
+            case Uint16TypeDefinition def -> derivedUint16Builder(def, qname);
+            case Uint32TypeDefinition def -> derivedUint32Builder(def, qname);
+            case Uint64TypeDefinition def -> derivedUint64Builder(def, qname);
+            default -> throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
+        };
     }
 
     public static @NonNull DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
