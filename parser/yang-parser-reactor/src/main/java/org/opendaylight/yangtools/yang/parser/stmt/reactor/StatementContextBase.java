@@ -405,12 +405,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     final List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatementUnsafe(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final int toAdd) {
-        final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
-        checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
-                || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase at: %s", sourceReference());
-
-        return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
+        return switch (getRoot().getSourceContext().getInProgressPhase()) {
+            case FULL_DECLARATION, EFFECTIVE_MODEL -> effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
+            default -> throw new IllegalStateException(
+                "Effective statement cannot be added in declared phase at: " + sourceReference());
+        };
     }
 
     @Override
@@ -752,13 +751,11 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(stmt);
-        if (stmt instanceof StatementContextBase<?, ?, ?> base) {
-            return childCopyOf(base, type, targetModule);
-        } else if (stmt instanceof ReplicaStatementContext<?, ?, ?> replica) {
-            return replica.replicaAsChildOf(this);
-        } else {
-            throw new IllegalArgumentException("Unsupported statement " + stmt);
-        }
+        return switch (stmt) {
+            case StatementContextBase<?, ?, ?> base -> childCopyOf(base, type, targetModule);
+            case ReplicaStatementContext<?, ?, ?> replica -> replica.replicaAsChildOf(this);
+            default -> throw new IllegalArgumentException("Unsupported statement " + stmt);
+        };
     }
 
     private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
