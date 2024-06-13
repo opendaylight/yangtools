@@ -14,10 +14,8 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -57,16 +55,10 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
-import org.opendaylight.yangtools.yang.model.ri.type.BitsTypeBuilder;
-import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
-import org.opendaylight.yangtools.yang.model.ri.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidRangeConstraintException;
-import org.opendaylight.yangtools.yang.model.ri.type.LengthRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.RangeRestrictedTypeBuilder;
-import org.opendaylight.yangtools.yang.model.ri.type.RequireInstanceRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.StringTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -74,7 +66,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -142,14 +133,14 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             final Mutable<QName, TypeStatement, EffectiveStatement<QName, TypeStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        final QName typeQName = stmt.getArgument();
-        final BuiltinEffectiveStatement builtin = STATIC_BUILT_IN_TYPES.get(typeQName);
+        final var typeQName = stmt.getArgument();
+        final var builtin = STATIC_BUILT_IN_TYPES.get(typeQName);
         if (builtin != null) {
             stmt.addToNs(BaseTypeNamespace.INSTANCE, Empty.value(), builtin);
             return;
         }
 
-        final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final var typePrereq = typeAction.requiresCtx(stmt, ParserNamespaces.TYPE, typeQName,
             ModelProcessingPhase.EFFECTIVE_MODEL);
         typeAction.mutatesEffectiveCtx(stmt.getParentContext());
@@ -186,11 +177,11 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     public final TypeEffectiveStatement<TypeStatement> createUndeclaredEffective(
             final UndeclaredCurrent<QName, TypeStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
-        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements = buildEffectiveSubstatements(stmt,
+        final var substatements = buildEffectiveSubstatements(stmt,
             statementsToBuild(stmt, effectiveSubstatements.filter(StmtContext::isSupportedToBuildEffective)));
 
         // First look up the proper base type
-        final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(stmt);
+        final var typeStmt = resolveType(stmt);
         if (substatements.isEmpty()) {
             return typeStmt;
         }
@@ -203,7 +194,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     protected final TypeStatement createDeclared(final BoundStmtCtx<QName> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
-            final TypeStatement builtin = BuiltinTypeStatement.lookup(ctx.getRawArgument());
+            final var builtin = BuiltinTypeStatement.lookup(ctx.getRawArgument());
             if (builtin != null) {
                 return builtin;
             }
@@ -221,63 +212,44 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     protected EffectiveStatement<QName, TypeStatement> createEffective(final Current<QName, TypeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // First look up the proper base type
-        final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(stmt);
+        final var typeStmt = resolveType(stmt);
         if (substatements.isEmpty()) {
             return typeStmt;
         }
 
         // Now instantiate the proper effective statement for that type
-        final TypeDefinition<?> baseType = typeStmt.getTypeDefinition();
-        final TypeStatement declared = stmt.declared();
-        if (baseType instanceof BinaryTypeDefinition) {
-            return createBinary(stmt, (BinaryTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof BitsTypeDefinition) {
-            return createBits(stmt, (BitsTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof BooleanTypeDefinition) {
-            return createBoolean(stmt, (BooleanTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof DecimalTypeDefinition) {
-            return createDecimal(stmt, (DecimalTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof EmptyTypeDefinition) {
-            return createEmpty(stmt, (EmptyTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof EnumTypeDefinition) {
-            return createEnum(stmt, (EnumTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof IdentityrefTypeDefinition) {
-            return createIdentityref(stmt, (IdentityrefTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            return createInstanceIdentifier(stmt, (InstanceIdentifierTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof Int8TypeDefinition) {
-            return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType, typeEffectiveQName(stmt)));
-        } else if (baseType instanceof Int16TypeDefinition) {
-            return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newInt16Builder((Int16TypeDefinition) baseType, typeEffectiveQName(stmt)));
-        } else if (baseType instanceof Int32TypeDefinition) {
-            return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newInt32Builder((Int32TypeDefinition) baseType, typeEffectiveQName(stmt)));
-        } else if (baseType instanceof Int64TypeDefinition) {
-            return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newInt64Builder((Int64TypeDefinition) baseType, typeEffectiveQName(stmt)));
-        } else if (baseType instanceof LeafrefTypeDefinition) {
-            return createLeafref(stmt, (LeafrefTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof StringTypeDefinition) {
-            return createString(stmt, (StringTypeDefinition) baseType, declared, substatements);
-        } else if (baseType instanceof Uint8TypeDefinition) {
-            return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newUint8Builder((Uint8TypeDefinition) baseType, typeEffectiveQName(stmt)));
-        } else if (baseType instanceof Uint16TypeDefinition) {
-            return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newUint16Builder((Uint16TypeDefinition) baseType, typeEffectiveQName(stmt)));
-        } else if (baseType instanceof Uint32TypeDefinition) {
-            return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newUint32Builder((Uint32TypeDefinition) baseType, typeEffectiveQName(stmt)));
-        } else if (baseType instanceof Uint64TypeDefinition) {
-            return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newUint64Builder((Uint64TypeDefinition) baseType, typeEffectiveQName(stmt)));
-        } else if (baseType instanceof UnionTypeDefinition) {
-            return createUnion(stmt, (UnionTypeDefinition) baseType, declared, substatements);
-        } else {
-            throw new IllegalStateException("Unhandled base type " + baseType);
-        }
+        final var baseType = typeStmt.getTypeDefinition();
+        final var declared = stmt.declared();
+        return switch (baseType) {
+            case BinaryTypeDefinition def -> createBinary(stmt, def, declared, substatements);
+            case BitsTypeDefinition def -> createBits(stmt, def, declared, substatements);
+            case BooleanTypeDefinition def -> createBoolean(stmt, def, declared, substatements);
+            case DecimalTypeDefinition def -> createDecimal(stmt, def, declared, substatements);
+            case EmptyTypeDefinition def ->  createEmpty(stmt, def, declared, substatements);
+            case EnumTypeDefinition def -> createEnum(stmt, def, declared, substatements);
+            case IdentityrefTypeDefinition def -> createIdentityref(stmt, def, declared, substatements);
+            case InstanceIdentifierTypeDefinition def -> createInstanceIdentifier(stmt, def, declared, substatements);
+            case Int8TypeDefinition def -> createIntegral(stmt, declared, substatements,
+                RestrictedTypes.newInt8Builder(def, typeEffectiveQName(stmt)));
+            case Int16TypeDefinition def -> createIntegral(stmt, declared, substatements,
+                RestrictedTypes.newInt16Builder(def, typeEffectiveQName(stmt)));
+            case Int32TypeDefinition def -> createIntegral(stmt, declared, substatements,
+                RestrictedTypes.newInt32Builder(def, typeEffectiveQName(stmt)));
+            case Int64TypeDefinition def -> createIntegral(stmt, declared, substatements,
+                RestrictedTypes.newInt64Builder(def, typeEffectiveQName(stmt)));
+            case LeafrefTypeDefinition def -> createLeafref(stmt, def, declared, substatements);
+            case StringTypeDefinition def -> createString(stmt, def, declared, substatements);
+            case Uint8TypeDefinition def -> createIntegral(stmt, declared, substatements,
+                RestrictedTypes.newUint8Builder(def, typeEffectiveQName(stmt)));
+            case Uint16TypeDefinition def -> createIntegral(stmt, declared, substatements,
+                RestrictedTypes.newUint16Builder(def, typeEffectiveQName(stmt)));
+            case Uint32TypeDefinition def -> createIntegral(stmt, declared, substatements,
+                RestrictedTypes.newUint32Builder(def, typeEffectiveQName(stmt)));
+            case Uint64TypeDefinition def -> createIntegral(stmt, declared, substatements,
+                RestrictedTypes.newUint64Builder(def, typeEffectiveQName(stmt)));
+            case UnionTypeDefinition def -> createUnion(stmt, def, declared, substatements);
+            default -> throw new IllegalStateException("Unhandled base type " + baseType);
+        };
     }
 
     // FIXME: YANGTOOLS-1208: this needs to happen during onFullDefinitionDeclared() and stored (again) in a namespace
@@ -293,24 +265,21 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
      * @throws SourceException if the target type cannot be found
      */
     private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final NamespaceStmtCtx ctx) {
-        final Object obj = verifyNotNull(ctx.namespaceItem(BaseTypeNamespace.INSTANCE, Empty.value()));
-        if (obj instanceof BuiltinEffectiveStatement) {
-            return (BuiltinEffectiveStatement) obj;
-        } else if (obj instanceof StmtContext) {
-            return ((TypedefEffectiveStatement) ((StmtContext<?, ?, ?>) obj).buildEffective())
-                .asTypeEffectiveStatement();
-        } else {
-            throw new InferenceException(ctx, "Unexpected base object %s", obj);
-        }
+        final var obj = verifyNotNull(ctx.namespaceItem(BaseTypeNamespace.INSTANCE, Empty.value()));
+        return switch (obj) {
+            case BuiltinEffectiveStatement builtin -> builtin;
+            case StmtContext<?, ?, ?> stmt ->
+                ((TypedefEffectiveStatement) stmt.buildEffective()).asTypeEffectiveStatement();
+            default -> throw new InferenceException(ctx, "Unexpected base object %s", obj);
+        };
     }
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createBinary(final Current<QName, ?> ctx,
             final BinaryTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final LengthRestrictedTypeBuilder<BinaryTypeDefinition> builder =
-                RestrictedTypes.newBinaryBuilder(baseType, typeEffectiveQName(ctx));
+        final var builder = RestrictedTypes.newBinaryBuilder(baseType, typeEffectiveQName(ctx));
 
-        for (EffectiveStatement<?, ?> stmt : substatements) {
+        for (var stmt : substatements) {
             if (stmt instanceof LengthEffectiveStatement length) {
                 try {
                     builder.setLengthConstraint(length, length.argument());
@@ -328,11 +297,11 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
             final BitsTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final BitsTypeBuilder builder = RestrictedTypes.newBitsBuilder(baseType, ctx.argumentAsTypeQName());
+        final var builder = RestrictedTypes.newBitsBuilder(baseType, ctx.argumentAsTypeQName());
 
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof BitEffectiveStatement) {
-                builder.addBit(addRestrictedBit(ctx, baseType, (BitEffectiveStatement) stmt));
+        for (var stmt : substatements) {
+            if (stmt instanceof BitEffectiveStatement bit) {
+                builder.addBit(addRestrictedBit(ctx, baseType, bit));
             }
         }
 
@@ -352,17 +321,19 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private static @NonNull TypeEffectiveStatement<TypeStatement> createDecimal(final Current<QName, ?> ctx,
             final DecimalTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final RangeRestrictedTypeBuilder<DecimalTypeDefinition, Decimal64> builder =
-                RestrictedTypes.newDecima64Builder(baseType, typeEffectiveQName(ctx));
+        final var builder = RestrictedTypes.newDecima64Builder(baseType, typeEffectiveQName(ctx));
 
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof RangeEffectiveStatement range) {
-                builder.setRangeConstraint(range, range.argument());
-            }
-            if (stmt instanceof FractionDigitsEffectiveStatement) {
-                final Integer digits = ((FractionDigitsEffectiveStatement)stmt).argument();
-                SourceException.throwIf(baseType.getFractionDigits() != digits, ctx,
-                    "Cannot override fraction-digits from base type %s to %s", baseType, digits);
+        for (var stmt : substatements) {
+            switch (stmt) {
+                case RangeEffectiveStatement range ->  builder.setRangeConstraint(range, range.argument());
+                case FractionDigitsEffectiveStatement fdes -> {
+                    final var digits = fdes.argument();
+                    SourceException.throwIf(baseType.getFractionDigits() != digits, ctx,
+                        "Cannot override fraction-digits from base type %s to %s", baseType, digits);
+                }
+                default -> {
+                    // no-op
+                }
             }
         }
 
@@ -379,12 +350,11 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private @NonNull TypeEffectiveStatement<TypeStatement> createEnum(final Current<?, ?> ctx,
             final EnumTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final EnumerationTypeBuilder builder = RestrictedTypes.newEnumerationBuilder(baseType,
-            ctx.argumentAsTypeQName());
+        final var builder = RestrictedTypes.newEnumerationBuilder(baseType, ctx.argumentAsTypeQName());
 
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof EnumEffectiveStatement) {
-                builder.addEnum(addRestrictedEnum(ctx, baseType, (EnumEffectiveStatement) stmt));
+        for (var stmt : substatements) {
+            if (stmt instanceof EnumEffectiveStatement ees) {
+                builder.addEnum(addRestrictedEnum(ctx, baseType, ees));
             }
         }
 
@@ -404,12 +374,11 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private static @NonNull TypeEffectiveStatement<TypeStatement> createInstanceIdentifier(final Current<QName, ?> ctx,
             final InstanceIdentifierTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(baseType,
-                    typeEffectiveQName(ctx));
+        final var builder = RestrictedTypes.newInstanceIdentifierBuilder(baseType, typeEffectiveQName(ctx));
 
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof RequireInstanceEffectiveStatement) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatement)stmt).argument());
+        for (var stmt : substatements) {
+            if (stmt instanceof RequireInstanceEffectiveStatement ries) {
+                builder.setRequireInstance(ries.argument());
             }
         }
 
@@ -420,9 +389,9 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         @NonNull TypeEffectiveStatement<TypeStatement> createIntegral(final Current<?, ?> ctx,
                 final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
                 final RangeRestrictedTypeBuilder<T, N> builder) {
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof RangeEffectiveStatement rangeStmt) {
-                builder.setRangeConstraint(rangeStmt, rangeStmt.argument());
+        for (var stmt : substatements) {
+            if (stmt instanceof RangeEffectiveStatement range) {
+                builder.setRangeConstraint(range, range.argument());
             }
         }
 
@@ -436,12 +405,12 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private static @NonNull TypeEffectiveStatement<TypeStatement> createLeafref(final Current<QName, ?> ctx,
             final LeafrefTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> builder =
-                RestrictedTypes.newLeafrefBuilder(baseType, AbstractTypeStatementSupport.typeEffectiveQName(ctx));
+        final var builder = RestrictedTypes.newLeafrefBuilder(baseType,
+            AbstractTypeStatementSupport.typeEffectiveQName(ctx));
 
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof RequireInstanceEffectiveStatement) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatement) stmt).argument());
+        for (var stmt : substatements) {
+            if (stmt instanceof RequireInstanceEffectiveStatement ries) {
+                builder.setRequireInstance(ries.argument());
             }
         }
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
@@ -450,21 +419,24 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private static @NonNull TypeEffectiveStatement<TypeStatement> createString(final Current<QName, ?> ctx,
             final StringTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final StringTypeBuilder builder = RestrictedTypes.newStringBuilder(baseType,
+        final var builder = RestrictedTypes.newStringBuilder(baseType,
             AbstractTypeStatementSupport.typeEffectiveQName(ctx));
 
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof LengthEffectiveStatement length) {
-                try {
-                    builder.setLengthConstraint(length, length.argument());
-                } catch (IllegalStateException e) {
-                    throw new SourceException(ctx, e, "Multiple length constraints encountered");
-                } catch (InvalidLengthConstraintException e) {
-                    throw new SourceException(ctx, e, "Invalid length constraint %s", length.argument());
+        for (var stmt : substatements) {
+            switch (stmt) {
+                case LengthEffectiveStatement length -> {
+                    try {
+                        builder.setLengthConstraint(length, length.argument());
+                    } catch (IllegalStateException e) {
+                        throw new SourceException(ctx, e, "Multiple length constraints encountered");
+                    } catch (InvalidLengthConstraintException e) {
+                        throw new SourceException(ctx, e, "Invalid length constraint %s", length.argument());
+                    }
                 }
-            }
-            if (stmt instanceof PatternEffectiveStatement) {
-                builder.addPatternConstraint((PatternEffectiveStatement) stmt);
+                case PatternEffectiveStatement pattern -> builder.addPatternConstraint(pattern);
+                default -> {
+                    // No-op
+                }
             }
         }
 
