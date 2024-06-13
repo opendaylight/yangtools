@@ -57,40 +57,37 @@ final class StatementOutputV1 extends StatementOutput {
         }
 
         final IRArgument argument = stmt.argument();
-        if (stmt instanceof IRStatement.Z22) {
-            writeHeader(keyBits, IOConstantsV1.HDR_LOCATION_22, sizeBits, argument);
-            out.writeShort(stmt.startLine());
-            out.writeShort(stmt.startColumn());
-        } else if (stmt instanceof IRStatement.Z31 z31) {
-            writeHeader(keyBits, IOConstantsV1.HDR_LOCATION_31, sizeBits, argument);
-            out.writeInt(z31.value());
-        } else {
-            writeHeader(keyBits, IOConstantsV1.HDR_LOCATION_44, sizeBits, argument);
-            out.writeInt(stmt.startLine());
-            out.writeInt(stmt.startColumn());
+        switch (stmt) {
+            case IRStatement.Z22 z22 -> {
+                writeHeader(keyBits, IOConstantsV1.HDR_LOCATION_22, sizeBits, argument);
+                out.writeShort(stmt.startLine());
+                out.writeShort(stmt.startColumn());
+            }
+            case IRStatement.Z31 z31 -> {
+                writeHeader(keyBits, IOConstantsV1.HDR_LOCATION_31, sizeBits, argument);
+                out.writeInt(z31.value());
+            }
+            case IRStatement.Z44 z44 -> {
+                writeHeader(keyBits, IOConstantsV1.HDR_LOCATION_44, sizeBits, argument);
+                out.writeInt(stmt.startLine());
+                out.writeInt(stmt.startColumn());
+            }
         }
 
         switch (keyBits) {
-            case IOConstantsV1.HDR_KEY_REF_U8:
-                out.writeByte(keyCode);
-                break;
-            case IOConstantsV1.HDR_KEY_REF_U16:
-                out.writeShort(keyCode);
-                break;
-            case IOConstantsV1.HDR_KEY_REF_S32:
-                out.writeInt(keyCode);
-                break;
-            case IOConstantsV1.HDR_KEY_DEF_QUAL:
+            case IOConstantsV1.HDR_KEY_REF_U8 -> out.writeByte(keyCode);
+            case IOConstantsV1.HDR_KEY_REF_U16 -> out.writeShort(keyCode);
+            case IOConstantsV1.HDR_KEY_REF_S32 -> out.writeInt(keyCode);
+            case IOConstantsV1.HDR_KEY_DEF_QUAL -> {
                 writeString(keyword.prefix());
                 writeString(keyword.identifier());
                 keywords.put(keyword, keywords.size());
-                break;
-            case IOConstantsV1.HDR_KEY_DEF_UQUAL:
+            }
+            case IOConstantsV1.HDR_KEY_DEF_UQUAL -> {
                 writeString(keyword.identifier());
                 keywords.put(keyword, keywords.size());
-                break;
-            default:
-                throw new IllegalStateException("Unhandled key bits " + keyBits);
+            }
+            default -> throw new IllegalStateException("Unhandled key bits " + keyBits);
         }
 
         if (argument != null) {
@@ -114,7 +111,7 @@ final class StatementOutputV1 extends StatementOutput {
                 throw new IllegalStateException("Unhandled size bits " + sizeBits);
         }
 
-        for (IRStatement child : statements) {
+        for (var child : statements) {
             writeStatement(child);
         }
     }
@@ -172,12 +169,9 @@ final class StatementOutputV1 extends StatementOutput {
     }
 
     private void writeArgument(final IRArgument argument) throws IOException {
-        if (argument instanceof Single) {
-            writeArgument((Single) argument);
-        } else if (argument instanceof Concatenation) {
-            writeArgument((Concatenation) argument);
-        } else {
-            throw new IllegalStateException("Unhandled argument " + argument);
+        switch (argument) {
+            case Single single -> writeArgument(single);
+            case Concatenation concat -> writeArgument(concat);
         }
     }
 
@@ -213,7 +207,7 @@ final class StatementOutputV1 extends StatementOutput {
     }
 
     private void writeArgument(final Concatenation argument) throws IOException {
-        final List<? extends Single> parts = argument.parts();
+        final var parts = argument.parts();
         final int size = parts.size();
         if (size <= 255) {
             out.writeByte(IOConstantsV1.ARG_TYPE_CONCAT_U8);
@@ -226,7 +220,7 @@ final class StatementOutputV1 extends StatementOutput {
             out.writeInt(size);
         }
 
-        for (Single part : parts) {
+        for (var part : parts) {
             writeArgument(part);
         }
     }
