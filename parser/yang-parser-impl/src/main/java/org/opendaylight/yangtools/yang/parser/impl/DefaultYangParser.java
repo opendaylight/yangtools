@@ -106,28 +106,26 @@ final class DefaultYangParser implements YangParser {
 
     static StatementStreamSource sourceToStatementStream(final SourceRepresentation source)
             throws IOException, YangSyntaxErrorException {
-        requireNonNull(source);
-        if (source instanceof YangIRSource irSource) {
-            return YangStatementStreamSource.create(irSource);
-        } else if (source instanceof YangTextSource yangSource) {
-            return YangStatementStreamSource.create(yangSource);
-        } else if (source instanceof YinDomSource yinDom) {
-            return YinStatementStreamSource.create(yinDom);
-        } else if (source instanceof YinTextSource yinText) {
-            try {
-                return YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(yinText));
-            } catch (SAXException e) {
-                throw new YangSyntaxErrorException(source.sourceId(), 0, 0, "Failed to parse XML text", e);
+        return switch (source) {
+            case YangIRSource irSource -> YangStatementStreamSource.create(irSource);
+            case YangTextSource yangSource -> YangStatementStreamSource.create(yangSource);
+            case YinDomSource yinDom -> YinStatementStreamSource.create(yinDom);
+            case YinTextSource yinText -> {
+                try {
+                    yield YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(yinText));
+                } catch (SAXException e) {
+                    throw new YangSyntaxErrorException(source.sourceId(), 0, 0, "Failed to parse XML text", e);
+                }
             }
-        } else if (source instanceof YinXmlSource yinXml) {
-            try {
-                return YinStatementStreamSource.create(yinXml);
-            } catch (TransformerException e) {
-                throw new YangSyntaxErrorException(source.sourceId(), 0, 0,
-                    "Failed to assemble in-memory representation", e);
+            case YinXmlSource yinXml -> {
+                try {
+                    yield YinStatementStreamSource.create(yinXml);
+                } catch (TransformerException e) {
+                    throw new YangSyntaxErrorException(source.sourceId(), 0, 0,
+                        "Failed to assemble in-memory representation", e);
+                }
             }
-        } else {
-            throw new IllegalArgumentException("Unsupported source " + source);
-        }
+            default -> throw new IllegalArgumentException("Unsupported source " + source);
+        };
     }
 }
