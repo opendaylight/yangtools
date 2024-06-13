@@ -155,26 +155,27 @@ abstract class InstanceIdentifierParser {
     }
 
     private Collection<YangExpr> parsePredicate(final PredicateContext expr) {
-        final var first = expr.getChild(0);
-        if (first instanceof LeafListPredicateContext llp) {
-            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(YangLocationPath.self(),
-                parseEqStringValue(getChild(llp.getChild(LeafListPredicateExprContext.class, 0),
+        return switch (expr.getChild(0)) {
+            case LeafListPredicateContext llp ->
+                ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(YangLocationPath.self(),
+                    parseEqStringValue(getChild(llp.getChild(LeafListPredicateExprContext.class, 0),
                     EqQuotedStringContext.class, 1))));
-        } else if (first instanceof PosContext pc) {
-            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(FunctionSupport.POSITION,
-                mathSupport.createNumber(pc.getToken(instanceIdentifierParser.PositiveIntegerValue, 0).getText())));
-        }
-
-        final int length = expr.getChildCount();
-        final var ret = new ArrayList<YangExpr>(length);
-        for (int i = 0; i < length; ++i) {
-            final var pred = getChild(expr, KeyPredicateContext.class, i).getChild(KeyPredicateExprContext.class, 0);
-            ret.add(YangBinaryOperator.EQUALS.exprWith(
-                createChildExpr(getChild(pred, NodeIdentifierContext.class, 0)),
-                parseEqStringValue(getChild(pred, EqQuotedStringContext.class, 1))));
-        }
-
-        return ret;
+            case PosContext pc ->
+                ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(FunctionSupport.POSITION,
+                    mathSupport.createNumber(pc.getToken(instanceIdentifierParser.PositiveIntegerValue, 0).getText())));
+            default -> {
+                final int length = expr.getChildCount();
+                final var ret = new ArrayList<YangExpr>(length);
+                for (int i = 0; i < length; ++i) {
+                    final var pred = getChild(expr, KeyPredicateContext.class, i)
+                        .getChild(KeyPredicateExprContext.class, 0);
+                    ret.add(YangBinaryOperator.EQUALS.exprWith(
+                        createChildExpr(getChild(pred, NodeIdentifierContext.class, 0)),
+                        parseEqStringValue(getChild(pred, EqQuotedStringContext.class, 1))));
+                }
+                yield ret;
+            }
+        };
     }
 
     private YangQNameExpr createChildExpr(final NodeIdentifierContext expr) {
