@@ -226,17 +226,6 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        walkTree(writer, stmtDef);
-    }
-
-    @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        walkTree(writer, stmtDef);
-    }
-
-    @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
         walkTree(writer, stmtDef);

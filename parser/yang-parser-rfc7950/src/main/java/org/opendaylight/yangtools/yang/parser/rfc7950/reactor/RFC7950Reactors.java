@@ -109,8 +109,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Utility class holding entrypoints for assembling RFC6020/RFC7950 statement {@link CrossSourceStatementReactor}s.
- *
- * @author Robert Varga
  */
 @Beta
 public final class RFC7950Reactors {
@@ -126,7 +124,7 @@ public final class RFC7950Reactors {
         // Hidden on purpose
     }
 
-    private static StatementSupportBundle preLinkageBundle(final YangParserConfiguration config) {
+    private static StatementSupportBundle stmtDefBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.derivedFrom(INIT_BUNDLE)
             .addVersionSpecificSupport(VERSION_1, ModuleStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, ModuleStatementSupport.rfc7950Instance(config))
@@ -142,22 +140,16 @@ public final class RFC7950Reactors {
             .addSupport(new YangVersionStatementSupport(config))
             .addSupport(new RevisionStatementSupport(config))
             .addSupport(new RevisionDateStatementSupport(config))
+            .addSupport(new DescriptionStatementSupport(config))
+            .addSupport(new ReferenceStatementSupport(config))
+            .addSupport(new ContactStatementSupport(config))
+            .addSupport(new OrganizationStatementSupport(config))
             .addSupport(NamespaceBehaviours.MODULE_NAME_TO_NAMESPACE)
             .addSupport(NamespaceBehaviours.PRELINKAGE_MODULE)
             .addSupport(NamespaceBehaviours.IMP_PREFIX_TO_NAMESPACE)
             .addSupport(NamespaceBehaviours.MODULECTX_TO_QNAME)
             .addSupport(QNameModuleNamespace.BEHAVIOUR)
             .addSupport(ImportedVersionNamespace.BEHAVIOUR)
-            .build();
-    }
-
-    private static StatementSupportBundle linkageBundle(final StatementSupportBundle preLinkageBundle,
-            final YangParserConfiguration config) {
-        return StatementSupportBundle.derivedFrom(preLinkageBundle)
-            .addSupport(new DescriptionStatementSupport(config))
-            .addSupport(new ReferenceStatementSupport(config))
-            .addSupport(new ContactStatementSupport(config))
-            .addSupport(new OrganizationStatementSupport(config))
             .addSupport(NamespaceBehaviours.MODULE)
             .addSupport(NamespaceBehaviours.MODULE_FOR_BELONGSTO)
             .addSupport(NamespaceBehaviours.SUBMODULE)
@@ -173,12 +165,6 @@ public final class RFC7950Reactors {
             .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULECTX)
             .addSupport(ModuleQNameToPrefix.BEHAVIOUR)
             .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULE_NAME)
-            .build();
-    }
-
-    private static StatementSupportBundle stmtDefBundle(final StatementSupportBundle linkageBundle,
-            final YangParserConfiguration config) {
-        return StatementSupportBundle.derivedFrom(linkageBundle)
             .addSupport(new YinElementStatementSupport(config))
             .addSupport(new ArgumentStatementSupport(config))
             .addSupport(new ExtensionStatementSupport(config))
@@ -304,16 +290,11 @@ public final class RFC7950Reactors {
 
     private static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
             final @NonNull XPathSupport xpathSupport, final YangParserConfiguration config) {
-        final StatementSupportBundle preLinkageBundle = preLinkageBundle(config);
-        final StatementSupportBundle linkageBundle = linkageBundle(preLinkageBundle, config);
-        final StatementSupportBundle stmtDefBundle = stmtDefBundle(linkageBundle, config);
-        final StatementSupportBundle fullDeclarationBundle =
-            fullDeclarationBundle(stmtDefBundle, xpathSupport, config);
+        final var stmtDefBundle = stmtDefBundle(config);
+        final var fullDeclarationBundle = fullDeclarationBundle(stmtDefBundle, xpathSupport, config);
 
         return new CustomCrossSourceStatementReactorBuilder(SUPPORTED_VERSIONS)
                 .addAllSupports(ModelProcessingPhase.INIT, INIT_BUNDLE)
-                .addAllSupports(ModelProcessingPhase.SOURCE_PRE_LINKAGE, preLinkageBundle)
-                .addAllSupports(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle)
                 .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION, stmtDefBundle)
                 .addAllSupports(ModelProcessingPhase.FULL_DECLARATION, fullDeclarationBundle)
                 .addAllSupports(ModelProcessingPhase.EFFECTIVE_MODEL, fullDeclarationBundle)

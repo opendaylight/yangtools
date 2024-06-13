@@ -17,11 +17,9 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
@@ -84,22 +82,6 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final IRStatement rootStatement,
             final String symbolicName) {
         return new YangStatementStreamSource(identifier, rootStatement, symbolicName);
-    }
-
-    @Override
-    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, null, YangVersion.VERSION_1).visit(rootStatement);
-    }
-
-    @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
-            @Override
-            StatementDefinition resolveStatement(final QNameModule module, final String localName) {
-                return stmtDef.getByNamespaceAndLocalName(module.namespace(), localName);
-            }
-        }.visit(rootStatement);
     }
 
     @Override

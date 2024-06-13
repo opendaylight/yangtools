@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -438,36 +437,14 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
 
         switch (inProgressPhase) {
-            case SOURCE_PRE_LINKAGE:
-                source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
-                break;
-            case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
-                    getRootVersion());
-                break;
-            case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
+            case STATEMENT_DEFINITION -> source.writeLinkageAndStatementDefinitions(
+                    new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(), getRootVersion());
+            case FULL_DECLARATION ->  source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(),
                     prefixes(), getRootVersion());
-                break;
-            case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
-                    getRootVersion());
-                break;
-            default:
-                break;
+            default -> {
+                // No-op
+            }
         }
-    }
-
-    private PrefixResolver preLinkagePrefixes() {
-        final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
-        final var prefixToNamespaceMap = getAllFromLocalStorage(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
-        if (prefixToNamespaceMap == null) {
-            //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
-            return null;
-        }
-
-        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.of(value)));
-        return preLinkagePrefixes;
     }
 
     private PrefixResolver prefixes() {

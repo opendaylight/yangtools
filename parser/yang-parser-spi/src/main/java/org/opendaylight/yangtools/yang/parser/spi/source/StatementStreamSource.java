@@ -54,44 +54,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 //               a visitor/filter or perform some explicit argument binding?
 public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
     /**
-     * Emits only pre-linkage-related statements to supplied {@code writer}.
-     *
-     * @param writer
-     *            {@link StatementWriter} which should be used to emit
-     *            statements.
-     * @param stmtDef
-     *            Map of available statement definitions. Only these statements
-     *            may be written to statement writer, source MUST ignore and MUST NOT
-     *            emit any other statements.
-     * @throws SourceException
-     *             If source was is not valid, or provided statement writer
-     *             failed to write statements.
-     */
-    void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef);
-
-    /**
-     * Emits only linkage-related statements to supplied {@code writer} based on specified YANG version.
-     * Default implementation does not make any differences between versions.
-     *
-     * @param writer
-     *            {@link StatementWriter} which should be used to emit
-     *            statements.
-     * @param stmtDef
-     *            Map of available statement definitions. Only these statements
-     *            may be written to statement writer, source MUST ignore and
-     *            MUST NOT emit any other statements.
-     * @param preLinkagePrefixes
-     *            Pre-linkage map of source-specific prefixes to namespaces
-     * @param yangVersion
-     *            yang version.
-     * @throws SourceException
-     *             If source was is not valid, or provided statement writer
-     *             failed to write statements.
-     */
-    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef,
-        PrefixResolver preLinkagePrefixes, YangVersion yangVersion);
-
-    /**
      * Emits only linkage and language extension statements to supplied
      * {@code writer} based on specified YANG version. Default implementation
      * does not make any differences between versions.

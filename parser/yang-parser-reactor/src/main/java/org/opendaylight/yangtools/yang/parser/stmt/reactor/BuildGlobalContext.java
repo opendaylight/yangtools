@@ -60,8 +60,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-        ModelProcessingPhase.SOURCE_LINKAGE,
         ModelProcessingPhase.STATEMENT_DEFINITION,
         ModelProcessingPhase.FULL_DECLARATION,
         ModelProcessingPhase.EFFECTIVE_MODEL
@@ -75,13 +73,12 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private final Set<SourceSpecificContext> sources = new HashSet<>();
     private final ImmutableSet<YangVersion> supportedVersions;
 
-    private Set<SourceSpecificContext> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
     BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
-        this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
+        supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 
         final var access = accessNamespace(ValidationBundles.NAMESPACE);
         for (var validationBundle : supportedValidation.entrySet()) {
@@ -294,13 +291,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     @SuppressWarnings("checkstyle:illegalCatch")
     private void completePhaseActions() throws ReactorException {
         checkState(currentPhase != null);
-        final List<SourceSpecificContext> sourcesToProgress = new ArrayList<>(sources);
-        if (!libSources.isEmpty()) {
-            checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                    "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, "
-                            + "but current phase was %s", currentPhase);
-            sourcesToProgress.addAll(libSources);
-        }
+        final var sourcesToProgress = new ArrayList<SourceSpecificContext>(sources);
 
         boolean progressing = true;
         while (progressing) {
