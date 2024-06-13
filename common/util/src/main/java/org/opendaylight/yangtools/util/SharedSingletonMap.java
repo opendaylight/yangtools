@@ -14,8 +14,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.io.Serializable;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map;
+import java.util.SequencedMap;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -29,7 +29,8 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-public abstract sealed class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
+public abstract sealed class SharedSingletonMap<K, V>
+        implements Serializable, SequencedMap<K, V>, UnmodifiableMapPhase<K, V> {
     static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
@@ -125,8 +126,8 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
      * @throws IllegalArgumentException if {@code map} does not have exactly one entry
      */
     public static <K, V> @NonNull SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> map) {
-        final Entry<K, V> e = singleEntry(map);
-        return new Ordered<>(e.getKey(), e.getValue());
+        final var entry = singleEntry(map);
+        return new Ordered<>(entry.getKey(), entry.getValue());
     }
 
     /**
@@ -139,17 +140,38 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
      * @throws IllegalArgumentException if {@code map} does not have exactly one entry
      */
     public static <K, V> @NonNull SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> map) {
-        final Entry<K, V> e = singleEntry(map);
-        return new Unordered<>(e.getKey(), e.getValue());
+        final var entry = singleEntry(map);
+        return new Unordered<>(entry.getKey(), entry.getValue());
     }
 
+    @Deprecated(since = "14.0.0", forRemoval = true)
     public final Entry<K, V> getEntry() {
-        return new SimpleImmutableEntry<>(keySet.getFirst(), value);
+        return firstEntry();
+    }
+
+    @Override
+    public final Entry<K, V> firstEntry() {
+        return Map.entry(keySet.getFirst(), value);
+    }
+
+    @Override
+    public final Entry<K, V> lastEntry() {
+        return firstEntry();
+    }
+
+    @Override
+    public final @NonNull SharedSingletonMap<K, V> reversed() {
+        return this;
     }
 
     @Override
     public final @NonNull SingletonSet<Entry<K, V>> entrySet() {
-        return SingletonSet.of(getEntry());
+        return SingletonSet.of(firstEntry());
+    }
+
+    @Override
+    public final @NonNull SingletonSet<Entry<K, V>> sequencedEntrySet() {
+        return entrySet();
     }
 
     @Override
@@ -158,8 +180,18 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
     }
 
     @Override
+    public final @NonNull SingletonSet<K> sequencedKeySet() {
+        return keySet;
+    }
+
+    @Override
     public final @NonNull SingletonSet<V> values() {
         return SingletonSet.of(value);
+    }
+
+    @Override
+    public final @NonNull SingletonSet<V> sequencedValues() {
+        return values();
     }
 
     @Override
@@ -207,6 +239,16 @@ public abstract sealed class SharedSingletonMap<K, V> implements Serializable, U
 
     @Override
     public final void clear() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final Entry<K, V> pollFirstEntry() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final Entry<K, V> pollLastEntry() {
         throw new UnsupportedOperationException();
     }
 
