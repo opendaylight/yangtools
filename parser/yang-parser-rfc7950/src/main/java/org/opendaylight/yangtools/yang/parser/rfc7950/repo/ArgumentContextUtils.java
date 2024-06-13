@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -96,17 +95,16 @@ abstract class ArgumentContextUtils {
      *       such as intermediate List allocation et al.
      */
     final @NonNull String stringFromStringContext(final IRArgument argument, final StatementSourceReference ref) {
-        if (argument instanceof final Single single) {
-            final var str = single.string();
-            if (single.needQuoteCheck()) {
-                checkUnquoted(str, ref);
+        return switch (argument) {
+            case Concatenation concat -> concatStrings(concat.parts(), ref);
+            case Single single -> {
+                final var str = single.string();
+                if (single.needQuoteCheck()) {
+                    checkUnquoted(str, ref);
+                }
+                yield single.needUnescape() ? unescape(str, ref) : str;
             }
-            return single.needUnescape() ? unescape(str, ref) : str;
-        } else if (argument instanceof Concatenation concat) {
-            return concatStrings(concat.parts(), ref);
-        } else {
-            throw new VerifyException("Unexpected argument " + argument);
-        }
+        };
     }
 
     private @NonNull String concatStrings(final List<? extends Single> parts, final StatementSourceReference ref) {
