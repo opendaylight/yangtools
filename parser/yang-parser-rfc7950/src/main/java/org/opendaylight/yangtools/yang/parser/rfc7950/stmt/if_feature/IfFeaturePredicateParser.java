@@ -65,28 +65,30 @@ final class IfFeaturePredicateParser {
 
     private IfFeatureExpr parseIfFeatureFactor(final If_feature_factorContext factor) {
         final var first = factor.getChild(0);
-        if (first instanceof Identifier_ref_argContext refArg) {
-            return IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(stmt, refArg.getText()));
-        } else if (first instanceof TerminalNode terminal) {
-            return switch (terminal.getSymbol().getType()) {
+        return switch (first) {
+            case Identifier_ref_argContext refArg ->
+                IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(stmt, refArg.getText()));
+            case TerminalNode terminal -> switch (terminal.getSymbol().getType()) {
                 case IfFeatureExpressionParser.LP ->
                     parseIfFeatureExpr(factor.getChild(If_feature_exprContext.class, 0));
                 case IfFeatureExpressionParser.NOT ->
                     parseIfFeatureFactor(getChild(factor, 2, If_feature_factorContext.class)).negate();
-                default -> throw new SourceException(stmt, "Unexpected terminal %s in sub-expression at %s",
-                    terminal.getText(), factor.getSourceInterval());
+                default ->
+                    throw new SourceException(stmt, "Unexpected terminal %s in sub-expression at %s",
+                        terminal.getText(), factor.getSourceInterval());
             };
-        } else {
-            throw new SourceException(stmt, "Unexpected error: sub-expression at %s has context %s. Please file a bug "
-                + "report with the corresponding model attached.", factor.getSourceInterval(), first);
-        }
+            default -> throw new SourceException(stmt, """
+                Unexpected error: sub-expression at %s has context %s. Please file a bug report with the corresponding \
+                model attached.""", factor.getSourceInterval(), first);
+        };
     }
 
-    private int verifyExprOrTermChildren(ParserRuleContext context) {
+    private int verifyExprOrTermChildren(final ParserRuleContext context) {
         final int count = context.getChildCount();
         if (count % 4 != 1) {
-            throw new SourceException(stmt, "Unexpected error: sub-expression at %s has %s children. Please file a bug "
-                + "report with the corresponding model attached.", context.getSourceInterval(), count);
+            throw new SourceException(stmt, """
+                Unexpected error: sub-expression at %s has %s children. Please file a bug report with the \
+                corresponding model attached.""", context.getSourceInterval(), count);
         }
         return count;
     }
@@ -94,9 +96,9 @@ final class IfFeaturePredicateParser {
     private <T> T getChild(final ParserRuleContext parent, final int offset, final Class<T> clazz) {
         final var child = parent.getChild(offset);
         if (!clazz.isInstance(child)) {
-            throw new SourceException(stmt, "Unexpected error: sub-expression at %s has child %s at offset %s when "
-                + "expecting %s. Please file a bug report with the corresponding model attached.",
-                parent.getSourceInterval(), child, offset, clazz);
+            throw new SourceException(stmt, """
+                Unexpected error: sub-expression at %s has child %s at offset %s when expecting %s. Please file a bug \
+                report with the corresponding model attached.""", parent.getSourceInterval(), child, offset, clazz);
         }
         return clazz.cast(child);
     }
