@@ -89,24 +89,25 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
         final var type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         final var builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), argument());
 
-        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof DefaultEffectiveStatement dflt) {
-                builder.setDefaultValue(dflt.argument());
-            } else if (stmt instanceof DescriptionEffectiveStatement description) {
-                builder.setDescription(description.argument());
-            } else if (stmt instanceof ReferenceEffectiveStatement reference) {
-                builder.setReference(reference.argument());
-            } else if (stmt instanceof StatusEffectiveStatement status) {
-                builder.setStatus(status.argument());
-            } else if (stmt instanceof UnitsEffectiveStatement units) {
-                builder.setUnits(units.argument());
-            } else if (stmt instanceof UnknownSchemaNode unknown) {
-                // FIXME: should not directly implement, I think
-                builder.addUnknownSchemaNode(unknown);
-            } else if (!(stmt instanceof TypeEffectiveStatement)) {
-                LOG.debug("Ignoring statement {}", stmt);
+        effectiveSubstatements().forEach(stmt -> {
+            switch (stmt) {
+                case DefaultEffectiveStatement dflt -> builder.setDefaultValue(dflt.argument());
+                case DescriptionEffectiveStatement description -> builder.setDescription(description.argument());
+                case ReferenceEffectiveStatement reference -> builder.setReference(reference.argument());
+                case StatusEffectiveStatement status -> builder.setStatus(status.argument());
+                case TypeEffectiveStatement<?> tef -> {
+                    // No-op
+                }
+                case UnitsEffectiveStatement units -> builder.setUnits(units.argument());
+                case UnknownSchemaNode unknown -> {
+                    // FIXME: should not directly implement, I think
+                    builder.addUnknownSchemaNode(unknown);
+                }
+                default -> {
+                    LOG.debug("Ignoring statement {}", stmt);
+                }
             }
-        }
+        });
 
         final var created = builder.build();
         final var witness = TYPE_DEFINITION.compareAndExchangeRelease(this, null, created);
