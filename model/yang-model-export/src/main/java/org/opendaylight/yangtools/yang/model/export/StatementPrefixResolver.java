@@ -165,16 +165,16 @@ final class StatementPrefixResolver {
     }
 
     private static Optional<String> decodeEntry(final Object entry, final DeclaredStatement<?> stmt) {
-        if (entry instanceof String str) {
-            return Optional.of(str);
-        } else if (entry instanceof Conflict conflict) {
-            final var prefix = conflict.findPrefix(stmt);
-            checkArgument(prefix != null, "Failed to find prefix for statement %s", stmt);
-            verify(!prefix.isEmpty(), "Empty prefix for statement %s", stmt);
-            return Optional.of(prefix);
-        } else {
-            throw new VerifyException("Unexpected entry " + entry);
-        }
+        return switch (entry) {
+            case String str -> Optional.of(str);
+            case Conflict conflict -> {
+                final var prefix = conflict.findPrefix(stmt);
+                checkArgument(prefix != null, "Failed to find prefix for statement %s", stmt);
+                verify(!prefix.isEmpty(), "Empty prefix for statement %s", stmt);
+                yield Optional.of(prefix);
+            }
+            default -> throw new VerifyException("Unexpected entry " + entry);
+        };
     }
 
     private static void indexPrefixes(final Map<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> map,
