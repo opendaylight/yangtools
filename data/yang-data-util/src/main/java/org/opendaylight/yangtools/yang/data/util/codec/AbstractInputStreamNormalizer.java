@@ -156,15 +156,12 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
             final InputStream stream) throws NormalizationException {
         final var stack = checkInferenceNotEmpty(inference);
         final var stmt = stack.currentStatement();
-        final QName expected;
-        if (stmt instanceof RpcEffectiveStatement rpc) {
-            expected = rpc.input().argument();
-        } else if (stmt instanceof ActionEffectiveStatement action) {
-            expected = action.input().argument();
-        } else {
-            throw invalidStatement(stmt);
-        }
-        return parseInputOutput(stream, stack, expected);
+        final var input = switch (stmt) {
+            case RpcEffectiveStatement rpc -> rpc.input();
+            case ActionEffectiveStatement action -> action.input();
+            default -> throw invalidStatement(stmt);
+        };
+        return parseInputOutput(stream, stack, input.argument());
     }
 
     @Override
@@ -172,15 +169,12 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
             final InputStream stream) throws NormalizationException {
         final var stack = checkInferenceNotEmpty(inference);
         final var stmt = stack.currentStatement();
-        final QName expected;
-        if (stmt instanceof RpcEffectiveStatement rpc) {
-            expected = rpc.output().argument();
-        } else if (stmt instanceof ActionEffectiveStatement action) {
-            expected = action.output().argument();
-        } else {
-            throw invalidStatement(stmt);
-        }
-        return parseInputOutput(stream, stack, expected);
+        final var output = switch (stmt) {
+            case RpcEffectiveStatement rpc -> rpc.output();
+            case ActionEffectiveStatement action -> action.output();
+            default -> throw invalidStatement(stmt);
+        };
+        return parseInputOutput(stream, stack, output.argument());
     }
 
     private @NonNull NormalizationResult<ContainerNode> parseInputOutput(final @NonNull InputStream stream,

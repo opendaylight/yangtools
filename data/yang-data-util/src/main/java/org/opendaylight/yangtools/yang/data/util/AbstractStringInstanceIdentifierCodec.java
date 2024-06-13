@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
@@ -66,14 +67,18 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
             appendQName(sb, qname, lastModule);
             lastModule = qname.getModule();
 
-            if (arg instanceof NodeIdentifierWithPredicates nip) {
-                for (var entry : nip.entrySet()) {
-                    final var keyName = entry.getKey();
-                    appendQName(sb.append('['), keyName, lastModule).append('=');
-                    appendValue(sb, keyName.getModule(), entry.getValue()).append(']');
+            switch (arg) {
+                case NodeIdentifier nid -> {
+                    // no-op
                 }
-            } else if (arg instanceof NodeWithValue<?> val) {
-                appendValue(sb.append("[.="), lastModule, val.getValue()).append(']');
+                case NodeIdentifierWithPredicates nip -> {
+                    for (var entry : nip.entrySet()) {
+                        final var keyName = entry.getKey();
+                        appendQName(sb.append('['), keyName, lastModule).append('=');
+                        appendValue(sb, keyName.getModule(), entry.getValue()).append(']');
+                    }
+                }
+                case NodeWithValue<?> val -> appendValue(sb.append("[.="), lastModule, val.getValue()).append(']');
             }
         }
         return sb.toString();

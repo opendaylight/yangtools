@@ -91,52 +91,34 @@ public abstract sealed class AbstractContext implements DataSchemaContext
     }
 
     public static @NonNull AbstractContext of(final @NonNull DataSchemaNode schema) {
-        if (schema instanceof ContainerLike containerLike) {
-            return new ContainerContext(containerLike);
-        } else if (schema instanceof ListSchemaNode list) {
-            return fromListSchemaNode(list);
-        } else if (schema instanceof LeafSchemaNode leaf) {
-            return new LeafContext(leaf);
-        } else if (schema instanceof ChoiceSchemaNode choice) {
-            return new ChoiceContext(choice);
-        } else if (schema instanceof LeafListSchemaNode leafList) {
-            return new LeafListContext(leafList);
-        } else if (schema instanceof AnydataSchemaNode anydata) {
-            return new OpaqueContext(anydata);
-        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
-            return new OpaqueContext(anyxml);
-        } else {
-            throw new IllegalStateException("Unhandled schema " + schema);
-        }
+        return switch (schema) {
+            case AnydataSchemaNode anydata -> new OpaqueContext(anydata);
+            case AnyxmlSchemaNode anyxml -> new OpaqueContext(anyxml);
+            case ChoiceSchemaNode choice -> new ChoiceContext(choice);
+            case ContainerLike containerLike -> new ContainerContext(containerLike);
+            case LeafSchemaNode leaf -> new LeafContext(leaf);
+            case LeafListSchemaNode leafList -> new LeafListContext(leafList);
+            case ListSchemaNode list -> fromListSchemaNode(list);
+            default -> throw new IllegalStateException("Unhandled schema " + schema);
+        };
     }
 
     // FIXME: do we tolerate null argument? do we tolerate unknown subclasses?
     private static @Nullable AbstractContext lenientOf(final @Nullable DataSchemaNode schema) {
-        if (schema instanceof ContainerLike containerLike) {
-            return new ContainerContext(containerLike);
-        } else if (schema instanceof ListSchemaNode list) {
-            return fromListSchemaNode(list);
-        } else if (schema instanceof LeafSchemaNode leaf) {
-            return new LeafContext(leaf);
-        } else if (schema instanceof ChoiceSchemaNode choice) {
-            return new ChoiceContext(choice);
-        } else if (schema instanceof LeafListSchemaNode leafList) {
-            return new LeafListContext(leafList);
-        } else if (schema instanceof AnydataSchemaNode anydata) {
-            return new OpaqueContext(anydata);
-        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
-            return new OpaqueContext(anyxml);
-        } else {
-            return null;
-        }
+        return switch (schema) {
+            case AnydataSchemaNode anydata -> new OpaqueContext(anydata);
+            case AnyxmlSchemaNode anyxml -> new OpaqueContext(anyxml);
+            case ChoiceSchemaNode choice -> new ChoiceContext(choice);
+            case ContainerLike containerLike -> new ContainerContext(containerLike);
+            case LeafSchemaNode leaf -> new LeafContext(leaf);
+            case LeafListSchemaNode leafList -> new LeafListContext(leafList);
+            case ListSchemaNode list -> fromListSchemaNode(list);
+            case null, default -> null;
+        };
     }
 
     private static @NonNull AbstractContext fromListSchemaNode(final ListSchemaNode potential) {
-        var keyDefinition = potential.getKeyDefinition();
-        if (keyDefinition.isEmpty()) {
-            return new ListContext(potential);
-        } else {
-            return new MapContext(potential);
-        }
+        final var keyDefinition = potential.getKeyDefinition();
+        return keyDefinition.isEmpty() ? new ListContext(potential) : new MapContext(potential);
     }
 }

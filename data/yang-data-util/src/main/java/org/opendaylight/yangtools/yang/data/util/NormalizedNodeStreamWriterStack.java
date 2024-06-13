@@ -267,16 +267,15 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
             ret = notification;
         } else {
             final var child = enterDataTree(name);
-            if (child instanceof ContainerEffectiveStatement container) {
-                ret = container;
-            } else if (child instanceof InputEffectiveStatement input) {
-                ret = input;
-            } else if (child instanceof OutputEffectiveStatement output) {
-                ret = output;
-            } else {
-                dataTree.exitToDataTree();
-                throw new IllegalArgumentException("Node " + child + " is not a container");
-            }
+            ret = switch (child) {
+                case ContainerEffectiveStatement container -> container;
+                case InputEffectiveStatement input -> input;
+                case OutputEffectiveStatement output -> output;
+                default -> {
+                    dataTree.exitToDataTree();
+                    throw new IllegalArgumentException("Node " + child + " is not a container");
+                }
+            };
         }
 
         schemaStack.push(ret);

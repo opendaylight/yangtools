@@ -110,15 +110,12 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
     }
 
     public static @NonNull CompositeNodeDataWithSchema<?> of(final DataSchemaNode schema) {
-        if (schema instanceof ListSchemaNode list) {
-            return new ListNodeDataWithSchema(list);
-        } else if (schema instanceof LeafListSchemaNode leafList) {
-            return new LeafListNodeDataWithSchema(leafList);
-        } else if (schema instanceof ContainerLike containerLike) {
-            return new ContainerNodeDataWithSchema(containerLike);
-        } else {
-            return new CompositeNodeDataWithSchema<>(schema);
-        }
+        return switch (schema) {
+            case ContainerLike containerLike -> new ContainerNodeDataWithSchema(containerLike);
+            case LeafListSchemaNode leafList -> new LeafListNodeDataWithSchema(leafList);
+            case ListSchemaNode list -> new ListNodeDataWithSchema(list);
+            default -> new CompositeNodeDataWithSchema<>(schema);
+        };
     }
 
     void addChild(final AbstractNodeDataWithSchema<?> newChild) {
@@ -182,7 +179,7 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
     private static CaseNodeDataWithSchema findChoice(final Collection<AbstractNodeDataWithSchema<?>> childNodes,
             final DataSchemaNode choiceCandidate, final DataSchemaNode caseCandidate) {
         if (childNodes != null) {
-            for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childNodes) {
+            for (var nodeDataWithSchema : childNodes) {
                 if (nodeDataWithSchema instanceof ChoiceNodeDataWithSchema childChoice
                         && nodeDataWithSchema.getSchema().getQName().equals(choiceCandidate.getQName())) {
                     CaseNodeDataWithSchema casePrevious = childChoice.getCase();
