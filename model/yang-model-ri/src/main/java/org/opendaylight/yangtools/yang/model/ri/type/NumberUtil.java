@@ -20,72 +20,46 @@ import org.opendaylight.yangtools.yang.common.Uint8;
 
 final class NumberUtil {
     private static final Comparator<Number> NUMBER_COMPARATOR = (o1, o2) -> {
+        // FIXME: Uint8 et al are not final
         checkArgument(o1.getClass().equals(o2.getClass()), "Incompatible Number classes %s and %s",
             o1.getClass(), o2.getClass());
 
-        if (o1 instanceof Byte) {
-            return ((Byte)o1).compareTo((Byte) o2);
-        } else if (o1 instanceof Short) {
-            return ((Short)o1).compareTo((Short) o2);
-        } else if (o1 instanceof Integer) {
-            return ((Integer)o1).compareTo((Integer) o2);
-        } else if (o1 instanceof Long) {
-            return ((Long)o1).compareTo((Long) o2);
-        } else if (o1 instanceof Uint8) {
-            return ((Uint8)o1).compareTo((Uint8) o2);
-        } else if (o1 instanceof Uint16) {
-            return ((Uint16)o1).compareTo((Uint16) o2);
-        } else if (o1 instanceof Uint32) {
-            return ((Uint32)o1).compareTo((Uint32) o2);
-        } else if (o1 instanceof Uint64) {
-            return ((Uint64)o1).compareTo((Uint64) o2);
-        } else if (o1 instanceof Decimal64) {
-            return ((Decimal64)o1).compareTo((Decimal64) o2);
-        } else {
-            throw new IllegalArgumentException("Unsupported Number class " + o1.getClass());
-        }
+        return switch (o1) {
+            case Byte b -> b.compareTo((Byte) o2);
+            case Short s -> s.compareTo((Short) o2);
+            case Integer i -> i.compareTo((Integer) o2);
+            case Long l -> l.compareTo((Long) o2);
+            case Uint8 u8 -> u8.compareTo((Uint8) o2);
+            case Uint16 u16 -> u16.compareTo((Uint16) o2);
+            case Uint32 u32 -> u32.compareTo((Uint32) o2);
+            case Uint64 u64 -> u64.compareTo((Uint64) o2);
+            case Decimal64 d64 -> d64.compareTo((Decimal64) o2);
+            default -> throw new IllegalArgumentException("Unsupported Number class " + o1.getClass());
+        };
     };
 
     private static final ImmutableMap<Class<? extends Number>, Function<Number, Number>> CONVERTERS;
 
     static {
         final ImmutableMap.Builder<Class<? extends Number>, Function<Number, Number>> b = ImmutableMap.builder();
-        b.put(Byte.class, input -> {
-            if (input instanceof Byte) {
-                return input;
-            }
-
-            return Byte.valueOf(input.toString());
+        b.put(Byte.class, input -> input instanceof Byte val ? val : Byte.valueOf(input.toString()));
+        b.put(Short.class, input -> switch (input) {
+            case Short val -> val;
+            case Byte val -> val.shortValue();
+            default -> Short.valueOf(input.toString());
         });
-        b.put(Short.class, input -> {
-            if (input instanceof Short) {
-                return input;
-            }
-            if (input instanceof Byte) {
-                return input.shortValue();
-            }
-
-            return Short.valueOf(input.toString());
+        b.put(Integer.class, input -> switch (input) {
+            case Integer val -> val;
+            case Short val -> val.intValue();
+            case Byte val -> val.intValue();
+            default -> Integer.valueOf(input.toString());
         });
-        b.put(Integer.class, input -> {
-            if (input instanceof Integer) {
-                return input;
-            }
-            if (input instanceof Byte || input instanceof Short) {
-                return input.intValue();
-            }
-
-            return Integer.valueOf(input.toString());
-        });
-        b.put(Long.class, input ->  {
-            if (input instanceof Long) {
-                return input;
-            }
-            if (input instanceof Byte || input instanceof Short || input instanceof Integer) {
-                return input.longValue();
-            }
-
-            return Long.valueOf(input.toString());
+        b.put(Long.class, input -> switch (input) {
+            case Long val -> val;
+            case Integer val -> val.longValue();
+            case Short val -> val.longValue();
+            case Byte val -> val.longValue();
+            default -> Long.valueOf(input.toString());
         });
         b.put(Decimal64.class, input -> {
             if (input instanceof Decimal64) {
