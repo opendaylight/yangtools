@@ -43,21 +43,15 @@ public abstract sealed class AbstractNodeDataWithSchema<T extends DataSchemaNode
     }
 
     public static @NonNull AbstractNodeDataWithSchema<?> of(final DataSchemaNode schema) {
-        if (schema instanceof ContainerLike containerLike) {
-            return new ContainerNodeDataWithSchema(containerLike);
-        } else if (schema instanceof ListSchemaNode list) {
-            return new ListNodeDataWithSchema(list);
-        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
-            return new AnyXmlNodeDataWithSchema(anyxml);
-        } else if (schema instanceof LeafSchemaNode leaf) {
-            return new LeafNodeDataWithSchema(leaf);
-        } else if (schema instanceof LeafListSchemaNode leafList) {
-            return new LeafListNodeDataWithSchema(leafList);
-        } else if (schema instanceof AnydataSchemaNode anydata) {
-            return new AnydataNodeDataWithSchema(anydata);
-        } else {
-            throw new IllegalStateException("Unsupported schema " + schema);
-        }
+        return switch (schema) {
+            case AnyxmlSchemaNode anyxml -> new AnyXmlNodeDataWithSchema(anyxml);
+            case ContainerLike containerLike -> new ContainerNodeDataWithSchema(containerLike);
+            case LeafSchemaNode leaf -> new LeafNodeDataWithSchema(leaf);
+            case ListSchemaNode list -> new ListNodeDataWithSchema(list);
+            case LeafListSchemaNode leafList -> new LeafListNodeDataWithSchema(leafList);
+            case AnydataSchemaNode anydata -> new AnydataNodeDataWithSchema(anydata);
+            default -> throw new IllegalStateException("Unsupported schema " + schema);
+        };
     }
 
     /**
@@ -131,7 +125,7 @@ public abstract sealed class AbstractNodeDataWithSchema<T extends DataSchemaNode
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractNodeDataWithSchema<?> other = (AbstractNodeDataWithSchema<?>) obj;
+        final var other = (AbstractNodeDataWithSchema<?>) obj;
         return schema.equals(other.schema);
     }
 
