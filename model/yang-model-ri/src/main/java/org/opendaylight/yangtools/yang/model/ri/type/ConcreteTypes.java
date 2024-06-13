@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -50,83 +51,68 @@ public final class ConcreteTypes {
     }
 
     public static ConcreteTypeBuilder<?> concreteTypeBuilder(final TypeDefinition<?> baseType, final QName qname) {
-        if (baseType instanceof BinaryTypeDefinition binary) {
-            return concreteBinaryBuilder(binary, qname);
-        } else if (baseType instanceof BitsTypeDefinition bits) {
-            return concreteBitsBuilder(bits, qname);
-        } else if (baseType instanceof BooleanTypeDefinition bool) {
-            return concreteBooleanBuilder(bool, qname);
-        } else if (baseType instanceof DecimalTypeDefinition decimal) {
-            return concreteDecimalBuilder(decimal, qname);
-        } else if (baseType instanceof EmptyTypeDefinition empty) {
-            return concreteEmptyBuilder(empty, qname);
-        } else if (baseType instanceof EnumTypeDefinition enumType) {
-            return concreteEnumerationBuilder(enumType, qname);
-        } else if (baseType instanceof IdentityrefTypeDefinition identityRef) {
-            return concreteIdentityrefBuilder(identityRef, qname);
-        } else if (baseType instanceof InstanceIdentifierTypeDefinition instanceIdentifier) {
-            return concreteInstanceIdentifierBuilder(instanceIdentifier, qname);
-        } else if (baseType instanceof Int8TypeDefinition int8) {
-            return concreteInt8Builder(int8, qname);
-        } else if (baseType instanceof Int16TypeDefinition int16) {
-            return concreteInt16Builder(int16, qname);
-        } else if (baseType instanceof Int32TypeDefinition int32) {
-            return concreteInt32Builder(int32, qname);
-        } else if (baseType instanceof Int64TypeDefinition int64) {
-            return concreteInt64Builder(int64, qname);
-        } else if (baseType instanceof LeafrefTypeDefinition leafRef) {
-            return concreteLeafrefBuilder(leafRef, qname);
-        } else if (baseType instanceof StringTypeDefinition string) {
-            return concreteStringBuilder(string, qname);
-        } else if (baseType instanceof UnionTypeDefinition union) {
-            return concreteUnionBuilder(union, qname);
-        } else if (baseType instanceof Uint8TypeDefinition uint8) {
-            return concreteUint8Builder(uint8, qname);
-        } else if (baseType instanceof Uint16TypeDefinition uint16) {
-            return concreteUint16Builder(uint16, qname);
-        } else if (baseType instanceof Uint32TypeDefinition uint32) {
-            return concreteUint32Builder(uint32, qname);
-        } else if (baseType instanceof Uint64TypeDefinition uint64) {
-            return concreteUint64Builder(uint64, qname);
-        } else {
-            throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
-        }
+        return typeBuilderOf(baseType, qname);
+    }
+
+    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Ungrokked pattern match cast")
+    private static ConcreteTypeBuilder<?> typeBuilderOf(final TypeDefinition<?> baseType, final QName qname) {
+        return switch (baseType) {
+            case BinaryTypeDefinition binary -> concreteBinaryBuilder(binary, qname);
+            case BitsTypeDefinition bits -> concreteBitsBuilder(bits, qname);
+            case BooleanTypeDefinition bool -> concreteBooleanBuilder(bool, qname);
+            case DecimalTypeDefinition decimal -> concreteDecimalBuilder(decimal, qname);
+            case EmptyTypeDefinition empty -> concreteEmptyBuilder(empty, qname);
+            case EnumTypeDefinition enumType -> concreteEnumerationBuilder(enumType, qname);
+            case IdentityrefTypeDefinition identityRef -> concreteIdentityrefBuilder(identityRef, qname);
+            case InstanceIdentifierTypeDefinition iid -> concreteInstanceIdentifierBuilder(iid, qname);
+            case Int8TypeDefinition int8 -> concreteInt8Builder(int8, qname);
+            case Int16TypeDefinition int16 -> concreteInt16Builder(int16, qname);
+            case Int32TypeDefinition int32 -> concreteInt32Builder(int32, qname);
+            case Int64TypeDefinition int64 -> concreteInt64Builder(int64, qname);
+            case LeafrefTypeDefinition leafRef -> concreteLeafrefBuilder(leafRef, qname);
+            case StringTypeDefinition string -> concreteStringBuilder(string, qname);
+            case UnionTypeDefinition union -> concreteUnionBuilder(union, qname);
+            case Uint8TypeDefinition uint8 -> concreteUint8Builder(uint8, qname);
+            case Uint16TypeDefinition uint16 -> concreteUint16Builder(uint16, qname);
+            case Uint32TypeDefinition uint32 -> concreteUint32Builder(uint32, qname);
+            case Uint64TypeDefinition uint64 -> concreteUint64Builder(uint64, qname);
+            default -> throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
+        };
     }
 
     public static TypeDefinition<?> typeOf(final LeafEffectiveStatement leaf) {
         final var typeStmt = leaf.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         final var builder = concreteTypeBuilder(typeStmt.getTypeDefinition(), leaf.argument());
-        for (var stmt : leaf.effectiveSubstatements()) {
-            if (stmt instanceof DefaultEffectiveStatement dflt) {
-                builder.setDefaultValue(dflt.argument());
-            } else if (stmt instanceof DescriptionEffectiveStatement description) {
-                builder.setDescription(description.argument());
-            } else if (stmt instanceof ReferenceEffectiveStatement reference) {
-                builder.setReference(reference.argument());
-            } else if (stmt instanceof StatusEffectiveStatement status) {
-                builder.setStatus(status.argument());
-            } else if (stmt instanceof UnitsEffectiveStatement units) {
-                builder.setUnits(units.argument());
+        leaf.effectiveSubstatements().forEach(stmt -> {
+            switch (stmt) {
+                case DefaultEffectiveStatement dflt -> builder.setDefaultValue(dflt.argument());
+                case DescriptionEffectiveStatement description -> builder.setDescription(description.argument());
+                case ReferenceEffectiveStatement reference -> builder.setReference(reference.argument());
+                case StatusEffectiveStatement status -> builder.setStatus(status.argument());
+                case UnitsEffectiveStatement units -> builder.setUnits(units.argument());
+                default -> {
+                    // No-op
+                }
             }
-        }
+        });
         return builder.build();
     }
 
     public static TypeDefinition<?> typeOf(final LeafListEffectiveStatement leafList) {
         final var typeStmt = leafList.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         final var builder = concreteTypeBuilder(typeStmt.getTypeDefinition(), leafList.argument());
-        for (var stmt : leafList.effectiveSubstatements()) {
+        leafList.effectiveSubstatements().forEach(stmt -> {
             // NOTE: 'default' is omitted here on purpose
-            if (stmt instanceof DescriptionEffectiveStatement description) {
-                builder.setDescription(description.argument());
-            } else if (stmt instanceof ReferenceEffectiveStatement reference) {
-                builder.setReference(reference.argument());
-            } else if (stmt instanceof StatusEffectiveStatement status) {
-                builder.setStatus(status.argument());
-            } else if (stmt instanceof UnitsEffectiveStatement units) {
-                builder.setUnits(units.argument());
+            switch (stmt) {
+                case DescriptionEffectiveStatement description -> builder.setDescription(description.argument());
+                case ReferenceEffectiveStatement reference -> builder.setReference(reference.argument());
+                case StatusEffectiveStatement status -> builder.setStatus(status.argument());
+                case UnitsEffectiveStatement units -> builder.setUnits(units.argument());
+                default -> {
+                    // No-op
+                }
             }
-        }
+        });
         return builder.build();
     }
 
