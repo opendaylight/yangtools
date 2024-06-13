@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.LeafrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -69,13 +68,15 @@ final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpeci
             throw noPath(stmt);
         }
 
-        final LeafrefTypeBuilder builder = BaseTypes.leafrefTypeBuilder(stmt.argumentAsTypeQName());
+        final var builder = BaseTypes.leafrefTypeBuilder(stmt.argumentAsTypeQName());
 
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof PathEffectiveStatement) {
-                builder.setPathStatement(((PathEffectiveStatement) subStmt).argument());
-            } else if (subStmt instanceof RequireInstanceEffectiveStatement) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatement)subStmt).argument());
+        for (var subStmt : substatements) {
+            switch (subStmt) {
+                case PathEffectiveStatement path -> builder.setPathStatement(path.argument());
+                case RequireInstanceEffectiveStatement ries -> builder.setRequireInstance(ries.argument());
+                case null, default -> {
+                    // No-op
+                }
             }
         }
 
