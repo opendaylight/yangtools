@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.api;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
@@ -21,12 +23,22 @@ public interface DataTree extends DataTreeTip, ReadOnlyDataTree {
      * @throws IllegalArgumentException if the new context is incompatible
      * @throws NullPointerException if newModelContext is null
      */
-    void setEffectiveModelContext(EffectiveModelContext newModelContext);
+    void setEffectiveModelContext(@NonNull EffectiveModelContext newModelContext);
 
     /**
      * Commit a data tree candidate.
      *
      * @param candidate data tree candidate
      */
-    void commit(DataTreeCandidate candidate);
+    default void commit(final @NonNull DataTreeCandidate candidate) {
+        commit(candidate, null);
+    }
+
+    /**
+     * Commit a data tree candidate, attaching an optional {@link VersionInfo} to the resulting modification.
+     *
+     * @param candidate data tree candidate
+     * @param info version info.
+     */
+    void commit(@NonNull DataTreeCandidate candidate, @Nullable VersionInfo info);
 }

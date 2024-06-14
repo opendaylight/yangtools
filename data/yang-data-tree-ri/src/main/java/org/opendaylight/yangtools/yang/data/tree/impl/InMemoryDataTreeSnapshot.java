@@ -16,8 +16,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshotCursor;
+import org.opendaylight.yangtools.yang.data.tree.api.VersionInfo;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
@@ -45,6 +47,12 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
     @Override
     public Optional<NormalizedNode> readNode(final YangInstanceIdentifier path) {
         return NormalizedNodes.findNode(rootNode.data(), path);
+    }
+
+    @Override
+    public Optional<VersionInfo> readVersionInfo(final YangInstanceIdentifier path) {
+        return StoreTreeNodes.findNode(rootNode, path)
+            .flatMap(treeNode -> Optional.ofNullable(treeNode.subtreeVersion().readInfo()));
     }
 
     @Override
