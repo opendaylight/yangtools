@@ -64,8 +64,8 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig) {
-        return new InMemoryDataTree(TreeNode.of(createRoot(treeConfig.getRootPath()), Version.initial()), treeConfig,
-            null);
+        return new InMemoryDataTree(TreeNode.of(createRoot(treeConfig.getRootPath()),
+            Version.initial(treeConfig.isVersionInfoTrackingEnabled())), treeConfig, null);
     }
 
     @Override
@@ -105,7 +105,8 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final var rootPath = treeConfig.getRootPath();
         final var rootSchemaNode = getRootSchemaNode(initialSchemaContext, rootPath);
         final var rootDataNode = createRoot((DataNodeContainer)rootSchemaNode, rootPath);
-        return new InMemoryDataTree(TreeNode.of(rootDataNode, Version.initial()), treeConfig,
+        return new InMemoryDataTree(
+            TreeNode.of(rootDataNode, Version.initial(treeConfig.isVersionInfoTrackingEnabled())), treeConfig,
             initialSchemaContext, rootSchemaNode, maskMandatory);
     }
 

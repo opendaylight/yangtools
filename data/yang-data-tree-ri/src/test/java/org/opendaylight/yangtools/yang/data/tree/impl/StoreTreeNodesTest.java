@@ -75,17 +75,17 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
 
-    public static ContainerNode createDocumentOne() {
-        return ImmutableNodes.newContainerBuilder()
+    private static TreeNode treeNodeOne() {
+        return TreeNode.of(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
             .withChild(createTestContainer())
-            .build();
+            .build(),
+            Version.initial(false));
     }
 
     @Test
     void findNodeTestNodeFound() {
-        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT, treeNodeOne(), rootOper);
         final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final var node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
         assertPresentAndType(node, TreeNode.class);
@@ -93,8 +93,7 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
 
     @Test
     void findNodeTestNodeNotFound() {
-        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT, treeNodeOne(), rootOper);
         final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final var outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
@@ -105,8 +104,7 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
 
     @Test
     void findNodeCheckedTestNodeFound() {
-        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT, treeNodeOne(), rootOper);
         final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
         TreeNode foundNode = StoreTreeNodes.findNodeChecked(rootNode, OUTER_LIST_1_PATH);
         assertNotNull(foundNode);
@@ -114,8 +112,7 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
 
     @Test
     void findNodeCheckedTestNodeNotFound() {
-        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT, treeNodeOne(), rootOper);
         final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final var outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
@@ -126,8 +123,7 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
 
     @Test
     void findClosestOrFirstMatchTestNodeExists() {
-        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT, treeNodeOne(), rootOper);
         final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final var expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
         assertPresentAndType(expectedNode, TreeNode.class);
@@ -138,8 +134,7 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
 
     @Test
     void findClosestOrFirstMatchTestNodeDoesNotExist() {
-        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial()), rootOper);
+        final var inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT, treeNodeOne(), rootOper);
         final var rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final var outerListInnerListPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
                 .node(TestModel.INNER_LIST_QNAME)

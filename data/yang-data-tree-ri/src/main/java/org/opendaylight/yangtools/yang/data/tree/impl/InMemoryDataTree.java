@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.tree.api.VersionInfo;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -137,7 +138,7 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
     }
 
     @Override
-    public void commit(final DataTreeCandidate candidate) {
+    public void commit(final DataTreeCandidate candidate, final VersionInfo info) {
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
         }
@@ -161,14 +162,18 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
             if (oldRoot != currentRoot) {
                 final String oldStr = simpleToString(oldRoot);
                 final String currentStr = simpleToString(currentRoot);
-                throw new IllegalStateException("Store tree " + currentStr + " and candidate base " + oldStr
-                    + " differ.");
+                throw new IllegalStateException(
+                    "Store tree " + currentStr + " and candidate base " + oldStr + " differ.");
             }
 
             newState = currentState.withRoot(newRoot);
             LOG.trace("Updated state from {} to {}", currentState, newState);
             // TODO: can we lower this to compareAndSwapRelease?
         } while (!STATE.compareAndSet(this, currentState, newState));
+
+        // Attach commit info.
+        // TODO: this should never fail, but should we check? report?
+        newRoot.getVersion().writeInfo(info);
     }
 
     private static String simpleToString(final Object obj) {
