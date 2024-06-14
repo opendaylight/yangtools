@@ -180,10 +180,9 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
     }
 
     private static void assertTreeNodeEquals(final TreeNode expected, final TreeNode actual) {
-        assertEquals(expected.getIdentifier(), actual.getIdentifier());
-        assertEquals(expected.getVersion(), actual.getVersion());
-        assertEquals(expected.getSubtreeVersion(), actual.getSubtreeVersion());
-        assertEquals(expected.getData(), actual.getData());
+        assertEquals(expected.version(), actual.version());
+        assertEquals(expected.subtreeVersion(), actual.subtreeVersion());
+        assertEquals(expected.data(), actual.data());
         assertEquals(expected.toString(), actual.toString());
     }
 }

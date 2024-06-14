@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 class TreeNodeFactoryTest {
 
     private static void checkTreeNode(final TreeNode node, final NormalizedNode data, final Version version) {
-        assertSame(data, node.getData());
-        assertSame(version, node.getSubtreeVersion());
-        assertSame(version, node.getVersion());
+        assertSame(data, node.data());
+        assertSame(version, node.subtreeVersion());
+        assertSame(version, node.version());
     }
 
     @Test

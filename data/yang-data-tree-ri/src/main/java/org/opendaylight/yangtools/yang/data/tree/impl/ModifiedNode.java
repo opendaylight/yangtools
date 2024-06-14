@@ -252,7 +252,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                 // A WRITE can collapse all of its children
                 if (!children.isEmpty()) {
                     final var applied = schema.apply(this, original(), version);
-                    value = applied != null ? applied.getData() : null;
+                    value = applied != null ? applied.data() : null;
                     children.clear();
                 }
 
@@ -329,7 +329,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     public static ModifiedNode createUnmodified(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {
-        return new ModifiedNode(metadataTree.getIdentifier(), requireNonNull(metadataTree), childPolicy);
+        return new ModifiedNode(metadataTree.data().name(), requireNonNull(metadataTree), childPolicy);
     }
 
     void setValidatedNode(final ModificationApplyOperation op, final @Nullable TreeNode currentMeta,

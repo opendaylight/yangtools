@@ -66,7 +66,7 @@ final class OperationWithModification {
                     applyOperation.getChildByArg(child).apply(childNode, childNode.original(), version));
             }
 
-            return snapshot.map(TreeNode::getData);
+            return snapshot.map(TreeNode::data);
         }
 
         var snapshot = modification.getSnapshot();
@@ -75,7 +75,7 @@ final class OperationWithModification {
         }
 
         if (snapshot.isPresent()) {
-            return snapshot.orElseThrow().findChildByArg(child).map(TreeNode::getData);
+            return snapshot.orElseThrow().findChildByArg(child).map(TreeNode::data);
         }
 
         return Optional.empty();

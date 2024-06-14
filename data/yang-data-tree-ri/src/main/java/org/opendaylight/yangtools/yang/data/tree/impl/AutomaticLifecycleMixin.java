@@ -79,7 +79,7 @@ final class AutomaticLifecycleMixin {
     private static @Nullable TreeNode disappearResult(final ModifiedNode modification, final @NonNull TreeNode result,
             final @Nullable TreeNode currentMeta) {
         // Check if the result is in fact empty before pulling any tricks
-        final var data = result.getData();
+        final var data = result.data();
         if (!(data instanceof NormalizedNodeContainer<?> container)) {
             throw new IllegalStateException("Unhandled data " + data);
         }

@@ -27,9 +27,9 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
     private Version subtreeVersion;
 
     AbstractMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
-        data = parent.getData();
-        version = parent.getVersion();
-        subtreeVersion = parent.getSubtreeVersion();
+        data = parent.data();
+        version = parent.version();
+        subtreeVersion = parent.subtreeVersion();
         this.children = requireNonNull(children);
     }
 
@@ -53,7 +53,7 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
 
     @Override
     public final TreeNode putChild(final TreeNode child) {
-        return children.put(child.getIdentifier(), child);
+        return children.put(child.data().name(), child);
     }
 
     @Override

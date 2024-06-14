@@ -38,7 +38,7 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
     }
 
     @Override
-    public final Version getSubtreeVersion() {
+    public final Version subtreeVersion() {
         return subtreeVersion;
     }
 

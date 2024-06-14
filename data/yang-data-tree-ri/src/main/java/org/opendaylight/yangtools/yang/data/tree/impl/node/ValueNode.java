@@ -32,12 +32,12 @@ final class ValueNode extends TreeNode {
     }
 
     @Override
-    public Version getSubtreeVersion() {
-        return getVersion();
+    public Version subtreeVersion() {
+        return version();
     }
 
     @Override
-    public MutableTreeNode mutable() {
+    public MutableTreeNode toMutable() {
         /**
          * Value nodes can only we read/written/delete, which does a straight
          * replace. That means they don't haver need to be made mutable.
@@ -47,6 +47,6 @@ final class ValueNode extends TreeNode {
 
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("value", getData());
+        return helper.add("value", data());
     }
 }
