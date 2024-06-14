@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 /**
  * A container node which has been modified. It tracks the subtree version and all modified children.
  */
-abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
+abstract sealed class AbstractModifiedContainerNode extends AbstractContainerNode
+        permits LazyContainerNode, MaterializedContainerNode {
     private final Map<PathArgument, TreeNode> children;
     private final Version subtreeVersion;
 
@@ -43,7 +44,7 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
     }
 
     @Override
-    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("subtreeVersion", subtreeVersion).add("children", children);
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return super.addToStringAttributes(helper).add("subtreeVersion", subtreeVersion).add("children", children);
     }
 }
