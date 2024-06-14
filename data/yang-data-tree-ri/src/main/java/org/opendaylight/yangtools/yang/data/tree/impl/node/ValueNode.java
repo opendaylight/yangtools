@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * Instances of this class report all children as absent, subtree version
  * equal to this node's version and do not support mutable view.
  */
-final class ValueNode extends TreeNode {
+final class ValueNode extends RawTreeNode {
     private static final Logger LOG = LoggerFactory.getLogger(ValueNode.class);
 
     ValueNode(final NormalizedNode data, final Version version) {
@@ -46,7 +46,7 @@ final class ValueNode extends TreeNode {
     }
 
     @Override
-    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("value", data());
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return super.addToStringAttributes(helper).add("value", data());
     }
 }
