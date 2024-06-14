@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * A TreeNode capable of holding child nodes. The fact that any of the children
  * changed is tracked by the subtree version.
  */
-abstract class AbstractContainerNode extends TreeNode {
+abstract sealed class AbstractContainerNode extends RawTreeNode
+        permits AbstractModifiedContainerNode, SimpleContainerNode {
     AbstractContainerNode(final NormalizedNode data, final Version version) {
         super(data, version);
     }
