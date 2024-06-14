@@ -29,7 +29,7 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
      * @return A node if the child is existing, {@code null} otherwise.
      * @throws NullPointerException when {@code child} is null
      */
-    @Nullable C childByArg(PathArgument arg);
+    @Nullable C childByArg(@NonNull PathArgument arg);
 
     /**
      * Returns a direct child of the node.
@@ -39,7 +39,7 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
      * @throws NullPointerException when {@code child} is null
      * @throws VerifyException if the child does not exist
      */
-    default @NonNull C getChildByArg(final PathArgument arg) {
+    default @NonNull C getChildByArg(final @NonNull PathArgument arg) {
         return verifyNotNull(childByArg(arg), "Child %s does not exist");
     }
 
@@ -50,7 +50,7 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
      * @return Optional with node if the child exists, {@link Optional#empty()} otherwise.
      * @throws NullPointerException when {@code child} is null
      */
-    @NonNull default Optional<C> findChildByArg(final PathArgument arg) {
+    @NonNull default Optional<C> findChildByArg(final @NonNull PathArgument arg) {
         return Optional.ofNullable(childByArg(arg));
     }
 }
