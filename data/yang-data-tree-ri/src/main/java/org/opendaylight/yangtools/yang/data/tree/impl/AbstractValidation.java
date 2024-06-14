@@ -78,7 +78,7 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
         // Deal with the result moving on us
         final var ret = delegate.apply(modification, currentMeta, version);
         if (ret != null) {
-            enforceOnData(ret.getData());
+            enforceOnData(ret.data());
         }
         return ret;
     }
@@ -116,7 +116,7 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
             throws DataValidationFailedException {
         if (applied != null) {
             // We only enforce min/max on present data and rely on MandatoryLeafEnforcer to take care of the empty case
-            enforceOnData(path, applied.getData());
+            enforceOnData(path, applied.data());
         }
     }
 

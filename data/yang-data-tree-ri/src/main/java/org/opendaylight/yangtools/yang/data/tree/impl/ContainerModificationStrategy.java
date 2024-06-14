@@ -60,7 +60,7 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
         }
 
         private @NonNull TreeNode enforce(final TreeNode treeNode) {
-            enforcer.enforceOnData(treeNode.getData());
+            enforcer.enforceOnData(treeNode.data());
             return treeNode;
         }
     }

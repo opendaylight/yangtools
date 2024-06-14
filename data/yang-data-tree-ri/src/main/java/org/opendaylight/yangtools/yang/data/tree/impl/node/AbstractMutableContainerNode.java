@@ -27,9 +27,9 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
     private Version subtreeVersion;
 
     AbstractMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
-        data = parent.getData();
-        version = parent.getVersion();
-        subtreeVersion = parent.getSubtreeVersion();
+        data = parent.data();
+        version = parent.version();
+        subtreeVersion = parent.subtreeVersion();
         this.children = requireNonNull(children);
     }
 
@@ -53,7 +53,7 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
 
     @Override
     public final TreeNode putChild(final TreeNode child) {
-        return children.put(child.getIdentifier(), child);
+        return children.put(child.data().name(), child);
     }
 
     @Override
@@ -67,8 +67,8 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
     }
 
     @Override
-    public final TreeNode seal() {
-        final TreeNode ret;
+    public final AbstractContainerNode seal() {
+        final AbstractContainerNode ret;
 
         /*
          * Decide which implementation:
@@ -79,7 +79,7 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
          * => more materialization can happen
          */
         if (!version.equals(subtreeVersion)) {
-            final Map<PathArgument, TreeNode> newChildren = MapAdaptor.getDefaultInstance().optimize(children);
+            final var newChildren = MapAdaptor.getDefaultInstance().optimize(children);
             final int dataSize = getData().size();
             final int childrenSize = newChildren.size();
             if (dataSize != childrenSize) {

@@ -23,12 +23,12 @@ abstract class AbstractContainerNode extends TreeNode {
 
     @SuppressWarnings("unchecked")
     final DistinctNodeContainer<PathArgument, NormalizedNode> castData() {
-        return (DistinctNodeContainer<PathArgument, NormalizedNode>) getData();
+        return (DistinctNodeContainer<PathArgument, NormalizedNode>) data();
     }
 
     final @Nullable TreeNode getChildFromData(final PathArgument childId) {
         // We do not cache the instantiated node as it is dirt cheap
-        return getChildFromData(castData(), childId, getVersion());
+        return getChildFromData(castData(), childId, version());
     }
 
     static TreeNode getChildFromData(final DistinctNodeContainer<PathArgument, NormalizedNode> data,

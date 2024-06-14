@@ -72,7 +72,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * node in modification and in data tree (if successfully
          * committed) will be same and will not change.
          */
-        version = snapshot.getRootNode().getSubtreeVersion().next();
+        version = snapshot.getRootNode().subtreeVersion().next();
     }
 
     ModifiedNode getRootModification() {
@@ -127,7 +127,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final var terminalPath = terminal.getKey();
 
         final var result = resolveSnapshot(terminalPath, terminal.getValue());
-        return result == null ? Optional.empty() : NormalizedNodes.findNode(terminalPath, result.getData(), path);
+        return result == null ? Optional.empty() : NormalizedNodes.findNode(terminalPath, result.data(), path);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
