@@ -141,7 +141,7 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
     void basicReadWrites() {
         final var modificationTree = new InMemoryDataTreeModification(
             new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial()), rootOper), rootOper);
+                TreeNode.of(createDocumentOne(), Version.initial(false)), rootOper), rootOper);
         final var originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
         assertSame(BAR_NODE, originalBarNode.orElseThrow());
