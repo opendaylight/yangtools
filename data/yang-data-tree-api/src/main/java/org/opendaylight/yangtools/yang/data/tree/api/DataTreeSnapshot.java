@@ -34,6 +34,14 @@ public interface DataTreeSnapshot {
     Optional<NormalizedNode> readNode(YangInstanceIdentifier path);
 
     /**
+     * Read the {@link VersionInfo} of the last commit which modified a particular node.
+     *
+     * @param path Path of the node
+     * @return Optional {@link VersionInfo} from the commit
+     */
+    Optional<VersionInfo> readVersionInfo(YangInstanceIdentifier path);
+
+    /**
      * Create a new data tree modification based on this snapshot, using the specified data application strategy.
      *
      * @return A new data tree modification

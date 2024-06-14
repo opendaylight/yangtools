@@ -12,11 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Test;
 
 class VersionTest {
-
     @Test
     void testInitial() {
-        final var v1 = Version.initial();
-        final var v2 = Version.initial();
+        final var v1 = Version.initial(false);
+        final var v2 = Version.initial(false);
 
         assertNotEquals(v1, v2);
         assertNotEquals(v2, v1);
@@ -24,7 +23,7 @@ class VersionTest {
 
     @Test
     void testNext() {
-        final var v1 = Version.initial();
+        final var v1 = Version.initial(false);
         final var v2 = v1.next();
         final var v3 = v2.next();
         final var v4 = v1.next();

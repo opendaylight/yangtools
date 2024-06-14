@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
+import org.opendaylight.yangtools.yang.data.tree.api.VersionInfo;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -114,20 +116,34 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public Optional<NormalizedNode> readNode(final YangInstanceIdentifier path) {
-        /*
-         * Walk the tree from the top, looking for the first node between root and
-         * the requested path which has been modified. If no such node exists,
-         * we use the node itself.
-         */
-        final var terminal = StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path,
-            input -> switch (input.getOperation()) {
-                case DELETE, MERGE, WRITE -> true;
-                case TOUCH, NONE -> false;
-            });
+        final var terminal = resolveTerminal(path);
         final var terminalPath = terminal.getKey();
 
         final var result = resolveSnapshot(terminalPath, terminal.getValue());
         return result == null ? Optional.empty() : NormalizedNodes.findNode(terminalPath, result.data(), path);
+    }
+
+    @Override
+    public Optional<VersionInfo> readVersionInfo(final YangInstanceIdentifier path) {
+        final var terminal = resolveTerminal(path);
+        final var terminalPath = terminal.getKey();
+
+        final var result = resolveSnapshot(terminalPath, terminal.getValue());
+        return result == null ? Optional.empty()
+            : StoreTreeNodes.findNode(result, path.relativeTo(terminalPath).orElseThrow())
+                .flatMap(treeNode -> Optional.ofNullable(treeNode.subtreeVersion().readInfo()));
+    }
+
+    private Entry<YangInstanceIdentifier, ModifiedNode> resolveTerminal(final YangInstanceIdentifier path) {
+        /*
+         * Walk the tree from the top, looking for the first node between root and the requested path which has been
+         * modified. If no such node exists, we use the node itself.
+         */
+        return StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path,
+            input -> switch (input.getOperation()) {
+                case DELETE, MERGE, WRITE -> true;
+                case TOUCH, NONE -> false;
+            });
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
