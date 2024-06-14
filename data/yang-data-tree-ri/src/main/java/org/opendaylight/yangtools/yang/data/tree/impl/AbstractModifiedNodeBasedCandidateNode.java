@@ -54,10 +54,10 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
 
     private static boolean canHaveChildren(final @Nullable TreeNode oldMeta, final @Nullable TreeNode newMeta) {
         if (oldMeta != null) {
-            return oldMeta.getData() instanceof NormalizedNodeContainer;
+            return oldMeta.data() instanceof NormalizedNodeContainer;
         }
         if (newMeta != null) {
-            return newMeta.getData() instanceof NormalizedNodeContainer;
+            return newMeta.data() instanceof NormalizedNodeContainer;
         }
         return false;
     }
@@ -65,7 +65,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     @SuppressWarnings("unchecked")
     private static DistinctNodeContainer<PathArgument, NormalizedNode> getContainer(
             final @Nullable TreeNode meta) {
-        return meta == null ? null : (DistinctNodeContainer<PathArgument, NormalizedNode>)meta.getData();
+        return meta == null ? null : (DistinctNodeContainer<PathArgument, NormalizedNode>)meta.data();
     }
 
     private @NonNull ChildNode childNode(final ModifiedNode childMod) {
@@ -113,7 +113,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     private static @Nullable NormalizedNode data(final TreeNode meta) {
-        return meta == null ? null : meta.getData();
+        return meta == null ? null : meta.data();
     }
 
 

@@ -54,7 +54,7 @@ sealed class MapEntryModificationStrategy extends DataNodeContainerModificationS
         }
 
         private @NonNull TreeNode enforce(final TreeNode treeNode) {
-            enforcer.enforceOnData(treeNode.getData());
+            enforcer.enforceOnData(treeNode.data());
             return treeNode;
         }
     }

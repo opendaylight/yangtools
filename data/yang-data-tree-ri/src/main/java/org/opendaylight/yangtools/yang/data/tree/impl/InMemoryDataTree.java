@@ -146,7 +146,7 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Data Tree is {}", NormalizedNodes.toStringTree(c.getTipRoot().getData()));
+            LOG.trace("Data Tree is {}", NormalizedNodes.toStringTree(c.getTipRoot().data()));
         }
 
         final TreeNode newRoot = c.getTipRoot();

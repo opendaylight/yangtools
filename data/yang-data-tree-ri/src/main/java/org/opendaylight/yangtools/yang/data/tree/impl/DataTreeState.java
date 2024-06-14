@@ -64,6 +64,6 @@ final class DataTreeState {
     @Override
     public String toString() {
         final TreeNode r = root;
-        return MoreObjects.toStringHelper(this).add("data", NormalizedNodes.toStringTree(r.getData())).toString();
+        return MoreObjects.toStringHelper(this).add("data", NormalizedNodes.toStringTree(r.data())).toString();
     }
 }

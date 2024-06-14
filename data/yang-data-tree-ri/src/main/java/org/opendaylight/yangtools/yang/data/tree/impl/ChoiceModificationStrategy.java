@@ -96,7 +96,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     private void enforceCases(final TreeNode tree) {
-        enforceCases(tree.getData());
+        enforceCases(tree.data());
     }
 
     private void enforceCases(final NormalizedNode normalizedNode) {

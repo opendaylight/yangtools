@@ -44,7 +44,7 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
 
     @Override
     public Optional<NormalizedNode> readNode(final YangInstanceIdentifier path) {
-        return NormalizedNodes.findNode(rootNode.getData(), path);
+        return NormalizedNodes.findNode(rootNode.data(), path);
     }
 
     @Override
@@ -54,7 +54,7 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
 
     @Override
     public Optional<DataTreeSnapshotCursor> openCursor(final YangInstanceIdentifier path) {
-        return NormalizedNodes.findNode(rootNode.getData(), path).map(root -> {
+        return NormalizedNodes.findNode(rootNode.data(), path).map(root -> {
             checkArgument(root instanceof DistinctNodeContainer, "Child %s is not a container", path);
             return openCursor(new InMemoryDataTreeSnapshotCursor(this, path, (DistinctNodeContainer<?, ?>)root));
         });
@@ -62,6 +62,6 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
 
     @Override
     public String toString() {
-        return rootNode.getSubtreeVersion().toString();
+        return rootNode.subtreeVersion().toString();
     }
 }

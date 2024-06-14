@@ -20,8 +20,8 @@ final class SimpleContainerNode extends AbstractContainerNode {
     }
 
     @Override
-    public Version getSubtreeVersion() {
-        return getVersion();
+    public Version subtreeVersion() {
+        return version();
     }
 
     @Override
@@ -30,12 +30,12 @@ final class SimpleContainerNode extends AbstractContainerNode {
     }
 
     @Override
-    public MutableTreeNode mutable() {
+    public MutableTreeNode toMutable() {
         return new LazyMutableContainerNode(this);
     }
 
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("data", getData());
+        return helper.add("data", data());
     }
 }

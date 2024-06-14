@@ -82,9 +82,9 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
 
     protected static final void checkNotConflicting(final ModificationPath path, final @NonNull TreeNode original,
             final @NonNull TreeNode current) throws ConflictingModificationAppliedException {
-        checkConflicting(path, original.getVersion().equals(current.getVersion()),
+        checkConflicting(path, original.version().equals(current.version()),
                 "Node was replaced by other transaction.");
-        checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
+        checkConflicting(path, original.subtreeVersion().equals(current.subtreeVersion()),
                 "Node children was modified by other transaction");
     }
 
@@ -147,7 +147,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
              * value of leaf is unchanged between two transactions it should not cause transaction to fail, since result
              * of this merge leads to same data.
              */
-            if (!orig.getData().equals(currentMeta.getData())) {
+            if (!orig.data().equals(currentMeta.data())) {
                 checkNotConflicting(path, orig, currentMeta);
             }
         }
@@ -206,7 +206,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
                     // to run that validation here.
                     modification.resolveModificationType(ModificationType.WRITE);
                     result = applyWrite(modification, modification.getWrittenValue(), null, version);
-                    fullVerifyStructure(result.getData());
+                    fullVerifyStructure(result.data());
                 } else {
                     result = applyMerge(modification, currentMeta, version);
                 }

@@ -12,16 +12,14 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Identifiable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
- * A very basic data tree node. It has a {@link #getVersion()} (when it was last modified),
- * a {@link #getSubtreeVersion()} (when any of its children were modified) and some read-only data. In terms of
+ * A very basic data tree node. It has a {@link #version()} (when it was last modified),
+ * a {@link #subtreeVersion()} (when any of its children were modified) and some read-only data. In terms of
  * <a href="https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation">MVCC</a>, the former
  * corresponds to the this node's current Read Timestamp (RTS(P), where P is this node). The latter is the most recent
  * Read Timestamp in this node's accessible children.
@@ -40,7 +38,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 // FIXME: BUG-2399: clarify that versioning rules are not enforced for non-presence containers, as they are not
 //                  considered to be data nodes.
 @NonNullByDefault
-public abstract class TreeNode implements Identifiable<PathArgument>, StoreTreeNode<TreeNode> {
+public abstract class TreeNode implements StoreTreeNode<TreeNode> {
     private final NormalizedNode data;
     private final Version version;
 
@@ -68,9 +66,13 @@ public abstract class TreeNode implements Identifiable<PathArgument>, StoreTreeN
         };
     }
 
-    @Override
-    public final PathArgument getIdentifier() {
-        return data.name();
+    /**
+     * Get a read-only view of the underlying data.
+     *
+     * @return Unmodifiable view of the underlying data.
+     */
+    public final NormalizedNode data() {
+        return data;
     }
 
     /**
@@ -80,7 +82,7 @@ public abstract class TreeNode implements Identifiable<PathArgument>, StoreTreeN
      *
      * @return Current data node version.
      */
-    public final Version getVersion() {
+    public final Version version() {
         return version;
     }
 
@@ -90,23 +92,14 @@ public abstract class TreeNode implements Identifiable<PathArgument>, StoreTreeN
      *
      * @return Current subtree version.
      */
-    public abstract Version getSubtreeVersion();
-
-    /**
-     * Get a read-only view of the underlying data.
-     *
-     * @return Unmodifiable view of the underlying data.
-     */
-    public final NormalizedNode getData() {
-        return data;
-    }
+    public abstract Version subtreeVersion();
 
     /**
      * Get a mutable, isolated copy of the node.
      *
      * @return Mutable copy
      */
-    public abstract MutableTreeNode mutable();
+    public abstract MutableTreeNode toMutable();
 
     @Override
     public final String toString() {

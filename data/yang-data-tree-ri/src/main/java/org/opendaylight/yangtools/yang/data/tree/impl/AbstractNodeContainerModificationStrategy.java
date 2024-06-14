@@ -184,7 +184,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final var mutable = newValueMeta.mutable();
+        final var mutable = newValueMeta.toMutable();
         mutable.setSubtreeVersion(version);
 
         final var result = mutateChildren(mutable, support.createBuilder(newValue), version,
@@ -193,7 +193,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
         // is larger than it needs to be. Create a new TreeNode to host the data.
-        return TreeNode.of(result.getData(), version);
+        return TreeNode.of(result.data(), version);
     }
 
     /**
@@ -214,7 +214,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
             final var result = resolveChildOperation(id).apply(mod, meta.childByArg(id), nodeVersion);
             if (result != null) {
                 meta.putChild(result);
-                data.addChild(result.getData());
+                data.addChild(result.data());
             } else {
                 meta.removeChild(id);
                 data.removeChild(id);
@@ -287,7 +287,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
                     // Version does not matter here as we'll throw it out
                     final var current = apply(modification, modification.original(), Version.initial());
                     if (current != null) {
-                        modification.updateValue(LogicalOperation.WRITE, current.getData());
+                        modification.updateValue(LogicalOperation.WRITE, current.data());
                         mergeChildrenIntoModification(modification, valueChildren, version);
                         return;
                     }
@@ -316,8 +316,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          * It also means the ModificationType is UNMODIFIED.
          */
         if (!modification.isEmpty()) {
-            final var dataBuilder = support.createBuilder(currentMeta.getData());
-            final var newMeta = currentMeta.mutable();
+            final var dataBuilder = support.createBuilder(currentMeta.data());
+            final var newMeta = currentMeta.toMutable();
             newMeta.setSubtreeVersion(version);
             final var children = modification.getChildren();
             final var ret = mutateChildren(newMeta, dataBuilder, version, children);

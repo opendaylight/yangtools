@@ -26,7 +26,7 @@ final class MaterializedContainerNode extends AbstractModifiedContainerNode {
     }
 
     @Override
-    public MutableTreeNode mutable() {
+    public MutableTreeNode toMutable() {
         return new MaterializedMutableContainerNode(this, snapshotChildren());
     }
 }
