@@ -25,6 +25,8 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.RawTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
@@ -273,6 +275,16 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @return A model node
      */
     abstract @NonNull T getSchema();
+
+    @NonNull MutableTreeNode openMeta(final TreeNode meta, final Version subtreeVersion) {
+        if (meta instanceof RawTreeNode raw) {
+            final var ret = raw.toMutable();
+            ret.setSubtreeVersion(subtreeVersion);
+            return ret;
+        } else {
+            throw new IllegalStateException("Unsupported " + meta);
+        }
+    }
 
     /**
      * Checks if supplied schema node belong to specified Data Tree type. All nodes belong to the operational tree,
