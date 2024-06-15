@@ -237,63 +237,50 @@ public final class DataTreeCandidates {
         }
     }
 
-    private static ModificationType compressModifications(final ModificationType firstModification,
-                                                          final ModificationType secondModification,
-                                                          final boolean hasNoDataBefore) {
-        switch (firstModification) {
-            case UNMODIFIED:
+    private static ModificationType compressModifications(final ModificationType first, final ModificationType second,
+            final boolean hasNoDataBefore) {
+        return switch (first) {
+            case UNMODIFIED -> {
                 if (hasNoDataBefore) {
-                    return switch (secondModification) {
-                        case UNMODIFIED, WRITE, APPEARED -> secondModification;
-                        case DELETE -> illegalModification(ModificationType.DELETE, ModificationType.DELETE);
-                        case SUBTREE_MODIFIED ->
-                            illegalModification(ModificationType.SUBTREE_MODIFIED, ModificationType.DELETE);
-                        case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, ModificationType.DELETE);
-                    };
+                    yield switch (second) {
+                            case UNMODIFIED, WRITE, APPEARED -> second;
+                            case DELETE, DISAPPEARED, SUBTREE_MODIFIED ->
+                                illegalModification(second, ModificationType.DELETE);
+                        };
                 }
-                if (secondModification == ModificationType.APPEARED) {
-                    return illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
+                if (second == ModificationType.APPEARED) {
+                    yield illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
                 }
-                return secondModification;
-            case WRITE:
-                return switch (secondModification) {
-                    case UNMODIFIED, WRITE, SUBTREE_MODIFIED -> ModificationType.WRITE;
-                    case DELETE -> ModificationType.DELETE;
-                    case DISAPPEARED -> ModificationType.DISAPPEARED;
-                    case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
-                };
-            case DELETE:
-                return switch (secondModification) {
-                    case UNMODIFIED -> ModificationType.DELETE;
-                    case WRITE, APPEARED -> ModificationType.WRITE;
-                    case DELETE -> illegalModification(ModificationType.DELETE, firstModification);
-                    case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, firstModification);
-                    case SUBTREE_MODIFIED -> illegalModification(ModificationType.SUBTREE_MODIFIED, firstModification);
-                };
-            case APPEARED:
-                return switch (secondModification) {
-                    case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.APPEARED;
-                    case DELETE, DISAPPEARED -> ModificationType.UNMODIFIED;
-                    case WRITE -> ModificationType.WRITE;
-                    case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
-                };
-            case DISAPPEARED:
-                return switch (secondModification) {
-                    case UNMODIFIED, WRITE -> secondModification;
-                    case APPEARED -> ModificationType.SUBTREE_MODIFIED;
-                    case DELETE -> illegalModification(ModificationType.DELETE, firstModification);
-                    case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, firstModification);
-                    case SUBTREE_MODIFIED -> illegalModification(ModificationType.SUBTREE_MODIFIED, firstModification);
-                };
-            case SUBTREE_MODIFIED:
-                return switch (secondModification) {
-                    case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.SUBTREE_MODIFIED;
-                    case WRITE, DELETE, DISAPPEARED -> secondModification;
-                    case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
-                };
-            default:
-                throw new IllegalStateException("Unsupported modification type " + firstModification);
-        }
+                yield second;
+            }
+            case WRITE -> switch (second) {
+                case UNMODIFIED, WRITE, SUBTREE_MODIFIED -> ModificationType.WRITE;
+                case DELETE -> ModificationType.DELETE;
+                case DISAPPEARED -> ModificationType.DISAPPEARED;
+                case APPEARED -> illegalModification(ModificationType.APPEARED, first);
+            };
+            case DELETE -> switch (second) {
+                case UNMODIFIED -> ModificationType.DELETE;
+                case WRITE, APPEARED -> ModificationType.WRITE;
+                case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> illegalModification(second, first);
+            };
+            case APPEARED -> switch (second) {
+                case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.APPEARED;
+                case DELETE, DISAPPEARED -> ModificationType.UNMODIFIED;
+                case WRITE -> ModificationType.WRITE;
+                case APPEARED -> illegalModification(ModificationType.APPEARED, first);
+            };
+            case DISAPPEARED -> switch (second) {
+                case UNMODIFIED, WRITE -> second;
+                case APPEARED -> ModificationType.SUBTREE_MODIFIED;
+                case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> illegalModification(second, first);
+            };
+            case SUBTREE_MODIFIED -> switch (second) {
+                case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.SUBTREE_MODIFIED;
+                case WRITE, DELETE, DISAPPEARED -> second;
+                case APPEARED -> illegalModification(ModificationType.APPEARED, first);
+            };
+        };
     }
 
     private static ModificationType illegalModification(final ModificationType first, final ModificationType second) {
