@@ -290,14 +290,14 @@ public final class DataTreeCandidates {
 
     private static void applyToCursorAwareModification(final CursorAwareDataTreeModification modification,
                                                        final DataTreeCandidate candidate) {
-        final YangInstanceIdentifier candidatePath = candidate.getRootPath();
-        final YangInstanceIdentifier parent = candidatePath.getParent();
+        final var candidatePath = candidate.getRootPath();
+        final var parent = candidatePath.getParent();
         if (parent == null) {
-            try (DataTreeModificationCursor cursor = modification.openCursor()) {
+            try (var cursor = modification.openCursor()) {
                 DataTreeCandidateNodes.applyRootToCursor(cursor, candidate.getRootNode());
             }
         } else {
-            try (DataTreeModificationCursor cursor = modification.openCursor(parent).orElseThrow()) {
+            try (var cursor = modification.openCursor(parent).orElseThrow()) {
                 DataTreeCandidateNodes.applyRootedNodeToCursor(cursor, candidatePath, candidate.getRootNode());
             }
         }
@@ -317,29 +317,27 @@ public final class DataTreeCandidates {
 
         NodeIterator next(final DataTreeModification modification) {
             while (iterator.hasNext()) {
-                final DataTreeCandidateNode node = iterator.next();
-                final YangInstanceIdentifier child = path.node(node.name());
-
-                switch (node.modificationType()) {
-                    case DELETE:
+                final var node = iterator.next();
+                final var child = path.node(node.name());
+                final var type = node.modificationType();
+                switch (type) {
+                    case DELETE -> {
                         modification.delete(child);
                         LOG.debug("Modification {} deleted path {}", modification, child);
-                        break;
-                    case APPEARED:
-                    case DISAPPEARED:
-                    case SUBTREE_MODIFIED:
+                    }
+                    case APPEARED, DISAPPEARED, SUBTREE_MODIFIED -> {
                         LOG.debug("Modification {} modified path {}", modification, child);
                         return new NodeIterator(this, child, node.childNodes().iterator());
-                    case UNMODIFIED:
-                        LOG.debug("Modification {} unmodified path {}", modification, child);
+                    }
+                    case UNMODIFIED -> {
                         // No-op
-                        break;
-                    case WRITE:
+                        LOG.debug("Modification {} unmodified path {}", modification, child);
+                    }
+                    case WRITE -> {
                         modification.write(child, verifyNotNull(node.dataAfter()));
                         LOG.debug("Modification {} written path {}", modification, child);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
+                    }
+                    default -> throw new IllegalArgumentException("Unsupported modification " + type);
                 }
             }
             return parent;
