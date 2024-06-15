@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * the modification from which this candidate was created. The node itself exposes the before- and after-image
  * of the tree restricted to the modified nodes.
  */
+@Deprecated(since = "14.0.0", forRemoval = true)
 public interface DataTreeCandidateNode {
     /**
      * Get the node underlying {@link NormalizedNode#name()}.

@@ -32,7 +32,7 @@ public interface DataTreeCandidate {
      *
      * @return Candidate tree root node
      */
-    DataTreeCandidateNode getRootNode();
+    CandidateNode getRootNode();
 
     /**
      * Get the candidate tree root path. This is the path of the root node

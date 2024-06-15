@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.spi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode.Unmodified;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
@@ -52,9 +54,8 @@ class DataTreeCandidatesAggregateTest {
 
         final var aggregationResult = DataTreeCandidates.aggregate(List.of(candidate1, candidate2));
 
-        assertEquals(UNMODIFIED, aggregationResult.getRootNode().modificationType());
-        assertEquals("value1", aggregationResult.getRootNode().dataBefore().body());
-        assertEquals("value1", aggregationResult.getRootNode().dataAfter().body());
+        final var unmodified = assertInstanceOf(Unmodified.class, aggregationResult.getRootNode());
+        assertEquals("value1", unmodified.dataAfter().body());
     }
 
     @Test
