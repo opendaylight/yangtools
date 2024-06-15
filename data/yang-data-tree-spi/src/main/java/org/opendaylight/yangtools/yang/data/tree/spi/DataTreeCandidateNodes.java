@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 @Beta
 public final class DataTreeCandidateNodes {
     private DataTreeCandidateNodes() {
-
+        // Hidden on purpose
     }
 
     /**
@@ -75,8 +75,7 @@ public final class DataTreeCandidateNodes {
      * @return Collection of changes
      */
     public static @NonNull Collection<DataTreeCandidateNode> containerDelta(
-            final @Nullable DistinctNodeContainer<?, ?> oldData,
-            final @Nullable DistinctNodeContainer<?, ?> newData) {
+            final @Nullable DistinctNodeContainer<?, ?> oldData, final @Nullable DistinctNodeContainer<?, ?> newData) {
         if (newData == null) {
             return oldData == null ? ImmutableList.of()
                     : Collections2.transform(oldData.body(), DataTreeCandidateNodes::deleteNode);
@@ -98,17 +97,11 @@ public final class DataTreeCandidateNodes {
         @SuppressWarnings("unchecked")
         final var oldCast = (DistinctNodeContainer<PathArgument, ?>) oldData;
         for (var child : newData.body()) {
-            final DataTreeCandidateNode node;
-            final NormalizedNode oldChild = oldCast.childByArg(child.name());
-            if (oldChild != null) {
+            final var oldChild = oldCast.childByArg(child.name());
+            result.add(oldChild == null ? writeNode(child)
                 // This does not find children which have not in fact been modified, as doing that
                 // reliably would require us running a full equals() on the two nodes.
-                node = replaceNode(oldChild, child);
-            } else {
-                node = writeNode(child);
-            }
-
-            result.add(node);
+                : replaceNode(oldChild, child));
         }
 
         // Process removals next, looking into new data to see if we processed it
@@ -135,14 +128,12 @@ public final class DataTreeCandidateNodes {
             final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> oldData,
             final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> newData,
             final @NonNull PathArgument child) {
-        final NormalizedNode newChild = getChild(newData, child);
-        final NormalizedNode oldChild = getChild(oldData, child);
+        final var newChild = getChild(newData, child);
+        final var oldChild = getChild(oldData, child);
         if (oldChild != null) {
             return newChild != null ? replaceNode(oldChild, newChild) : deleteNode(oldChild);
-        } else if (newChild != null) {
-            return DataTreeCandidateNodes.writeNode(newChild);
         } else {
-            return null;
+            return newChild != null ? DataTreeCandidateNodes.writeNode(newChild) : null;
         }
     }
 
@@ -155,25 +146,21 @@ public final class DataTreeCandidateNodes {
      * @param node candidate tree to apply
      */
     public static void applyToCursor(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
-        switch (node.modificationType()) {
-            case DELETE:
-                cursor.delete(node.name());
-                break;
-            case SUBTREE_MODIFIED:
+        final var type = node.modificationType();
+        switch (type) {
+            case DELETE -> cursor.delete(node.name());
+            case SUBTREE_MODIFIED -> {
                 cursor.enter(node.name());
                 AbstractNodeIterator iterator = new ExitingNodeIterator(null, node.childNodes().iterator());
                 do {
                     iterator = iterator.next(cursor);
                 } while (iterator != null);
-                break;
-            case UNMODIFIED:
+            }
+            case UNMODIFIED -> {
                 // No-op
-                break;
-            case WRITE:
-                cursor.write(node.name(), verifyNotNull(node.dataAfter()));
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
+            }
+            case WRITE -> cursor.write(node.name(), verifyNotNull(node.dataAfter()));
+            default -> throw new IllegalArgumentException("Unsupported modification " + type);
         }
     }
 
@@ -187,49 +174,43 @@ public final class DataTreeCandidateNodes {
      */
     public static void applyRootedNodeToCursor(final DataTreeModificationCursor cursor,
             final YangInstanceIdentifier rootPath, final DataTreeCandidateNode node) {
-        switch (node.modificationType()) {
-            case DELETE:
-                cursor.delete(rootPath.getLastPathArgument());
-                break;
-            case SUBTREE_MODIFIED:
+        final var type = node.modificationType();
+        switch (type) {
+            case DELETE -> cursor.delete(rootPath.getLastPathArgument());
+            case SUBTREE_MODIFIED -> {
                 cursor.enter(rootPath.getLastPathArgument());
                 AbstractNodeIterator iterator = new ExitingNodeIterator(null, node.childNodes().iterator());
                 do {
                     iterator = iterator.next(cursor);
                 } while (iterator != null);
-                break;
-            case UNMODIFIED:
+            }
+            case UNMODIFIED -> {
                 // No-op
-                break;
-            case WRITE:
-                cursor.write(rootPath.getLastPathArgument(), verifyNotNull(node.dataAfter()));
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
+            }
+            case WRITE -> cursor.write(rootPath.getLastPathArgument(), verifyNotNull(node.dataAfter()));
+            default -> throw new IllegalArgumentException("Unsupported modification " + type);
         }
     }
 
     public static void applyRootToCursor(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
-        switch (node.modificationType()) {
-            case DELETE:
-                throw new IllegalArgumentException("Can not delete root.");
-            case WRITE:
-            case SUBTREE_MODIFIED:
+        final var type = node.modificationType();
+        switch (type) {
+            case DELETE -> throw new IllegalArgumentException("Can not delete root.");
+            case WRITE, SUBTREE_MODIFIED -> {
                 AbstractNodeIterator iterator = new RootNonExitingIterator(node.childNodes().iterator());
                 do {
                     iterator = iterator.next(cursor);
                 } while (iterator != null);
-                break;
-            case UNMODIFIED:
+            }
+            case UNMODIFIED -> {
                 // No-op
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
+            }
+            default -> throw new IllegalArgumentException("Unsupported modification " + type);
         }
     }
 
-    private static @Nullable NormalizedNode getChild(
-            final DistinctNodeContainer<PathArgument, ?> container, final PathArgument identifier) {
+    private static @Nullable NormalizedNode getChild(final DistinctNodeContainer<PathArgument, ?> container,
+            final PathArgument identifier) {
         return container == null ? null : container.childByArg(identifier);
     }
 
@@ -270,28 +251,22 @@ public final class DataTreeCandidateNodes {
 
         final AbstractNodeIterator next(final DataTreeModificationCursor cursor) {
             while (iterator.hasNext()) {
-                final DataTreeCandidateNode node = iterator.next();
-                switch (node.modificationType()) {
-                    case DELETE:
-                        cursor.delete(node.name());
-                        break;
-                    case APPEARED:
-                    case DISAPPEARED:
-                    case SUBTREE_MODIFIED:
+                final var node = iterator.next();
+                final var type = node.modificationType();
+                switch (type) {
+                    case DELETE -> cursor.delete(node.name());
+                    case APPEARED, DISAPPEARED, SUBTREE_MODIFIED -> {
                         final var children = node.childNodes();
                         if (!children.isEmpty()) {
                             cursor.enter(node.name());
                             return new ExitingNodeIterator(this, children.iterator());
                         }
-                        break;
-                    case UNMODIFIED:
+                    }
+                    case UNMODIFIED -> {
                         // No-op
-                        break;
-                    case WRITE:
-                        cursor.write(node.name(), verifyNotNull(node.dataAfter()));
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
+                    }
+                    case WRITE -> cursor.write(node.name(), verifyNotNull(node.dataAfter()));
+                    default -> throw new IllegalArgumentException("Unsupported modification " + type);
                 }
             }
             exitNode(cursor);
