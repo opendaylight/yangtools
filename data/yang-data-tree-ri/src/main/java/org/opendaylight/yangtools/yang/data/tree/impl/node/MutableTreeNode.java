@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
  * A mutable tree node. This is a transient view materialized from a pre-existing node. Modifications are isolated. Once
  * this object is {@link #seal()}ed, any interactions with it will result in undefined behavior.
  */
+@NonNullByDefault
 public abstract class MutableTreeNode implements StoreTreeNode<TreeNode> {
     /**
      * Set the data component of the node.
@@ -62,5 +63,5 @@ public abstract class MutableTreeNode implements StoreTreeNode<TreeNode> {
      *
      * @return Read-only view of this node.
      */
-    public abstract @NonNull TreeNode seal();
+    public abstract TreeNode seal();
 }
