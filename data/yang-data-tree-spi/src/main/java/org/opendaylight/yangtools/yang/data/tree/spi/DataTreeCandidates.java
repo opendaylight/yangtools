@@ -264,8 +264,6 @@ public final class DataTreeCandidates {
                         case SUBTREE_MODIFIED ->
                             illegalModification(ModificationType.SUBTREE_MODIFIED, ModificationType.DELETE);
                         case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, ModificationType.DELETE);
-                        default ->
-                            throw new IllegalStateException("Unsupported modification type " + secondModification);
                     };
                 }
                 if (secondModification == ModificationType.APPEARED) {
@@ -278,7 +276,6 @@ public final class DataTreeCandidates {
                     case DELETE -> ModificationType.DELETE;
                     case DISAPPEARED -> ModificationType.DISAPPEARED;
                     case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
-                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
                 };
             case DELETE:
                 return switch (secondModification) {
@@ -287,7 +284,6 @@ public final class DataTreeCandidates {
                     case DELETE -> illegalModification(ModificationType.DELETE, firstModification);
                     case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, firstModification);
                     case SUBTREE_MODIFIED -> illegalModification(ModificationType.SUBTREE_MODIFIED, firstModification);
-                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
                 };
             case APPEARED:
                 return switch (secondModification) {
@@ -295,7 +291,6 @@ public final class DataTreeCandidates {
                     case DELETE, DISAPPEARED -> ModificationType.UNMODIFIED;
                     case WRITE -> ModificationType.WRITE;
                     case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
-                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
                 };
             case DISAPPEARED:
                 return switch (secondModification) {
@@ -304,14 +299,12 @@ public final class DataTreeCandidates {
                     case DELETE -> illegalModification(ModificationType.DELETE, firstModification);
                     case DISAPPEARED -> illegalModification(ModificationType.DISAPPEARED, firstModification);
                     case SUBTREE_MODIFIED -> illegalModification(ModificationType.SUBTREE_MODIFIED, firstModification);
-                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
                 };
             case SUBTREE_MODIFIED:
                 return switch (secondModification) {
                     case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.SUBTREE_MODIFIED;
                     case WRITE, DELETE, DISAPPEARED -> secondModification;
                     case APPEARED -> illegalModification(ModificationType.APPEARED, firstModification);
-                    default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
                 };
             default:
                 throw new IllegalStateException("Unsupported modification type " + firstModification);
