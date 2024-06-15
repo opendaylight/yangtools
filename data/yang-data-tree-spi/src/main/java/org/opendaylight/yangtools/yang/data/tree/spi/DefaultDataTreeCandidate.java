@@ -12,22 +12,21 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 
 /**
  * Default utility implementation of the {@link DataTreeCandidate} contract.
  */
 final class DefaultDataTreeCandidate implements DataTreeCandidate {
     private final YangInstanceIdentifier rootPath;
-    private final DataTreeCandidateNode rootNode;
+    private final CandidateNode rootNode;
 
-    DefaultDataTreeCandidate(final YangInstanceIdentifier rootPath, final DataTreeCandidateNode rootNode) {
+    DefaultDataTreeCandidate(final YangInstanceIdentifier rootPath, final CandidateNode rootNode) {
         this.rootPath = requireNonNull(rootPath);
         this.rootNode = requireNonNull(rootNode);
     }
 
     @Override
-    public DataTreeCandidateNode getRootNode() {
+    public CandidateNode getRootNode() {
         return rootNode;
     }
 
