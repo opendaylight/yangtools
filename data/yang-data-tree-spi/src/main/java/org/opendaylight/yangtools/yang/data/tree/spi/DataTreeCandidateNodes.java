@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 
 @Beta
+@Deprecated(since = "14.0.0", forRemoval = true)
 public final class DataTreeCandidateNodes {
     private DataTreeCandidateNodes() {
         // Hidden on purpose

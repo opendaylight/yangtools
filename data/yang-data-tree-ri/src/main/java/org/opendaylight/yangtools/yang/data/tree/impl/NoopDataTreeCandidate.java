@@ -10,14 +10,9 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
-import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode.Unmodified;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 
 /**
@@ -26,38 +21,6 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
  * of this class are explicitly recognized and processing of them is skipped.
  */
 final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
-    private static final DataTreeCandidateNode ROOT = new DataTreeCandidateNode() {
-        @Override
-        public ModificationType modificationType() {
-            return ModificationType.UNMODIFIED;
-        }
-
-        @Override
-        public Collection<DataTreeCandidateNode> childNodes() {
-            return List.of();
-        }
-
-        @Override
-        public PathArgument name() {
-            throw new IllegalStateException("Attempted to read identifier of the no-operation change");
-        }
-
-        @Override
-        public NormalizedNode dataAfter() {
-            return null;
-        }
-
-        @Override
-        public NormalizedNode dataBefore() {
-            return null;
-        }
-
-        @Override
-        public DataTreeCandidateNode modifiedChild(final PathArgument identifier) {
-            return null;
-        }
-    };
-
     private final @NonNull TreeNode afterRoot;
 
     protected NoopDataTreeCandidate(final YangInstanceIdentifier rootPath, final ModifiedNode modificationRoot,
@@ -68,8 +31,10 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
     }
 
     @Override
-    public DataTreeCandidateNode getRootNode() {
-        return ROOT;
+    public Unmodified getRootNode() {
+        return () -> {
+            throw new UnsupportedOperationException("Attempted to read data of the no-operation change");
+        };
     }
 
     @Override
