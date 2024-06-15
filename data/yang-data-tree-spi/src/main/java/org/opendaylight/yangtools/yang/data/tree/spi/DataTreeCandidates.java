@@ -143,16 +143,16 @@ public final class DataTreeCandidates {
     }
 
     private static DataTreeCandidateNode slowCompressNodes(final DataTreeCandidateNode first,
-                                                           final List<DataTreeCandidateNode> input) {
+            final List<DataTreeCandidateNode> input) {
         // finalNode contains summarized changes
-        TerminalDataTreeCandidateNode finalNode = new TerminalDataTreeCandidateNode(null, first.dataBefore());
+        final var finalNode = new TerminalDataTreeCandidateNode(null, first.dataBefore());
         input.forEach(node -> compressNode(finalNode, node, null));
         finalNode.setAfter(input.get(input.size() - 1).dataAfter());
         return cleanUpTree(finalNode);
     }
 
     private static void compressNode(final TerminalDataTreeCandidateNode finalNode, final DataTreeCandidateNode node,
-                                     final PathArgument parent) {
+            final PathArgument parent) {
         PathArgument identifier;
         try {
             identifier = node.name();
@@ -161,36 +161,26 @@ public final class DataTreeCandidates {
         }
         // Check if finalNode has stored any changes for node
         if (finalNode.getNode(identifier).isEmpty()) {
-            TerminalDataTreeCandidateNode parentNode = finalNode.getNode(parent)
-                    .orElseThrow(() -> new IllegalArgumentException("No node found for " + parent + " identifier"));
-            TerminalDataTreeCandidateNode childNode = new TerminalDataTreeCandidateNode(
-                    identifier,
-                    node.dataBefore(),
-                    parentNode);
-            parentNode.addChildNode(childNode);
+            final var parentNode = finalNode.getNode(parent)
+                .orElseThrow(() -> new IllegalArgumentException("No node found for " + parent + " identifier"));
+            parentNode.addChildNode(new TerminalDataTreeCandidateNode(identifier, node.dataBefore(), parentNode));
         }
 
-        ModificationType nodeModification = node.modificationType();
+        final var nodeModification = node.modificationType();
         switch (nodeModification) {
-            case UNMODIFIED:
+            case UNMODIFIED -> {
                 // If node is unmodified there is no need iterate through its child nodes
-                break;
-            case WRITE:
-            case DELETE:
-            case APPEARED:
-            case DISAPPEARED:
-            case SUBTREE_MODIFIED:
-                finalNode.setModification(identifier,
-                        compressModifications(finalNode.getModification(identifier), nodeModification,
-                                finalNode.dataAfter(identifier) == null));
+            }
+            case APPEARED, DELETE, DISAPPEARED, SUBTREE_MODIFIED, WRITE -> {
+                finalNode.setModification(identifier, compressModifications(finalNode.getModification(identifier),
+                    nodeModification, finalNode.dataAfter(identifier) == null));
                 finalNode.setData(identifier, node.dataAfter());
 
-                for (DataTreeCandidateNode child : node.childNodes()) {
+                for (var child : node.childNodes()) {
                     compressNode(finalNode, child, identifier);
                 }
-                break;
-            default:
-                throw new IllegalStateException("Unsupported modification type " + nodeModification);
+            }
+            default -> throw new IllegalStateException("Unsupported modification type " + nodeModification);
         }
     }
 
