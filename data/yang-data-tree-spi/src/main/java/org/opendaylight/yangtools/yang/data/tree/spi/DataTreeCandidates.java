@@ -98,18 +98,18 @@ public final class DataTreeCandidates {
      * @throws NullPointerException     if {@code candidates} is null or contains a null entry
      */
     public static @NonNull DataTreeCandidate aggregate(@NonNull final List<? extends DataTreeCandidate> candidates) {
-        final Iterator<? extends DataTreeCandidate> it = candidates.iterator();
+        final var it = candidates.iterator();
         checkArgument(it.hasNext(), "Input must not be empty");
-        final DataTreeCandidate first = requireNonNull(it.next(), "Input must not contain null entries");
+        final var first = requireNonNull(it.next(), "Input must not contain null entries");
         if (!it.hasNext()) {
             // Short-circuit
             return first;
         }
-        final YangInstanceIdentifier rootPath = first.getRootPath();
-        final List<DataTreeCandidateNode> roots = new ArrayList<>(candidates.size());
+        final var rootPath = first.getRootPath();
+        final var roots = new ArrayList<DataTreeCandidateNode>(candidates.size());
         roots.add(first.getRootNode());
         it.forEachRemaining(candidate -> {
-            final YangInstanceIdentifier root = candidate.getRootPath();
+            final var root = candidate.getRootPath();
             checkArgument(rootPath.equals(root), "Expecting root path %s, encountered %s", rootPath, root);
             roots.add(candidate.getRootNode());
         });
