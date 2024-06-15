@@ -20,12 +20,17 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.spi.AbstractDataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.spi.DataTreeCandidateNodes;
+import org.opendaylight.yangtools.yang.data.tree.spi.ImmutableCandidateCreated;
+import org.opendaylight.yangtools.yang.data.tree.spi.ImmutableCandidateDeleted;
+import org.opendaylight.yangtools.yang.data.tree.spi.ImmutableCandidateReplaced;
+import org.opendaylight.yangtools.yang.data.tree.spi.ImmutableCandidateUnmodified;
 
-abstract class AbstractModifiedNodeBasedCandidateNode extends AbstractDataTreeCandidateNode {
+abstract class AbstractModifiedNodeBasedCandidateNode {
     private final ModifiedNode mod;
     private final TreeNode newMeta;
     private final TreeNode oldMeta;
@@ -36,6 +41,21 @@ abstract class AbstractModifiedNodeBasedCandidateNode extends AbstractDataTreeCa
         this.newMeta = newMeta;
         this.oldMeta = oldMeta;
         this.mod = mod;
+    }
+
+    final @NonNull CandidateNode toCandidateNode() {
+        return switch (mod.getModificationType()) {
+            case APPEARED -> new NodeBasedAppeared(this);
+            case DELETE -> new ImmutableCandidateDeleted(dataBefore());
+            case DISAPPEARED -> new NodeBasedDisappeared(this);
+            case SUBTREE_MODIFIED -> new NodeBasedModified(this);
+            case UNMODIFIED -> new ImmutableCandidateUnmodified(dataAfter());
+            case WRITE -> {
+                final var dataBefore = dataBefore();
+                yield dataBefore == null ? new ImmutableCandidateCreated(dataAfter())
+                    : new ImmutableCandidateReplaced(dataBefore, dataAfter());
+            }
+        };
     }
 
     protected final ModifiedNode getMod() {
@@ -65,12 +85,20 @@ abstract class AbstractModifiedNodeBasedCandidateNode extends AbstractDataTreeCa
         return meta == null ? null : (DistinctNodeContainer<PathArgument, NormalizedNode>)meta.data();
     }
 
+    final Collection<CandidateNode> candidateChildren() {
+        return Collections2.transform(mod.getChildren(), mod -> childNode(mod).toCandidateNode());
+    }
+
+    final @Nullable CandidateNode candidateModifiedChild(final PathArgument arg) {
+        final var child = mod.childByArg(arg);
+        return child == null ? null : childNode(child).toCandidateNode();
+    }
+
     private @NonNull ChildNode childNode(final ModifiedNode childMod) {
         final var id = childMod.getIdentifier();
         return new ChildNode(childMod, childMeta(oldMeta, id), childMeta(newMeta, id));
     }
 
-    @Override
     public Collection<DataTreeCandidateNode> childNodes() {
         return switch (mod.getModificationType()) {
             case APPEARED, DISAPPEARED, SUBTREE_MODIFIED -> Collections2.transform(mod.getChildren(), this::childNode);
@@ -94,12 +122,18 @@ abstract class AbstractModifiedNodeBasedCandidateNode extends AbstractDataTreeCa
         };
     }
 
+<<<<<<< HEAD
     @Override
+=======
+    public final ModificationType modificationType() {
+        return verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
+    }
+
+>>>>>>> 2fc250b16f (WIP: Add ImmutableCandidateNodes)
     public final NormalizedNode dataBefore() {
         return data(oldMeta);
     }
 
-    @Override
     public final NormalizedNode dataAfter() {
         return data(newMeta);
     }
@@ -108,8 +142,6 @@ abstract class AbstractModifiedNodeBasedCandidateNode extends AbstractDataTreeCa
         return meta == null ? null : meta.data();
     }
 
-
-    @Override
     public final DataTreeCandidateNode modifiedChild(final PathArgument childName) {
         final var identifier = requireNonNull(childName);
         return switch (mod.getModificationType()) {
@@ -133,8 +165,8 @@ abstract class AbstractModifiedNodeBasedCandidateNode extends AbstractDataTreeCa
         };
     }
 
-    private static final class ChildNode extends AbstractModifiedNodeBasedCandidateNode {
-        ChildNode(final ModifiedNode mod, final TreeNode oldMeta, final TreeNode newMeta) {
+    static final class ChildNode extends AbstractModifiedNodeBasedCandidateNode {
+        private ChildNode(final ModifiedNode mod, final TreeNode oldMeta, final TreeNode newMeta) {
             super(mod, oldMeta, newMeta);
         }
 
