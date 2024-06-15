@@ -314,7 +314,7 @@ public final class DataTreeCandidates {
                     default -> throw new IllegalStateException("Unsupported modification type " + secondModification);
                 };
             default:
-                throw new IllegalStateException("Unsupported modification type " + secondModification);
+                throw new IllegalStateException("Unsupported modification type " + firstModification);
         }
     }
 
