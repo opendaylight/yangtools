@@ -129,7 +129,7 @@ public final class DataTreeCandidates {
                 // Check if node had data before
                 if (previous == ModificationType.DELETE || previous == ModificationType.DISAPPEARED
                     || previous == ModificationType.UNMODIFIED && dataBefore == null) {
-                    illegalModification(ModificationType.DELETE, ModificationType.DELETE);
+                    throw illegalModification(ModificationType.DELETE, ModificationType.DELETE);
                 }
 
                 yield dataBefore != null ? new TerminalDataTreeCandidateNode(null, type, dataBefore, null)
@@ -213,7 +213,7 @@ public final class DataTreeCandidates {
                 return finalNode;
             case APPEARED:
                 if (dataBefore != null) {
-                    illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
+                    throw illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
                 }
                 if (childNodes.isEmpty()) {
                     finalNode.deleteNode(identifier);
@@ -226,7 +226,7 @@ public final class DataTreeCandidates {
                 return finalNode;
             case SUBTREE_MODIFIED:
                 if (dataBefore == null) {
-                    illegalModification(ModificationType.SUBTREE_MODIFIED, ModificationType.DELETE);
+                    throw illegalModification(ModificationType.SUBTREE_MODIFIED, ModificationType.DELETE);
                 }
                 if (childNodes.isEmpty()) {
                     finalNode.deleteNode(identifier);
@@ -245,11 +245,11 @@ public final class DataTreeCandidates {
                     yield switch (second) {
                             case UNMODIFIED, WRITE, APPEARED -> second;
                             case DELETE, DISAPPEARED, SUBTREE_MODIFIED ->
-                                illegalModification(second, ModificationType.DELETE);
+                                throw illegalModification(second, ModificationType.DELETE);
                         };
                 }
                 if (second == ModificationType.APPEARED) {
-                    yield illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
+                    throw illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
                 }
                 yield second;
             }
@@ -257,34 +257,35 @@ public final class DataTreeCandidates {
                 case UNMODIFIED, WRITE, SUBTREE_MODIFIED -> ModificationType.WRITE;
                 case DELETE -> ModificationType.DELETE;
                 case DISAPPEARED -> ModificationType.DISAPPEARED;
-                case APPEARED -> illegalModification(ModificationType.APPEARED, first);
+                case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
             };
             case DELETE -> switch (second) {
                 case UNMODIFIED -> ModificationType.DELETE;
                 case WRITE, APPEARED -> ModificationType.WRITE;
-                case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> illegalModification(second, first);
+                case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> throw illegalModification(second, first);
             };
             case APPEARED -> switch (second) {
                 case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.APPEARED;
                 case DELETE, DISAPPEARED -> ModificationType.UNMODIFIED;
                 case WRITE -> ModificationType.WRITE;
-                case APPEARED -> illegalModification(ModificationType.APPEARED, first);
+                case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
             };
             case DISAPPEARED -> switch (second) {
                 case UNMODIFIED, WRITE -> second;
                 case APPEARED -> ModificationType.SUBTREE_MODIFIED;
-                case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> illegalModification(second, first);
+                case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> throw illegalModification(second, first);
             };
             case SUBTREE_MODIFIED -> switch (second) {
                 case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.SUBTREE_MODIFIED;
                 case WRITE, DELETE, DISAPPEARED -> second;
-                case APPEARED -> illegalModification(ModificationType.APPEARED, first);
+                case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
             };
         };
     }
 
-    private static ModificationType illegalModification(final ModificationType first, final ModificationType second) {
-        throw new IllegalArgumentException(first + " modification event on " + second + " node");
+    private static IllegalArgumentException illegalModification(final ModificationType first,
+            final ModificationType second) {
+        return new IllegalArgumentException(first + " modification event on " + second + " node");
     }
 
     private static void applyToCursorAwareModification(final CursorAwareDataTreeModification modification,
