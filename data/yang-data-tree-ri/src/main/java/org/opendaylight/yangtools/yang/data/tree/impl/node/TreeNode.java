@@ -81,13 +81,6 @@ public abstract sealed class TreeNode implements StoreTreeNode<TreeNode> permits
      */
     public abstract Version subtreeVersion();
 
-    /**
-     * Get a mutable, isolated copy of the node.
-     *
-     * @return Mutable copy
-     */
-    public abstract MutableTreeNode toMutable();
-
     @Override
     public final int hashCode() {
         return super.hashCode();

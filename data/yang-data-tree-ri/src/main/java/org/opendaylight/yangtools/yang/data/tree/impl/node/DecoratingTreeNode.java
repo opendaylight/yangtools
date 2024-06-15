@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 @NonNullByDefault
 public abstract non-sealed class DecoratingTreeNode extends TreeNode {
-    protected final TreeNode base;
+    protected final RawTreeNode base;
 
-    protected DecoratingTreeNode(final TreeNode base) {
+    protected DecoratingTreeNode(final RawTreeNode base) {
         this.base = requireNonNull(base);
     }
 

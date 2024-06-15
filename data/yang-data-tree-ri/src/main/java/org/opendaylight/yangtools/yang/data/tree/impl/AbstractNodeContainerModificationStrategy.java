@@ -184,8 +184,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final var mutable = newValueMeta.toMutable();
-        mutable.setSubtreeVersion(version);
+        final var mutable = openMeta(newValueMeta, version);
 
         final var result = mutateChildren(mutable, support.createBuilder(newValue), version,
             modification.getChildren());
@@ -317,8 +316,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          */
         if (!modification.isEmpty()) {
             final var dataBuilder = support.createBuilder(currentMeta.data());
-            final var newMeta = currentMeta.toMutable();
-            newMeta.setSubtreeVersion(version);
+            final var newMeta = openMeta(currentMeta, version);
             final var children = modification.getChildren();
             final var ret = mutateChildren(newMeta, dataBuilder, version, children);
 

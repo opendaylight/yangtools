@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * Abstract base class for undecorated tree nodes.
  */
 @NonNullByDefault
-abstract sealed class RawTreeNode extends TreeNode permits AbstractContainerNode, ValueNode {
+public abstract sealed class RawTreeNode extends TreeNode permits AbstractContainerNode, ValueNode {
     private final NormalizedNode data;
     private final Version version;
 
@@ -34,4 +34,12 @@ abstract sealed class RawTreeNode extends TreeNode permits AbstractContainerNode
     public final Version version() {
         return version;
     }
+
+    /**
+     * Get a mutable, isolated copy of the node.
+     *
+     * @return Mutable copy
+     */
+    public abstract MutableTreeNode toMutable();
+
 }
