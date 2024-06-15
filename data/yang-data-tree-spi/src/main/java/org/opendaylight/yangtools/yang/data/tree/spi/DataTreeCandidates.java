@@ -55,36 +55,36 @@ public final class DataTreeCandidates {
     }
 
     public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
-        if (modification instanceof CursorAwareDataTreeModification) {
-            applyToCursorAwareModification((CursorAwareDataTreeModification) modification, candidate);
+        if (modification instanceof CursorAwareDataTreeModification cursorAware) {
+            applyToCursorAwareModification(cursorAware, candidate);
             return;
         }
 
-        final DataTreeCandidateNode node = candidate.getRootNode();
-        final YangInstanceIdentifier path = candidate.getRootPath();
-        switch (node.modificationType()) {
-            case DELETE:
+        final var node = candidate.getRootNode();
+        final var path = candidate.getRootPath();
+        final var type = node.modificationType();
+        switch (type) {
+            case DELETE -> {
                 modification.delete(path);
                 LOG.debug("Modification {} deleted path {}", modification, path);
-                break;
-            case SUBTREE_MODIFIED:
+            }
+            case SUBTREE_MODIFIED -> {
                 LOG.debug("Modification {} modified path {}", modification, path);
 
-                NodeIterator iterator = new NodeIterator(null, path, node.childNodes().iterator());
+                var iterator = new NodeIterator(null, path, node.childNodes().iterator());
                 do {
                     iterator = iterator.next(modification);
                 } while (iterator != null);
-                break;
-            case UNMODIFIED:
+            }
+            case UNMODIFIED -> {
                 LOG.debug("Modification {} unmodified path {}", modification, path);
                 // No-op
-                break;
-            case WRITE:
+            }
+            case WRITE -> {
                 modification.write(path, verifyNotNull(node.dataAfter()));
                 LOG.debug("Modification {} written path {}", modification, path);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported modification " + node.modificationType());
+            }
+            default -> throw new IllegalArgumentException("Unsupported modification " + type);
         }
     }
 
