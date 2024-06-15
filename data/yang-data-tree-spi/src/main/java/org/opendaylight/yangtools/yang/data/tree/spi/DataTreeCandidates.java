@@ -191,50 +191,50 @@ public final class DataTreeCandidates {
 
     // Compare data before and after in order to find modified nodes without actual changes
     private static DataTreeCandidateNode cleanUpTree(final TerminalDataTreeCandidateNode finalNode,
-                                                     final TerminalDataTreeCandidateNode node) {
+            final TerminalDataTreeCandidateNode node) {
         final var identifier = node.name();
-        final var nodeModification = node.modificationType();
         final var childNodes = node.childNodes();
         for (var childNode : childNodes) {
             cleanUpTree(finalNode, (TerminalDataTreeCandidateNode) childNode);
         }
         final var dataBefore = finalNode.dataBefore(identifier);
 
+        final var nodeModification = node.modificationType();
         switch (nodeModification) {
-            case UNMODIFIED:
-                finalNode.deleteNode(identifier);
-                return finalNode;
-            case WRITE:
-                return finalNode;
-            case DELETE:
+            case UNMODIFIED -> finalNode.deleteNode(identifier);
+            case WRITE -> {
+                // No-op
+            }
+            case DELETE -> {
                 if (dataBefore == null) {
                     finalNode.deleteNode(identifier);
                 }
-                return finalNode;
-            case APPEARED:
+            }
+            case APPEARED -> {
                 if (dataBefore != null) {
                     throw illegalModification(ModificationType.APPEARED, ModificationType.WRITE);
                 }
                 if (childNodes.isEmpty()) {
                     finalNode.deleteNode(identifier);
                 }
-                return finalNode;
-            case DISAPPEARED:
+            }
+            case DISAPPEARED -> {
                 if (dataBefore == null || childNodes.isEmpty()) {
                     finalNode.deleteNode(identifier);
                 }
-                return finalNode;
-            case SUBTREE_MODIFIED:
+            }
+            case SUBTREE_MODIFIED -> {
                 if (dataBefore == null) {
                     throw illegalModification(ModificationType.SUBTREE_MODIFIED, ModificationType.DELETE);
                 }
                 if (childNodes.isEmpty()) {
                     finalNode.deleteNode(identifier);
                 }
-                return finalNode;
-            default:
-                throw new IllegalStateException("Unsupported modification type " + nodeModification);
+            }
+            default -> throw new IllegalStateException("Unsupported modification type " + nodeModification);
         }
+
+        return finalNode;
     }
 
     private static ModificationType compressModifications(final ModificationType first, final ModificationType second,
