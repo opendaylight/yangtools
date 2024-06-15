@@ -117,34 +117,29 @@ public final class DataTreeCandidates {
     }
 
     private static DataTreeCandidateNode fastCompressNode(final DataTreeCandidateNode first,
-                                                          final List<DataTreeCandidateNode> input) {
+            final List<DataTreeCandidateNode> input) {
         final var last = input.get(input.size() - 1);
-        final var nodeModification = last.modificationType();
         final var dataBefore = first.dataBefore();
         final var dataAfter = last.dataAfter();
-        switch (nodeModification) {
-            case DELETE:
-                ModificationType previous = first.modificationType();
+        final var type = last.modificationType();
+
+        return switch (type) {
+            case DELETE -> {
+                final var previous = first.modificationType();
                 // Check if node had data before
                 if (previous == ModificationType.DELETE || previous == ModificationType.DISAPPEARED
                     || previous == ModificationType.UNMODIFIED && dataBefore == null) {
                     illegalModification(ModificationType.DELETE, ModificationType.DELETE);
                 }
-                if (dataBefore == null) {
-                    return new TerminalDataTreeCandidateNode(null, ModificationType.UNMODIFIED, null, null);
-                }
-                return new TerminalDataTreeCandidateNode(null, nodeModification, verifyNotNull(dataBefore), null);
-            case WRITE:
-                return new TerminalDataTreeCandidateNode(null, nodeModification, dataBefore, verifyNotNull(dataAfter));
-            case APPEARED:
-            case DISAPPEARED:
-            case SUBTREE_MODIFIED:
-            case UNMODIFIED:
+
+                yield dataBefore != null ? new TerminalDataTreeCandidateNode(null, type, dataBefore, null)
+                    : new TerminalDataTreeCandidateNode(null, ModificationType.UNMODIFIED, null, null);
+            }
+            case WRITE -> new TerminalDataTreeCandidateNode(null, type, dataBefore, verifyNotNull(dataAfter));
+            case APPEARED, DISAPPEARED, SUBTREE_MODIFIED, UNMODIFIED ->
                 // No luck, we need to iterate
-                return slowCompressNodes(first, input);
-            default:
-                throw new IllegalStateException("Unsupported modification type " + nodeModification);
-        }
+                slowCompressNodes(first, input);
+        };
     }
 
     private static DataTreeCandidateNode slowCompressNodes(final DataTreeCandidateNode first,
