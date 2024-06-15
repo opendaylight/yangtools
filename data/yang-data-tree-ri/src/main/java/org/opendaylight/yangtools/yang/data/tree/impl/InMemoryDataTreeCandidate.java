@@ -12,19 +12,12 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 
 final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
     private static final class RootNode extends AbstractModifiedNodeBasedCandidateNode {
         RootNode(final ModifiedNode mod, final TreeNode oldMeta, final TreeNode newMeta) {
             super(mod, oldMeta, newMeta);
-        }
-
-        @Override
-        public PathArgument name() {
-            throw new IllegalStateException("Attempted to get identifier of the root node");
         }
     }
 
@@ -46,8 +39,8 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
     }
 
     @Override
-    public DataTreeCandidateNode getRootNode() {
-        return root;
+    public CandidateNode getRootNode() {
+        return root.toCandidateNode();
     }
 
     @Override
