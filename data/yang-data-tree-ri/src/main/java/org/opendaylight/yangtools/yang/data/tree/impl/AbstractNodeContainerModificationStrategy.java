@@ -257,28 +257,28 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     final void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode value,
             final Version version) {
         final var valueChildren = ((DistinctNodeContainer<?, ?>) value).body();
-        switch (modification.getOperation()) {
-            case NONE:
+        final var op = modification.getOperation();
+        switch (op) {
+            case NONE -> {
                 // Fresh node, just record a MERGE with a value
                 recursivelyVerifyStructure(value);
                 modification.updateValue(LogicalOperation.MERGE, value);
-                return;
-            case TOUCH:
-
+            }
+            case TOUCH -> {
                 mergeChildrenIntoModification(modification, valueChildren, version);
                 // We record empty merge value, since real children merges are already expanded. This is needed to
                 // satisfy non-null for merge original merge value can not be used since it mean different order of
                 // operation - parent changes are always resolved before children ones, and having node in TOUCH means
                 // children was modified before.
                 modification.updateValue(LogicalOperation.MERGE, support.createEmptyValue(value));
-                return;
-            case MERGE:
+            }
+            case MERGE -> {
                 // Merging into an existing node. Merge data children modifications (maybe recursively) and mark
                 // as MERGE, invalidating cached snapshot
                 mergeChildrenIntoModification(modification, valueChildren, version);
                 modification.updateOperationType(LogicalOperation.MERGE);
-                return;
-            case DELETE:
+            }
+            case DELETE -> {
                 // Delete performs a data dependency check on existence of the node. Performing a merge on DELETE means
                 // we are really performing a write. One thing that ruins that are any child modifications. If there
                 // are any, we will perform a read() to get the current state of affairs, turn this into into a WRITE
@@ -294,15 +294,14 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
                 }
 
                 modification.updateValue(LogicalOperation.WRITE, value);
-                return;
-            case WRITE:
+            }
+            case WRITE -> {
                 // We are augmenting a previous write. We'll just walk value's children, get the corresponding
                 // ModifiedNode and run recursively on it
                 mergeChildrenIntoModification(modification, valueChildren, version);
                 modification.updateOperationType(LogicalOperation.WRITE);
-                return;
-            default:
-                throw new IllegalArgumentException("Unsupported operation " + modification.getOperation());
+            }
+            default -> throw new IllegalArgumentException("Unsupported operation " + op);
         }
     }
 
