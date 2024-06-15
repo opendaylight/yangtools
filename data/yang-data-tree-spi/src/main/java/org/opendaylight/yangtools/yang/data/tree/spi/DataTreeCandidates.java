@@ -199,8 +199,7 @@ public final class DataTreeCandidates {
         }
         final var dataBefore = finalNode.dataBefore(identifier);
 
-        final var nodeModification = node.modificationType();
-        switch (nodeModification) {
+        switch (node.modificationType()) {
             case UNMODIFIED -> {
                 finalNode.deleteNode(identifier);
             }
@@ -233,7 +232,7 @@ public final class DataTreeCandidates {
                     finalNode.deleteNode(identifier);
                 }
             }
-            default -> throw new IllegalStateException("Unsupported modification type " + nodeModification);
+            case null -> throw new NullPointerException("null modificationType");
         }
 
         return finalNode;
@@ -321,8 +320,7 @@ public final class DataTreeCandidates {
             while (iterator.hasNext()) {
                 final var node = iterator.next();
                 final var child = path.node(node.name());
-                final var type = node.modificationType();
-                switch (type) {
+                switch (node.modificationType()) {
                     case DELETE -> {
                         modification.delete(child);
                         LOG.debug("Modification {} deleted path {}", modification, child);
@@ -339,7 +337,7 @@ public final class DataTreeCandidates {
                         modification.write(child, verifyNotNull(node.dataAfter()));
                         LOG.debug("Modification {} written path {}", modification, child);
                     }
-                    default -> throw new IllegalArgumentException("Unsupported modification " + type);
+                    case null -> throw new NullPointerException("null modificationType");
                 }
             }
             return parent;
