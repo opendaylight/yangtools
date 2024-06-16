@@ -467,7 +467,12 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
     }
 
     @java.io.Serial
-    private Object readResolve() {
+    protected Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    protected Object writeReplace() {
+        return new U8v1(value);
     }
 }
