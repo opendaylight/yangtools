@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedInteger;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -436,8 +435,13 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         return toCanonicalString();
     }
 
-    @Serial
-    private Object readResolve() {
+    @java.io.Serial
+    protected Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    protected Object writeReplace() {
+        return new U4v1(value);
     }
 }
