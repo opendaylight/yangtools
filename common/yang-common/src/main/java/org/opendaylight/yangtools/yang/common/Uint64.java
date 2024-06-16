@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedLong;
-import java.io.Serial;
 import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -40,7 +39,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
     }
 
     private static final CanonicalValueSupport<Uint64> SUPPORT = new Support();
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final String MAX_VALUE_STR = Long.toUnsignedString(-1);
 
@@ -459,8 +458,13 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return toCanonicalString();
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    private Object writeReplace() {
+        return new U8v1(value);
     }
 }

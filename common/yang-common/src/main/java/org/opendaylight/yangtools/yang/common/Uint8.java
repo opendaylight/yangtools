@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -40,7 +39,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     private static final short MAX_VALUE_SHORT = 255;
     private static final String MAX_VALUE_STR = "255";
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private static final @NonNull Uint8[] CACHE;
@@ -385,8 +384,13 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         return toCanonicalString();
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    private Object writeReplace() {
+        return new U1v1(value);
     }
 }

@@ -76,6 +76,11 @@ public final class Empty implements Immutable, Serializable {
     }
 
     @java.io.Serial
+    private Object writeReplace() {
+        return new Ev1();
+    }
+
+    @java.io.Serial
     @SuppressWarnings("static-method")
     private Object readResolve() {
         return VALUE;
