@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * Dedicated type for YANG's {@code type uint16} type.
  */
 @NonNullByDefault
-public class Uint16 extends Number implements CanonicalValue<Uint16> {
+public non-sealed class Uint16 extends Number implements YangUint<Uint16> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint16> {
         private static final CanonicalValueSupport<Uint16> INSTANCE = new Support();
 
