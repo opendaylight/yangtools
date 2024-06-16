@@ -145,9 +145,8 @@ class Uint64Test {
 
         final var bytes = bos.toByteArray();
         assertEquals("""
-            aced00057372002d6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e55696e7436340\
-            0000000000000010200014a000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b02000078700000\
-            0000000000ff""", HexFormat.of().formatHex(bytes));
+            aced00057372002b6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e5538763100000\
+            000000000000200014a000462697473787000000000000000ff""", HexFormat.of().formatHex(bytes));
 
         try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
             assertSame(source, ois.readObject());
