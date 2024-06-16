@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serial;
+import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -19,7 +20,7 @@ import org.opendaylight.yangtools.concepts.Either;
  * Dedicated type for YANG's {@code type uint8} type.
  */
 @NonNullByDefault
-public class Uint8 extends Number implements CanonicalValue<Uint8> {
+public non-sealed class Uint8 extends Number implements CanonicalValue<Uint8>, YangUint<Uint8> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint8> {
         public Support() {
             super(Uint8.class);
@@ -388,5 +389,59 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     @Serial
     private Object readResolve() {
         return instanceFor(value);
+    }
+
+    @Override
+    public Uint8 plus(final byte val) {
+        return val == 0 ? this : ofArithmeticValue(intValue() + val);
+    }
+
+    @Override
+    public Uint8 plus(final short val) {
+        return val == 0 ? this : ofArithmeticValue(intValue() + val);
+    }
+
+    @Override
+    public Uint8 plus(final int val) {
+        return val == 0 ? this : ofArithmeticValue(longValue() + val);
+    }
+
+    @Override
+    public Uint8 plus(final long val) {
+        return val == 0 ? this : ofArithmeticValue(Math.addExact(longValue(), val));
+    }
+
+    @Override
+    public Uint8 plus(final Uint64 val) {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Uint8 plus(final BigInteger val) {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
+    }
+
+    private static Uint8 ofArithmeticValue(final int value) {
+        try {
+            return valueOf(value);
+        } catch (IllegalArgumentException e) {
+            throw ae(e);
+        }
+    }
+
+    private static Uint8 ofArithmeticValue(final long value) {
+        try {
+            return valueOf(value);
+        } catch (IllegalArgumentException e) {
+            throw ae(e);
+        }
+    }
+
+    private static ArithmeticException ae(final Exception cause) {
+        final var ret = new ArithmeticException(cause.getMessage());
+        ret.initCause(cause);
+        return ret;
     }
 }
