@@ -135,9 +135,8 @@ class Uint32Test {
 
         final var bytes = bos.toByteArray();
         assertEquals("""
-            aced00057372002d6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e55696e7433320\
-            00000000000000102000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b02000078700000\
-            00ff""", HexFormat.of().formatHex(bytes));
+            aced00057372002b6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e5534763100000\
+            00000000000020001490004626974737870000000ff""", HexFormat.of().formatHex(bytes));
 
         try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
             assertSame(source, ois.readObject());

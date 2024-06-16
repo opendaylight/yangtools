@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -38,7 +37,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
     }
 
     private static final CanonicalValueSupport<Uint16> SUPPORT = new Support();
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final int MAX_VALUE_INT = 65535;
     private static final String MAX_VALUE_STR = "65535";
@@ -410,8 +409,13 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         return toCanonicalString();
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    private Object writeReplace() {
+        return new U2v1(value);
     }
 }

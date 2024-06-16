@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedInteger;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -39,7 +38,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
     }
 
     private static final CanonicalValueSupport<Uint32> SUPPORT = new Support();
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final long MAX_VALUE_LONG = 4294967295L;
     private static final String MAX_VALUE_STR = "4294967295";
@@ -427,8 +426,13 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         return toCanonicalString();
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    private Object writeReplace() {
+        return new U4v1(value);
     }
 }
