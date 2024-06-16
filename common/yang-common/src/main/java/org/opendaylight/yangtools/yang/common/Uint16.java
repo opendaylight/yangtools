@@ -419,7 +419,12 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
     }
 
     @java.io.Serial
-    private Object readResolve() {
+    protected Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    protected Object writeReplace() {
+        return new U2v1(value);
     }
 }

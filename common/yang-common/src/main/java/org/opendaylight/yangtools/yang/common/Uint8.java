@@ -393,7 +393,12 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     }
 
     @java.io.Serial
-    private Object readResolve() {
+    protected Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    protected Object writeReplace() {
+        return new U1v1(value);
     }
 }

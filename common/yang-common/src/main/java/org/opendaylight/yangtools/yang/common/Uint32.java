@@ -436,7 +436,12 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
     }
 
     @java.io.Serial
-    private Object readResolve() {
+    protected Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    protected Object writeReplace() {
+        return new U4v1(value);
     }
 }
