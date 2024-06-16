@@ -18,7 +18,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @Beta
 @NonNullByDefault
-public sealed interface YangInteger<T extends YangInteger<T>> extends CanonicalValue<T>, YangNumber<T>
+public sealed interface YangInteger<T extends YangInteger<T>>
+    extends CanonicalValue<T>, YangNumber<T>, YangStrictIntMath<T>, YangOverflowIntMath<T>, YangSaturatedIntMath<T>
     // FIXME: permits YangInt when we can match the convenience of Byte, Short, Int, Long
     permits YangUint {
     // Just a marker interface for now
