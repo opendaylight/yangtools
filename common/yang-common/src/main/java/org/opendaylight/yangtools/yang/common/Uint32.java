@@ -12,6 +12,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedInteger;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectOutputStream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -435,7 +438,18 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
     }
 
     @java.io.Serial
-    private Object readResolve() {
+    protected Object readResolve() {
         return instanceFor(value);
+    }
+
+    @java.io.Serial
+    protected Object writeReplace() {
+        return new U4v1(value);
+    }
+
+    @java.io.Serial
+    @SuppressWarnings("static-method")
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        throw new InvalidClassException("should use serialization proxy");
     }
 }

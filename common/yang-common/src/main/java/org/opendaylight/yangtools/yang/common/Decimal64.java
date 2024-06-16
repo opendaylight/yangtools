@@ -12,6 +12,9 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -632,6 +635,17 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     private long fracPart() {
         return value % FACTOR[offset];
+    }
+
+    @java.io.Serial
+    protected Object writeReplace() {
+        return new D8v1((byte) (offset + 1), value);
+    }
+
+    @java.io.Serial
+    @SuppressWarnings("static-method")
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        throw new InvalidClassException("should use serialization proxy");
     }
 
     private static byte offsetOf(final int scale) {

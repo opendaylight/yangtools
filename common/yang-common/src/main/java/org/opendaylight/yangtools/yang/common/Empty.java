@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -79,5 +82,17 @@ public final class Empty implements Immutable, Serializable {
     @SuppressWarnings("static-method")
     private Object readResolve() {
         return VALUE;
+    }
+
+    @java.io.Serial
+    @SuppressWarnings("static-method")
+    private Object writeReplace() {
+        return new Ev1();
+    }
+
+    @java.io.Serial
+    @SuppressWarnings("static-method")
+    private void writeObject(final ObjectOutputStream stream) throws IOException {
+        throw new InvalidClassException("should use serialization proxy");
     }
 }
