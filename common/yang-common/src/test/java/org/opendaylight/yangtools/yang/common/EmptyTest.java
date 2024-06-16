@@ -38,8 +38,8 @@ class EmptyTest {
 
         final var bytes = bos.toByteArray();
         assertEquals("""
-            aced00057372002c6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e456d707479000\
-            00000000000010200007870""", HexFormat.of().formatHex(bytes));
+            aced00057372002a6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e4576310000000\
+            0000000000200007870""", HexFormat.of().formatHex(bytes));
 
         try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
             assertSame(Empty.value(), ois.readObject());

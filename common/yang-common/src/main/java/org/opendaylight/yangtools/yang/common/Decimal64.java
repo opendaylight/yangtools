@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
@@ -164,7 +163,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     }
 
     private static final CanonicalValueSupport<Decimal64> SUPPORT = new Support();
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private static final int MAX_SCALE = 18;
@@ -628,6 +627,11 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     private long fracPart() {
         return value % FACTOR[offset];
+    }
+
+    @java.io.Serial
+    private Object writeReplace() {
+        return new D8v1((byte) (offset + 1), value);
     }
 
     private static byte offsetOf(final int scale) {

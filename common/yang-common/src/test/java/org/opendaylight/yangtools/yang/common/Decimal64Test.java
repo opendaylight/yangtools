@@ -393,9 +393,8 @@ class Decimal64Test {
 
         final var bytes = bos.toByteArray();
         assertEquals("""
-            aced0005737200306f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e446563696d616\
-            c363400000000000000010200024200066f66667365744a000576616c7565787200106a6176612e6c616e672e4e756d62657286ac95\
-            1d0b94e08b020000787001ffffffffffffffc1""", HexFormat.of().formatHex(bytes));
+            aced00057372002b6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e4438763100000\
+            000000000000200024a0004626974734200057363616c657870ffffffffffffffc102""", HexFormat.of().formatHex(bytes));
 
         try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
             assertEquals(source, ois.readObject());
