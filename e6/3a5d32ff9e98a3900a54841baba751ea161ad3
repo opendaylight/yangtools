@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng ODL
+Verified+1: ODL Required.GHA <releng+odl.required.gha@linuxfoundation.org>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Mon, 17 Jun 2024 10:38:49 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/c/yangtools/+/112184
+Project: yangtools
+Branch: refs/heads/master
