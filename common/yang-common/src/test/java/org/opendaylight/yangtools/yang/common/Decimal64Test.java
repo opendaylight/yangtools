@@ -403,7 +403,7 @@ public class Decimal64Test {
     private static Decimal64 assertParsedString(final String str, final long intPart, final long fracPart,
             final int digits, final boolean negative) {
         final Decimal64 parsed = Decimal64.valueOf(str);
-        assertEquals(new Decimal64((byte) digits, intPart, fracPart, negative), parsed);
+        assertEquals(Decimal64.of((byte) digits, intPart, fracPart, negative), parsed);
         return parsed;
     }
 }
