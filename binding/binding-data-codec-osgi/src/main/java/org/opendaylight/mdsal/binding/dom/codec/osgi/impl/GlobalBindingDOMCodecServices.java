@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.primitives.UnsignedLong;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
@@ -23,6 +22,7 @@ import org.opendaylight.mdsal.binding.dom.codec.spi.LazyActionOutputContainerNod
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -46,7 +46,7 @@ public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCod
     private static final Logger LOG = LoggerFactory.getLogger(GlobalBindingDOMCodecServices.class);
 
     private BindingDOMCodecServices delegate;
-    private UnsignedLong generation;
+    private Uint64 generation;
 
     @Activate
     public GlobalBindingDOMCodecServices(@Reference(updated = "update") final OSGiBindingDOMCodecServices services) {
@@ -66,8 +66,8 @@ public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCod
     }
 
     private void updateDelegate(final OSGiBindingDOMCodecServices services) {
-        generation = services.getGeneration();
-        delegate = services.getService();
+        generation = services.generation();
+        delegate = services.service();
     }
 
     @Override

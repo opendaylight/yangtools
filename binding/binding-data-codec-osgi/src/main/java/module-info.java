@@ -8,11 +8,11 @@
 module org.opendaylight.mdsal.binding.dom.codec.osgi {
     exports org.opendaylight.mdsal.binding.dom.codec.osgi;
 
-    requires transitive org.opendaylight.mdsal.dom.schema.osgi;
+    requires transitive org.opendaylight.mdsal.binding.runtime.osgi;
     requires org.opendaylight.mdsal.binding.dom.codec.api;
     requires org.opendaylight.mdsal.binding.dom.codec.spi;
-    requires org.opendaylight.mdsal.binding.runtime.osgi;
     requires org.opendaylight.yangtools.binding.spec;
+    requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.api;
     requires org.osgi.framework;
     requires org.osgi.service.component;
