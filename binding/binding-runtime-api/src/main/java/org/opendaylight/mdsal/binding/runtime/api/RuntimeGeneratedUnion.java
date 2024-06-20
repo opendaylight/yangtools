@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.runtime.api;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 
 /**
  * A {@link GeneratedTransferObject} created for run-time representation of a {@code union}.

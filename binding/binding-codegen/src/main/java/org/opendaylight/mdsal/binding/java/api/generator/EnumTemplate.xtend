@@ -10,9 +10,9 @@ package org.opendaylight.mdsal.binding.java.api.generator
 import static extension org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 
-import org.opendaylight.mdsal.binding.model.api.Enumeration
-import org.opendaylight.mdsal.binding.model.api.GeneratedType
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName
+import org.opendaylight.yangtools.binding.model.api.Enumeration
+import org.opendaylight.yangtools.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.lib.EnumTypeObject
 
 /**

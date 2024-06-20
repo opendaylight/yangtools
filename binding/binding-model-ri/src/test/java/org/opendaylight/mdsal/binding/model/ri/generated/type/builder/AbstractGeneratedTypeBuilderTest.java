@@ -9,8 +9,8 @@ package org.opendaylight.mdsal.binding.model.ri.generated.type.builder;
 
 import java.io.Serializable;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 public class AbstractGeneratedTypeBuilderTest {
 

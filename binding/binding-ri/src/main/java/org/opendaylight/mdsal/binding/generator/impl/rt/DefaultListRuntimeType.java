@@ -9,11 +9,11 @@ package org.opendaylight.mdsal.binding.generator.impl.rt;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 public final class DefaultListRuntimeType extends AbstractAugmentableRuntimeType<ListEffectiveStatement>

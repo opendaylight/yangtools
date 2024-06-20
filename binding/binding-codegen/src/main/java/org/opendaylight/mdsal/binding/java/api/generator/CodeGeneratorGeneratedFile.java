@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.Writer;
-import org.opendaylight.mdsal.binding.model.api.CodeGenerator;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.plugin.generator.api.AbstractGeneratedTextFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileLifecycle;
 

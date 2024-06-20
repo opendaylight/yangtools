@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import java.util.List;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 
 interface GeneratedUnionBuilder extends GeneratedTOBuilder {
 

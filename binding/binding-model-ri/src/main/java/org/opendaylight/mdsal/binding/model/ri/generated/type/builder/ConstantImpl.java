@@ -8,8 +8,8 @@
 package org.opendaylight.mdsal.binding.model.ri.generated.type.builder;
 
 import java.util.Objects;
-import org.opendaylight.mdsal.binding.model.api.Constant;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 final class ConstantImpl implements Constant {
     private final Type type;

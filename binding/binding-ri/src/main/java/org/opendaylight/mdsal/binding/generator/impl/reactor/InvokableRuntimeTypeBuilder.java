@@ -11,10 +11,10 @@ import static com.google.common.base.Verify.verify;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 abstract class InvokableRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>

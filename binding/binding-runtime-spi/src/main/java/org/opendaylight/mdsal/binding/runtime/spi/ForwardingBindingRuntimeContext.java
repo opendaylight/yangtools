@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.runtime.spi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;

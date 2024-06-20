@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderGeneratorTest {

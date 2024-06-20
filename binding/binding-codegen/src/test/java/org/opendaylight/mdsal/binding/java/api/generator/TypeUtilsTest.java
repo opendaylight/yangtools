@@ -13,10 +13,10 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.ConcreteType;
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 public class TypeUtilsTest {
 

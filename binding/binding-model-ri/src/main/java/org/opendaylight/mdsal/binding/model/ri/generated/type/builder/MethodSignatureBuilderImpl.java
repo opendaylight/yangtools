@@ -12,11 +12,11 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.opendaylight.mdsal.binding.model.api.AnnotationType;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 
 final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodSignatureBuilder>

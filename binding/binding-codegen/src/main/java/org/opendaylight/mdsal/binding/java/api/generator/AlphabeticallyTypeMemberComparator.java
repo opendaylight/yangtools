@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Comparator;
-import org.opendaylight.mdsal.binding.model.api.TypeMember;
+import org.opendaylight.yangtools.binding.model.api.TypeMember;
 
 /**
  * Alphabetically type member {@link Comparator} which provides sorting by name for type members (variables and methods)

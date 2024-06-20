@@ -20,12 +20,12 @@ import static org.opendaylight.yangtools.binding.lib.contract.Naming.NONNULL_PRE
 import java.util.Collection
 import java.util.List
 import java.util.Optional
-import org.opendaylight.mdsal.binding.model.api.AnnotationType
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
-import org.opendaylight.mdsal.binding.model.api.GeneratedType
-import org.opendaylight.mdsal.binding.model.api.MethodSignature
-import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics
-import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.yangtools.binding.model.api.AnnotationType
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
+import org.opendaylight.yangtools.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.binding.model.api.MethodSignature
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics
+import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.Types
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable
 

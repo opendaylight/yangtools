@@ -55,7 +55,7 @@ import org.opendaylight.mdsal.binding.dom.codec.spi.AbstractBindingNormalizedNod
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingSchemaMapping;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.api.ChoiceRuntimeType;

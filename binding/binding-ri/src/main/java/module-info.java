@@ -17,12 +17,12 @@ module org.opendaylight.mdsal.binding.generator {
     provides BindingGenerator with DefaultBindingGenerator;
     provides BindingRuntimeGenerator with DefaultBindingRuntimeGenerator;
 
-    requires transitive org.opendaylight.mdsal.binding.model.api;
+    requires transitive org.opendaylight.yangtools.binding.model.api;
     requires transitive org.opendaylight.mdsal.binding.model.ri;
     requires transitive org.opendaylight.mdsal.binding.runtime.api;
     requires com.google.common;
-    requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.binding.lib;
+    requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;

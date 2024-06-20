@@ -14,8 +14,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 /**
  * This class tracks types generated into a single Java compilation unit (file) and manages imports of that compilation

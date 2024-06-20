@@ -7,9 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
-import org.opendaylight.mdsal.binding.model.api.CodeGenerator;
-import org.opendaylight.mdsal.binding.model.api.Enumeration;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
+import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Transformator of the data from the virtual form to JAVA source code. The result source code represents JAVA

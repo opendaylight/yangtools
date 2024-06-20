@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import org.opendaylight.mdsal.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;

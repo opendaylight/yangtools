@@ -18,8 +18,8 @@ import org.opendaylight.mdsal.binding.generator.BindingGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.Generator;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.GeneratorReactor;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.TypeBuilderFactory;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 

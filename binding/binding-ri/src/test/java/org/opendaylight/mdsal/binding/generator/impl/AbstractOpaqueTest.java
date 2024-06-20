@@ -14,12 +14,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
-import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.lib.ChildOf;
 import org.opendaylight.yangtools.binding.lib.OpaqueObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 abstract class AbstractOpaqueTest {
 

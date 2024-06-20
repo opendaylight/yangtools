@@ -23,14 +23,14 @@ import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.model.api.AbstractType;
-import org.opendaylight.mdsal.binding.model.api.BaseTypeWithRestrictions;
-import org.opendaylight.mdsal.binding.model.api.ConcreteType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
-import org.opendaylight.mdsal.binding.model.api.Restrictions;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.WildcardType;
+import org.opendaylight.yangtools.binding.model.api.AbstractType;
+import org.opendaylight.yangtools.binding.model.api.BaseTypeWithRestrictions;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.WildcardType;
 
 public final class Types {
     private static final LoadingCache<Class<?>, ConcreteType> TYPE_CACHE = CacheBuilder.newBuilder().weakKeys()
@@ -243,7 +243,8 @@ public final class Types {
     }
 
     /**
-     * Creates instance of type {@link org.opendaylight.mdsal.binding.model.api.ParameterizedType ParameterizedType}.
+     * Creates instance of type
+     * {@link org.opendaylight.yangtools.binding.model.api.ParameterizedType ParameterizedType}.
      *
      * @param type JAVA <code>Type</code> for raw type
      * @param parameters JAVA <code>Type</code>s for actual parameter types
@@ -255,7 +256,7 @@ public final class Types {
     }
 
     /**
-     * Creates instance of type {@link org.opendaylight.mdsal.binding.model.api.WildcardType}.
+     * Creates instance of type {@link org.opendaylight.yangtools.binding.model.api.WildcardType}.
      *
      * @param identifier JavaTypeName of the type
      * @return <code>WildcardType</code> representation of specified identifier
