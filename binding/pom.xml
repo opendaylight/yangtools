@@ -40,7 +40,7 @@
         <module>binding-ri</module>
         <module>binding-runtime-api</module>
         <module>binding-runtime-dynamic</module>
-        <!--module>binding-runtime-osgi</module-->
+        <module>binding-runtime-osgi</module>
         <module>binding-runtime-spi</module>
         <module>binding-spec</module>
         <module>binding-test-model</module>

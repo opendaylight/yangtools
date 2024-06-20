@@ -6,19 +6,20 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 module org.opendaylight.mdsal.binding.runtime.osgi {
-    exports org.opendaylight.mdsal.binding.runtime.osgi;
+    exports org.opendaylight.yangtools.binding.runtime.osgi;
 
-    requires transitive org.opendaylight.mdsal.dom.schema.osgi;
-
+    requires transitive org.opendaylight.yangtools.binding.runtime.api;
+    requires transitive org.opendaylight.yangtools.yang.common;
     requires com.google.common;
-    requires org.opendaylight.yangtools.binding.runtime.api;
     requires org.opendaylight.yangtools.binding.runtime.spi;
     requires org.osgi.framework;
     requires org.osgi.service.component;
+    requires org.osgi.util.tracker;
     requires org.slf4j;
 
     // Annotations
     requires static org.checkerframework.checker.qual;
+    requires static org.apache.karaf.features.core;
     requires static org.eclipse.jdt.annotation;
     requires static org.osgi.service.component.annotations;
 }
