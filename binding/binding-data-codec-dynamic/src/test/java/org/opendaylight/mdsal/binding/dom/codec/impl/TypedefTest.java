@@ -16,7 +16,7 @@ import org.opendaylight.yang.gen.v1.bug8903.rev170829.PolicyLoggingFlag;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TestCont;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TestContBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TypedefEmpty;
-import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
 
 public class TypedefTest extends AbstractBindingCodecTest {

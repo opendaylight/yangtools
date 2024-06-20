@@ -325,7 +325,7 @@ public class BuilderGeneratorTest {
     private static GeneratedType mockAugment(final GeneratedType genType) {
         final List<Type> impls = new ArrayList<>();
         final Type impl = mock(Type.class);
-        doReturn("org.opendaylight.yangtools.binding.lib.Augmentable").when(impl).getFullyQualifiedName();
+        doReturn("org.opendaylight.yangtools.binding.Augmentable").when(impl).getFullyQualifiedName();
         impls.add(impl);
         doReturn(impls).when(genType).getImplements();
         return genType;

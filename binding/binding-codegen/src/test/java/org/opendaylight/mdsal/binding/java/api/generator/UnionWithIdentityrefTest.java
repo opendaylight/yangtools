@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.junit.Test;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.contract.Naming;
 
 /**
  * Union constructor with indentityref. Previously identityref was ignored so that there is no constructor for

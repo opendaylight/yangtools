@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.spi;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 @Beta

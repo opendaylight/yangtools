@@ -10,8 +10,8 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.lib.YangFeature;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.YangFeature;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;

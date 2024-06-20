@@ -16,9 +16,9 @@ import java.lang.invoke.VarHandle;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.lib.Augmentable;
-import org.opendaylight.yangtools.binding.lib.Augmentation;
-import org.opendaylight.yangtools.binding.lib.DataObject;
+import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
 /**

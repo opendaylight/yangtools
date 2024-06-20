@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev1
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.Module4MainBuilder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.module4.main.ContainerModule4Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.module4.main.container.module._4.ManualContainerModule11Builder;
-import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.InstanceIdentifier;
 
 public class Bug5524augmentUses extends AbstractBindingCodecTest {
     @Test

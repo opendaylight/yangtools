@@ -8,8 +8,8 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.binding.lib.BindingContract;
-import org.opendaylight.yangtools.binding.lib.OpaqueObject;
+import org.opendaylight.yangtools.binding.BindingContract;
+import org.opendaylight.yangtools.binding.OpaqueObject;
 
 @Beta
 public non-sealed interface BindingOpaqueObjectCodecTreeNode<T extends OpaqueObject<T>>

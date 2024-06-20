@@ -11,7 +11,7 @@ import static com.google.common.base.Verify.verify;
 
 import java.util.List;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultCaseRuntimeType;
-import org.opendaylight.yangtools.binding.lib.contract.StatementNamespace;
+import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;

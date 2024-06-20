@@ -9,9 +9,9 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.lib.Augmentation;
-import org.opendaylight.yangtools.binding.lib.ChoiceIn;
-import org.opendaylight.yangtools.binding.lib.DataObject;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.DataObject;
 
 /**
  * Common interface for entities which can supply a {@link BindingDataObjectCodecTreeNode} based on Binding DataObject

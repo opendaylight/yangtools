@@ -10,9 +10,9 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.lib.DataObject;
-import org.opendaylight.yangtools.binding.lib.DataObjectStep;
-import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 

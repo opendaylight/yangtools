@@ -12,8 +12,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.Mdsal767Data;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.One$F;
-import org.opendaylight.yangtools.binding.lib.YangFeature;
-import org.opendaylight.yangtools.binding.lib.YangFeatureProvider;
+import org.opendaylight.yangtools.binding.YangFeature;
+import org.opendaylight.yangtools.binding.YangFeatureProvider;
 
 @MetaInfServices
 @NonNullByDefault

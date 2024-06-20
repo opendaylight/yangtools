@@ -10,7 +10,7 @@ module org.opendaylight.yangtools.binding.model.ri {
     exports org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
     requires transitive org.opendaylight.yangtools.binding.model.api;
-    requires org.opendaylight.yangtools.binding.lib;
+    requires org.opendaylight.yangtools.binding.spec;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;

@@ -10,8 +10,8 @@ package org.opendaylight.mdsal.binding.dom.codec.spi;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
-import org.opendaylight.yangtools.binding.lib.Action;
-import org.opendaylight.yangtools.binding.lib.RpcInput;
+import org.opendaylight.yangtools.binding.Action;
+import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 

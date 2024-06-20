@@ -37,9 +37,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
-import org.opendaylight.yangtools.binding.lib.Augmentable;
-import org.opendaylight.yangtools.binding.lib.CodeHelpers;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.CodeHelpers;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -154,7 +154,7 @@ class JavaFileTemplate {
     static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
 
     /**
-     * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a JavaTypeName.
+     * {@code org.opendaylight.yangtools.binding.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 

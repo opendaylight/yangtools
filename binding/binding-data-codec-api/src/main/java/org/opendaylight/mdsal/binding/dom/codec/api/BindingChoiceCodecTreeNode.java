@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
-import org.opendaylight.yangtools.binding.lib.ChoiceIn;
+import org.opendaylight.yangtools.binding.ChoiceIn;
 
 /**
  * A {@link BindingDataContainerCodecTreeNode} corresponding to a base {@link ChoiceIn}.

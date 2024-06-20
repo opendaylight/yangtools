@@ -12,9 +12,9 @@ import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BASE_IDEN
 import java.util.List;
 import java.util.stream.Collectors;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultIdentityRuntimeType;
-import org.opendaylight.yangtools.binding.lib.BaseIdentity;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
-import org.opendaylight.yangtools.binding.lib.contract.StatementNamespace;
+import org.opendaylight.yangtools.binding.BaseIdentity;
+import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;

@@ -46,7 +46,7 @@ import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.LocalN
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

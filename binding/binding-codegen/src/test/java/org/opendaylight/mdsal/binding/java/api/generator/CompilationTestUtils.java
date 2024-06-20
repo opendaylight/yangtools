@@ -48,7 +48,7 @@ public final class CompilationTestUtils {
     private static final String COMPILER_OUTPUT_PATH = TEST_PATH + FS + "bin";
     static final File COMPILER_OUTPUT_DIR = new File(COMPILER_OUTPUT_PATH);
 
-    static final String AUGMENTATION = "interface org.opendaylight.yangtools.binding.lib.Augmentation";
+    static final String AUGMENTATION = "interface org.opendaylight.yangtools.binding.Augmentation";
     static final String BASE_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1";
     static final String BASE_SVC_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "svc" + FS + "v1";
     static final String NS_TEST = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";

@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.model.ri;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.lib.BitsTypeObject;
-import org.opendaylight.yangtools.binding.lib.ScalarTypeObject;
+import org.opendaylight.yangtools.binding.BitsTypeObject;
+import org.opendaylight.yangtools.binding.ScalarTypeObject;
 
 /**
  * Contains constants used in relations with <code>Type</code>.

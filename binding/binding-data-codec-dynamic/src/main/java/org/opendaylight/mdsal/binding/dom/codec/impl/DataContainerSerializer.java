@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
-import org.opendaylight.yangtools.binding.lib.DataContainer;
+import org.opendaylight.yangtools.binding.DataContainer;
 
 /**
  * A serializer which writes DataObject to supplied stream event writer.

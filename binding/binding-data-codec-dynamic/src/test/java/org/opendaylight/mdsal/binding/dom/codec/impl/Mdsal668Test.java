@@ -15,7 +15,7 @@ import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.FooBuilder;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.Bar;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.BarBuilder;
-import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 

@@ -14,7 +14,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.lib.BindingObject;
+import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
