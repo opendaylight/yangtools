@@ -366,11 +366,11 @@
                 <artifactId>binding-runtime-api</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
             </dependency>
-            <!--dependency>
+            <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-dynamic</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
-            </dependency-->
+            </dependency>
             <!--dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-osgi</artifactId>

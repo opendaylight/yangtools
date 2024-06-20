@@ -11,9 +11,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.lib.DataObject;
 import org.opendaylight.yangtools.binding.lib.NodeStep;
+import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 /**

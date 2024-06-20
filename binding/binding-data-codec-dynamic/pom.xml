@@ -93,6 +93,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-runtime-dynamic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-util</artifactId>
         </dependency>
         <dependency>

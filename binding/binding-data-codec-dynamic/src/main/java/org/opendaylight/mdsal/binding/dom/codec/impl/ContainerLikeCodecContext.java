@@ -7,9 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.binding.lib.DataObject;
 import org.opendaylight.yangtools.binding.lib.NodeStep;
+import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 

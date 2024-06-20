@@ -23,10 +23,10 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.binding.lib.DataObject;
 import org.opendaylight.yangtools.binding.lib.Key;
 import org.opendaylight.yangtools.binding.lib.KeyAware;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
 /**

@@ -7,8 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.lib.DataObjectStep;
+import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 
 /**
  * A prototype for a {@link StructuralContainerCodecContext}.
