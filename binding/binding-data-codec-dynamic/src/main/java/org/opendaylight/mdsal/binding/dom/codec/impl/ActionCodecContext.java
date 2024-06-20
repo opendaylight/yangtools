@@ -9,8 +9,8 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.mdsal.binding.runtime.api.InputRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.OutputRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 
 /**
  * This is not really a codec context, but rather a holder of input and output codec contexts.

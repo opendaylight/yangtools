@@ -19,7 +19,7 @@ import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.OSGiBindingDOMCodecServices;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecFactory;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;

@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.runtime.spi;
 
 import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeGenerator;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 
 /**

@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.lib.DataObject;
 import org.opendaylight.yangtools.binding.lib.DataObjectStep;
 import org.opendaylight.yangtools.binding.lib.Key;

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.lib.DataObjectStep;
 
 /**

@@ -9,7 +9,7 @@ module org.opendaylight.mdsal.binding.runtime.spi {
     exports org.opendaylight.mdsal.binding.runtime.spi;
 
     requires transitive org.opendaylight.yangtools.yang.parser.api;
-    requires transitive org.opendaylight.mdsal.binding.runtime.api;
+    requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires org.opendaylight.yangtools.binding.model.api;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
@@ -21,7 +21,7 @@ module org.opendaylight.mdsal.binding.runtime.spi {
 
     uses org.opendaylight.yangtools.binding.lib.YangModelBindingProvider;
     uses org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
-    uses org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
+    uses org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeGenerator;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;

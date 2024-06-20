@@ -30,9 +30,9 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNo
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentableRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.AugmentableRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.lib.Augmentable;
 import org.opendaylight.yangtools.binding.lib.Augmentation;
 import org.opendaylight.yangtools.binding.lib.BindingObject;

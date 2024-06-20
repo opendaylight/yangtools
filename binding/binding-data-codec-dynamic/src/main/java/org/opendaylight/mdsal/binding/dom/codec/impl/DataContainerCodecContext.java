@@ -33,8 +33,8 @@ import org.opendaylight.mdsal.binding.dom.codec.api.MissingClassInLoadingStrateg
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassException;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.binding.lib.Augmentable;
 import org.opendaylight.yangtools.binding.lib.Augmentation;

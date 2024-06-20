@@ -35,7 +35,7 @@ import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
-import org.opendaylight.mdsal.binding.runtime.api.NotificationRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.lib.BaseNotification;
 import org.opendaylight.yangtools.binding.lib.DataObject;
 import org.opendaylight.yangtools.binding.lib.EventInstantAware;

@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.runtime.osgi.impl;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.primitives.UnsignedLong;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.spi.ForwardingBindingRuntimeContext;
 import org.osgi.service.component.annotations.Activate;

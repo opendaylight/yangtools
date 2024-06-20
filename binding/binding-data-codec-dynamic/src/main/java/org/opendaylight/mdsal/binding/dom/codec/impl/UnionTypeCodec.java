@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeGeneratedUnion;
+import org.opendaylight.yangtools.binding.runtime.api.RuntimeGeneratedUnion;
 import org.opendaylight.yangtools.binding.lib.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;

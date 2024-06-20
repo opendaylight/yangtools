@@ -13,12 +13,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.runtime.api.ActionRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.ContainerRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.InputRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;

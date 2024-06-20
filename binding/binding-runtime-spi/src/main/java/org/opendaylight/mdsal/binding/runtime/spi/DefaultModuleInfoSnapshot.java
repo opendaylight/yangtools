@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
+import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.binding.lib.YangModuleInfo;
 import org.opendaylight.yangtools.binding.lib.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
