@@ -9,10 +9,10 @@ package org.opendaylight.mdsal.binding.runtime.osgi.impl;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.primitives.UnsignedLong;
-import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.spi.ForwardingBindingRuntimeContext;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -27,13 +27,13 @@ import org.slf4j.LoggerFactory;
 public final class GlobalBindingRuntimeContext extends ForwardingBindingRuntimeContext {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalBindingRuntimeContext.class);
 
-    private final UnsignedLong generation;
+    private final Uint64 generation;
     private BindingRuntimeContext delegate;
 
     @Activate
     public GlobalBindingRuntimeContext(@Reference final OSGiBindingRuntimeContext osgi) {
-        generation = osgi.getGeneration();
-        delegate = osgi.getService();
+        generation = osgi.generation();
+        delegate = osgi.service();
         LOG.info("Global BindingRuntimeContext generation {} activated", generation);
     }
 

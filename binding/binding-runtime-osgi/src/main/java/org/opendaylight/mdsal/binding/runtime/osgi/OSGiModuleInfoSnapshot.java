@@ -8,9 +8,12 @@
 package org.opendaylight.mdsal.binding.runtime.osgi;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
 
+/**
+ * Combination of a {@link ModuleInfoSnapshot} with a linear generation.
+ */
 @Beta
-public interface OSGiBindingRuntimeContext extends ModelGenerationAware<BindingRuntimeContext> {
+public interface OSGiModuleInfoSnapshot extends ModelGenerationAware<ModuleInfoSnapshot> {
     // Nothing else
 }

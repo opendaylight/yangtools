@@ -54,10 +54,6 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-runtime-osgi</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>org.opendaylight.mdsal</groupId>
-            <artifactId>mdsal-dom-schema-osgi</artifactId>
-        </dependency-->
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-api</artifactId>
@@ -77,12 +73,12 @@
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-test-model</artifactId>
+            <artifactId>binding-ri</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-ri</artifactId>
-            <scope>test</scope>
+            <artifactId>binding-test-model</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>

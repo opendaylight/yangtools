@@ -326,11 +326,11 @@
                 <artifactId>binding-data-codec-dynamic</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
             </dependency>
-            <!--dependency>
+            <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-data-codec-osgi</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
-            </dependency-->
+            </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-data-codec-spi</artifactId>
@@ -366,11 +366,11 @@
                 <artifactId>binding-runtime-dynamic</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
             </dependency>
-            <!--dependency>
+            <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-osgi</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
-            </dependency-->
+            </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-spi</artifactId>
