@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.spec.reflect;
+package org.opendaylight.yangtools.binding.reflect;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,16 +45,16 @@ public class StringValueObjectFactoryTest {
         private final String _value;
 
         public TestClass(final TestClass parent) {
-            this._value = parent._value;
+            _value = parent._value;
         }
 
         public TestClass(final String value) {
-            this._value = value;
+            _value = value;
         }
 
         @Override
         public String toString() {
-            return this._value;
+            return _value;
         }
     }
 }

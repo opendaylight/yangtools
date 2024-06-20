@@ -97,7 +97,7 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-util</artifactId>
+            <artifactId>binding-reflect</artifactId>
         </dependency>
         <dependency>
             <groupId>com.guicedee.services</groupId>
