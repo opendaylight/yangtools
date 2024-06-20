@@ -10,11 +10,11 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.lib.Augmentation;
-import org.opendaylight.yangtools.binding.lib.BindingContract;
-import org.opendaylight.yangtools.binding.lib.DataContainer;
-import org.opendaylight.yangtools.binding.lib.DataObject;
-import org.opendaylight.yangtools.binding.lib.DataObjectStep;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.BindingContract;
+import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 

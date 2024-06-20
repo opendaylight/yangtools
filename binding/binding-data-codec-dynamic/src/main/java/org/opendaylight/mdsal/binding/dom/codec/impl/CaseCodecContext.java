@@ -8,9 +8,9 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.lib.ChoiceIn;
-import org.opendaylight.yangtools.binding.lib.DataObject;
-import org.opendaylight.yangtools.binding.lib.DataObjectStep;
+import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;

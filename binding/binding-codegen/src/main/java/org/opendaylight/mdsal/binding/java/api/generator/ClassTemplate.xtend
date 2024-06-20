@@ -50,7 +50,7 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.model.ri.Types
-import org.opendaylight.yangtools.binding.lib.contract.Naming
+import org.opendaylight.yangtools.binding.contract.Naming
 import org.opendaylight.yangtools.yang.common.Empty
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 

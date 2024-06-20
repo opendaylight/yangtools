@@ -338,11 +338,6 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-lib</artifactId>
-                <version>14.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-model-api</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
             </dependency>
@@ -379,6 +374,11 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-spi</artifactId>
+                <version>14.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>binding-spec</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>

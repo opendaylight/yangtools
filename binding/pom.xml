@@ -34,7 +34,6 @@
         <module>binding-data-codec-dynamic</module>
         <!--module>binding-data-codec-osgi</module-->
         <module>binding-data-codec-spi</module>
-        <module>binding-lib</module>
         <module>binding-model-api</module>
         <module>binding-model-ri</module>
         <module>binding-parent</module>
@@ -43,6 +42,7 @@
         <module>binding-runtime-dynamic</module>
         <!--module>binding-runtime-osgi</module-->
         <module>binding-runtime-spi</module>
+        <module>binding-spec</module>
         <module>binding-test-model</module>
         <module>binding-util</module>
     </modules>

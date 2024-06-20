@@ -40,7 +40,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opendaylight.yangtools.binding.lib.YangModuleInfo;
+import org.opendaylight.yangtools.binding.YangModuleInfo;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileType;

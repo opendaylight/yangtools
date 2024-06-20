@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal766.norev.GlobalFoo;
 import org.opendaylight.yang.gen.v1.mdsal766.norev.Mdsal766Data;
-import org.opendaylight.yangtools.binding.lib.YangFeature;
+import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public class Mdsal766Test {

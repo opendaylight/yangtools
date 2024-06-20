@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.BeforeClass;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;

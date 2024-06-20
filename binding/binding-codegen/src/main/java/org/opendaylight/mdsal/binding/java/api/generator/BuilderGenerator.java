@@ -8,10 +8,10 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.opendaylight.yangtools.binding.lib.Augmentable;
-import org.opendaylight.yangtools.binding.lib.Augmentation;
-import org.opendaylight.yangtools.binding.lib.YangData;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;

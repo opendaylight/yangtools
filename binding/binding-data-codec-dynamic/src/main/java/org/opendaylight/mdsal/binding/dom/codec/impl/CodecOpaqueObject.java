@@ -11,9 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
-import org.opendaylight.yangtools.binding.lib.OpaqueData;
-import org.opendaylight.yangtools.binding.lib.OpaqueObject;
+import org.opendaylight.yangtools.binding.AbstractOpaqueObject;
+import org.opendaylight.yangtools.binding.OpaqueData;
+import org.opendaylight.yangtools.binding.OpaqueObject;
 
 /**
  * A base class for {@link OpaqueObject}s backed by {@link ForeignOpaqueData}. While this class is public, it not part

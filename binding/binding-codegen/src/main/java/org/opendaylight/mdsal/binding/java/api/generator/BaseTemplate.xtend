@@ -31,8 +31,8 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
-import org.opendaylight.yangtools.binding.lib.BaseIdentity
-import org.opendaylight.yangtools.binding.lib.contract.Naming
+import org.opendaylight.yangtools.binding.BaseIdentity
+import org.opendaylight.yangtools.binding.contract.Naming
 import org.opendaylight.yangtools.yang.common.YangDataName
 
 abstract class BaseTemplate extends AbstractBaseTemplate {

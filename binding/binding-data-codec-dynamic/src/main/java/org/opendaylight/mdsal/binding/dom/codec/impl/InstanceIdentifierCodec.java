@@ -13,10 +13,10 @@ import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingInstanceIdentifierCodec;
-import org.opendaylight.yangtools.binding.lib.DataObject;
-import org.opendaylight.yangtools.binding.lib.DataObjectStep;
-import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
-import org.opendaylight.yangtools.binding.lib.KeylessStep;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 

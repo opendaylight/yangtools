@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.junit.Test;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.contract.Naming;
 
 public class UnionWithMultipleIdentityrefsTest extends BaseCompilationTest {
     @Test

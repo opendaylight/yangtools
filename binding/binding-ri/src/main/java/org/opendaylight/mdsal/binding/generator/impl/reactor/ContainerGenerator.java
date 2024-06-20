@@ -9,8 +9,8 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import java.util.List;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultContainerRuntimeType;
-import org.opendaylight.yangtools.binding.lib.contract.Naming;
-import org.opendaylight.yangtools.binding.lib.contract.StatementNamespace;
+import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;

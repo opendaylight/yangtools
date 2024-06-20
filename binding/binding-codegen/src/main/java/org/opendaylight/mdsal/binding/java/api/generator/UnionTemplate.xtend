@@ -13,8 +13,8 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TY
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING
 import static org.opendaylight.yangtools.binding.model.ri.Types.getOuterClassName
-import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-import static org.opendaylight.yangtools.binding.lib.contract.Naming.BUILDER_SUFFIX
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX
 import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes.isBitsType
 import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes.isIdentityType
 
@@ -116,7 +116,7 @@ class UnionTemplate extends ClassTemplate {
                 «IF STRING_TYPE.equals(propRet)»
                     ««« type string
                 return «field»;
-                «ELSEIF "org.opendaylight.yangtools.binding.lib.InstanceIdentifier".equals(propRet.fullyQualifiedName)»
+                «ELSEIF "org.opendaylight.yangtools.binding.InstanceIdentifier".equals(propRet.fullyQualifiedName)»
                     ««« type instance-identifier
                 return «field».toString();
                 «ELSEIF BINARY_TYPE.equals(propRet)»

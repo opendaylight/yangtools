@@ -14,15 +14,15 @@ import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.binding.lib.Augmentable;
-import org.opendaylight.yangtools.binding.lib.Augmentation;
-import org.opendaylight.yangtools.binding.lib.BaseIdentity;
-import org.opendaylight.yangtools.binding.lib.DataObject;
-import org.opendaylight.yangtools.binding.lib.DataRoot;
-import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
-import org.opendaylight.yangtools.binding.lib.Key;
-import org.opendaylight.yangtools.binding.lib.KeyAware;
-import org.opendaylight.yangtools.binding.lib.Notification;
+import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.BaseIdentity;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 
 public class BindingTypesTest {

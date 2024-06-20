@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import org.opendaylight.yangtools.binding.model.api.Enumeration
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
-import org.opendaylight.yangtools.binding.lib.EnumTypeObject
+import org.opendaylight.yangtools.binding.EnumTypeObject
 
 /**
  * Template for generating JAVA enumeration type.

@@ -7,19 +7,19 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static extension org.opendaylight.yangtools.binding.lib.contract.Naming.getGetterMethodForNonnull
-import static extension org.opendaylight.yangtools.binding.lib.contract.Naming.getGetterMethodForRequire
-import static extension org.opendaylight.yangtools.binding.lib.contract.Naming.isGetterMethodName
-import static extension org.opendaylight.yangtools.binding.lib.contract.Naming.isNonnullMethodName
-import static extension org.opendaylight.yangtools.binding.lib.contract.Naming.isRequireMethodName
+import static extension org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull
+import static extension org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForRequire
+import static extension org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName
+import static extension org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName
+import static extension org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName
 import static org.opendaylight.yangtools.binding.model.ri.Types.BOOLEAN
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING
-import static org.opendaylight.yangtools.binding.lib.contract.Naming.REQUIRE_PREFIX
-import static org.opendaylight.yangtools.binding.lib.contract.Naming.AUGMENTATION_FIELD
-import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_EQUALS_NAME
-import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_HASHCODE_NAME
-import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_TO_STRING_NAME
+import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX
+import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List

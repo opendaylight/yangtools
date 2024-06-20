@@ -49,7 +49,7 @@ public class Mdsal406TypeObjectTest {
         assertNotNull(typedefType.getImplements());
         Type objectType = typedefType.getImplements().stream()
                 .filter(type -> type.getFullyQualifiedName()
-                .equals("org.opendaylight.yangtools.binding.lib.ScalarTypeObject")).findAny().orElseThrow();
+                .equals("org.opendaylight.yangtools.binding.ScalarTypeObject")).findAny().orElseThrow();
         assertEquals(BindingTypes.scalarTypeObject(Types.BYTE_ARRAY), objectType);
     }
 
@@ -65,7 +65,7 @@ public class Mdsal406TypeObjectTest {
         assertNotNull(typedefType.getImplements());
         Type objectType = typedefType.getImplements().stream()
                 .filter(type -> type.getFullyQualifiedName()
-                        .equals("org.opendaylight.yangtools.binding.lib.BitsTypeObject")).findAny().orElseThrow();
+                        .equals("org.opendaylight.yangtools.binding.BitsTypeObject")).findAny().orElseThrow();
         assertEquals(BITS_TYPE_OBJECT, objectType);
     }
 
@@ -81,7 +81,7 @@ public class Mdsal406TypeObjectTest {
         assertNotNull(typedefType.getImplements());
         Type objectType = typedefType.getImplements().stream()
                 .filter(type -> type.getFullyQualifiedName()
-                        .equals("org.opendaylight.yangtools.binding.lib.UnionTypeObject")).findAny().orElseThrow();
+                        .equals("org.opendaylight.yangtools.binding.UnionTypeObject")).findAny().orElseThrow();
         assertEquals(UNION_TYPE_OBJECT, objectType);
     }
 }
