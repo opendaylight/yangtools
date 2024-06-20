@@ -7,12 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.keyAware;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.keyAware;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultListRuntimeType;
-import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
@@ -24,6 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechani
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;

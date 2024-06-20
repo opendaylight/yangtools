@@ -8,8 +8,8 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.lib.Augmentable;
 import org.opendaylight.yangtools.binding.lib.Augmentation;
 import org.opendaylight.yangtools.binding.lib.YangData;

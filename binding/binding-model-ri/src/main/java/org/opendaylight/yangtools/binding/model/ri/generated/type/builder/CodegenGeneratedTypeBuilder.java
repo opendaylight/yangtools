@@ -1,22 +1,41 @@
 /*
- * Copyright (c) 2018 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.model.ri.generated.type.builder;
+package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 
-public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder> implements
+public final class CodegenGeneratedTypeBuilder extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder> implements
         GeneratedTypeBuilder {
 
-    public RuntimeGeneratedTypeBuilder(final JavaTypeName identifier) {
+    private String description;
+    private String reference;
+    private String moduleName;
+
+    public CodegenGeneratedTypeBuilder(final JavaTypeName identifier) {
         super(identifier);
         setAbstract(true);
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    @Override
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    @Override
+    public void setReference(final String reference) {
+        this.reference = reference;
     }
 
     @Override
@@ -25,47 +44,36 @@ public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuil
     }
 
     @Override
-    public void setDescription(final String description) {
-        // No-op
-    }
-
-    @Override
-    public void setModuleName(final String moduleName) {
-        // No-op
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        // No-op
-    }
-
-    @Override
-    protected RuntimeGeneratedTypeBuilder thisInstance() {
+    protected CodegenGeneratedTypeBuilder thisInstance() {
         return this;
     }
 
     private static final class GeneratedTypeImpl extends AbstractGeneratedType {
-        GeneratedTypeImpl(final RuntimeGeneratedTypeBuilder builder) {
+        private final String description;
+        private final String reference;
+        private final String moduleName;
+
+        GeneratedTypeImpl(final CodegenGeneratedTypeBuilder builder) {
             super(builder);
+
+            description = builder.description;
+            reference = builder.reference;
+            moduleName = builder.moduleName;
         }
 
         @Override
         public String getDescription() {
-            throw unsupported();
+            return description;
         }
 
         @Override
         public String getReference() {
-            throw unsupported();
+            return reference;
         }
 
         @Override
         public String getModuleName() {
-            throw unsupported();
-        }
-
-        private static UnsupportedOperationException unsupported() {
-            return new UnsupportedOperationException("Not available at runtime");
+            return moduleName;
         }
     }
 }

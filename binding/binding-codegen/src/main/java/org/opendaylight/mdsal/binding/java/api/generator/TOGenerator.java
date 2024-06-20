@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
-import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;

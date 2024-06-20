@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
-import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -25,6 +24,7 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedProper
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeMemberBuilder;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 public final class SerialVersionHelper {
     private static final Set<ConcreteType> IGNORED_INTERFACES =

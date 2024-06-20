@@ -7,16 +7,16 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.BINARY_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.EMPTY_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.STRING_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.Types.STRING
-import static org.opendaylight.mdsal.binding.model.ri.Types.getOuterClassName
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.Types.STRING
+import static org.opendaylight.yangtools.binding.model.ri.Types.getOuterClassName
 import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
 import static org.opendaylight.yangtools.binding.lib.contract.Naming.BUILDER_SUFFIX
-import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isBitsType
-import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isIdentityType
+import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes.isBitsType
+import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes.isIdentityType
 
 import java.util.Base64;
 import org.opendaylight.yangtools.binding.model.api.Enumeration
