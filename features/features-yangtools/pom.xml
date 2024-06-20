@@ -38,6 +38,12 @@
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odl-bytebuddy</artifactId>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odl-yangtools-codec</artifactId>
             <classifier>features</classifier>
             <type>xml</type>
