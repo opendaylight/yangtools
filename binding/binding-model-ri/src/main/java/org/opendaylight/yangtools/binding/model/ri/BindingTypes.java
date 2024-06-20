@@ -5,11 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.model.ri;
+package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.opendaylight.mdsal.binding.model.ri.Types.parameterizedTypeFor;
-import static org.opendaylight.mdsal.binding.model.ri.Types.typeForClass;
 import static org.opendaylight.yangtools.binding.lib.contract.Naming.VALUE_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.model.ri.Types.parameterizedTypeFor;
+import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;

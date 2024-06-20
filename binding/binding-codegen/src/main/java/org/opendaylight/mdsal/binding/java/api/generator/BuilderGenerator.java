@@ -8,8 +8,6 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.lib.Augmentable;
 import org.opendaylight.yangtools.binding.lib.Augmentation;
 import org.opendaylight.yangtools.binding.lib.YangData;
@@ -20,6 +18,8 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 
 /**
  * Transformator of the data from the virtual form to JAVA programming language. The result source code represent java

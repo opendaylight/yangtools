@@ -9,11 +9,11 @@ package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
-import static org.opendaylight.mdsal.binding.model.ri.Types.classType;
-import static org.opendaylight.mdsal.binding.model.ri.Types.primitiveBooleanType;
-import static org.opendaylight.mdsal.binding.model.ri.Types.primitiveIntType;
-import static org.opendaylight.mdsal.binding.model.ri.Types.wildcardTypeFor;
+import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
+import static org.opendaylight.yangtools.binding.model.ri.Types.classType;
+import static org.opendaylight.yangtools.binding.model.ri.Types.primitiveBooleanType;
+import static org.opendaylight.yangtools.binding.model.ri.Types.primitiveIntType;
+import static org.opendaylight.yangtools.binding.model.ri.Types.wildcardTypeFor;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -24,9 +24,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.CollisionDomain.Member;
-import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
-import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.binding.lib.DataContainer;
 import org.opendaylight.yangtools.binding.lib.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.contract.StatementNamespace;
@@ -39,6 +36,9 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedProper
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;

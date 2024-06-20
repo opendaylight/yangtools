@@ -5,20 +5,26 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.model.ri.generated.type.builder;
+package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import java.util.Objects;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
+import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
-final class MethodParameterImpl implements Parameter {
-
-    private final String name;
+final class ConstantImpl implements Constant {
     private final Type type;
+    private final String name;
+    private final Object value;
 
-    MethodParameterImpl(final String name, final Type type) {
-        this.name = name;
+    ConstantImpl(final Type type, final String name, final Object value) {
         this.type = type;
+        this.name = name;
+        this.value = value;
+    }
+
+    @Override
+    public Type getType() {
+        return this.type;
     }
 
     @Override
@@ -27,15 +33,10 @@ final class MethodParameterImpl implements Parameter {
     }
 
     @Override
-    public Type getType() {
-        return this.type;
+    public Object getValue() {
+        return this.value;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -45,11 +46,6 @@ final class MethodParameterImpl implements Parameter {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -58,24 +54,20 @@ final class MethodParameterImpl implements Parameter {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        final MethodParameterImpl other = (MethodParameterImpl) obj;
-        return Objects.equals(this.name, other.name) && Objects.equals(this.type, other.type);
+        final ConstantImpl other = (ConstantImpl) obj;
+        return Objects.equals(this.name, other.name) && Objects.equals(this.type, other.type)
+                && Objects.equals(this.value, other.value);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("MethodParameter [name=");
+        builder.append("Constant [type=");
+        builder.append(this.type);
+        builder.append(", name=");
         builder.append(this.name);
-        builder.append(", type=");
-        builder.append(this.type.getPackageName());
-        builder.append(".");
-        builder.append(this.type.getName());
+        builder.append(", value=");
+        builder.append(this.value);
         builder.append("]");
         return builder.toString();
     }

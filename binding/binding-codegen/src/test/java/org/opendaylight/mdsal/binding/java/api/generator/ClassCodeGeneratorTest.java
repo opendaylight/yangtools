@@ -16,14 +16,14 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
-import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class ClassCodeGeneratorTest {

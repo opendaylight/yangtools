@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.model.ri;
+package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
-import static org.opendaylight.mdsal.binding.model.ri.Types.typeForClass;
+import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.lib.Augmentable;

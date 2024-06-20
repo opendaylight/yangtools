@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.BASE_IDENTITY;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BASE_IDENTITY;
 
 import java.util.List;
 import java.util.stream.Collectors;
