@@ -6,14 +6,12 @@ module opendaylight-of-migration-test-model {
     import opendaylight-mdsal-binding-test {prefix test;}
     import yang-ext {prefix ext;}
     import opendaylight-mdsal-augment-test {prefix aug;}
-    import opendaylight-test-routed-rpc {prefix routed;}
 
     description
         "This module contains a collection of YANG definitions used for
         test cases that used to depend on flow model.";
 
-    revision 2015-02-10 {
-    }
+    revision 2015-02-10;
 
     typedef bit-flags {
         type bits {
