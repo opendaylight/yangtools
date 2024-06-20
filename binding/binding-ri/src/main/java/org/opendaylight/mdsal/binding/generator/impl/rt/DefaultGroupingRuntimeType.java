@@ -12,10 +12,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.GroupingRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
 public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeType<GroupingEffectiveStatement>

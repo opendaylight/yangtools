@@ -11,13 +11,13 @@ import static com.google.common.base.Verify.verify;
 
 import java.util.List;
 import org.opendaylight.mdsal.binding.generator.impl.rt.DefaultCaseRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.CaseRuntimeType;
-import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.binding.lib.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 

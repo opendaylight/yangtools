@@ -11,7 +11,7 @@ import org.opendaylight.mdsal.binding.dom.codec.impl.SimpleBindingCodecTreeFacto
 import org.opendaylight.mdsal.binding.dom.codec.impl.SimpleBindingDOMCodecFactory;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecFactory;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 module org.opendaylight.mdsal.binding.dom.codec.impl {
     // FIXME: MDSAL-828: do not export this package
@@ -23,7 +23,7 @@ module org.opendaylight.mdsal.binding.dom.codec.impl {
     provides BindingDOMCodecServices with BindingCodecContext;
     provides BindingCodecTreeFactory with SimpleBindingCodecTreeFactory;
 
-    requires transitive org.opendaylight.mdsal.binding.runtime.api;
+    requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires transitive org.opendaylight.mdsal.binding.dom.codec.api;
     requires transitive org.opendaylight.mdsal.binding.dom.codec.spi;
     requires com.google.common;

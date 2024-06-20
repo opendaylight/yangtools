@@ -8,8 +8,8 @@
 package org.opendaylight.mdsal.binding.generator.impl;
 
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeGenerator;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

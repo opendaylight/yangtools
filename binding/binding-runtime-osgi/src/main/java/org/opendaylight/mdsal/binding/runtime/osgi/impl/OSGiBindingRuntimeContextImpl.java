@@ -15,7 +15,7 @@ import com.google.common.primitives.UnsignedLong;
 import java.util.Dictionary;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;

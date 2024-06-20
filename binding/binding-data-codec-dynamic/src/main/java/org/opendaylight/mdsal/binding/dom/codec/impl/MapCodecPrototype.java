@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.lib.DataObjectStep;
 import org.opendaylight.yangtools.binding.lib.KeyAware;
 

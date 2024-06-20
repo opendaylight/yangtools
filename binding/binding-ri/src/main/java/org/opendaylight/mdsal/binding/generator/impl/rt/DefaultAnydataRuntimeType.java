@@ -7,8 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import org.opendaylight.mdsal.binding.runtime.api.AnydataRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.runtime.api.AnydataRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 
 public final class DefaultAnydataRuntimeType extends AbstractGeneratedRuntimeType<AnydataEffectiveStatement>

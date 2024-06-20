@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import org.opendaylight.mdsal.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**

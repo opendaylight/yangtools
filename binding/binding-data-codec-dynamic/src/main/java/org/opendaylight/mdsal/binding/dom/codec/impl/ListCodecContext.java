@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.lang.reflect.Method;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.runtime.api.ListRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.lib.DataObject;
 import org.opendaylight.yangtools.binding.lib.NodeStep;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;

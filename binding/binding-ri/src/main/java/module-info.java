@@ -8,7 +8,7 @@
 import org.opendaylight.mdsal.binding.generator.BindingGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenerator;
-import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeGenerator;
 
 module org.opendaylight.mdsal.binding.generator {
     exports org.opendaylight.mdsal.binding.generator;
@@ -19,7 +19,7 @@ module org.opendaylight.mdsal.binding.generator {
 
     requires transitive org.opendaylight.yangtools.binding.model.api;
     requires transitive org.opendaylight.yangtools.binding.model.ri;
-    requires transitive org.opendaylight.mdsal.binding.runtime.api;
+    requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires com.google.common;
     requires org.opendaylight.yangtools.binding.lib;
     requires org.opendaylight.yangtools.concepts;
