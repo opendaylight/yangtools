@@ -8,8 +8,8 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
-import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
-import static org.opendaylight.mdsal.binding.model.ri.Types.objectType;
+import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
+import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment
-import org.opendaylight.mdsal.binding.model.ri.TypeConstants
+import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.lib.BaseIdentity
 import org.opendaylight.yangtools.binding.lib.contract.Naming
 import org.opendaylight.yangtools.yang.common.YangDataName

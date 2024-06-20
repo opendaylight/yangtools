@@ -8,23 +8,23 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static java.util.Objects.requireNonNull
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.BINARY_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.DECIMAL64_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.EMPTY_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.INT16_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.INT32_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.INT64_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.INT8_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.STRING_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.UINT16_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.UINT32_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.UINT64_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.UINT8_TYPE
-import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT
-import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT
-import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.DECIMAL64_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT16_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT32_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT64_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT8_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT16_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT
+import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
 import com.google.common.base.Preconditions
@@ -48,8 +48,8 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.ri.TypeConstants
-import org.opendaylight.mdsal.binding.model.ri.Types
+import org.opendaylight.yangtools.binding.model.ri.TypeConstants
+import org.opendaylight.yangtools.binding.model.ri.Types
 import org.opendaylight.yangtools.binding.lib.contract.Naming
 import org.opendaylight.yangtools.yang.common.Empty
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition

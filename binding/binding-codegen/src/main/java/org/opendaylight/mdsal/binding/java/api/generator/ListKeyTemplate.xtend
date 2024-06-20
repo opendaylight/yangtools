@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.ri.BindingTypes
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes
 
 /**
  * Template for generating JAVA class.

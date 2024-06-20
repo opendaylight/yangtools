@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 import static extension org.opendaylight.mdsal.binding.java.api.generator.GeneratorUtil.isNonPresenceContainer;
-import static org.opendaylight.mdsal.binding.model.ri.BindingTypes.DATA_OBJECT
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.DATA_OBJECT
 import static org.opendaylight.yangtools.binding.lib.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.yangtools.binding.lib.contract.Naming.AUGMENTATION_FIELD
 import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
@@ -32,8 +32,8 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType
 import org.opendaylight.yangtools.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.ri.TypeConstants
-import org.opendaylight.mdsal.binding.model.ri.Types
+import org.opendaylight.yangtools.binding.model.ri.TypeConstants
+import org.opendaylight.yangtools.binding.model.ri.Types
 import org.opendaylight.yangtools.binding.lib.contract.Naming
 
 /**
