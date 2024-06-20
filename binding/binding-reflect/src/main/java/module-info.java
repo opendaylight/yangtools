@@ -5,8 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-module org.opendaylight.mdsal.binding.spec.util {
-    exports org.opendaylight.mdsal.binding.spec.reflect;
+module org.opendaylight.yangtools.binding.reflect {
+    exports org.opendaylight.yangtools.binding.reflect;
 
     uses org.opendaylight.yangtools.binding.YangModelBindingProvider;
 
