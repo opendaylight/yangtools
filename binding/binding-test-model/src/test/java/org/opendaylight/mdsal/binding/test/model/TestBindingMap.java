@@ -19,7 +19,7 @@ import org.opendaylight.yang.gen.v1.lal.norev.FooBuilder;
 import org.opendaylight.yang.gen.v1.lal.norev.foo.Bar;
 import org.opendaylight.yang.gen.v1.lal.norev.foo.BarBuilder;
 import org.opendaylight.yang.gen.v1.lal.norev.foo.BarKey;
-import org.opendaylight.yangtools.yang.binding.util.BindingMap;
+import org.opendaylight.yangtools.binding.lib.util.BindingMap;
 
 public class TestBindingMap {
     private static final BarKey BAR_KEY_ONE = new BarKey(1);

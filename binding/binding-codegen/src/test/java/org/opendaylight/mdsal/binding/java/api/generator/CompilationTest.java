@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
-import org.opendaylight.yangtools.yang.binding.ChildOf;
-import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
+import org.opendaylight.yangtools.binding.lib.ChildOf;
+import org.opendaylight.yangtools.binding.lib.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Uint16;
@@ -134,7 +134,7 @@ public class CompilationTest extends BaseCompilationTest {
         // Test serialVersionUID generation
         final Field suid = CompilationTestUtils.assertContainsField(linksKeyClass, "serialVersionUID", Long.TYPE);
         suid.setAccessible(true);
-        assertEquals(-8290985055387641395L, suid.getLong(null));
+        assertEquals(1508705866470220657L, suid.getLong(null));
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
@@ -532,7 +532,7 @@ public class CompilationTest extends BaseCompilationTest {
                 .forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.bar.rev131008.IdentityClass", true, loader);
 
         // test identity
-        final Class<?> baseIdentity = Class.forName("org.opendaylight.yangtools.yang.binding.BaseIdentity", true,
+        final Class<?> baseIdentity = Class.forName("org.opendaylight.yangtools.binding.lib.BaseIdentity", true,
             loader);
         assertEquals(ImmutableList.of(baseIdentity), Arrays.asList(identityClass.getInterfaces()));
 
@@ -888,7 +888,7 @@ public class CompilationTest extends BaseCompilationTest {
     private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz,
             final String methodName) throws ClassNotFoundException, NoSuchMethodException, SecurityException {
         final Method method = clazz.getMethod(methodName);
-        final Class<?> rawReturnType = Class.forName("org.opendaylight.yangtools.yang.binding.InstanceIdentifier", true,
+        final Class<?> rawReturnType = Class.forName("org.opendaylight.yangtools.binding.lib.InstanceIdentifier", true,
             loader);
         assertEquals(rawReturnType, method.getReturnType());
         final Type returnType = method.getGenericReturnType();

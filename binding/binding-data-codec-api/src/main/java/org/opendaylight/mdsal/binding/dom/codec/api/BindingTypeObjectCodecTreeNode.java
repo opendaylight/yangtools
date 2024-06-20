@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.binding.TypeObject;
+import org.opendaylight.yangtools.binding.lib.TypeObject;
 
 @Beta
 public non-sealed interface BindingTypeObjectCodecTreeNode<T extends TypeObject>

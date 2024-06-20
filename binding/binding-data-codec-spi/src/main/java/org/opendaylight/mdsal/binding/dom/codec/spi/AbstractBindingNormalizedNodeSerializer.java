@@ -11,9 +11,9 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
-import org.opendaylight.yangtools.yang.binding.Action;
-import org.opendaylight.yangtools.yang.binding.RpcInput;
-import org.opendaylight.yangtools.yang.binding.RpcOutput;
+import org.opendaylight.yangtools.binding.lib.Action;
+import org.opendaylight.yangtools.binding.lib.RpcInput;
+import org.opendaylight.yangtools.binding.lib.RpcOutput;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 @Beta

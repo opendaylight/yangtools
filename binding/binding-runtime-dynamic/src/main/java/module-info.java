@@ -16,7 +16,7 @@ module org.opendaylight.mdsal.binding.loader {
     requires transitive net.bytebuddy;
 
     requires com.google.common;
-    requires org.opendaylight.yangtools.yang.binding;
+    requires org.opendaylight.yangtools.binding.lib;
     requires org.slf4j;
 
     // Annotations

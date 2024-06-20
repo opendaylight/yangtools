@@ -19,7 +19,7 @@ module org.opendaylight.mdsal.binding.runtime.spi {
     requires org.opendaylight.mdsal.binding.spec.util;
     requires org.slf4j;
 
-    uses org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
+    uses org.opendaylight.yangtools.binding.lib.YangModelBindingProvider;
     uses org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
     uses org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
 

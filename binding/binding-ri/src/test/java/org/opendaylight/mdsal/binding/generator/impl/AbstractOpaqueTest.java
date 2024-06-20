@@ -18,8 +18,8 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.binding.ChildOf;
-import org.opendaylight.yangtools.yang.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.lib.ChildOf;
+import org.opendaylight.yangtools.binding.lib.OpaqueObject;
 
 abstract class AbstractOpaqueTest {
 

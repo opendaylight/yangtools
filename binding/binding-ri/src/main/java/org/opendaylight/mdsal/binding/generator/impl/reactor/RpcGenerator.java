@@ -15,8 +15,8 @@ import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.runtime.api.RpcRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
-import org.opendaylight.yangtools.yang.binding.contract.Naming;
-import org.opendaylight.yangtools.yang.binding.contract.StatementNamespace;
+import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.contract.StatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 
 /**

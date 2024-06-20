@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.binding;
+package org.opendaylight.yangtools.binding.lib;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,15 +23,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.binding.test.mock.FooChild;
-import org.opendaylight.yangtools.yang.binding.test.mock.FooRoot;
-import org.opendaylight.yangtools.yang.binding.test.mock.InstantiatedFoo;
-import org.opendaylight.yangtools.yang.binding.test.mock.Node;
-import org.opendaylight.yangtools.yang.binding.test.mock.NodeAugmentation;
-import org.opendaylight.yangtools.yang.binding.test.mock.NodeChild;
-import org.opendaylight.yangtools.yang.binding.test.mock.NodeChildKey;
-import org.opendaylight.yangtools.yang.binding.test.mock.NodeKey;
-import org.opendaylight.yangtools.yang.binding.test.mock.Nodes;
+import org.opendaylight.yangtools.binding.lib.test.mock.FooChild;
+import org.opendaylight.yangtools.binding.lib.test.mock.FooRoot;
+import org.opendaylight.yangtools.binding.lib.test.mock.InstantiatedFoo;
+import org.opendaylight.yangtools.binding.lib.test.mock.Node;
+import org.opendaylight.yangtools.binding.lib.test.mock.NodeAugmentation;
+import org.opendaylight.yangtools.binding.lib.test.mock.NodeChild;
+import org.opendaylight.yangtools.binding.lib.test.mock.NodeChildKey;
+import org.opendaylight.yangtools.binding.lib.test.mock.NodeKey;
+import org.opendaylight.yangtools.binding.lib.test.mock.Nodes;
 import org.powermock.reflect.Whitebox;
 
 public class InstanceIdentifierTest {

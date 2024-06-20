@@ -35,7 +35,7 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.contract.Naming;
 
 public class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final ParameterizedType SET_STRING_TYPE  = Types.setTypeFor(Types.STRING);

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
-import org.opendaylight.yangtools.yang.binding.YangData;
+import org.opendaylight.yangtools.binding.lib.YangData;
 
 /**
  * A {@link BindingDataContainerCodecTreeNode} corresponding to a RFC8040 {@code yang-data}

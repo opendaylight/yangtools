@@ -9,13 +9,13 @@ package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.opendaylight.mdsal.binding.java.api.generator.GeneratorUtil.isNonPresenceContainer;
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.AUGMENTATION_FIELD
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_EQUALS_NAME
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_HASHCODE_NAME
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.BINDING_TO_STRING_NAME
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.BUILDER_SUFFIX
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.KEY_AWARE_KEY_NAME
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.NONNULL_PREFIX
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.AUGMENTATION_FIELD
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_EQUALS_NAME
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_HASHCODE_NAME
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.BINDING_TO_STRING_NAME
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.BUILDER_SUFFIX
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.KEY_AWARE_KEY_NAME
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.NONNULL_PREFIX
 
 import java.util.Collection
 import java.util.List
@@ -27,7 +27,7 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.Types
-import org.opendaylight.yangtools.yang.binding.AbstractAugmentable
+import org.opendaylight.yangtools.binding.lib.AbstractAugmentable
 
 class BuilderImplTemplate extends AbstractBuilderTemplate {
     val BuilderTemplate builder;

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.binding.lib.DataContainer;
 
 /**
  * SPI-level contract for registry of {@link DataContainerSerializer}. The contract is kept between implementation of

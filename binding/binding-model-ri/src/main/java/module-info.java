@@ -11,7 +11,7 @@ module org.opendaylight.mdsal.binding.model.ri {
 
     requires transitive org.opendaylight.mdsal.binding.model.api;
     requires org.opendaylight.yangtools.util;
-    requires org.opendaylight.yangtools.yang.binding;
+    requires org.opendaylight.yangtools.binding.lib;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
 

@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.binding.BindingObject;
+import org.opendaylight.yangtools.binding.lib.BindingObject;
 
 /**
  * Caching variant of Binding to Normalized Node codec. Caching may introduce performance penalty to serialization and

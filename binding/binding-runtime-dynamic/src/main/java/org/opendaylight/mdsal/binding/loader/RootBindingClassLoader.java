@@ -17,7 +17,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.binding.lib.DataContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

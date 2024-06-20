@@ -8,9 +8,9 @@
 module org.opendaylight.mdsal.binding.spec.util {
     exports org.opendaylight.mdsal.binding.spec.reflect;
 
-    uses org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
+    uses org.opendaylight.yangtools.binding.lib.YangModelBindingProvider;
 
-    requires transitive org.opendaylight.yangtools.yang.binding;
+    requires transitive org.opendaylight.yangtools.binding.lib;
     requires transitive org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;

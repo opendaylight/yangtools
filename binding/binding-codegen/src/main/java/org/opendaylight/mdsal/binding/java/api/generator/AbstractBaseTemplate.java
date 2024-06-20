@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.yang.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.contract.Naming;
 
 /**
  * Intermediate Java-based parts under {@link BaseTemplate}.

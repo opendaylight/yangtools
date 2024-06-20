@@ -29,8 +29,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.BitsTypeObject;
-import org.opendaylight.yangtools.yang.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.BitsTypeObject;
+import org.opendaylight.yangtools.binding.lib.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 

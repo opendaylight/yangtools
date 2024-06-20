@@ -51,9 +51,9 @@ import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
 import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
-import org.opendaylight.yangtools.yang.binding.CodeHelpers;
-import org.opendaylight.yangtools.yang.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.Augmentable;
+import org.opendaylight.yangtools.binding.lib.CodeHelpers;
+import org.opendaylight.yangtools.binding.lib.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -154,7 +154,7 @@ class JavaFileTemplate {
     static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
 
     /**
-     * {@code org.opendaylight.yangtools.yang.binding.CodeHelpers} as a JavaTypeName.
+     * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 

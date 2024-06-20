@@ -11,11 +11,11 @@ import com.google.common.annotations.Beta;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.DataContainer;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Key;
-import org.opendaylight.yangtools.yang.binding.KeyAware;
+import org.opendaylight.yangtools.binding.lib.Augmentation;
+import org.opendaylight.yangtools.binding.lib.DataContainer;
+import org.opendaylight.yangtools.binding.lib.DataObject;
+import org.opendaylight.yangtools.binding.lib.Key;
+import org.opendaylight.yangtools.binding.lib.KeyAware;
 
 /**
  * Event Stream Writer for Binding Representation.

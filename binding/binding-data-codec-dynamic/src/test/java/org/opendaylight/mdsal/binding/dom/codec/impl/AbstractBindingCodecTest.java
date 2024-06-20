@@ -12,8 +12,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.lib.DataObject;
+import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
 
 public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTest {
     protected BindingCodecContext codecContext;

@@ -15,15 +15,15 @@ import static org.opendaylight.mdsal.binding.model.ri.Types.typeForClass;
 
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
-import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.BaseIdentity;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.DataRoot;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.Key;
-import org.opendaylight.yangtools.yang.binding.KeyAware;
-import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.binding.lib.Augmentable;
+import org.opendaylight.yangtools.binding.lib.Augmentation;
+import org.opendaylight.yangtools.binding.lib.BaseIdentity;
+import org.opendaylight.yangtools.binding.lib.DataObject;
+import org.opendaylight.yangtools.binding.lib.DataRoot;
+import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.lib.Key;
+import org.opendaylight.yangtools.binding.lib.KeyAware;
+import org.opendaylight.yangtools.binding.lib.Notification;
 
 public class BindingTypesTest {
     @Test

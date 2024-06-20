@@ -18,8 +18,8 @@ import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstBuilder;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstKey;
 import org.opendaylight.yang.gen.v1.mdsal442.keyuse.norev.Use;
 import org.opendaylight.yang.gen.v1.mdsal442.keyuse.norev.UseBuilder;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.lib.DataObject;
+import org.opendaylight.yangtools.binding.lib.InstanceIdentifier;
 
 public class KeyInheritenceTest extends AbstractBindingCodecTest {
     private static final LstKey KEY = new LstKey("foo");

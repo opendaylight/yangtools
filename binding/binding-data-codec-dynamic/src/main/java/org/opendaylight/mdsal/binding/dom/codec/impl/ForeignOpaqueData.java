@@ -9,8 +9,8 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.yang.binding.AbstractOpaqueData;
-import org.opendaylight.yangtools.yang.binding.OpaqueData;
+import org.opendaylight.yangtools.binding.lib.AbstractOpaqueData;
+import org.opendaylight.yangtools.binding.lib.OpaqueData;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
 
 /**

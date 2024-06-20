@@ -67,7 +67,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>@{argLine}
-                        --add-opens org.opendaylight.yangtools.yang.binding/org.opendaylight.yangtools.yang.binding=ALL-UNNAMED
+                        --add-opens org.opendaylight.yangtools.binding.lib/org.opendaylight.yangtools.binding.lib=ALL-UNNAMED
                     </argLine>
                 </configuration>
             </plugin>

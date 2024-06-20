@@ -16,10 +16,10 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
-import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.YangData;
-import org.opendaylight.yangtools.yang.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.Augmentable;
+import org.opendaylight.yangtools.binding.lib.Augmentation;
+import org.opendaylight.yangtools.binding.lib.YangData;
+import org.opendaylight.yangtools.binding.lib.contract.Naming;
 
 /**
  * Transformator of the data from the virtual form to JAVA programming language. The result source code represent java

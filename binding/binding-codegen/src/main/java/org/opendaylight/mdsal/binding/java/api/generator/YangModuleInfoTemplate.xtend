@@ -7,12 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getClassName
-import static extension org.opendaylight.yangtools.yang.binding.contract.Naming.getServicePackageName
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODEL_BINDING_PROVIDER_CLASS_NAME
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODULE_INFO_CLASS_NAME
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME
-import static org.opendaylight.yangtools.yang.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
+import static extension org.opendaylight.yangtools.binding.lib.contract.Naming.getClassName
+import static extension org.opendaylight.yangtools.binding.lib.contract.Naming.getServicePackageName
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.MODEL_BINDING_PROVIDER_CLASS_NAME
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.MODULE_INFO_CLASS_NAME
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME
+import static org.opendaylight.yangtools.binding.lib.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
 
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
@@ -24,7 +24,7 @@ import java.util.TreeMap
 import java.util.function.Function
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode
-import org.opendaylight.yangtools.yang.binding.YangModuleInfo
+import org.opendaylight.yangtools.binding.lib.YangModuleInfo
 import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext
 import org.opendaylight.yangtools.yang.model.api.Module
@@ -47,8 +47,8 @@ final class YangModuleInfoTemplate {
         import java.lang.Override;
         import java.lang.String;
         import org.eclipse.jdt.annotation.NonNull;
-        import org.opendaylight.yangtools.yang.binding.ResourceYangModuleInfo;
-        import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.YangModuleInfo;
         import org.opendaylight.yangtools.yang.common.QName;
     '''
     static val EXT_IMPORT_STR = '''
@@ -58,8 +58,8 @@ final class YangModuleInfoTemplate {
         import java.util.HashSet;
         import java.util.Set;
         import org.eclipse.jdt.annotation.NonNull;
-        import org.opendaylight.yangtools.yang.binding.ResourceYangModuleInfo;
-        import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.YangModuleInfo;
         import org.opendaylight.yangtools.yang.common.QName;
     '''
 
@@ -159,8 +159,8 @@ final class YangModuleInfoTemplate {
 
         import java.lang.Override;
         import java.util.ServiceLoader;
-        import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
-        import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.YangModelBindingProvider;
+        import org.opendaylight.yangtools.binding.lib.YangModuleInfo;
 
         /**
          * The {@link YangModelBindingProvider} for {@code «module.name»} module. This class should not be used

@@ -11,7 +11,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.yang.binding.Augmentable;
+import org.opendaylight.yangtools.binding.lib.Augmentable;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
 /**

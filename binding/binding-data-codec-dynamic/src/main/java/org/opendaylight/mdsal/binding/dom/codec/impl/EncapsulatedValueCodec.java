@@ -19,8 +19,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.yang.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.ScalarTypeObject;
+import org.opendaylight.yangtools.binding.lib.contract.Naming;
 
 /**
  * Derived YANG types are just immutable value holders for simple value

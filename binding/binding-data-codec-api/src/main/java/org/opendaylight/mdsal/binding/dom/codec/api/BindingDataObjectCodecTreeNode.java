@@ -10,8 +10,8 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableCollection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.BindingObject;
-import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.binding.lib.BindingObject;
+import org.opendaylight.yangtools.binding.lib.DataObject;
 
 @Beta
 public interface BindingDataObjectCodecTreeNode<T extends DataObject>

@@ -18,7 +18,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes
-import org.opendaylight.yangtools.yang.binding.contract.Naming
+import org.opendaylight.yangtools.binding.lib.contract.Naming
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
     static val Comparator<GeneratedProperty> KEY_PROPS_COMPARATOR = [ p1, p2 | return p1.name.compareTo(p2.name) ]

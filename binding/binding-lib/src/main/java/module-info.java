@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-// FIXME: rename to yangtools.binding.lib and move packages
-module org.opendaylight.yangtools.yang.binding {
-    exports org.opendaylight.yangtools.yang.binding;
-    exports org.opendaylight.yangtools.yang.binding.annotations;
-    exports org.opendaylight.yangtools.yang.binding.contract;
-    exports org.opendaylight.yangtools.yang.binding.util;
+module org.opendaylight.yangtools.binding.lib {
+    exports org.opendaylight.yangtools.binding.lib;
+    exports org.opendaylight.yangtools.binding.lib.annotations;
+    exports org.opendaylight.yangtools.binding.lib.contract;
+    exports org.opendaylight.yangtools.binding.lib.util;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;

@@ -8,12 +8,12 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import java.io.IOException;
-import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.DataContainer;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Key;
-import org.opendaylight.yangtools.yang.binding.KeyAware;
-import org.opendaylight.yangtools.yang.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.lib.Augmentation;
+import org.opendaylight.yangtools.binding.lib.DataContainer;
+import org.opendaylight.yangtools.binding.lib.DataObject;
+import org.opendaylight.yangtools.binding.lib.Key;
+import org.opendaylight.yangtools.binding.lib.KeyAware;
+import org.opendaylight.yangtools.binding.lib.OpaqueObject;
 
 // FIXME: Consider moving this to yang.binding.util.* in Be
 abstract class ForwardingBindingStreamEventWriter implements AnydataBindingStreamWriter {

@@ -13,7 +13,7 @@ import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName
-import org.opendaylight.yangtools.yang.binding.EnumTypeObject
+import org.opendaylight.yangtools.binding.lib.EnumTypeObject
 
 /**
  * Template for generating JAVA enumeration type.
