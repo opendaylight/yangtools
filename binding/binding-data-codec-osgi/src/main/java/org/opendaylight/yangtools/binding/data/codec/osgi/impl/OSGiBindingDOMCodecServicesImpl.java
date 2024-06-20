@@ -5,18 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
+package org.opendaylight.yangtools.binding.data.codec.osgi.impl;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.primitives.UnsignedLong;
 import java.util.Dictionary;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.dom.codec.osgi.OSGiBindingDOMCodecServices;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
+import org.opendaylight.yangtools.binding.data.codec.osgi.OSGiBindingDOMCodecServices;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
@@ -44,23 +44,23 @@ public final class OSGiBindingDOMCodecServicesImpl implements OSGiBindingDOMCode
     private static final Logger LOG = LoggerFactory.getLogger(OSGiBindingDOMCodecServicesImpl.class);
 
     private BindingDOMCodecServices delegate;
-    private UnsignedLong generation;
-
-    @Override
-    public UnsignedLong getGeneration() {
-        return verifyNotNull(generation);
-    }
-
-    @Override
-    public BindingDOMCodecServices getService() {
-        return verifyNotNull(delegate);
-    }
+    private final Uint64 generation;
 
     @Activate
-    void activate(final Map<String, ?> properties) {
-        generation = (UnsignedLong) verifyNotNull(properties.get(GENERATION));
+    public OSGiBindingDOMCodecServicesImpl(final Map<String, ?> properties) {
+        generation = (Uint64) verifyNotNull(properties.get(GENERATION));
         delegate = (BindingDOMCodecServices) verifyNotNull(properties.get(DELEGATE));
         LOG.info("Binding/DOM Codec generation {} activated", generation);
+    }
+
+    @Override
+    public Uint64 generation() {
+        return generation;
+    }
+
+    @Override
+    public BindingDOMCodecServices service() {
+        return verifyNotNull(delegate);
     }
 
     @Deactivate
@@ -69,7 +69,7 @@ public final class OSGiBindingDOMCodecServicesImpl implements OSGiBindingDOMCode
         LOG.info("Binding/DOM Codec generation {} deactivated", generation);
     }
 
-    static Dictionary<String, ?> props(final @NonNull UnsignedLong generation, final @NonNull Integer ranking,
+    static Dictionary<String, ?> props(final @NonNull Uint64 generation, final @NonNull Integer ranking,
             final @NonNull BindingDOMCodecServices delegate) {
         return FrameworkUtil.asDictionary(Map.of(
             Constants.SERVICE_RANKING, ranking,
