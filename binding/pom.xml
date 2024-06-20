@@ -32,7 +32,7 @@
         <module>binding-codegen</module>
         <module>binding-data-codec-api</module>
         <module>binding-data-codec-dynamic</module>
-        <!--module>binding-data-codec-osgi</module-->
+        <module>binding-data-codec-osgi</module>
         <module>binding-data-codec-spi</module>
         <module>binding-model-api</module>
         <module>binding-model-ri</module>

@@ -40,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-dom-codec-spi</artifactId>
+            <artifactId>binding-data-codec-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -53,6 +53,10 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-runtime-osgi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
