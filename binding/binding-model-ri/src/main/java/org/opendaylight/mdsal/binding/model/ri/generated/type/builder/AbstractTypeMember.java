@@ -9,11 +9,11 @@ package org.opendaylight.mdsal.binding.model.ri.generated.type.builder;
 
 import java.util.List;
 import java.util.Objects;
-import org.opendaylight.mdsal.binding.model.api.AccessModifier;
-import org.opendaylight.mdsal.binding.model.api.AnnotationType;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.TypeMember;
-import org.opendaylight.mdsal.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMember;
+import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 abstract class AbstractTypeMember implements TypeMember {
 

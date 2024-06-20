@@ -29,11 +29,11 @@ module org.opendaylight.mdsal.binding.dom.codec.impl {
     requires com.google.common;
     requires net.bytebuddy;
     requires org.opendaylight.mdsal.binding.loader;
-    requires org.opendaylight.mdsal.binding.model.api;
     requires org.opendaylight.mdsal.binding.spec.util;
+    requires org.opendaylight.yangtools.binding.lib;
+    requires org.opendaylight.yangtools.binding.model.api;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
-    requires org.opendaylight.yangtools.binding.lib;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.api;
     requires org.opendaylight.yangtools.yang.data.spi;

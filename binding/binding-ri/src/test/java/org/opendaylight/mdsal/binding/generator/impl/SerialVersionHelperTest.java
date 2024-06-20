@@ -13,13 +13,13 @@ import static org.junit.Assert.assertNotEquals;
 import java.io.Serializable;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.generator.impl.reactor.SerialVersionHelper;
-import org.opendaylight.mdsal.binding.model.api.AccessModifier;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 
 public class SerialVersionHelperTest {
     @Test

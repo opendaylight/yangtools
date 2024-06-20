@@ -15,21 +15,21 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.Constant;
-import org.opendaylight.mdsal.binding.model.api.Enumeration;
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
-import org.opendaylight.mdsal.binding.model.api.Restrictions;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.EnumBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.type.builder.EnumBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 
 public class GeneratedTypeBuilderTest {
 

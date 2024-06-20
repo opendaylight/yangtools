@@ -8,10 +8,10 @@
 package org.opendaylight.mdsal.binding.model.ri.generated.type.builder;
 
 import java.util.Optional;
-import org.opendaylight.mdsal.binding.model.api.Enumeration;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.TypeComment;
-import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition;
+import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.TypeComment;
+import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
 public final class RuntimeEnumerationBuilder extends AbstractEnumerationBuilder {

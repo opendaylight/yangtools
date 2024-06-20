@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 class GeneratorResult implements Immutable {

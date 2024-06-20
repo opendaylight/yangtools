@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.model.ri;
 
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Uint16;

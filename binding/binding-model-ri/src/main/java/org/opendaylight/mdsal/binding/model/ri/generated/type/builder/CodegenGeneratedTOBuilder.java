@@ -7,11 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.model.ri.generated.type.builder;
 
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.Restrictions;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
 public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     private Restrictions restrictions;

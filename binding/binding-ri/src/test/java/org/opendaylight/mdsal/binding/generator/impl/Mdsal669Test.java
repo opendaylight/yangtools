@@ -14,10 +14,10 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.mdsal.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal669Test {

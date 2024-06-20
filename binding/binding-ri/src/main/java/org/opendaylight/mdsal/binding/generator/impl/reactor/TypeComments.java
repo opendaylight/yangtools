@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.mdsal.binding.model.api.TypeComment;
+import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 /**
  * Enumeration of possible placements for a particular type. This provides a tie-in between the {@link Generator} tree

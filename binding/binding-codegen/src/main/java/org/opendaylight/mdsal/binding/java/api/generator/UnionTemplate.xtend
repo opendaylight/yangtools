@@ -19,9 +19,9 @@ import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isB
 import static extension org.opendaylight.mdsal.binding.model.ri.BindingTypes.isIdentityType
 
 import java.util.Base64;
-import org.opendaylight.mdsal.binding.model.api.Enumeration
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
-import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.yangtools.binding.model.api.Enumeration
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
+import org.opendaylight.yangtools.binding.model.api.Type
 
 /**
  * Template for generating JAVA class.

@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.opendaylight.mdsal.binding.model.api.AccessModifier;
-import org.opendaylight.mdsal.binding.model.api.AnnotationType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.TypeMemberComment;
-import org.opendaylight.mdsal.binding.model.api.type.builder.AnnotationTypeBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.TypeMemberBuilder;
+import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 
 abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> implements TypeMemberBuilder<T> {

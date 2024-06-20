@@ -14,12 +14,12 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.lib.contract.Naming;
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class AugmentRelativeXPathTest {

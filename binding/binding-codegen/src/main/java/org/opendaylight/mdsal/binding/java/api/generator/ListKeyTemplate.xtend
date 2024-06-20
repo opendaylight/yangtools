@@ -7,11 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
-import org.opendaylight.mdsal.binding.model.api.GeneratedType
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
-import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
+import org.opendaylight.yangtools.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes
 
 /**

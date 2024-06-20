@@ -24,15 +24,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.AnnotationType;
-import org.opendaylight.mdsal.binding.model.api.Constant;
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 public class GeneratorUtilTest {
     private static final JavaTypeName ANNOTATION = JavaTypeName.create("tst.package", "tstAnnotationName");

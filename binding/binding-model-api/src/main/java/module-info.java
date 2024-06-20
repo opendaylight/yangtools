@@ -5,9 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-module org.opendaylight.mdsal.binding.model.api {
-    exports org.opendaylight.mdsal.binding.model.api;
-    exports org.opendaylight.mdsal.binding.model.api.type.builder;
+module org.opendaylight.yangtools.binding.model.api {
+    exports org.opendaylight.yangtools.binding.model.api;
+    exports org.opendaylight.yangtools.binding.model.api.type.builder;
 
     requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.model.api;

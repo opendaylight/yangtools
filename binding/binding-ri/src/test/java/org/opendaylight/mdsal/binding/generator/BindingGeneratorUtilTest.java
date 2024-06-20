@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertSame;
 
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 

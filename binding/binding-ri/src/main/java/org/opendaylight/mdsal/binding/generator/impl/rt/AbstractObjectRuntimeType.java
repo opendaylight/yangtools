@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 abstract class AbstractObjectRuntimeType<S extends EffectiveStatement<?, ?>>

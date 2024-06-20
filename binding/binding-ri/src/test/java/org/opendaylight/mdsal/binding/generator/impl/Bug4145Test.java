@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4145Test {

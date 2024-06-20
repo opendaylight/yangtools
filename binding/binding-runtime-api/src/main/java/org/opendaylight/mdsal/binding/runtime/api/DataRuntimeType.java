@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.runtime.api;
 
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 /**
  * Marker interface for concrete {@link RuntimeType}s relevant when dealing data hierarchy. This interface does not have

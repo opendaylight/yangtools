@@ -7,8 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.rt;
 
-import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.LeafListRuntimeType;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 
 public final class DefaultLeafListRuntimeType extends AbstractRuntimeType<LeafListEffectiveStatement, Type>

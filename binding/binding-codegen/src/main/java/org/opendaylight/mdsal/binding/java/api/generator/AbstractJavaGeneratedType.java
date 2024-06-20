@@ -20,13 +20,13 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.model.api.Enumeration;
-import org.opendaylight.mdsal.binding.model.api.Enumeration.Pair;
-import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.WildcardType;
+import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.Enumeration.Pair;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.WildcardType;
 
 /**
  * Abstract class representing a generated type, either top-level or nested. It takes care of tracking references

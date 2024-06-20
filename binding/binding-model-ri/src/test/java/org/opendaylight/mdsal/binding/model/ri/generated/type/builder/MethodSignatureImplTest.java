@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.AccessModifier;
-import org.opendaylight.mdsal.binding.model.api.AnnotationType;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature.Parameter;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.TypeMemberComment;
 import org.opendaylight.mdsal.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 public class MethodSignatureImplTest {
 

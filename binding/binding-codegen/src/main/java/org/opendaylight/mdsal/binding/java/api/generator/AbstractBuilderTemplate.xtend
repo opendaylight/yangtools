@@ -12,11 +12,11 @@ import java.util.Collection
 import java.util.Comparator
 import java.util.List
 import java.util.Set
-import org.opendaylight.mdsal.binding.model.api.AnnotationType
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
-import org.opendaylight.mdsal.binding.model.api.GeneratedType
-import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.yangtools.binding.model.api.AnnotationType
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
+import org.opendaylight.yangtools.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.BindingTypes
 import org.opendaylight.yangtools.binding.lib.contract.Naming
 

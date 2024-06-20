@@ -12,10 +12,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 
 public class GeneratedTOBuilderTest {
 

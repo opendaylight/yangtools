@@ -13,11 +13,11 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.model.api.AccessModifier;
-import org.opendaylight.mdsal.binding.model.api.AnnotationType;
-import org.opendaylight.mdsal.binding.model.api.MethodSignature;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature {
     private final List<Parameter> params;

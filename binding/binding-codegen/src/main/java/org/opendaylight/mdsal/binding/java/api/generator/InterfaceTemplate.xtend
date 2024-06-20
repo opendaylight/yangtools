@@ -27,14 +27,14 @@ import java.util.Locale
 import java.util.Map.Entry
 import java.util.Set
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
-import org.opendaylight.mdsal.binding.model.api.AnnotationType
-import org.opendaylight.mdsal.binding.model.api.Constant
-import org.opendaylight.mdsal.binding.model.api.Enumeration
-import org.opendaylight.mdsal.binding.model.api.GeneratedType
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName
-import org.opendaylight.mdsal.binding.model.api.MethodSignature
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType
-import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.yangtools.binding.model.api.AnnotationType
+import org.opendaylight.yangtools.binding.model.api.Constant
+import org.opendaylight.yangtools.binding.model.api.Enumeration
+import org.opendaylight.yangtools.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName
+import org.opendaylight.yangtools.binding.model.api.MethodSignature
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType
+import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.ri.Types
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 
