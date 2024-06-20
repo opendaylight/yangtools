@@ -15,11 +15,11 @@ import java.util.Arrays;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 
 public class GeneratorJavaFileTest extends BaseCompilationTest {
     private static final String FS = File.separator;

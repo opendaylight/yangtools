@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.ri.BindingTypes
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes
 import org.opendaylight.yangtools.binding.lib.contract.Naming
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
