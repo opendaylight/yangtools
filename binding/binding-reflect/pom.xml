@@ -16,7 +16,7 @@
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
-    <artifactId>binding-util</artifactId>
+    <artifactId>binding-reflect</artifactId>
     <packaging>bundle</packaging>
     <description>YANG Binding Specification utilities</description>
 
