@@ -42,7 +42,7 @@
         <module>binding-runtime-api</module>
         <module>binding-runtime-dynamic</module>
         <!--module>binding-runtime-osgi</module-->
-        <!--module>binding-runtime-spi</module-->
+        <module>binding-runtime-spi</module>
         <module>binding-test-model</module>
         <module>binding-util</module>
         <module>yang-ext</module>

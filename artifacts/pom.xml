@@ -376,11 +376,11 @@
                 <artifactId>binding-runtime-osgi</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
             </dependency-->
-            <!--dependency>
+            <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-spi</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
-            </dependency-->
+            </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-test-model</artifactId>
