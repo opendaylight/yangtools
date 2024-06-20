@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.runtime.osgi.impl;
+package org.opendaylight.yangtools.binding.runtime.osgi.impl;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
@@ -20,7 +20,7 @@ import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeGenerator;
 import org.opendaylight.yangtools.binding.runtime.api.DefaultBindingRuntimeContext;
-import org.opendaylight.mdsal.dom.schema.osgi.OSGiModuleInfoSnapshot;
+import org.opendaylight.yangtools.binding.runtime.osgi.OSGiModuleInfoSnapshot;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.osgi.service.component.annotations.Activate;
@@ -74,7 +74,7 @@ public final class OSGiBindingRuntime {
                 final ComponentFactory<OSGiBindingRuntimeContextImpl> factory) {
             final ActiveInstances active = new ActiveInstances(generator, factory);
             instances.stream()
-                .sorted(Comparator.comparing(OSGiModuleInfoSnapshot::getGeneration).reversed())
+                .sorted(Comparator.comparing(OSGiModuleInfoSnapshot::generation).reversed())
                 .forEach(active::add);
             return active;
         }
@@ -99,11 +99,11 @@ public final class OSGiBindingRuntime {
 
         @Override
         void add(final OSGiModuleInfoSnapshot snapshot) {
-            final var infoSnapshot = snapshot.getService();
+            final var infoSnapshot = snapshot.service();
             final var types = generator.generateTypeMapping(infoSnapshot.modelContext());
 
             instances.put(snapshot, factory.newInstance(OSGiBindingRuntimeContextImpl.props(
-                snapshot.getGeneration(), snapshot.getServiceRanking(),
+                snapshot.generation(), snapshot.getServiceRanking(),
                 new DefaultBindingRuntimeContext(types, infoSnapshot))));
         }
 
@@ -113,7 +113,7 @@ public final class OSGiBindingRuntime {
             if (instance != null) {
                 instance.dispose();
             } else {
-                LOG.warn("Instance for generation {} not found", snapshot.getGeneration());
+                LOG.warn("Instance for generation {} not found", snapshot.generation());
             }
         }
 

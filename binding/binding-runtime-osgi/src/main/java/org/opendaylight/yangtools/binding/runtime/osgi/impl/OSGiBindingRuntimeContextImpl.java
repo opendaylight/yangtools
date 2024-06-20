@@ -5,18 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.runtime.osgi.impl;
+package org.opendaylight.yangtools.binding.runtime.osgi.impl;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.primitives.UnsignedLong;
 import java.util.Dictionary;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
+import org.opendaylight.yangtools.binding.runtime.osgi.OSGiBindingRuntimeContext;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.annotations.Activate;
@@ -36,39 +36,38 @@ public final class OSGiBindingRuntimeContextImpl implements OSGiBindingRuntimeCo
 
     // Keys to for activation properties
     @VisibleForTesting
-    static final String GENERATION = "org.opendaylight.mdsal.binding.runtime.osgi.impl.Generation";
+    static final String GENERATION = "org.opendaylight.mdsal.binding.runtime.osgi.impl.generation";
     @VisibleForTesting
     static final String DELEGATE = "org.opendaylight.mdsal.binding.runtime.osgi.impl.BindingRuntimeContext";
 
     private static final Logger LOG = LoggerFactory.getLogger(OSGiBindingRuntimeContextImpl.class);
 
-    private BindingRuntimeContext delegate;
-    private UnsignedLong generation;
-
-    @Override
-    public UnsignedLong getGeneration() {
-        return verifyNotNull(generation);
-    }
-
-    @Override
-    public BindingRuntimeContext getService() {
-        return verifyNotNull(delegate);
-    }
+    private final BindingRuntimeContext delegate;
+    private final Uint64 generation;
 
     @Activate
-    void activate(final Map<String, ?> properties) {
-        generation = (UnsignedLong) verifyNotNull(properties.get(GENERATION));
+    public OSGiBindingRuntimeContextImpl(final Map<String, ?> properties) {
+        generation = (Uint64) verifyNotNull(properties.get(GENERATION));
         delegate = (BindingRuntimeContext) verifyNotNull(properties.get(DELEGATE));
         LOG.info("BindingRuntimeContext generation {} activated", generation);
     }
 
     @Deactivate
     void deactivate() {
-        delegate = null;
         LOG.info("BindingRuntimeContext generation {} deactivated", generation);
     }
 
-    static Dictionary<String, ?> props(final @NonNull UnsignedLong generation, final @NonNull Integer ranking,
+    @Override
+    public Uint64 generation() {
+        return generation;
+    }
+
+    @Override
+    public BindingRuntimeContext service() {
+        return delegate;
+    }
+
+    static Dictionary<String, ?> props(final @NonNull Uint64 generation, final @NonNull Integer ranking,
             final @NonNull BindingRuntimeContext delegate) {
         return FrameworkUtil.asDictionary(Map.of(
             Constants.SERVICE_RANKING, ranking,
