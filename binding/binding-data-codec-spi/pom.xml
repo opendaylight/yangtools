@@ -16,7 +16,7 @@
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
-    <artifactId>binding-dom-codec-spi</artifactId>
+    <artifactId>binding-data-codec-spi</artifactId>
     <packaging>bundle</packaging>
     <description>API definitions of YANG Binding/yang-data-api codec</description>
 
