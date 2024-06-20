@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
+package org.opendaylight.yangtools.binding.data.codec.osgi.impl;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
@@ -17,10 +17,9 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.dom.codec.osgi.OSGiBindingDOMCodecServices;
 import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecFactory;
-import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.runtime.osgi.OSGiBindingRuntimeContext;
+import org.opendaylight.yangtools.binding.data.codec.osgi.OSGiBindingDOMCodecServices;
+import org.opendaylight.yangtools.binding.runtime.osgi.OSGiBindingRuntimeContext;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.osgi.service.component.annotations.Activate;
@@ -73,7 +72,7 @@ public final class OSGiBindingDOMCodec {
                 final ComponentFactory<OSGiBindingDOMCodecServices> factory) {
             final ActiveInstances active = new ActiveInstances(codecFactory, factory);
             instances.stream()
-                .sorted(Comparator.comparing(OSGiBindingRuntimeContext::getGeneration).reversed())
+                .sorted(Comparator.comparing(OSGiBindingRuntimeContext::generation).reversed())
                 .forEach(active::add);
             return active;
         }
@@ -98,10 +97,10 @@ public final class OSGiBindingDOMCodec {
 
         @Override
         void add(final OSGiBindingRuntimeContext runtimeContext) {
-            final BindingRuntimeContext context = runtimeContext.getService();
+            final var context = runtimeContext.service();
 
             instances.put(runtimeContext, factory.newInstance(OSGiBindingDOMCodecServicesImpl.props(
-                runtimeContext.getGeneration(), runtimeContext.getServiceRanking(),
+                runtimeContext.generation(), runtimeContext.getServiceRanking(),
                 codecFactory.createBindingDOMCodec(context))));
         }
 
@@ -111,7 +110,7 @@ public final class OSGiBindingDOMCodec {
             if (instance != null) {
                 instance.dispose();
             } else {
-                LOG.warn("Instance for generation {} not found", runtimeContext.getGeneration());
+                LOG.warn("Instance for generation {} not found", runtimeContext.generation());
             }
         }
 
