@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.TypeObject;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.slf4j.Logger;

@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeFactory;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

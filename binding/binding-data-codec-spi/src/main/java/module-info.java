@@ -8,7 +8,7 @@
 module org.opendaylight.yangtools.binding.data.codec.spi {
     exports org.opendaylight.yangtools.binding.data.codec.spi;
 
-    requires transitive org.opendaylight.mdsal.binding.dom.codec.api;
+    requires transitive org.opendaylight.yangtools.binding.data.codec.api;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;

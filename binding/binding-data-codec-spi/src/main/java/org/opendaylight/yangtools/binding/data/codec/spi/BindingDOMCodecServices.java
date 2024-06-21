@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.binding.data.codec.spi;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 /**
@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
  * acquiring a consistent set of these services.
  */
 @Beta
-public interface BindingDOMCodecServices extends BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer,
-    BindingCodecTree {
+public interface BindingDOMCodecServices
+        extends BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer, BindingCodecTree {
 
     @NonNull BindingRuntimeContext getRuntimeContext();
 }

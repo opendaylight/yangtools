@@ -5,22 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.dom.codec.api;
+package org.opendaylight.yangtools.binding.data.codec.api;
 
 import com.google.common.annotations.Beta;
 import java.io.Serial;
 
 /**
- * Thrown when user schema for supplied binding class is available in present schema context, but
- * binding class itself is not known to codecs because backing class loading strategy did not
- * provided it.
+ * Thrown when codec was used with data which are not modeled and available in schema used by codec.
  */
 @Beta
-public class MissingClassInLoadingStrategyException extends MissingSchemaException {
+public class MissingSchemaException extends IllegalArgumentException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public MissingClassInLoadingStrategyException(final String msg, final Throwable cause) {
+    public MissingSchemaException(final String msg) {
+        super(msg);
+    }
+
+    public MissingSchemaException(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 }

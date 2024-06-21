@@ -13,8 +13,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.BindingObject;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingObjectCodecTreeNode;
 
 /**
  * Abstract Holder of Binding to Normalized Node caches indexed by {@link DataContainerCodecContext} to which cache is

@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-module org.opendaylight.mdsal.binding.dom.codec.api {
-    exports org.opendaylight.mdsal.binding.dom.codec.api;
+module org.opendaylight.yangtools.binding.data.codec.api {
+    exports org.opendaylight.yangtools.binding.data.codec.api;
 
+    requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires transitive org.opendaylight.yangtools.binding.spec;
     requires transitive org.opendaylight.yangtools.yang.data.api;
     requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.binding.runtime.api;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;

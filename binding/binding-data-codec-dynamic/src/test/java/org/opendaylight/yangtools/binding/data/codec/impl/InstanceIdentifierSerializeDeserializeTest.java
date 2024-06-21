@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.common.collect.Iterables;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.Lst;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lst.Foo;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test.bi.ba.notification.rev150205.OutOfPixieDustNotification;
@@ -36,6 +35,7 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.grp
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.root.RootBase;
 import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.binding.KeyStep;
+import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
