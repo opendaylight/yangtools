@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.loader;
+package org.opendaylight.yangtools.binding.loader;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
