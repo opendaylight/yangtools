@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.data.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.ReferenceData;
 
 /**
@@ -46,7 +47,7 @@ import org.opendaylight.yangtools.yang.data.ReferenceData;
  * node in the YANG module</li>
  * </ul>
  */
-public final class QName extends AbstractQName implements Comparable<QName>, ReferenceData {
+public final class QName extends AbstractQName implements Comparable<QName>, InstanceIdentifier.Step, ReferenceData {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
     @Serial
