@@ -29,7 +29,7 @@ public record KeylessStep<T extends KeyAware<?> & DataObject>(
         this(type, null);
     }
 
-    boolean matches(final @NonNull DataObjectStep<?> other) {
+    public boolean matches(final @NonNull DataObjectStep<?> other) {
         // FIXME: this should be an instanceof check for KeyStep, then a match -- i.e. reject match on plain NodeStep,
         //        because that is an addressing mismatch
         return type.equals(other.type()) && Objects.equals(caseType, other.caseType());
