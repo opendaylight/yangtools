@@ -16,7 +16,7 @@
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
-    <artifactId>binding-runtime-dynamic</artifactId>
+    <artifactId>binding-loader</artifactId>
     <packaging>bundle</packaging>
     <description>YANG Binding runtime for JIT environments</description>
 

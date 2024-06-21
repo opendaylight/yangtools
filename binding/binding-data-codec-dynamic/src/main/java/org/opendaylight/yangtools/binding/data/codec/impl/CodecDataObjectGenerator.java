@@ -41,12 +41,12 @@ import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
-import org.opendaylight.mdsal.binding.loader.BindingClassLoader.ClassGenerator;
-import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.data.codec.impl.ClassGeneratorBridge.CodecContextSupplierProvider;
 import org.opendaylight.yangtools.binding.data.codec.impl.ClassGeneratorBridge.LocalNameProvider;
+import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
+import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
+import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
