@@ -51,11 +51,11 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingYangDataCodecTreeNode
 import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
-import org.opendaylight.mdsal.binding.dom.codec.spi.AbstractBindingNormalizedNodeSerializer;
-import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
-import org.opendaylight.mdsal.binding.dom.codec.spi.BindingSchemaMapping;
+import org.opendaylight.yangtools.binding.data.codec.spi.AbstractBindingNormalizedNodeSerializer;
+import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
+import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
 import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
-import org.opendaylight.yangtools.binding.Action;
+import org.opendaylight.yangtools.binding.Action; 
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.BaseNotification;

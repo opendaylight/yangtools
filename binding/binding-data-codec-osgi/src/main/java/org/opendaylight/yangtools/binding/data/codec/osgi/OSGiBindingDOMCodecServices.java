@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.data.codec.osgi;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
+import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.runtime.osgi.ModelGenerationAware;
 
 @Beta

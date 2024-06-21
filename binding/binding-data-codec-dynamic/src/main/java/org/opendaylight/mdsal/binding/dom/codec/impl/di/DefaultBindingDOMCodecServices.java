@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.impl.BindingCodecContext;
-import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
-import org.opendaylight.mdsal.binding.dom.codec.spi.ForwardingBindingDOMCodecServices;
+import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
+import org.opendaylight.yangtools.binding.data.codec.spi.ForwardingBindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 /**

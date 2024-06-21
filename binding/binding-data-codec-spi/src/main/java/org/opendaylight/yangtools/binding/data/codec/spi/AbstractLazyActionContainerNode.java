@@ -5,26 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.dom.codec.spi;
+package org.opendaylight.yangtools.binding.data.codec.spi;
 
-import com.google.common.annotations.Beta;
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.Action;
-import org.opendaylight.yangtools.binding.RpcOutput;
+import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 
-@Beta
 @NonNullByDefault
-public final class LazyActionOutputContainerNode extends AbstractLazyActionContainerNode<RpcOutput> {
-    public LazyActionOutputContainerNode(final NodeIdentifier identifier, final RpcOutput bindingData,
-            final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
-        super(identifier, bindingData, codec, action);
-    }
+abstract class AbstractLazyActionContainerNode<T extends DataObject>
+        extends AbstractBindingLazyContainerNode<T, BindingNormalizedNodeSerializer> {
+    final Class<? extends Action<?, ?, ?>> action;
 
-    @Override
-    protected ContainerNode computeContainerNode(final BindingNormalizedNodeSerializer context) {
-        return context.toNormalizedNodeActionOutput(action, getDataObject());
+    AbstractLazyActionContainerNode(final NodeIdentifier identifier, final T bindingData,
+            final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
+        super(identifier, bindingData, codec);
+        this.action = requireNonNull(action);
     }
 }
