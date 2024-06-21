@@ -10,8 +10,8 @@
  * A ClassLoader for binding constructs. It allows loading of runtime-generated classes with a combined visibility with
  * a set of parent class loaders.
  */
-module org.opendaylight.mdsal.binding.loader {
-    exports org.opendaylight.mdsal.binding.loader;
+module org.opendaylight.yangtools.binding.runtime.dynamic {
+    exports org.opendaylight.yangtools.binding.runtime.dynamic;
 
     requires transitive net.bytebuddy;
 

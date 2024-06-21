@@ -17,9 +17,9 @@ import net.bytebuddy.matcher.ElementMatchers;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
-import org.opendaylight.mdsal.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.Top;
+import org.opendaylight.yangtools.binding.runtime.dynamic.BindingClassLoader;
+import org.opendaylight.yangtools.binding.runtime.dynamic.BindingClassLoader.GeneratorResult;
 
 public class CodecClassLoaderTest {
     private final BindingClassLoader codecClassLoader = BindingClassLoader.create(CodecClassLoaderTest.class, null);

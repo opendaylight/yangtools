@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.OpaqueData;
 import org.opendaylight.yangtools.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.runtime.dynamic.BindingClassLoader;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;

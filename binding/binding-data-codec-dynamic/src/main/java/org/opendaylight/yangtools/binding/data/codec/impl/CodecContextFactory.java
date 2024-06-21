@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.dynamic.BindingClassLoader;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**

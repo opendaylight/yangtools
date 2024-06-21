@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static com.google.common.base.Verify.verify;
 
 import javax.xml.transform.dom.DOMSource;
-import org.opendaylight.mdsal.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.OpaqueData;
 import org.opendaylight.yangtools.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.runtime.dynamic.BindingClassLoader;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;

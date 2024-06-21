@@ -28,8 +28,8 @@ module org.opendaylight.yangtools.binding.data.codec.dynamic {
     requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires com.google.common;
     requires net.bytebuddy;
-    requires org.opendaylight.mdsal.binding.loader;
     requires org.opendaylight.yangtools.binding.reflect;
+    requires org.opendaylight.yangtools.binding.runtime.dynamic;
     requires org.opendaylight.yangtools.binding.spec;
     requires org.opendaylight.yangtools.binding.model.api;
     requires org.opendaylight.yangtools.concepts;
