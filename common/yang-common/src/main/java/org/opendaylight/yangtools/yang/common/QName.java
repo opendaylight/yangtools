@@ -45,7 +45,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * node in the YANG module</li>
  * </ul>
  */
-public final class QName extends AbstractQName implements Comparable<QName> {
+public final class QName extends AbstractQName implements Comparable<QName>, InstanceIdentifier.Step {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
     @Serial
