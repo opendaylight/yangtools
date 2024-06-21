@@ -9,8 +9,8 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory;
 import org.opendaylight.mdsal.binding.dom.codec.impl.BindingCodecContext;
 import org.opendaylight.mdsal.binding.dom.codec.impl.SimpleBindingCodecTreeFactory;
 import org.opendaylight.mdsal.binding.dom.codec.impl.SimpleBindingDOMCodecFactory;
-import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecFactory;
-import org.opendaylight.mdsal.binding.dom.codec.spi.BindingDOMCodecServices;
+import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecFactory;
+import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 module org.opendaylight.mdsal.binding.dom.codec.impl {
@@ -23,9 +23,9 @@ module org.opendaylight.mdsal.binding.dom.codec.impl {
     provides BindingDOMCodecServices with BindingCodecContext;
     provides BindingCodecTreeFactory with SimpleBindingCodecTreeFactory;
 
+    requires transitive org.opendaylight.yangtools.binding.data.codec.spi;
     requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires transitive org.opendaylight.mdsal.binding.dom.codec.api;
-    requires transitive org.opendaylight.mdsal.binding.dom.codec.spi;
     requires com.google.common;
     requires net.bytebuddy;
     requires org.opendaylight.mdsal.binding.loader;
