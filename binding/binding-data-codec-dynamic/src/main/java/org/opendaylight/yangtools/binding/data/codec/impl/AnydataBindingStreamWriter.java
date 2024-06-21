@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import java.io.IOException;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.yangtools.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
 
 interface AnydataBindingStreamWriter extends BindingStreamEventWriter {
 

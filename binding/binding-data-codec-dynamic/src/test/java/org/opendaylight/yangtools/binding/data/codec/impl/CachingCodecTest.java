@@ -20,8 +20,6 @@ import java.util.Collection;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TopBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
@@ -33,6 +31,8 @@ import org.opendaylight.yang.gen.v1.urn.test.leaf.caching.codec.rev190201.MyType
 import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;

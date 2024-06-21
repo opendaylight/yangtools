@@ -11,9 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 class CachingNormalizedNodeCodec<D extends DataObject,

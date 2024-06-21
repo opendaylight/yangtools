@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCodec;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 
 /**
  * Marker interface for codecs dealing with RPC input being potentially unmapped. We use this interface to mark both

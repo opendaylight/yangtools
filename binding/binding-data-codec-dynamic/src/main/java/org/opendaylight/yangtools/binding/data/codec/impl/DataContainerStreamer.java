@@ -15,13 +15,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

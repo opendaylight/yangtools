@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.mdsal.binding.dom.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.data.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 

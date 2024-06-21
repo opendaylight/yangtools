@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.binding.data.codec.osgi.impl;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingLazyContainerNode;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.osgi.OSGiBindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.ForwardingBindingDOMCodecServices;

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeFactory;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingCodecContext;
 import org.opendaylight.yangtools.binding.data.codec.impl.SimpleBindingCodecTreeFactory;
 import org.opendaylight.yangtools.binding.data.codec.impl.SimpleBindingDOMCodecFactory;
@@ -23,9 +23,9 @@ module org.opendaylight.yangtools.binding.data.codec.dynamic {
     provides BindingDOMCodecServices with BindingCodecContext;
     provides BindingCodecTreeFactory with SimpleBindingCodecTreeFactory;
 
+    requires transitive org.opendaylight.yangtools.binding.data.codec.api;
     requires transitive org.opendaylight.yangtools.binding.data.codec.spi;
     requires transitive org.opendaylight.yangtools.binding.runtime.api;
-    requires transitive org.opendaylight.mdsal.binding.dom.codec.api;
     requires com.google.common;
     requires net.bytebuddy;
     requires org.opendaylight.mdsal.binding.loader;
