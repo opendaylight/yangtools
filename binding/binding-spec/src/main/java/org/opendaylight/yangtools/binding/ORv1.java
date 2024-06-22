@@ -10,64 +10,46 @@ package org.opendaylight.yangtools.binding;
 import com.google.common.collect.ImmutableList;
 import java.io.Externalizable;
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
-import java.io.Serial;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 
-class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
-    @Serial
-    private static final long serialVersionUID = 3L;
+final class ORv1 implements Externalizable {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
 
-    private @Nullable Iterable<DataObjectStep<?>> pathArguments;
-    private @Nullable Class<T> targetType;
-    private boolean wildcarded;
-    private int hash;
+    private ImmutableList<@NonNull DataObjectStep<?>> steps;
 
     @SuppressWarnings("redundantModifier")
-    public InstanceIdentifierV3() {
+    public ORv1() {
         // For Externalizable
     }
 
-    final int getHash() {
-        return hash;
-    }
-
-    final Iterable<DataObjectStep<?>> getPathArguments() {
-        return pathArguments;
-    }
-
-    final Class<T> getTargetType() {
-        return targetType;
-    }
-
-    final boolean isWildcarded() {
-        return wildcarded;
+    ORv1(final DataObjectReference<?, ?> source) {
+        steps = ImmutableList.copyOf(source.steps());
     }
 
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
-        throw new NotSerializableException(InstanceIdentifierV3.class.getName());
+        out.writeInt(steps.size());
+        for (var step : steps) {
+            out.writeObject(step);
+        }
     }
 
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-        targetType = (Class<T>) in.readObject();
-        wildcarded = in.readBoolean();
-        hash = in.readInt();
-
         final int size = in.readInt();
         final var builder = ImmutableList.<DataObjectStep<?>>builderWithExpectedSize(size);
         for (int i = 0; i < size; ++i) {
             builder.add((DataObjectStep<?>) in.readObject());
         }
-        pathArguments = builder.build();
+        steps = builder.build();
     }
 
     @java.io.Serial
     Object readResolve() throws ObjectStreamException {
-        return new InstanceIdentifier<>(targetType, pathArguments, wildcarded, hash);
+        return DataObjectReference.ofSteps(steps);
     }
 }

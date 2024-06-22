@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -21,16 +20,14 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     @java.io.Serial
     private static final long serialVersionUID = 2L;
 
-    private final @NonNull KeyStep<K, T> lastStep;
-
-    KeyedInstanceIdentifier(final KeyStep<K, T> lastStep, final Iterable<DataObjectStep<?>> pathArguments,
-            final boolean wildcarded, final int hash) {
-        super(lastStep.type(), pathArguments, wildcarded, hash);
-        this.lastStep = lastStep;
+    KeyedInstanceIdentifier(final Iterable<DataObjectStep<?>> steps, final KeyStep<K, T> lastStep) {
+        super(steps, lastStep);
     }
 
-    @NonNull KeyStep<K, T> lastStep() {
-        return lastStep;
+    @Override
+    @SuppressWarnings("unchecked")
+    public KeyStep<K, T> lastStep() {
+        return (KeyStep<K, T>) super.lastStep();
     }
 
     /**
@@ -40,21 +37,16 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
      * @return Key associated with this instance identifier.
      */
     public @NonNull K getKey() {
-        return lastStep.key();
+        return lastStep().key();
     }
 
     @Override
-    public KeyedBuilder<T, K> builder() {
+    public KeyedBuilder<T, K> toBuilder() {
         return new KeyedBuilder<>(this);
     }
 
     @Override
     boolean keyEquals(final InstanceIdentifier<?> other) {
         return getKey().equals(((KeyedInstanceIdentifier<?, ?>) other).getKey());
-    }
-
-    @Override
-    Object writeReplace() throws ObjectStreamException {
-        return new KIIv4<>(this);
     }
 }

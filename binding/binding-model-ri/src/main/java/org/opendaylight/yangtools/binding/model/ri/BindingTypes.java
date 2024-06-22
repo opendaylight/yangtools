@@ -24,12 +24,11 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataRoot;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
-import org.opendaylight.yangtools.binding.KeyedInstanceIdentifier;
 import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
@@ -65,8 +64,6 @@ public final class BindingTypes {
     public static final ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
     public static final ConcreteType BITS_TYPE_OBJECT = typeForClass(BitsTypeObject.class);
     public static final ConcreteType UNION_TYPE_OBJECT = typeForClass(UnionTypeObject.class);
-    public static final ConcreteType INSTANCE_IDENTIFIER = typeForClass(InstanceIdentifier.class);
-    public static final ConcreteType KEYED_INSTANCE_IDENTIFIER = typeForClass(KeyedInstanceIdentifier.class);
     public static final ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
 
     // This is an annotation, we are current just referencing the type
@@ -87,6 +84,8 @@ public final class BindingTypes {
     private static final ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
     private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
+    private static final ConcreteType OBJECT_REFERENCE = typeForClass(DataObjectReference.class);
+    private static final ConcreteType OBJECT_REFERENCE_WITH_KEY = typeForClass(DataObjectReference.WithKey.class);
     private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
     private static final ConcreteType RPC = typeForClass(Rpc.class);
@@ -108,7 +107,7 @@ public final class BindingTypes {
      * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType action(final Type parent, final Type input, final Type output) {
-        return parameterizedTypeFor(ACTION, instanceIdentifier(parent), input, output);
+        return parameterizedTypeFor(ACTION, objectReference(parent), input, output);
     }
 
     /**
@@ -230,26 +229,26 @@ public final class BindingTypes {
     }
 
     /**
-     * Type specializing {@link InstanceIdentifier} for a particular type.
+     * Type specializing {@link DataObjectReference} for a particular type.
      *
      * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code InstanceIdentifier<Type>}
+     * @return A parameterized type corresponding to {@code DataObjectReference<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static ParameterizedType instanceIdentifier(final Type type) {
-        return parameterizedTypeFor(INSTANCE_IDENTIFIER, type);
+    public static ParameterizedType objectReference(final Type type) {
+        return parameterizedTypeFor(OBJECT_REFERENCE, type);
     }
 
     /**
-     * Type specializing {@link KeyedInstanceIdentifier} for a particular type.
+     * Type specializing {@link DataObjectReference.WithKey} for a particular type.
      *
      * @param type Type for which to specialize
      * @param keyType Type of key
-     * @return A parameterized type corresponding to {@code KeyedInstanceIdentifier<Type, KeyType>}
+     * @return A parameterized type corresponding to {@code DataObjectReference.WithKey<Type, KeyType>}
      * @throws NullPointerException if any argument is is {@code null}
      */
-    public static ParameterizedType keyedInstanceIdentifier(final Type type, final Type keyType) {
-        return parameterizedTypeFor(KEYED_INSTANCE_IDENTIFIER, type, keyType);
+    public static ParameterizedType objectReferenceWithKey(final Type type, final Type keyType) {
+        return parameterizedTypeFor(OBJECT_REFERENCE_WITH_KEY, type, keyType);
     }
 
     /**

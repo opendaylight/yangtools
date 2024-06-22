@@ -13,13 +13,11 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
@@ -30,7 +28,6 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 /**
  * This instance identifier uniquely identifies a specific DataObject in the data tree modeled by YANG.
@@ -60,7 +57,8 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  * <p>
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  */
-public sealed class InstanceIdentifier<T extends DataObject>
+// FIXME: rename to 'DataObjectFilter' or 'DataObjectWildcard'
+public sealed class InstanceIdentifier<T extends DataObject> extends DataObjectReference<DataObjectStep<?>, T>
         implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
         permits KeyedInstanceIdentifier {
     @java.io.Serial
@@ -70,18 +68,18 @@ public sealed class InstanceIdentifier<T extends DataObject>
      * Protected to differentiate internal and external access. Internal access is required never to modify
      * the contents. References passed to outside entities have to be wrapped in an unmodifiable view.
      */
-    final Iterable<DataObjectStep<?>> pathArguments;
+    final @NonNull Iterable<DataObjectStep<?>> steps;
 
-    private final @NonNull Class<T> targetType;
-    private final boolean wildcarded;
-    private final int hash;
+    private final @NonNull DataObjectStep<T> lastStep;
 
-    InstanceIdentifier(final Class<T> type, final Iterable<DataObjectStep<?>> pathArguments, final boolean wildcarded,
-            final int hash) {
-        this.pathArguments = requireNonNull(pathArguments);
-        targetType = requireNonNull(type);
-        this.wildcarded = wildcarded;
-        this.hash = hash;
+    InstanceIdentifier(final Iterable<DataObjectStep<?>> steps, final DataObjectStep<T> lastStep) {
+        this.steps = requireNonNull(steps);
+        this.lastStep = requireNonNull(lastStep);
+    }
+
+    @Override
+    public DataObjectStep<T> lastStep() {
+        return lastStep;
     }
 
     /**
@@ -90,7 +88,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
      * @return Target type
      */
     public final @NonNull Class<T> getTargetType() {
-        return targetType;
+        return lastStep.type();
     }
 
     /**
@@ -103,7 +101,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
      */
     @SuppressWarnings("unchecked")
     public final <N extends DataObject> @NonNull InstanceIdentifier<N> verifyTarget(final Class<@NonNull N> target) {
-        verify(target.equals(targetType), "Cannot adapt %s to %s", this, target);
+        verify(target.equals(getTargetType()), "Cannot adapt %s to %s", this, target);
         return (InstanceIdentifier<N>) this;
     }
 
@@ -112,50 +110,9 @@ public sealed class InstanceIdentifier<T extends DataObject>
      *
      * @return Path argument chain. Immutable and does not contain nulls.
      */
-    public final @NonNull Iterable<DataObjectStep<?>> getPathArguments() {
-        return Iterables.unmodifiableIterable(pathArguments);
-    }
-
-    /**
-     * Check whether an instance identifier contains any wildcards. A wildcard is an path argument which has a null key.
-     *
-     * @return true if any of the path arguments has a null key.
-     */
-    public final boolean isWildcarded() {
-        return wildcarded;
-    }
-
     @Override
-    public final int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        final var other = (InstanceIdentifier<?>) obj;
-        if (pathArguments == other.pathArguments) {
-            return true;
-        }
-
-        /*
-         * We could now just go and compare the pathArguments, but that can be potentially expensive. Let's try to avoid
-         * that by checking various things that we have cached from pathArguments and trying to prove the identifiers
-         * are *not* equal.
-         */
-        return hash == other.hash && wildcarded == other.wildcarded && targetType == other.targetType
-            && keyEquals(other)
-            // Everything checks out so far, so we have to do a full equals
-            && Iterables.elementsEqual(pathArguments, other.pathArguments);
+    public final Iterable<DataObjectStep<?>> steps() {
+        return Iterables.unmodifiableIterable(steps);
     }
 
     boolean keyEquals(final InstanceIdentifier<?> other) {
@@ -163,18 +120,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
     }
 
     @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
-    /**
-     * Add class-specific toString attributes.
-     *
-     * @param toStringHelper ToStringHelper instance
-     * @return ToStringHelper instance which was passed in
-     */
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("targetType", targetType).add("path", Iterables.toString(pathArguments));
+    ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("targetType", getTargetType()).add("path", Iterables.toString(steps));
     }
 
     /**
@@ -200,10 +147,10 @@ public sealed class InstanceIdentifier<T extends DataObject>
     public final <I extends DataObject> @Nullable InstanceIdentifier<I> firstIdentifierOf(
             final Class<@NonNull I> type) {
         int count = 1;
-        for (var step : pathArguments) {
+        for (var step : steps) {
             if (type.equals(step.type())) {
                 @SuppressWarnings("unchecked")
-                final var ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(pathArguments, count));
+                final var ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(steps, count));
                 return ret;
             }
 
@@ -223,7 +170,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
      */
     public final <N extends KeyAware<K> & DataObject, K extends Key<N>> @Nullable K firstKeyOf(
             final Class<@NonNull N> listItem) {
-        for (var step : pathArguments) {
+        for (var step : steps) {
             if (step instanceof KeyStep<?, ?> keyPredicate && listItem.equals(step.type())) {
                 @SuppressWarnings("unchecked")
                 final var ret = (K) keyPredicate.key();
@@ -257,8 +204,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
     public final boolean contains(final InstanceIdentifier<? extends DataObject> other) {
         requireNonNull(other, "other should not be null");
 
-        final var oit = other.pathArguments.iterator();
-        for (var step : pathArguments) {
+        final var oit = other.steps.iterator();
+        for (var step : steps) {
             if (!oit.hasNext()) {
                 return false;
             }
@@ -271,32 +218,34 @@ public sealed class InstanceIdentifier<T extends DataObject>
 
     /**
      * Check whether this instance identifier contains the other identifier after wildcard expansion. This is similar
-     * to {@link #contains(InstanceIdentifier)}, with the exception that a wildcards are assumed to match the their
+     * to {@link #contains(InstanceIdentifier)}, with the exception that a wildcards are assumed to match their
      * non-wildcarded PathArgument counterpart.
      *
      * @param other Identifier which should be checked for inclusion.
      * @return true if this identifier contains the other object
      */
-    public final boolean containsWildcarded(final InstanceIdentifier<?> other) {
+    public final boolean containsWildcarded(final DataObjectReference<?, ?> other) {
         requireNonNull(other, "other should not be null");
 
-        final var otherSteps = other.pathArguments.iterator();
-        for (var step : pathArguments) {
+        final var otherSteps = other.steps().iterator();
+        for (var step : steps) {
             if (!otherSteps.hasNext()) {
                 return false;
             }
 
             final var otherStep = otherSteps.next();
-            if (step instanceof ExactDataObjectStep) {
-                if (!step.equals(otherStep)) {
-                    return false;
+            switch (step) {
+                case null -> throw new NullPointerException("null otherStep");
+                case ExactDataObjectStep<?> exact -> {
+                    if (!step.equals(otherStep)) {
+                        return false;
+                    }
                 }
-            } else if (step instanceof KeylessStep<?> keyless) {
-                if (!keyless.matches(otherStep)) {
-                    return false;
+                case InexactDataObjectStep<?> inexact -> {
+                    if (!inexact.matches(requireNonNull(otherStep))) {
+                        return false;
+                    }
                 }
-            } else {
-                throw new IllegalStateException("Unhandled step " + step);
             }
         }
 
@@ -304,8 +253,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
     }
 
     private <N extends DataObject> @NonNull InstanceIdentifier<N> childIdentifier(final DataObjectStep<N> arg) {
-        return trustedCreate(arg, Iterables.concat(pathArguments, Collections.singleton(arg)),
-            HashCodeBuilder.nextHashCode(hash, arg), wildcarded);
+        return trustedCreate(arg, Iterables.concat(steps, Collections.singleton(arg)));
     }
 
     /**
@@ -391,9 +339,9 @@ public sealed class InstanceIdentifier<T extends DataObject>
         return childIdentifier(new NodeStep<>(container));
     }
 
-    @java.io.Serial
-    Object writeReplace() throws ObjectStreamException {
-        return new IIv4<>(this);
+    @Override
+    final Class<?> contract() {
+        return InstanceIdentifier.class;
     }
 
     @java.io.Serial
@@ -411,17 +359,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
         throwNSE();
     }
 
-    private void throwNSE() throws NotSerializableException {
-        throw new NotSerializableException(getClass().getName());
-    }
-
-    /**
-     * Create a builder rooted at this key.
-     *
-     * @return A builder instance
-     */
-    // FIXME: rename this method to 'toBuilder()'
-    public @NonNull Builder<T> builder() {
+    @Override
+    public Builder<T> toBuilder() {
         return new RegularBuilder<>(this);
     }
 
@@ -545,8 +484,6 @@ public sealed class InstanceIdentifier<T extends DataObject>
         final var it = requireNonNull(pathArguments, "pathArguments may not be null").iterator();
         checkArgument(it.hasNext(), "pathArguments may not be empty");
 
-        final var hashBuilder = new HashCodeBuilder<DataObjectStep<?>>();
-        boolean wildcard = false;
         DataObjectStep<?> arg;
 
         do {
@@ -555,15 +492,9 @@ public sealed class InstanceIdentifier<T extends DataObject>
             final var type = verifyNotNull(arg).type();
             checkArgument(ChildOf.class.isAssignableFrom(type) || Augmentation.class.isAssignableFrom(type),
                 "%s is not a valid path argument", type);
-
-            hashBuilder.addArgument(arg);
-
-            if (!(arg instanceof ExactDataObjectStep)) {
-                wildcard = true;
-            }
         } while (it.hasNext());
 
-        return trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
+        return trustedCreate(arg, pathArguments);
     }
 
     /**
@@ -630,16 +561,12 @@ public sealed class InstanceIdentifier<T extends DataObject>
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static <N extends DataObject> @NonNull InstanceIdentifier<N> trustedCreate(final DataObjectStep<?> lastStep,
-            final Iterable<DataObjectStep<?>> pathArguments, final int hash, final boolean wildcarded) {
-        if (lastStep instanceof NodeStep) {
-            return new InstanceIdentifier(lastStep.type(), pathArguments, wildcarded, hash);
-        } else if (lastStep instanceof KeyStep<?, ?> predicate) {
-            return new KeyedInstanceIdentifier(predicate, pathArguments, wildcarded, hash);
-        } else if (lastStep instanceof KeylessStep) {
-            return new InstanceIdentifier(lastStep.type(), pathArguments, true, hash);
-        } else {
-            throw new IllegalStateException("Unhandled step " + lastStep);
-        }
+            final Iterable<DataObjectStep<?>> pathArguments) {
+        return switch (lastStep) {
+            case NodeStep<?> node -> new InstanceIdentifier(pathArguments, lastStep);
+            case KeyStep<?, ?> key -> new KeyedInstanceIdentifier(pathArguments, key);
+            case KeylessStep keyless -> new InstanceIdentifier(pathArguments, lastStep);
+        };
     }
 
     @Deprecated(since = "13.0.0", forRemoval = true)
@@ -826,124 +753,43 @@ public sealed class InstanceIdentifier<T extends DataObject>
      *
      * @param <T> Instance identifier target type
      */
-    public abstract static sealed class Builder<T extends DataObject> {
-        private final ImmutableList.Builder<DataObjectStep<?>> pathBuilder;
-        private final HashCodeBuilder<DataObjectStep<?>> hashBuilder;
-        private final Iterable<? extends DataObjectStep<?>> basePath;
-
-        private boolean wildcard;
-
-        Builder(final Builder<?> prev, final DataObjectStep<?> item) {
-            pathBuilder = prev.pathBuilder;
-            hashBuilder = prev.hashBuilder;
-            basePath = prev.basePath;
-            wildcard = prev.wildcard;
-            appendItem(item);
+    public abstract static sealed class Builder<T extends DataObject>
+            extends DataObjectReferenceBuilder<DataObjectStep<?>, T> {
+        Builder(final Builder<?> prev, final DataObjectStep<?> step) {
+            super(prev, step);
         }
 
         Builder(final InstanceIdentifier<T> identifier) {
-            pathBuilder = ImmutableList.builder();
-            hashBuilder = new HashCodeBuilder<>(identifier.hashCode());
-            wildcard = identifier.isWildcarded();
-            basePath = identifier.pathArguments;
+            super(identifier.steps);
         }
 
-        Builder(final DataObjectStep<?> item, final boolean wildcard) {
-            pathBuilder = ImmutableList.builder();
-            hashBuilder = new HashCodeBuilder<>();
-            basePath = null;
-            hashBuilder.addArgument(item);
-            pathBuilder.add(item);
-            this.wildcard = wildcard;
+        Builder(final DataObjectStep<?> step) {
+            super(step);
         }
 
-        final boolean wildcard() {
-            return wildcard;
+        @Override
+        public final <N extends DataObject & Augmentation<? super T>> Builder<N> augmentation(final Class<N> augment) {
+            return append(new NodeStep<>(augment));
         }
 
-        /**
-         * Build an identifier which refers to a specific augmentation of the current InstanceIdentifier referenced by
-         * the builder.
-         *
-         * @param container augmentation class
-         * @param <N> augmentation type
-         * @return this builder
-         * @throws NullPointerException if {@code container} is null
-         */
-        public final <N extends DataObject & Augmentation<? super T>> Builder<N> augmentation(
-                final Class<N> container) {
-            return append(new NodeStep<>(container));
-        }
-
-        /**
-         * Append the specified container as a child of the current InstanceIdentifier referenced by the builder. This
-         * method should be used when you want to build an instance identifier by appending top-level elements, for
-         * example
-         * <pre>
-         *     InstanceIdentifier.builder().child(Nodes.class).build();
-         * </pre>
-         *
-         * <p>
-         * NOTE :- The above example is only for illustration purposes InstanceIdentifier.builder() has been deprecated
-         * and should not be used. Use InstanceIdentifier.builder(Nodes.class) instead
-         *
-         * @param container Container to append
-         * @param <N> Container type
-         * @return this builder
-         * @throws NullPointerException if {@code container} is null
-         */
+        @Override
         public final <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
             return append(createStep(container));
         }
 
-        /**
-         * Append the specified container as a child of the current InstanceIdentifier referenced by the builder. This
-         * method should be used when you want to build an instance identifier by appending a container node to the
-         * identifier and the {@code container} is defined in a {@code grouping} used in a {@code case} statement.
-         *
-         * @param caze Choice case class
-         * @param container Container to append
-         * @param <C> Case type
-         * @param <N> Container type
-         * @return this builder
-         * @throws NullPointerException if {@code container} is null
-         */
+        @Override
         public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
                 final Class<C> caze, final Class<N> container) {
             return append(createStep(caze, container));
         }
 
-        /**
-         * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder. This
-         * method should be used when you want to build an instance identifier by appending a specific list element to
-         * the identifier.
-         *
-         * @param listItem List to append
-         * @param listKey List key
-         * @param <N> List type
-         * @param <K> Key type
-         * @return this builder
-         * @throws NullPointerException if any argument is null
-         */
+        @Override
         public final <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>> KeyedBuilder<N, K> child(
                 final Class<@NonNull N> listItem, final K listKey) {
             return append(new KeyStep<>(listItem, listKey));
         }
 
-        /**
-         * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder. This
-         * method should be used when you want to build an instance identifier by appending a specific list element to
-         * the identifier and the {@code list} is defined in a {@code grouping} used in a {@code case} statement.
-         *
-         * @param caze Choice case class
-         * @param listItem List to append
-         * @param listKey List key
-         * @param <C> Case type
-         * @param <N> List type
-         * @param <K> Key type
-         * @return this builder
-         * @throws NullPointerException if any argument is null
-         */
+        @Override
         public final <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
                 N extends KeyAware<K> & ChildOf<? super C>> KeyedBuilder<N, K> child(final Class<C> caze,
                     final Class<N> listItem, final K listKey) {
@@ -955,37 +801,23 @@ public sealed class InstanceIdentifier<T extends DataObject>
          *
          * @return Resulting {@link InstanceIdentifier}.
          */
+        @Override
         public abstract @NonNull InstanceIdentifier<T> build();
 
         @Override
-        public final int hashCode() {
-            return hashBuilder.build();
+        final <X extends DataObject> RegularBuilder<X> append(final ExactDataObjectStep<?> step) {
+            return append((DataObjectStep<?>) step);
         }
 
         @Override
-        public final boolean equals(final Object obj) {
-            return this == obj || obj instanceof Builder<?> other
-                && wildcard == other.wildcard && hashCode() == other.hashCode()
-                && Iterables.elementsEqual(pathArguments(), other.pathArguments());
+        final <X extends DataObject> RegularBuilder<X> append(final InexactDataObjectStep<?> step) {
+            return append((DataObjectStep<?>) step);
         }
 
-        final Iterable<DataObjectStep<?>> pathArguments() {
-            final var args = pathBuilder.build();
-            return basePath == null ? args : Iterables.concat(basePath, args);
-        }
+        @Override
+        abstract <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(KeyStep<?, ?> step);
 
-        final void appendItem(final DataObjectStep<?> item) {
-            hashBuilder.addArgument(item);
-            pathBuilder.add(item);
-            if (!(item instanceof ExactDataObjectStep)) {
-                wildcard = true;
-            }
-        }
-
-        abstract <X extends DataObject> @NonNull RegularBuilder<X> append(DataObjectStep<X> step);
-
-        abstract <X extends DataObject & KeyAware<Y>, Y extends Key<X>> @NonNull KeyedBuilder<X, Y> append(
-            KeyStep<Y, X> step);
+        abstract <X extends DataObject> @NonNull RegularBuilder<X> append(@NonNull DataObjectStep<?> step);
     }
 
     public static final class KeyedBuilder<T extends DataObject & KeyAware<K>, K extends Key<T>>
@@ -993,7 +825,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
         private @NonNull KeyStep<K, T> lastStep;
 
         KeyedBuilder(final KeyStep<K, T> firstStep) {
-            super(firstStep, false);
+            super(firstStep);
             lastStep = requireNonNull(firstStep);
         }
 
@@ -1002,9 +834,10 @@ public sealed class InstanceIdentifier<T extends DataObject>
             lastStep = identifier.lastStep();
         }
 
-        private KeyedBuilder(final RegularBuilder<?> prev, final KeyStep<K, T> lastStep) {
+        @SuppressWarnings("unchecked")
+        KeyedBuilder(final RegularBuilder<?> prev, final KeyStep<?, ?> lastStep) {
             super(prev, lastStep);
-            this.lastStep = requireNonNull(lastStep);
+            this.lastStep = (KeyStep<K, T>) requireNonNull(lastStep);
         }
 
         /**
@@ -1014,57 +847,58 @@ public sealed class InstanceIdentifier<T extends DataObject>
          */
         @Override
         public @NonNull KeyedInstanceIdentifier<T, K> build() {
-            return new KeyedInstanceIdentifier<>(lastStep, pathArguments(), wildcard(), hashCode());
+            return new KeyedInstanceIdentifier<>(buildSteps(), lastStep);
         }
 
         @Override
-        <X extends DataObject> @NonNull RegularBuilder<X> append(final DataObjectStep<X> step) {
+        <X extends DataObject> RegularBuilder<X> append(final DataObjectStep<?> step) {
             return new RegularBuilder<>(this, step);
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(final KeyStep<Y, X> step) {
-            appendItem(step);
+        <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(final KeyStep<?, ?> step) {
             lastStep = (KeyStep<K, T>) requireNonNull(step);
+            addStep(step);
             return (KeyedBuilder<X, Y>) this;
         }
     }
 
     private static final class RegularBuilder<T extends DataObject> extends Builder<T> {
-        private @NonNull Class<T> type;
+        private @NonNull DataObjectStep<T> lastStep;
 
-        RegularBuilder(final DataObjectStep<T> item) {
-            super(item, !(item instanceof ExactDataObjectStep));
-            type = item.type();
+        @SuppressWarnings("unchecked")
+        RegularBuilder(final DataObjectStep<?> step) {
+            super(step);
+            lastStep = (DataObjectStep<T>) requireNonNull(step);
         }
 
         RegularBuilder(final InstanceIdentifier<T> identifier) {
             super(identifier);
-            type = identifier.getTargetType();
+            lastStep = identifier.lastStep();
         }
 
-        private RegularBuilder(final KeyedBuilder<?, ?> prev, final DataObjectStep<T> item) {
-            super(prev, item);
-            type = item.type();
+        @SuppressWarnings("unchecked")
+        RegularBuilder(final KeyedBuilder<?, ?> prev, final DataObjectStep<?> step) {
+            super(prev, step);
+            lastStep = (DataObjectStep<T>) requireNonNull(step);
         }
 
         @Override
         public InstanceIdentifier<T> build() {
-            return new InstanceIdentifier<>(type, pathArguments(), wildcard(), hashCode());
+            return new InstanceIdentifier<>(buildSteps(), lastStep);
         }
 
         @Override
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        <X extends DataObject> RegularBuilder<X> append(final DataObjectStep<X> step) {
-            appendItem(step);
-            type = (Class) step.type();
+        <X extends DataObject> RegularBuilder<X> append(final DataObjectStep<?> step) {
+            lastStep = (DataObjectStep<T>) requireNonNull(step);
+            addStep(step);
             return (RegularBuilder<X>) this;
         }
 
         @Override
-        <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
-                final KeyStep<Y, X> item) {
+        <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(final KeyStep<?, ?> item) {
             return new KeyedBuilder<>(this, item);
         }
     }
