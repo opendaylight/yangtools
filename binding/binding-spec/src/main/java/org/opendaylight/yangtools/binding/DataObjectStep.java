@@ -28,6 +28,20 @@ import org.eclipse.jdt.annotation.Nullable;
  * - 'pos' interfaces (index into a list or a leaf-list}
  * - 'node-identifier for non-DataObjects' (i.e. leaf, anydata, anyxml)
  */
+
+///**
+// * A {@link DataObjectStep} which is exactly specified. Due to how {@link DataObject} and {@link KeyAware} are tied
+// * together, a class generated for a {@code list} is strictly a {@link DataObject}, but its semantics differ.
+// *
+// * <p>
+// * This interface captures two possible outcomes:
+// * <ol>
+// *   <li>this is a plain {@link NodeStep}</li>
+// *   <li>this is a fully-specified {@link KeyStep}</li>
+// * </ol>
+// *
+// * @param <T> DataObject type
+// */
 public sealed interface DataObjectStep<T extends DataObject> extends Comparable<DataObjectStep<?>>, Serializable
         permits ExactDataObjectStep, KeylessStep {
     /**
