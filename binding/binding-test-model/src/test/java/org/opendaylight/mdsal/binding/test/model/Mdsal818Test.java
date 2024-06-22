@@ -9,7 +9,8 @@ package org.opendaylight.mdsal.binding.test.model;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
@@ -17,31 +18,30 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.binding.KeyedInstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 
 class Mdsal818Test {
     @Test
     void simpleWildcardInstanceIdentitifer() {
-        final var id = InstanceIdentifier.builder(Top.class).child(TopLevelList.class).build();
-        assertTrue(id.isWildcarded());
-        assertFalse(id instanceof KeyedInstanceIdentifier);
+        final var id = DataObjectWildcard.builder(Top.class).child(TopLevelList.class).build();
+        assertNull(id.tryToIdentifier());
+        assertFalse(id instanceof DataObjectWildcard.WithKey);
     }
 
     @Test
     void simpleKeyedInstanceIdentitifer() {
-        final var first = assertInstanceOf(KeyedInstanceIdentifier.class, InstanceIdentifier.builder(Top.class)
+        final var first = assertInstanceOf(DataObjectWildcard.WithKey.class, DataObjectWildcard.builder(Top.class)
             .child(TopLevelList.class, new TopLevelListKey("foo"))
             .build());
-        assertFalse(first.isWildcarded());
+        assertNotNull(first.tryToIdentifier());
     }
 
     @Test
     void wildcardKeyedInstanceIdentitifer() {
-        final var first = assertInstanceOf(KeyedInstanceIdentifier.class, InstanceIdentifier.builder(Top.class)
+        final var first = assertInstanceOf(DataObjectWildcard.WithKey.class, DataObjectWildcard.builder(Top.class)
             .child(TopLevelList.class)
             .child(NestedList.class, new NestedListKey("foo"))
             .build());
-        assertTrue(first.isWildcarded());
+        assertNull(first.tryToIdentifier());
     }
 }
