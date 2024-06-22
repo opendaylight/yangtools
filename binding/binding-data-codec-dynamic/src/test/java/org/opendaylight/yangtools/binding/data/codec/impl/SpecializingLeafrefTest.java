@@ -16,14 +16,14 @@ import org.opendaylight.yang.gen.v1.mdsal426.norev.BarCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanContBuilder;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 
 public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
-    private static final InstanceIdentifier<BooleanCont> BOOLEAN_CONT_II = InstanceIdentifier
-            .builder(BooleanCont.class).build();
+    private static final DataObjectReference<BooleanCont> BOOLEAN_CONT_II =
+        DataObjectReference.builder(BooleanCont.class).build();
 
-    private static final InstanceIdentifier<BarCont> BAR_CONT_II = InstanceIdentifier
-            .builder(BarCont.class).build();
+    private static final DataObjectReference<BarCont> BAR_CONT_II =
+        DataObjectReference.builder(BarCont.class).build();
 
     @Test
     public void specifiedBooleanLeafTest() {

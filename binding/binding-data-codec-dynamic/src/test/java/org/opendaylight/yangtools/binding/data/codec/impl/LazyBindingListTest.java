@@ -22,7 +22,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 
 public class LazyBindingListTest extends AbstractBindingCodecTest {
     @Test
@@ -36,7 +36,7 @@ public class LazyBindingListTest extends AbstractBindingCodecTest {
                 .setNestedList(nested)
                 .build();
         final TopLevelList actual = thereAndBackAgain(
-            InstanceIdentifier.create(Top.class).child(TopLevelList.class, expected.key()), expected);
+            DataObjectReference.builder(Top.class).child(TopLevelList.class, expected.key()).build(), expected);
 
         final List<NestedList> list = actual.getNestedList();
         assertThat(list, instanceOf(LazyBindingList.class));
@@ -67,7 +67,7 @@ public class LazyBindingListTest extends AbstractBindingCodecTest {
                 .setNestedList(List.of(new NestedListBuilder().setName(String.valueOf("one")).build()))
                 .build();
         final TopLevelList actual = thereAndBackAgain(
-            InstanceIdentifier.create(Top.class).child(TopLevelList.class, expected.key()), expected);
+            DataObjectReference.builder(Top.class).child(TopLevelList.class, expected.key()).build(), expected);
 
         final List<NestedList> list = actual.getNestedList();
         assertThat(list, not(instanceOf(LazyBindingList.class)));

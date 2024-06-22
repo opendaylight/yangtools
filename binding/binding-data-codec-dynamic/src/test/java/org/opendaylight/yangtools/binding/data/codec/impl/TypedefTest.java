@@ -16,14 +16,14 @@ import org.opendaylight.yang.gen.v1.bug8903.rev170829.PolicyLoggingFlag;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TestCont;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TestContBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TypedefEmpty;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.yang.common.Empty;
 
 public class TypedefTest extends AbstractBindingCodecTest {
-    private static final InstanceIdentifier<DefaultPolicy> BA_DEFAULT_POLICY =
-            InstanceIdentifier.builder(DefaultPolicy.class).build();
-    private static final InstanceIdentifier<TestCont> BA_TEST_CONT =
-            InstanceIdentifier.builder(TestCont.class).build();
+    private static final DataObjectReference<DefaultPolicy> BA_DEFAULT_POLICY =
+        DataObjectReference.builder(DefaultPolicy.class).build();
+    private static final DataObjectReference<TestCont> BA_TEST_CONT =
+        DataObjectReference.builder(TestCont.class).build();
 
     @Test
     public void testTypedef() {

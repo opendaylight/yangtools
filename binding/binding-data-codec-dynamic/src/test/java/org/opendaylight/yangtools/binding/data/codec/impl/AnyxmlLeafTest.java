@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import java.util.Map.Entry;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.Cont;
@@ -24,6 +23,7 @@ import org.opendaylight.yang.gen.v1.mdsal437.norev.cont.ContAny;
 import org.opendaylight.yangtools.binding.AbstractOpaqueData;
 import org.opendaylight.yangtools.binding.AbstractOpaqueObject;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.binding.OpaqueData;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -60,8 +60,7 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
 
     @Test
     public void testAnyxmlToBinding() {
-        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(
-            YangInstanceIdentifier.of(CONT_NODE_ID), cont);
+        final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(CONT_NODE_ID), cont);
         assertEquals(InstanceIdentifier.create(Cont.class), entry.getKey());
         final DataObject ldo = entry.getValue();
         assertThat(ldo, instanceOf(Cont.class));
@@ -96,7 +95,7 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
 
     @Test
     public void testAnyxmlFromBinding() {
-        final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Cont.class),
+        final var entry = codecContext.toNormalizedDataObject(DataObjectReference.builder(Cont.class).build(),
             new ContBuilder().setContAny(new FakeCont()).build());
         assertEquals(YangInstanceIdentifier.of(CONT_NODE_ID), entry.path());
         assertEquals(cont, entry.node());

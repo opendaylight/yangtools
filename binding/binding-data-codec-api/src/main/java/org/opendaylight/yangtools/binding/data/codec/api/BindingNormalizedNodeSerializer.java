@@ -19,9 +19,10 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseNotification;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
@@ -38,7 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  */
 public interface BindingNormalizedNodeSerializer {
     /**
-     * Result of a {@link BindingNormalizedNodeSerializer#toNormalizedNode(InstanceIdentifier, DataObject)}. Since the
+     * Result of a {@link BindingNormalizedNodeSerializer#toNormalizedNode(DataObjectReference, DataObject)}. Since the
      * Binding {@link Augmentation} does not have an exact equivalent, there are two specializations of this class:
      * {@link NodeResult} and {@link AugmentationResult}.
      */
@@ -84,7 +85,7 @@ public interface BindingNormalizedNodeSerializer {
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
     // FIXME: MDSAL-525: reconcile this with BindingInstanceIdentifierCodec
-    @NonNull YangInstanceIdentifier toYangInstanceIdentifier(@NonNull InstanceIdentifier<?> binding);
+    @NonNull YangInstanceIdentifier toYangInstanceIdentifier(@NonNull BindingInstanceIdentifier binding);
 
     /**
      * Translates supplied YANG Instance Identifier into Binding instance identifier.
@@ -93,7 +94,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return Binding Instance Identifier, or null if the instance identifier is not representable.
      */
     // FIXME: MDSAL-525: reconcile this with BindingInstanceIdentifierCodec
-    <T extends DataObject> @Nullable InstanceIdentifier<T> fromYangInstanceIdentifier(
+    <T extends DataObject> @Nullable DataObjectReference<T> fromYangInstanceIdentifier(
             @NonNull YangInstanceIdentifier dom);
 
     /**
@@ -104,7 +105,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return {@link NormalizedResult} representation
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    <T extends DataObject> @NonNull NormalizedResult toNormalizedNode(InstanceIdentifier<T> path, T data);
+    <T extends DataObject> @NonNull NormalizedResult toNormalizedNode(DataObjectReference<T> path, T data);
 
     /**
      * Translates supplied Binding Instance Identifier and data into NormalizedNode representation.
@@ -114,7 +115,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return {@link NormalizedResult} representation
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    <A extends Augmentation<?>> @NonNull AugmentationResult toNormalizedAugmentation(InstanceIdentifier<A> path,
+    <A extends Augmentation<?>> @NonNull AugmentationResult toNormalizedAugmentation(DataObjectReference<A> path,
         A data);
 
     /**
@@ -125,7 +126,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return {@link NormalizedResult} representation
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    <T extends DataObject> @NonNull NodeResult toNormalizedDataObject(InstanceIdentifier<T> path, T data);
+    <T extends DataObject> @NonNull NodeResult toNormalizedDataObject(DataObjectReference<T> path, T data);
 
     /**
      * Translates supplied YANG Instance Identifier and NormalizedNode into Binding data.
@@ -134,7 +135,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing data
      * @return DOM Instance Identifier
      */
-    @Nullable Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(@NonNull YangInstanceIdentifier path,
+    @Nullable Entry<DataObjectReference<?>, DataObject> fromNormalizedNode(@NonNull YangInstanceIdentifier path,
             NormalizedNode data);
 
     /**

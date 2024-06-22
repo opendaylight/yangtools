@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.binding.data.codec.api;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -25,7 +25,7 @@ public interface CommonDataObjectCodecTreeNode<T extends DataObject> extends Bin
     /**
      * Serializes the instance identifier step for current node.
      *
-     * @param step {@link DataObjectStep}, may be null if {@link InstanceIdentifier} does not have a representation for
+     * @param step {@link DataObjectStep}, may be null if {@link DataObjectReference} does not have a representation for
      *             current node (e.g. choice or case).
      * @return {@link PathArgument}, may be null if {@link YangInstanceIdentifier} does not have representation for
      *         current node (e.g. case).
@@ -39,7 +39,7 @@ public interface CommonDataObjectCodecTreeNode<T extends DataObject> extends Bin
      *
      * @param arg a {@link PathArgument}, may be null if {@link YangInstanceIdentifier} does not have a representation
      *            for current node (e.g. case).
-     * @return {@link DataObjectStep}, may be null if {@link InstanceIdentifier} does not have a representation for
+     * @return {@link DataObjectStep}, may be null if {@link DataObjectReference} does not have a representation for
      *         current node (e.g. choice or case).
      * @throws IllegalArgumentException If supplied {@code arg} is not valid.
      */

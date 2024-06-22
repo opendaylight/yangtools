@@ -95,9 +95,11 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends DataObject & K
     }
 
     @Override
-    protected final DataObjectStep<?> getBindingPathArgument(final PathArgument domArg) {
-        return domArg instanceof NodeIdentifierWithPredicates nip ? codec.domToBinding(nip)
-            : super.getBindingPathArgument(domArg);
+    protected final KeyStep<?, ?> getBindingPathArgument(final PathArgument domArg) {
+        if (domArg instanceof NodeIdentifierWithPredicates nip) {
+            return codec.domToBinding(nip);
+        }
+        throw new IllegalArgumentException("Unexpected argument " + domArg);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

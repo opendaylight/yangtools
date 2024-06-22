@@ -9,20 +9,19 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.DataObjectStep;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.binding.KeylessStep;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
+import org.opendaylight.yangtools.binding.ExactDataObjectStep;
+import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
         //FIXME: this is not really an IllegalArgumentCodec, as it can legally return null from deserialize()
-        ValueCodec<YangInstanceIdentifier, InstanceIdentifier<?>> {
+        ValueCodec<YangInstanceIdentifier, DataObjectReference<?>> {
     private final BindingCodecContext context;
 
     InstanceIdentifierCodec(final BindingCodecContext context) {
@@ -30,37 +29,49 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     }
 
     @Override
-    public <T extends DataObject> InstanceIdentifier<T> toBinding(final YangInstanceIdentifier domPath) {
-        final var builder = new ArrayList<DataObjectStep<?>>();
+    public BindingInstanceIdentifier dataToBinding(final YangInstanceIdentifier domPath) {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public DataObjectReference<?> toBinding(final YangInstanceIdentifier domPath) {
+        final var builder = new ArrayList<ExactDataObjectStep<?>>();
         final var codec = context.getCodecContextNode(domPath, builder);
         if (codec == null) {
             return null;
         }
-        if (codec instanceof ListCodecContext && Iterables.getLast(builder) instanceof KeylessStep) {
+        if (codec instanceof ListCodecContext && builder.getLast() instanceof NodeStep) {
             // We ended up in list, but without key, which means it represent list as a whole,
             // which is not binding representable.
             return null;
         }
 
-        return InstanceIdentifier.unsafeOf(builder);
+        return DataObjectReference.of(builder);
     }
 
     @Override
-    public @NonNull YangInstanceIdentifier fromBinding(@NonNull final InstanceIdentifier<?> bindingPath) {
-        final var domArgs = new ArrayList<PathArgument>();
-        context.getCodecContextNode(bindingPath, domArgs);
-        return YangInstanceIdentifier.of(domArgs);
+    public @NonNull YangInstanceIdentifier fromBinding(final @NonNull BindingInstanceIdentifier bindingPath) {
+        return switch (bindingPath) {
+            case DataObjectReference<?> ref -> {
+                final var domArgs = new ArrayList<PathArgument>();
+                context.getCodecContextNode(ref, domArgs);
+                yield YangInstanceIdentifier.of(domArgs);
+            }
+        };
     }
 
     @Override
     @Deprecated
-    public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
+    public YangInstanceIdentifier serialize(final DataObjectReference<?> input) {
         return fromBinding(input);
     }
 
     @Override
     @Deprecated
-    public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
-        return toBinding(input);
+    public DataObjectReference<?> deserialize(final YangInstanceIdentifier input) {
+        return switch (dataToBinding(input)) {
+            case DataObjectReference<?> ref -> ref;
+        };
     }
 }

@@ -16,7 +16,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.LowestLevel1;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaException;
@@ -30,11 +30,10 @@ public class ExceptionReportingTest {
     private static final BindingNormalizedNodeSerializer FULL_CODEC = codec(TreeComplexUsesAugment.class);
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
-    private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
-        .child(TopLevelList.class, TOP_FOO_KEY)
-        .build();
-    private static final InstanceIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY =
-        BA_TOP_LEVEL_LIST.augmentation(TreeLeafOnlyAugment.class);
+    private static final DataObjectReference<TopLevelList> BA_TOP_LEVEL_LIST =
+        DataObjectReference.builder(Top.class).child(TopLevelList.class, TOP_FOO_KEY).build();
+    private static final DataObjectReference<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY =
+        BA_TOP_LEVEL_LIST.toBuilder().augmentation(TreeLeafOnlyAugment.class).build();
 
     private static final YangInstanceIdentifier BI_TOP_PATH = YangInstanceIdentifier.of(Top.QNAME);
 
@@ -65,14 +64,16 @@ public class ExceptionReportingTest {
     @Test
     public void testBindingSkippedRoot() {
         @SuppressWarnings({"unchecked", "rawtypes"})
-        final var iid = InstanceIdentifier.create((Class) TopLevelList.class);
+        final var iid = DataObjectReference.builder((Class) TopLevelList.class).build();
         assertThrows(IncorrectNestingException.class, () -> FULL_CODEC.toYangInstanceIdentifier(iid));
     }
 
     @Test
     public void testBindingIncorrectAugment() {
         @SuppressWarnings({"unchecked", "rawtypes"})
-        final var iid = InstanceIdentifier.create(Top.class).augmentation((Class) TreeComplexUsesAugment.class);
+        final var iid = DataObjectReference.builder(Top.class)
+            .augmentation((Class) TreeComplexUsesAugment.class)
+            .build();
         assertThrows(IncorrectNestingException.class, () -> FULL_CODEC.toYangInstanceIdentifier(iid));
     }
 

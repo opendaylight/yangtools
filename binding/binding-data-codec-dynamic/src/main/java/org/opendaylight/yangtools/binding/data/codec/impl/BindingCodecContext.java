@@ -30,9 +30,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -45,10 +43,12 @@ import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.BaseNotification;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.DataObjectReference;
+import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
@@ -390,7 +390,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
-            final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
+            final DataObjectReference<?> path, final NormalizedNodeStreamWriter domWriter) {
         final var yangArgs = new ArrayList<PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
         return Map.entry(YangInstanceIdentifier.of(yangArgs),
@@ -398,7 +398,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public BindingStreamEventWriter newWriter(final InstanceIdentifier<?> path,
+    public BindingStreamEventWriter newWriter(final DataObjectReference<?> path,
             final NormalizedNodeStreamWriter domWriter) {
         return new BindingToNormalizedStreamWriter(getCodecContextNode(path, null), domWriter);
     }
@@ -427,9 +427,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return new BindingToNormalizedStreamWriter(getActionCodec(action).output(), domWriter);
     }
 
-    @NonNull DataContainerCodecContext<?, ?, ?> getCodecContextNode(final InstanceIdentifier<?> binding,
-            final List<PathArgument> builder) {
-        final var it = binding.getPathArguments().iterator();
+    @NonNull DataContainerCodecContext<?, ?, ?> getCodecContextNode(final DataObjectReference<?> binding,
+            final ArrayList<PathArgument> builder) {
+        final var it = binding.steps().iterator();
         final var step = it.next();
 
         final DataContainerCodecContext<?, ?, ?> start;
@@ -466,7 +466,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
      * @throws IllegalArgumentException if {@code dom} is empty
      */
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
-            final @Nullable Collection<DataObjectStep<?>> bindingArguments) {
+            final @Nullable ArrayList<ExactDataObjectStep<?>> bindingArguments) {
         final var it = dom.getPathArguments().iterator();
         if (!it.hasNext()) {
             throw new IllegalArgumentException("Path may not be empty");
@@ -763,7 +763,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Override
     @SuppressWarnings("unchecked")
     public <A extends Augmentation<?>> BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
-            final InstanceIdentifier<A> path) {
+            final DataObjectReference<A> path) {
         final var codecContext = getCodecContextNode(path, null);
         if (codecContext instanceof BindingAugmentationCodecTreeNode) {
             return (BindingAugmentationCodecTreeNode<A>) codecContext;
@@ -774,7 +774,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Override
     @SuppressWarnings("unchecked")
     public <T extends DataObject> BindingDataObjectCodecTreeNode<T> getDataObjectCodec(
-            final InstanceIdentifier<T> path) {
+            final DataObjectReference<T> path) {
         final var codecContext = getCodecContextNode(path, null);
         if (codecContext instanceof BindingDataObjectCodecTreeNode) {
             return (BindingDataObjectCodecTreeNode<T>) codecContext;
@@ -784,7 +784,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends DataObject> CodecWithPath<T> getSubtreeCodecWithPath(final InstanceIdentifier<T> path) {
+    public <T extends DataObject> CodecWithPath<T> getSubtreeCodecWithPath(final DataObjectReference<T> path) {
         final var yangArgs = new ArrayList<PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
 
@@ -795,7 +795,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends DataObject> CommonDataObjectCodecTreeNode<T> getSubtreeCodec(final InstanceIdentifier<T> path) {
+    public <T extends DataObject> CommonDataObjectCodecTreeNode<T> getSubtreeCodec(final DataObjectReference<T> path) {
         // TODO Do we need defensive check here?
         return (CommonDataObjectCodecTreeNode<T>) getCodecContextNode(path, null);
     }
@@ -811,17 +811,17 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public YangInstanceIdentifier toYangInstanceIdentifier(final InstanceIdentifier<?> binding) {
+    public YangInstanceIdentifier toYangInstanceIdentifier(final BindingInstanceIdentifier binding) {
         return instanceIdentifierCodec.fromBinding(binding);
     }
 
     @Override
-    public <T extends DataObject> InstanceIdentifier<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
-        return instanceIdentifierCodec.toBinding(dom);
+    public <T extends DataObject> DataObjectReference<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
+        return (DataObjectReference<T>) instanceIdentifierCodec.toBinding(dom);
     }
 
     @Override
-    public <A extends Augmentation<?>> AugmentationResult toNormalizedAugmentation(final InstanceIdentifier<A> path,
+    public <A extends Augmentation<?>> AugmentationResult toNormalizedAugmentation(final DataObjectReference<A> path,
             final A data) {
         final var result = toNormalizedNode(path, data);
         if (result instanceof AugmentationResult augment) {
@@ -831,7 +831,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <T extends DataObject> NodeResult toNormalizedDataObject(final InstanceIdentifier<T> path, final T data) {
+    public <T extends DataObject> NodeResult toNormalizedDataObject(final DataObjectReference<T> path, final T data) {
         final var result = toNormalizedNode(path, data);
         if (result instanceof NodeResult node) {
             return node;
@@ -840,7 +840,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <T extends DataObject> NormalizedResult toNormalizedNode(final InstanceIdentifier<T> path, final T data) {
+    public <T extends DataObject> NormalizedResult toNormalizedNode(final DataObjectReference<T> path, final T data) {
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
         final var yangArgs = new ArrayList<PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
@@ -861,7 +861,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
 
             // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
-            getSerializer(path.getTargetType()).serialize(data, bindingWriter);
+            getSerializer(path.lastStep().type()).serialize(data, bindingWriter);
 
             if (augment != null) {
                 domWriter.endNode();
@@ -880,13 +880,13 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
+    public Entry<DataObjectReference<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
             final NormalizedNode data) {
         if (notBindingRepresentable(data)) {
             return null;
         }
 
-        final var builder = new ArrayList<DataObjectStep<?>>();
+        final var builder = new ArrayList<ExactDataObjectStep<?>>();
         final var codec = getCodecContextNode(path, builder);
         if (codec == null) {
             if (data != null) {
@@ -896,9 +896,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             return null;
         }
 
-        final DataObject lazyObj = codec.deserialize(data);
-        final InstanceIdentifier<?> bindingPath = InstanceIdentifier.unsafeOf(builder);
-        return Map.entry(bindingPath, lazyObj);
+        final var lazyObj = codec.deserialize(data);
+        return Map.entry(DataObjectReference.of(builder), lazyObj);
     }
 
     @Override

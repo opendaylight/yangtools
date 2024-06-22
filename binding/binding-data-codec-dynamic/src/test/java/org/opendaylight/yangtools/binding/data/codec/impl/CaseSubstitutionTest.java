@@ -24,22 +24,21 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.ChoiceListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public class CaseSubstitutionTest extends AbstractBindingCodecTest {
-
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final ChoiceListKey CHOICE_FOO_KEY = new ChoiceListKey("foo");
 
-    private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
-            .child(TopLevelList.class, TOP_FOO_KEY).build();
-    private static final InstanceIdentifier<ChoiceList> BA_CHOICE_LIST = InstanceIdentifier.builder(Top.class)
-            .child(ChoiceList.class, CHOICE_FOO_KEY).build();
-    private static final InstanceIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY = BA_TOP_LEVEL_LIST
-            .augmentation(TreeLeafOnlyAugment.class);
-    private static final InstanceIdentifier<TreeComplexUsesAugment> BA_TREE_COMPLEX_USES = BA_TOP_LEVEL_LIST
-            .augmentation(TreeComplexUsesAugment.class);
+    private static final DataObjectReference<TopLevelList> BA_TOP_LEVEL_LIST =
+        DataObjectReference.builder(Top.class).child(TopLevelList.class, TOP_FOO_KEY).build();
+    private static final DataObjectReference<ChoiceList> BA_CHOICE_LIST =
+        DataObjectReference.builder(Top.class).child(ChoiceList.class, CHOICE_FOO_KEY).build();
+    private static final DataObjectReference<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY =
+        BA_TOP_LEVEL_LIST.toBuilder().augmentation(TreeLeafOnlyAugment.class).build();
+    private static final DataObjectReference<TreeComplexUsesAugment> BA_TREE_COMPLEX_USES =
+        BA_TOP_LEVEL_LIST.toBuilder().augmentation(TreeComplexUsesAugment.class).build();
     private static final QName SIMPLE_VALUE_QNAME = QName.create(TreeComplexUsesAugment.QNAME, "simple-value");
 
     @Test

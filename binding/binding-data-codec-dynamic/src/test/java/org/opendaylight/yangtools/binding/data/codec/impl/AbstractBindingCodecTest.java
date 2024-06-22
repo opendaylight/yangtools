@@ -13,7 +13,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 
 public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTest {
     protected BindingCodecContext codecContext;
@@ -34,7 +34,7 @@ public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTes
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends DataObject> T thereAndBackAgain(final InstanceIdentifier<T> path, final T data) {
+    protected <T extends DataObject> T thereAndBackAgain(final DataObjectReference<T> path, final T data) {
         final var there = codecContext.toNormalizedDataObject(path, data);
         final var backAgain = codecContext.fromNormalizedNode(there.path(), there.node());
         assertEquals(path, backAgain.getKey());
