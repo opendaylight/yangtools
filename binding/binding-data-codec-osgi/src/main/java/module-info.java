@@ -8,7 +8,7 @@
 module org.opendaylight.yangtools.binding.data.codec.osgi {
     exports org.opendaylight.yangtools.binding.data.codec.osgi;
 
-    requires transitive org.opendaylight.mdsal.binding.runtime.osgi;
+    requires transitive org.opendaylight.yangtools.binding.runtime.osgi;
     requires org.opendaylight.yangtools.binding.data.codec.api;
     requires org.opendaylight.yangtools.binding.data.codec.spi;
     requires org.opendaylight.yangtools.binding.spec;

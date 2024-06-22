@@ -26,10 +26,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 
 public final class ListsBindingUtils {
-    private static final InstanceIdentifier<Top> TOP_PATH = InstanceIdentifier.create(Top.class);
+    private static final DataObjectIdentifier<Top> TOP_PATH = DataObjectIdentifier.create(Top.class);
 
     public static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     public static final TopLevelListKey TOP_BAR_KEY = new TopLevelListKey("bar");
@@ -40,19 +40,19 @@ public final class ListsBindingUtils {
         // Hidden on purpose
     }
 
-    public static InstanceIdentifier<TopLevelList> path(final TopLevelListKey key) {
+    public static DataObjectIdentifier<TopLevelList> path(final TopLevelListKey key) {
         return TOP_PATH.child(TopLevelList.class, key);
     }
 
-    public static InstanceIdentifier<NestedList> path(final TopLevelListKey top,final NestedListKey nested) {
+    public static DataObjectIdentifier<NestedList> path(final TopLevelListKey top,final NestedListKey nested) {
         return path(top).child(NestedList.class, nested);
     }
 
-    public static InstanceIdentifier<ListViaUses> path(final TopLevelListKey top,final ListViaUsesKey uses) {
+    public static DataObjectIdentifier<ListViaUses> path(final TopLevelListKey top,final ListViaUsesKey uses) {
         return path(top).augmentation(TreeComplexUsesAugment.class).child(ListViaUses.class, uses);
     }
 
-    public static <T extends DataObject & Augmentation<TopLevelList>> InstanceIdentifier<T> path(
+    public static <T extends DataObject & Augmentation<TopLevelList>> DataObjectIdentifier<T> path(
             final TopLevelListKey key, final Class<T> augmentation) {
         return path(key).augmentation(augmentation);
     }

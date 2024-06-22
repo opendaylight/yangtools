@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-module org.opendaylight.mdsal.binding.runtime.osgi {
+module org.opendaylight.yangtools.binding.runtime.osgi {
     exports org.opendaylight.yangtools.binding.runtime.osgi;
 
     requires transitive org.opendaylight.yangtools.binding.runtime.api;
