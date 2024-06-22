@@ -7,84 +7,84 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
+import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.common.Decimal64;
-import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.Uint16;
-import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.common.Uint64;
-import org.opendaylight.yangtools.yang.common.Uint8;
 
 public final class BaseYangTypes {
     /**
      * {@code Type} representation of {@code boolean} YANG type.
      */
-    public static final Type BOOLEAN_TYPE = Types.BOOLEAN;
+    public static final Type BOOLEAN_TYPE = typeFor(BuiltInType.BINARY);
 
     /**
      * {@code Type} representation of {@code empty} YANG type.
      */
-    public static final Type EMPTY_TYPE = Types.typeForClass(Empty.class);
+    public static final Type EMPTY_TYPE = typeFor(BuiltInType.EMPTY);
 
-    public static final Type ENUM_TYPE = Types.typeForClass(Enum.class);
+    /**
+     * {@code Type} representation of {@code enumeration} YANG type.
+     */
+    public static final Type ENUMERATION_TYPE = typeFor(BuiltInType.ENUMERATION);
 
     /**
      * {@code Type} representation of {@code int8} YANG type.
      */
-    public static final Type INT8_TYPE = Types.typeForClass(Byte.class);
+    public static final Type INT8_TYPE = typeFor(BuiltInType.INT8);
 
     /**
      * {@code Type} representation of {@code int16} YANG type.
      */
-    public static final Type INT16_TYPE = Types.typeForClass(Short.class);
+    public static final Type INT16_TYPE = typeFor(BuiltInType.INT16);
 
     /**
      * {@code Type} representation of {@code int32} YANG type.
      */
-    public static final Type INT32_TYPE = Types.typeForClass(Integer.class);
+    public static final Type INT32_TYPE = typeFor(BuiltInType.INT32);
 
     /**
      * {@code Type} representation of {@code int64} YANG type.
      */
-    public static final Type INT64_TYPE = Types.typeForClass(Long.class);
+    public static final Type INT64_TYPE = typeFor(BuiltInType.INT64);
 
     /**
      * {@code Type} representation of {@code string} YANG type.
      */
-    public static final Type STRING_TYPE = Types.STRING;
+    public static final Type STRING_TYPE = typeFor(BuiltInType.STRING);
 
     /**
      * {@code Type} representation of {@code decimal64} YANG type.
      */
-    public static final Type DECIMAL64_TYPE = Types.typeForClass(Decimal64.class);
+    public static final Type DECIMAL64_TYPE = typeFor(BuiltInType.DECIMAL64);
 
     /**
      * {@code Type} representation of {@code uint8} YANG type.
      */
-    public static final Type UINT8_TYPE = Types.typeForClass(Uint8.class);
+    public static final Type UINT8_TYPE = typeFor(BuiltInType.UINT8);
 
     /**
      * {@code Type} representation of {@code uint16} YANG type.
      */
-    public static final Type UINT16_TYPE = Types.typeForClass(Uint16.class);
+    public static final Type UINT16_TYPE = typeFor(BuiltInType.UINT16);
 
     /**
      * {@code Type} representation of {@code uint32} YANG type.
      */
-    public static final Type UINT32_TYPE = Types.typeForClass(Uint32.class);
+    public static final Type UINT32_TYPE = typeFor(BuiltInType.UINT32);
 
     /**
      * {@code Type} representation of {@code uint64} YANG type.
      */
-    public static final Type UINT64_TYPE = Types.typeForClass(Uint64.class);
+    public static final Type UINT64_TYPE = typeFor(BuiltInType.UINT64);
 
     /**
      * {@code Type} representation of {@code binary} YANG type.
      */
-    public static final Type BINARY_TYPE = Types.BYTE_ARRAY;
+    public static final Type BINARY_TYPE = typeFor(BuiltInType.BINARY);
 
-    // FIXME: why is this a ParameterizedType (vs. what BindingTypes defines?)
-    public static final Type INSTANCE_IDENTIFIER = Types.parameterizedTypeFor(BindingTypes.INSTANCE_IDENTIFIER);
+    /**
+     * {@code Type} representation of {@code instance-identifier} YANG type.
+     */
+    public static final Type INSTANCE_IDENTIFIER = typeFor(BuiltInType.INSTANCE_IDENTIFIER);
 
     private BaseYangTypes() {
         // Hidden on purpose
@@ -103,7 +103,7 @@ public final class BaseYangTypes {
             case "boolean" -> BOOLEAN_TYPE;
             case "decimal64" -> DECIMAL64_TYPE;
             case "empty" -> EMPTY_TYPE;
-            case "enumeration" -> ENUM_TYPE;
+            case "enumeration" -> ENUMERATION_TYPE;
             case "instance-identifier" -> INSTANCE_IDENTIFIER;
             case "int8" -> INT8_TYPE;
             case "int16" -> INT16_TYPE;
@@ -116,5 +116,9 @@ public final class BaseYangTypes {
             case "uint64" -> UINT64_TYPE;
             default -> null;
         };
+    }
+
+    private static Type typeFor(final BuiltInType<?> builtIn) {
+        return Types.typeForClass(builtIn.javaClass());
     }
 }
