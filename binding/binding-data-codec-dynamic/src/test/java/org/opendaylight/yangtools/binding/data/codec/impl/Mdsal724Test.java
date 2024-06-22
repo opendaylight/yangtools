@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThrows;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test.bi.ba.notification.rev150205.OutOfPixieDustNotification;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock.rev180723.KnockKnockInput;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 
 public class Mdsal724Test {
     @Test
@@ -21,7 +21,7 @@ public class Mdsal724Test {
     public void testNotificationInstanceIdentifier() {
         // An InstanceIdentifier pointing at a notification, unsafe to create
         final var ex = assertThrows(IllegalArgumentException.class,
-            () -> InstanceIdentifier.create((Class) OutOfPixieDustNotification.class));
+            () -> DataObjectWildcard.create((Class) OutOfPixieDustNotification.class));
         assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test"
             + ".bi.ba.notification.rev150205.OutOfPixieDustNotification is not a valid path argument", ex.getMessage());
     }
@@ -31,7 +31,7 @@ public class Mdsal724Test {
     public void testRpcInputInstanceIdentifier() {
         // An InstanceIdentifier pointing at a notification, unsafe to create
         final var ex = assertThrows(IllegalArgumentException.class,
-            () -> InstanceIdentifier.create((Class) KnockKnockInput.class));
+            () -> DataObjectWildcard.create((Class) KnockKnockInput.class));
         assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock"
             + ".rev180723.KnockKnockInput is not a valid path argument", ex.getMessage());
     }

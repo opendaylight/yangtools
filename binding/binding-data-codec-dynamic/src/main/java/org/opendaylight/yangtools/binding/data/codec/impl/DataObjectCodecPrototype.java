@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
@@ -23,7 +23,7 @@ abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> e
 
     DataObjectCodecPrototype(final Class<?> cls, final NodeIdentifier yangArg, final T type,
             final CodecContextFactory factory) {
-        this(InstanceIdentifier.createStep(cls.asSubclass(DataObject.class)), yangArg, type, factory);
+        this(DataObjectWildcard.createStep(cls.asSubclass(DataObject.class)), yangArg, type, factory);
     }
 
     DataObjectCodecPrototype(final DataObjectStep<?> bindingArg, final NodeIdentifier yangArg, final T type,

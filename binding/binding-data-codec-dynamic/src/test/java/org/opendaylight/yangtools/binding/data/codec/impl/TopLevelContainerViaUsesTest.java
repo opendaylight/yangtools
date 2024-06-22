@@ -12,13 +12,13 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.test.top.via.uses.rev151112.OpendaylightBindingTopLevelViaUsesData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.test.top.via.uses.rev151112.container.top.ContainerTop;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class TopLevelContainerViaUsesTest extends AbstractBindingCodecTest {
-    private static final InstanceIdentifier<ContainerTop> TOP_LEVEL_CONTAINER_FROM_USES =
-        InstanceIdentifier.builderOfInherited(OpendaylightBindingTopLevelViaUsesData.class, ContainerTop.class).build();
+    private static final DataObjectWildcard<ContainerTop> TOP_LEVEL_CONTAINER_FROM_USES =
+        DataObjectWildcard.builderOfInherited(OpendaylightBindingTopLevelViaUsesData.class, ContainerTop.class).build();
 
     @Test
     public void testBindingToDomFirst() {
@@ -30,7 +30,7 @@ public class TopLevelContainerViaUsesTest extends AbstractBindingCodecTest {
     @Test
     public void testDomToBindingFirst() {
         final YangInstanceIdentifier yangII = YangInstanceIdentifier.of(ContainerTop.QNAME);
-        final InstanceIdentifier<?> bindingII = codecContext.fromYangInstanceIdentifier(yangII);
+        final var bindingII = codecContext.fromYangInstanceIdentifier(yangII);
         assertEquals(TOP_LEVEL_CONTAINER_FROM_USES, bindingII);
     }
 }

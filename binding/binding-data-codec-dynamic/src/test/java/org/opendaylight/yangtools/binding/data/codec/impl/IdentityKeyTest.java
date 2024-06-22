@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal483.norev.Bar;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal483.norev.BarBuilder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal483.norev.Foo;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.yang.common.Uint64;
 
 public class IdentityKeyTest extends AbstractBindingCodecTest {
@@ -24,7 +24,7 @@ public class IdentityKeyTest extends AbstractBindingCodecTest {
             .setTwo(Foo.VALUE)
             .build();
 
-        final var actual = thereAndBackAgain(InstanceIdentifier.builder(Bar.class, expected.key()).build(), expected);
+        final var actual = thereAndBackAgain(DataObjectWildcard.builder(Bar.class, expected.key()).build(), expected);
         assertEquals(expected, actual);
         assertEquals(expected.key(), actual.key());
     }

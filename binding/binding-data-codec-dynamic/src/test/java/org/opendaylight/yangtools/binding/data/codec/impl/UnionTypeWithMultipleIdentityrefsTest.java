@@ -19,7 +19,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.I
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.TopBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.UnionType;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -53,11 +53,11 @@ public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecT
     @Test
     public void bindingToNNAndBackAgain() {
         final Top topIdentOne = new TopBuilder().setTestUnionLeaf(new UnionType(IdentOne.VALUE)).build();
-        final Top topIdentOneReturned = thereAndBackAgain(InstanceIdentifier.builder(Top.class).build(), topIdentOne);
+        final Top topIdentOneReturned = thereAndBackAgain(DataObjectWildcard.builder(Top.class).build(), topIdentOne);
         assertNull(topIdentOneReturned.getTestUnionLeaf().getIdentTwo());
         assertEquals(topIdentOneReturned.getTestUnionLeaf().getIdentOne().implementedInterface(), IdentOne.class);
         final Top topIdentTwo = new TopBuilder().setTestUnionLeaf(new UnionType(IdentTwo.VALUE)).build();
-        final Top topIdentTwoReturned = thereAndBackAgain(InstanceIdentifier.builder(Top.class).build(), topIdentTwo);
+        final Top topIdentTwoReturned = thereAndBackAgain(DataObjectWildcard.builder(Top.class).build(), topIdentTwo);
         assertNull(topIdentTwoReturned.getTestUnionLeaf().getIdentOne());
         assertEquals(topIdentTwoReturned.getTestUnionLeaf().getIdentTwo().implementedInterface(), IdentTwo.class);
     }
@@ -78,7 +78,7 @@ public class UnionTypeWithMultipleIdentityrefsTest extends AbstractBindingCodecT
         // create binding instance with identity
         final Top topContainer = new TopBuilder().setTestUnionLeaf(chosenIdentity).build();
         // translate via codec into NN
-        final var translated = codecContext.toNormalizedDataObject(InstanceIdentifier.builder(Top.class).build(),
+        final var translated = codecContext.toNormalizedDataObject(DataObjectWildcard.builder(Top.class).build(),
             topContainer);
         assertNotNull(translated);
         // verify translation worked
