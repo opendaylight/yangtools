@@ -17,7 +17,7 @@ import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContBuilder;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContInt32;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContInt32.RefUnionInt32;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContInt32Builder;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
@@ -26,10 +26,10 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
     @Test
     public void listReferenceTest() {
         final YangInstanceIdentifier contYII = YangInstanceIdentifier.builder().node(Cont.QNAME).build();
-        final InstanceIdentifier<?> fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
+        final var fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
 
-        final InstanceIdentifier<Cont> BA_II_CONT = InstanceIdentifier.builder(Cont.class).build();
+        final var BA_II_CONT = DataObjectWildcard.builder(Cont.class).build();
         final Ref refVal = new Ref("myvalue");
         final Cont data = new ContBuilder().setRef(refVal).build();
         final var normalizedNode = codecContext.toNormalizedDataObject(BA_II_CONT, data);
@@ -44,10 +44,10 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
     @Test
     public void uint32LeafrefTest() {
         final YangInstanceIdentifier contYII = YangInstanceIdentifier.builder().node(ContInt32.QNAME).build();
-        final InstanceIdentifier<?> fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
+        final var fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
 
-        final InstanceIdentifier<ContInt32> BA_II_CONT = InstanceIdentifier.builder(ContInt32.class).build();
+        final DataObjectWildcard<ContInt32> BA_II_CONT = DataObjectWildcard.builder(ContInt32.class).build();
         final RefUnionInt32 refVal = new RefUnionInt32(Uint32.valueOf(5));
         final ContInt32 data = new ContInt32Builder().setRefUnionInt32(refVal).build();
         final var normalizedNode = codecContext.toNormalizedDataObject(BA_II_CONT, data);

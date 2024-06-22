@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.BaseIdentity;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
@@ -57,8 +57,10 @@ abstract class CompositeValueCodec extends AbstractValueCodec<Object, Object> {
 
         @Override
         Object bindingToDom(final Object bindingValue) {
-            checkArgument(bindingValue instanceof InstanceIdentifier, "Unexpected Binding value %s", bindingValue);
-            return valueCodec.fromBinding((InstanceIdentifier<?>) bindingValue);
+            return switch (bindingValue) {
+                case DataObjectIdentifier<?> id -> valueCodec.fromBinding(id.toWildcard());
+                default -> throw new IllegalArgumentException("Unexpected Binding value " + bindingValue);
+            };
         }
     }
 

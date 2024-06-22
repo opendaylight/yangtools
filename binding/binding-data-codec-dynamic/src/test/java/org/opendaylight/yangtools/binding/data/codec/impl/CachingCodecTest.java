@@ -30,7 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.test.leaf.caching.codec.rev190201.ContBu
 import org.opendaylight.yang.gen.v1.urn.test.leaf.caching.codec.rev190201.MyType;
 import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 public class CachingCodecTest extends AbstractBindingCodecTest {
 
     private static final NodeIdentifier TOP_LEVEL_LIST_ARG = new NodeIdentifier(TopLevelList.QNAME);
-    private static final InstanceIdentifier<Top> TOP_PATH = InstanceIdentifier.create(Top.class);
+    private static final DataObjectWildcard<Top> TOP_PATH = DataObjectWildcard.create(Top.class);
     private static final Map<TopLevelListKey, TopLevelList> TWO_LIST = createList(2);
     private static final Map<TopLevelListKey, TopLevelList> THREE_LIST = createList(3);
 
@@ -53,7 +53,7 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
     private static final Top TOP_THREE_LIST_DATA = new TopBuilder().setTopLevelList(THREE_LIST).build();
 
     private static final NodeIdentifier LEAF_ARG = new NodeIdentifier(QName.create(Cont.QNAME, "caching"));
-    private static final InstanceIdentifier<Cont> CONT_PATH = InstanceIdentifier.create(Cont.class);
+    private static final DataObjectWildcard<Cont> CONT_PATH = DataObjectWildcard.create(Cont.class);
 
     private static final Cont CONT_DATA = new ContBuilder().setCaching(new MyType(dataValue())).setNonCaching("test")
             .build();

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Map.Entry;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.Def;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.DefBuilder;
@@ -18,13 +17,12 @@ import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstBuilder;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstKey;
 import org.opendaylight.yang.gen.v1.mdsal442.keyuse.norev.Use;
 import org.opendaylight.yang.gen.v1.mdsal442.keyuse.norev.UseBuilder;
-import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 
 public class KeyInheritenceTest extends AbstractBindingCodecTest {
     private static final LstKey KEY = new LstKey("foo");
-    private static final InstanceIdentifier<Def> DEF_IID = InstanceIdentifier.create(Def.class);
-    private static final InstanceIdentifier<Use> USE_IID = InstanceIdentifier.create(Use.class);
+    private static final DataObjectWildcard<Def> DEF_IID = DataObjectWildcard.create(Def.class);
+    private static final DataObjectWildcard<Use> USE_IID = DataObjectWildcard.create(Use.class);
 
     private static final Def DEF = new DefBuilder()
             .setLst(ImmutableMap.of(KEY, new LstBuilder().setFoo("foo").withKey(KEY).build()))
@@ -36,7 +34,7 @@ public class KeyInheritenceTest extends AbstractBindingCodecTest {
     @Test
     public void testFromBinding() {
         final var domDef = codecContext.toNormalizedDataObject(DEF_IID, DEF);
-        Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(domDef.path(), domDef.node());
+        var entry = codecContext.fromNormalizedNode(domDef.path(), domDef.node());
         assertEquals(DEF_IID, entry.getKey());
         final Def codecDef = (Def) entry.getValue();
 

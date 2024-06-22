@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -29,5 +31,6 @@ public class BaseYangTypesTest {
         assertEquals("java.util", stringBooleanMap.getPackageName());
         assertEquals("Map", stringBooleanMap.getName());
         assertEquals(2, stringBooleanMap.getActualTypeArguments().length);
+        assertEquals(typeForClass(BindingInstanceIdentifier.class), BaseYangTypes.INSTANCE_IDENTIFIER);
     }
 }

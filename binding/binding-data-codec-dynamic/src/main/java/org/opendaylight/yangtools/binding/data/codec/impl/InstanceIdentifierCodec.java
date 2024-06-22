@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 
 final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
         //FIXME: this is not really an IllegalArgumentCodec, as it can legally return null from deserialize()
-        ValueCodec<YangInstanceIdentifier, InstanceIdentifier<?>> {
+        ValueCodec<YangInstanceIdentifier, DataObjectWildcard<?>> {
     private final BindingCodecContext context;
 
     InstanceIdentifierCodec(final BindingCodecContext context) {
@@ -30,7 +30,7 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     }
 
     @Override
-    public <T extends DataObject> InstanceIdentifier<T> toBinding(final YangInstanceIdentifier domPath) {
+    public <T extends DataObject> DataObjectWildcard<T> toBinding(final YangInstanceIdentifier domPath) {
         final var builder = new ArrayList<DataObjectStep<?>>();
         final var codec = context.getCodecContextNode(domPath, builder);
         if (codec == null) {
@@ -42,11 +42,11 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
             return null;
         }
 
-        return InstanceIdentifier.unsafeOf(builder);
+        return DataObjectWildcard.unsafeOf(builder);
     }
 
     @Override
-    public @NonNull YangInstanceIdentifier fromBinding(@NonNull final InstanceIdentifier<?> bindingPath) {
+    public @NonNull YangInstanceIdentifier fromBinding(final DataObjectWildcard<?> bindingPath) {
         final var domArgs = new ArrayList<PathArgument>();
         context.getCodecContextNode(bindingPath, domArgs);
         return YangInstanceIdentifier.of(domArgs);
@@ -54,13 +54,13 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
 
     @Override
     @Deprecated
-    public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
+    public YangInstanceIdentifier serialize(final DataObjectWildcard<?> input) {
         return fromBinding(input);
     }
 
     @Override
     @Deprecated
-    public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
+    public DataObjectWildcard<?> deserialize(final YangInstanceIdentifier input) {
         return toBinding(input);
     }
 }

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +33,7 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.con
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.cont.cont.choice.ContBase;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.grp.GrpCont;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.root.RootBase;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,8 +45,8 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     public static final String TOP_LEVEL_LIST_KEY_VALUE = "foo";
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
-    private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier
-            .builder(Top.class).child(TopLevelList.class, TOP_FOO_KEY).build();
+    private static final DataObjectWildcard<TopLevelList> BA_TOP_LEVEL_LIST =
+        DataObjectWildcard.builder(Top.class).child(TopLevelList.class, TOP_FOO_KEY).build();
 
     public static final QName TOP_QNAME = Top.QNAME;
     public static final QName TOP_LEVEL_LIST_QNAME = QName.create(TOP_QNAME, "top-level-list");
@@ -73,9 +73,9 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testYangIIToBindingAwareIIListWithKey() {
         final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_1_PATH);
-        final var last = Iterables.getLast(instanceIdentifier.getPathArguments());
+        final var last = Iterables.getLast(instanceIdentifier.steps());
         assertEquals(TopLevelList.class, instanceIdentifier.getTargetType());
-        assertFalse(instanceIdentifier.isWildcarded());
+        assertNotNull(instanceIdentifier.toIdentifier());
         final var key = assertInstanceOf(KeyStep.class, last).key();
         assertEquals(TopLevelListKey.class, key.getClass());
         assertEquals(TOP_LEVEL_LIST_KEY_VALUE, ((TopLevelListKey)key).getName());
@@ -84,7 +84,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testBindingAwareIIToYangIContainer() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
-                InstanceIdentifier.create(Top.class).child(TopLevelList.class));
+            DataObjectWildcard.create(Top.class).child(TopLevelList.class));
         final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifier);
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
@@ -93,7 +93,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testBindingAwareIIToYangIIWildcard() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
-                InstanceIdentifier.create(Top.class).child(TopLevelList.class));
+            DataObjectWildcard.create(Top.class).child(TopLevelList.class));
         final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifier);
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
@@ -102,7 +102,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testBindingAwareIIToYangIIListWithKey() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
-                InstanceIdentifier.create(Top.class).child(TopLevelList.class, TOP_FOO_KEY));
+            DataObjectWildcard.create(Top.class).child(TopLevelList.class, TOP_FOO_KEY));
         final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifierWithPredicates);
         assertTrue(((NodeIdentifierWithPredicates) lastPathArgument).values().contains(TOP_LEVEL_LIST_KEY_VALUE));
@@ -112,12 +112,12 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testChoiceCaseGroupingFromBinding() {
         final var contBase = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build());
+            DataObjectWildcard.builder(Cont.class).child(ContBase.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME), NodeIdentifier.create(GrpCont.QNAME)), contBase);
 
         final var contAug = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build());
+            DataObjectWildcard.builder(Cont.class).child(ContAug.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME),
             NodeIdentifier.create(GrpCont.QNAME.bindTo(ContAug.QNAME.getModule()))), contAug);
@@ -126,16 +126,16 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
         //         select the lexically-lower class
         assertEquals(1, ContBase.class.getCanonicalName().compareTo(ContAug.class.getCanonicalName()));
         final var contAugLegacy = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(Cont.class).child((Class) GrpCont.class).build());
+            DataObjectWildcard.builder(Cont.class).child((Class) GrpCont.class).build());
         assertEquals(contAug, contAugLegacy);
 
         final var rootBase = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(RootBase.class, GrpCont.class).build());
+            DataObjectWildcard.builder(RootBase.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Root.QNAME),
             NodeIdentifier.create(GrpCont.QNAME)), rootBase);
 
         final var rootAug = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(RootAug.class, GrpCont.class).build());
+            DataObjectWildcard.builder(RootAug.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Root.QNAME),
             NodeIdentifier.create(GrpCont.QNAME.bindTo(RootAug.QNAME.getModule()))), rootAug);
     }
@@ -144,19 +144,19 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     public void testChoiceCaseGroupingToBinding() {
         final var contBase = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Cont.QNAME, ContChoice.QNAME, GrpCont.QNAME));
-        assertEquals(InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build(), contBase);
+        assertEquals(DataObjectWildcard.builder(Cont.class).child(ContBase.class, GrpCont.class).build(), contBase);
 
         final var contAug = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Cont.QNAME, ContChoice.QNAME, GrpCont.QNAME.bindTo(ContAug.QNAME.getModule())));
-        assertEquals(InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
+        assertEquals(DataObjectWildcard.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
 
         final var rootBase = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Root.QNAME, GrpCont.QNAME));
-        assertEquals(InstanceIdentifier.builder(RootBase.class, GrpCont.class).build(), rootBase);
+        assertEquals(DataObjectWildcard.builder(RootBase.class, GrpCont.class).build(), rootBase);
 
         final var rootAug = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Root.QNAME, GrpCont.QNAME.bindTo(RootAug.QNAME.getModule())));
-        assertEquals(InstanceIdentifier.builder(RootAug.class, GrpCont.class).build(), rootAug);
+        assertEquals(DataObjectWildcard.builder(RootAug.class, GrpCont.class).build(), rootAug);
     }
 
     @Test

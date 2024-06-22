@@ -13,10 +13,10 @@ import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryList;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryListBuilder;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 
 public class BinaryKeyTest extends AbstractBindingCodecTest {
-    private final InstanceIdentifier<BinaryList> instanceIdentifier = InstanceIdentifier.create(BinaryList.class);
+    private final DataObjectWildcard<BinaryList> instanceIdentifier = DataObjectWildcard.create(BinaryList.class);
 
     @Test
     public void binaryKeyTest() {

@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataRoot;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.Notification;
@@ -35,7 +34,6 @@ public class BindingTypesTest {
         assertEquals("DATA_ROOT", typeForClass(DataRoot.class), BindingTypes.DATA_ROOT);
         assertEquals("KEY_AWARE", typeForClass(KeyAware.class), BindingTypes.KEY_AWARE);
         assertEquals("KEY", typeForClass(Key.class), BindingTypes.KEY);
-        assertEquals("INSTANCE_IDENTIFIER", typeForClass(InstanceIdentifier.class), BindingTypes.INSTANCE_IDENTIFIER);
     }
 
     @Test

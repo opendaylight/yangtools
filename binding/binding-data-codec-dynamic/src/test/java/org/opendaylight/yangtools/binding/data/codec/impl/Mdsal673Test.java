@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.Bar;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.BarBuilder;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -35,7 +35,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO),
             ImmutableNodes.newContainerBuilder().withNodeIdentifier(FOO).build());
         assertNotNull(entry);
-        assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
+        assertEquals(DataObjectWildcard.create(Foo.class), entry.getKey());
 
         final var obj = entry.getValue();
         assertThat(obj, instanceOf(Foo.class));
@@ -57,7 +57,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
                 .withChild(ImmutableNodes.newContainerBuilder().withNodeIdentifier(BAR).build())
                 .build());
         assertNotNull(entry);
-        assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
+        assertEquals(DataObjectWildcard.create(Foo.class), entry.getKey());
 
         final var obj = entry.getValue();
         assertThat(obj, instanceOf(Foo.class));
@@ -85,7 +85,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
             .build();
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO), data);
         assertNotNull(entry);
-        assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
+        assertEquals(DataObjectWildcard.create(Foo.class), entry.getKey());
 
         final var obj = entry.getValue();
         assertThat(obj, instanceOf(Foo.class));

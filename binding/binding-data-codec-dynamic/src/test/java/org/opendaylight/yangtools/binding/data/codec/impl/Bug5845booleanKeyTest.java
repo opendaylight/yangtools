@@ -17,7 +17,7 @@ import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.Bo
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListIntBuilder;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListIntKey;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListKey;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 
 public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
     @Test
@@ -39,7 +39,7 @@ public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
                         .build()))
                 .build();
 
-        final var subtreeCodec = codecContext.getDataObjectCodec(InstanceIdentifier.create(BooleanContainer.class));
+        final var subtreeCodec = codecContext.getDataObjectCodec(DataObjectIdentifier.of(BooleanContainer.class));
         final var serializedInt = subtreeCodec.serialize(booleanContainerInt);
         assertNotNull(serializedInt);
         final var serialized = subtreeCodec.serialize(booleanContainer);

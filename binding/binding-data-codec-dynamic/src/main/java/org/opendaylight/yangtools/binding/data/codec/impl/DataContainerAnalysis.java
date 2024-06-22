@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectWildcard;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -174,8 +174,8 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
     private static @NonNull DataObjectStep<?> createItem(final @Nullable Class<? extends DataObject> caseClass,
             final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
         return caseClass != null && childSchema instanceof AddedByUsesAware aware && aware.isAddedByUses()
-            ? InstanceIdentifier.createStep((Class) caseClass, (Class) childClass)
-                : InstanceIdentifier.createStep((Class) childClass);
+            ? DataObjectWildcard.createStep((Class) caseClass, (Class) childClass)
+                : DataObjectWildcard.createStep((Class) childClass);
     }
 
     // FIXME: MDSAL-780: these methods perform analytics using java.lang.reflect to acquire the basic shape of the
