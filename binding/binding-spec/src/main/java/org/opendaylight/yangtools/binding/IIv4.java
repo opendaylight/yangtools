@@ -31,7 +31,7 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
     }
 
     IIv4(final InstanceIdentifier<T> source) {
-        pathArguments = source.pathArguments;
+        pathArguments = source.steps;
         targetType = source.getTargetType();
         wildcarded = source.isWildcarded();
         hash = source.hashCode();

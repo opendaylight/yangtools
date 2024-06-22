@@ -14,10 +14,8 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**
  * Interface extended by all interfaces generated for a YANG {@code action}.
- *
- * @author Robert Varga
  */
-public non-sealed interface Action<P extends InstanceIdentifier<?>, I extends RpcInput, O extends RpcOutput>
+public non-sealed interface Action<P extends DataObjectIdentifier<?>, I extends RpcInput, O extends RpcOutput>
         extends BindingContract<Action<P, I, O>> {
     /**
      * Invoke the action.
@@ -26,7 +24,6 @@ public non-sealed interface Action<P extends InstanceIdentifier<?>, I extends Rp
      * @param input Input argument
      * @return Future result of invocation
      * @throws NullPointerException if any of the arguments are null
-     * @throws IllegalArgumentException if {@code path} is {@link InstanceIdentifier#isWildcarded()}
      */
     @CheckReturnValue
     @NonNull ListenableFuture<@NonNull RpcResult<@NonNull O>> invoke(@NonNull P path, @NonNull I input);

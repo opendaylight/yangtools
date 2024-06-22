@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -29,7 +28,8 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
         this.lastStep = lastStep;
     }
 
-    @NonNull KeyStep<K, T> lastStep() {
+    @Override
+    public KeyStep<K, T> lastStep() {
         return lastStep;
     }
 
@@ -54,7 +54,7 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     }
 
     @Override
-    Object writeReplace() throws ObjectStreamException {
+    Object writeReplace() {
         return new KIIv4<>(this);
     }
 }

@@ -13,13 +13,11 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
@@ -60,7 +58,8 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  * <p>
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  */
-public sealed class InstanceIdentifier<T extends DataObject>
+// FIXME: rename to 'DataObjectFilter' or 'DataObjectWildcard'
+public sealed class InstanceIdentifier<T extends DataObject> extends DataObjectReference<DataObjectStep<?>, T>
         implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
         permits KeyedInstanceIdentifier {
     @java.io.Serial
@@ -70,15 +69,15 @@ public sealed class InstanceIdentifier<T extends DataObject>
      * Protected to differentiate internal and external access. Internal access is required never to modify
      * the contents. References passed to outside entities have to be wrapped in an unmodifiable view.
      */
-    final Iterable<DataObjectStep<?>> pathArguments;
+    final Iterable<DataObjectStep<?>> steps;
 
     private final @NonNull Class<T> targetType;
     private final boolean wildcarded;
     private final int hash;
 
-    InstanceIdentifier(final Class<T> type, final Iterable<DataObjectStep<?>> pathArguments, final boolean wildcarded,
+    InstanceIdentifier(final Class<T> type, final Iterable<DataObjectStep<?>> steps, final boolean wildcarded,
             final int hash) {
-        this.pathArguments = requireNonNull(pathArguments);
+        this.steps = requireNonNull(steps);
         targetType = requireNonNull(type);
         this.wildcarded = wildcarded;
         this.hash = hash;
@@ -112,8 +111,9 @@ public sealed class InstanceIdentifier<T extends DataObject>
      *
      * @return Path argument chain. Immutable and does not contain nulls.
      */
-    public final @NonNull Iterable<DataObjectStep<?>> getPathArguments() {
-        return Iterables.unmodifiableIterable(pathArguments);
+    @Override
+    public final Iterable<DataObjectStep<?>> steps() {
+        return Iterables.unmodifiableIterable(steps);
     }
 
     /**
@@ -125,56 +125,13 @@ public sealed class InstanceIdentifier<T extends DataObject>
         return wildcarded;
     }
 
-    @Override
-    public final int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        final var other = (InstanceIdentifier<?>) obj;
-        if (pathArguments == other.pathArguments) {
-            return true;
-        }
-
-        /*
-         * We could now just go and compare the pathArguments, but that can be potentially expensive. Let's try to avoid
-         * that by checking various things that we have cached from pathArguments and trying to prove the identifiers
-         * are *not* equal.
-         */
-        return hash == other.hash && wildcarded == other.wildcarded && targetType == other.targetType
-            && keyEquals(other)
-            // Everything checks out so far, so we have to do a full equals
-            && Iterables.elementsEqual(pathArguments, other.pathArguments);
-    }
-
     boolean keyEquals(final InstanceIdentifier<?> other) {
         return true;
     }
 
     @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
-    /**
-     * Add class-specific toString attributes.
-     *
-     * @param toStringHelper ToStringHelper instance
-     * @return ToStringHelper instance which was passed in
-     */
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("targetType", targetType).add("path", Iterables.toString(pathArguments));
+    ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("targetType", targetType).add("path", Iterables.toString(steps));
     }
 
     /**
@@ -200,10 +157,10 @@ public sealed class InstanceIdentifier<T extends DataObject>
     public final <I extends DataObject> @Nullable InstanceIdentifier<I> firstIdentifierOf(
             final Class<@NonNull I> type) {
         int count = 1;
-        for (var step : pathArguments) {
+        for (var step : steps) {
             if (type.equals(step.type())) {
                 @SuppressWarnings("unchecked")
-                final var ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(pathArguments, count));
+                final var ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(steps, count));
                 return ret;
             }
 
@@ -223,7 +180,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
      */
     public final <N extends KeyAware<K> & DataObject, K extends Key<N>> @Nullable K firstKeyOf(
             final Class<@NonNull N> listItem) {
-        for (var step : pathArguments) {
+        for (var step : steps) {
             if (step instanceof KeyStep<?, ?> keyPredicate && listItem.equals(step.type())) {
                 @SuppressWarnings("unchecked")
                 final var ret = (K) keyPredicate.key();
@@ -257,8 +214,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
     public final boolean contains(final InstanceIdentifier<? extends DataObject> other) {
         requireNonNull(other, "other should not be null");
 
-        final var oit = other.pathArguments.iterator();
-        for (var step : pathArguments) {
+        final var oit = other.steps.iterator();
+        for (var step : steps) {
             if (!oit.hasNext()) {
                 return false;
             }
@@ -280,8 +237,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
     public final boolean containsWildcarded(final InstanceIdentifier<?> other) {
         requireNonNull(other, "other should not be null");
 
-        final var otherSteps = other.pathArguments.iterator();
-        for (var step : pathArguments) {
+        final var otherSteps = other.steps.iterator();
+        for (var step : steps) {
             if (!otherSteps.hasNext()) {
                 return false;
             }
@@ -304,7 +261,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
     }
 
     private <N extends DataObject> @NonNull InstanceIdentifier<N> childIdentifier(final DataObjectStep<N> arg) {
-        return trustedCreate(arg, Iterables.concat(pathArguments, Collections.singleton(arg)),
+        return trustedCreate(arg, Iterables.concat(steps, Collections.singleton(arg)),
             HashCodeBuilder.nextHashCode(hash, arg), wildcarded);
     }
 
@@ -391,8 +348,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
         return childIdentifier(new NodeStep<>(container));
     }
 
-    @java.io.Serial
-    Object writeReplace() throws ObjectStreamException {
+    @Override
+    Object writeReplace() {
         return new IIv4<>(this);
     }
 
@@ -411,17 +368,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
         throwNSE();
     }
 
-    private void throwNSE() throws NotSerializableException {
-        throw new NotSerializableException(getClass().getName());
-    }
-
-    /**
-     * Create a builder rooted at this key.
-     *
-     * @return A builder instance
-     */
-    // FIXME: rename this method to 'toBuilder()'
-    public @NonNull Builder<T> builder() {
+    @Override
+    public Builder<T> toBuilder() {
         return new RegularBuilder<>(this);
     }
 
@@ -826,7 +774,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
      *
      * @param <T> Instance identifier target type
      */
-    public abstract static sealed class Builder<T extends DataObject> {
+    public abstract static sealed class Builder<T extends DataObject>
+            extends DataObjectReferenceBuilder<DataObjectStep<?>, T> {
         private final ImmutableList.Builder<DataObjectStep<?>> pathBuilder;
         private final HashCodeBuilder<DataObjectStep<?>> hashBuilder;
         private final Iterable<? extends DataObjectStep<?>> basePath;
@@ -845,7 +794,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
             pathBuilder = ImmutableList.builder();
             hashBuilder = new HashCodeBuilder<>(identifier.hashCode());
             wildcard = identifier.isWildcarded();
-            basePath = identifier.pathArguments;
+            basePath = identifier.steps;
         }
 
         Builder(final DataObjectStep<?> item, final boolean wildcard) {
@@ -955,6 +904,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
          *
          * @return Resulting {@link InstanceIdentifier}.
          */
+        @Override
         public abstract @NonNull InstanceIdentifier<T> build();
 
         @Override

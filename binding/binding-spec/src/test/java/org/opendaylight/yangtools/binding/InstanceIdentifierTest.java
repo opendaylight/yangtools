@@ -136,7 +136,7 @@ public class InstanceIdentifierTest {
         assertFalse(instanceIdentifier1.equals(object));
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
 
-        Whitebox.setInternalState(instanceIdentifier2, "pathArguments", instanceIdentifier1.pathArguments);
+        Whitebox.setInternalState(instanceIdentifier2, "pathArguments", instanceIdentifier1.steps);
         Whitebox.setInternalState(instanceIdentifier4, "wildcarded", true);
 
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
@@ -147,7 +147,7 @@ public class InstanceIdentifierTest {
         Whitebox.setInternalState(instanceIdentifier5, "hash", instanceIdentifier1.hashCode());
         Whitebox.setInternalState(instanceIdentifier5, "wildcarded", false);
 
-        assertNotNull(InstanceIdentifier.unsafeOf(ImmutableList.copyOf(instanceIdentifier1.getPathArguments())));
+        assertNotNull(InstanceIdentifier.unsafeOf(ImmutableList.copyOf(instanceIdentifier1.steps())));
         assertNotNull(InstanceIdentifier.create(Nodes.class).child(Node.class));
         assertNotNull(InstanceIdentifier.create(Nodes.class).child(Node.class, new NodeKey(5)));
         assertNotNull(instanceIdentifier5.augmentation(NodeAugmentation.class));
