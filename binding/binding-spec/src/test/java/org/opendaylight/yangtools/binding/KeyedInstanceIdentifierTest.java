@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.test.mock.Node;
 import org.opendaylight.yangtools.binding.test.mock.NodeKey;
@@ -19,13 +20,13 @@ public class KeyedInstanceIdentifierTest {
     @Test
     public void basicTest() {
         final var key = new NodeKey(0);
-        final var keyed = new KeyedInstanceIdentifier<>(new KeyStep<>(Node.class, key), ImmutableList.of(),
-            false, 0);
+        final var keyStep = new KeyStep<>(Node.class, key);
+        final var keyed = new DataObjectWildcard.WithKey<>(List.of(keyStep), keyStep);
 
         assertEquals(key, keyed.getKey());
-        assertTrue(keyed.keyEquals(keyed.builder().build()));
+        assertTrue(keyed.keyEquals(keyed.toBuilder().build()));
 
-        final var keyless = new InstanceIdentifier<>(Node.class, ImmutableList.of(), true, 0);
-        assertTrue(keyless.keyEquals(keyed.builder().build()));
+        final var keyless = DataObjectWildcard.unsafeOf(ImmutableList.of(new KeylessStep<>(Node.class)));
+        assertTrue(keyless.keyEquals(keyed.toBuilder().build()));
     }
 }
