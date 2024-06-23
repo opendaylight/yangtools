@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 public record KeylessStep<T extends KeyAware<?> & DataObject>(
         @NonNull Class<T> type,
-        @Nullable Class<? extends DataObject> caseType) implements DataObjectStep<T> {
+        @Nullable Class<? extends DataObject> caseType) implements InexactDataObjectStep<T> {
     public KeylessStep {
         NodeStep.checkType(type, true);
         NodeStep.checkCaseType(caseType);
@@ -29,7 +29,8 @@ public record KeylessStep<T extends KeyAware<?> & DataObject>(
         this(type, null);
     }
 
-    boolean matches(final @NonNull DataObjectStep<?> other) {
+    @Override
+    public boolean matches(final DataObjectStep<?> other) {
         // FIXME: this should be an instanceof check for KeyStep, then a match -- i.e. reject match on plain NodeStep,
         //        because that is an addressing mismatch
         return type.equals(other.type()) && Objects.equals(caseType, other.caseType());
