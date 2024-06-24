@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingInstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 

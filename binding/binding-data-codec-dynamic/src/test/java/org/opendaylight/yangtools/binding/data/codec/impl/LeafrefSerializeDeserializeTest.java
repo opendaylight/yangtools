@@ -17,12 +17,11 @@ import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContBuilder;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContInt32;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContInt32.RefUnionInt32;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContInt32Builder;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
-
     @Test
     public void listReferenceTest() {
         final YangInstanceIdentifier contYII = YangInstanceIdentifier.builder().node(Cont.QNAME).build();

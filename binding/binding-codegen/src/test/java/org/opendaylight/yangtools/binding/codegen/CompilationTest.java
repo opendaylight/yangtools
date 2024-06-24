@@ -888,7 +888,7 @@ public class CompilationTest extends BaseCompilationTest {
     private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz,
             final String methodName) throws ClassNotFoundException, NoSuchMethodException, SecurityException {
         final Method method = clazz.getMethod(methodName);
-        final Class<?> rawReturnType = Class.forName("org.opendaylight.yangtools.binding.InstanceIdentifier", true,
+        final Class<?> rawReturnType = Class.forName("org.opendaylight.yangtools.yang.binding.InstanceIdentifier", true,
             loader);
         assertEquals(rawReturnType, method.getReturnType());
         final Type returnType = method.getGenericReturnType();

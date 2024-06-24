@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal483.norev.Bar;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal483.norev.BarBuilder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal483.norev.Foo;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Uint64;
 
 public class IdentityKeyTest extends AbstractBindingCodecTest {

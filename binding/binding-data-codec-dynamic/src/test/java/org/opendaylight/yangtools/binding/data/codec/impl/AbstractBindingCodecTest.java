@@ -13,7 +13,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTest {
     protected BindingCodecContext codecContext;

@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.BaseIdentity;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 

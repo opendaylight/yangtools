@@ -11,8 +11,8 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 @Beta

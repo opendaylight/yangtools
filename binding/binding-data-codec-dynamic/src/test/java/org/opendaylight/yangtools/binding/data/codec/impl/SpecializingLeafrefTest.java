@@ -16,7 +16,7 @@ import org.opendaylight.yang.gen.v1.mdsal426.norev.BarCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanContBuilder;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
     private static final InstanceIdentifier<BooleanCont> BOOLEAN_CONT_II = InstanceIdentifier

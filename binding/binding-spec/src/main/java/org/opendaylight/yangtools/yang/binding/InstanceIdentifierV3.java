@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.yang.binding;
 
 import com.google.common.collect.ImmutableList;
 import java.io.Externalizable;
@@ -16,6 +16,8 @@ import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
 import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectStep;
 
 class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
     @Serial
