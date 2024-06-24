@@ -54,6 +54,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7998e22e_56c93bbb",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2024-06-24T13:57:18Z",
+      "side": 1,
+      "message": "pattern.matcher(c).matches()",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0b137388_694ce29b",
         "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
         "patchSetId": 11
@@ -65,6 +82,23 @@
       "writtenOn": "2024-06-24T13:09:09Z",
       "side": 1,
       "message": "static",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ed99329_195a1de8",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2024-06-24T13:57:18Z",
+      "side": 1,
+      "message": "pattern.matcher(c).matches()",
       "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
