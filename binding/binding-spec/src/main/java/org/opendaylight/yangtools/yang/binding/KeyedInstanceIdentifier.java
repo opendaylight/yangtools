@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.binding;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.binding.KeyStep;
  * @param <K> Target key type
  */
 public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K extends Key<T>>
-        extends InstanceIdentifier<T> {
+        extends InstanceIdentifier<T> implements WithKey<T, K> {
     @java.io.Serial
     private static final long serialVersionUID = 2L;
 
@@ -38,24 +39,19 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
         return lastStep;
     }
 
-    /**
-     * Return the key attached to this identifier. This method is equivalent to calling
-     * {@link InstanceIdentifier#keyOf(InstanceIdentifier)}.
-     *
-     * @return Key associated with this instance identifier.
-     */
-    public @NonNull K getKey() {
+    @Override
+    public K key() {
         return lastStep.key();
     }
 
     @Override
-    public KeyedBuilder<T, K> builder() {
+    public KeyedBuilder<T, K> toBuilder() {
         return new KeyedBuilder<>(this);
     }
 
     @Override
     boolean keyEquals(final InstanceIdentifier<?> other) {
-        return getKey().equals(((KeyedInstanceIdentifier<?, ?>) other).getKey());
+        return key().equals(((KeyedInstanceIdentifier<?, ?>) other).key());
     }
 
     @Override

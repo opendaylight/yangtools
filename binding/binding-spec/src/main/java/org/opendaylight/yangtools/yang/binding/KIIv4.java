@@ -29,7 +29,7 @@ final class KIIv4<T extends KeyAware<K> & DataObject, K extends Key<T>> extends 
 
     KIIv4(final KeyedInstanceIdentifier<T, K> source) {
         super(source);
-        key = source.getKey();
+        key = source.key();
     }
 
     @Override
