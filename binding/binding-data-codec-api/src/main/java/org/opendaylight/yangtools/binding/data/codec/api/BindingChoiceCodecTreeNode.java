@@ -15,5 +15,5 @@ import org.opendaylight.yangtools.binding.ChoiceIn;
  * @param <C> ChoiceIn type
  */
 public interface BindingChoiceCodecTreeNode<C extends ChoiceIn<?>> extends BindingDataContainerCodecTreeNode<C> {
-
+    // Just a marker
 }

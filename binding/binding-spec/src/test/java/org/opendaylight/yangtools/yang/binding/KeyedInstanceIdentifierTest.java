@@ -5,13 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.yang.binding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
+import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.test.mock.Node;
 import org.opendaylight.yangtools.binding.test.mock.NodeKey;
 

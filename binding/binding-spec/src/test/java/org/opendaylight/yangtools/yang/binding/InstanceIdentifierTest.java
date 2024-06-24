@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.yang.binding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.junit.Test;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.test.mock.FooChild;
 import org.opendaylight.yangtools.binding.test.mock.FooRoot;
 import org.opendaylight.yangtools.binding.test.mock.InstantiatedFoo;

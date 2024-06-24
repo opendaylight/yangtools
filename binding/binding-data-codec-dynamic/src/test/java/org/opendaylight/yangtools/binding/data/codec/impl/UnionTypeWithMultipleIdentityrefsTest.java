@@ -19,7 +19,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.I
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.TopBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.yang.union.test.rev220428.UnionType;
-import org.opendaylight.yangtools.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;

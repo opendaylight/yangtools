@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
@@ -29,6 +29,19 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.ChildOf;
+import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.ExactDataObjectStep;
+import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.KeyStep;
+import org.opendaylight.yangtools.binding.KeylessStep;
+import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
@@ -631,6 +644,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static <N extends DataObject> @NonNull InstanceIdentifier<N> trustedCreate(final DataObjectStep<?> lastStep,
             final Iterable<DataObjectStep<?>> pathArguments, final int hash, final boolean wildcarded) {
+        // FIXME: use a switch expression
         if (lastStep instanceof NodeStep) {
             return new InstanceIdentifier(lastStep.type(), pathArguments, wildcarded, hash);
         } else if (lastStep instanceof KeyStep<?, ?> predicate) {
