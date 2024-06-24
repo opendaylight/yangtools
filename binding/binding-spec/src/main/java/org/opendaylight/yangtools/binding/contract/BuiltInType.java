@@ -52,6 +52,7 @@ public final class BuiltInType<T> {
     public static final @NonNull BuiltInType<@NonNull Empty> EMPTY = new BuiltInType<>("empty", Empty.class);
     public static final @NonNull BuiltInType<@NonNull UnionTypeObject> UNION =
         new BuiltInType<>("union", UnionTypeObject.class);
+    // FIXME: YANGTOOLS-1577: use BindingInstanceIdentifier instead
     @SuppressWarnings("rawtypes")
     public static final @NonNull BuiltInType<@NonNull InstanceIdentifier> INSTANCE_IDENTIFIER =
         new BuiltInType<>("instance-identifier", InstanceIdentifier.class);

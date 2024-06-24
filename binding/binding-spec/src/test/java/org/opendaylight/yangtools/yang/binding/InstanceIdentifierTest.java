@@ -45,7 +45,7 @@ public class InstanceIdentifierTest {
         assertNotNull(nodes);
         assertEquals(Nodes.class, nodes.getTargetType());
 
-        final InstanceIdentifier<Node> node = nodes.builder().child(Node.class).build();
+        final InstanceIdentifier<Node> node = nodes.toBuilder().child(Node.class).build();
 
         assertNotNull(node);
         assertEquals(Node.class, node.getTargetType());
@@ -94,7 +94,9 @@ public class InstanceIdentifierTest {
                 .child(Node.class)
                 .child(NodeChild.class).build();
 
+        assertFalse(wildcarded.isExact());
         assertTrue(wildcarded.isWildcarded());
+        assertFalse(wildcardedChildren.isExact());
         assertTrue(wildcardedChildren.isWildcarded());
 
         final InstanceIdentifier<Node> nodeTen = InstanceIdentifier.builder(Nodes.class)
@@ -149,14 +151,14 @@ public class InstanceIdentifierTest {
         Whitebox.setInternalState(instanceIdentifier5, "hash", instanceIdentifier1.hashCode());
         Whitebox.setInternalState(instanceIdentifier5, "wildcarded", false);
 
-        assertNotNull(InstanceIdentifier.unsafeOf(ImmutableList.copyOf(instanceIdentifier1.getPathArguments())));
+        assertNotNull(InstanceIdentifier.unsafeOf(ImmutableList.copyOf(instanceIdentifier1.steps())));
         assertNotNull(InstanceIdentifier.create(Nodes.class).child(Node.class));
         assertNotNull(InstanceIdentifier.create(Nodes.class).child(Node.class, new NodeKey(5)));
         assertNotNull(instanceIdentifier5.augmentation(NodeAugmentation.class));
         assertNotNull(instanceIdentifier1.hashCode());
         assertNotNull(instanceIdentifier1.toString());
 
-        final InstanceIdentifier.Builder instanceIdentifierBuilder = instanceIdentifier1.builder();
+        final InstanceIdentifier.Builder instanceIdentifierBuilder = instanceIdentifier1.toBuilder();
         assertEquals(instanceIdentifier1.hashCode(), instanceIdentifierBuilder.hashCode());
         assertNotNull(instanceIdentifierBuilder.augmentation(InstantiatedFoo.class));
         assertNotNull(instanceIdentifierBuilder.build());
@@ -208,10 +210,10 @@ public class InstanceIdentifierTest {
 
     @Test
     public void equalsTest() {
-        final InstanceIdentifier.Builder<FooRoot> builder1 =  InstanceIdentifier.create(FooRoot.class).builder();
-        final InstanceIdentifier.Builder<FooRoot> builder2 =  InstanceIdentifier.create(FooRoot.class).builder();
-        final InstanceIdentifier.Builder<Nodes> builder3 =  InstanceIdentifier.create(Nodes.class).builder();
-        final InstanceIdentifier.Builder<Nodes> builder4 =  InstanceIdentifier.create(Nodes.class).builder();
+        final InstanceIdentifier.Builder<FooRoot> builder1 = InstanceIdentifier.create(FooRoot.class).toBuilder();
+        final InstanceIdentifier.Builder<FooRoot> builder2 = InstanceIdentifier.create(FooRoot.class).toBuilder();
+        final InstanceIdentifier.Builder<Nodes> builder3 = InstanceIdentifier.create(Nodes.class).toBuilder();
+        final InstanceIdentifier.Builder<Nodes> builder4 = InstanceIdentifier.create(Nodes.class).toBuilder();
         final Object obj = new Object();
 
         assertTrue(builder1.equals(builder2));
@@ -235,10 +237,10 @@ public class InstanceIdentifierTest {
 
     @Test
     public void hashCodeTest() {
-        final InstanceIdentifier.Builder<FooRoot> builder1 =  InstanceIdentifier.create(FooRoot.class).builder();
-        final InstanceIdentifier.Builder<FooRoot> builder2 =  InstanceIdentifier.create(FooRoot.class).builder();
-        final InstanceIdentifier.Builder<Nodes> builder3 =  InstanceIdentifier.create(Nodes.class).builder();
-        final InstanceIdentifier.Builder<Nodes> builder4 =  InstanceIdentifier.create(Nodes.class).builder();
+        final InstanceIdentifier.Builder<FooRoot> builder1 = InstanceIdentifier.create(FooRoot.class).toBuilder();
+        final InstanceIdentifier.Builder<FooRoot> builder2 = InstanceIdentifier.create(FooRoot.class).toBuilder();
+        final InstanceIdentifier.Builder<Nodes> builder3 = InstanceIdentifier.create(Nodes.class).toBuilder();
+        final InstanceIdentifier.Builder<Nodes> builder4 = InstanceIdentifier.create(Nodes.class).toBuilder();
         final Object obj = new Object();
 
         assertTrue(builder1.hashCode() == builder2.hashCode());

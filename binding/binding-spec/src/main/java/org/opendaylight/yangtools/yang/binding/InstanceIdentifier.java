@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
@@ -74,7 +75,7 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  */
 public sealed class InstanceIdentifier<T extends DataObject>
-        implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
+        implements DataObjectReference<T>, HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
         permits KeyedInstanceIdentifier {
     @java.io.Serial
     private static final long serialVersionUID = 3L;
@@ -120,20 +121,18 @@ public sealed class InstanceIdentifier<T extends DataObject>
         return (InstanceIdentifier<N>) this;
     }
 
-    /**
-     * Return the path argument chain which makes up this instance identifier.
-     *
-     * @return Path argument chain. Immutable and does not contain nulls.
-     */
-    public final @NonNull Iterable<DataObjectStep<?>> getPathArguments() {
+    @Override
+    public final @NonNull Iterable<@NonNull DataObjectStep<?>> steps() {
         return Iterables.unmodifiableIterable(pathArguments);
     }
 
-    /**
-     * Check whether an instance identifier contains any wildcards. A wildcard is an path argument which has a null key.
-     *
-     * @return true if any of the path arguments has a null key.
-     */
+    @Override
+    public final boolean isExact() {
+        return !wildcarded;
+    }
+
+    @Override
+    @Deprecated(since = "14.0.0", forRemoval = true)
     public final boolean isWildcarded() {
         return wildcarded;
     }
@@ -428,13 +427,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
         throw new NotSerializableException(getClass().getName());
     }
 
-    /**
-     * Create a builder rooted at this key.
-     *
-     * @return A builder instance
-     */
-    // FIXME: rename this method to 'toBuilder()'
-    public @NonNull Builder<T> builder() {
+    @Override
+    public Builder<T> toBuilder() {
         return new RegularBuilder<>(this);
     }
 
@@ -637,7 +631,7 @@ public sealed class InstanceIdentifier<T extends DataObject>
         checkArgument(id instanceof KeyedInstanceIdentifier, "%s does not have a key", id);
 
         @SuppressWarnings("unchecked")
-        final K ret = ((KeyedInstanceIdentifier<N, K>)id).getKey();
+        final K ret = ((KeyedInstanceIdentifier<N, K>)id).key();
         return ret;
     }
 

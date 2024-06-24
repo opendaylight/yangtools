@@ -23,10 +23,10 @@ public class KeyedInstanceIdentifierTest {
         final var keyed = new KeyedInstanceIdentifier<>(new KeyStep<>(Node.class, key), ImmutableList.of(),
             false, 0);
 
-        assertEquals(key, keyed.getKey());
-        assertTrue(keyed.keyEquals(keyed.builder().build()));
+        assertEquals(key, keyed.key());
+        assertTrue(keyed.keyEquals(keyed.toBuilder().build()));
 
         final var keyless = new InstanceIdentifier<>(Node.class, ImmutableList.of(), true, 0);
-        assertTrue(keyless.keyEquals(keyed.builder().build()));
+        assertTrue(keyless.keyEquals(keyed.toBuilder().build()));
     }
 }

@@ -85,7 +85,9 @@ public final class BindingTypes {
     private static final ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
     private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
+    // FIXME: YANGTOOLS-1577: Use DataObjectReference
     private static final ConcreteType OBJECT_REFERENCE = typeForClass(InstanceIdentifier.class);
+    // FIXME: YANGTOOLS-1577: Use DataObjectReference.WithKey
     private static final ConcreteType OBJECT_REFERENCE_WITH_KEY = typeForClass(KeyedInstanceIdentifier.class);
     private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
