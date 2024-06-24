@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "74bd3762_67c33335",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2024-06-24T13:52:40Z",
+      "side": 1,
+      "message": "assertPatternMatch?\nassertPatternNotMatch?",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0909234e_8307fcd6",
         "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
         "patchSetId": 11
