@@ -14,10 +14,9 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**
  * Interface extended by all interfaces generated for a YANG {@code action} instantiated in keyed lists.
- *
- * @author Robert Varga
  */
 public interface KeyedListAction<K extends Key<T>, T extends DataObject & KeyAware<K>,
+        // FIXME: YANGTOOLS-1577: use DataObjectReference.WithKey instead
         I extends RpcInput, O extends RpcOutput> extends Action<KeyedInstanceIdentifier<T, K>, I, O> {
     @Override
     @CheckReturnValue

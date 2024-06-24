@@ -15,9 +15,8 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**
  * Interface extended by all interfaces generated for a YANG {@code action}.
- *
- * @author Robert Varga
  */
+// FIXME: YANGTOOLS-1577: use DataObjectReference instead
 public non-sealed interface Action<P extends InstanceIdentifier<?>, I extends RpcInput, O extends RpcOutput>
         extends BindingContract<Action<P, I, O>> {
     /**
