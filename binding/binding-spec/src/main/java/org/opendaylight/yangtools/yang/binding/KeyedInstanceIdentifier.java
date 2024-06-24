@@ -5,10 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.yang.binding;
 
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.KeyStep;
 
 /**
  * An {@link InstanceIdentifier}, which has a list key attached at its last path element.
