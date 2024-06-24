@@ -7,35 +7,35 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
-public class TypeNameTest {
+class TypeNameTest {
     @Test
-    public void testHashCode() {
-        JavaTypeName baseType1 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test");
-        JavaTypeName baseType2 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test2");
+    void testHashCode() {
+        var baseType1 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test");
+        var baseType2 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test2");
         assertNotEquals(baseType1.hashCode(), baseType2.hashCode());
     }
 
     @Test
-    public void testToString() {
-        JavaTypeName baseType = JavaTypeName.create("org.opendaylight.yangtools.test", "Test");
+    void testToString() {
+        var baseType = JavaTypeName.create("org.opendaylight.yangtools.test", "Test");
         assertTrue(baseType.toString().contains("org.opendaylight.yangtools.test.Test"));
         baseType = JavaTypeName.create(byte[].class);
         assertTrue(baseType.toString().contains("byte[]"));
     }
 
     @Test
-    public void testEquals() {
-        final JavaTypeName baseType1 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test");
-        final JavaTypeName baseType2 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test2");
-        final JavaTypeName baseType4 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test");
-        final JavaTypeName baseType5 = JavaTypeName.create("org.opendaylight.yangtools.test1", "Test");
+    void testEquals() {
+        final var baseType1 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test");
+        final var baseType2 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test2");
+        final var baseType4 = JavaTypeName.create("org.opendaylight.yangtools.test", "Test");
+        final var baseType5 = JavaTypeName.create("org.opendaylight.yangtools.test1", "Test");
 
         assertFalse(baseType1.equals(baseType2));
         assertFalse(baseType1.equals(null));

@@ -7,67 +7,63 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.WildcardType;
 
-public class TypesTest {
-
+class TypesTest {
     @Test
-    public void testVoidType() {
-        final ConcreteType voidType = Types.voidType();
+    void testVoidType() {
+        final var voidType = Types.voidType();
         assertEquals("Void", voidType.getName());
         assertNotNull(voidType);
     }
 
     @Test
-    public void testPrimitiveType() {
-        final Type primitiveType = Types.typeForClass(String[].class);
+    void testPrimitiveType() {
+        final var primitiveType = Types.typeForClass(String[].class);
         assertEquals("String[]", primitiveType.getName());
     }
 
     @Test
-    public void testMapTypeFor() {
-        final ParameterizedType mapType = Types.mapTypeFor(Types.objectType(), Types.objectType());
+    void testMapTypeFor() {
+        final var mapType = Types.mapTypeFor(Types.objectType(), Types.objectType());
         assertEquals("Map", mapType.getName());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testMapTypeForNull() {
-        Types.mapTypeFor(null, null);
+    @Test
+    void testMapTypeForNull() {
+        assertThrows(NullPointerException.class, () -> Types.mapTypeFor(null, null));
     }
 
     @Test
-    public void testSetTypeFor() {
-        final ParameterizedType setType = Types.setTypeFor(Types.objectType());
+    void testSetTypeFor() {
+        final var setType = Types.setTypeFor(Types.objectType());
         assertEquals("Set", setType.getName());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testSetTypeForNull() {
-        Types.setTypeFor(null);
+    @Test
+    void testSetTypeForNull() {
+        assertThrows(NullPointerException.class, () -> Types.setTypeFor(null));
     }
 
     @Test
-    public void testListTypeFor() {
-        final ParameterizedType listType = Types.listTypeFor(Types.objectType());
+    void testListTypeFor() {
+        final var listType = Types.listTypeFor(Types.objectType());
         assertEquals("List", listType.getName());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testListTypeForNull() {
-        Types.listTypeFor(null);
+    @Test
+    void testListTypeForNull() {
+        assertThrows(NullPointerException.class, () -> Types.listTypeFor(null));
     }
 
     @Test
-    public void testWildcardTypeFor() {
-        final WildcardType wildcardType = Types.wildcardTypeFor(JavaTypeName.create("org.opendaylight.yangtools.test",
+    void testWildcardTypeFor() {
+        final var wildcardType = Types.wildcardTypeFor(JavaTypeName.create("org.opendaylight.yangtools.test",
             "WildcardTypeTest"));
         assertEquals("WildcardTypeTest", wildcardType.getName());
     }
