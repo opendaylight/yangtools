@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.Types.parameterizedTypeFor;
+import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import com.google.common.annotations.Beta;
@@ -19,7 +20,6 @@ import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
-import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
@@ -36,10 +36,10 @@ import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
+import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -55,7 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 public final class BindingTypes {
 
-    public static final ConcreteType BASE_IDENTITY = typeForClass(BaseIdentity.class);
+    public static final ConcreteType BASE_IDENTITY = typeForBuiltIn(BuiltInType.IDENTITYREF);
     public static final ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
     public static final ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
     public static final ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
@@ -63,10 +63,8 @@ public final class BindingTypes {
     public static final ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
     public static final ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
-    public static final ConcreteType BITS_TYPE_OBJECT = typeForClass(BitsTypeObject.class);
-    public static final ConcreteType UNION_TYPE_OBJECT = typeForClass(UnionTypeObject.class);
-    public static final ConcreteType INSTANCE_IDENTIFIER = typeForClass(InstanceIdentifier.class);
-    public static final ConcreteType KEYED_INSTANCE_IDENTIFIER = typeForClass(KeyedInstanceIdentifier.class);
+    public static final ConcreteType BITS_TYPE_OBJECT = typeForBuiltIn(BuiltInType.BITS);
+    public static final ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
     public static final ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
 
     // This is an annotation, we are current just referencing the type
@@ -87,6 +85,8 @@ public final class BindingTypes {
     private static final ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
     private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
+    private static final ConcreteType OBJECT_REFERENCE = typeForClass(InstanceIdentifier.class);
+    private static final ConcreteType OBJECT_REFERENCE_WITH_KEY = typeForClass(KeyedInstanceIdentifier.class);
     private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
     private static final ConcreteType RPC = typeForClass(Rpc.class);
@@ -95,7 +95,7 @@ public final class BindingTypes {
     private static final ConcreteType YANG_DATA = typeForClass(YangData.class);
 
     private BindingTypes() {
-
+        //  Hidden on purpose
     }
 
     /**
@@ -108,7 +108,7 @@ public final class BindingTypes {
      * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType action(final Type parent, final Type input, final Type output) {
-        return parameterizedTypeFor(ACTION, instanceIdentifier(parent), input, output);
+        return parameterizedTypeFor(ACTION, objectReference(parent), input, output);
     }
 
     /**
@@ -236,8 +236,8 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code InstanceIdentifier<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static ParameterizedType instanceIdentifier(final Type type) {
-        return parameterizedTypeFor(INSTANCE_IDENTIFIER, type);
+    public static ParameterizedType objectReference(final Type type) {
+        return parameterizedTypeFor(OBJECT_REFERENCE, type);
     }
 
     /**
@@ -248,8 +248,8 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code KeyedInstanceIdentifier<Type, KeyType>}
      * @throws NullPointerException if any argument is is {@code null}
      */
-    public static ParameterizedType keyedInstanceIdentifier(final Type type, final Type keyType) {
-        return parameterizedTypeFor(KEYED_INSTANCE_IDENTIFIER, type, keyType);
+    public static ParameterizedType objectReferenceWithKey(final Type type, final Type keyType) {
+        return parameterizedTypeFor(OBJECT_REFERENCE_WITH_KEY, type, keyType);
     }
 
     /**
