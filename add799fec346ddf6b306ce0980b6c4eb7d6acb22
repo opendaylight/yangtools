@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32406761_daff1b3d",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2024-06-24T13:09:09Z",
+      "side": 1,
+      "message": "It means that that we should not replace characters as IDE suggests with, for example:\nUnicode escape sequence \u0027\\u00C0\u0027 can be replaced with \u0027À\u0027",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0909234e_8307fcd6",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2024-06-24T13:09:09Z",
+      "side": 1,
+      "message": "static",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0b137388_694ce29b",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2024-06-24T13:09:09Z",
+      "side": 1,
+      "message": "static",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
