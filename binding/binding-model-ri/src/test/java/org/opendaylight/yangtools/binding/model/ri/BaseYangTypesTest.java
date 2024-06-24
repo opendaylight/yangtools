@@ -7,27 +7,27 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class BaseYangTypesTest {
+class BaseYangTypesTest {
     @Test
-    public void test() {
-        Type stringType = BaseYangTypes.javaTypeForYangType("string");
+    void test() {
+        final var stringType = assertInstanceOf(ConcreteType.class, BaseYangTypes.javaTypeForYangType("string"));
         assertEquals("java.lang", stringType.getPackageName());
         assertEquals("String", stringType.getName());
-        assertTrue(stringType instanceof ConcreteType);
-        ParameterizedType stringBooleanMap = Types.mapTypeFor(
+        final var stringBooleanMap = Types.mapTypeFor(
             BaseYangTypes.javaTypeForYangType("string"),
             BaseYangTypes.javaTypeForYangType("boolean"));
-        assertTrue(!(stringBooleanMap instanceof ConcreteType));
+
         assertEquals("java.util", stringBooleanMap.getPackageName());
         assertEquals("Map", stringBooleanMap.getName());
         assertEquals(2, stringBooleanMap.getActualTypeArguments().length);
+
+        assertEquals(Types.typeForClass(InstanceIdentifier.class), BaseYangTypes.INSTANCE_IDENTIFIER);
     }
 }

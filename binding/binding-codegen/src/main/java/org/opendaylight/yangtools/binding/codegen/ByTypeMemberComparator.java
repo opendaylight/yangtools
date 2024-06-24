@@ -144,7 +144,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         if (type.equals(BaseYangTypes.STRING_TYPE) || type.equals(Types.BYTE_ARRAY)) {
             return RANK_VARIABLE_ARRAY;
         }
-        if (type.equals(BindingTypes.INSTANCE_IDENTIFIER) || type.equals(BindingTypes.KEYED_INSTANCE_IDENTIFIER)) {
+        if (type.equals(BaseYangTypes.INSTANCE_IDENTIFIER)) {
             return RANK_INSTANCE_IDENTIFIER;
         }
         if (type instanceof GeneratedTransferObject gto) {

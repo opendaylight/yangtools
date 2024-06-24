@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.BaseTypeWithRestrictions;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -130,6 +131,16 @@ public final class Types {
      */
     public static @NonNull ConcreteType serializableType() {
         return SERIALIZABLE;
+    }
+
+    /**
+     * Returns an instance of {@link ConcreteType} describing a {@link BuiltInType}.
+     *
+     * @param type {@link BuiltInType} to describe
+     * @return Description of the type
+     */
+    public static @NonNull ConcreteType typeForBuiltIn(final @NonNull BuiltInType<?> type) {
+        return typeForClass(type.javaClass());
     }
 
     /**
