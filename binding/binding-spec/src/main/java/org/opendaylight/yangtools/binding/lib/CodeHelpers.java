@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.binding.lib;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
@@ -25,6 +25,10 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.BindingContract;
+import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 
 /**
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
