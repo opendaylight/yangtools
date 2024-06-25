@@ -397,7 +397,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     @Override
     protected Object toSerialForm() {
-        return new IIv4<>(this);
+        return new IIv5(this);
     }
 
     @java.io.Serial

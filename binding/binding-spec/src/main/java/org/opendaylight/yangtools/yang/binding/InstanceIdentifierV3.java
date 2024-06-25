@@ -50,8 +50,8 @@ class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
-        throw new NotSerializableException(InstanceIdentifierV3.class.getName());
+    public final void writeExternal(final ObjectOutput out) throws IOException {
+        throw new NotSerializableException(getClass().getName());
     }
 
     @Override

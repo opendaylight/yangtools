@@ -52,9 +52,4 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     boolean keyEquals(final InstanceIdentifier<?> other) {
         return key().equals(((KeyedInstanceIdentifier<?, ?>) other).key());
     }
-
-    @Override
-    protected Object toSerialForm() {
-        return new KIIv4<>(this);
-    }
 }

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.binding;
 
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
 import java.io.Serial;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -27,12 +26,6 @@ final class KeyedInstanceIdentifierV2<T extends KeyAware<K> & DataObject, K exte
     @SuppressWarnings("redundantModifier")
     public KeyedInstanceIdentifierV2() {
         // For Externalizable
-    }
-
-    @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
-        super.writeExternal(out);
-        out.writeObject(key);
     }
 
     @Override

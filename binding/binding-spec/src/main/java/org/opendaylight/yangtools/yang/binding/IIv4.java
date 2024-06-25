@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import java.io.Externalizable;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
@@ -32,13 +32,6 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
         // For Externalizable
     }
 
-    IIv4(final InstanceIdentifier<T> source) {
-        pathArguments = source.pathArguments;
-        targetType = source.getTargetType();
-        wildcarded = source.isWildcarded();
-        hash = source.hashCode();
-    }
-
     final int getHash() {
         return hash;
     }
@@ -56,14 +49,8 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
-        out.writeObject(targetType);
-        out.writeBoolean(wildcarded);
-        out.writeInt(hash);
-        out.writeInt(Iterables.size(pathArguments));
-        for (var o : pathArguments) {
-            out.writeObject(o);
-        }
+    public final void writeExternal(final ObjectOutput out) throws IOException {
+        throw new NotSerializableException(getClass().getName());
     }
 
     @Override
