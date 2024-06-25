@@ -34,12 +34,12 @@
         <module>binding-data-codec-dynamic</module>
         <module>binding-data-codec-osgi</module>
         <module>binding-data-codec-spi</module>
+        <module>binding-generator</module>
         <module>binding-loader</module>
         <module>binding-model-api</module>
         <module>binding-model-ri</module>
         <module>binding-parent</module>
         <module>binding-reflect</module>
-        <module>binding-ri</module>
         <module>binding-runtime-api</module>
         <module>binding-runtime-osgi</module>
         <module>binding-runtime-spi</module>
