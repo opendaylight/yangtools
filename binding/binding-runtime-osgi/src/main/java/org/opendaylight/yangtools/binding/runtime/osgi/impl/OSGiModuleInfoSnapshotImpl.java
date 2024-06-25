@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.primitives.UnsignedLong;
 import java.util.Dictionary;
 import java.util.Map;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
@@ -68,7 +67,7 @@ public final class OSGiModuleInfoSnapshotImpl implements OSGiModuleInfoSnapshot 
     static Dictionary<String, ?> props(final long generation, final ModuleInfoSnapshot delegate) {
         return FrameworkUtil.asDictionary(Map.of(
             Constants.SERVICE_RANKING, ModelGenerationAware.computeServiceRanking(generation),
-            GENERATION, UnsignedLong.fromLongBits(generation),
+            GENERATION, Uint64.fromLongBits(generation),
             DELEGATE, delegate));
     }
 }
