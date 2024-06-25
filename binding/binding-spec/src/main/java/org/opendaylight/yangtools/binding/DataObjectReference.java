@@ -119,7 +119,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @implSpec
      *     The default implementation returns {@code true} to simplify implementation hierarchy.
      * @return {@code true} if this reference contains an {@link InexactDataObjectStep}
-     * @return true if any of the path arguments has a null key.
      * @deprecated Use negated result of {@link #isExact()} instead
      */
     @Deprecated(since = "14.0.0")
