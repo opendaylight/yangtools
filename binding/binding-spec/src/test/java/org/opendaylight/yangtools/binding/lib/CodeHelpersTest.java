@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.binding.lib;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.binding.EnumTypeObject;
 
 public class CodeHelpersTest {
     @Test

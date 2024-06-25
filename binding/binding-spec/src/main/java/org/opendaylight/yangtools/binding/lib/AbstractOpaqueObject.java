@@ -5,12 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.binding.lib;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.OpaqueData;
+import org.opendaylight.yangtools.binding.OpaqueObject;
 
 /**
  * Utility base class for {@link OpaqueObject} implementations. This class provides baseline implementation of

@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.binding.AbstractOpaqueData;
 import org.opendaylight.yangtools.binding.OpaqueData;
+import org.opendaylight.yangtools.binding.lib.AbstractOpaqueData;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
 
 /**
