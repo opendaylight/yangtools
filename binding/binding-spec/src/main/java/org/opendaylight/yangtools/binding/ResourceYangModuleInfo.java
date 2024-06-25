@@ -15,6 +15,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 
 /**
  * Base utility class for providing YANG module info backed by class resources.
