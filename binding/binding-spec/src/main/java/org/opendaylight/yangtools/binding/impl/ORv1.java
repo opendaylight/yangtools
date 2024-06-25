@@ -17,7 +17,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 
-final class ORv1 implements Externalizable {
+// visible and non-final for yang.binding.IIv5
+public class ORv1 implements Externalizable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
@@ -28,12 +29,12 @@ final class ORv1 implements Externalizable {
         // For Externalizable
     }
 
-    ORv1(final DataObjectReference<?> source) {
+    protected ORv1(final DataObjectReference<?> source) {
         steps = ImmutableList.copyOf(source.steps());
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
+    public final void writeExternal(final ObjectOutput out) throws IOException {
         out.writeInt(steps.size());
         for (var step : steps) {
             out.writeObject(step);
@@ -41,7 +42,7 @@ final class ORv1 implements Externalizable {
     }
 
     @Override
-    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    public final void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final int size = in.readInt();
         final var builder = ImmutableList.<DataObjectStep<?>>builderWithExpectedSize(size);
         for (int i = 0; i < size; ++i) {
@@ -51,7 +52,11 @@ final class ORv1 implements Externalizable {
     }
 
     @java.io.Serial
-    private Object readResolve() throws ObjectStreamException {
-        return DataObjectReferenceImpl.ofUnsafeSteps(steps);
+    protected final Object readResolve() throws ObjectStreamException {
+        return resolve(steps);
+    }
+
+    protected @NonNull DataObjectReference<?> resolve(final ImmutableList<@NonNull DataObjectStep<?>> toResolve) {
+        return DataObjectReferenceImpl.ofUnsafeSteps(toResolve);
     }
 }

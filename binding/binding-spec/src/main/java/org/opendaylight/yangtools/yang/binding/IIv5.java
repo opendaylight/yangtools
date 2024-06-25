@@ -8,19 +8,14 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import com.google.common.collect.ImmutableList;
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.impl.ORv1;
 
-final class IIv5 implements Externalizable {
+final class IIv5 extends ORv1 {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
-
-    private ImmutableList<@NonNull DataObjectStep<?>> steps;
 
     @SuppressWarnings("redundantModifier")
     public IIv5() {
@@ -28,29 +23,11 @@ final class IIv5 implements Externalizable {
     }
 
     IIv5(final InstanceIdentifier<?> source) {
-        steps = ImmutableList.copyOf(source.steps());
+        super(source);
     }
 
     @Override
-    public void writeExternal(final ObjectOutput out) throws IOException {
-        out.writeInt(steps.size());
-        for (var step : steps) {
-            out.writeObject(step);
-        }
-    }
-
-    @Override
-    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-        final int size = in.readInt();
-        final var builder = ImmutableList.<DataObjectStep<?>>builderWithExpectedSize(size);
-        for (int i = 0; i < size; ++i) {
-            builder.add((DataObjectStep<?>) in.readObject());
-        }
-        steps = builder.build();
-    }
-
-    @java.io.Serial
-    private Object readResolve() throws ObjectStreamException {
-        return InstanceIdentifier.unsafeOf(steps);
+    protected DataObjectReference<?> resolve(final ImmutableList<@NonNull DataObjectStep<?>> toResolve) {
+        return InstanceIdentifier.unsafeOf(toResolve);
     }
 }
