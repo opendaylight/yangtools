@@ -22,7 +22,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
@@ -82,14 +82,14 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * Protected to differentiate internal and external access. Internal access is required never to modify
      * the contents. References passed to outside entities have to be wrapped in an unmodifiable view.
      */
-    final Iterable<DataObjectStep<?>> pathArguments;
+    final Iterable<? extends DataObjectStep<?>> pathArguments;
 
     private final @NonNull Class<T> targetType;
     private final boolean wildcarded;
     private final int hash;
 
-    InstanceIdentifier(final Class<T> type, final Iterable<DataObjectStep<?>> pathArguments, final boolean wildcarded,
-            final int hash) {
+    InstanceIdentifier(final Class<T> type, final Iterable<? extends DataObjectStep<?>> pathArguments,
+            final boolean wildcarded, final int hash) {
         this.pathArguments = requireNonNull(pathArguments);
         targetType = requireNonNull(type);
         this.wildcarded = wildcarded;
@@ -120,7 +120,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     @Override
-    public final @NonNull Iterable<@NonNull DataObjectStep<?>> steps() {
+    public final Iterable<? extends @NonNull DataObjectStep<?>> steps() {
         return Iterables.unmodifiableIterable(pathArguments);
     }
 
@@ -309,8 +309,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     private <N extends DataObject> @NonNull InstanceIdentifier<N> childIdentifier(final DataObjectStep<N> arg) {
-        return trustedCreate(arg, Iterables.concat(pathArguments, Collections.singleton(arg)),
-            HashCodeBuilder.nextHashCode(hash, arg), wildcarded);
+        return trustedCreate(arg, concat(pathArguments, arg), HashCodeBuilder.nextHashCode(hash, arg), wildcarded);
     }
 
     /**
@@ -537,7 +536,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @throws IllegalArgumentException if pathArguments is empty or contains a null element.
      * @throws NullPointerException if {@code pathArguments} is null
      */
-    private static @NonNull InstanceIdentifier<?> internalCreate(final Iterable<DataObjectStep<?>> pathArguments) {
+    private static @NonNull InstanceIdentifier<?> internalCreate(
+            final Iterable<? extends DataObjectStep<?>> pathArguments) {
         final var it = requireNonNull(pathArguments, "pathArguments may not be null").iterator();
         checkArgument(it.hasNext(), "pathArguments may not be empty");
 
@@ -626,7 +626,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static <N extends DataObject> @NonNull InstanceIdentifier<N> trustedCreate(final DataObjectStep<?> lastStep,
-            final Iterable<DataObjectStep<?>> pathArguments, final int hash, final boolean wildcarded) {
+            final Iterable<? extends DataObjectStep<?>> pathArguments, final int hash, final boolean wildcarded) {
         // FIXME: use a switch expression
         if (lastStep instanceof NodeStep) {
             return new InstanceIdentifier(lastStep.type(), pathArguments, wildcarded, hash);
@@ -824,7 +824,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @param <T> Instance identifier target type
      */
     public abstract static sealed class Builder<T extends DataObject> {
-        private final ImmutableList.Builder<DataObjectStep<?>> pathBuilder;
+        private final ArrayList<DataObjectStep<?>> pathBuilder;
         private final HashCodeBuilder<DataObjectStep<?>> hashBuilder;
         private final Iterable<? extends DataObjectStep<?>> basePath;
 
@@ -839,14 +839,14 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
 
         Builder(final InstanceIdentifier<T> identifier) {
-            pathBuilder = ImmutableList.builder();
+            pathBuilder = new ArrayList<>(4);
             hashBuilder = new HashCodeBuilder<>(identifier.hashCode());
             wildcard = identifier.isWildcarded();
             basePath = identifier.pathArguments;
         }
 
         Builder(final DataObjectStep<?> item, final boolean wildcard) {
-            pathBuilder = ImmutableList.builder();
+            pathBuilder = new ArrayList<>(4);
             hashBuilder = new HashCodeBuilder<>();
             basePath = null;
             hashBuilder.addArgument(item);
@@ -954,6 +954,19 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
          */
         public abstract @NonNull InstanceIdentifier<T> build();
 
+        final Iterable<? extends DataObjectStep<?>> buildSteps() {
+            final var prefix = basePath;
+            if (prefix == null) {
+                return pathBuilder.isEmpty() ? ImmutableList.of() : ImmutableList.copyOf(pathBuilder);
+            }
+
+            return switch (pathBuilder.size()) {
+                case 0 -> prefix;
+                case 1 -> concat(prefix, pathBuilder.getFirst());
+                default -> ImmutableList.<DataObjectStep<?>>builder().addAll(prefix).addAll(pathBuilder).build();
+            };
+        }
+
         @Override
         public final int hashCode() {
             return hashBuilder.build();
@@ -966,12 +979,13 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
                 && Iterables.elementsEqual(pathArguments(), other.pathArguments());
         }
 
-        final Iterable<DataObjectStep<?>> pathArguments() {
-            final var args = pathBuilder.build();
-            return basePath == null ? args : Iterables.concat(basePath, args);
+        // Note: not suitable for use in result
+        private Iterable<? extends DataObjectStep<?>> pathArguments() {
+            return basePath == null ? pathBuilder : Iterables.concat(basePath, pathBuilder);
         }
 
         final void appendItem(final DataObjectStep<?> item) {
+            // note: implies non-null item
             hashBuilder.addArgument(item);
             pathBuilder.add(item);
             if (!(item instanceof ExactDataObjectStep)) {
@@ -1011,7 +1025,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
          */
         @Override
         public @NonNull KeyedInstanceIdentifier<T, K> build() {
-            return new KeyedInstanceIdentifier<>(lastStep, pathArguments(), wildcard(), hashCode());
+            return new KeyedInstanceIdentifier<>(lastStep, buildSteps(), wildcard(), hashCode());
         }
 
         @Override
@@ -1048,7 +1062,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
         @Override
         public InstanceIdentifier<T> build() {
-            return new InstanceIdentifier<>(type, pathArguments(), wildcard(), hashCode());
+            return new InstanceIdentifier<>(type, buildSteps(), wildcard(), hashCode());
         }
 
         @Override

@@ -22,7 +22,7 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    private @Nullable Iterable<DataObjectStep<?>> pathArguments;
+    private @Nullable Iterable<? extends DataObjectStep<?>> pathArguments;
     private @Nullable Class<T> targetType;
     private boolean wildcarded;
     private int hash;
@@ -43,7 +43,7 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
         return hash;
     }
 
-    final Iterable<DataObjectStep<?>> getPathArguments() {
+    final Iterable<? extends DataObjectStep<?>> getPathArguments() {
         return pathArguments;
     }
 

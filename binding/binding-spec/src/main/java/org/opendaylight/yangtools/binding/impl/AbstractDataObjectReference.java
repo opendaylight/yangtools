@@ -15,6 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
@@ -70,6 +71,11 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
 
     protected @NonNull Object toSerialForm() {
         return new ORv1(this);
+    }
+
+    @NonNullByDefault
+    public static final <T> Iterable<? extends T> concat(final Iterable<? extends T> others, final T last) {
+        return new AppendIterable<>(others, last);
     }
 
     @java.io.Serial

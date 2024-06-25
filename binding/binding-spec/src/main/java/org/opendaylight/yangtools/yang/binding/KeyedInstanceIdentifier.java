@@ -28,7 +28,7 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
 
     private final @NonNull KeyStep<K, T> lastStep;
 
-    KeyedInstanceIdentifier(final KeyStep<K, T> lastStep, final Iterable<DataObjectStep<?>> pathArguments,
+    KeyedInstanceIdentifier(final KeyStep<K, T> lastStep, final Iterable<? extends DataObjectStep<?>> pathArguments,
             final boolean wildcarded, final int hash) {
         super(lastStep.type(), pathArguments, wildcarded, hash);
         this.lastStep = lastStep;
