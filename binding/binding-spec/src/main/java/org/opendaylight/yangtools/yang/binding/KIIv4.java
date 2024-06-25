@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 
+@Deprecated(since = "14.0.0", forRemoval = true)
 final class KIIv4<T extends KeyAware<K> & DataObject, K extends Key<T>> extends IIv4<T> {
     @java.io.Serial
     private static final long serialVersionUID = 2L;

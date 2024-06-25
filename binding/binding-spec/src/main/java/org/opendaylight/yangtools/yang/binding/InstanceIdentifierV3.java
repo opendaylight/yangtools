@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 
+@Deprecated(since = "14.0.0", forRemoval = true)
 class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
     @java.io.Serial
     private static final long serialVersionUID = 3L;
