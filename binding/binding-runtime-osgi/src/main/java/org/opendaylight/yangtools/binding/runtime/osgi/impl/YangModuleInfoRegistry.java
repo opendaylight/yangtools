@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.binding.runtime.osgi.impl;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.YangFeatureProvider;
-import org.opendaylight.yangtools.binding.YangModuleInfo;
+import org.opendaylight.yangtools.binding.meta.YangFeatureProvider;
+import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.osgi.framework.BundleContext;

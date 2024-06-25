@@ -9,6 +9,7 @@ module org.opendaylight.yangtools.binding.spec {
     exports org.opendaylight.yangtools.binding;
     exports org.opendaylight.yangtools.binding.annotations;
     exports org.opendaylight.yangtools.binding.contract;
+    exports org.opendaylight.yangtools.binding.meta;
     exports org.opendaylight.yangtools.binding.util;
     // FIXME: inhume this package
     exports org.opendaylight.yangtools.yang.binding;

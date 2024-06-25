@@ -5,11 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.binding.meta;
 
 import java.util.ServiceLoader;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.YangFeature;
 
 /**
  * Run-time feature discovery service. Implementations of this interface are required to be registered with the
