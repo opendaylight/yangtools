@@ -7,8 +7,13 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
+import org.opendaylight.yangtools.binding.impl.DataObjectReferenceImpl;
+import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Builder;
@@ -38,7 +43,7 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 //*       {@link InexactDataObjectStep#matches(DataObjectStep)}.
 //* </ul>
 public sealed interface DataObjectReference<T extends DataObject> extends Immutable, Serializable
-        permits DataObjectIdentifier, DataObjectReference.WithKey, InstanceIdentifier {
+        permits DataObjectIdentifier, DataObjectReference.WithKey, AbstractDataObjectReference {
     /**
      * A {@link DataObjectReference} pointing to a {@link KeyAware} {@link DataObject}, typically a map entry.
      *
@@ -47,7 +52,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      */
     sealed interface WithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
             extends DataObjectReference<T>, KeyAware<K>
-            permits DataObjectIdentifier.WithKey, KeyedInstanceIdentifier {
+            permits DataObjectIdentifier.WithKey, DataObjectReferenceWithKey, KeyedInstanceIdentifier {
         @Override
         KeyedBuilder<T, K> toBuilder();
 
@@ -62,6 +67,19 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         default @NonNull K getKey() {
             return key();
         }
+    }
+
+    static @NonNull DataObjectReference<?> ofUnsafeSteps(final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
+        return ofUnsafeSteps(ImmutableList.copyOf(steps));
+    }
+
+    static @NonNull DataObjectReference<?> ofUnsafeSteps(final List<? extends @NonNull DataObjectStep<?>> steps) {
+        return ofUnsafeSteps(ImmutableList.copyOf(steps));
+    }
+
+    static @NonNull DataObjectReference<?> ofUnsafeSteps(
+            final ImmutableList<? extends @NonNull DataObjectStep<?>> steps) {
+        return DataObjectReferenceImpl.ofUnsafeSteps(steps);
     }
 
     /**
@@ -96,7 +114,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @return A builder instance
      * @deprecated Use {@link #toBuilder()} instead.
      */
-    @Deprecated(since = "14.0.0", forRemoval = true)
+    @Deprecated(since = "14.0.0")
     default @NonNull Builder<T> builder() {
         return toBuilder();
     }
