@@ -5,20 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.binding.contract;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.annotations.Beta;
 import java.util.regex.Pattern;
 
-@Beta
 public final class RegexPatterns {
     private static final String NEGATED_PATTERN_PREFIX = "^(?!";
     private static final String NEGATED_PATTERN_SUFFIX = ").*$";
 
     private RegexPatterns() {
-
+        // Hidden on purpose
     }
 
     /**

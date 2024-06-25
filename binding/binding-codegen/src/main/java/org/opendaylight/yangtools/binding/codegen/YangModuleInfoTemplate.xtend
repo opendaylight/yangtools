@@ -47,7 +47,7 @@ final class YangModuleInfoTemplate {
         import java.lang.Override;
         import java.lang.String;
         import org.eclipse.jdt.annotation.NonNull;
-        import org.opendaylight.yangtools.binding.ResourceYangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
         import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
         import org.opendaylight.yangtools.yang.common.QName;
     '''
@@ -58,7 +58,7 @@ final class YangModuleInfoTemplate {
         import java.util.HashSet;
         import java.util.Set;
         import org.eclipse.jdt.annotation.NonNull;
-        import org.opendaylight.yangtools.binding.ResourceYangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
         import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
         import org.opendaylight.yangtools.yang.common.QName;
     '''

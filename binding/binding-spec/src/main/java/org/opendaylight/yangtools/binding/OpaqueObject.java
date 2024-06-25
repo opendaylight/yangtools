@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
 
 /**
  * An opaque object. This interface supports code generation for both {@code anyxml} and {@code anydata}. Both of these

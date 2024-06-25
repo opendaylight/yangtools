@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding;
+package org.opendaylight.yangtools.binding.lib;
 
 import static java.util.Objects.requireNonNull;
 
@@ -13,6 +13,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.Augmentation;
 
 /**
  * Abstract base class for implementing immutable {@link Augmentable} classes. This class is provided as a convenience.

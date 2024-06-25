@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.lib.AbstractOpaqueData;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**

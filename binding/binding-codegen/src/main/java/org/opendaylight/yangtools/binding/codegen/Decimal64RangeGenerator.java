@@ -12,7 +12,7 @@ import java.lang.reflect.Array;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
-import org.opendaylight.yangtools.binding.CodeHelpers;
+import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint8;
