@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
-import static org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
+import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
+import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;

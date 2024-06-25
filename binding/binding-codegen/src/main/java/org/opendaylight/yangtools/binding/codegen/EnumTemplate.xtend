@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen
 
-import static extension org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
+import static extension org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import org.opendaylight.yangtools.binding.model.api.Enumeration

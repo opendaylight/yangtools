@@ -77,7 +77,7 @@
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-ri</artifactId>
+            <artifactId>binding-generator</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
