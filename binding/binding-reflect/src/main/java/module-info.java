@@ -8,7 +8,7 @@
 module org.opendaylight.yangtools.binding.reflect {
     exports org.opendaylight.yangtools.binding.reflect;
 
-    uses org.opendaylight.yangtools.binding.YangModelBindingProvider;
+    uses org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 
     requires transitive org.opendaylight.yangtools.binding.spec;
     requires transitive org.opendaylight.yangtools.yang.common;
