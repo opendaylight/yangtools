@@ -13,13 +13,11 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
@@ -34,7 +32,6 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
@@ -43,6 +40,7 @@ import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.NodeStep;
+import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
@@ -74,8 +72,8 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  * <p>
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  */
-public sealed class InstanceIdentifier<T extends DataObject>
-        implements DataObjectReference<T>, HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
+public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDataObjectReference<T, DataObjectStep<?>>
+        implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
         permits KeyedInstanceIdentifier {
     @java.io.Serial
     private static final long serialVersionUID = 3L;
@@ -175,16 +173,11 @@ public sealed class InstanceIdentifier<T extends DataObject>
     }
 
     @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    protected final Class<?> contract() {
+        return getClass();
     }
 
-    /**
-     * Add class-specific toString attributes.
-     *
-     * @param toStringHelper ToStringHelper instance
-     * @return ToStringHelper instance which was passed in
-     */
+    @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
         return toStringHelper.add("targetType", targetType).add("path", Iterables.toString(pathArguments));
     }
@@ -403,8 +396,8 @@ public sealed class InstanceIdentifier<T extends DataObject>
         return childIdentifier(new NodeStep<>(container));
     }
 
-    @java.io.Serial
-    Object writeReplace() throws ObjectStreamException {
+    @Override
+    protected Object toSerialForm() {
         return new IIv4<>(this);
     }
 
@@ -421,10 +414,6 @@ public sealed class InstanceIdentifier<T extends DataObject>
     @java.io.Serial
     private void writeObject(final ObjectOutputStream stream) throws IOException {
         throwNSE();
-    }
-
-    private void throwNSE() throws NotSerializableException {
-        throw new NotSerializableException(getClass().getName());
     }
 
     @Override

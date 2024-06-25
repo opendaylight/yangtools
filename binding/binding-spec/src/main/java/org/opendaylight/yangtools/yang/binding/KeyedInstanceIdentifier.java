@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
@@ -55,7 +54,7 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     }
 
     @Override
-    Object writeReplace() throws ObjectStreamException {
+    protected Object toSerialForm() {
         return new KIIv4<>(this);
     }
 }

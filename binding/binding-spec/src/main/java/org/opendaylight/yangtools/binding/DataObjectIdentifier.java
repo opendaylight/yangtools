@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
+import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierWithKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.KeyedBuilder;
 
 /**
@@ -16,19 +20,36 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.KeyedBuilder;
  *
  * @param <T> type of {@link DataObject} held in the last step.
  */
-// FIXME: YANGTOOLS-1577: seal this type
-public non-sealed interface DataObjectIdentifier<T extends DataObject>
-        extends DataObjectReference<T>, BindingInstanceIdentifier {
+public sealed interface DataObjectIdentifier<T extends DataObject>
+        extends DataObjectReference<T>, BindingInstanceIdentifier
+        permits DataObjectIdentifier.WithKey, DataObjectIdentifierImpl {
     /**
      * A {@link DataObjectIdentifier} pointing to a {@link KeyAware} {@link DataObject}, typically a map entry.
      *
      * @param <K> Key type
      * @param <T> KeyAware type
      */
-    non-sealed interface WithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
-            extends DataObjectIdentifier<T>, DataObjectReference.WithKey<T, K> {
+    sealed interface WithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
+            extends DataObjectIdentifier<T>, DataObjectReference.WithKey<T, K>
+            permits DataObjectIdentifierWithKey {
         @Override
         KeyedBuilder<T, K> toBuilder();
+    }
+
+    static @NonNull DataObjectIdentifier<?> ofUnsafeSteps(
+            final Iterable<? extends @NonNull ExactDataObjectStep<?>> steps) {
+        return ofUnsafeSteps(ImmutableList.copyOf(steps));
+    }
+
+    static @NonNull DataObjectIdentifier<?> ofUnsafeSteps(
+            final List<? extends @NonNull ExactDataObjectStep<?>> steps) {
+        return ofUnsafeSteps(ImmutableList.copyOf(steps));
+    }
+
+    static @NonNull DataObjectIdentifier<?> ofUnsafeSteps(
+            final ImmutableList<? extends @NonNull ExactDataObjectStep<?>> steps) {
+        // FIXME: YANGTOOLS-1577: DataObjectReferenceImpl.ofUnsafeSteps() instead
+        return DataObjectIdentifierImpl.ofUnsafeSteps(steps);
     }
 
     @Override
