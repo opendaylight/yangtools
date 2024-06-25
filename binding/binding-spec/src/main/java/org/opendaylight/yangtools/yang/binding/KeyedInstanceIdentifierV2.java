@@ -9,19 +9,14 @@ package org.opendaylight.yangtools.yang.binding;
 
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectStreamException;
-import java.io.Serial;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
-import org.opendaylight.yangtools.binding.KeyStep;
 
 final class KeyedInstanceIdentifierV2<T extends KeyAware<K> & DataObject, K extends Key<T>>
         extends InstanceIdentifierV3<T> {
     @java.io.Serial
     private static final long serialVersionUID = 2L;
-
-    private K key;
 
     @SuppressWarnings("redundantModifier")
     public KeyedInstanceIdentifierV2() {
@@ -31,13 +26,6 @@ final class KeyedInstanceIdentifierV2<T extends KeyAware<K> & DataObject, K exte
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
-        key = (K) in.readObject();
-    }
-
-    @Serial
-    @Override
-    Object readResolve() throws ObjectStreamException {
-        return new KeyedInstanceIdentifier<>(new KeyStep<>(getTargetType(), key), getPathArguments(),
-            isWildcarded(), getHash());
+        Key.class.cast(in.readObject());
     }
 }

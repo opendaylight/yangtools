@@ -22,30 +22,11 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    private @Nullable Iterable<? extends DataObjectStep<?>> pathArguments;
-    private @Nullable Class<T> targetType;
-    private boolean wildcarded;
-    private int hash;
+    private @Nullable ImmutableList<? extends DataObjectStep<?>> pathArguments;
 
     @SuppressWarnings("redundantModifier")
     public IIv4() {
         // For Externalizable
-    }
-
-    final int getHash() {
-        return hash;
-    }
-
-    final Iterable<? extends DataObjectStep<?>> getPathArguments() {
-        return pathArguments;
-    }
-
-    final Class<T> getTargetType() {
-        return targetType;
-    }
-
-    final boolean isWildcarded() {
-        return wildcarded;
     }
 
     @Override
@@ -55,9 +36,9 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
 
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-        targetType = (Class<T>) in.readObject();
-        wildcarded = in.readBoolean();
-        hash = in.readInt();
+        Class.class.cast(in.readObject());
+        in.readBoolean();
+        in.readInt();
 
         final int size = in.readInt();
         final var builder = ImmutableList.<DataObjectStep<?>>builderWithExpectedSize(size);
@@ -68,7 +49,7 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
     }
 
     @java.io.Serial
-    Object readResolve() throws ObjectStreamException {
-        return new InstanceIdentifier<>(targetType, pathArguments, wildcarded, hash);
+    final Object readResolve() throws ObjectStreamException {
+        return InstanceIdentifier.unsafeOf(pathArguments);
     }
 }
