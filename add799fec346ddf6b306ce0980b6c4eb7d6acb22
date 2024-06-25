@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9f1410f_b9757bbd",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/RegexUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-06-25T09:33:19Z",
+      "side": 1,
+      "message": "Yes, we should not replace characters as IDE suggests. See in previous comment:\nhttps://git.opendaylight.org/gerrit/c/yangtools/+/111365/comment/b90d5bf2_c3608f12/\n\nAlso, not all those Unicode characters are replaceable.",
+      "parentUuid": "32406761_daff1b3d",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "74bd3762_67c33335",
@@ -31,6 +49,24 @@
       "writtenOn": "2024-06-24T13:52:40Z",
       "side": 1,
       "message": "assertPatternMatch?\nassertPatternNotMatch?",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a38b41e5_2a18a8f6",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-06-25T09:33:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "74bd3762_67c33335",
       "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1aa1fe7_fd8ffaa0",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-06-25T09:33:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0909234e_8307fcd6",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7998e22e_56c93bbb",
@@ -65,6 +119,24 @@
       "writtenOn": "2024-06-24T13:57:18Z",
       "side": 1,
       "message": "pattern.matcher(c).matches()",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f3d57c1_c7525dec",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-06-25T09:33:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7998e22e_56c93bbb",
       "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -86,6 +158,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6587ee48_6d3baf7f",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-06-25T09:33:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b137388_694ce29b",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5ed99329_195a1de8",
@@ -99,6 +189,24 @@
       "writtenOn": "2024-06-24T13:57:18Z",
       "side": 1,
       "message": "pattern.matcher(c).matches()",
+      "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ff61da0_15796ed6",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/pattern/YT1571Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2024-06-25T09:33:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ed99329_195a1de8",
       "revId": "add799fec346ddf6b306ce0980b6c4eb7d6acb22",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
