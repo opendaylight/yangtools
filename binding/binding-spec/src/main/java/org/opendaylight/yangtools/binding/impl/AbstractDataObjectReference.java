@@ -15,6 +15,7 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -34,6 +35,11 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     // FIXME: YANGTOOLS-1577: final
     @Override
     public abstract Iterable<? extends @NonNull S> steps();
+
+    @Override
+    public DataObjectStep<T> lastStep() {
+        return getLast(steps());
+    }
 
     @Override
     public final int hashCode() {
@@ -58,6 +64,15 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
 
     protected @NonNull Class<?> contract() {
         return DataObjectReference.class;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static final <T> @NonNull T getLast(final Iterable<?> steps) {
+        return (@NonNull T) switch (steps) {
+            case AppendIterable<?> append -> append.last();
+            case List<?> list -> list.getLast();
+            default -> Iterables.getLast(steps);
+        };
     }
 
     /**

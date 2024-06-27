@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.impl;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.KeyStep;
 
 // FIXME: YANGTOOLS-1577: final
 public abstract non-sealed class DataObjectReferenceWithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
@@ -25,15 +23,9 @@ public abstract non-sealed class DataObjectReferenceWithKey<T extends KeyAware<K
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    private final @NonNull K key;
-
-    protected DataObjectReferenceWithKey(final K key) {
-        this.key = requireNonNull(key);
-    }
-
     @Override
-    public final K key() {
-        return key;
+    public final KeyStep<K, T> lastStep() {
+        return getLast(steps());
     }
 
     @java.io.Serial
