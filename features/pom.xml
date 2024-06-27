@@ -32,6 +32,7 @@
 
         <!-- Stable features -->
         <module>odl-bytebuddy</module>
+        <module>odl-yangtools-binding-runtime</module>
         <module>odl-yangtools-binding-spec</module>
         <module>odl-yangtools-codec</module>
         <module>odl-yangtools-common</module>

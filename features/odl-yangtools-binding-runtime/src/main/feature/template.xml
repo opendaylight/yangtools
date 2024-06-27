@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-mdsal-runtime-api">
+    <repository>mvn:org.opendaylight.yangtools/odl-bytebuddy/{{versionAsInProject}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-parser/{{versionAsInProject}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-binding-spec/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-binding-runtime">
+        <feature version="{{semVerRange}}">odl-bytebuddy</feature>
+        <feature version="{{semVerRange}}">odl-yangtools-binding-spec</feature>
+        <feature version="{{semVerRange}}">odl-yangtools-parser</feature>
+        <bundle>mvn:org.opendaylight.yangtools/binding-generator/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-loader/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-model-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-model-ri/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-runtime-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-runtime-osgi/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-runtime-spi/{{versionAsInProject}}</bundle>
+    </feature>
+</features>
