@@ -139,7 +139,7 @@ public class InstanceIdentifierTest {
         assertFalse(instanceIdentifier1.equals(object));
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
 
-        Whitebox.setInternalState(instanceIdentifier2, "pathArguments", instanceIdentifier1.pathArguments);
+        Whitebox.setInternalState(instanceIdentifier2, "steps", instanceIdentifier1.steps());
 
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
         assertFalse(instanceIdentifier1.equals(instanceIdentifier3));
