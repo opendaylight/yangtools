@@ -130,7 +130,6 @@ public class InstanceIdentifierTest {
     public void basicTests() {
         final InstanceIdentifier<FooRoot> instanceIdentifier1 = InstanceIdentifier.create(FooRoot.class);
         final InstanceIdentifier<FooRoot> instanceIdentifier2 = InstanceIdentifier.create(FooRoot.class);
-        final InstanceIdentifier<FooRoot> instanceIdentifier4 = InstanceIdentifier.create(FooRoot.class);
         final InstanceIdentifier<NodeChild> instanceIdentifier3 = InstanceIdentifier.builder(Nodes.class)
                 .child(Node.class, new NodeKey(10)).child(NodeChild.class).build();
         final Object object = new Object();
@@ -141,14 +140,11 @@ public class InstanceIdentifierTest {
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
 
         Whitebox.setInternalState(instanceIdentifier2, "pathArguments", instanceIdentifier1.pathArguments);
-        Whitebox.setInternalState(instanceIdentifier4, "wildcarded", true);
 
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
         assertFalse(instanceIdentifier1.equals(instanceIdentifier3));
-        assertFalse(instanceIdentifier1.equals(instanceIdentifier4));
 
         final InstanceIdentifier<Node> instanceIdentifier5 = InstanceIdentifier.create(Nodes.class).child(Node.class);
-        Whitebox.setInternalState(instanceIdentifier5, "hash", instanceIdentifier1.hashCode());
         Whitebox.setInternalState(instanceIdentifier5, "wildcarded", false);
 
         assertNotNull(InstanceIdentifier.unsafeOf(ImmutableList.copyOf(instanceIdentifier1.steps())));
@@ -188,7 +184,7 @@ public class InstanceIdentifierTest {
     public void keyOfTest() {
         final var key = new NodeKey(42);
         assertEquals(key, InstanceIdentifier.keyOf(
-            new KeyedInstanceIdentifier<>(new KeyStep<>(Node.class, key), ImmutableList.of(), false, 0)));
+            new KeyedInstanceIdentifier<>(new KeyStep<>(Node.class, key), ImmutableList.of(), false)));
     }
 
     @Test

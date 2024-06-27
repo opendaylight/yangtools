@@ -12,7 +12,6 @@ module org.opendaylight.yangtools.binding.reflect {
 
     requires transitive org.opendaylight.yangtools.binding.spec;
     requires transitive org.opendaylight.yangtools.yang.common;
-    requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations
