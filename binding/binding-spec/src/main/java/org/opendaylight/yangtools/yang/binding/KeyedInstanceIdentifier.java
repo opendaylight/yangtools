@@ -29,8 +29,8 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     private final @NonNull KeyStep<K, T> lastStep;
 
     KeyedInstanceIdentifier(final KeyStep<K, T> lastStep, final Iterable<? extends DataObjectStep<?>> pathArguments,
-            final boolean wildcarded, final int hash) {
-        super(lastStep.type(), pathArguments, wildcarded, hash);
+            final boolean wildcarded) {
+        super(lastStep.type(), pathArguments, wildcarded);
         this.lastStep = lastStep;
     }
 
@@ -46,10 +46,5 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     @Override
     public KeyedBuilder<T, K> toBuilder() {
         return new KeyedBuilder<>(this);
-    }
-
-    @Override
-    boolean keyEquals(final InstanceIdentifier<?> other) {
-        return key().equals(((KeyedInstanceIdentifier<?, ?>) other).key());
     }
 }

@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 /**
  * This instance identifier uniquely identifies a specific DataObject in the data tree modeled by YANG.
@@ -86,14 +85,12 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     private final @NonNull Class<T> targetType;
     private final boolean wildcarded;
-    private final int hash;
 
     InstanceIdentifier(final Class<T> type, final Iterable<? extends DataObjectStep<?>> pathArguments,
-            final boolean wildcarded, final int hash) {
+            final boolean wildcarded) {
         this.pathArguments = requireNonNull(pathArguments);
         targetType = requireNonNull(type);
         this.wildcarded = wildcarded;
-        this.hash = hash;
     }
 
     /**
@@ -133,43 +130,6 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     @Deprecated(since = "14.0.0", forRemoval = true)
     public final boolean isWildcarded() {
         return wildcarded;
-    }
-
-    @Override
-    public final int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        final var other = (InstanceIdentifier<?>) obj;
-        if (pathArguments == other.pathArguments) {
-            return true;
-        }
-
-        /*
-         * We could now just go and compare the pathArguments, but that can be potentially expensive. Let's try to avoid
-         * that by checking various things that we have cached from pathArguments and trying to prove the identifiers
-         * are *not* equal.
-         */
-        return hash == other.hash && wildcarded == other.wildcarded && targetType == other.targetType
-            && keyEquals(other)
-            // Everything checks out so far, so we have to do a full equals
-            && Iterables.elementsEqual(pathArguments, other.pathArguments);
-    }
-
-    boolean keyEquals(final InstanceIdentifier<?> other) {
-        return true;
     }
 
     @Override
@@ -309,7 +269,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     private <N extends DataObject> @NonNull InstanceIdentifier<N> childIdentifier(final DataObjectStep<N> arg) {
-        return trustedCreate(arg, concat(pathArguments, arg), HashCodeBuilder.nextHashCode(hash, arg), wildcarded);
+        return trustedCreate(arg, concat(pathArguments, arg), wildcarded);
     }
 
     /**
@@ -541,7 +501,6 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         final var it = requireNonNull(pathArguments, "pathArguments may not be null").iterator();
         checkArgument(it.hasNext(), "pathArguments may not be empty");
 
-        final var hashBuilder = new HashCodeBuilder<DataObjectStep<?>>();
         boolean wildcard = false;
         DataObjectStep<?> arg;
 
@@ -552,14 +511,12 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
             checkArgument(ChildOf.class.isAssignableFrom(type) || Augmentation.class.isAssignableFrom(type),
                 "%s is not a valid path argument", type);
 
-            hashBuilder.addArgument(arg);
-
             if (!(arg instanceof ExactDataObjectStep)) {
                 wildcard = true;
             }
         } while (it.hasNext());
 
-        return trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
+        return trustedCreate(arg, pathArguments, wildcard);
     }
 
     /**
@@ -626,17 +583,12 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static <N extends DataObject> @NonNull InstanceIdentifier<N> trustedCreate(final DataObjectStep<?> lastStep,
-            final Iterable<? extends DataObjectStep<?>> pathArguments, final int hash, final boolean wildcarded) {
-        // FIXME: use a switch expression
-        if (lastStep instanceof NodeStep) {
-            return new InstanceIdentifier(lastStep.type(), pathArguments, wildcarded, hash);
-        } else if (lastStep instanceof KeyStep<?, ?> predicate) {
-            return new KeyedInstanceIdentifier(predicate, pathArguments, wildcarded, hash);
-        } else if (lastStep instanceof KeylessStep) {
-            return new InstanceIdentifier(lastStep.type(), pathArguments, true, hash);
-        } else {
-            throw new IllegalStateException("Unhandled step " + lastStep);
-        }
+            final Iterable<? extends DataObjectStep<?>> pathArguments, final boolean wildcarded) {
+        return switch (lastStep) {
+            case NodeStep<?> cast -> new InstanceIdentifier(cast.type(), pathArguments, wildcarded);
+            case KeyStep<?, ?> cast -> new KeyedInstanceIdentifier(cast, pathArguments, wildcarded);
+            case KeylessStep<?> cast -> new InstanceIdentifier(cast.type(), pathArguments, true);
+        };
     }
 
     @Deprecated(since = "13.0.0", forRemoval = true)
@@ -825,14 +777,12 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      */
     public abstract static sealed class Builder<T extends DataObject> {
         private final ArrayList<DataObjectStep<?>> pathBuilder;
-        private final HashCodeBuilder<DataObjectStep<?>> hashBuilder;
         private final Iterable<? extends DataObjectStep<?>> basePath;
 
         private boolean wildcard;
 
         Builder(final Builder<?> prev, final DataObjectStep<?> item) {
             pathBuilder = prev.pathBuilder;
-            hashBuilder = prev.hashBuilder;
             basePath = prev.basePath;
             wildcard = prev.wildcard;
             appendItem(item);
@@ -840,18 +790,15 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
         Builder(final InstanceIdentifier<T> identifier) {
             pathBuilder = new ArrayList<>(4);
-            hashBuilder = new HashCodeBuilder<>(identifier.hashCode());
             wildcard = identifier.isWildcarded();
             basePath = identifier.pathArguments;
         }
 
         Builder(final DataObjectStep<?> item, final boolean wildcard) {
             pathBuilder = new ArrayList<>(4);
-            hashBuilder = new HashCodeBuilder<>();
             basePath = null;
-            hashBuilder.addArgument(item);
-            pathBuilder.add(item);
             this.wildcard = wildcard;
+            appendItem(item);
         }
 
         final boolean wildcard() {
@@ -969,14 +916,17 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
         @Override
         public final int hashCode() {
-            return hashBuilder.build();
+            int hash = 1;
+            for (var step : pathArguments()) {
+                hash = 31 * hash + step.hashCode();
+            }
+            return hash;
         }
 
         @Override
         public final boolean equals(final Object obj) {
             return this == obj || obj instanceof Builder<?> other
-                && wildcard == other.wildcard && hashCode() == other.hashCode()
-                && Iterables.elementsEqual(pathArguments(), other.pathArguments());
+                && wildcard == other.wildcard && Iterables.elementsEqual(pathArguments(), other.pathArguments());
         }
 
         // Note: not suitable for use in result
@@ -985,9 +935,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
 
         final void appendItem(final DataObjectStep<?> item) {
-            // note: implies non-null item
-            hashBuilder.addArgument(item);
-            pathBuilder.add(item);
+            pathBuilder.add(requireNonNull(item));
             if (!(item instanceof ExactDataObjectStep)) {
                 wildcard = true;
             }
@@ -1025,7 +973,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
          */
         @Override
         public @NonNull KeyedInstanceIdentifier<T, K> build() {
-            return new KeyedInstanceIdentifier<>(lastStep, buildSteps(), wildcard(), hashCode());
+            return new KeyedInstanceIdentifier<>(lastStep, buildSteps(), wildcard());
         }
 
         @Override
@@ -1062,7 +1010,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
         @Override
         public InstanceIdentifier<T> build() {
-            return new InstanceIdentifier<>(type, buildSteps(), wildcard(), hashCode());
+            return new InstanceIdentifier<>(type, buildSteps(), wildcard());
         }
 
         @Override

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.impl;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -34,13 +35,20 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     @Override
     public abstract Iterable<? extends @NonNull S> steps();
 
-    // FIXME: YANGTOOLS-1577: final
     @Override
-    public abstract int hashCode();
+    public final int hashCode() {
+        int hash = 1;
+        for (var step : steps()) {
+            hash = 31 * hash + step.hashCode();
+        }
+        return hash;
+    }
 
-    // FIXME: YANGTOOLS-1577: final
     @Override
-    public abstract boolean equals(Object obj);
+    public final boolean equals(final Object obj) {
+        return this == obj || obj instanceof AbstractDataObjectReference other
+            && Iterables.elementsEqual(steps(), other.steps());
+    }
 
     @Override
     public final String toString() {
