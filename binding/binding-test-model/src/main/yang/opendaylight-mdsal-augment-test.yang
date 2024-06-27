@@ -6,7 +6,7 @@ module opendaylight-mdsal-augment-test {
     import opendaylight-mdsal-binding-test {
         prefix test;
     }
-    import yang-ext {
+    import odl-codegen-extensions {
         prefix ext;
     }
 

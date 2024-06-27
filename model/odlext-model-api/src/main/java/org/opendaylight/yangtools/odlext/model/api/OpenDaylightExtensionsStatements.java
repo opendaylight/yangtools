@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     // Binding codegen support
     AUGMENT_IDENTIFIER(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier"),
-        "identifier", AugmentIdentifierStatement.class, AugmentIdentifierEffectiveStatement.class),
+        "identifier", LegacyAugmentIdentifierStatement.class, LegacyAugmentIdentifierEffectiveStatement.class),
 
     // Mount extension
     MOUNT(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "mount"), null,
@@ -47,7 +47,7 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
             final Class<? extends DeclaredStatement<?>> declaredRepresentation,
             final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
-        this.argumentDef = argumentName == null ? null
+        argumentDef = argumentName == null ? null
             : ArgumentDefinition.of(QName.create(statementName, argumentName).intern(), false);
         this.declaredRepresentation = requireNonNull(declaredRepresentation);
         this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
