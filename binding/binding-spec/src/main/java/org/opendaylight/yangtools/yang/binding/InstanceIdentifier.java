@@ -119,6 +119,11 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     @Override
+    public final InstanceIdentifier<T> toLegacy() {
+        return this;
+    }
+
+    @Override
     protected final Class<?> contract() {
         return getClass();
     }

@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
@@ -32,7 +33,6 @@ import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWrite
 import org.opendaylight.yangtools.binding.data.codec.api.BindingYangDataCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -71,28 +71,28 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public YangInstanceIdentifier toYangInstanceIdentifier(final InstanceIdentifier<?> binding) {
+    public YangInstanceIdentifier toYangInstanceIdentifier(final DataObjectReference<?> binding) {
         return delegate().toYangInstanceIdentifier(binding);
     }
 
     @Override
-    public <T extends DataObject> InstanceIdentifier<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
+    public <T extends DataObject> DataObjectReference<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
         return delegate().fromYangInstanceIdentifier(dom);
     }
 
     @Override
-    public <T extends DataObject> NormalizedResult toNormalizedNode(final InstanceIdentifier<T> path, final T data) {
+    public <T extends DataObject> NormalizedResult toNormalizedNode(final DataObjectReference<T> path, final T data) {
         return delegate().toNormalizedNode(path, data);
     }
 
     @Override
     public <A extends Augmentation<?>> @NonNull AugmentationResult toNormalizedAugmentation(
-            final InstanceIdentifier<A> path, final A data) {
+            final DataObjectReference<A> path, final A data) {
         return delegate().toNormalizedAugmentation(path, data);
     }
 
     @Override
-    public <T extends DataObject> @NonNull NodeResult toNormalizedDataObject(final InstanceIdentifier<T> path,
+    public <T extends DataObject> @NonNull NodeResult toNormalizedDataObject(final DataObjectReference<T> path,
             final T data) {
         return delegate().toNormalizedDataObject(path, data);
     }
@@ -125,7 +125,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
+    public Entry<DataObjectReference<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
             final NormalizedNode data) {
         return delegate().fromNormalizedNode(path, data);
     }
@@ -160,12 +160,12 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
 
     @Override
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
-            final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
+            final DataObjectReference<?> path, final NormalizedNodeStreamWriter domWriter) {
         return delegate().newWriterAndIdentifier(path, domWriter);
     }
 
     @Override
-    public BindingStreamEventWriter newWriter(final InstanceIdentifier<?> path,
+    public BindingStreamEventWriter newWriter(final DataObjectReference<?> path,
             final NormalizedNodeStreamWriter domWriter) {
         return delegate().newWriter(path, domWriter);
     }
@@ -195,24 +195,24 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public <T extends DataObject> CodecWithPath<T> getSubtreeCodecWithPath(final InstanceIdentifier<T> path) {
+    public <T extends DataObject> CodecWithPath<T> getSubtreeCodecWithPath(final DataObjectReference<T> path) {
         return delegate().getSubtreeCodecWithPath(path);
     }
 
     @Override
     public <A extends Augmentation<?>> BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
-            final InstanceIdentifier<A> path) {
+            final DataObjectReference<A> path) {
         return delegate().getAugmentationCodec(path);
     }
 
     @Override
     public <T extends DataObject> BindingDataObjectCodecTreeNode<T> getDataObjectCodec(
-            final InstanceIdentifier<T> path) {
+            final DataObjectReference<T> path) {
         return delegate().getDataObjectCodec(path);
     }
 
     @Override
-    public <T extends DataObject> CommonDataObjectCodecTreeNode<T> getSubtreeCodec(final InstanceIdentifier<T> path) {
+    public <T extends DataObject> CommonDataObjectCodecTreeNode<T> getSubtreeCodec(final DataObjectReference<T> path) {
         return delegate().getSubtreeCodec(path);
     }
 

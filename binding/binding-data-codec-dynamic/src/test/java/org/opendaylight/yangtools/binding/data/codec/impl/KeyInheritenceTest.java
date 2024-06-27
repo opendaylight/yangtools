@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Map.Entry;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.Def;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.DefBuilder;
@@ -18,7 +17,6 @@ import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstBuilder;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.grp.LstKey;
 import org.opendaylight.yang.gen.v1.mdsal442.keyuse.norev.Use;
 import org.opendaylight.yang.gen.v1.mdsal442.keyuse.norev.UseBuilder;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public class KeyInheritenceTest extends AbstractBindingCodecTest {
@@ -36,7 +34,7 @@ public class KeyInheritenceTest extends AbstractBindingCodecTest {
     @Test
     public void testFromBinding() {
         final var domDef = codecContext.toNormalizedDataObject(DEF_IID, DEF);
-        Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(domDef.path(), domDef.node());
+        var entry = codecContext.fromNormalizedNode(domDef.path(), domDef.node());
         assertEquals(DEF_IID, entry.getKey());
         final Def codecDef = (Def) entry.getValue();
 
