@@ -13,8 +13,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.YangData;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -53,7 +53,7 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      * @throws IllegalArgumentException if the codec cannot be resolved
      */
     <A extends Augmentation<?>> @NonNull BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
-        InstanceIdentifier<A> path);
+        DataObjectReference<A> path);
 
     /**
      * Look up the codec for specified ordinary DataObject path.
@@ -64,7 +64,7 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      * @throws NullPointerException if {@code path} is {@code null}
      * @throws IllegalArgumentException if the codec cannot be resolved or refers to an Augmentation
      */
-    <T extends DataObject> @NonNull BindingDataObjectCodecTreeNode<T> getDataObjectCodec(InstanceIdentifier<T> path);
+    <T extends DataObject> @NonNull BindingDataObjectCodecTreeNode<T> getDataObjectCodec(DataObjectReference<T> path);
 
     /**
      * Look up the codec for specified path, constructing the {@link YangInstanceIdentifier} corresponding to it.
@@ -75,7 +75,7 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      * @throws NullPointerException if {@code path} is {@code null}
      * @throws IllegalArgumentException if the codec cannot be resolved
      */
-    <T extends DataObject> @NonNull CodecWithPath<T> getSubtreeCodecWithPath(InstanceIdentifier<T> path);
+    <T extends DataObject> @NonNull CodecWithPath<T> getSubtreeCodecWithPath(DataObjectReference<T> path);
 
     /**
      * Look up the codec for specified path.
@@ -86,7 +86,7 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      * @throws NullPointerException if {@code path} is {@code null}
      * @throws IllegalArgumentException if the codec cannot be resolved
      */
-    <T extends DataObject> @NonNull CommonDataObjectCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path);
+    <T extends DataObject> @NonNull CommonDataObjectCodecTreeNode<T> getSubtreeCodec(DataObjectReference<T> path);
 
     /**
      * Look up a codec by its {@link YangInstanceIdentifier} path.
