@@ -77,16 +77,10 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     @java.io.Serial
     private static final long serialVersionUID = 3L;
 
-    /*
-     * Protected to differentiate internal and external access. Internal access is required never to modify
-     * the contents. References passed to outside entities have to be wrapped in an unmodifiable view.
-     */
-    final Iterable<? extends DataObjectStep<?>> pathArguments;
-
     private final boolean wildcarded;
 
-    InstanceIdentifier(final Iterable<? extends DataObjectStep<?>> pathArguments, final boolean wildcarded) {
-        this.pathArguments = requireNonNull(pathArguments);
+    InstanceIdentifier(final Iterable<? extends @NonNull DataObjectStep<?>> steps, final boolean wildcarded) {
+        super(steps);
         this.wildcarded = wildcarded;
     }
 
@@ -114,11 +108,6 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     @Override
-    public final Iterable<? extends @NonNull DataObjectStep<?>> steps() {
-        return Iterables.unmodifiableIterable(pathArguments);
-    }
-
-    @Override
     public final boolean isExact() {
         return !wildcarded;
     }
@@ -136,7 +125,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("targetType", getTargetType()).add("path", Iterables.toString(pathArguments));
+        return toStringHelper.add("targetType", getTargetType()).add("path", Iterables.toString(steps()));
     }
 
     /**
@@ -162,10 +151,10 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     public final <I extends DataObject> @Nullable InstanceIdentifier<I> firstIdentifierOf(
             final Class<@NonNull I> type) {
         int count = 1;
-        for (var step : pathArguments) {
+        for (var step : steps()) {
             if (type.equals(step.type())) {
                 @SuppressWarnings("unchecked")
-                final var ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(pathArguments, count));
+                final var ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(steps(), count));
                 return ret;
             }
 
@@ -185,7 +174,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      */
     public final <N extends KeyAware<K> & DataObject, K extends Key<N>> @Nullable K firstKeyOf(
             final Class<@NonNull N> listItem) {
-        for (var step : pathArguments) {
+        for (var step : steps()) {
             if (step instanceof KeyStep<?, ?> keyPredicate && listItem.equals(step.type())) {
                 @SuppressWarnings("unchecked")
                 final var ret = (K) keyPredicate.key();
@@ -219,8 +208,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     public final boolean contains(final InstanceIdentifier<? extends DataObject> other) {
         requireNonNull(other, "other should not be null");
 
-        final var oit = other.pathArguments.iterator();
-        for (var step : pathArguments) {
+        final var oit = other.steps().iterator();
+        for (var step : steps()) {
             if (!oit.hasNext()) {
                 return false;
             }
@@ -242,8 +231,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     public final boolean containsWildcarded(final InstanceIdentifier<?> other) {
         requireNonNull(other, "other should not be null");
 
-        final var otherSteps = other.pathArguments.iterator();
-        for (var step : pathArguments) {
+        final var otherSteps = other.steps().iterator();
+        for (var step : steps()) {
             if (!otherSteps.hasNext()) {
                 return false;
             }
@@ -266,7 +255,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     private <N extends DataObject> @NonNull InstanceIdentifier<N> childIdentifier(final DataObjectStep<N> arg) {
-        return trustedCreate(arg, concat(pathArguments, arg), wildcarded);
+        return trustedCreate(arg, concat(steps(), arg), wildcarded);
     }
 
     /**
@@ -773,8 +762,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @param <T> Instance identifier target type
      */
     public abstract static sealed class Builder<T extends DataObject> {
-        private final ArrayList<DataObjectStep<?>> pathBuilder;
-        private final Iterable<? extends DataObjectStep<?>> basePath;
+        private final ArrayList<@NonNull DataObjectStep<?>> pathBuilder;
+        private final Iterable<? extends @NonNull DataObjectStep<?>> basePath;
 
         private boolean wildcard;
 
@@ -788,7 +777,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         Builder(final InstanceIdentifier<T> identifier) {
             pathBuilder = new ArrayList<>(4);
             wildcard = identifier.isWildcarded();
-            basePath = identifier.pathArguments;
+            basePath = identifier.steps();
         }
 
         Builder(final DataObjectStep<?> item, final boolean wildcard) {

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Iterables;
@@ -32,19 +34,26 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    // FIXME: YANGTOOLS-1577: final
+    private final @NonNull Iterable<? extends @NonNull S> steps;
+
+    protected AbstractDataObjectReference(final Iterable<? extends @NonNull S> steps) {
+        this.steps = requireNonNull(steps);
+    }
+
     @Override
-    public abstract Iterable<? extends @NonNull S> steps();
+    public final Iterable<? extends @NonNull S> steps() {
+        return steps;
+    }
 
     @Override
     public DataObjectStep<T> lastStep() {
-        return getLast(steps());
+        return getLast(steps);
     }
 
     @Override
     public final int hashCode() {
         int hash = 1;
-        for (var step : steps()) {
+        for (var step : steps) {
             hash = 31 * hash + step.hashCode();
         }
         return hash;
