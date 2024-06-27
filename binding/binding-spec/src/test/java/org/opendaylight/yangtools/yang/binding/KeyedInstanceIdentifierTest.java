@@ -21,10 +21,9 @@ class KeyedInstanceIdentifierTest {
     @Test
     void basicTest() {
         final var key = new NodeKey(0);
-        final var keyStep = new KeyStep<>(Node.class, key);
-        final var keyed = new KeyedInstanceIdentifier<>(keyStep, List.of(), false);
+        final var keyed = new KeyedInstanceIdentifier<>(List.of(new KeyStep<>(Node.class, key)), false);
 
         assertEquals(key, keyed.key());
-        assertNotEquals(keyed, new InstanceIdentifier<>(Node.class, List.of(new KeylessStep<>(Node.class)), true));
+        assertNotEquals(keyed, new InstanceIdentifier<>(List.of(new KeylessStep<>(Node.class)), true));
     }
 }

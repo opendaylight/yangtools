@@ -54,7 +54,15 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
             extends DataObjectReference<T>, KeyAware<K>
             permits DataObjectIdentifier.WithKey, DataObjectReferenceWithKey, KeyedInstanceIdentifier {
         @Override
+        KeyStep<K, T> lastStep();
+
+        @Override
         KeyedBuilder<T, K> toBuilder();
+
+        @Override
+        default K key() {
+            return lastStep().key();
+        }
 
         /**
          * Return the key attached to this identifier. This method is equivalent to calling
@@ -89,6 +97,13 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @return the steps of this reference
      */
     @NonNull Iterable<? extends @NonNull DataObjectStep<?>> steps();
+
+    /**
+     * Return the last step of this reference.
+     *
+     * @return the last step
+     */
+    @NonNull DataObjectStep<T> lastStep();
 
     /**
      * Create a new {@link Builder} initialized to produce a reference equal to this one.

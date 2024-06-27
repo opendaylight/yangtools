@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
 import org.opendaylight.yangtools.binding.DataObjectStep;
@@ -26,21 +25,14 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     @java.io.Serial
     private static final long serialVersionUID = 2L;
 
-    private final @NonNull KeyStep<K, T> lastStep;
-
-    KeyedInstanceIdentifier(final KeyStep<K, T> lastStep, final Iterable<? extends DataObjectStep<?>> pathArguments,
-            final boolean wildcarded) {
-        super(lastStep.type(), pathArguments, wildcarded);
-        this.lastStep = lastStep;
-    }
-
-    @NonNull KeyStep<K, T> lastStep() {
-        return lastStep;
+    KeyedInstanceIdentifier(final Iterable<? extends DataObjectStep<?>> pathArguments, final boolean wildcarded) {
+        super(pathArguments, wildcarded);
     }
 
     @Override
-    public K key() {
-        return lastStep.key();
+    @SuppressWarnings("unchecked")
+    public KeyStep<K, T> lastStep() {
+        return (KeyStep<K, T>) super.lastStep();
     }
 
     @Override
