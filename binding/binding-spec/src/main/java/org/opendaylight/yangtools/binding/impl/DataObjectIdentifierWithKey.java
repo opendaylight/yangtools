@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier.WithKey;
+import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
@@ -22,6 +24,10 @@ public abstract non-sealed class DataObjectIdentifierWithKey<T extends KeyAware<
         extends DataObjectIdentifierImpl<T> implements WithKey<T, K> {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
+
+    DataObjectIdentifierWithKey(final Iterable<? extends @NonNull ExactDataObjectStep<?>> steps) {
+        super(steps);
+    }
 
     @Override
     public final KeyStep<K, T> lastStep() {

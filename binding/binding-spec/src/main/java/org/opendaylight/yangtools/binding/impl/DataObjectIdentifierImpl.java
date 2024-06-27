@@ -24,6 +24,10 @@ public abstract sealed class DataObjectIdentifierImpl<T extends DataObject>
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
+    DataObjectIdentifierImpl(final Iterable<? extends @NonNull ExactDataObjectStep<?>> steps) {
+        super(steps);
+    }
+
     public static final @NonNull DataObjectIdentifierImpl<?> ofUnsafeSteps(
             final ImmutableList<? extends @NonNull ExactDataObjectStep<?>> steps) {
         // FIXME: YANGTOOLS-1577: implement this
