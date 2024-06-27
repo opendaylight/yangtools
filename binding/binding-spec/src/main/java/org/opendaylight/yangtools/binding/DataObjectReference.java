@@ -124,6 +124,15 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
     }
 
     /**
+     * Return a legacy {@link InstanceIdentifier} for this reference.
+     *
+     * @return An {@link InstanceIdentifier}.
+     */
+    default InstanceIdentifier<T> toLegacy() {
+        return InstanceIdentifier.unsafeOf(ImmutableList.copyOf(steps()));
+    }
+
+    /**
      * Create a new {@link Builder} initialized to produce a reference equal to this one.
      *
      * @return A builder instance

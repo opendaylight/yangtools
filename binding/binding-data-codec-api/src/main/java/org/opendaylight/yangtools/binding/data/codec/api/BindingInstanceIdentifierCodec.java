@@ -11,14 +11,14 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 @Beta
 public interface BindingInstanceIdentifierCodec extends Immutable {
     /**
-     * Translates supplied {@link YangInstanceIdentifier} into an {@link InstanceIdentifier}, if possible.
+     * Translates supplied {@link YangInstanceIdentifier} into a {@link DataObjectReference}, if possible.
      *
      * @param domPath YANG Instance Identifier
      * @return Binding Instance Identifier, or null if the instance identifier is not representable.
@@ -27,10 +27,10 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      */
     // FIXME: Document MissingSchemaException being thrown?
     // FIXME: Document MissingSchemaForClassException being thrown?
-    <T extends DataObject> @Nullable InstanceIdentifier<T> toBinding(@NonNull YangInstanceIdentifier domPath);
+    <T extends DataObject> @Nullable DataObjectReference<T> toBinding(@NonNull YangInstanceIdentifier domPath);
 
     /**
-     * Translates supplied {@link InstanceIdentifier} into {@link YangInstanceIdentifier}.
+     * Translates supplied {@link DataObjectReference} into {@link YangInstanceIdentifier}.
      *
      * @param bindingPath Binding Instance Identifier
      * @return DOM Instance Identifier
@@ -39,5 +39,5 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      */
     // FIXME: Document MissingSchemaException being thrown
     // FIXME: Document MissingSchemaForClassException being thrown
-    @NonNull YangInstanceIdentifier fromBinding(@NonNull InstanceIdentifier<?> bindingPath);
+    @NonNull YangInstanceIdentifier fromBinding(@NonNull DataObjectReference<?> bindingPath);
 }

@@ -16,7 +16,6 @@ import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.t
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment1Builder;
@@ -44,7 +43,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
 import org.opendaylight.yang.gen.v1.urn.test.foo4798.rev160101.Root;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -323,8 +321,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                 .withChild(ImmutableNodes.leafNode(nestedContainerLeafOuterQname, "bar"))
                 .build())
             .build();
-        final Entry<InstanceIdentifier<?>, DataObject> entryContainer = codecContext.fromNormalizedNode(
-            yangInstanceIdentifierOuter, containerNodeOuter);
+        final var entryContainer = codecContext.fromNormalizedNode(yangInstanceIdentifierOuter, containerNodeOuter);
         assertNotNull(entryContainer.getValue());
         assertNotNull(entryContainer.getKey());
 
@@ -408,8 +405,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
                     .build())
                 .build())
             .build();
-        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(BI_CHOICE_CONTAINER_PATH,
-            choiceContainerBI);
+        final var entry = codecContext.fromNormalizedNode(BI_CHOICE_CONTAINER_PATH,choiceContainerBI);
         final ChoiceContainer choiceContainerBA = new ChoiceContainerBuilder().setIdentifier(new ExtendedBuilder()
             .setExtendedId(new ExtendedIdBuilder().setId("identifier_value").build()).build()).build();
         assertEquals(choiceContainerBA, entry.getValue());

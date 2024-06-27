@@ -11,8 +11,8 @@ import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.Notification;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
@@ -31,7 +31,7 @@ public interface BindingNormalizedNodeWriterFactory {
      *
      * <p>
      * If {@link YangInstanceIdentifier} is not needed, please use
-     * {@link #newWriter(InstanceIdentifier, NormalizedNodeStreamWriter)} method to conserve resources.
+     * {@link #newWriter(DataObjectReference, NormalizedNodeStreamWriter)} method to conserve resources.
      *
      * @param path
      *            Binding Path in conceptual data tree, for which writer should
@@ -43,7 +43,7 @@ public interface BindingNormalizedNodeWriterFactory {
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
     @NonNull Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
-            @NonNull InstanceIdentifier<?> path, @NonNull NormalizedNodeStreamWriter domWriter);
+            @NonNull DataObjectReference<?> path, @NonNull NormalizedNodeStreamWriter domWriter);
 
     /**
      * Creates a {@link BindingStreamEventWriter} for data tree path which will translate to NormalizedNode model
@@ -51,7 +51,7 @@ public interface BindingNormalizedNodeWriterFactory {
      *
      * <p>
      * This variant does not provide YANG instance identifier and is useful for use-cases, where
-     * {@link InstanceIdentifier} translation is done in other way, or YANG instance identifier is unnecessary
+     * {@link DataObjectReference} translation is done in other way, or YANG instance identifier is unnecessary
      * (e.g. notifications, RPCs).
      *
      * @param path Binding Path in conceptual data tree, for which writer should
@@ -61,7 +61,7 @@ public interface BindingNormalizedNodeWriterFactory {
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    @NonNull BindingStreamEventWriter newWriter(@NonNull InstanceIdentifier<?> path,
+    @NonNull BindingStreamEventWriter newWriter(@NonNull DataObjectReference<?> path,
             @NonNull NormalizedNodeStreamWriter domWriter);
 
     /**

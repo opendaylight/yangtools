@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import java.util.Map.Entry;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.Cont;
@@ -60,8 +59,7 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
 
     @Test
     public void testAnydataToBinding() {
-        final Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(
-            YangInstanceIdentifier.of(CONT_NODE_ID), cont);
+        final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(CONT_NODE_ID), cont);
         assertEquals(InstanceIdentifier.create(Cont.class), entry.getKey());
         final DataObject ldo = entry.getValue();
         assertThat(ldo, instanceOf(Cont.class));
