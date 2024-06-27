@@ -7,26 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import com.google.common.collect.ImmutableList;
-import org.junit.Test;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.KeyStep;
+import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.test.mock.Node;
 import org.opendaylight.yangtools.binding.test.mock.NodeKey;
 
-public class KeyedInstanceIdentifierTest {
+class KeyedInstanceIdentifierTest {
     @Test
-    public void basicTest() {
+    void basicTest() {
         final var key = new NodeKey(0);
-        final var keyed = new KeyedInstanceIdentifier<>(new KeyStep<>(Node.class, key), ImmutableList.of(),
-            false, 0);
+        final var keyStep = new KeyStep<>(Node.class, key);
+        final var keyed = new KeyedInstanceIdentifier<>(keyStep, List.of(), false);
 
         assertEquals(key, keyed.key());
-        assertTrue(keyed.keyEquals(keyed.toBuilder().build()));
-
-        final var keyless = new InstanceIdentifier<>(Node.class, ImmutableList.of(), true, 0);
-        assertTrue(keyless.keyEquals(keyed.toBuilder().build()));
+        assertNotEquals(keyed, new InstanceIdentifier<>(Node.class, List.of(new KeylessStep<>(Node.class)), true));
     }
 }
