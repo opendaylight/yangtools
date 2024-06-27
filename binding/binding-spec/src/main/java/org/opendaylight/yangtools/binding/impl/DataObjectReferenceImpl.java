@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 // FIXME: YANGTOOLS-1577: non-abstract
@@ -24,6 +25,10 @@ public abstract sealed class DataObjectReferenceImpl<T extends DataObject>
         permits DataObjectReferenceWithKey {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
+
+    DataObjectReferenceImpl(final Iterable<? extends @NonNull ExactDataObjectStep<?>> steps) {
+        super(steps);
+    }
 
     public static final @NonNull DataObjectReference<?> ofUnsafeSteps(
             final ImmutableList<? extends @NonNull DataObjectStep<?>> steps) {
