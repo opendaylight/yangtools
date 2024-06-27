@@ -5,6 +5,6 @@
         <feature version="{{semVerRange}}">odl-yangtools-common</feature>
         <bundle>mvn:org.opendaylight.yangtools/binding-reflect/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-spec/{{versionAsInProject}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/yang-ext/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/codegen-extensions/{{versionAsInProject}}</bundle>
     </feature>
 </features>

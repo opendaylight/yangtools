@@ -45,6 +45,6 @@
         <module>binding-runtime-spi</module>
         <module>binding-spec</module>
         <module>binding-test-model</module>
-        <module>yang-ext</module>
+        <module>codegen-extensions</module>
     </modules>
 </project>

@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
+import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -123,10 +124,17 @@ abstract class AbstractAugmentGenerator
 
     @Override
     final Member createMember(final CollisionDomain domain) {
-        final AbstractQName explicitIdentifier = statement()
-            .findFirstEffectiveSubstatementArgument(AugmentIdentifierEffectiveStatement.class).orElse(null);
-        if (explicitIdentifier != null) {
-            return domain.addPrimary(this, new CamelCaseNamingStrategy(StatementNamespace.AUGMENT, explicitIdentifier));
+        // odl-codegen-extensions first
+        var explicitIdentifier = statement()
+            .findFirstEffectiveSubstatementArgument(AugmentIdentifierEffectiveStatement.class);
+        if (explicitIdentifier.isEmpty()) {
+            // yang-ext fallback
+            explicitIdentifier = statement()
+                .findFirstEffectiveSubstatementArgument(LegacyAugmentIdentifierEffectiveStatement.class);
+        }
+        if (explicitIdentifier.isPresent()) {
+            return domain.addPrimary(this,
+                new CamelCaseNamingStrategy(StatementNamespace.AUGMENT, explicitIdentifier.orElseThrow()));
         }
 
         final Member target = targetGenerator().getMember();

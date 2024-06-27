@@ -17,10 +17,10 @@
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
-    <artifactId>yang-ext</artifactId>
+    <artifactId>codegen-extensions</artifactId>
     <name>${project.artifactId}</name>
     <packaging>bundle</packaging>
-    <description>Legacy MD-SAL YANG extensions</description>
+    <description>OpenDaylight YANG extensions for code generation</description>
 
     <build>
         <plugins>
@@ -29,7 +29,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Automatic-Module-Name>org.opendaylight.mdsal.model.yang.ext</Automatic-Module-Name>
+                        <Automatic-Module-Name>org.opendaylight.yangtools.codegen.extensions</Automatic-Module-Name>
                     </instructions>
                 </configuration>
             </plugin>

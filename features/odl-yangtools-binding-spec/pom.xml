@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-ext</artifactId>
+            <artifactId>codegen-extensions</artifactId>
         </dependency>
     </dependencies>
 </project>

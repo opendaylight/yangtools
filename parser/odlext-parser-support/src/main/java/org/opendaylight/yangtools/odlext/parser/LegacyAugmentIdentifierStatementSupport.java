@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
-import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
+import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierEffectiveStatement;
+import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierStatement;
+import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -22,31 +23,33 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
-public final class AugmentIdentifierStatementSupport
-        extends AbstractUnqualifiedStatementSupport<AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement> {
+public final class LegacyAugmentIdentifierStatementSupport
+        extends AbstractUnqualifiedStatementSupport<LegacyAugmentIdentifierStatement,
+            LegacyAugmentIdentifierEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(AugmentIdentifierStatement.DEFINITION).build();
+        SubstatementValidator.builder(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER).build();
 
-    public AugmentIdentifierStatementSupport(final YangParserConfiguration config) {
-        super(AugmentIdentifierStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+    public LegacyAugmentIdentifierStatementSupport(final YangParserConfiguration config) {
+        super(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER, StatementPolicy.contextIndependent(), config,
+            VALIDATOR);
     }
 
     @Override
-    protected AugmentIdentifierStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
+    protected LegacyAugmentIdentifierStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        return new AugmentIdentifierStatementImpl(ctx.getArgument(), substatements);
+        return new LegacyAugmentIdentifierStatementImpl(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected AugmentIdentifierStatement attachDeclarationReference(final AugmentIdentifierStatement stmt,
+    protected LegacyAugmentIdentifierStatement attachDeclarationReference(final LegacyAugmentIdentifierStatement stmt,
             final DeclarationReference reference) {
-        return new RefAugmentIdentifierStatement(stmt, reference);
+        return new RefLegacyAugmentIdentifierStatement(stmt, reference);
     }
 
     @Override
-    protected AugmentIdentifierEffectiveStatement createEffective(
-            final Current<Unqualified, AugmentIdentifierStatement> stmt,
+    protected LegacyAugmentIdentifierEffectiveStatement createEffective(
+            final Current<Unqualified, LegacyAugmentIdentifierStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new AugmentIdentifierEffectiveStatementImpl(stmt.declared(), substatements);
+        return new LegacyAugmentIdentifierEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

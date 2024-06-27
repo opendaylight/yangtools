@@ -35,11 +35,11 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-common</artifactId>
+            <artifactId>codegen-extensions</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-ext</artifactId>
+            <artifactId>yang-common</artifactId>
         </dependency>
 
         <dependency>
