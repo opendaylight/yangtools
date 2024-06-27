@@ -183,8 +183,8 @@ public class InstanceIdentifierTest {
     @Test
     public void keyOfTest() {
         final var key = new NodeKey(42);
-        assertEquals(key, InstanceIdentifier.keyOf(
-            new KeyedInstanceIdentifier<>(new KeyStep<>(Node.class, key), ImmutableList.of(), false)));
+        assertEquals(key, InstanceIdentifier.<Node, NodeKey>keyOf(
+            new KeyedInstanceIdentifier<>(ImmutableList.of(new KeyStep<>(Node.class, key)), false)));
     }
 
     @Test
