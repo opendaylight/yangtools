@@ -73,8 +73,9 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testYangIIToBindingAwareIIListWithKey() {
         final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_1_PATH);
-        final var last = Iterables.getLast(instanceIdentifier.getPathArguments());
+        final var last = Iterables.getLast(instanceIdentifier.steps());
         assertEquals(TopLevelList.class, instanceIdentifier.getTargetType());
+        assertTrue(instanceIdentifier.isExact());
         assertFalse(instanceIdentifier.isWildcarded());
         final var key = assertInstanceOf(KeyStep.class, last).key();
         assertEquals(TopLevelListKey.class, key.getClass());

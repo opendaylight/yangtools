@@ -429,7 +429,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @NonNull DataContainerCodecContext<?, ?, ?> getCodecContextNode(final InstanceIdentifier<?> binding,
             final List<PathArgument> builder) {
-        final var it = binding.getPathArguments().iterator();
+        final var it = binding.steps().iterator();
         final var step = it.next();
 
         final DataContainerCodecContext<?, ?, ?> start;
