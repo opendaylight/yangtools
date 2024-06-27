@@ -33,6 +33,9 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
             extends DataObjectIdentifier<T>, DataObjectReference.WithKey<T, K>
             permits DataObjectIdentifierWithKey {
         @Override
+        KeyStep<K, T> lastStep();
+
+        @Override
         KeyedBuilder<T, K> toBuilder();
     }
 

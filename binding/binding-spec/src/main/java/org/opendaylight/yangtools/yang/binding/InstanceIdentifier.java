@@ -83,13 +83,10 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      */
     final Iterable<? extends DataObjectStep<?>> pathArguments;
 
-    private final @NonNull Class<T> targetType;
     private final boolean wildcarded;
 
-    InstanceIdentifier(final Class<T> type, final Iterable<? extends DataObjectStep<?>> pathArguments,
-            final boolean wildcarded) {
+    InstanceIdentifier(final Iterable<? extends DataObjectStep<?>> pathArguments, final boolean wildcarded) {
         this.pathArguments = requireNonNull(pathArguments);
-        targetType = requireNonNull(type);
         this.wildcarded = wildcarded;
     }
 
@@ -99,7 +96,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @return Target type
      */
     public final @NonNull Class<T> getTargetType() {
-        return targetType;
+        return lastStep().type();
     }
 
     /**
@@ -112,7 +109,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      */
     @SuppressWarnings("unchecked")
     public final <N extends DataObject> @NonNull InstanceIdentifier<N> verifyTarget(final Class<@NonNull N> target) {
-        verify(target.equals(targetType), "Cannot adapt %s to %s", this, target);
+        verify(target.equals(getTargetType()), "Cannot adapt %s to %s", this, target);
         return (InstanceIdentifier<N>) this;
     }
 
@@ -139,7 +136,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("targetType", targetType).add("path", Iterables.toString(pathArguments));
+        return toStringHelper.add("targetType", getTargetType()).add("path", Iterables.toString(pathArguments));
     }
 
     /**
@@ -585,9 +582,9 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     static <N extends DataObject> @NonNull InstanceIdentifier<N> trustedCreate(final DataObjectStep<?> lastStep,
             final Iterable<? extends DataObjectStep<?>> pathArguments, final boolean wildcarded) {
         return switch (lastStep) {
-            case NodeStep<?> cast -> new InstanceIdentifier(cast.type(), pathArguments, wildcarded);
-            case KeyStep<?, ?> cast -> new KeyedInstanceIdentifier(cast, pathArguments, wildcarded);
-            case KeylessStep<?> cast -> new InstanceIdentifier(cast.type(), pathArguments, true);
+            case NodeStep<?> cast -> new InstanceIdentifier(pathArguments, wildcarded);
+            case KeyStep<?, ?> cast -> new KeyedInstanceIdentifier(pathArguments, wildcarded);
+            case KeylessStep<?> cast -> new InstanceIdentifier(pathArguments, true);
         };
     }
 
@@ -949,21 +946,16 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     public static final class KeyedBuilder<T extends DataObject & KeyAware<K>, K extends Key<T>>
             extends Builder<T> {
-        private @NonNull KeyStep<K, T> lastStep;
-
         KeyedBuilder(final KeyStep<K, T> firstStep) {
             super(firstStep, false);
-            lastStep = requireNonNull(firstStep);
         }
 
         KeyedBuilder(final KeyedInstanceIdentifier<T, K> identifier) {
             super(identifier);
-            lastStep = identifier.lastStep();
         }
 
         private KeyedBuilder(final RegularBuilder<?> prev, final KeyStep<K, T> lastStep) {
             super(prev, lastStep);
-            this.lastStep = requireNonNull(lastStep);
         }
 
         /**
@@ -973,7 +965,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
          */
         @Override
         public @NonNull KeyedInstanceIdentifier<T, K> build() {
-            return new KeyedInstanceIdentifier<>(lastStep, buildSteps(), wildcard());
+            return new KeyedInstanceIdentifier<>(buildSteps(), wildcard());
         }
 
         @Override
@@ -985,39 +977,32 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         @SuppressWarnings("unchecked")
         <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(final KeyStep<Y, X> step) {
             appendItem(step);
-            lastStep = (KeyStep<K, T>) requireNonNull(step);
             return (KeyedBuilder<X, Y>) this;
         }
     }
 
     private static final class RegularBuilder<T extends DataObject> extends Builder<T> {
-        private @NonNull Class<T> type;
-
         RegularBuilder(final DataObjectStep<T> item) {
             super(item, !(item instanceof ExactDataObjectStep));
-            type = item.type();
         }
 
         RegularBuilder(final InstanceIdentifier<T> identifier) {
             super(identifier);
-            type = identifier.getTargetType();
         }
 
         private RegularBuilder(final KeyedBuilder<?, ?> prev, final DataObjectStep<T> item) {
             super(prev, item);
-            type = item.type();
         }
 
         @Override
         public InstanceIdentifier<T> build() {
-            return new InstanceIdentifier<>(type, buildSteps(), wildcard());
+            return new InstanceIdentifier<>(buildSteps(), wildcard());
         }
 
         @Override
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings("unchecked")
         <X extends DataObject> RegularBuilder<X> append(final DataObjectStep<X> step) {
             appendItem(step);
-            type = (Class) step.type();
             return (RegularBuilder<X>) this;
         }
 
