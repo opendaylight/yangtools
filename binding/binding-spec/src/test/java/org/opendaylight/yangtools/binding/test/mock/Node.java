@@ -9,12 +9,10 @@ package org.opendaylight.yangtools.binding.test.mock;
 
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.EntryObject;
 
 public interface Node extends
-    DataObject,
-    KeyAware<NodeKey>,
+    EntryObject<Node, NodeKey>,
     ChildOf<Nodes>,
     Augmentable<Node> {
 

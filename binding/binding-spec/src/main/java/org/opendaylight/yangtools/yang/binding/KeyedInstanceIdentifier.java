@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierWithKey;
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
@@ -24,7 +23,7 @@ import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
  * @param <T> Target data type
  * @param <K> Target key type
  */
-public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K extends Key<T>>
+public final class KeyedInstanceIdentifier<T extends EntryObject<T, K>, K extends Key<T>>
         extends InstanceIdentifier<T> implements WithKey<T, K> {
     @java.io.Serial
     private static final long serialVersionUID = 2L;

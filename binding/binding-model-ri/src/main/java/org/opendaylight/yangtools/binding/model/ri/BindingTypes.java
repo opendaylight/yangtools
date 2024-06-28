@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
@@ -74,7 +75,7 @@ public final class BindingTypes {
     @VisibleForTesting
     static final ConcreteType AUGMENTATION = typeForClass(Augmentation.class);
     @VisibleForTesting
-    static final ConcreteType KEY_AWARE = typeForClass(KeyAware.class);
+    static final ConcreteType ENTRY_OBJECT = typeForClass(EntryObject.class);
     @VisibleForTesting
     static final ConcreteType KEY = typeForClass(Key.class);
 
@@ -218,14 +219,15 @@ public final class BindingTypes {
     }
 
     /**
-     * Type specializing {@link KeyAware} for a particular type.
+     * Type specializing {@link EntryObject} for a particular type.
      *
      * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code KeyAware<Type>}
-     * @throws NullPointerException if {@code type} is {@code null}
+     * @param keyType the corresponding {@link #key(Type)}
+     * @return A parameterized type corresponding to {@code EntryObject<Type, KeyType>}
+     * @throws NullPointerException if any argument is {@code null}
      */
-    public static ParameterizedType keyAware(final Type type) {
-        return parameterizedTypeFor(KEY_AWARE, type);
+    public static ParameterizedType entryObject(final Type type, final Type keyType) {
+        return parameterizedTypeFor(ENTRY_OBJECT, type, keyType);
     }
 
     /**

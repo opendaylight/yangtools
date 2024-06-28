@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
@@ -81,9 +80,9 @@ public final class BuilderGenerator implements CodeGenerator {
     }
 
     private static Type getKey(final GeneratedType type) {
-        for (MethodSignature m : type.getMethodDefinitions()) {
-            if (Naming.KEY_AWARE_KEY_NAME.equals(m.getName())) {
-                return m.getReturnType();
+        for (var method : type.getMethodDefinitions()) {
+            if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
+                return method.getReturnType();
             }
         }
         return null;

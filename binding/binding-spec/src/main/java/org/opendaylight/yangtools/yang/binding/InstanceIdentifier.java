@@ -33,9 +33,9 @@ import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.NodeStep;
@@ -169,7 +169,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @return key associated with the component, or null if the component type
      *         is not present.
      */
-    public final <N extends KeyAware<K> & DataObject, K extends Key<N>> @Nullable K firstKeyOf(
+    public final <N extends EntryObject<N, K>, K extends Key<N>> @Nullable K firstKeyOf(
             final Class<@NonNull N> listItem) {
         for (var step : steps()) {
             if (step instanceof KeyStep<?, ?> keyPredicate && listItem.equals(step.type())) {
@@ -281,7 +281,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @throws NullPointerException if any argument is null
      */
     @SuppressWarnings("unchecked")
-    public final <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>>
+    public final <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>>
             @NonNull KeyedInstanceIdentifier<N, K> child(final Class<@NonNull N> listItem, final K listKey) {
         return (KeyedInstanceIdentifier<N, K>) childIdentifier(new KeyStep<>(listItem, listKey));
     }
@@ -319,7 +319,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     // FIXME: add a proper caller
     @SuppressWarnings("unchecked")
     public final <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
-        N extends KeyAware<K> & ChildOf<? super C>> @NonNull KeyedInstanceIdentifier<N, K> child(
+        N extends EntryObject<N, K> & ChildOf<? super C>> @NonNull KeyedInstanceIdentifier<N, K> child(
                 final Class<@NonNull C> caze, final Class<@NonNull N> listItem, final K listKey) {
         return (KeyedInstanceIdentifier<N, K>) childIdentifier(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
@@ -428,9 +428,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @return A new {@link Builder}
      * @throws NullPointerException if any argument is null
      */
-    public static <N extends KeyAware<K> & ChildOf<? extends DataRoot>,
-            K extends Key<N>> @NonNull KeyedBuilder<N, K> builder(final Class<N> listItem,
-                    final K listKey) {
+    public static <N extends EntryObject<N, K> & ChildOf<? extends DataRoot>, K extends Key<N>>
+            @NonNull KeyedBuilder<N, K> builder(final Class<N> listItem, final K listKey) {
         return new KeyedBuilder<>(new KeyStep<>(listItem, listKey));
     }
 
@@ -448,7 +447,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @throws NullPointerException if any argument is null
      */
     public static <C extends ChoiceIn<? extends DataRoot> & DataObject,
-            N extends KeyAware<K> & ChildOf<? super C>, K extends Key<N>>
+            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builder(final @NonNull Class<C> caze, final @NonNull Class<N> listItem,
                     final @NonNull K listKey) {
         return new KeyedBuilder<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
@@ -468,7 +467,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         return new RegularBuilder<>(DataObjectStep.of(caze, container));
     }
 
-    public static <R extends DataRoot & DataObject, N extends KeyAware<K> & ChildOf<? super R>,
+    public static <R extends DataRoot & DataObject, N extends EntryObject<N, K> & ChildOf<? super R>,
             K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builderOfInherited(final @NonNull Class<R> root,
                 final @NonNull Class<N> listItem, final @NonNull K listKey) {
@@ -477,7 +476,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
-            N extends KeyAware<K> & ChildOf<? super C>, K extends Key<N>>
+            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
@@ -568,8 +567,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @throws NullPointerException if id is null.
      */
     // FIXME: reconsider naming and design of this method
-    public static <N extends KeyAware<K> & DataObject, K extends Key<N>> K keyOf(
-            final InstanceIdentifier<N> id) {
+    public static <N extends EntryObject<N, K>, K extends Key<N>> K keyOf(final InstanceIdentifier<N> id) {
         requireNonNull(id);
         checkArgument(id instanceof KeyedInstanceIdentifier, "%s does not have a key", id);
 
@@ -696,7 +694,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @param <T> The identifier of the object
      */
     @Deprecated(since = "13.0.0", forRemoval = true)
-    private static sealed class IdentifiableItem<I extends KeyAware<T> & DataObject, T extends Key<I>>
+    private static sealed class IdentifiableItem<I extends EntryObject<I, T>, T extends Key<I>>
             extends AbstractPathArgument<I> {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
@@ -750,7 +748,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     @Deprecated(since = "13.0.0", forRemoval = true)
     private static final class CaseIdentifiableItem<C extends ChoiceIn<?> & DataObject,
-            T extends ChildOf<? super C> & KeyAware<K>, K extends Key<T>> extends IdentifiableItem<T, K> {
+            T extends ChildOf<? super C> & EntryObject<T, K>, K extends Key<T>> extends IdentifiableItem<T, K> {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
@@ -803,14 +801,14 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
 
         @Override
-        public final <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>> KeyedBuilder<N, K> child(
+        public final <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> KeyedBuilder<N, K> child(
                 final Class<@NonNull N> listItem, final K listKey) {
             return append(new KeyStep<>(listItem, listKey));
         }
 
         @Override
         public final <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
-                N extends KeyAware<K> & ChildOf<? super C>> KeyedBuilder<N, K> child(final Class<C> caze,
+                N extends EntryObject<N, K> & ChildOf<? super C>> KeyedBuilder<N, K> child(final Class<C> caze,
                     final Class<N> listItem, final K listKey) {
             return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
         }
@@ -822,12 +820,12 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         protected abstract <X extends DataObject> @NonNull RegularBuilder<X> append(DataObjectStep<X> step);
 
         @Override
-        protected abstract <X extends DataObject & KeyAware<Y>, Y extends Key<X>> @NonNull KeyedBuilder<X, Y> append(
+        protected abstract <X extends EntryObject<X, Y>, Y extends Key<X>> @NonNull KeyedBuilder<X, Y> append(
             KeyStep<Y, X> step);
     }
 
-    public static final class KeyedBuilder<T extends DataObject & KeyAware<K>, K extends Key<T>>
-            extends Builder<T> implements DataObjectReference.Builder.WithKey<T, K> {
+    public static final class KeyedBuilder<T extends EntryObject<T, K>, K extends Key<T>> extends Builder<T>
+            implements DataObjectReference.Builder.WithKey<T, K> {
         KeyedBuilder(final KeyStep<K, T> firstStep) {
             super(firstStep, false);
         }
@@ -857,8 +855,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
         @Override
         @SuppressWarnings("unchecked")
-        protected <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
-                final KeyStep<Y, X> step) {
+        protected <X extends EntryObject<X, Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(final KeyStep<Y, X> step) {
             appendItem(step);
             return (KeyedBuilder<X, Y>) this;
         }
@@ -890,7 +887,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
 
         @Override
-        protected <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
+        protected <X extends EntryObject<X, Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
                 final KeyStep<Y, X> item) {
             return new KeyedBuilder<>(this, item);
         }

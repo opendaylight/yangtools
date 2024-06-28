@@ -14,7 +14,8 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <T> Identifier class for this object
  */
-public interface KeyAware<T extends Key<? extends KeyAware<T>>> {
+public sealed interface KeyAware<T extends Key<? extends EntryObject<?, T>>>
+        permits EntryObject, DataObjectReference.WithKey, KeyStep {
     /**
      * Returns an unique key for the object.
      *
