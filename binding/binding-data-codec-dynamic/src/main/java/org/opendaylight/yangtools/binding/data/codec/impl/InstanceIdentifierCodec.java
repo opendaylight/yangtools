@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingInstanceIdentifierCodec;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -31,7 +30,8 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     }
 
     @Override
-    public <T extends DataObject> InstanceIdentifier<T> toBinding(final YangInstanceIdentifier domPath) {
+    @SuppressWarnings("unchecked")
+    public <T extends DataObject> DataObjectReference<T> toBinding(final YangInstanceIdentifier domPath) {
         final var builder = new ArrayList<DataObjectStep<?>>();
         final var codec = context.getCodecContextNode(domPath, builder);
         if (codec == null) {
@@ -43,7 +43,7 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
             return null;
         }
 
-        return InstanceIdentifier.unsafeOf(builder);
+        return (DataObjectReference<T>) DataObjectReference.ofUnsafeSteps(builder);
     }
 
     @Override

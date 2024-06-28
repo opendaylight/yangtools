@@ -87,7 +87,6 @@ import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -456,10 +455,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     /**
-     * Multi-purpose utility function. Traverse the codec tree, looking for
-     * the appropriate codec for the specified {@link YangInstanceIdentifier}.
-     * As a side-effect, gather all traversed binding {@link InstanceIdentifier.PathArgument}s
-     * into the supplied collection.
+     * Multi-purpose utility function. Traverse the codec tree, looking for the appropriate codec for the specified
+     * {@link YangInstanceIdentifier}. As a side-effect, gather all traversed binding {@link DataObjectStep}s into the
+     * supplied collection.
      *
      * @param dom {@link YangInstanceIdentifier} which is to be translated
      * @param bindingArguments Collection for traversed path arguments
@@ -539,8 +537,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             /*
              * List representation in YANG Instance Identifier consists of two arguments: first is list as a whole,
              * second is list as an item so if it is /list it means list as whole, if it is /list/list - it is
-             * wildcarded and if it is /list/list[key] it is concrete item, all this variations are expressed in
-             * InstanceIdentifier as Item or IdentifiableItem
+             * wildcarded and if it is /list/list[key] it is concrete item, all these variations are expressed in
+             * DataObjectReference as am ExactDataObjectStep.
              */
             if (currentList != null) {
                 checkArgument(currentList == nextNode,
@@ -818,7 +816,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <T extends DataObject> InstanceIdentifier<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
+    public <T extends DataObject> DataObjectReference<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
         return instanceIdentifierCodec.toBinding(dom);
     }
 
@@ -899,7 +897,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         }
 
         final DataObject lazyObj = codec.deserialize(data);
-        return Map.entry(InstanceIdentifier.unsafeOf(builder), lazyObj);
+        return Map.entry(DataObjectReference.ofUnsafeSteps(builder), lazyObj);
     }
 
     @Override

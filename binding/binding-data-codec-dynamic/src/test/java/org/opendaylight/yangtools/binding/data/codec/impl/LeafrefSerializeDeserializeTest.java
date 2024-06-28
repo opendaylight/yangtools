@@ -24,37 +24,37 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
     @Test
     public void listReferenceTest() {
-        final YangInstanceIdentifier contYII = YangInstanceIdentifier.builder().node(Cont.QNAME).build();
-        final InstanceIdentifier<?> fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
+        final var contYII = YangInstanceIdentifier.builder().node(Cont.QNAME).build();
+        final var fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
 
-        final InstanceIdentifier<Cont> BA_II_CONT = InstanceIdentifier.builder(Cont.class).build();
-        final Ref refVal = new Ref("myvalue");
-        final Cont data = new ContBuilder().setRef(refVal).build();
+        final var BA_II_CONT = InstanceIdentifier.builder(Cont.class).build();
+        final var refVal = new Ref("myvalue");
+        final var data = new ContBuilder().setRef(refVal).build();
         final var normalizedNode = codecContext.toNormalizedDataObject(BA_II_CONT, data);
         assertNotNull(normalizedNode);
 
         final var fromNormalizedNode = codecContext.fromNormalizedNode(contYII, normalizedNode.node());
         assertNotNull(fromNormalizedNode);
-        final Cont value = (Cont) fromNormalizedNode.getValue();
+        final var value = (Cont) fromNormalizedNode.getValue();
         assertEquals(refVal, value.getRef());
     }
 
     @Test
     public void uint32LeafrefTest() {
-        final YangInstanceIdentifier contYII = YangInstanceIdentifier.builder().node(ContInt32.QNAME).build();
-        final InstanceIdentifier<?> fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
+        final var contYII = YangInstanceIdentifier.builder().node(ContInt32.QNAME).build();
+        final var fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
 
-        final InstanceIdentifier<ContInt32> BA_II_CONT = InstanceIdentifier.builder(ContInt32.class).build();
-        final RefUnionInt32 refVal = new RefUnionInt32(Uint32.valueOf(5));
-        final ContInt32 data = new ContInt32Builder().setRefUnionInt32(refVal).build();
+        final var BA_II_CONT = InstanceIdentifier.builder(ContInt32.class).build();
+        final var refVal = new RefUnionInt32(Uint32.valueOf(5));
+        final var data = new ContInt32Builder().setRefUnionInt32(refVal).build();
         final var normalizedNode = codecContext.toNormalizedDataObject(BA_II_CONT, data);
         assertNotNull(normalizedNode);
 
         final var fromNormalizedNode = codecContext.fromNormalizedNode(contYII, normalizedNode.node());
         assertNotNull(fromNormalizedNode);
-        final ContInt32 value = (ContInt32) fromNormalizedNode.getValue();
+        final var value = (ContInt32) fromNormalizedNode.getValue();
         assertEquals(refVal, value.getRefUnionInt32());
     }
 }

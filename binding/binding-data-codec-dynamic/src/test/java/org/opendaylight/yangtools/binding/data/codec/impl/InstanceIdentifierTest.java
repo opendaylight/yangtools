@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
@@ -21,8 +21,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier.WithKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -41,8 +41,8 @@ public class InstanceIdentifierTest extends AbstractBindingCodecTest {
     @Test
     public void testComplexAugmentationSerialization() {
         // augmentation child pointer fully recoverable after reverse transformation
-        final YangInstanceIdentifier yii = codecContext.toYangInstanceIdentifier(BA_TREE_COMPLEX_USES);
-        final InstanceIdentifier<?> converted = codecContext.fromYangInstanceIdentifier(yii);
+        final var yii = codecContext.toYangInstanceIdentifier(BA_TREE_COMPLEX_USES);
+        final var converted = codecContext.fromYangInstanceIdentifier(yii);
         assertEquals(BA_TREE_COMPLEX_USES, converted);
     }
 
@@ -50,22 +50,22 @@ public class InstanceIdentifierTest extends AbstractBindingCodecTest {
     public void testLeafOnlyAugmentationSerialization() {
         // augmentation only pointer translated to parent node being augmented,
         // because of augmentation only have no corresponding yang identifier
-        final YangInstanceIdentifier yii = codecContext.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
-        final InstanceIdentifier<?> converted = codecContext.fromYangInstanceIdentifier(yii);
+        final var yii = codecContext.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
+        final var converted = codecContext.fromYangInstanceIdentifier(yii);
         assertEquals(BA_TOP_LEVEL_LIST, converted);
     }
 
     @Test
     public void testCamelCaseKeys() {
-        final InstanceIdentifier<?> result = codecContext.fromYangInstanceIdentifier(YangInstanceIdentifier.of(
+        final var result = codecContext.fromYangInstanceIdentifier(YangInstanceIdentifier.of(
             NodeIdentifier.create(OspfStatLsdbBrief.QNAME),
             NodeIdentifierWithPredicates.of(OspfStatLsdbBrief.QNAME, ImmutableMap.of(
                 QName.create(OspfStatLsdbBrief.QNAME, "AreaIndex"), 1,
                 QName.create(OspfStatLsdbBrief.QNAME, "LsaType"), Uint8.valueOf(2),
                 QName.create(OspfStatLsdbBrief.QNAME, "LsId"), 3,
                 QName.create(OspfStatLsdbBrief.QNAME, "AdvRtr"), "foo"))));
-        assertTrue(result instanceof KeyedInstanceIdentifier);
-        final var key = ((KeyedInstanceIdentifier<?, ?>) result).getKey();
+
+        final var key = assertInstanceOf(WithKey.class, result).key();
         assertEquals(new OspfStatLsdbBriefKey("foo", 1, 3, Uint8.valueOf(2)), key);
     }
 }
