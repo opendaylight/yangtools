@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -19,9 +18,14 @@ import java.io.ObjectStreamException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.KeyStep;
+import org.opendaylight.yangtools.binding.KeylessStep;
+import org.opendaylight.yangtools.binding.NodeStep;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
@@ -32,6 +36,9 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
         permits DataObjectIdentifierImpl, DataObjectReferenceImpl, InstanceIdentifier {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
+
+    private static final String TRIM_STRING = Naming.PACKAGE_PREFIX;
+    private static final int TRIM_LENGTH = TRIM_STRING.length();
 
     private final @NonNull Iterable<? extends @NonNull S> steps;
 
@@ -66,8 +73,66 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
 
     @Override
     public final String toString() {
-        // FIXME: YANGTOOLS-1577: pretty-print steps instead
-        return MoreObjects.toStringHelper(contract()).add("steps", Iterables.toString(steps())).toString();
+        final var sb = new StringBuilder(contract().getSimpleName()).append("[\n");
+        // Note: invalid start on purpose
+        var prevPackage = ".";
+        for (var step : steps) {
+            prevPackage = appendStep(sb, prevPackage, step);
+        }
+        return sb.append(']').toString();
+    }
+
+    private static @NonNull String appendStep(final StringBuilder sb, final String prevPackage,
+            final DataObjectStep<?> step) {
+        return switch (step) {
+            case KeyStep<?, ?> cast -> appendStep(sb, prevPackage, cast);
+            case KeylessStep<?> cast -> appendStep(sb, prevPackage, cast);
+            case NodeStep<?> cast -> appendStep(sb, prevPackage, cast);
+        };
+    }
+
+    private static @NonNull String appendStep(final StringBuilder sb, final String prevPackage,
+            final KeyStep<?, ?> step) {
+        final var ret = appendStep(sb, prevPackage, step.caseType(), step.type());
+        sb.append('[').append(step.key()).append("]\n");
+        return ret;
+    }
+
+    private static @NonNull String appendStep(final StringBuilder sb, final String prevPackage,
+            final KeylessStep<?> step) {
+        final var ret = appendStep(sb, prevPackage, step.caseType(), step.type());
+        sb.append("(any)\n");
+        return ret;
+    }
+
+    private static @NonNull String appendStep(final StringBuilder sb, final String prevPackage,
+            final NodeStep<?> step) {
+        final var ret = appendStep(sb, prevPackage, step.caseType(), step.type());
+        sb.append('\n');
+        return ret;
+    }
+
+    private static @NonNull String appendStep(final StringBuilder sb, final String prevPackage,
+            final @Nullable Class<? extends DataObject> caseType, final Class<? extends DataObject> type) {
+        if (caseType != null) {
+            appendClass(sb.append('<'), prevPackage, caseType);
+            sb.append('>');
+        }
+        return appendClass(sb, prevPackage, type);
+    }
+
+    private static @NonNull String appendClass(final StringBuilder sb, final String trim,
+            final Class<? extends DataObject> type) {
+        final var fqpn = type.getPackageName();
+        if (fqpn.startsWith(trim)) {
+            sb.append('.').append(fqpn, trim.length(), fqpn.length() + 1);
+        } else if (fqpn.startsWith(TRIM_STRING)) {
+            sb.append('@').append(fqpn, TRIM_LENGTH, fqpn.length() + 1);
+        } else {
+            sb.append(fqpn);
+        }
+        sb.append('.').append(type.getSimpleName());
+        return fqpn;
     }
 
     protected @NonNull Class<?> contract() {
