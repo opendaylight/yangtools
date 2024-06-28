@@ -11,8 +11,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
 
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 public final class BaseYangTypes {
     /**
@@ -88,8 +86,7 @@ public final class BaseYangTypes {
     /**
      * {@code Type} representation of {@code instance-identifier} YANG type.
      */
-    public static final ParameterizedType INSTANCE_IDENTIFIER =
-        Types.parameterizedTypeFor(typeForBuiltIn(BuiltInType.INSTANCE_IDENTIFIER));
+    public static final ConcreteType INSTANCE_IDENTIFIER = typeForBuiltIn(BuiltInType.INSTANCE_IDENTIFIER);
 
     private BaseYangTypes() {
         // Hidden on purpose
@@ -102,8 +99,7 @@ public final class BaseYangTypes {
      * @return Java {@code Type} representation of {@code type}, or null if the type is not mapped.
      * @throws NullPointerException if type is null
      */
-    // FIXME: YANGTOOLS-1577: ConcreteType when we map to BindingInstanceIdentifier
-    public static Type javaTypeForYangType(final String type) {
+    public static ConcreteType javaTypeForYangType(final String type) {
         return switch (type) {
             case "binary" -> BINARY_TYPE;
             case "boolean" -> BOOLEAN_TYPE;
