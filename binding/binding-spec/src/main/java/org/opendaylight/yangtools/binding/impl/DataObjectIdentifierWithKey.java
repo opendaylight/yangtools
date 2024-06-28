@@ -29,7 +29,7 @@ public final class DataObjectIdentifierWithKey<T extends KeyAware<K> & DataObjec
         super(steps);
     }
 
-    DataObjectIdentifierWithKey(final Void unused, final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
+    public DataObjectIdentifierWithKey(final Void unused, final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
         super(unused, steps);
     }
 
@@ -41,6 +41,11 @@ public final class DataObjectIdentifierWithKey<T extends KeyAware<K> & DataObjec
     @Override
     public DataObjectReferenceBuilderWithKey<T, K> toBuilder() {
         return new DataObjectReferenceBuilderWithKey<>(this);
+    }
+
+    @Override
+    public DataObjectIdentifierWithKey<T, K> toIdentifier() {
+        return this;
     }
 
     @java.io.Serial

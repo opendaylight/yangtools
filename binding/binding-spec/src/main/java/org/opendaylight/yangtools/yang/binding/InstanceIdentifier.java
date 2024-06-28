@@ -41,6 +41,8 @@ import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReferenceBuilder;
+import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
+import org.opendaylight.yangtools.binding.impl.DataObjectReferenceImpl;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 
 /**
@@ -116,11 +118,6 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     @Deprecated(since = "14.0.0", forRemoval = true)
     public final boolean isWildcarded() {
         return wildcarded;
-    }
-
-    @Override
-    public final InstanceIdentifier<T> toLegacy() {
-        return this;
     }
 
     @Override
@@ -364,6 +361,26 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     @Override
     public Builder<T> toBuilder() {
         return new RegularBuilder<>(this);
+    }
+
+    @Override
+    public DataObjectIdentifier<T> toIdentifier() {
+        return toReference().toIdentifier();
+    }
+
+    @Override
+    public final InstanceIdentifier<T> toLegacy() {
+        return this;
+    }
+
+    /**
+     * Convert this {@link InstanceIdentifier} into its corresponding {@link DataObjectReference}.
+     *
+     * @return A non-InstanceIdentifier {@link DataObjectReference}
+     */
+    public DataObjectReference<T> toReference() {
+        final var steps = steps();
+        return wildcarded ? new DataObjectReferenceImpl<>(steps) : new DataObjectIdentifierImpl<>(null, steps);
     }
 
     /**

@@ -31,19 +31,24 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
  * This means users can use a {@link KeyAware} class without specifying the corresponding key -- resulting in an
  * {@link InexactDataObjectStep}.
  *
+ * <p>
+ * There are two kinds of a reference based on their treatment of such a {@link InexactDataObjectStep}:
+ * <ol>
+ *   <li>{@link DataObjectIdentifier}, which accepts only {@link ExactDataObjectStep}s and represents
+ *       a {@link BindingInstanceIdentifier} pointing to a {@link DataObject}</li>
+ *   <li>{@link DataObjectReference}, which accepts any {@link DataObjectStep} and represents path-based matching
+ *       criteria for one or more {@link DataObjectIdentifier}s based on
+ *       {@link InexactDataObjectStep#matches(DataObjectStep)}.
+ * </ol>
+ * An explicit conversion to {@link DataObjectIdentifier} can be attempted via {@link #toIdentifier()} method.
+ *
+ * <p>
+ * The legacy {@link InstanceIdentifier} is implements the second kind via its class hierarchy, but indicates its
+ * compliance via {@link #isExact()} method. Any {@link DataObjectReference} can be converted into an
+ * {@link InstanceIdentifier} via the {@link #toLegacy()} method.
+ *
  * @param <T> type of {@link DataObject} held in the last step.
  */
-// FIXME: YANGTOOLS-1577: revise this bit of documentation
-//*
-//* <p>
-//* There are two kinds of a reference based on their treatment of such a {@link InexactDataObjectStep}:
-//* <ul>
-//*   <li>{@link DataObjectIdentifier}, which accepts only {@link ExactDataObjectStep}s and represents
-//*       a {@link BindingInstanceIdentifier} pointing to a {@link DataObject}</li>
-//*   <li>{@link DataObjectWildcard}, which accepts any {@link DataObjectStep} and represents path-based matching
-//*       criteria for one or more {@link DataObjectIdentifier}s based on
-//*       {@link InexactDataObjectStep#matches(DataObjectStep)}.
-//* </ul>
 public sealed interface DataObjectReference<T extends DataObject> extends Immutable, Serializable
         permits DataObjectIdentifier, DataObjectReference.WithKey, AbstractDataObjectReference {
     /**
@@ -157,6 +162,9 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         Builder.WithKey<T, K> toBuilder();
 
         @Override
+        DataObjectIdentifier.WithKey<T, K> toIdentifier();
+
+        @Override
         default K key() {
             return lastStep().key();
         }
@@ -213,6 +221,14 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @return A builder instance
      */
     @NonNull Builder<T> toBuilder();
+
+    /**
+     * Return a {@link DataObjectIdentifier} view of this reference, if possible.
+     *
+     * @return A {@link DataObjectIdentifier}
+     * @throws UnsupportedOperationException if this reference is not compatible with {@link DataObjectIdentifier}
+     */
+    @NonNull DataObjectIdentifier<T> toIdentifier();
 
     /**
      * Returns {@code true} if this reference is composed solely of {@link ExactDataObjectStep}s.

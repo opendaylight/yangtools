@@ -8,11 +8,15 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
+import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierWithKey;
+import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
 
 /**
  * An {@link InstanceIdentifier}, which has a list key attached at its last path element.
@@ -37,5 +41,16 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     @Override
     public KeyedBuilder<T, K> toBuilder() {
         return new KeyedBuilder<>(this);
+    }
+
+    @Override
+    public DataObjectIdentifier.WithKey<T, K> toIdentifier() {
+        return toReference().toIdentifier();
+    }
+
+    @Override
+    public DataObjectReference.WithKey<T, K> toReference() {
+        final var steps = steps();
+        return isExact() ? new DataObjectIdentifierWithKey<>(null, steps) : new DataObjectReferenceWithKey<>(steps);
     }
 }
