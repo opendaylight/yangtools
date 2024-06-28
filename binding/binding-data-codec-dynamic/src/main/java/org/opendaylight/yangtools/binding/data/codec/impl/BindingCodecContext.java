@@ -13,8 +13,10 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.base.VerifyException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -59,6 +61,7 @@ import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
@@ -136,6 +139,23 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         final String dir = System.getProperty("org.opendaylight.mdsal.binding.dom.codec.loader.bytecodeDumpDirectory");
         BYTECODE_DIRECTORY = Strings.isNullOrEmpty(dir) ? null : new File(dir);
     }
+
+    /**
+     * A simple codec that just verifies against possible {@link BuiltInType}s.
+     */
+    // FIXME: YANGTOOLS-1602: this codec should not be needed
+    @VisibleForTesting
+    static final @NonNull SchemaUnawareCodec NOOP_CODEC = new SchemaUnawareCodec() {
+        @Override
+        protected Object serializeImpl(final Object input) {
+            return BuiltInType.checkValue(input);
+        }
+
+        @Override
+        protected Object deserializeImpl(final Object input) {
+            return BuiltInType.checkValue(input);
+        }
+    };
 
     private final LoadingCache<Class<?>, DataContainerStreamer<?>> streamers = CacheBuilder.newBuilder()
         .build(new CacheLoader<>() {
@@ -647,7 +667,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
                 final ValueNodeCodecContext valueNode;
                 if (schema instanceof LeafSchemaNode leafSchema) {
-                    // FIXME: MDSAL-670: this is not right as we need to find a concrete type, but this may return
+                    // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type, but this may return
                     //                   Object.class
                     final Class<?> valueType = method.getReturnType();
                     final ValueCodec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
@@ -665,7 +685,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     } else if (genericType instanceof ParameterizedType parameterized) {
                         valueType = (Class<?>) parameterized.getRawType();
                     } else if (genericType instanceof WildcardType) {
-                        // FIXME: MDSAL-670: this is not right as we need to find a concrete type
+                        // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type
                         valueType = Object.class;
                     } else {
                         throw new IllegalStateException("Unexpected return type " + genericType);
@@ -703,10 +723,19 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             return casted;
         } else if (BindingReflections.isBindingClass(valueType)) {
             return getCodecForBindingClass(valueType, instantiatedType);
+        } else {
+            final var codec = BuiltInValueCodec.forValueType(valueType);
+            if (codec != null) {
+                return codec;
+            }
+
+            // FIXME: YANGTOOLS-1602: we must never return NOOP_CODEC for valueType=Object.class
+            if (Object.class.equals(valueType)) {
+                return NOOP_CODEC;
+            }
+
+            throw new VerifyException("Unsupported type " + valueType.getName());
         }
-        // FIXME: MDSAL-670: this is right for most situations, but we must never return NOOP_CODEC for
-        //                   valueType=Object.class
-        return SchemaUnawareCodec.NOOP_CODEC;
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -724,19 +753,24 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
         } else if (typeDef instanceof LeafrefTypeDefinition) {
-            final var typeWithSchema = context.getTypeWithSchema(valueType);
-            final var schema = typeWithSchema.statement();
-            final TypeDefinition<?> def;
-            if (schema instanceof TypeDefinitionAware typeDefAware) {
-                def = typeDefAware.getTypeDefinition();
-            } else if (schema instanceof TypeAware typeAware) {
-                def = typeAware.getType();
-            } else {
-                throw new IllegalStateException("Unexpected schema " + schema);
-            }
-            return getCodec(valueType, def);
+            final var schema = context.getTypeWithSchema(valueType).statement();
+            return getCodec(valueType, switch (schema) {
+                case TypeDefinitionAware typeDefAware -> typeDefAware.getTypeDefinition();
+                case TypeAware typeAware -> typeAware.getType();
+                default -> throw new IllegalStateException("Unexpected schema " + schema);
+            });
         }
-        return SchemaUnawareCodec.of(valueType, typeDef);
+
+        final var cached = SchemaUnawareCodec.of(valueType, typeDef);
+        if (cached != null) {
+            return cached;
+        }
+        final var codec = BuiltInValueCodec.forValueType(valueType);
+        if (codec != null) {
+            return codec;
+        }
+
+        throw new VerifyException("Unsupported type " + valueType.getName());
     }
 
     @Override
