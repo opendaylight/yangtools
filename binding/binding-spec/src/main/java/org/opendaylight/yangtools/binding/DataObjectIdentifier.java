@@ -12,7 +12,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierWithKey;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.KeyedBuilder;
 
 /**
  * A {@link DataObjectReference} matching at most one {@link DataObject}, consistent with YANG
@@ -36,7 +35,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         KeyStep<K, T> lastStep();
 
         @Override
-        KeyedBuilder<T, K> toBuilder();
+        DataObjectReference.Builder.WithKey<T, K> toBuilder();
     }
 
     static @NonNull DataObjectIdentifier<?> ofUnsafeSteps(

@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 
-// FIXME: YANGTOOLS-1577: non-abstract
-public abstract sealed class DataObjectIdentifierImpl<T extends DataObject>
+public sealed class DataObjectIdentifierImpl<T extends DataObject>
         extends AbstractDataObjectReference<T, ExactDataObjectStep<?>> implements DataObjectIdentifier<T>
         permits DataObjectIdentifierWithKey {
     @java.io.Serial
@@ -32,6 +31,11 @@ public abstract sealed class DataObjectIdentifierImpl<T extends DataObject>
             final ImmutableList<? extends @NonNull ExactDataObjectStep<?>> steps) {
         // FIXME: YANGTOOLS-1577: implement this
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public AbstractDataObjectReferenceBuilder<T> toBuilder() {
+        return new DataObjectReferenceBuilder<>(this);
     }
 
     @Override

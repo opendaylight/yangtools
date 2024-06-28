@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -21,7 +20,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
@@ -32,6 +30,7 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
@@ -41,6 +40,7 @@ import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
+import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReferenceBuilder;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 
 /**
@@ -269,7 +269,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      */
     public final <N extends ChildOf<? super T>> @NonNull InstanceIdentifier<N> child(
             final Class<@NonNull N> container) {
-        return childIdentifier(createStep(container));
+        return childIdentifier(DataObjectStep.of(container));
     }
 
     /**
@@ -303,7 +303,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     // FIXME: add a proper caller
     public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>>
             @NonNull InstanceIdentifier<N> child(final Class<@NonNull C> caze, final Class<@NonNull N> container) {
-        return childIdentifier(createStep(caze, container));
+        return childIdentifier(DataObjectStep.of(caze, container));
     }
 
     /**
@@ -375,8 +375,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @throws NullPointerException if {@code container} is null
      */
     public static <T extends ChildOf<? extends DataRoot>> @NonNull Builder<T> builder(
-            final Class<T> container) {
-        return new RegularBuilder<>(createStep(container));
+            final @NonNull Class<T> container) {
+        return new RegularBuilder<>(DataObjectStep.of(container));
     }
 
     /**
@@ -391,8 +391,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @throws NullPointerException if any argument is null
      */
     public static <C extends ChoiceIn<? extends DataRoot> & DataObject, T extends ChildOf<? super C>>
-            @NonNull Builder<T> builder(final Class<C> caze, final Class<T> container) {
-        return new RegularBuilder<>(createStep(caze, container));
+            @NonNull Builder<T> builder(final @NonNull Class<C> caze, final @NonNull Class<T> container) {
+        return new RegularBuilder<>(DataObjectStep.of(caze, container));
     }
 
     /**
@@ -426,15 +426,15 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      */
     public static <C extends ChoiceIn<? extends DataRoot> & DataObject,
             N extends KeyAware<K> & ChildOf<? super C>, K extends Key<N>>
-            @NonNull KeyedBuilder<N, K> builder(final Class<C> caze, final Class<N> listItem,
-                    final K listKey) {
+            @NonNull KeyedBuilder<N, K> builder(final @NonNull Class<C> caze, final @NonNull Class<N> listItem,
+                    final @NonNull K listKey) {
         return new KeyedBuilder<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 
     public static <R extends DataRoot & DataObject, T extends ChildOf<? super R>>
-            @NonNull Builder<T> builderOfInherited(final Class<R> root, final Class<T> container) {
+            @NonNull Builder<T> builderOfInherited(final @NonNull Class<R> root, final @NonNull Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
-        return new RegularBuilder<>(createStep(container));
+        return new RegularBuilder<>(DataObjectStep.of(container));
     }
 
     public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
@@ -442,13 +442,13 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
             @NonNull Builder<T> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
-        return new RegularBuilder<>(createStep(caze, container));
+        return new RegularBuilder<>(DataObjectStep.of(caze, container));
     }
 
     public static <R extends DataRoot & DataObject, N extends KeyAware<K> & ChildOf<? super R>,
             K extends Key<N>>
-            @NonNull KeyedBuilder<N, K> builderOfInherited(final Class<R> root,
-                final Class<N> listItem, final K listKey) {
+            @NonNull KeyedBuilder<N, K> builderOfInherited(final @NonNull Class<R> root,
+                final @NonNull Class<N> listItem, final @NonNull K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new KeyedBuilder<>(new KeyStep<>(listItem, listKey));
     }
@@ -459,18 +459,6 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
                 final Class<C> caze, final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new KeyedBuilder<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
-    }
-
-    @Beta
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static <T extends DataObject, C extends ChoiceIn<?> & DataObject> @NonNull DataObjectStep<T> createStep(
-            final Class<C> caze, final Class<T> type) {
-        return KeyAware.class.isAssignableFrom(type) ? new KeylessStep(type, caze) : new NodeStep<>(type, caze);
-    }
-
-    @Beta
-    public static <T extends DataObject> @NonNull DataObjectStep<T> createStep(final Class<T> type) {
-        return createStep(null, type);
     }
 
     /**
@@ -545,7 +533,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     @SuppressWarnings("unchecked")
     public static <T extends ChildOf<? extends DataRoot>> @NonNull InstanceIdentifier<T> create(
             final Class<@NonNull T> type) {
-        return (InstanceIdentifier<T>) internalCreate(ImmutableList.of(createStep(type)));
+        return (InstanceIdentifier<T>) internalCreate(ImmutableList.of(DataObjectStep.of(type)));
     }
 
     /**
@@ -668,7 +656,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         @Override
         @SuppressWarnings({ "rawtypes", "unchecked" })
         final DataObjectStep<?> toStep() {
-            return createStep((Class) caseType(), type());
+            return DataObjectStep.of((Class) caseType(), type());
         }
 
         @Override
@@ -761,180 +749,62 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      *
      * @param <T> Instance identifier target type
      */
-    public abstract static sealed class Builder<T extends DataObject> {
-        private final ArrayList<@NonNull DataObjectStep<?>> pathBuilder;
-        private final Iterable<? extends @NonNull DataObjectStep<?>> basePath;
-
-        private boolean wildcard;
-
+    public abstract static sealed class Builder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
         Builder(final Builder<?> prev, final DataObjectStep<?> item) {
-            pathBuilder = prev.pathBuilder;
-            basePath = prev.basePath;
-            wildcard = prev.wildcard;
-            appendItem(item);
+            super(prev, item);
         }
 
         Builder(final InstanceIdentifier<T> identifier) {
-            pathBuilder = new ArrayList<>(4);
-            wildcard = identifier.isWildcarded();
-            basePath = identifier.steps();
+            super(identifier);
         }
 
         Builder(final DataObjectStep<?> item, final boolean wildcard) {
-            pathBuilder = new ArrayList<>(4);
-            basePath = null;
-            this.wildcard = wildcard;
-            appendItem(item);
+            super(item, wildcard);
         }
 
-        final boolean wildcard() {
-            return wildcard;
-        }
-
-        /**
-         * Build an identifier which refers to a specific augmentation of the current InstanceIdentifier referenced by
-         * the builder.
-         *
-         * @param container augmentation class
-         * @param <N> augmentation type
-         * @return this builder
-         * @throws NullPointerException if {@code container} is null
-         */
+        @Override
         public final <N extends DataObject & Augmentation<? super T>> Builder<N> augmentation(
-                final Class<N> container) {
-            return append(new NodeStep<>(container));
+                final Class<N> augmentation) {
+            return append(new NodeStep<>(augmentation));
         }
 
-        /**
-         * Append the specified container as a child of the current InstanceIdentifier referenced by the builder. This
-         * method should be used when you want to build an instance identifier by appending top-level elements, for
-         * example
-         * <pre>
-         *     InstanceIdentifier.builder().child(Nodes.class).build();
-         * </pre>
-         *
-         * <p>
-         * NOTE :- The above example is only for illustration purposes InstanceIdentifier.builder() has been deprecated
-         * and should not be used. Use InstanceIdentifier.builder(Nodes.class) instead
-         *
-         * @param container Container to append
-         * @param <N> Container type
-         * @return this builder
-         * @throws NullPointerException if {@code container} is null
-         */
+        @Override
         public final <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
-            return append(createStep(container));
+            return append(DataObjectStep.of(container));
         }
 
-        /**
-         * Append the specified container as a child of the current InstanceIdentifier referenced by the builder. This
-         * method should be used when you want to build an instance identifier by appending a container node to the
-         * identifier and the {@code container} is defined in a {@code grouping} used in a {@code case} statement.
-         *
-         * @param caze Choice case class
-         * @param container Container to append
-         * @param <C> Case type
-         * @param <N> Container type
-         * @return this builder
-         * @throws NullPointerException if {@code container} is null
-         */
+        @Override
         public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
                 final Class<C> caze, final Class<N> container) {
-            return append(createStep(caze, container));
+            return append(DataObjectStep.of(caze, container));
         }
 
-        /**
-         * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder. This
-         * method should be used when you want to build an instance identifier by appending a specific list element to
-         * the identifier.
-         *
-         * @param listItem List to append
-         * @param listKey List key
-         * @param <N> List type
-         * @param <K> Key type
-         * @return this builder
-         * @throws NullPointerException if any argument is null
-         */
+        @Override
         public final <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>> KeyedBuilder<N, K> child(
                 final Class<@NonNull N> listItem, final K listKey) {
             return append(new KeyStep<>(listItem, listKey));
         }
 
-        /**
-         * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder. This
-         * method should be used when you want to build an instance identifier by appending a specific list element to
-         * the identifier and the {@code list} is defined in a {@code grouping} used in a {@code case} statement.
-         *
-         * @param caze Choice case class
-         * @param listItem List to append
-         * @param listKey List key
-         * @param <C> Case type
-         * @param <N> List type
-         * @param <K> Key type
-         * @return this builder
-         * @throws NullPointerException if any argument is null
-         */
+        @Override
         public final <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
                 N extends KeyAware<K> & ChildOf<? super C>> KeyedBuilder<N, K> child(final Class<C> caze,
                     final Class<N> listItem, final K listKey) {
             return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
         }
 
-        /**
-         * Build the instance identifier.
-         *
-         * @return Resulting {@link InstanceIdentifier}.
-         */
+        @Override
         public abstract @NonNull InstanceIdentifier<T> build();
 
-        final Iterable<? extends DataObjectStep<?>> buildSteps() {
-            final var prefix = basePath;
-            if (prefix == null) {
-                return pathBuilder.isEmpty() ? ImmutableList.of() : ImmutableList.copyOf(pathBuilder);
-            }
-
-            return switch (pathBuilder.size()) {
-                case 0 -> prefix;
-                case 1 -> concat(prefix, pathBuilder.getFirst());
-                default -> ImmutableList.<DataObjectStep<?>>builder().addAll(prefix).addAll(pathBuilder).build();
-            };
-        }
+        @Override
+        protected abstract <X extends DataObject> @NonNull RegularBuilder<X> append(DataObjectStep<X> step);
 
         @Override
-        public final int hashCode() {
-            int hash = 1;
-            for (var step : pathArguments()) {
-                hash = 31 * hash + step.hashCode();
-            }
-            return hash;
-        }
-
-        @Override
-        public final boolean equals(final Object obj) {
-            return this == obj || obj instanceof Builder<?> other
-                && wildcard == other.wildcard && Iterables.elementsEqual(pathArguments(), other.pathArguments());
-        }
-
-        // Note: not suitable for use in result
-        private Iterable<? extends DataObjectStep<?>> pathArguments() {
-            return basePath == null ? pathBuilder : Iterables.concat(basePath, pathBuilder);
-        }
-
-        final void appendItem(final DataObjectStep<?> item) {
-            pathBuilder.add(requireNonNull(item));
-            if (!(item instanceof ExactDataObjectStep)) {
-                wildcard = true;
-            }
-        }
-
-        abstract <X extends DataObject> @NonNull RegularBuilder<X> append(DataObjectStep<X> step);
-
-        abstract <X extends DataObject & KeyAware<Y>, Y extends Key<X>> @NonNull KeyedBuilder<X, Y> append(
+        protected abstract <X extends DataObject & KeyAware<Y>, Y extends Key<X>> @NonNull KeyedBuilder<X, Y> append(
             KeyStep<Y, X> step);
     }
 
     public static final class KeyedBuilder<T extends DataObject & KeyAware<K>, K extends Key<T>>
-            extends Builder<T> {
+            extends Builder<T> implements DataObjectReference.Builder.WithKey<T, K> {
         KeyedBuilder(final KeyStep<K, T> firstStep) {
             super(firstStep, false);
         }
@@ -958,13 +828,14 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
 
         @Override
-        <X extends DataObject> @NonNull RegularBuilder<X> append(final DataObjectStep<X> step) {
+        protected <X extends DataObject> @NonNull RegularBuilder<X> append(final DataObjectStep<X> step) {
             return new RegularBuilder<>(this, step);
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(final KeyStep<Y, X> step) {
+        protected <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
+                final KeyStep<Y, X> step) {
             appendItem(step);
             return (KeyedBuilder<X, Y>) this;
         }
@@ -990,13 +861,13 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
         @Override
         @SuppressWarnings("unchecked")
-        <X extends DataObject> RegularBuilder<X> append(final DataObjectStep<X> step) {
+        protected <X extends DataObject> RegularBuilder<X> append(final DataObjectStep<X> step) {
             appendItem(step);
             return (RegularBuilder<X>) this;
         }
 
         @Override
-        <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
+        protected <X extends DataObject & KeyAware<Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
                 final KeyStep<Y, X> item) {
             return new KeyedBuilder<>(this, item);
         }

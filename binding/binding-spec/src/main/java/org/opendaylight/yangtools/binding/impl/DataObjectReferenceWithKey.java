@@ -34,6 +34,11 @@ public abstract non-sealed class DataObjectReferenceWithKey<T extends KeyAware<K
         return getLast(steps());
     }
 
+    @Override
+    public DataObjectReferenceBuilderWithKey<T, K> toBuilder() {
+        return new DataObjectReferenceBuilderWithKey<>(this);
+    }
+
     @java.io.Serial
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         throwNSE();
