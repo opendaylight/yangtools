@@ -28,11 +28,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangDataName;
@@ -121,7 +121,7 @@ public final class Naming {
     public static final @NonNull String BINDING_TO_STRING_NAME = "bindingToString";
 
     /**
-     * Name of {@link Action#invoke(InstanceIdentifier, RpcInput)}.
+     * Name of {@link Action#invoke(DataObjectIdentifier, RpcInput)}.
      */
     public static final @NonNull String ACTION_INVOKE_NAME = "invoke";
 

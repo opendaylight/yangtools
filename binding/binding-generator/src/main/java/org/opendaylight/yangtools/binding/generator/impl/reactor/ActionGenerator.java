@@ -52,7 +52,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
                 final var keyType = keyGen.getGeneratedType(builderFactory);
                 builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
                 builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
-                    .addParameter(BindingTypes.objectReferenceWithKey(parentType, keyType), "path")
+                    .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")
                     .addParameter(input, "input")
                     .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
                     .addAnnotation(OVERRIDE_ANNOTATION);
@@ -61,7 +61,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
         }
         builder.addImplementsType(BindingTypes.action(parentType, input, output));
         builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
-            .addParameter(BindingTypes.objectReference(parentType), "path")
+            .addParameter(BindingTypes.objectIdentifier(parentType), "path")
             .addParameter(input, "input")
             .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
             .addAnnotation(OVERRIDE_ANNOTATION);

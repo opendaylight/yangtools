@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.Key;
@@ -46,8 +47,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.YangDataName;
@@ -85,10 +84,8 @@ public final class BindingTypes {
     private static final ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
     private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
-    // FIXME: YANGTOOLS-1577: Use DataObjectReference
-    private static final ConcreteType OBJECT_REFERENCE = typeForClass(InstanceIdentifier.class);
-    // FIXME: YANGTOOLS-1577: Use DataObjectReference.WithKey
-    private static final ConcreteType OBJECT_REFERENCE_WITH_KEY = typeForClass(KeyedInstanceIdentifier.class);
+    private static final ConcreteType OBJECT_REFERENCE = typeForClass(DataObjectIdentifier.class);
+    private static final ConcreteType OBJECT_REFERENCE_WITH_KEY = typeForClass(DataObjectIdentifier.WithKey.class);
     private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
     private static final ConcreteType RPC = typeForClass(Rpc.class);
@@ -110,7 +107,7 @@ public final class BindingTypes {
      * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType action(final Type parent, final Type input, final Type output) {
-        return parameterizedTypeFor(ACTION, objectReference(parent), input, output);
+        return parameterizedTypeFor(ACTION, objectIdentifier(parent), input, output);
     }
 
     /**
@@ -232,25 +229,25 @@ public final class BindingTypes {
     }
 
     /**
-     * Type specializing {@link InstanceIdentifier} for a particular type.
+     * Type specializing {@link DataObjectIdentifier} for a particular type.
      *
      * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code InstanceIdentifier<Type>}
+     * @return A parameterized type corresponding to {@code DataObjectIdentifier<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static ParameterizedType objectReference(final Type type) {
+    public static ParameterizedType objectIdentifier(final Type type) {
         return parameterizedTypeFor(OBJECT_REFERENCE, type);
     }
 
     /**
-     * Type specializing {@link KeyedInstanceIdentifier} for a particular type.
+     * Type specializing {@link DataObjectIdentifier.WithKey} for a particular type.
      *
      * @param type Type for which to specialize
      * @param keyType Type of key
-     * @return A parameterized type corresponding to {@code KeyedInstanceIdentifier<Type, KeyType>}
+     * @return A parameterized type corresponding to {@code DataObjectIdentifier.WithKey<Type, KeyType>}
      * @throws NullPointerException if any argument is is {@code null}
      */
-    public static ParameterizedType objectReferenceWithKey(final Type type, final Type keyType) {
+    public static ParameterizedType objectIdentifierWithKey(final Type type, final Type keyType) {
         return parameterizedTypeFor(OBJECT_REFERENCE_WITH_KEY, type, keyType);
     }
 
