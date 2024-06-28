@@ -44,6 +44,12 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odl-yangtools-binding-codec</artifactId>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odl-yangtools-binding-runtime</artifactId>
             <classifier>features</classifier>
             <type>xml</type>

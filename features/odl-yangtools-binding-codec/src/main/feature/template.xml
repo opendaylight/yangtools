@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-binding-codec">
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-binding-runtime/{{versionAsInProject}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-data/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-binding-codec">
+        <feature version="{{semVerRange}}">odl-yangtools-binding-runtime</feature>
+        <feature version="{{semVerRange}}">odl-yangtools-data</feature>
+        <bundle>mvn:org.opendaylight.yangtools/binding-data-codec-dynamic/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-data-codec-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-data-codec-spi/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-data-codec-osgi/{{versionAsInProject}}</bundle>
+    </feature>
+</features>
