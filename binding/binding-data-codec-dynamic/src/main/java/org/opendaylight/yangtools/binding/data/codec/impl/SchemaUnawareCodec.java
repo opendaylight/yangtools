@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -22,27 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  */
 // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
 abstract class SchemaUnawareCodec extends AbstractValueCodec<Object, Object> {
-    /**
-     * No-op Codec, Java YANG Binding uses same types as NormalizedNode model for base YANG types, representing numbers,
-     * binary, strings and empty.
-     */
-    static final @NonNull SchemaUnawareCodec NOOP_CODEC = new SchemaUnawareCodec() {
-        @Override
-        protected Object serializeImpl(final Object input) {
-            return input;
-        }
-
-        @Override
-        protected Object deserializeImpl(final Object input) {
-            return input;
-        }
-    };
-
-    static @NonNull SchemaUnawareCodec of(final Class<?> typeClz, final TypeDefinition<?> def) {
-        if (BindingReflections.isBindingClass(typeClz)) {
-            return getCachedSchemaUnawareCodec(typeClz, def);
-        }
-        return NOOP_CODEC;
+    static @Nullable SchemaUnawareCodec of(final Class<?> typeClz, final TypeDefinition<?> def) {
+        return BindingReflections.isBindingClass(typeClz) ? getCachedSchemaUnawareCodec(typeClz, def) : null;
     }
 
     private static @NonNull SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz,

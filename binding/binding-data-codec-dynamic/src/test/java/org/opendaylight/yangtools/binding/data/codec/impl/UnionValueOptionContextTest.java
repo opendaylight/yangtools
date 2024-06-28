@@ -23,15 +23,15 @@ public class UnionValueOptionContextTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         TEST_UVOC_1 = new UnionValueOptionContext(UnionTestType.class, LowestLevel1.class,
-            UnionTestType.class.getMethod("getLowestLevel1"), SchemaUnawareCodec.NOOP_CODEC);
+            UnionTestType.class.getMethod("getLowestLevel1"), BindingCodecContext.NOOP_CODEC);
         TEST_UVOC_2 = new UnionValueOptionContext(UnionTestType.class, LowestLevel2.class,
-            UnionTestType.class.getMethod("getLowestLevel2"), SchemaUnawareCodec.NOOP_CODEC);
+            UnionTestType.class.getMethod("getLowestLevel2"), BindingCodecContext.NOOP_CODEC);
     }
 
     @Test
     public void hashCodeTest() throws Exception {
         final UnionValueOptionContext test_uvoc = new UnionValueOptionContext(UnionTestType.class, LowestLevel1.class,
-            UnionTestType.class.getMethod("getLowestLevel1"), SchemaUnawareCodec.NOOP_CODEC);
+            UnionTestType.class.getMethod("getLowestLevel1"), BindingCodecContext.NOOP_CODEC);
 
         assertEquals("HashCode", test_uvoc.hashCode(), TEST_UVOC_1.hashCode());
         assertNotEquals("HashCode", TEST_UVOC_1.hashCode(), TEST_UVOC_2.hashCode());
@@ -40,7 +40,7 @@ public class UnionValueOptionContextTest {
     @Test
     public void equalsTest() throws Exception {
         final UnionValueOptionContext test_uvoc = new UnionValueOptionContext(UnionTestType.class, LowestLevel1.class,
-            UnionTestType.class.getMethod("getLowestLevel1"), SchemaUnawareCodec.NOOP_CODEC);
+            UnionTestType.class.getMethod("getLowestLevel1"), BindingCodecContext.NOOP_CODEC);
 
         assertEquals(TEST_UVOC_1, test_uvoc);
         assertNotEquals(TEST_UVOC_1, TEST_UVOC_2);
