@@ -31,7 +31,7 @@ public sealed class DataObjectIdentifierImpl<T extends DataObject>
         super(steps);
     }
 
-    DataObjectIdentifierImpl(final Void unused, final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
+    public DataObjectIdentifierImpl(final Void unused, final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
         this(verifySteps(steps));
     }
 
@@ -52,6 +52,11 @@ public sealed class DataObjectIdentifierImpl<T extends DataObject>
     @Override
     public AbstractDataObjectReferenceBuilder<T> toBuilder() {
         return new DataObjectReferenceBuilder<>(this);
+    }
+
+    @Override
+    public DataObjectIdentifierImpl<T> toIdentifier() {
+        return this;
     }
 
     @Override

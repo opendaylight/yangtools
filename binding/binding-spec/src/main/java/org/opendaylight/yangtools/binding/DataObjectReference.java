@@ -157,6 +157,9 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         Builder.WithKey<T, K> toBuilder();
 
         @Override
+        DataObjectIdentifier.WithKey<T, K> toIdentifier();
+
+        @Override
         default K key() {
             return lastStep().key();
         }
@@ -213,6 +216,14 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @return A builder instance
      */
     @NonNull Builder<T> toBuilder();
+
+    /**
+     * Return a {@link DataObjectIdentifier} view of this reference, if possible.
+     *
+     * @return A {@link DataObjectIdentifier}
+     * @throws UnsupportedOperationException if this reference is not compatible with {@link DataObjectIdentifier}
+     */
+    @NonNull DataObjectIdentifier<T> toIdentifier();
 
     /**
      * Returns {@code true} if this reference is composed solely of {@link ExactDataObjectStep}s.
