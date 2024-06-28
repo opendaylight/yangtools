@@ -13,7 +13,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -32,6 +31,7 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
@@ -125,12 +125,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     @Override
     protected final Class<?> contract() {
-        return getClass();
-    }
-
-    @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("targetType", getTargetType()).add("path", Iterables.toString(steps()));
+        return wildcarded ? super.contract() : DataObjectIdentifier.class;
     }
 
     /**

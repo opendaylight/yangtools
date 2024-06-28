@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -68,7 +67,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     @Override
     public final String toString() {
         // FIXME: YANGTOOLS-1577: pretty-print steps instead
-        return addToStringAttributes(MoreObjects.toStringHelper(contract())).toString();
+        return MoreObjects.toStringHelper(contract()).add("steps", Iterables.toString(steps())).toString();
     }
 
     protected @NonNull Class<?> contract() {
@@ -83,14 +82,6 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
             default -> Iterables.getLast(steps);
         };
     }
-
-    /**
-     * Add class-specific toString attributes.
-     *
-     * @param toStringHelper ToStringHelper instance
-     * @return ToStringHelper instance which was passed in
-     */
-    protected abstract ToStringHelper addToStringAttributes(ToStringHelper toStringHelper);
 
     protected final void throwNSE() throws NotSerializableException {
         throw new NotSerializableException(getClass().getName());

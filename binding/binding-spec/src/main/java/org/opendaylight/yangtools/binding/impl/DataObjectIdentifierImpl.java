@@ -34,6 +34,11 @@ public abstract sealed class DataObjectIdentifierImpl<T extends DataObject>
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected final Class<?> contract() {
+        return DataObjectIdentifier.class;
+    }
+
     @java.io.Serial
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         throwNSE();
