@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
  * @param <K> key type
  * @param <V> value type
  */
-final class LazyBindingMapLookupState<K extends Key<V>, V extends DataObject & KeyAware<K>>
+final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<V, K>>
         extends LazyBindingMap.State<K, V> {
     private static final VarHandle VALUES;
 
@@ -125,8 +125,8 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends DataObject & K
         return (witness = VALUES.compareAndExchangeRelease(this, null, ret)) == null ? ret : (Values<K, V>) witness;
     }
 
-    private static final class EntrySet<K extends Key<V>, V extends DataObject & KeyAware<K>>
-            extends AbstractSet<Entry<K, V>> implements Immutable {
+    private static final class EntrySet<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<Entry<K, V>>
+            implements Immutable {
         private final Values<K, V> values;
 
         EntrySet(final Values<K, V> values) {
@@ -159,8 +159,8 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends DataObject & K
         }
     }
 
-    private static final class KeySet<K extends Key<V>, V extends DataObject & KeyAware<K>>
-            extends AbstractSet<K> implements Immutable {
+    private static final class KeySet<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<K>
+            implements Immutable {
         private final Values<K, V> values;
 
         KeySet(final Values<K, V> values) {
@@ -191,8 +191,8 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends DataObject & K
         }
     }
 
-    private static final class Values<K extends Key<V>, V extends DataObject & KeyAware<K>>
-            extends AbstractSet<V> implements Immutable {
+    private static final class Values<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<V>
+            implements Immutable {
         private final LazyBindingMapLookupState<K, V> state;
 
         // Temporary storage for translated objects. We first initialize this to DOM values, so that we know what
@@ -258,8 +258,7 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends DataObject & K
         }
     }
 
-    private static final class ValuesIter<K extends Key<V>, V extends DataObject & KeyAware<K>>
-            extends AbstractIterator<V> {
+    private static final class ValuesIter<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractIterator<V> {
         private final Values<K, V> values;
         private final Object[] objects;
         private int nextOffset;

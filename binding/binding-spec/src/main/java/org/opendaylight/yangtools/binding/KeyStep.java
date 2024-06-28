@@ -13,13 +13,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * A {@link KeyAware}-based step with a {@link #key()}. It equates to a {@code node-identifier} with a
+ * A {@link EntryObject}-based step with a {@link #key()}. It equates to a {@code node-identifier} with a
  * {@code key-predicate}.
  *
  * @param <K> Key type
  * @param <T> KeyAware type
  */
-public record KeyStep<K extends Key<T>, T extends KeyAware<K> & DataObject>(
+public record KeyStep<K extends Key<T>, T extends EntryObject<T, K>>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType,
         @NonNull K key) implements ExactDataObjectStep<T>, KeyAware<K> {

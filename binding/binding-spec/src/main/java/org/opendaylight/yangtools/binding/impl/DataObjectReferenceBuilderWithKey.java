@@ -11,11 +11,11 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.Builder.WithKey;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-public final class DataObjectReferenceBuilderWithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
+public final class DataObjectReferenceBuilderWithKey<T extends EntryObject<T, K>, K extends Key<T>>
         extends AbstractDataObjectReferenceBuilder<T> implements WithKey<T, K> {
     DataObjectReferenceBuilderWithKey(final DataObjectReferenceBuilder<?> prev, final DataObjectStep<?> item) {
         super(prev, item);
@@ -42,7 +42,7 @@ public final class DataObjectReferenceBuilderWithKey<T extends KeyAware<K> & Dat
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <X extends DataObject & KeyAware<Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
+    protected <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         appendItem(step);
         return (DataObjectReferenceBuilderWithKey<X, Y>) this;

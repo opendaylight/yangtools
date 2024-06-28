@@ -120,12 +120,16 @@ public final class ClassLoaderUtils {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static <S, G, P> Optional<Class<P>> findFirstGenericArgument(final Class<S> scannedClass,
             final Class<G> genericType) {
-        return getWithClassLoader(scannedClass.getClassLoader(),
-            () -> findParameterizedType(scannedClass, genericType)
-                .map(ptype -> (Class<P>) ptype.getActualTypeArguments()[0]));
+        return findGenericArgument(scannedClass, genericType, 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <S, G, P> Optional<Class<P>> findGenericArgument(final Class<S> scannedClass,
+            final Class<G> genericType, final int index) {
+        return getWithClassLoader(scannedClass.getClassLoader(), () -> findParameterizedType(scannedClass, genericType)
+            .map(ptype -> (Class<P>) ptype.getActualTypeArguments()[index]));
     }
 
     /**

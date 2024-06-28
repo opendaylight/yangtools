@@ -32,7 +32,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public class LazyBindingMapTest extends AbstractBindingCodecTest {
@@ -186,22 +186,22 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
 
     @Test
     public void testLookupContainsValueThrows() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+        final var list = prepareData().getTopLevelList();
         assertThrows(NullPointerException.class, () -> list.containsValue(null));
         assertThrows(ClassCastException.class, () -> list.containsValue(mock(DataObject.class)));
     }
 
     @Test
     public void testLookupContainsKeyThrows() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+        final var list = prepareData().getTopLevelList();
         assertThrows(NullPointerException.class, () -> list.containsKey(null));
-        assertThrows(ClassCastException.class, () -> list.containsKey(mock(KeyAware.class)));
+        assertThrows(ClassCastException.class, () -> list.containsKey(mock(EntryObject.class)));
     }
 
     @Test
     public void testLookupKey() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
-        for (TopLevelListKey key : TOP.getTopLevelList().keySet()) {
+        final var list = prepareData().getTopLevelList();
+        for (var key : TOP.getTopLevelList().keySet()) {
             assertTrue(list.containsKey(key));
         }
 
@@ -210,8 +210,8 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
 
     @Test
     public void testLookupValue() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
-        for (TopLevelList val : TOP.getTopLevelList().values()) {
+        final var list = prepareData().getTopLevelList();
+        for (var val : TOP.getTopLevelList().values()) {
             assertTrue(list.containsValue(val));
         }
 
