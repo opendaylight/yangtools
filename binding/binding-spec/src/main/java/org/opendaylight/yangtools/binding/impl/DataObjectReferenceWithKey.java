@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
@@ -24,7 +25,7 @@ public final class DataObjectReferenceWithKey<T extends KeyAware<K> & DataObject
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    DataObjectReferenceWithKey(final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
+    public DataObjectReferenceWithKey(final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
         super(steps);
     }
 
@@ -36,6 +37,11 @@ public final class DataObjectReferenceWithKey<T extends KeyAware<K> & DataObject
     @Override
     public DataObjectReferenceBuilderWithKey<T, K> toBuilder() {
         return new DataObjectReferenceBuilderWithKey<>(this);
+    }
+
+    @Override
+    public DataObjectIdentifier.WithKey<T, K> toIdentifier() {
+        throw new UnsupportedOperationException(this + " contains inexact steps");
     }
 
     @java.io.Serial
