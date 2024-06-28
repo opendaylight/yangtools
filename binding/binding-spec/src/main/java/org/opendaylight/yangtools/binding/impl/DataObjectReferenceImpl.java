@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 // FIXME: YANGTOOLS-1577: non-abstract
-public abstract sealed class DataObjectReferenceImpl<T extends DataObject>
+public sealed class DataObjectReferenceImpl<T extends DataObject>
         extends AbstractDataObjectReference<T, DataObjectStep<?>>
         permits DataObjectReferenceWithKey {
     @java.io.Serial
@@ -49,5 +49,11 @@ public abstract sealed class DataObjectReferenceImpl<T extends DataObject>
     @java.io.Serial
     private void writeObject(final ObjectOutputStream stream) throws IOException {
         throwNSE();
+    }
+
+    @Override
+    public DataObjectReferenceBuilder<T> toBuilder() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

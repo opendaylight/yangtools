@@ -50,6 +50,9 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     }
 
     @Override
+    public abstract AbstractDataObjectReferenceBuilder<T> toBuilder();
+
+    @Override
     public final int hashCode() {
         int hash = 1;
         for (var step : steps) {
