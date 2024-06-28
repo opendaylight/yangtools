@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -174,8 +173,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
     private static @NonNull DataObjectStep<?> createItem(final @Nullable Class<? extends DataObject> caseClass,
             final Class<?> childClass, final EffectiveStatement<?, ?> childSchema) {
         return caseClass != null && childSchema instanceof AddedByUsesAware aware && aware.isAddedByUses()
-            ? InstanceIdentifier.createStep((Class) caseClass, (Class) childClass)
-                : InstanceIdentifier.createStep((Class) childClass);
+            ? DataObjectStep.of((Class) caseClass, (Class) childClass) : DataObjectStep.of((Class) childClass);
     }
 
     // FIXME: MDSAL-780: these methods perform analytics using java.lang.reflect to acquire the basic shape of the

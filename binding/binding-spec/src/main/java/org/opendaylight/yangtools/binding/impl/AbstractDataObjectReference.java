@@ -97,7 +97,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     }
 
     @NonNullByDefault
-    public static final <T> Iterable<? extends T> concat(final Iterable<? extends T> others, final T last) {
+    protected static final <T> Iterable<? extends T> concat(final Iterable<? extends T> others, final T last) {
         return new AppendIterable<>(others, last);
     }
 
