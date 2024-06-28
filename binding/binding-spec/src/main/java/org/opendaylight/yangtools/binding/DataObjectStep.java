@@ -30,6 +30,17 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 public sealed interface DataObjectStep<T extends DataObject> extends Comparable<DataObjectStep<?>>, Serializable
         permits ExactDataObjectStep, InexactDataObjectStep {
+
+    static <T extends DataObject> @NonNull DataObjectStep<T> of(final @NonNull Class<T> type) {
+        return of(null, type);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    static <T extends DataObject, C extends ChoiceIn<?> & DataObject> @NonNull DataObjectStep<T> of(
+            final @Nullable Class<C> caze, final @NonNull Class<T> type) {
+        return KeyAware.class.isAssignableFrom(type) ? new KeylessStep(type, caze) : new NodeStep<>(type, caze);
+    }
+
     /**
      * Return the data object type backing this PathArgument.
      *

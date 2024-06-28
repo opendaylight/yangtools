@@ -19,19 +19,23 @@ import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-// FIXME: YANGTOOLS-1577: final
-public abstract non-sealed class DataObjectIdentifierWithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
+public final class DataObjectIdentifierWithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
         extends DataObjectIdentifierImpl<T> implements WithKey<T, K> {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    DataObjectIdentifierWithKey(final Iterable<? extends @NonNull ExactDataObjectStep<?>> steps) {
+    public DataObjectIdentifierWithKey(final Iterable<? extends @NonNull ExactDataObjectStep<?>> steps) {
         super(steps);
     }
 
     @Override
-    public final KeyStep<K, T> lastStep() {
+    public KeyStep<K, T> lastStep() {
         return getLast(steps());
+    }
+
+    @Override
+    public DataObjectReferenceBuilderWithKey<T, K> toBuilder() {
+        return new DataObjectReferenceBuilderWithKey<>(this);
     }
 
     @java.io.Serial
