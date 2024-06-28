@@ -12,11 +12,11 @@ import java.io.Serializable;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
+import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReferenceBuilder;
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceImpl;
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Builder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.KeyedBuilder;
 import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 
@@ -45,6 +45,101 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 public sealed interface DataObjectReference<T extends DataObject> extends Immutable, Serializable
         permits DataObjectIdentifier, DataObjectReference.WithKey, AbstractDataObjectReference {
     /**
+     * A builder of {@link DataObjectReference} objects.
+     *
+     * @param <T> type of {@link DataObject} held in the last step.
+     */
+    sealed interface Builder<T extends DataObject> permits Builder.WithKey, AbstractDataObjectReferenceBuilder {
+        /**
+         * A builder of {@link DataObjectReference.WithKey} objects.
+         *
+         * @param <T> type of {@link KeyAware} {@link DataObject} held in the last step.
+         * @param <K> {@link Key} type
+         */
+        sealed interface WithKey<T extends KeyAware<K> & DataObject, K extends Key<T>> extends Builder<T>
+                permits KeyedBuilder {
+            @Override
+            DataObjectReference.WithKey<T, K> build();
+        }
+
+        /**
+         * Update this builder to build a reference to a specific augmentation of the data object this builder currently
+         * points to.
+         *
+         * @param <N> augmentation type
+         * @param container augmentation class
+         * @return this builder
+         * @throws NullPointerException if {@code augmentation} is {@code null}
+         */
+        <N extends DataObject & Augmentation<? super T>> @NonNull Builder<N> augmentation(
+            @NonNull Class<N> augmentation);
+
+        /**
+         * Append the specified container as a child of the data object this build currently references. This method
+         * should be used when you want to build an instance identifier by appending top-level elements.
+         *
+         * @param <N> Container type
+         * @param container Container to append
+         * @return this builder
+         * @throws NullPointerException if {@code container} is null
+         */
+        <N extends ChildOf<? super T>> @NonNull Builder<N> child(final @NonNull Class<N> container);
+
+        /**
+         * Append the specified container as a child of the data object this build currently references. This method
+         * should be used when you want to build an reference by appending a container node to the identifier and the
+         * {@code container} is defined in a {@code grouping} used in a {@code case} statement.
+         *
+         * @param <C> Case type
+         * @param <N> Container type
+         * @param caze Choice case class
+         * @param container Container to append
+         * @return this builder
+         * @throws NullPointerException if {@code container} is null
+         */
+        <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> @NonNull Builder<N> child(
+                Class<C> caze, @NonNull Class<N> container);
+
+        /**
+         * Append the specified listItem as a child of the data object this build currently references. This method
+         * should be used when you want to build a reference by appending a specific list element to the identifier.
+         *
+         * @param <N> List type
+         * @param <K> Key type
+         * @param listItem List to append
+         * @param listKey List key
+         * @return this builder
+         * @throws NullPointerException if any argument is null
+         */
+        <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>> @NonNull WithKey<N, K> child(
+                @NonNull Class<@NonNull N> listItem, @NonNull K listKey);
+
+        /**
+         * Append the specified listItem as a child of the data object this build currently references. This
+         * method should be used when you want to build a reference by appending a specific list element to the
+         * identifier and the {@code list} is defined in a {@code grouping} used in a {@code case} statement.
+         *
+         * @param <C> Case type
+         * @param <N> List type
+         * @param <K> Key type
+         * @param caze Choice case class
+         * @param listItem List to append
+         * @param listKey List key
+         * @return this builder
+         * @throws NullPointerException if any argument is null
+         */
+        <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>, N extends KeyAware<K> & ChildOf<? super C>>
+            @NonNull WithKey<N, K> child(@NonNull Class<C> caze, @NonNull Class<N> listItem, @NonNull K listKey);
+
+        /**
+         * Build the data object reference.
+         *
+         * @return resulting {@link DataObjectReference}.
+         */
+        @NonNull DataObjectReference<T> build();
+    }
+
+    /**
      * A {@link DataObjectReference} pointing to a {@link KeyAware} {@link DataObject}, typically a map entry.
      *
      * @param <K> Key type
@@ -57,7 +152,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         KeyStep<K, T> lastStep();
 
         @Override
-        KeyedBuilder<T, K> toBuilder();
+        Builder.WithKey<T, K> toBuilder();
 
         @Override
         default K key() {
