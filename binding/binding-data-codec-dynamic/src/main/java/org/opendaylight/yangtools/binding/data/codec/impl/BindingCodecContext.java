@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.BaseNotification;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -696,7 +697,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final ValueCodec<Object, Object> casted = (ValueCodec) identityCodec;
             return casted;
-        } else if (InstanceIdentifier.class.equals(valueType)) {
+        } else if (BindingInstanceIdentifier.class.equals(valueType)) {
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final ValueCodec<Object, Object> casted = (ValueCodec) instanceIdentifierCodec;
             return casted;

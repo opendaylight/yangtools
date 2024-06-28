@@ -24,9 +24,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -887,18 +884,9 @@ public class CompilationTest extends BaseCompilationTest {
 
     private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz,
             final String methodName) throws ClassNotFoundException, NoSuchMethodException, SecurityException {
-        final Method method = clazz.getMethod(methodName);
-        final Class<?> rawReturnType = Class.forName("org.opendaylight.yangtools.yang.binding.InstanceIdentifier", true,
+        final var method = clazz.getMethod(methodName);
+        final var rawReturnType = Class.forName("org.opendaylight.yangtools.binding.BindingInstanceIdentifier", true,
             loader);
-        assertEquals(rawReturnType, method.getReturnType());
-        final Type returnType = method.getGenericReturnType();
-        assertTrue(returnType instanceof ParameterizedType);
-        final ParameterizedType pt = (ParameterizedType) returnType;
-        final Type[] parameters = pt.getActualTypeArguments();
-        assertEquals(1, parameters.length);
-        final Type parameter = parameters[0];
-        assertTrue(parameter instanceof WildcardType);
-        final WildcardType wildcardType = (WildcardType) parameter;
-        assertEquals("?", wildcardType.toString());
+        assertEquals(rawReturnType, method.getGenericReturnType());
     }
 }

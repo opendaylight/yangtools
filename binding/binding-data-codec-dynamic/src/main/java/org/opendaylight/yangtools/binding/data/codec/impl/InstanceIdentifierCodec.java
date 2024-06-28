@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 
 final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
         //FIXME: this is not really an IllegalArgumentCodec, as it can legally return null from deserialize()
-        ValueCodec<YangInstanceIdentifier, InstanceIdentifier<?>> {
+        ValueCodec<YangInstanceIdentifier, BindingInstanceIdentifier> {
     private final BindingCodecContext context;
 
     InstanceIdentifierCodec(final BindingCodecContext context) {
@@ -54,13 +55,22 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
 
     @Override
     @Deprecated
-    public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
+    public YangInstanceIdentifier serialize(final BindingInstanceIdentifier input) {
         return fromBinding(input);
     }
 
     @Override
     @Deprecated
-    public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
-        return toBinding(input);
+    public BindingInstanceIdentifier deserialize(final YangInstanceIdentifier input) {
+        // FIXME: YANGTOOLS-1577: do not defer to InstanceIdentifier here
+        final var binding = toBinding(input);
+        if (binding == null) {
+            throw new IllegalArgumentException(input + " cannot be represented as a BindingInstanceIdentifier");
+        }
+        try {
+            return binding.toIdentifier();
+        } catch (UnsupportedOperationException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }

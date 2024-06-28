@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.binding.data.codec.api;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -30,7 +32,19 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
     <T extends DataObject> @Nullable DataObjectReference<T> toBinding(@NonNull YangInstanceIdentifier domPath);
 
     /**
-     * Translates supplied {@link DataObjectReference} into {@link YangInstanceIdentifier}.
+     * Translates supplied {@link DataObjectReference} into a {@link YangInstanceIdentifier}.
+     *
+     * @param bindingPath a data object reference
+     * @return DOM Instance Identifier
+     * @throws NullPointerException if bindingPath is null
+     * @throws IllegalArgumentException if bindingPath is not valid.
+     */
+    // FIXME: Document MissingSchemaException being thrown
+    // FIXME: Document MissingSchemaForClassException being thrown
+    @NonNull YangInstanceIdentifier fromBinding(@NonNull DataObjectReference<?> bindingPath);
+
+    /**
+     * Translates supplied {@link BindingInstanceIdentifier} into a {@link YangInstanceIdentifier}.
      *
      * @param bindingPath Binding Instance Identifier
      * @return DOM Instance Identifier
@@ -39,5 +53,9 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      */
     // FIXME: Document MissingSchemaException being thrown
     // FIXME: Document MissingSchemaForClassException being thrown
-    @NonNull YangInstanceIdentifier fromBinding(@NonNull DataObjectReference<?> bindingPath);
+    default @NonNull YangInstanceIdentifier fromBinding(final @NonNull BindingInstanceIdentifier bindingPath) {
+        return switch (bindingPath) {
+            case DataObjectIdentifier<?> doi -> fromBinding((DataObjectReference<?>) doi);
+        };
+    }
 }
