@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.BaseIdentity;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
-// FIXME: sealed once we have JDK17+
-abstract class CompositeValueCodec extends AbstractValueCodec<Object, Object> {
+abstract sealed class CompositeValueCodec extends AbstractValueCodec<Object, Object> {
     static final class OfIdentity extends CompositeValueCodec {
         private final IdentityCodec valueCodec;
 
@@ -27,15 +25,19 @@ abstract class CompositeValueCodec extends AbstractValueCodec<Object, Object> {
         }
 
         @Override
-        Object bindingToDom(final Object bindingValue) {
-            checkArgument(bindingValue instanceof BaseIdentity, "Unexpected Binding value %s", bindingValue);
-            return valueCodec.fromBinding((BaseIdentity) bindingValue);
+        QName bindingToDom(final Object bindingValue) {
+            return switch (bindingValue) {
+                case BaseIdentity identity -> valueCodec.fromBinding(identity);
+                default -> throw new IllegalArgumentException("Unexpected Binding value " + bindingValue);
+            };
         }
 
         @Override
-        Object domToBinding(final Object domValue) {
-            checkArgument(domValue instanceof QName, "Unexpected DOM value %s", domValue);
-            return valueCodec.toBinding((QName) domValue);
+        BaseIdentity domToBinding(final Object domValue) {
+            return switch (domValue) {
+                case QName qname -> valueCodec.toBinding(qname);
+                default -> throw new IllegalArgumentException("Unexpected DOM value " + domValue);
+            };
         }
     }
 
@@ -48,17 +50,19 @@ abstract class CompositeValueCodec extends AbstractValueCodec<Object, Object> {
         }
 
         @Override
-        Object domToBinding(final Object domValue) {
-            checkArgument(domValue instanceof YangInstanceIdentifier, "Unexpected DOM value %s", domValue);
-            final var binding = valueCodec.toBinding((YangInstanceIdentifier) domValue);
-            checkArgument(binding != null, "Cannot represent %s in binding", domValue);
-            return binding;
+        BindingInstanceIdentifier domToBinding(final Object domValue) {
+            return switch (domValue) {
+                case YangInstanceIdentifier yiid -> valueCodec.deserialize(yiid);
+                default -> throw new IllegalArgumentException("Unexpected DOM value " + domValue);
+            };
         }
 
         @Override
-        Object bindingToDom(final Object bindingValue) {
-            checkArgument(bindingValue instanceof InstanceIdentifier, "Unexpected Binding value %s", bindingValue);
-            return valueCodec.fromBinding((InstanceIdentifier<?>) bindingValue);
+        YangInstanceIdentifier bindingToDom(final Object bindingValue) {
+            return switch (bindingValue) {
+                case BindingInstanceIdentifier bid -> valueCodec.fromBinding(bid);
+                default -> throw new IllegalArgumentException("Unexpected Binding value " + bindingValue);
+            };
         }
     }
 
