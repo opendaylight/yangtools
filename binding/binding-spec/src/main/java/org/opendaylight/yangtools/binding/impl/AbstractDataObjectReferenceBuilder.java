@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.Builder;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -74,13 +74,14 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>> WithKey<N, K> child(final Class<N> listItem,
-            final K listKey) {
+    public <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> WithKey<N, K> child(
+            final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, listKey));
     }
 
     @Override
-    public <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>, N extends KeyAware<K> & ChildOf<? super C>>
+    public <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
+            N extends EntryObject<N, K> & ChildOf<? super C>>
             WithKey<N, K> child(final Class<C> caze, final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
@@ -90,7 +91,7 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
 
     protected abstract <X extends DataObject> @NonNull Builder<X> append(@NonNull DataObjectStep<X> step);
 
-    protected abstract <X extends DataObject & KeyAware<Y>, Y extends Key<X>> @NonNull WithKey<X, Y> append(
+    protected abstract <X extends EntryObject<X, Y>, Y extends Key<X>> @NonNull WithKey<X, Y> append(
         @NonNull KeyStep<Y, X> step);
 
     protected final boolean wildcard() {
