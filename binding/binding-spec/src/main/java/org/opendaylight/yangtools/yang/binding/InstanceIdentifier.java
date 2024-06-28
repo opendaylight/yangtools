@@ -383,6 +383,12 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         return wildcarded ? new DataObjectReferenceImpl<>(steps) : new DataObjectIdentifierImpl<>(null, steps);
     }
 
+    @Override
+    @Deprecated(since = "14.0.0")
+    public Builder<T> builder() {
+        return toBuilder();
+    }
+
     /**
      * Create a {@link Builder} for a specific type of InstanceIdentifier as specified by container.
      *

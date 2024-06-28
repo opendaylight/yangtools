@@ -39,6 +39,12 @@ public final class KeyedInstanceIdentifier<T extends KeyAware<K> & DataObject, K
     }
 
     @Override
+    @Deprecated(since = "14.0.0")
+    public KeyedBuilder<T, K> builder() {
+        return toBuilder();
+    }
+
+    @Override
     public KeyedBuilder<T, K> toBuilder() {
         return new KeyedBuilder<>(this);
     }
