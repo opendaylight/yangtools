@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.BaseIdentity;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
@@ -52,10 +53,8 @@ public final class BuiltInType<T> {
     public static final @NonNull BuiltInType<@NonNull Empty> EMPTY = new BuiltInType<>("empty", Empty.class);
     public static final @NonNull BuiltInType<@NonNull UnionTypeObject> UNION =
         new BuiltInType<>("union", UnionTypeObject.class);
-    // FIXME: YANGTOOLS-1577: use BindingInstanceIdentifier instead
-    @SuppressWarnings("rawtypes")
-    public static final @NonNull BuiltInType<@NonNull InstanceIdentifier> INSTANCE_IDENTIFIER =
-        new BuiltInType<>("instance-identifier", InstanceIdentifier.class);
+    public static final @NonNull BuiltInType<@NonNull BindingInstanceIdentifier> INSTANCE_IDENTIFIER =
+        new BuiltInType<>("instance-identifier", BindingInstanceIdentifier.class);
 
     private final @NonNull Class<T> javaClass;
     private final String str;
