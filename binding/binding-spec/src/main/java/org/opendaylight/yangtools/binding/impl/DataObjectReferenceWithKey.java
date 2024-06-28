@@ -14,24 +14,28 @@ import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
-import org.opendaylight.yangtools.binding.ExactDataObjectStep;
+import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-// FIXME: YANGTOOLS-1577: final
-public abstract non-sealed class DataObjectReferenceWithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
+public final class DataObjectReferenceWithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
         extends DataObjectReferenceImpl<T> implements WithKey<T, K> {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    DataObjectReferenceWithKey(final Iterable<? extends @NonNull ExactDataObjectStep<?>> steps) {
+    DataObjectReferenceWithKey(final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
         super(steps);
     }
 
     @Override
-    public final KeyStep<K, T> lastStep() {
+    public KeyStep<K, T> lastStep() {
         return getLast(steps());
+    }
+
+    @Override
+    public DataObjectReferenceBuilderWithKey<T, K> toBuilder() {
+        return new DataObjectReferenceBuilderWithKey<>(this);
     }
 
     @java.io.Serial

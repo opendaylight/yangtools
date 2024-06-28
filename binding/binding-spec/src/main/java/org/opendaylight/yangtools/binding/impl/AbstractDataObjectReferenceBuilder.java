@@ -1,0 +1,119 @@
+/*
+ * Copyright (c) 2024 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.binding.impl;
+
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.ChildOf;
+import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectReference;
+import org.opendaylight.yangtools.binding.DataObjectReference.Builder;
+import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.ExactDataObjectStep;
+import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.KeyStep;
+import org.opendaylight.yangtools.binding.NodeStep;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+
+/**
+ * Base implementation of {@link Builder}.
+ */
+public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataObject> implements Builder<T>
+        permits DataObjectReferenceBuilder, DataObjectReferenceBuilderWithKey, InstanceIdentifier.Builder {
+    private final ArrayList<@NonNull DataObjectStep<?>> pathBuilder;
+    private final Iterable<? extends @NonNull DataObjectStep<?>> basePath;
+
+    private boolean wildcard;
+
+    protected AbstractDataObjectReferenceBuilder(final AbstractDataObjectReferenceBuilder<?> prev,
+            final DataObjectStep<?> item) {
+        pathBuilder = prev.pathBuilder;
+        basePath = prev.basePath;
+        wildcard = prev.wildcard;
+        appendItem(item);
+    }
+
+    protected AbstractDataObjectReferenceBuilder(final DataObjectReference<T> base) {
+        pathBuilder = new ArrayList<>(4);
+        wildcard = base.isWildcarded();
+        basePath = base.steps();
+    }
+
+    protected AbstractDataObjectReferenceBuilder(final DataObjectStep<?> item, final boolean wildcard) {
+        pathBuilder = new ArrayList<>(4);
+        basePath = null;
+        this.wildcard = wildcard;
+        appendItem(item);
+    }
+
+    @Override
+    public <N extends DataObject & Augmentation<? super T>> Builder<N> augmentation(final Class<N> augmentation) {
+        return append(new NodeStep<>(augmentation));
+    }
+
+    @Override
+    public <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
+        return append(DataObjectStep.of(container));
+    }
+
+    @Override
+    public <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
+            final Class<C> caze, final Class<N> container) {
+        return append(DataObjectStep.of(caze, container));
+    }
+
+    @Override
+    public <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>> WithKey<N, K> child(final Class<N> listItem,
+            final K listKey) {
+        return append(new KeyStep<>(listItem, listKey));
+    }
+
+    @Override
+    public <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>, N extends KeyAware<K> & ChildOf<? super C>>
+            WithKey<N, K> child(final Class<C> caze, final Class<N> listItem, final K listKey) {
+        return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
+    }
+
+    @Override
+    public abstract DataObjectReference<T> build();
+
+    protected abstract <X extends DataObject> @NonNull Builder<X> append(@NonNull DataObjectStep<X> step);
+
+    protected abstract <X extends DataObject & KeyAware<Y>, Y extends Key<X>> Builder.@NonNull WithKey<X, Y> append(
+        @NonNull KeyStep<Y, X> step);
+
+    protected final boolean wildcard() {
+        return wildcard;
+    }
+
+    protected final void appendItem(final DataObjectStep<?> item) {
+        pathBuilder.add(requireNonNull(item));
+        if (!(item instanceof ExactDataObjectStep)) {
+            wildcard = true;
+        }
+    }
+
+    protected final @NonNull Iterable<? extends @NonNull DataObjectStep<?>> buildSteps() {
+        final var prefix = basePath;
+        if (prefix == null) {
+            return pathBuilder.isEmpty() ? ImmutableList.of() : ImmutableList.copyOf(pathBuilder);
+        }
+
+        return switch (pathBuilder.size()) {
+            case 0 -> prefix;
+            case 1 -> AbstractDataObjectReference.concat(prefix, pathBuilder.getFirst());
+            default -> ImmutableList.<DataObjectStep<?>>builder().addAll(prefix).addAll(pathBuilder).build();
+        };
+    }
+}
