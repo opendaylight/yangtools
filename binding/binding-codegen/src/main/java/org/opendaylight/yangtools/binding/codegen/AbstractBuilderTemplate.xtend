@@ -34,7 +34,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     protected val Set<BuilderGeneratedProperty> properties
 
     /**
-     * GeneratedType for key type, null if this type does not have a key.
+     * GeneratedType for key type, {@code null} if this type does not have a key.
      */
     protected val Type keyType
 
@@ -118,7 +118,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             «IF augmentType !== null»
                 «generateCopyAugmentation(implType)»
             «ENDIF»
-            «IF keyType !== null && implementsIfc(targetType, BindingTypes.keyAware(targetType))»
+            «IF keyType !== null && implementsIfc(targetType, BindingTypes.entryObject(targetType, keyType))»
                 «val keyProps = new ArrayList((keyType as GeneratedTransferObject).properties)»
                 «keyProps.sort(KEY_PROPS_COMPARATOR)»
                 «val allProps = new ArrayList(properties)»

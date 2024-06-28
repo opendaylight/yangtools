@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.keyAware;
-
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -19,6 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechani
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
@@ -71,7 +70,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         if (local != null) {
             // Add yang.binding.Identifiable and its key() method
             final var keyType = local.getGeneratedType(builderFactory);
-            builder.addImplementsType(keyAware(keyType));
+            builder.addImplementsType(BindingTypes.entryObject(builder, keyType));
             builder.addMethod(Naming.KEY_AWARE_KEY_NAME)
                 .setReturnType(keyType)
                 .addAnnotation(OVERRIDE_ANNOTATION);

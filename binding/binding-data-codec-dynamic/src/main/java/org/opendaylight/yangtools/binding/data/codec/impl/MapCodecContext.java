@@ -15,8 +15,8 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -26,17 +26,14 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 
-abstract sealed class MapCodecContext<I extends Key<D>, D extends DataObject & KeyAware<I>>
-        extends ListCodecContext<D> {
-    private static final class Ordered<I extends Key<D>, D extends DataObject & KeyAware<I>>
-            extends MapCodecContext<I, D> {
+abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<D, I>> extends ListCodecContext<D> {
+    private static final class Ordered<I extends Key<D>, D extends EntryObject<D, I>> extends MapCodecContext<I, D> {
         Ordered(final MapCodecPrototype prototype, final Method keyMethod, final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);
         }
     }
 
-    static final class Unordered<I extends Key<D>, D extends DataObject & KeyAware<I>>
-            extends MapCodecContext<I, D> {
+    static final class Unordered<I extends Key<D>, D extends EntryObject<D, I>> extends MapCodecContext<I, D> {
         private Unordered(final MapCodecPrototype prototype, final Method keyMethod,
                 final IdentifiableItemCodec codec) {
             super(prototype, keyMethod, codec);

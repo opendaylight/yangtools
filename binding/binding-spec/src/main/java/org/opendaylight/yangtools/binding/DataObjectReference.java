@@ -63,7 +63,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @param <T> type of {@link KeyAware} {@link DataObject} held in the last step.
          * @param <K> {@link Key} type
          */
-        sealed interface WithKey<T extends KeyAware<K> & DataObject, K extends Key<T>> extends Builder<T>
+        sealed interface WithKey<T extends EntryObject<T, K> & DataObject, K extends Key<T>> extends Builder<T>
                 permits DataObjectReferenceBuilderWithKey, KeyedBuilder {
             @Override
             DataObjectReference.WithKey<T, K> build();
@@ -118,7 +118,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @return this builder
          * @throws NullPointerException if any argument is null
          */
-        <N extends KeyAware<K> & ChildOf<? super T>, K extends Key<N>> @NonNull WithKey<N, K> child(
+        <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> @NonNull WithKey<N, K> child(
                 @NonNull Class<@NonNull N> listItem, @NonNull K listKey);
 
         /**
@@ -135,7 +135,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @return this builder
          * @throws NullPointerException if any argument is null
          */
-        <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>, N extends KeyAware<K> & ChildOf<? super C>>
+        <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>>
             @NonNull WithKey<N, K> child(@NonNull Class<C> caze, @NonNull Class<N> listItem, @NonNull K listKey);
 
         /**
@@ -152,7 +152,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @param <K> Key type
      * @param <T> KeyAware type
      */
-    sealed interface WithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
+    sealed interface WithKey<T extends EntryObject<T, K> & DataObject, K extends Key<T>>
             extends DataObjectReference<T>, KeyAware<K>
             permits DataObjectIdentifier.WithKey, DataObjectReferenceWithKey, KeyedInstanceIdentifier {
         @Override

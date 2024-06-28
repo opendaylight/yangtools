@@ -53,8 +53,8 @@ import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.OpaqueObject;
@@ -773,14 +773,15 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListRuntimeType type) {
-        final Optional<Class<Key<?>>> optIdentifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
-                KeyAware.class);
-        checkState(optIdentifier.isPresent(), "Failed to find identifier for %s", listClz);
+        @SuppressWarnings("unchecked")
+        final Class<? extends Key<?>> identifier = (Class<? extends Key<?>>)
+            ClassLoaderUtils.findGenericArgument(listClz, EntryObject.class, 1)
+                .orElseThrow(() -> new IllegalStateException("Failed to find identifier for " + listClz))
+                .asSubclass(Key.class);
 
-        final Class<Key<?>> identifier = optIdentifier.orElseThrow();
-        final Map<QName, ValueContext> valueCtx = new HashMap<>();
-        for (final ValueNodeCodecContext leaf : getLeafNodes(identifier, type.statement()).values()) {
-            final QName name = leaf.getDomPathArgument().getNodeType();
+        final var valueCtx = new HashMap<QName, ValueContext>();
+        for (var leaf : getLeafNodes(identifier, type.statement()).values()) {
+            final var name = leaf.getDomPathArgument().getNodeType();
             valueCtx.put(name, new ValueContext(identifier, leaf));
         }
         return IdentifiableItemCodec.of(type.statement(), identifier, listClz, valueCtx);
