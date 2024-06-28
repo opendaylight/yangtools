@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.binding.test.mock;
 
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.EntryObject;
 
 public interface NodeChild extends
-        DataObject,
-        KeyAware<NodeChildKey>,
-        ChildOf<Node> {
+    EntryObject<NodeChild, NodeChildKey>,
+    ChildOf<Node> {
 
 }

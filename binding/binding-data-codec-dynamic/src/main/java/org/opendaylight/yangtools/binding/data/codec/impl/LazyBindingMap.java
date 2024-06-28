@@ -21,9 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.data.codec.impl.MapCodecContext.Unordered;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -40,8 +39,8 @@ import org.slf4j.LoggerFactory;
  * @param <K> key type
  * @param <V> value type
  */
-final class LazyBindingMap<K extends Key<V>, V extends DataObject & KeyAware<K>>
-        extends AbstractMap<K, V> implements Immutable {
+final class LazyBindingMap<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractMap<K, V>
+        implements Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(LazyBindingMap.class);
     private static final String LAZY_CUTOFF_PROPERTY =
             "org.opendaylight.mdsal.binding.dom.codec.impl.LazyBindingMap.max-eager-elements";
@@ -82,7 +81,7 @@ final class LazyBindingMap<K extends Key<V>, V extends DataObject & KeyAware<K>>
         this.mapNode = requireNonNull(mapNode);
     }
 
-    static <K extends Key<V>, V extends DataObject & KeyAware<K>> @NonNull Map<K, V> of(final Unordered<K, V> codec,
+    static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final Unordered<K, V> codec,
             final MapNode mapNode, final int size) {
         if (size == 1) {
             // Do not bother with lazy instantiation in case of a singleton
@@ -92,7 +91,7 @@ final class LazyBindingMap<K extends Key<V>, V extends DataObject & KeyAware<K>>
         return size > LAZY_CUTOFF ? new LazyBindingMap<>(codec, mapNode) : eagerMap(codec, mapNode, size);
     }
 
-    private static <K extends Key<V>, V extends DataObject & KeyAware<K>> @NonNull Map<K, V> eagerMap(
+    private static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> eagerMap(
             final Unordered<K, V> codec, final MapNode mapNode, final int size) {
         final Builder<K, V> builder = ImmutableMap.builderWithExpectedSize(size);
         for (MapEntryNode node : mapNode.body()) {
@@ -206,7 +205,7 @@ final class LazyBindingMap<K extends Key<V>, V extends DataObject & KeyAware<K>>
         return new UnsupportedOperationException("Modification is not supported");
     }
 
-    abstract static class State<K extends Key<V>, V extends DataObject & KeyAware<K>> {
+    abstract static class State<K extends Key<V>, V extends EntryObject<V, K>> {
         abstract boolean containsKey(@NonNull Object key);
 
         abstract V get(@NonNull Object key);

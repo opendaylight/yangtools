@@ -23,12 +23,12 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         extends DataObjectReference<T>, BindingInstanceIdentifier
         permits DataObjectIdentifier.WithKey, DataObjectIdentifierImpl {
     /**
-     * A {@link DataObjectIdentifier} pointing to a {@link KeyAware} {@link DataObject}, typically a map entry.
+     * A {@link DataObjectIdentifier} pointing to an {@link EntryObject}.
      *
      * @param <K> Key type
      * @param <T> KeyAware type
      */
-    sealed interface WithKey<T extends KeyAware<K> & DataObject, K extends Key<T>>
+    sealed interface WithKey<T extends EntryObject<T, K> & DataObject, K extends Key<T>>
             extends DataObjectIdentifier<T>, DataObjectReference.WithKey<T, K>
             permits DataObjectIdentifierWithKey {
         @Override

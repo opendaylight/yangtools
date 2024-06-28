@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -36,8 +36,7 @@ import org.slf4j.LoggerFactory;
  * @param <K> key type
  * @param <V> value type
  */
-final class LazyBindingMapIterState<K extends Key<V>, V extends DataObject & KeyAware<K>>
-        extends LazyBindingMap.State<K, V> {
+final class LazyBindingMapIterState<K extends Key<V>, V extends EntryObject<V, K>> extends LazyBindingMap.State<K, V> {
     private static final Logger LOG = LoggerFactory.getLogger(LazyBindingMapIterState.class);
     private static final VarHandle ENTRY_SET;
     private static final VarHandle KEY_SET;
@@ -135,8 +134,8 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends DataObject & Key
         return (witness = KEY_SET.compareAndExchangeRelease(this, null, ret)) == null ? ret : (KeySet<K, V>) witness;
     }
 
-    private static final class EntrySet<K extends Key<V>, V extends DataObject & KeyAware<K>>
-            extends AbstractSet<Entry<K, V>> implements Immutable {
+    private static final class EntrySet<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<Entry<K, V>>
+            implements Immutable {
         private final Values<K, V> values;
 
         EntrySet(final Values<K, V> values) {
@@ -162,8 +161,8 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends DataObject & Key
         }
     }
 
-    private static final class KeySet<K extends Key<V>, V extends DataObject & KeyAware<K>>
-            extends AbstractSet<K> implements Immutable {
+    private static final class KeySet<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<K>
+            implements Immutable {
         private final Values<K, V> values;
 
         KeySet(final Values<K, V> values) {
@@ -192,8 +191,8 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends DataObject & Key
      * the array to hold all values upfront and populate it with MapEntry nodes. That allows us to perform lock-free
      * access, as we just end up CASing MapEntryNodes with their Binding replacements.
      */
-    private static final class Values<K extends Key<V>, V extends DataObject & KeyAware<K>>
-            extends AbstractSet<V> implements Immutable {
+    private static final class Values<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<V>
+            implements Immutable {
         private final LazyBindingMap<K, V> map;
         private final Object[] objects;
 

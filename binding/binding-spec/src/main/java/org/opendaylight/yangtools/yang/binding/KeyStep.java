@@ -14,11 +14,11 @@ import java.io.Serializable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 
 @Deprecated(since = "14.0.0", forRemoval = true)
-record KeyStep<K extends Key<T>, T extends KeyAware<K> & DataObject>(
+record KeyStep<K extends Key<T>, T extends EntryObject<T, K>>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType,
         @NonNull K key) implements Serializable {
