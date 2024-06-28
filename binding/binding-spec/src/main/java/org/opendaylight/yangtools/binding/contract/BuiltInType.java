@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Uint16;
@@ -83,7 +82,7 @@ public final class BuiltInType<T> {
             case BaseIdentity value -> IDENTITYREF;
             case Empty value -> EMPTY;
             case UnionTypeObject value -> UNION;
-            case InstanceIdentifier<?> value -> INSTANCE_IDENTIFIER;
+            case BindingInstanceIdentifier value -> INSTANCE_IDENTIFIER;
             default -> throw new IllegalArgumentException("Invalid value " + obj);
         };
     }
@@ -107,7 +106,7 @@ public final class BuiltInType<T> {
             case @NonNull BaseIdentity value -> value;
             case @NonNull Empty value -> value;
             case @NonNull UnionTypeObject value -> value;
-            case @NonNull InstanceIdentifier<?> value -> value;
+            case @NonNull BindingInstanceIdentifier value -> value;
             default -> throw new IllegalArgumentException("Invalid value " + obj);
         };
     }
