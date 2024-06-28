@@ -52,6 +52,6 @@ final class ORv1 implements Externalizable {
 
     @java.io.Serial
     private Object readResolve() throws ObjectStreamException {
-        return DataObjectReferenceImpl.ofUnsafeSteps(steps);
+        return DataObjectReference.ofUnsafeSteps(steps);
     }
 }
