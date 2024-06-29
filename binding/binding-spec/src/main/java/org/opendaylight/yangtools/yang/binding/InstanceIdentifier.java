@@ -328,14 +328,14 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * Create an InstanceIdentifier for a child augmentation. This method is a more efficient equivalent to
      * {@code builder().augmentation(container).build()}.
      *
-     * @param container Container to append
-     * @param <N> Container type
+     * @param augmentation Container to append
+     * @param <A> Container type
      * @return An InstanceIdentifier.
      * @throws NullPointerException if {@code container} is null
      */
-    public final <N extends DataObject & Augmentation<? super T>> @NonNull InstanceIdentifier<N> augmentation(
-            final Class<@NonNull N> container) {
-        return childIdentifier(new NodeStep<>(container));
+    public final <A extends Augmentation<? super T>> @NonNull InstanceIdentifier<A> augmentation(
+            final Class<@NonNull A> augmentation) {
+        return childIdentifier(new NodeStep<>(augmentation));
     }
 
     @Override
@@ -784,8 +784,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
 
         @Override
-        public final <N extends DataObject & Augmentation<? super T>> Builder<N> augmentation(
-                final Class<N> augmentation) {
+        public final <A extends Augmentation<? super T>> Builder<A> augmentation(final Class<A> augmentation) {
             return append(new NodeStep<>(augmentation));
         }
 

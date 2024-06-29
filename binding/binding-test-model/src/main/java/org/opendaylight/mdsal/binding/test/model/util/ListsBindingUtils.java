@@ -25,7 +25,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public final class ListsBindingUtils {
@@ -52,8 +51,8 @@ public final class ListsBindingUtils {
         return path(top).augmentation(TreeComplexUsesAugment.class).child(ListViaUses.class, uses);
     }
 
-    public static <T extends DataObject & Augmentation<TopLevelList>> InstanceIdentifier<T> path(
-            final TopLevelListKey key, final Class<T> augmentation) {
+    public static <T extends Augmentation<TopLevelList>> InstanceIdentifier<T> path(final TopLevelListKey key,
+            final Class<T> augmentation) {
         return path(key).augmentation(augmentation);
     }
 
