@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2024 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.binding;
 
 /**
- * Data Root of YANG module.
+ * Base interface extended by all interfaces generated for {@code grouping} statements.
  */
-public non-sealed interface DataRoot extends DataContainer {
+public non-sealed interface Grouping extends DataContainer {
     @Override
-    Class<? extends DataRoot> implementedInterface();
+    Class<? extends Grouping> implementedInterface();
 }

@@ -453,29 +453,26 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         return new KeyedBuilder<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 
-    public static <R extends DataRoot & DataObject, T extends ChildOf<? super R>>
+    public static <R extends DataRoot, T extends ChildOf<? super R>>
             @NonNull Builder<T> builderOfInherited(final @NonNull Class<R> root, final @NonNull Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new RegularBuilder<>(DataObjectStep.of(container));
     }
 
-    public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
-            T extends ChildOf<? super C>>
-            @NonNull Builder<T> builderOfInherited(final Class<R> root,
-                final Class<C> caze, final Class<T> container) {
+    public static <R extends DataRoot, C extends ChoiceIn<? super R> & DataObject, T extends ChildOf<? super C>>
+            @NonNull Builder<T> builderOfInherited(final Class<R> root, final Class<C> caze, final Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new RegularBuilder<>(DataObjectStep.of(caze, container));
     }
 
-    public static <R extends DataRoot & DataObject, N extends EntryObject<N, K> & ChildOf<? super R>,
-            K extends Key<N>>
+    public static <R extends DataRoot, N extends EntryObject<N, K> & ChildOf<? super R>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builderOfInherited(final @NonNull Class<R> root,
                 final @NonNull Class<N> listItem, final @NonNull K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new KeyedBuilder<>(new KeyStep<>(listItem, listKey));
     }
 
-    public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
+    public static <R extends DataRoot, C extends ChoiceIn<? super R> & DataObject,
             N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<N> listItem, final K listKey) {

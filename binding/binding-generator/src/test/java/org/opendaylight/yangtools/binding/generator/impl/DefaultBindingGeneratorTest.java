@@ -15,14 +15,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -40,7 +39,6 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
  *
  * @author Lukas Sedlak
  */
-@RunWith(MockitoJUnitRunner.class)
 public class DefaultBindingGeneratorTest {
     public static final String BASE_YANG_TYPES =
         "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.base.yang.types.rev140914";
@@ -75,7 +73,11 @@ public class DefaultBindingGeneratorTest {
     public void javaTypeForSchemaDefinitionLeafrefToEnumTypeTest() {
         final var bData = assertGeneratedType(TEST_TYPE_PROVIDER_B_DATA);
         final var bDataMethods = bData.getMethodDefinitions();
-        assertEquals(8, bDataMethods.size());
+        assertEquals(9, bDataMethods.size());
+
+        final var ifaceType = assertInstanceOf(ParameterizedType.class,
+            assertGeneratedMethod(bDataMethods, "implementedInterface").getReturnType());
+
 
         final var bEnumType = assertGeneratedMethod(bDataMethods, "getEnum").getReturnType();
         assertThat(bEnumType, instanceOf(Enumeration.class));

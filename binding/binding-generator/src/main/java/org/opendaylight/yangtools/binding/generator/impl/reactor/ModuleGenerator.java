@@ -95,15 +95,10 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         builder.setModuleName(statement().argument().getLocalName());
         builder.addImplementsType(BindingTypes.DATA_ROOT);
-
-        final int usesCount = addUsesInterfaces(builder, builderFactory);
-        // if we have more than 2 top level uses statements we need to define getImplementedInterface() on the top-level
-        // DataRoot object
-        if (usesCount > 1) {
-            narrowImplementedInterface(builder);
-        }
-
+        narrowImplementedInterface(builder);
+        addUsesInterfaces(builder, builderFactory);
         addGetterMethods(builder, builderFactory);
+
         builderFactory.addCodegenInformation(statement(), builder);
 
         return builder.build();
