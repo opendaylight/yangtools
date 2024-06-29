@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "17d7e91a_e8c67170",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-06-29T14:20:38Z",
+      "side": 1,
+      "message": "See https://git.opendaylight.org/gerrit/c/mdsal/+/105699 for history of this change.",
+      "revId": "40457574bc677079578033577e91d20ac2f18d18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
