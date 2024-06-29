@@ -31,14 +31,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 
 @Beta
 public final class ModuleInfoSnapshotBuilder {
-    private final SetMultimap<Class<? extends DataRoot>, YangFeature<?, ?>> moduleFeatures = HashMultimap.create();
+    private final SetMultimap<Class<? extends DataRoot<?>>, YangFeature<?, ?>> moduleFeatures = HashMultimap.create();
     private final Set<YangModuleInfo> moduleInfos = new HashSet<>();
     private final YangParserFactory parserFactory;
 
@@ -80,13 +79,13 @@ public final class ModuleInfoSnapshotBuilder {
     }
 
     public @NonNull ModuleInfoSnapshotBuilder add(final Iterable<? extends YangModuleInfo> infos) {
-        for (YangModuleInfo info : infos) {
+        for (var info : infos) {
             add(info);
         }
         return this;
     }
 
-    public <R extends @NonNull DataRoot> @NonNull ModuleInfoSnapshotBuilder addModuleFeatures(final Class<R> module,
+    public <R extends @NonNull DataRoot<R>> @NonNull ModuleInfoSnapshotBuilder addModuleFeatures(final Class<R> module,
             final Set<? extends YangFeature<?, R>> supportedFeatures) {
         moduleFeatures.putAll(requireNonNull(module), ImmutableList.copyOf(supportedFeatures));
         return this;
@@ -99,7 +98,7 @@ public final class ModuleInfoSnapshotBuilder {
      * @throws YangParserException if parsing any of the {@link YangModuleInfo} instances fails
      */
     public @NonNull ModuleInfoSnapshot build() throws YangParserException {
-        final YangParser parser = parserFactory.createParser();
+        final var parser = parserFactory.createParser();
 
         final var mappedInfos = new HashMap<SourceIdentifier, YangModuleInfo>();
         final var classLoaders = new HashMap<String, ClassLoader>();

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Abstract base class for classes generated for YANG {@code feature} statements.
  */
 @NonNullByDefault
-public abstract non-sealed class YangFeature<F extends YangFeature<F, R>, R extends DataRoot>
+public abstract non-sealed class YangFeature<F extends YangFeature<F, R>, R extends DataRoot<R>>
         implements BindingContract<F> {
     @Override
     public abstract Class<F> implementedInterface();

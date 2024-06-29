@@ -15,6 +15,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import java.util.Set;
@@ -75,7 +77,13 @@ public class DefaultBindingGeneratorTest {
     public void javaTypeForSchemaDefinitionLeafrefToEnumTypeTest() {
         final var bData = assertGeneratedType(TEST_TYPE_PROVIDER_B_DATA);
         final var bDataMethods = bData.getMethodDefinitions();
-        assertEquals(8, bDataMethods.size());
+        assertEquals(9, bDataMethods.size());
+
+        final var bIface = assertGeneratedMethod(bDataMethods, "implementedInterface");
+        assertTrue(bIface.isDefault());
+        final var bIfaceType = assertInstanceOf(ParameterizedType.class, bIface.getReturnType());
+        assertEquals(Types.CLASS, bIfaceType.getRawType());
+        assertArrayEquals(new Type[] { bData }, bIfaceType.getActualTypeArguments());
 
         final var bEnumType = assertGeneratedMethod(bDataMethods, "getEnum").getReturnType();
         assertThat(bEnumType, instanceOf(Enumeration.class));

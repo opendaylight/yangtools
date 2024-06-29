@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.YangFeature;
  * {@link ServiceLoader} framework.
  */
 @NonNullByDefault
-public interface YangFeatureProvider<R extends DataRoot> {
+public interface YangFeatureProvider<R extends DataRoot<R>> {
     /**
      * Return the module this provider recognizes. It is implied that any feature defined in this module and not
      * advertized by any provider is unavailable.

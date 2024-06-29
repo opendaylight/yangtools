@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -21,6 +22,8 @@ import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.Notification;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 class BindingTypesTest {
     @Test
@@ -29,7 +32,6 @@ class BindingTypesTest {
         assertEquals(Types.typeForClass(Augmentation.class), BindingTypes.AUGMENTATION);
         assertEquals(Types.typeForClass(BaseIdentity.class), BindingTypes.BASE_IDENTITY);
         assertEquals(Types.typeForClass(DataObject.class), BindingTypes.DATA_OBJECT);
-        assertEquals(Types.typeForClass(DataRoot.class), BindingTypes.DATA_ROOT);
         assertEquals(Types.typeForClass(EntryObject.class), BindingTypes.ENTRY_OBJECT);
         assertEquals(Types.typeForClass(Key.class), BindingTypes.KEY);
     }
@@ -76,5 +78,12 @@ class BindingTypesTest {
         final var notificationType = BindingTypes.notification(Types.objectType());
         assertEquals(Types.typeForClass(Notification.class), notificationType.getRawType());
         assertArrayEquals(new Object[] { Types.objectType() }, notificationType.getActualTypeArguments());
+    }
+
+    @Test
+    void testDataRoot() {
+        final var type = assertInstanceOf(ParameterizedType.class, BindingTypes.dataRoot(Types.objectType()));
+        assertEquals(Types.typeForClass(DataRoot.class), type.getRawType());
+        assertArrayEquals(new Type[] { Types.typeForClass(Object.class) }, type.getActualTypeArguments());
     }
 }

@@ -328,7 +328,7 @@ public class UsesTest {
 
         containsInterface("GroupingModulTest", groupingUsesModulData);
 
-        assertEquals("Number of method in GroupingUsesModulData is incorrect", 0, groupingUsesModulData
+        assertEquals("Number of method in GroupingUsesModulData is incorrect", 1, groupingUsesModulData
                 .getMethodDefinitions().size());
         assertEquals("Number of method in GroupingModulTest is incorrect", 5, groupingModulTest.getMethodDefinitions()
                 .size());

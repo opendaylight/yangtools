@@ -397,7 +397,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @return A new {@link Builder}
      * @throws NullPointerException if {@code container} is null
      */
-    public static <T extends ChildOf<? extends DataRoot>> @NonNull Builder<T> builder(
+    public static <T extends ChildOf<? extends DataRoot<?>>> @NonNull Builder<T> builder(
             final @NonNull Class<T> container) {
         return new RegularBuilder<>(DataObjectStep.of(container));
     }
@@ -413,7 +413,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @return A new {@link Builder}
      * @throws NullPointerException if any argument is null
      */
-    public static <C extends ChoiceIn<? extends DataRoot> & DataObject, T extends ChildOf<? super C>>
+    public static <C extends ChoiceIn<? extends DataRoot<?>> & DataObject, T extends ChildOf<? super C>>
             @NonNull Builder<T> builder(final @NonNull Class<C> caze, final @NonNull Class<T> container) {
         return new RegularBuilder<>(DataObjectStep.of(caze, container));
     }
@@ -428,7 +428,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @return A new {@link Builder}
      * @throws NullPointerException if any argument is null
      */
-    public static <N extends EntryObject<N, K> & ChildOf<? extends DataRoot>, K extends Key<N>>
+    public static <N extends EntryObject<N, K> & ChildOf<? extends DataRoot<?>>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builder(final Class<N> listItem, final K listKey) {
         return new KeyedBuilder<>(new KeyStep<>(listItem, listKey));
     }
@@ -446,36 +446,34 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @return A new {@link Builder}
      * @throws NullPointerException if any argument is null
      */
-    public static <C extends ChoiceIn<? extends DataRoot> & DataObject,
+    public static <C extends ChoiceIn<? extends DataRoot<?>> & DataObject,
             N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builder(final @NonNull Class<C> caze, final @NonNull Class<N> listItem,
                     final @NonNull K listKey) {
         return new KeyedBuilder<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 
-    public static <R extends DataRoot & DataObject, T extends ChildOf<? super R>>
+    public static <R extends DataRoot<R>, T extends ChildOf<? super R>>
             @NonNull Builder<T> builderOfInherited(final @NonNull Class<R> root, final @NonNull Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new RegularBuilder<>(DataObjectStep.of(container));
     }
 
-    public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
-            T extends ChildOf<? super C>>
+    public static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject, T extends ChildOf<? super C>>
             @NonNull Builder<T> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new RegularBuilder<>(DataObjectStep.of(caze, container));
     }
 
-    public static <R extends DataRoot & DataObject, N extends EntryObject<N, K> & ChildOf<? super R>,
-            K extends Key<N>>
+    public static <R extends DataRoot<R>, N extends EntryObject<N, K> & ChildOf<? super R>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builderOfInherited(final @NonNull Class<R> root,
                 final @NonNull Class<N> listItem, final @NonNull K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new KeyedBuilder<>(new KeyStep<>(listItem, listKey));
     }
 
-    public static <R extends DataRoot & DataObject, C extends ChoiceIn<? super R> & DataObject,
+    public static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject,
             N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
             @NonNull KeyedBuilder<N, K> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<N> listItem, final K listKey) {
@@ -553,7 +551,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      */
     // FIXME: considering removing in favor of always going through a builder
     @SuppressWarnings("unchecked")
-    public static <T extends ChildOf<? extends DataRoot>> @NonNull InstanceIdentifier<T> create(
+    public static <T extends ChildOf<? extends DataRoot<?>>> @NonNull InstanceIdentifier<T> create(
             final Class<@NonNull T> type) {
         return (InstanceIdentifier<T>) internalCreate(ImmutableList.of(DataObjectStep.of(type)));
     }

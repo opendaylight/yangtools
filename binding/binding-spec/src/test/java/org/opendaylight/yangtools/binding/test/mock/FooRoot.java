@@ -9,8 +9,7 @@ package org.opendaylight.yangtools.binding.test.mock;
 
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.DataRoot;
 
-public interface FooRoot extends ChildOf<DataRoot>, DataObject {
+public interface FooRoot extends ChildOf<FooData>, DataObject {
 
 }

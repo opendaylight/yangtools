@@ -455,13 +455,11 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      *
      * @param builder Target builder
      * @param builderFactory factory for creating {@link TypeBuilder}s
-     * @return The number of groupings this type uses.
      */
-    final int addUsesInterfaces(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
+    final void addUsesInterfaces(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
         for (var grp : groupings) {
             builder.addImplementsType(grp.getGeneratedType(builderFactory));
         }
-        return groupings.size();
     }
 
     static final void addAugmentable(final GeneratedTypeBuilder builder) {
