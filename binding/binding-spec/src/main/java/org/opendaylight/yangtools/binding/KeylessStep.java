@@ -12,12 +12,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * A {@link KeyAware}-based step without the corresponding key. This corresponds to a {@code node-identifier} step,
+ * A {@link EntryObject}-based step without the corresponding key. This corresponds to a {@code node-identifier} step,
  * where we know there is a {@code key-predicate} possible, but we do not have it.
  *
- * @param <T> KeyAware type
+ * @param <T> EntryObject type
  */
-public record KeylessStep<T extends KeyAware<?> & DataObject>(
+public record KeylessStep<T extends EntryObject<?, ?>>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType) implements InexactDataObjectStep<T> {
     public KeylessStep {

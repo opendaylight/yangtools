@@ -60,10 +60,10 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         /**
          * A builder of {@link DataObjectReference.WithKey} objects.
          *
-         * @param <T> type of {@link KeyAware} {@link DataObject} held in the last step.
+         * @param <T> type of {@link EntryObject} held in the last step.
          * @param <K> {@link Key} type
          */
-        sealed interface WithKey<T extends EntryObject<T, K> & DataObject, K extends Key<T>> extends Builder<T>
+        sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>> extends Builder<T>
                 permits DataObjectReferenceBuilderWithKey, KeyedBuilder {
             @Override
             DataObjectReference.WithKey<T, K> build();
@@ -147,13 +147,12 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
     }
 
     /**
-     * A {@link DataObjectReference} pointing to a {@link KeyAware} {@link DataObject}, typically a map entry.
+     * A {@link DataObjectReference} pointing to a {@link EntryObject}.
      *
      * @param <K> Key type
-     * @param <T> KeyAware type
+     * @param <T> EntryObject type
      */
-    sealed interface WithKey<T extends EntryObject<T, K> & DataObject, K extends Key<T>>
-            extends DataObjectReference<T>, KeyAware<K>
+    sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>> extends DataObjectReference<T>, KeyAware<K>
             permits DataObjectIdentifier.WithKey, DataObjectReferenceWithKey, KeyedInstanceIdentifier {
         @Override
         KeyStep<K, T> lastStep();

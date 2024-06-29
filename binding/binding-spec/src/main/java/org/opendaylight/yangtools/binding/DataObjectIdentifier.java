@@ -26,9 +26,9 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
      * A {@link DataObjectIdentifier} pointing to an {@link EntryObject}.
      *
      * @param <K> Key type
-     * @param <T> KeyAware type
+     * @param <T> EntryObject type
      */
-    sealed interface WithKey<T extends EntryObject<T, K> & DataObject, K extends Key<T>>
+    sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>>
             extends DataObjectIdentifier<T>, DataObjectReference.WithKey<T, K>
             permits DataObjectIdentifierWithKey {
         @Override
