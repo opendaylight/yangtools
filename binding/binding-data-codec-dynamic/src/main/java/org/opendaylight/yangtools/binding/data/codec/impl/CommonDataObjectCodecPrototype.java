@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 
@@ -31,7 +31,7 @@ abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeT
     }
 
     @Override
-    final Class<? extends DataObject> javaClass() {
+    final Class<? extends Addressable> javaClass() {
         return step.type();
     }
 

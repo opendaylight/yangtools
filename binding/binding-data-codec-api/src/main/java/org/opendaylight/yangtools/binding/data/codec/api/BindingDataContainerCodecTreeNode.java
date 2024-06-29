@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -47,7 +48,7 @@ public non-sealed interface BindingDataContainerCodecTreeNode<T extends DataCont
      * @return Context of child or {@code null} is supplied class is not applicable in context.
      * @throws NullPointerException if {@code childClass} is {@code null}
      */
-    <E extends DataObject> @Nullable BindingDataContainerCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
+    <E extends Addressable> @Nullable BindingDataContainerCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
 
     default <A extends Augmentation<?>> @Nullable BindingAugmentationCodecTreeNode<A> streamAugmentation(
             final @NonNull Class<A> childClass) {

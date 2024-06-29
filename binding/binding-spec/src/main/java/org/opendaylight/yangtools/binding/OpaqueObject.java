@@ -27,8 +27,8 @@ import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
  * @param <T> Generated interface
  */
 @Beta
-public non-sealed interface OpaqueObject<T extends OpaqueObject<T>> extends BindingObject, DataContainer,
-        ValueAware<OpaqueData<?>> {
+public non-sealed interface OpaqueObject<T extends OpaqueObject<T>>
+        extends BindingObject, DataContainer, ValueAware<OpaqueData<?>> {
     @Override
     Class<T> implementedInterface();
 

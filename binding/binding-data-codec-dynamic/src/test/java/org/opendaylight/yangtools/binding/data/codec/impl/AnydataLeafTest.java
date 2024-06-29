@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.Cont;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.ContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.cont.ContAny;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.OpaqueData;
 import org.opendaylight.yangtools.binding.lib.AbstractOpaqueData;
 import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
@@ -61,7 +60,7 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
     public void testAnydataToBinding() {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(CONT_NODE_ID), cont);
         assertEquals(InstanceIdentifier.create(Cont.class), entry.getKey());
-        final DataObject ldo = entry.getValue();
+        final var ldo = entry.getValue();
         assertThat(ldo, instanceOf(Cont.class));
 
         // So no... GrpAny should be null ..

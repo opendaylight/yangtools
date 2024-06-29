@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReferenceBuilder;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
@@ -49,14 +50,15 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
  *
  * @param <T> type of {@link DataObject} held in the last step.
  */
-public sealed interface DataObjectReference<T extends DataObject> extends Immutable, Serializable
+public sealed interface DataObjectReference<T extends Addressable> extends Immutable, Serializable
         permits DataObjectIdentifier, DataObjectReference.WithKey, AbstractDataObjectReference {
     /**
      * A builder of {@link DataObjectReference} objects.
      *
      * @param <T> type of {@link DataObject} held in the last step.
      */
-    sealed interface Builder<T extends DataObject> permits Builder.WithKey, AbstractDataObjectReferenceBuilder {
+    sealed interface Builder<T extends Addressable>
+            permits Builder.WithKey, AbstractDataObjectReferenceBuilder {
         /**
          * A builder of {@link DataObjectReference.WithKey} objects.
          *

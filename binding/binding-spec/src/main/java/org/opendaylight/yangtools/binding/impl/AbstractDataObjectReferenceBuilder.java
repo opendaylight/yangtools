@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.Builder;
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 /**
  * Base implementation of {@link Builder}.
  */
-public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataObject> implements Builder<T>
+public abstract sealed class AbstractDataObjectReferenceBuilder<T extends Addressable> implements Builder<T>
         permits DataObjectReferenceBuilder, DataObjectReferenceBuilderWithKey, InstanceIdentifier.Builder {
     private final ArrayList<@NonNull DataObjectStep<?>> pathBuilder;
     private final Iterable<? extends @NonNull DataObjectStep<?>> basePath;
@@ -89,7 +90,7 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     @Override
     public abstract DataObjectReference<T> build();
 
-    protected abstract <X extends DataObject> @NonNull Builder<X> append(@NonNull DataObjectStep<X> step);
+    protected abstract <X extends Addressable> @NonNull Builder<X> append(@NonNull DataObjectStep<X> step);
 
     protected abstract <X extends EntryObject<X, Y>, Y extends Key<X>> @NonNull WithKey<X, Y> append(
         @NonNull KeyStep<Y, X> step);

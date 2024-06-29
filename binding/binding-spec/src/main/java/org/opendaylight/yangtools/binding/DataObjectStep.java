@@ -10,14 +10,16 @@ package org.opendaylight.yangtools.binding;
 import java.io.Serializable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 
 /**
- * A reference to a {@link DataObject} type forming a single step in a path similar to {@code instance-identifier}.
+ * A reference to a {@link Addressable.Single} type forming a single step in a path similar to
+ * {@code instance-identifier}.
  *
  * @param <T> DataObject type
  */
 /*
- * FIXME: this interface forms a partial model of the following RFC7950 construct:
+ * FIXME: YANGTOOLS-1577: this interface forms a partial model of the following RFC7950 construct:
  *
  *          ;; Instance Identifiers
  *
@@ -28,7 +30,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * - 'pos' interfaces (index into a list or a leaf-list}
  * - 'node-identifier for non-DataObjects' (i.e. leaf, anydata, anyxml)
  */
-public sealed interface DataObjectStep<T extends DataObject> extends Comparable<DataObjectStep<?>>, Serializable
+public sealed interface DataObjectStep<T extends Addressable> extends Comparable<DataObjectStep<?>>, Serializable
         permits ExactDataObjectStep, InexactDataObjectStep {
 
     static <T extends DataObject> @NonNull DataObjectStep<T> of(final @NonNull Class<T> type) {

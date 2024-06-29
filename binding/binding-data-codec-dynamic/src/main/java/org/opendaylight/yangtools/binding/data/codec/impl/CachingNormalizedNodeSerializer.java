@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
@@ -53,7 +54,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
      * @return Normalized Node representation of data.
      */
     static NormalizedNode serializeUsingStreamWriter(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
-            final DataContainerCodecContext<?, ?, ?> subtreeRoot, final DataObject data) {
+            final DataContainerCodecContext<?, ?, ?> subtreeRoot, final Addressable data) {
         final var writer = new CachingNormalizedNodeSerializer(cacheHolder, subtreeRoot);
         try {
             subtreeRoot.eventStreamSerializer().serialize(data, writer);
