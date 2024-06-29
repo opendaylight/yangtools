@@ -50,12 +50,14 @@ import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyedListAction;
+import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.RpcInput;
@@ -173,10 +175,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 return new DataContainerSerializer(BindingCodecContext.this, streamers.get(key));
             }
         });
-    private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>> childrenByClass =
+    private final LoadingCache<Class<? extends Addressable>, DataContainerCodecContext<?, ?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> key) {
+            public DataContainerCodecContext<?, ?, ?> load(final Class<? extends Addressable> key) {
                 final var childSchema = context.getTypes().bindingChild(JavaTypeName.create(key));
                 if (childSchema instanceof ContainerLikeRuntimeType containerLike) {
                     if (childSchema instanceof ContainerRuntimeType container
@@ -186,7 +188,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     }
                     return new ContainerLikeCodecContext<>(key, containerLike, BindingCodecContext.this);
                 } else if (childSchema instanceof ListRuntimeType list) {
-                    return list.keyType() == null ? new ListCodecContext<>(key, list, BindingCodecContext.this)
+                    return list.keyType() == null
+                        ? new ListCodecContext<>(new NodeStep(key), list, BindingCodecContext.this)
                         : MapCodecContext.of(key, list, BindingCodecContext.this);
                 } else if (childSchema instanceof ChoiceRuntimeType choice) {
                     return new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), choice, BindingCodecContext.this);
@@ -789,7 +792,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends DataObject> DataContainerCodecContext<E, ?, ?> getStreamChild(final Class<E> childClass) {
+    public <E extends Addressable> DataContainerCodecContext<E, ?, ?> getStreamChild(final Class<E> childClass) {
         final var result = Notification.class.isAssignableFrom(childClass) ? getNotificationContext(childClass)
             : getOrRethrow(childrenByClass, childClass);
         return (DataContainerCodecContext<E, ?, ?>) result;
@@ -851,7 +854,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <T extends DataObject> DataObjectReference<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
+    public <T extends Addressable> DataObjectReference<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
         return instanceIdentifierCodec.toBinding(dom);
     }
 
@@ -875,7 +878,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <T extends DataObject> NormalizedResult toNormalizedNode(final DataObjectReference<T> path, final T data) {
+    public <T extends Addressable> NormalizedResult toNormalizedNode(final DataObjectReference<T> path, final T data) {
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
         final var yangArgs = new ArrayList<PathArgument>();
         final var codecContext = getCodecContextNode(path, yangArgs);
@@ -915,7 +918,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public Entry<DataObjectReference<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
+    public Entry<DataObjectReference<?>, Addressable> fromNormalizedNode(final YangInstanceIdentifier path,
             final NormalizedNode data) {
         if (notBindingRepresentable(data)) {
             return null;
@@ -931,7 +934,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             return null;
         }
 
-        final DataObject lazyObj = codec.deserialize(data);
+        final var lazyObj = codec.deserialize(data);
         return Map.entry(DataObjectReference.ofUnsafeSteps(builder), lazyObj);
     }
 
@@ -1038,7 +1041,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             || data instanceof LeafSetNode;
     }
 
-    private static <K,V> V getOrRethrow(final LoadingCache<K, V> cache, final K key) {
+    private static <K, V> V getOrRethrow(final LoadingCache<K, V> cache, final K key) {
         try {
             return cache.getUnchecked(key);
         } catch (UncheckedExecutionException e) {

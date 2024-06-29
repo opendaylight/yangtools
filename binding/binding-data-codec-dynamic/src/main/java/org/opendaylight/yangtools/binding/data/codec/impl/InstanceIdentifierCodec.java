@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
@@ -31,7 +31,7 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends DataObject> DataObjectReference<T> toBinding(final YangInstanceIdentifier domPath) {
+    public <T extends Addressable> DataObjectReference<T> toBinding(final YangInstanceIdentifier domPath) {
         final var builder = new ArrayList<DataObjectStep<?>>();
         final var codec = context.getCodecContextNode(domPath, builder);
         if (codec == null) {

@@ -10,16 +10,17 @@ package org.opendaylight.yangtools.binding;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierWithKey;
 
 /**
- * A {@link DataObjectReference} matching at most one {@link DataObject}, consistent with YANG
+ * A {@link DataObjectReference} matching at most one {@link Addressable.Single}, consistent with YANG
  * {@code instance-identifier} addressing as captured by {@link BindingInstanceIdentifier}.
  *
  * @param <T> type of {@link DataObject} held in the last step.
  */
-public sealed interface DataObjectIdentifier<T extends DataObject>
+public sealed interface DataObjectIdentifier<T extends Addressable>
         extends DataObjectReference<T>, BindingInstanceIdentifier
         permits DataObjectIdentifier.WithKey, DataObjectIdentifierImpl {
     /**

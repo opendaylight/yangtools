@@ -9,18 +9,21 @@ package org.opendaylight.yangtools.binding;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 
 /**
- * A {@link DataObject}-based step along an {@code instance-identifier}. It equates to a {@code node-identifier} and
- * carries additional assertion that there are no valid predicates for this type.
+ * A {@link Addressable.Single}-based step along an {@code instance-identifier}. It equates to a
+ * {@code node-identifier} and carries additional assertion that there are no valid predicates for this type.
  *
- * @param <T> DataObject type
+ * @param <T> DataContainer type
  */
-public record NodeStep<T extends DataObject>(
+public record NodeStep<T extends Addressable.Single>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType) implements ExactDataObjectStep<T> {
     public NodeStep {
-        checkType(type, false);
+        if (!Addressable.Single.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException("Invalid type " + type);
+        }
         checkCaseType(caseType);
     }
 

@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -252,7 +253,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
         return caze.bindingPathArgumentChild(step, builder);
     }
 
-    private DataContainerCodecContext<?, ?, ?> getCaseByChildClass(final @NonNull Class<? extends DataObject> type) {
+    private DataContainerCodecContext<?, ?, ?> getCaseByChildClass(final @NonNull Class<? extends Addressable> type) {
         var result = byCaseChildClass.get(type);
         if (result == null) {
             // We have not found an unambiguous result, try ambiguous ones

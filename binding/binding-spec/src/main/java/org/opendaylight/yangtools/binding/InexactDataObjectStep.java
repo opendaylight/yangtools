@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.binding;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 
 /**
  * A {@link DataObjectStep} which is not exactly specified. Other {@link DataObjectStep} steps can be
  * {@link #matches(DataObjectStep) matched} against it.
  */
-public sealed interface InexactDataObjectStep<T extends DataObject> extends DataObjectStep<T> permits KeylessStep {
+public sealed interface InexactDataObjectStep<T extends Addressable.Multiple> extends DataObjectStep<T>
+        permits KeylessStep {
 
     boolean matches(@NonNull DataObjectStep<?> other);
 }

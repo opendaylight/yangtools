@@ -24,12 +24,18 @@ public record KeyStep<K extends Key<T>, T extends EntryObject<T, K>>(
         @Nullable Class<? extends DataObject> caseType,
         @NonNull K key) implements ExactDataObjectStep<T>, KeyAware<K> {
     public KeyStep {
-        NodeStep.checkType(type, true);
+        checkType(type);
         NodeStep.checkCaseType(caseType);
         requireNonNull(key);
     }
 
     public KeyStep(final @NonNull Class<T> type, final @NonNull K key) {
         this(type, null, key);
+    }
+
+    static void checkType(final Class<?> type) {
+        if (!EntryObject.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException("Invalid type " + type);
+        }
     }
 }

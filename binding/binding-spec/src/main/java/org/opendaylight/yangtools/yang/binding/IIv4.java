@@ -15,11 +15,11 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 
 @Deprecated(since = "14.0.0", forRemoval = true)
-sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 {
+sealed class IIv4<T extends Addressable> implements Externalizable permits KIIv4 {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 

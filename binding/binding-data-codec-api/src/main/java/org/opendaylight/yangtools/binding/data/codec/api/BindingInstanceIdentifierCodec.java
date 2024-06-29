@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -29,7 +29,7 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      */
     // FIXME: Document MissingSchemaException being thrown?
     // FIXME: Document MissingSchemaForClassException being thrown?
-    <T extends DataObject> @Nullable DataObjectReference<T> toBinding(@NonNull YangInstanceIdentifier domPath);
+    <T extends Addressable> @Nullable DataObjectReference<T> toBinding(@NonNull YangInstanceIdentifier domPath);
 
     /**
      * Translates supplied {@link DataObjectReference} into a {@link YangInstanceIdentifier}.

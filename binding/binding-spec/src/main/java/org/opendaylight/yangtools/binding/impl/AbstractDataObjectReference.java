@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
@@ -31,7 +32,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 /**
  * Base implementation of {@link DataObjectReference}.
  */
-public abstract sealed class AbstractDataObjectReference<T extends DataObject, S extends DataObjectStep<?>>
+public abstract sealed class AbstractDataObjectReference<T extends Addressable, S extends DataObjectStep<?>>
         implements DataObjectReference<T>
         permits DataObjectIdentifierImpl, DataObjectReferenceImpl, InstanceIdentifier {
     @java.io.Serial
@@ -113,7 +114,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     }
 
     private static @NonNull String appendStep(final StringBuilder sb, final String prevPackage,
-            final @Nullable Class<? extends DataObject> caseType, final Class<? extends DataObject> type) {
+            final @Nullable Class<? extends DataObject> caseType, final Class<? extends Addressable> type) {
         sb.append("  ");
         if (caseType != null) {
             appendClass(sb.append('<'), prevPackage, caseType);
@@ -123,7 +124,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     }
 
     private static @NonNull String appendClass(final StringBuilder sb, final String trim,
-            final Class<? extends DataObject> type) {
+            final Class<? extends Addressable> type) {
         final var fqpn = type.getPackageName();
         if (fqpn.startsWith(trim)) {
             sb.append("... ").append(fqpn, trim.length(), fqpn.length());

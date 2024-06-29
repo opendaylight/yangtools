@@ -24,6 +24,27 @@ package org.opendaylight.yangtools.binding;
  * </ul>
  */
 public sealed interface DataContainer extends BindingContract<DataContainer>
-    permits BaseNotification, ChoiceIn, DataObject, DataRoot, Grouping, OpaqueObject, YangData {
-    // Nothing else
+    permits DataContainer.Addressable, BaseNotification, ChoiceIn, DataRoot, Grouping, OpaqueObject, YangData {
+    /**
+     * A {@link DataContainer} which models data which can be instantiated in a data tree. This implies
+     * addressability via {@link DataObjectReference}.
+     */
+    sealed interface Addressable extends BindingObject, DataContainer {
+        /**
+         * A {@link DataContainer} which models data which can be instantiated once in a data tree. This implies
+         * addressability via {@link DataObjectReference} and {@link ExactDataObjectStep}s only.
+         */
+        sealed interface Single extends DataContainer.Addressable permits Augmentation, DataObject {
+            // Nothing else
+        }
+
+        /**
+         * A {@link DataContainer} which models data which can be instantiated multiple times in a data tree. This
+         * implies addressability via {@link DataObjectReference} with {@link ExactDataObjectStep} as well as
+         * {@link InexactDataObjectStep}s.
+         */
+        sealed interface Multiple extends Addressable permits EntryObject {
+            // Nothing else
+        }
+    }
 }

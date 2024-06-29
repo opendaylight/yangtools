@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.Notification;
@@ -76,12 +77,12 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public <T extends DataObject> DataObjectReference<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
+    public <T extends Addressable> DataObjectReference<T> fromYangInstanceIdentifier(final YangInstanceIdentifier dom) {
         return delegate().fromYangInstanceIdentifier(dom);
     }
 
     @Override
-    public <T extends DataObject> NormalizedResult toNormalizedNode(final DataObjectReference<T> path, final T data) {
+    public <T extends Addressable> NormalizedResult toNormalizedNode(final DataObjectReference<T> path, final T data) {
         return delegate().toNormalizedNode(path, data);
     }
 
@@ -125,7 +126,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public Entry<DataObjectReference<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
+    public Entry<DataObjectReference<?>, Addressable> fromNormalizedNode(final YangInstanceIdentifier path,
             final NormalizedNode data) {
         return delegate().fromNormalizedNode(path, data);
     }
@@ -252,7 +253,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public <E extends DataObject> BindingDataContainerCodecTreeNode<E> getStreamChild(final Class<E> childClass) {
+    public <E extends Addressable> BindingDataContainerCodecTreeNode<E> getStreamChild(final Class<E> childClass) {
         return delegate().getStreamChild(childClass);
     }
 }

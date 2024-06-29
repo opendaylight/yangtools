@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding;
 
 /**
- * A {@link DataObject} which represents a single entry in a {@code list} with a {@code key} -- and hence it has a
+ * A {@link DataContainer} which represents a single entry in a {@code list} with a {@code key} -- and hence it has a
  * {@link #key()}.
  *
  * @apiNote
@@ -17,6 +17,7 @@ package org.opendaylight.yangtools.binding;
  *     The logic here is that {@code EntryObject} is an entry on a {@code Map<Key, EntryObject>}, whereas {@code list}
  *     statements are mapped to {@code List<ElementObject>}.
  */
-public non-sealed interface EntryObject<T extends EntryObject<T, K>, K extends Key<T>> extends DataObject, KeyAware<K> {
+public non-sealed interface EntryObject<T extends EntryObject<T, K>, K extends Key<T>>
+    extends DataContainer.Addressable.Multiple, KeyAware<K> {
     // Nothing else
 }
