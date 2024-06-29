@@ -23,8 +23,6 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -42,7 +40,6 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
  *
  * @author Lukas Sedlak
  */
-@RunWith(MockitoJUnitRunner.class)
 public class DefaultBindingGeneratorTest {
     public static final String BASE_YANG_TYPES =
         "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.base.yang.types.rev140914";

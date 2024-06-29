@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.binding;
  * Data Container - object contains structured data. Marker interface which must be implemented by all interfaces
  * generated for YANG:
  * <ul>
+ *   <li>{@code grouping} based on {@link Grouping}</li>
  *   <li>{@code input} based on {@link RpcInput}</li>
  *   <li>{@code output} based on {@link RpcOutput}</li>
  *   <li>{@code notification} based on {@link BaseNotification}, either {@link Notification} or
@@ -19,9 +20,10 @@ package org.opendaylight.yangtools.binding;
  *   <li>{@code anydata} and {@code anyxml} based on {@link OpaqueObject}
  *   <li>a {@code module}'s data schema nodes based on {@link DataRoot}
  *   <li>{@code rc:yang-data} based on {@link YangData}
+ *   <li>{@code module}'s top-level data based on {@link DataRoot}
  * </ul>
  */
 public sealed interface DataContainer extends BindingContract<DataContainer>
-    permits BaseNotification, ChoiceIn, DataObject, DataRoot, OpaqueObject, YangData {
-
+    permits BaseNotification, ChoiceIn, DataObject, DataRoot, Grouping, OpaqueObject, YangData {
+    // Nothing else
 }
