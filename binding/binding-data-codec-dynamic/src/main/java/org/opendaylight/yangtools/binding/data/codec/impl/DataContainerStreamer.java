@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.KeyAware;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
 import org.slf4j.Logger;
@@ -131,7 +131,7 @@ public abstract class DataContainerStreamer<T extends DataContainer> {
         }
     }
 
-    protected static final <E extends DataObject & KeyAware<?>> void streamMap(final Class<E> childClass,
+    protected static final <E extends EntryObject<?, ?>> void streamMap(final Class<E> childClass,
             final DataContainerStreamer<E> childStreamer, final DataContainerSerializerRegistry registry,
             final BindingStreamEventWriter writer, final Map<?, ? extends E> value) throws IOException {
         final int size = nullSize(value);
@@ -141,7 +141,7 @@ public abstract class DataContainerStreamer<T extends DataContainer> {
         }
     }
 
-    protected static final <E extends DataObject & KeyAware<?>> void streamOrderedMap(final Class<E> childClass,
+    protected static final <E extends EntryObject<?, ?>> void streamOrderedMap(final Class<E> childClass,
             final DataContainerStreamer<E> childStreamer, final DataContainerSerializerRegistry registry,
             final BindingStreamEventWriter writer, final List<? extends E> value) throws IOException {
         final int size = nullSize(value);

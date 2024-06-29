@@ -14,8 +14,8 @@ import java.io.IOException;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 
 /**
  * Event Stream Writer for Binding Representation.
@@ -277,7 +277,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    <T extends DataObject & KeyAware<?>> void startMapNode(Class<T> mapEntryType, int childSizeHint) throws IOException;
+    void startMapNode(Class<? extends EntryObject<?, ?>> mapEntryType, int childSizeHint) throws IOException;
 
     /**
      * Emits start of ordered map node event.
@@ -302,8 +302,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    <T extends DataObject & KeyAware<?>> void startOrderedMapNode(Class<T> mapEntryType, int childSizeHint)
-            throws IOException;
+    void startOrderedMapNode(Class<? extends EntryObject<?, ?>> mapEntryType, int childSizeHint) throws IOException;
 
     /**
      * Emits start of map entry.

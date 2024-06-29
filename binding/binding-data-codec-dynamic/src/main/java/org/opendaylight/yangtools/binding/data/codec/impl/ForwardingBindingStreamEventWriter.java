@@ -11,8 +11,8 @@ import java.io.IOException;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 
 // FIXME: Consider moving this to yang.binding.util.* in Be
@@ -58,14 +58,14 @@ abstract class ForwardingBindingStreamEventWriter implements AnydataBindingStrea
     }
 
     @Override
-    public <T extends DataObject & KeyAware<?>> void startMapNode(final Class<T> mapEntryType, final int childSizeHint)
+    public void startMapNode(final Class<? extends EntryObject<?, ?>> mapEntryType, final int childSizeHint)
             throws IOException {
         delegate().startMapNode(mapEntryType, childSizeHint);
     }
 
     @Override
-    public <T extends DataObject & KeyAware<?>> void startOrderedMapNode(final Class<T> mapEntryType,
-            final int childSizeHint) throws IOException {
+    public void startOrderedMapNode(final Class<? extends EntryObject<?, ?>> mapEntryType, final int childSizeHint)
+            throws IOException {
         delegate().startOrderedMapNode(mapEntryType, childSizeHint);
     }
 
