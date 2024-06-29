@@ -18,6 +18,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.OpaqueObject;
@@ -151,10 +152,9 @@ public abstract class DataContainerStreamer<T extends DataContainer> {
         }
     }
 
-    private static <E extends DataObject> void commonStreamList(final DataContainerSerializerRegistry registry,
+    private static <E extends Addressable> void commonStreamList(final DataContainerSerializerRegistry registry,
             final BindingStreamEventWriter writer, final DataContainerStreamer<E> childStreamer,
             final Collection<? extends E> value) throws IOException {
-
         for (E entry : value) {
             if (tryCache(writer, entry)) {
                 childStreamer.serialize(registry, entry, writer);
@@ -188,7 +188,7 @@ public abstract class DataContainerStreamer<T extends DataContainer> {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends DataObject> boolean tryCache(final BindingStreamEventWriter writer, final T value) {
+    private static <T extends Addressable> boolean tryCache(final BindingStreamEventWriter writer, final T value) {
         // Force serialization if writer is not a BindingSerializer, otherwise defer to it for a decision
         return !(writer instanceof BindingSerializer) || ((BindingSerializer<?, T>) writer).serialize(value) == null;
     }

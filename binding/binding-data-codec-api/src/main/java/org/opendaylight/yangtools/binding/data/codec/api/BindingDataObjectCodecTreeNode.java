@@ -11,10 +11,10 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableCollection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.BindingObject;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 
 @Beta
-public interface BindingDataObjectCodecTreeNode<T extends DataObject>
+public interface BindingDataObjectCodecTreeNode<T extends Addressable>
         extends CommonDataObjectCodecTreeNode<T>, BindingNormalizedNodeCodec<T> {
     /**
      * Returns codec which uses caches serialization / deserialization results.

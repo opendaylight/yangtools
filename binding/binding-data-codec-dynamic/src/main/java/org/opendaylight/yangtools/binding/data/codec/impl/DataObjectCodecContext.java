@@ -29,6 +29,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * This class is an implementation detail. It is public only due to technical reasons and may change at any time.
  */
 @Beta
-public abstract sealed class DataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
+public abstract sealed class DataObjectCodecContext<D extends Addressable, T extends CompositeRuntimeType>
         extends AbstractDataObjectCodecContext<D, T> implements BindingDataObjectCodecTreeNode<D>
         permits CaseCodecContext, ContainerLikeCodecContext, ListCodecContext, NotificationCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
@@ -151,7 +152,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     @Override
-    final DataContainerPrototype<?, ?> pathChildPrototype(final Class<? extends DataObject> argType) {
+    final DataContainerPrototype<?, ?> pathChildPrototype(final Class<? extends Addressable> argType) {
         final var child = super.pathChildPrototype(argType);
         return child != null ? child : augmentToPrototype.get(argType);
     }

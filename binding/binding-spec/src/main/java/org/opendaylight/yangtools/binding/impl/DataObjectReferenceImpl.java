@@ -13,14 +13,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-public sealed class DataObjectReferenceImpl<T extends DataObject>
-        extends AbstractDataObjectReference<T, DataObjectStep<?>>
-        permits DataObjectReferenceWithKey {
+public sealed class DataObjectReferenceImpl<T extends Addressable>
+        extends AbstractDataObjectReference<T, DataObjectStep<?>> permits DataObjectReferenceWithKey {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 

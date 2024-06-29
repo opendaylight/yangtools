@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *
  * @param <T> DataObject type
  */
-public interface CommonDataObjectCodecTreeNode<T extends DataObject> extends BindingDataContainerCodecTreeNode<T> {
+public interface CommonDataObjectCodecTreeNode<T extends Addressable> extends BindingDataContainerCodecTreeNode<T> {
     /**
      * Serializes the instance identifier step for current node.
      *

@@ -21,7 +21,7 @@ public record KeylessStep<T extends EntryObject<?, ?>>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType) implements InexactDataObjectStep<T> {
     public KeylessStep {
-        NodeStep.checkType(type, true);
+        KeyStep.checkType(type);
         NodeStep.checkCaseType(caseType);
     }
 

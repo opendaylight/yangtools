@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 
 /**
  * Marker interface for YANG-defined instance {@code notification}s. A concrete InstanceNotification and its
@@ -19,7 +20,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <T> Parent data tree instance type
  */
 @Beta
-public non-sealed interface InstanceNotification<N extends InstanceNotification<N, T>, T extends DataObject>
+public non-sealed interface InstanceNotification<N extends InstanceNotification<N, T>, T extends Addressable>
         extends BaseNotification {
     @Override
     @NonNull Class<N> implementedInterface();

@@ -14,6 +14,7 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
@@ -40,7 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
  * While this class is public, it not part of API surface and is an implementation detail. The only reason for it being
  * public is that it needs to be accessible by code generated at runtime.
  */
-public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
+public abstract sealed class AbstractDataObjectCodecContext<D extends Addressable, T extends CompositeRuntimeType>
         extends CommonDataObjectCodecContext<D, T>
         permits AugmentationCodecContext, DataObjectCodecContext {
     private final ImmutableMap<Class<?>, DataContainerPrototype<?, ?>> byBindingArgClass;
@@ -86,7 +87,7 @@ public abstract sealed class AbstractDataObjectCodecContext<D extends DataObject
         }
     }
 
-    @Nullable DataContainerPrototype<?, ?> pathChildPrototype(final @NonNull Class<? extends DataObject> argType) {
+    @Nullable DataContainerPrototype<?, ?> pathChildPrototype(final @NonNull Class<? extends Addressable> argType) {
         return byBindingArgClass.get(argType);
     }
 

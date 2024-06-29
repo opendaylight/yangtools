@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 
 /**
@@ -46,7 +47,7 @@ public interface BindingDataObjectCodecTreeParent<T> {
      * @throws NullPointerException if {@code childClass} is {@code null}
      * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
-    <E extends DataObject> @NonNull BindingDataContainerCodecTreeNode<E> getStreamChild(@NonNull Class<E> childClass);
+    <E extends Addressable> @NonNull BindingDataContainerCodecTreeNode<E> getStreamChild(@NonNull Class<E> childClass);
 
     default <A extends Augmentation<?>> @NonNull BindingAugmentationCodecTreeNode<A> getStreamAugmentation(
             final @NonNull Class<A> childClass) {

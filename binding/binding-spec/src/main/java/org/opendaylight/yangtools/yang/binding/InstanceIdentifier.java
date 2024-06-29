@@ -28,6 +28,8 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
@@ -73,7 +75,7 @@ import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
  * <p>
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  */
-public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDataObjectReference<T, DataObjectStep<?>>
+public sealed class InstanceIdentifier<T extends Addressable> extends AbstractDataObjectReference<T, DataObjectStep<?>>
         implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
         permits KeyedInstanceIdentifier {
     @java.io.Serial
@@ -251,7 +253,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         return true;
     }
 
-    private <N extends DataObject> @NonNull InstanceIdentifier<N> childIdentifier(final DataObjectStep<N> arg) {
+    private <N extends Addressable.Single> @NonNull InstanceIdentifier<N> childIdentifier(
+            final DataObjectStep<N> arg) {
         return trustedCreate(arg, concat(steps(), arg), wildcarded);
     }
 
@@ -531,7 +534,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      *                                  a valid addressing step.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends DataObject> @NonNull InstanceIdentifier<T> unsafeOf(
+    public static <T extends Addressable> @NonNull InstanceIdentifier<T> unsafeOf(
             final List<? extends DataObjectStep<?>> pathArguments) {
         return (InstanceIdentifier<T>) internalCreate(ImmutableList.copyOf(pathArguments));
     }
@@ -575,8 +578,9 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    static <N extends DataObject> @NonNull InstanceIdentifier<N> trustedCreate(final DataObjectStep<?> lastStep,
-            final Iterable<? extends DataObjectStep<?>> pathArguments, final boolean wildcarded) {
+    static <N extends Addressable.Single> @NonNull InstanceIdentifier<N> trustedCreate(
+            final DataObjectStep<?> lastStep, final Iterable<? extends DataObjectStep<?>> pathArguments,
+                final boolean wildcarded) {
         return switch (lastStep) {
             case NodeStep<?> cast -> new InstanceIdentifier(pathArguments, wildcarded);
             case KeyStep<?, ?> cast -> new KeyedInstanceIdentifier(pathArguments, wildcarded);
@@ -585,7 +589,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     @Deprecated(since = "13.0.0", forRemoval = true)
-    private abstract static sealed class AbstractPathArgument<T extends DataObject>
+    private abstract static sealed class AbstractPathArgument<T extends DataContainer.Addressable>
             implements Comparable<AbstractPathArgument<?>>, Serializable {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
@@ -768,7 +772,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      *
      * @param <T> Instance identifier target type
      */
-    public abstract static sealed class Builder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
+    public abstract static sealed class Builder<T extends Addressable>
+            extends AbstractDataObjectReferenceBuilder<T> {
         Builder(final Builder<?> prev, final DataObjectStep<?> item) {
             super(prev, item);
         }
@@ -814,7 +819,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         public abstract @NonNull InstanceIdentifier<T> build();
 
         @Override
-        protected abstract <X extends DataObject> @NonNull RegularBuilder<X> append(DataObjectStep<X> step);
+        protected abstract <X extends Addressable> @NonNull RegularBuilder<X> append(DataObjectStep<X> step);
 
         @Override
         protected abstract <X extends EntryObject<X, Y>, Y extends Key<X>> @NonNull KeyedBuilder<X, Y> append(
@@ -841,12 +846,12 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
          * @return Resulting {@link KeyedInstanceIdentifier}.
          */
         @Override
-        public @NonNull KeyedInstanceIdentifier<T, K> build() {
+        public KeyedInstanceIdentifier<T, K> build() {
             return new KeyedInstanceIdentifier<>(buildSteps(), wildcard());
         }
 
         @Override
-        protected <X extends DataObject> @NonNull RegularBuilder<X> append(final DataObjectStep<X> step) {
+        protected <X extends Addressable> RegularBuilder<X> append(final DataObjectStep<X> step) {
             return new RegularBuilder<>(this, step);
         }
 
@@ -858,7 +863,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
     }
 
-    private static final class RegularBuilder<T extends DataObject> extends Builder<T> {
+    private static final class RegularBuilder<T extends Addressable> extends Builder<T> {
         RegularBuilder(final DataObjectStep<T> item) {
             super(item, !(item instanceof ExactDataObjectStep));
         }
@@ -878,7 +883,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
         @Override
         @SuppressWarnings("unchecked")
-        protected <X extends DataObject> RegularBuilder<X> append(final DataObjectStep<X> step) {
+        protected <X extends Addressable> RegularBuilder<X> append(final DataObjectStep<X> step) {
             appendItem(step);
             return (RegularBuilder<X>) this;
         }

@@ -29,10 +29,9 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataContainer;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataContainerCodecTreeNode;
-import org.opendaylight.yangtools.binding.data.codec.api.BindingDataContainerCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
@@ -153,14 +152,14 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
     }
 
     @Override
-    public final <C extends DataObject> DataContainerCodecContext<C, ?, ?> getStreamChild(final Class<C> childClass) {
+    public final <C extends Addressable> DataContainerCodecContext<C, ?, ?> getStreamChild(final Class<C> childClass) {
         return childNonNull(streamChild(childClass), childClass,
             "Child %s is not valid child of %s", getBindingClass(), childClass);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <C extends DataObject> DataContainerCodecContext<C, ?, ?> streamChild(final Class<C> childClass) {
+    public final <C extends Addressable> DataContainerCodecContext<C, ?, ?> streamChild(final Class<C> childClass) {
         final var childProto = streamChildPrototype(requireNonNull(childClass));
         return childProto == null ? null : (DataContainerCodecContext<C, ?, ?>) childProto.getCodecContext();
     }
@@ -172,7 +171,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
         return getClass().getSimpleName() + " [" + getBindingClass() + "]";
     }
 
-    static final <T extends DataObject, C extends DataContainerCodecContext<T, ?, ?> & BindingNormalizedNodeCodec<T>>
+    static final <T extends Addressable, C extends DataContainerCodecContext<T, ?, ?> & BindingNormalizedNodeCodec<T>>
             @NonNull BindingNormalizedNodeCachingCodec<T> createCachingCodec(final C context,
                 final ImmutableCollection<Class<? extends BindingObject>> cacheSpecifier) {
         return cacheSpecifier.isEmpty() ? new NonCachingCodec<>(context)

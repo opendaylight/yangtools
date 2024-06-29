@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
+
 /**
  * A {@link DataObjectStep} which is exactly specified. Due to how {@link DataObject} and {@link KeyAware} are tied
  * together, a class generated for a {@code list} is strictly a {@link DataObject}, but its semantics differ.
@@ -18,9 +20,8 @@ package org.opendaylight.yangtools.binding;
  *   <li>this is a fully-specified {@link KeyStep}</li>
  * </ol>
  *
- * @param <T> DataObject type
+ * @param <T> DataContainer type
  */
-public sealed interface ExactDataObjectStep<T extends DataObject> extends DataObjectStep<T>
-    permits KeyStep, NodeStep {
+public sealed interface ExactDataObjectStep<T extends Addressable> extends DataObjectStep<T> permits KeyStep, NodeStep {
     // for class hierarchy only
 }

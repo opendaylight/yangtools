@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.Notification;
@@ -93,7 +94,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return {@link DataObjectReference}, or {@code null} if the instance identifier is not representable.
      */
     // FIXME: MDSAL-525: reconcile this with BindingInstanceIdentifierCodec
-    <T extends DataObject> @Nullable DataObjectReference<T> fromYangInstanceIdentifier(
+    <T extends Addressable> @Nullable DataObjectReference<T> fromYangInstanceIdentifier(
             @NonNull YangInstanceIdentifier dom);
 
     /**
@@ -104,7 +105,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return {@link NormalizedResult} representation
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    <T extends DataObject> @NonNull NormalizedResult toNormalizedNode(DataObjectReference<T> path, T data);
+    <T extends Addressable> @NonNull NormalizedResult toNormalizedNode(DataObjectReference<T> path, T data);
 
     /**
      * Translates supplied {@link DataObjectReference} and data into {@link NormalizedNode} representation.
@@ -134,7 +135,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing data
      * @return DOM Instance Identifier
      */
-    @Nullable Entry<DataObjectReference<?>, DataObject> fromNormalizedNode(@NonNull YangInstanceIdentifier path,
+    @Nullable Entry<DataObjectReference<?>, Addressable> fromNormalizedNode(@NonNull YangInstanceIdentifier path,
             NormalizedNode data);
 
     /**

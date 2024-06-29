@@ -15,13 +15,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-public sealed class DataObjectIdentifierImpl<T extends DataObject>
+public sealed class DataObjectIdentifierImpl<T extends Addressable>
         extends AbstractDataObjectReference<T, ExactDataObjectStep<?>> implements DataObjectIdentifier<T>
         permits DataObjectIdentifierWithKey {
     @java.io.Serial

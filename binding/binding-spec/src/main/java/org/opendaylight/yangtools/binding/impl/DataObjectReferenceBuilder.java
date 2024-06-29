@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.impl;
 
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-final class DataObjectReferenceBuilder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
+final class DataObjectReferenceBuilder<T extends Addressable> extends AbstractDataObjectReferenceBuilder<T> {
     DataObjectReferenceBuilder(final AbstractDataObjectReferenceBuilder<?> prev, final DataObjectStep<?> item) {
         super(prev, item);
     }
@@ -35,7 +35,7 @@ final class DataObjectReferenceBuilder<T extends DataObject> extends AbstractDat
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <X extends DataObject> DataObjectReferenceBuilder<X> append(final DataObjectStep<X> step) {
+    protected <X extends Addressable> DataObjectReferenceBuilder<X> append(final DataObjectStep<X> step) {
         appendItem(step);
         return (DataObjectReferenceBuilder<X>) this;
     }

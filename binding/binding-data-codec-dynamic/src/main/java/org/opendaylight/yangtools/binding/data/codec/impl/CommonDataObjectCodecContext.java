@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.data.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 /**
  * Base implementation of {@link CommonDataObjectCodecTreeNode}.
  */
-abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
+abstract sealed class CommonDataObjectCodecContext<D extends Addressable, T extends CompositeRuntimeType>
         extends DataContainerCodecContext<D, T, CommonDataObjectCodecPrototype<T>>
         implements CommonDataObjectCodecTreeNode<D>
         permits AbstractDataObjectCodecContext {

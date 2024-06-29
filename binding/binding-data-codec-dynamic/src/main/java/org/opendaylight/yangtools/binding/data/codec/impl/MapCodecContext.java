@@ -13,7 +13,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
@@ -53,9 +52,9 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<D,
         this.codec = requireNonNull(codec);
     }
 
-    static @NonNull MapCodecContext<?, ?> of(final Class<? extends DataObject> cls, final ListRuntimeType type,
+    static @NonNull MapCodecContext<?, ?> of(final Class<? extends EntryObject<?, ?>> cls, final ListRuntimeType type,
             final CodecContextFactory factory) {
-        return of(new MapCodecPrototype(new KeylessStep(cls), type, factory));
+        return of(new MapCodecPrototype(new KeylessStep<>(cls), type, factory));
     }
 
     static @NonNull MapCodecContext<?, ?> of(final MapCodecPrototype prototype) {

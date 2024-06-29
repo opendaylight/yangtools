@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataContainer.Addressable;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class NonCachingCodec<D extends DataObject> implements BindingNormalizedNodeCachingCodec<D> {
+final class NonCachingCodec<D extends Addressable> implements BindingNormalizedNodeCachingCodec<D> {
     private final BindingNormalizedNodeCodec<D> delegate;
 
     NonCachingCodec(final BindingNormalizedNodeCodec<D> delegate) {
