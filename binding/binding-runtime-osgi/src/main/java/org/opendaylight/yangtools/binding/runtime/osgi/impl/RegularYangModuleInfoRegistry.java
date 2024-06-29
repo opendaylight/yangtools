@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.binding.runtime.osgi.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
@@ -86,13 +86,7 @@ final class RegularYangModuleInfoRegistry extends YangModuleInfoRegistry {
     Registration registerBundle(final List<YangModuleInfo> moduleInfos,
             final List<YangFeatureProvider<?>> featureProviders) {
         final var infoRegs = resolver.registerModuleInfos(moduleInfos);
-        final var featureRegs = featureProviders.stream()
-            .map(provider -> {
-                @SuppressWarnings("unchecked")
-                final var raw = (YangFeatureProvider<@NonNull DataRoot>) provider;
-                return resolver.registerModuleFeatures(raw.boundModule(), raw.supportedFeatures());
-            })
-            .collect(ImmutableList.toImmutableList());
+        final var featureRegs = featureProviders.stream().map(this::register).collect(Collectors.toList());
 
         return new AbstractRegistration() {
             @Override
@@ -101,6 +95,13 @@ final class RegularYangModuleInfoRegistry extends YangModuleInfoRegistry {
                 infoRegs.forEach(Registration::close);
             }
         };
+    }
+
+    @SuppressWarnings("unchecked")
+    private <R extends @NonNull DataRoot<R>> Registration register(final YangFeatureProvider<?> provider) {
+        @SuppressWarnings("rawtypes")
+        final YangFeatureProvider cast = provider;
+        return resolver.registerModuleFeatures(cast.boundModule(), cast.supportedFeatures());
     }
 
     @Holding("this")

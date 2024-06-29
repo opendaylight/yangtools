@@ -17,10 +17,11 @@ package org.opendaylight.yangtools.binding;
  *       {@link InstanceNotification}</li>
  *   <li>{@code container}, {@code list} and {@code case} based on {@link DataObject}</li>
  *   <li>{@code anydata} and {@code anyxml} based on {@link OpaqueObject}
+ *   <li>a {@code module}'s data schema nodes based on {@link DataRoot}
  *   <li>{@code rc:yang-data} based on {@link YangData}
  * </ul>
  */
 public sealed interface DataContainer extends BindingContract<DataContainer>
-    permits BaseNotification, ChoiceIn, DataObject, OpaqueObject, YangData {
+    permits BaseNotification, ChoiceIn, DataObject, DataRoot, OpaqueObject, YangData {
 
 }

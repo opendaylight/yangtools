@@ -58,7 +58,6 @@ public final class BindingTypes {
     public static final ConcreteType BASE_IDENTITY = typeForBuiltIn(BuiltInType.IDENTITYREF);
     public static final ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
     public static final ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
-    public static final ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
     public static final ConcreteType QNAME = typeForClass(QName.class);
     public static final ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
@@ -82,6 +81,7 @@ public final class BindingTypes {
     private static final ConcreteType ACTION = typeForClass(Action.class);
     private static final ConcreteType CHILD_OF = typeForClass(ChildOf.class);
     private static final ConcreteType CHOICE_IN = typeForClass(ChoiceIn.class);
+    private static final ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
     private static final ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
     private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
@@ -194,6 +194,17 @@ public final class BindingTypes {
      */
     public static ParameterizedType childOf(final Type type) {
         return parameterizedTypeFor(CHILD_OF, type);
+    }
+
+    /**
+     * Type specializing {@link DataRoot} for a particular type.
+     *
+     * @param type Type for which to specialize
+     * @return A parameterized type corresponding to {@code DataRoot<Type>}
+     * @throws NullPointerException if {@code type} is {@code null}
+     */
+    public static ParameterizedType dataRoot(final Type type) {
+        return parameterizedTypeFor(DATA_ROOT, type);
     }
 
     /**

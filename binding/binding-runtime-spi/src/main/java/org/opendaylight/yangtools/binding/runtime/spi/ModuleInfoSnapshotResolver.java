@@ -96,7 +96,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     private final ListMultimap<SourceIdentifier, RegisteredModuleInfo> sourceToInfoReg =
             MultimapBuilder.hashKeys().arrayListValues().build();
     @GuardedBy("this")
-    private final ListMultimap<Class<? extends DataRoot>, ImmutableSet<YangFeature<?, ?>>> moduleToFeatures =
+    private final ListMultimap<Class<? extends DataRoot<?>>, ImmutableSet<YangFeature<?, ?>>> moduleToFeatures =
             MultimapBuilder.hashKeys().arrayListValues().build();
     @GuardedBy("this")
     private @Nullable ModuleInfoSnapshot currentSnapshot;
@@ -105,7 +105,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         ctxResolver = YangTextSchemaContextResolver.create(name, parserFactory);
     }
 
-    public synchronized <R extends @NonNull DataRoot> Registration registerModuleFeatures(final Class<R> module,
+    public synchronized <R extends @NonNull DataRoot<R>> Registration registerModuleFeatures(final Class<R> module,
             final Set<? extends YangFeature<?, R>> supportedFeatures) {
         final var features = supportedFeatures.stream().map(YangFeature::qname).map(QName::getLocalName).sorted()
             .collect(ImmutableSet.toImmutableSet());
