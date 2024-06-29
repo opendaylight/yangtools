@@ -116,7 +116,7 @@ class UnionTemplate extends ClassTemplate {
                 «IF STRING_TYPE.equals(propRet)»
                     ««« type string
                 return «field»;
-                «ELSEIF "org.opendaylight.yangtools.binding.InstanceIdentifier".equals(propRet.fullyQualifiedName)»
+                «ELSEIF "org.opendaylight.yangtools.binding.BindingInstanceIdentifier".equals(propRet.fullyQualifiedName)»
                     ««« type instance-identifier
                 return «field».toString();
                 «ELSEIF BINARY_TYPE.equals(propRet)»
