@@ -7,40 +7,44 @@
  */
 package org.opendaylight.yangtools.binding.reflect;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+// public for TestClass visibility
 public class StringValueObjectFactoryTest {
-
     @Test
-    public void createTest() throws Exception {
-        final StringValueObjectFactory<?> stringValueObjectFactory =
-                StringValueObjectFactory.create(TestClass.class, "testTemplate");
+    void createTest() {
+        final var stringValueObjectFactory = StringValueObjectFactory.create(TestClass.class, "testTemplate");
         assertNotNull(stringValueObjectFactory);
         assertEquals("testTemplate", stringValueObjectFactory.getTemplate().toString());
     }
 
     @Test
-    public void newInstanceTest() throws Exception {
-        final StringValueObjectFactory<?> instance = StringValueObjectFactory.create(TestClass.class, "testTemplate");
+    void newInstanceTest() {
+        final var instance = StringValueObjectFactory.create(TestClass.class, "testTemplate");
 
         assertEquals("instanceTest", instance.newInstance("instanceTest").toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createTestNoConstructor() throws Exception {
-        StringValueObjectFactory.create(Object.class, "");
+    @Test
+    void createTestNoConstructor() throws Exception {
+        final var iae = assertThrows(IllegalArgumentException.class,
+            () -> StringValueObjectFactory.create(Object.class, ""));
+        assertEquals("class java.lang.Object does not have a String constructor", iae.getMessage());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createTestNoField() throws Exception {
-        StringValueObjectFactory.create(String.class, "");
+    @Test
+    void createTestNoField() throws Exception {
+        final var iae = assertThrows(IllegalArgumentException.class,
+            () -> StringValueObjectFactory.create(String.class, ""));
+        assertEquals("class java.lang.String nor its superclasses define required internal field _value",
+            iae.getMessage());
     }
 
     public static final class TestClass {
-
         @SuppressWarnings("checkstyle:memberName")
         private final String _value;
 
