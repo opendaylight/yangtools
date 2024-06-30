@@ -143,7 +143,7 @@ public final class CompilationTestUtils {
      */
     static void assertContainsFieldWithValue(final Class<?> clazz, final String name, final Class<?> returnType,
             final Object expectedValue, final Class<?>[] constructorArgs, final Object... initargs) {
-        Field field = assertContainsField(clazz, name, returnType);
+        final var field = assertContainsField(clazz, name, returnType);
         field.setAccessible(true);
 
         final Object obj;
@@ -242,7 +242,7 @@ public final class CompilationTestUtils {
      * @param args constructor arguments
      */
     static void assertContainsRestrictionCheck(final Constructor<?> constructor, final String errorMsg,
-            final Object... args) throws ReflectiveOperationException {
+            final Object... args) {
         final var cause = assertThrows(InvocationTargetException.class, () -> constructor.newInstance(args)).getCause();
         assertThat(cause, instanceOf(IllegalArgumentException.class));
         assertEquals(errorMsg, cause.getMessage());
@@ -257,7 +257,7 @@ public final class CompilationTestUtils {
      * @param args constructor arguments
      */
     static void assertContainsRestrictionCheck(final Object obj, final Method method, final String errorMsg,
-            final Object... args) throws ReflectiveOperationException {
+            final Object... args) {
         final var cause = assertThrows(InvocationTargetException.class, () -> method.invoke(obj, args)).getCause();
         assertThat(cause, instanceOf(IllegalArgumentException.class));
         assertEquals(errorMsg, cause.getMessage());
@@ -297,8 +297,7 @@ public final class CompilationTestUtils {
             final String genericTypeName) {
         ParameterizedType ifcType = null;
         for (Type ifc : clazz.getGenericInterfaces()) {
-            if (ifc instanceof ParameterizedType) {
-                ParameterizedType pt = (ParameterizedType) ifc;
+            if (ifc instanceof ParameterizedType pt) {
                 if (ifcName.equals(pt.getRawType().toString())) {
                     ifcType = pt;
                 }
