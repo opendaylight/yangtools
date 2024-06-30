@@ -9,8 +9,7 @@
         <feature version="{{semVerRange}}">odl-yangtools-parser</feature>
         <bundle>mvn:org.opendaylight.yangtools/binding-generator/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-loader/{{versionAsInProject}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-model-api/{{versionAsInProject}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-model-ri/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/binding-model/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-runtime-api/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-runtime-osgi/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-runtime-spi/{{versionAsInProject}}</bundle>

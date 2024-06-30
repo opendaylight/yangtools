@@ -67,15 +67,11 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-model-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-model-ri</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
