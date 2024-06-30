@@ -7,31 +7,30 @@
  */
 package org.opendaylight.yangtools.binding.contract;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
-public class NamingTest {
-
+class NamingTest {
     @Test
-    public void testGetModelRootPackageName() {
+    void testGetModelRootPackageName() {
         assertEquals("org.opendaylight.yang.gen.v1.test.rev990939",
             Naming.getModelRootPackageName("org.opendaylight.yang.gen.v1.test.rev990939"));
     }
 
     @Test
-    public void testGetMethodName() {
+    void testGetMethodName() {
         assertEquals("testLocalName", Naming.getMethodName(QName.create("testNS", "testLocalName")));
         assertEquals("testYangIdentifier", Naming.getMethodName("TestYangIdentifier"));
     }
 
     @Test
-    public void testGetClassName() {
+    void testGetClassName() {
         assertEquals("TestClass", Naming.getClassName(QName.create("testNS", "testClass")));
         assertEquals("TestClass", Naming.getClassName("testClass"));
         assertEquals("", Naming.getClassName(""));
@@ -40,7 +39,7 @@ public class NamingTest {
     }
 
     @Test
-    public void testGetPropertyName() {
+    void testGetPropertyName() {
         assertEquals("test", Naming.getPropertyName("Test"));
         assertEquals("test", Naming.getPropertyName("test"));
         assertEquals("xmlClass", Naming.getPropertyName("Class"));
@@ -99,6 +98,20 @@ public class NamingTest {
             List.of("ľaľaho papľuhu", "ľaľaho  papľuhu"));
     }
 
+    @Test
+    void yangDataMapping() {
+        final var ns = QNameModule.of("unused");
+
+        // single ascii compliant non-conflicting word - remain as is
+        assertEquals("single", Naming.mapYangDataName(new YangDataName(ns, "single")));
+        // ascii compliant - non-compliany chars only encoded
+        assertEquals("$abc$20$cde", Naming.mapYangDataName(new YangDataName(ns, "abc cde")));
+        // latin1 compliant -> latin chars normalized, non-compliant chars are encoded
+        assertEquals("$ľaľaho$20$papľuhu", Naming.mapYangDataName(new YangDataName(ns, "ľaľaho papľuhu")));
+        // latin1 non-compliant - all non-compliant characters encoded
+        assertEquals("$привет$20$papľuhu", Naming.mapYangDataName(new YangDataName(ns, "привет papľuhu")));
+    }
+
     private static void assertEqualMapping(final String mapped, final String yang) {
         assertEqualMapping(List.of(mapped), List.of(yang));
     }
@@ -111,19 +124,5 @@ public class NamingTest {
         }
 
         assertEquals(expected, Naming.mapEnumAssignedNames(yang));
-    }
-
-    @Test
-    public void yangDataMapping() {
-        final var ns = QNameModule.of("unused");
-
-        // single ascii compliant non-conflicting word - remain as is
-        assertEquals("single", Naming.mapYangDataName(new YangDataName(ns, "single")));
-        // ascii compliant - non-compliany chars only encoded
-        assertEquals("$abc$20$cde", Naming.mapYangDataName(new YangDataName(ns, "abc cde")));
-        // latin1 compliant -> latin chars normalized, non-compliant chars are encoded
-        assertEquals("$ľaľaho$20$papľuhu", Naming.mapYangDataName(new YangDataName(ns, "ľaľaho papľuhu")));
-        // latin1 non-compliant - all non-compliant characters encoded
-        assertEquals("$привет$20$papľuhu", Naming.mapYangDataName(new YangDataName(ns, "привет papľuhu")));
     }
 }
