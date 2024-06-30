@@ -36,8 +36,7 @@
         <module>binding-data-codec-spi</module>
         <module>binding-generator</module>
         <module>binding-loader</module>
-        <module>binding-model-api</module>
-        <module>binding-model-ri</module>
+        <module>binding-model</module>
         <module>binding-parent</module>
         <module>binding-reflect</module>
         <module>binding-runtime-api</module>

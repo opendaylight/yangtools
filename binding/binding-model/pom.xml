@@ -16,9 +16,9 @@
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
-    <artifactId>binding-model-ri</artifactId>
+    <artifactId>binding-model</artifactId>
     <packaging>bundle</packaging>
-    <description>YANG Binding metamodel reference implementation</description>
+    <description>YANG Binding metamodel</description>
 
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
@@ -36,42 +36,11 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-model-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-common</artifactId>
+            <artifactId>concepts</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>mockito-configuration</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-model-ri</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-model-util</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-test-util</artifactId>
         </dependency>
     </dependencies>
 </project>
