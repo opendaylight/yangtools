@@ -49,9 +49,7 @@ public final class TypeMemberComment implements Immutable {
 
     /**
      * Return the member reference description. This description is passed unmodified, pre-formatted in a single block.
-     * It is expected to look something like the following paragraph:
-     *
-     * <p>
+     * It is expected to look something like the following:
      * <pre>
      *   <code>
      *     A 32-bit bit unsigned word. Individual bits are expected to be interpreted as follows:
@@ -93,14 +91,8 @@ public final class TypeMemberComment implements Immutable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (!(obj instanceof TypeMemberComment)) {
-            return false;
-        }
-        final TypeMemberComment other = (TypeMemberComment) obj;
-        return Objects.equals(contractDescription, other.contractDescription)
+        return obj == this || obj instanceof TypeMemberComment other
+            && Objects.equals(contractDescription, other.contractDescription)
             && Objects.equals(referenceDescription, other.referenceDescription)
             && Objects.equals(typeSignature, other.typeSignature);
     }
