@@ -7,15 +7,21 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
-public class EnumGeneratorTest {
+@ExtendWith(MockitoExtension.class)
+class EnumGeneratorTest {
+    @Mock
+    private Type type;
+
     @Test
-    public void basicTest() throws Exception {
-        assertEquals("", new EnumGenerator().generate(mock(Type.class)));
+    void basicTest() {
+        assertEquals("", new EnumGenerator().generate(type));
     }
 }

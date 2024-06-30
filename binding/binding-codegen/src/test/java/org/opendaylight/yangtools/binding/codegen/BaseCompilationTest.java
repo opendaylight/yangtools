@@ -14,6 +14,7 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 import com.google.common.io.Files;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
@@ -26,8 +27,6 @@ import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public abstract class BaseCompilationTest {
@@ -57,22 +56,36 @@ public abstract class BaseCompilationTest {
     }
 
     protected static final List<GeneratedType> generateTestSources(final String resourceDirPath,
-            final File sourcesOutputDir) throws IOException, URISyntaxException {
-        final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
-        final EffectiveModelContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<GeneratedType> types = new DefaultBindingGenerator().generateTypes(context);
-        generateTestSources(types, sourcesOutputDir);
+            final File sourcesOutputDir) {
+        final List<File> sourceFiles;
+        try {
+            sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
+        } catch (FileNotFoundException | URISyntaxException e) {
+            throw new AssertionError(e);
+        }
+
+        final var context = YangParserTestUtils.parseYangFiles(sourceFiles);
+        final var types = new DefaultBindingGenerator().generateTypes(context);
+        try {
+            generateTestSources(types, sourcesOutputDir);
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
 
         // Also generate YangModuleInfo
-        for (Module module : context.getModules()) {
-            final YangModuleInfoTemplate template = new YangModuleInfoTemplate(module, context,
+        for (var module : context.getModules()) {
+            final var template = new YangModuleInfoTemplate(module, context,
                 mod -> Optional.of("fake/" + mod.getName()));
 
-            final File file = new File(new File(sourcesOutputDir,
+            final var file = new File(new File(sourcesOutputDir,
                 Naming.getServicePackageName(module.getQNameModule()).replace('.', File.separatorChar)),
                 Naming.MODULE_INFO_CLASS_NAME + ".java");
-            Files.createParentDirs(file);
-            Files.asCharSink(file, StandardCharsets.UTF_8).write(template.generate());
+            try {
+                Files.createParentDirs(file);
+                Files.asCharSink(file, StandardCharsets.UTF_8).write(template.generate());
+            } catch (IOException e) {
+                throw new AssertionError(e);
+            }
         }
 
         return types;
