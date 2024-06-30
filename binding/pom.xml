@@ -29,6 +29,7 @@
     </properties>
 
     <modules>
+        <module>binding-bundle-parent</module>
         <module>binding-codegen</module>
         <module>binding-data-codec-api</module>
         <module>binding-data-codec-dynamic</module>
@@ -38,7 +39,6 @@
         <module>binding-loader</module>
         <module>binding-model-api</module>
         <module>binding-model-ri</module>
-        <module>binding-parent</module>
         <module>binding-reflect</module>
         <module>binding-runtime-api</module>
         <module>binding-runtime-osgi</module>
