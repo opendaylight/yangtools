@@ -10,7 +10,7 @@ module org.opendaylight.yangtools.binding.runtime.spi {
 
     requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
-    requires org.opendaylight.yangtools.binding.model.api;
+    requires org.opendaylight.yangtools.binding.model;
     requires org.opendaylight.yangtools.binding.reflect;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;

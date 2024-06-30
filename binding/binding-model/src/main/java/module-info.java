@@ -5,15 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-module org.opendaylight.yangtools.binding.model.ri {
+module org.opendaylight.yangtools.binding.model {
+    exports org.opendaylight.yangtools.binding.model.api;
+    exports org.opendaylight.yangtools.binding.model.api.type.builder;
     exports org.opendaylight.yangtools.binding.model.ri;
     exports org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-    requires transitive org.opendaylight.yangtools.binding.model.api;
-    requires org.opendaylight.yangtools.binding.spec;
+    requires transitive org.opendaylight.yangtools.binding.spec;
+    requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires com.google.common;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
-    requires org.opendaylight.yangtools.yang.model.api;
+    requires org.slf4j;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;

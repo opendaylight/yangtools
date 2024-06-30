@@ -17,8 +17,7 @@ module org.opendaylight.yangtools.binding.generator {
     provides BindingGenerator with DefaultBindingGenerator;
     provides BindingRuntimeGenerator with DefaultBindingRuntimeGenerator;
 
-    requires transitive org.opendaylight.yangtools.binding.model.api;
-    requires transitive org.opendaylight.yangtools.binding.model.ri;
+    requires transitive org.opendaylight.yangtools.binding.model;
     requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires com.google.common;
     requires org.opendaylight.yangtools.binding.spec;

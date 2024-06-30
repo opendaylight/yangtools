@@ -9,7 +9,7 @@ module org.opendaylight.yangtools.binding.runtime.api {
     exports org.opendaylight.yangtools.binding.runtime.api;
 
     requires transitive org.opendaylight.yangtools.binding.spec;
-    requires transitive org.opendaylight.yangtools.binding.model.api;
+    requires transitive org.opendaylight.yangtools.binding.model;
     requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;

@@ -348,12 +348,7 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-model-api</artifactId>
-                <version>14.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-model-ri</artifactId>
+                <artifactId>binding-model</artifactId>
                 <version>14.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
