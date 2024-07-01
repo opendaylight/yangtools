@@ -7,7 +7,7 @@
  */
 /**
  * Library of utilities for use by generated code. The contents of this package as well as their semantics are an
- * implementation detail of the Binding Specification.
+ * implementation detail of the Binding Specification and should <b>NOT</b> be used by non-generated code.
  */
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.binding.lib;

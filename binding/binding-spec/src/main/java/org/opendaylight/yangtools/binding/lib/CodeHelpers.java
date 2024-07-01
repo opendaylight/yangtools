@@ -27,13 +27,22 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
+import org.opendaylight.yangtools.binding.impl.CodegenTrust;
 
 /**
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
  * to perform specific shared functions. This allows for generated classes to be leaner. Methods in this class follows
- * general API stability requirements of the Binding Specification.
+ * general API stability requirements of the Binding Specification, but are subject to change based on implementation
+ * requirements.
+ *
+ * <p>
+ * End users should <b>NOT</b> be using this class.
  */
 public final class CodeHelpers {
     private CodeHelpers() {
@@ -479,5 +488,34 @@ public final class CodeHelpers {
             final @NonNull String fieldName, final @Nullable Set<?> set) {
         DoNotLeakSpotbugs.checkCollectionField(requiredClass, fieldName, set);
         return (Set<T>) set;
+    }
+
+    /**
+     * Utility method for instantiating a {@link KeyStep} based on trusted conditions.
+     *
+     * @param <T> {@link EntryObject} type
+     * @param <K> {@link Key} type
+     * @param entryClass entry class
+     * @param key key
+     * @return a {@link KeyStep}
+     */
+    public static <T extends EntryObject<T, K>, K extends Key<T>> @NonNull KeyStep<K, T> keyStep(
+            final @NonNull Class<T> entryClass, final @NonNull K key) {
+        return new KeyStep<>(CodegenTrust.ENTRY_OBJECT, entryClass, null, key);
+    }
+
+    /**
+     * Utility method for instantiating a {@link KeyStep} based on trusted conditions.
+     *
+     * @param <T> {@link EntryObject} type
+     * @param <K> {@link Key} type
+     * @param entryClass entry class
+     * @param key key
+     * @return a {@link KeyStep}
+     */
+    public static <T extends EntryObject<T, K>, K extends Key<T>> @NonNull KeyStep<K, T> keyStep(
+            final @NonNull Class<? extends DataObject> caseType, final @NonNull Class<T> entryClass,
+            final @NonNull K key) {
+        return new KeyStep<>(CodegenTrust.ENTRY_OBJECT, entryClass, requireNonNull(caseType), key);
     }
 }

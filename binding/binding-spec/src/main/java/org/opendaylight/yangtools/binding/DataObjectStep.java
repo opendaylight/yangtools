@@ -29,7 +29,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * - 'node-identifier for non-DataObjects' (i.e. leaf, anydata, anyxml)
  */
 public sealed interface DataObjectStep<T extends DataObject> extends Comparable<DataObjectStep<?>>, Serializable
-        permits ExactDataObjectStep, InexactDataObjectStep {
+        permits ExactDataObjectStep, InexactDataObjectStep, AbstractEntryStep {
 
     static <T extends DataObject> @NonNull DataObjectStep<T> of(final @NonNull Class<T> type) {
         return of(null, type);

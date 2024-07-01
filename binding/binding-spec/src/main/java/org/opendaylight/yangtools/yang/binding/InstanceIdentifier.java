@@ -239,7 +239,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
                 if (!step.equals(otherStep)) {
                     return false;
                 }
-            } else if (step instanceof KeylessStep<?> keyless) {
+            } else if (step instanceof KeylessStep<?, ?> keyless) {
                 if (!keyless.matches(otherStep)) {
                     return false;
                 }
@@ -580,7 +580,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         return switch (lastStep) {
             case NodeStep<?> cast -> new InstanceIdentifier(pathArguments, wildcarded);
             case KeyStep<?, ?> cast -> new KeyedInstanceIdentifier(pathArguments, wildcarded);
-            case KeylessStep<?> cast -> new InstanceIdentifier(pathArguments, true);
+            case KeylessStep<?, ?> cast -> new InstanceIdentifier(pathArguments, true);
         };
     }
 

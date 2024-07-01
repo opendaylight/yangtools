@@ -18,6 +18,7 @@ module org.opendaylight.yangtools.binding.spec {
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.common;
+    requires org.slf4j;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;

@@ -86,7 +86,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
             final DataObjectStep<?> step) {
         return switch (step) {
             case KeyStep<?, ?> cast -> appendStep(sb, prevPackage, cast);
-            case KeylessStep<?> cast -> appendStep(sb, prevPackage, cast);
+            case KeylessStep<?, ?> cast -> appendStep(sb, prevPackage, cast);
             case NodeStep<?> cast -> appendStep(sb, prevPackage, cast);
         };
     }
@@ -99,7 +99,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     }
 
     private static @NonNull String appendStep(final StringBuilder sb, final String prevPackage,
-            final KeylessStep<?> step) {
+            final KeylessStep<?, ?> step) {
         final var ret = appendStep(sb, prevPackage, step.caseType(), step.type());
         sb.append("(any)\n");
         return ret;

@@ -6,8 +6,12 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * Internal implementation details. This package exists only for the use with
- * {@link org.opendaylight.yangtools.yang.binding.InstanceIdentifier}, so the dance we are doing with class hierarchy
- * is not (entirely) visible.
+ * Internal implementation details. This package has a number of functions:
+ * <ul>
+ *   <li>the class loader part of {@link org.opendaylight.yangtools.binding.contract.ContractTrust}, being inaccessible
+ *       to outside code unless a JVM override is applied</li>
+ *   <li>use with {@link org.opendaylight.yangtools.yang.binding.InstanceIdentifier}, so the dance we are doing with
+ *       class hierarchy is not (entirely) visible</li>
+ * </ul>
  */
 package org.opendaylight.yangtools.binding.impl;
