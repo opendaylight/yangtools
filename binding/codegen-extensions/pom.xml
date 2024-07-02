@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>binding-parent</artifactId>
+        <artifactId>binding-bundle-parent</artifactId>
         <version>14.0.0-SNAPSHOT</version>
         <relativePath>../binding-bundle-parent</relativePath>
     </parent>
