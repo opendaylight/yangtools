@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public class Bug5524augmentUses extends AbstractBindingCodecTest {
     @Test
-    public void testBug5224() throws Exception {
-        final Module4Main module4Main = new Module4MainBuilder()
+    public void testBug5224() {
+        final var module4Main = new Module4MainBuilder()
             .setContainerModule4(new ContainerModule4Builder()
                 .setListModule11(List.of(new ListModule11Builder()
                     .setListModule12(List.of(new ListModule12Builder()
@@ -43,7 +43,7 @@ public class Bug5524augmentUses extends AbstractBindingCodecTest {
                 .build())
             .build();
 
-        final Module4Main manualModule4Main = new Module4MainBuilder()
+        final var manualModule4Main = new Module4MainBuilder()
             .setContainerModule4(new ContainerModule4Builder()
                 .setManualListModule11(List.of(new ManualListModule11Builder()
                     .setManualListModule12(List.of(new ManualListModule12Builder()
@@ -55,7 +55,7 @@ public class Bug5524augmentUses extends AbstractBindingCodecTest {
                 .build())
             .build();
 
-        final Module4Main contManualModule4Main = new Module4MainBuilder()
+        final var contManualModule4Main = new Module4MainBuilder()
             .setContainerModule4(new ContainerModule4Builder()
                 .setContainerManualListModule11(List.of(new ContainerManualListModule11Builder()
                     .setContainerManualListModule12(List.of(new ContainerManualListModule12Builder()

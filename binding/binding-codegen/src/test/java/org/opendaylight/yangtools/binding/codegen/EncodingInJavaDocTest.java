@@ -18,9 +18,8 @@ import org.junit.Test;
  * symbols as javadoc comment tag, which caused of compilation problem.
  */
 public class EncodingInJavaDocTest extends BaseCompilationTest {
-
     @Test
-    public void testAugmentToUsesInAugment() throws Exception {
+    public void testAugmentToUsesInAugment() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("encoding-javadoc");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("encoding-javadoc");
         generateTestSources("/compilation/encoding-javadoc", sourcesOutputDir);
@@ -29,5 +28,4 @@ public class EncodingInJavaDocTest extends BaseCompilationTest {
         testCompilation(sourcesOutputDir, compiledOutputDir);
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
-
 }

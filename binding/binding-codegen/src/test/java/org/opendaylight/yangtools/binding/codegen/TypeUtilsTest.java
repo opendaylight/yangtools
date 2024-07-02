@@ -8,10 +8,11 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -19,9 +20,8 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 public class TypeUtilsTest {
-
     @Test
-    public void getBaseYangTypeTest() throws Exception {
+    public void getBaseYangTypeTest() {
         final GeneratedTransferObject rootType = mock(GeneratedTransferObject.class);
         final GeneratedTransferObject innerType = mock(GeneratedTransferObject.class);
         final GeneratedProperty property = mock(GeneratedProperty.class);
@@ -31,19 +31,19 @@ public class TypeUtilsTest {
         doReturn("value").when(property).getName();
         doReturn(type).when(property).getReturnType();
         doReturn(rootType).when(innerType).getSuperType();
-        doReturn(ImmutableList.of(property)).when(rootType).getProperties();
+        doReturn(List.of(property)).when(rootType).getProperties();
         assertEquals(type, TypeUtils.getBaseYangType(innerType));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getBaseYangTypeWithExceptionTest() throws Exception {
+    @Test
+    public void getBaseYangTypeWithExceptionTest() {
         final GeneratedTransferObject rootType = mock(GeneratedTransferObject.class);
         final GeneratedTransferObject innerType = mock(GeneratedTransferObject.class);
         final GeneratedProperty property = mock(GeneratedProperty.class);
 
         doReturn("test").when(property).getName();
         doReturn(rootType).when(innerType).getSuperType();
-        doReturn(ImmutableList.of(property)).when(rootType).getProperties();
-        TypeUtils.getBaseYangType(innerType);
+        doReturn(List.of(property)).when(rootType).getProperties();
+        assertThrows(IllegalArgumentException.class, () -> TypeUtils.getBaseYangType(innerType));
     }
 }

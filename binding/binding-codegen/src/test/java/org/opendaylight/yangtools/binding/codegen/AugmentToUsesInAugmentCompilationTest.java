@@ -10,16 +10,13 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.junit.Test;
 
 public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
-
     @Test
-    public void testAugmentToUsesInAugment() throws IOException, URISyntaxException {
+    public void testAugmentToUsesInAugment() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("augment-uses-to-augment");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("augment-uses-to-augment");
         generateTestSources("/compilation/augment-uses-to-augment", sourcesOutputDir);
@@ -74,31 +71,23 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
 
         ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
 
-        try {
-            Class<?> link1Class = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.foo.rev131008.Link1",
-                true, loader);
-            String augmentableNode = CompilationTestUtils.BASE_PKG + ".urn.opendaylight.bar.rev131008.link.Link";
-            CompilationTestUtils.testAugmentation(link1Class, augmentableNode);
+        Class<?> link1Class = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.foo.rev131008.Link1",
+            true, loader);
+        String augmentableNode = CompilationTestUtils.BASE_PKG + ".urn.opendaylight.bar.rev131008.link.Link";
+        CompilationTestUtils.testAugmentation(link1Class, augmentableNode);
 
-            Class<?> igpLinkAttributesClass = Class.forName(CompilationTestUtils.BASE_PKG
-                    + ".urn.opendaylight.foo.rev131008.IgpLinkAttributes", true, loader);
-            CompilationTestUtils.assertImplementsIfc(link1Class, igpLinkAttributesClass);
-        } catch (ClassNotFoundException e) {
-            throw new AssertionError("Class for augment wasn't generated", e);
-        }
+        Class<?> igpLinkAttributesClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.foo.rev131008.IgpLinkAttributes", true, loader);
+        CompilationTestUtils.assertImplementsIfc(link1Class, igpLinkAttributesClass);
 
-        try {
-            Class<?> igpLinkAttributes1Class = Class.forName(CompilationTestUtils.BASE_PKG
-                + ".urn.opendaylight.baz.rev131008.IgpLinkAttributes1", true, loader);
-            CompilationTestUtils.testAugmentation(igpLinkAttributes1Class, CompilationTestUtils.BASE_PKG
-                + ".urn.opendaylight.foo.rev131008.igp.link.attributes.IgpLinkAttributes");
+        Class<?> igpLinkAttributes1Class = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.baz.rev131008.IgpLinkAttributes1", true, loader);
+        CompilationTestUtils.testAugmentation(igpLinkAttributes1Class, CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.foo.rev131008.igp.link.attributes.IgpLinkAttributes");
 
-            Class<?> linkAttributesClass = Class.forName(CompilationTestUtils.BASE_PKG
-                + ".urn.opendaylight.baz.rev131008.LinkAttributes", true, loader);
-            CompilationTestUtils.assertImplementsIfc(igpLinkAttributes1Class, linkAttributesClass);
-        } catch (ClassNotFoundException e) {
-            throw new AssertionError("Class for augment wasn't generated", e);
-        }
+        Class<?> linkAttributesClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.baz.rev131008.LinkAttributes", true, loader);
+        CompilationTestUtils.assertImplementsIfc(igpLinkAttributes1Class, linkAttributesClass);
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

@@ -21,8 +21,6 @@ import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.tab;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.tripleTab;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -32,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -81,7 +78,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     private Map<String, File> files;
 
     @Before
-    public void before() throws IOException, URISyntaxException {
+    public void before() {
         sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal426");
         compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal426");
         types = generateTestSources("/compilation/mdsal426", sourcesOutputDir);
@@ -95,7 +92,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testGroupingWithUnresolvedLeafRefs() throws IOException {
+    public void testGroupingWithUnresolvedLeafRefs() throws Exception {
         verifyReturnType(FOO_GRP, GET_LEAF1_NAME, Types.objectType());
         verifyReturnType(FOO_GRP, GET_LEAFLIST1_NAME, Types.setTypeWildcard());
 
@@ -106,7 +103,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testLeafLeafrefPointsLeaf() throws IOException {
+    public void testLeafLeafrefPointsLeaf() throws Exception {
         verifyReturnType(RESOLVED_LEAF_GRP, GET_LEAF1_NAME, Types.STRING);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
@@ -115,7 +112,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testLeafLeafrefPointsLeafList() throws IOException {
+    public void testLeafLeafrefPointsLeafList() throws Exception {
         verifyReturnType(RESOLVED_LEAFLIST_GRP, GET_LEAF1_NAME, Types.STRING);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
@@ -124,7 +121,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testLeafListLeafrefPointsLeaf() throws IOException {
+    public void testLeafListLeafrefPointsLeaf() throws Exception {
         verifyReturnType(RESOLVED_LEAF_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
@@ -133,7 +130,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testLeafListLeafrefPointsLeafList() throws IOException {
+    public void testLeafListLeafrefPointsLeafList() throws Exception {
         verifyReturnType(RESOLVED_LEAFLIST_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
 
         final String content = getFileContent(RESOLVED_LEAFLIST_GRP);
@@ -142,7 +139,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testGroupingWhichInheritUnresolvedLeafrefAndDoesNotDefineIt() throws IOException {
+    public void testGroupingWhichInheritUnresolvedLeafrefAndDoesNotDefineIt() throws Exception {
         verifyMethodAbsence(TRANSITIVE_GROUP, GET_LEAF1_NAME);
         verifyMethodAbsence(TRANSITIVE_GROUP, GET_LEAFLIST1_NAME);
 
@@ -153,7 +150,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testLeafrefWhichPointsBoolean() throws IOException {
+    public void testLeafrefWhichPointsBoolean() throws Exception {
         verifyReturnType(UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.objectType());
         verifyReturnType(BOOLEAN_CONT, GET_LEAF1_NAME, Types.BOOLEAN);
 
@@ -165,13 +162,13 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testGroupingsUsageWhereLeafrefAlreadyResolved() throws IOException {
+    public void testGroupingsUsageWhereLeafrefAlreadyResolved() throws Exception {
         leafList1AndLeaf1Absence(BAR_CONT);
         leafList1AndLeaf1Absence(BAR_LST);
         leafList1AndLeaf1Absence(BAZ_GRP);
     }
 
-    private void leafList1AndLeaf1Absence(final String typeName) throws IOException {
+    private void leafList1AndLeaf1Absence(final String typeName) throws Exception {
         verifyMethodAbsence(typeName, GET_LEAF1_NAME);
         verifyMethodAbsence(typeName, GET_LEAFLIST1_NAME);
 
@@ -191,7 +188,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void barContBuilderDataObjectTest() throws IOException {
+    public void barContBuilderDataObjectTest() throws Exception {
         final File file = files.get(getJavaBuilderFileName(BAR_CONT));
         final String content = Files.readString(file.toPath());
 
@@ -242,7 +239,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void booleanContBuilderDataObjectTest() throws IOException {
+    public void booleanContBuilderDataObjectTest() throws Exception {
         final File file = files.get(getJavaBuilderFileName(BOOLEAN_CONT));
         final String content = Files.readString(file.toPath());
 
@@ -278,7 +275,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
         return getJavaFileName(name + Naming.BUILDER_SUFFIX);
     }
 
-    private String getFileContent(final String fileName) throws IOException {
+    private String getFileContent(final String fileName) throws Exception {
         final File file = files.get(getJavaFileName(fileName));
         assertNotNull(Files.lines(file.toPath()).findFirst());
         final String content = Files.readString(Path.of(file.getAbsolutePath()));
@@ -297,7 +294,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private static GeneratedType typeByName(final List<GeneratedType> types, final String name) {
-        for (final GeneratedType type : types) {
+        for (var type : types) {
             if (type.getName().equals(name)) {
                 return type;
             }
@@ -306,7 +303,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private static Type returnTypeByMethodName(final GeneratedType type, final String name) {
-        for (final MethodSignature m : type.getMethodDefinitions()) {
+        for (var m : type.getMethodDefinitions()) {
             if (m.getName().equals(name)) {
                 return m.getReturnType();
             }

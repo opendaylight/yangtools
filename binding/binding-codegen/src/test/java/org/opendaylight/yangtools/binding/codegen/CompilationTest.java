@@ -19,12 +19,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -189,7 +187,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testAugmentUnderUsesGeneration() throws Exception {
+    public void testAugmentUnderUsesGeneration() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("augment-under-uses");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("augment-under-uses");
         generateTestSources("/compilation/augment-under-uses", sourcesOutputDir);
@@ -297,7 +295,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testAugmentOfAugmentGeneration() throws Exception {
+    public void testAugmentOfAugmentGeneration() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("aug-of-aug");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("aug-of-aug");
         generateTestSources("/compilation/augment-of-augment", sourcesOutputDir);
@@ -497,8 +495,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testGenerationContextReferenceExtension() throws IOException, URISyntaxException,
-            ClassNotFoundException {
+    public void testGenerationContextReferenceExtension() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("context-reference");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("context-reference");
         generateTestSources("/compilation/context-reference", sourcesOutputDir);
@@ -547,7 +544,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void compilationTest() throws Exception {
+    public void compilationTest() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("yang");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("yang");
         generateTestSources("/yang", sourcesOutputDir);
@@ -559,7 +556,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testBug586() throws Exception {
+    public void testBug586() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug586");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug586");
         generateTestSources("/compilation/bug586", sourcesOutputDir);
@@ -571,7 +568,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testBug4760() throws Exception {
+    public void testBug4760() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug4760");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug4760");
         generateTestSources("/compilation/bug4760", sourcesOutputDir);
@@ -586,7 +583,7 @@ public class CompilationTest extends BaseCompilationTest {
      * Test handling nested uses-augmentations.
      */
     @Test
-    public void testBug1172() throws Exception {
+    public void testBug1172() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1172");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug1172");
         generateTestSources("/compilation/bug1172", sourcesOutputDir);
@@ -598,7 +595,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testBug5461() throws Exception {
+    public void testBug5461() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5461");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug5461");
         generateTestSources("/compilation/bug5461", sourcesOutputDir);
@@ -703,7 +700,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal365() throws Exception {
+    public void testMdsal365() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal365");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal365");
         generateTestSources("/compilation/mdsal365", sourcesOutputDir);
@@ -712,7 +709,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal395() throws Exception {
+    public void testMdsal395() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal395");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal395");
         generateTestSources("/compilation/mdsal395", sourcesOutputDir);
@@ -721,7 +718,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void classNamesColisionTest() throws Exception {
+    public void classNamesColisionTest() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("class-name-collision");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("class-name-collision");
         generateTestSources("/compilation/class-name-collision", sourcesOutputDir);
@@ -730,7 +727,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void innerEnumerationNameCollisionTest() throws Exception {
+    public void innerEnumerationNameCollisionTest() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal321");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal321");
         generateTestSources("/compilation/mdsal321", sourcesOutputDir);
@@ -739,7 +736,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void twoNestedUnionsTest() throws Exception {
+    public void twoNestedUnionsTest() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal320");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal320");
         generateTestSources("/compilation/mdsal320", sourcesOutputDir);
@@ -748,7 +745,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal425() throws Exception {
+    public void testMdsal425() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal425");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal425");
         generateTestSources("/compilation/mdsal425", sourcesOutputDir);
@@ -757,7 +754,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal426() throws Exception {
+    public void testMdsal426() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal426");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal426");
         generateTestSources("/compilation/mdsal426", sourcesOutputDir);
@@ -766,7 +763,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal529() throws Exception {
+    public void testMdsal529() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal529");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal529");
         generateTestSources("/compilation/mdsal529", sourcesOutputDir);
@@ -775,7 +772,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal589() throws Exception {
+    public void testMdsal589() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal589");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal589");
         generateTestSources("/compilation/mdsal589", sourcesOutputDir);
@@ -784,7 +781,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal533() throws Exception {
+    public void testMdsal533() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal533");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal533");
         generateTestSources("/compilation/mdsal533", sourcesOutputDir);
@@ -793,7 +790,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal664() throws Exception {
+    public void testMdsal664() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal664");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal664");
         generateTestSources("/compilation/mdsal664", sourcesOutputDir);
@@ -818,13 +815,12 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void yangDataCompilation() throws Exception {
+    public void yangDataCompilation() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("yang-data-gen");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("yang-data-gen");
 
         generateTestSources("/compilation/yang-data-gen", sourcesOutputDir);
 
-        final ClassLoader loader = new URLClassLoader(new URL[]{compiledOutputDir.toURI().toURL()});
         final List<String> artifactNames = List.of(
                 // module with top level container
                 "YangDataDemoData", "RootContainer", "RootContainerBuilder",
@@ -876,17 +872,32 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     private static void testReturnTypeIdentityref(final Class<?> clazz, final String methodName,
-            final String returnTypeStr) throws NoSuchMethodException {
-        Class<?> returnType = clazz.getMethod(methodName).getReturnType();
+            final String returnTypeStr) {
+        final Class<?> returnType;
+        try {
+            returnType = clazz.getMethod(methodName).getReturnType();
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new AssertionError(e);
+        }
         assertTrue(returnType.isInterface());
         assertEquals(returnTypeStr, returnType.getName());
     }
 
     private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz,
-            final String methodName) throws ClassNotFoundException, NoSuchMethodException, SecurityException {
-        final var method = clazz.getMethod(methodName);
-        final var rawReturnType = Class.forName("org.opendaylight.yangtools.binding.BindingInstanceIdentifier", true,
-            loader);
+            final String methodName) {
+        final Method method;
+        try {
+            method = clazz.getMethod(methodName);
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new AssertionError(e);
+        }
+        final Class<?> rawReturnType;
+        try {
+            rawReturnType = Class.forName("org.opendaylight.yangtools.binding.BindingInstanceIdentifier", true,
+                loader);
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError(e);
+        }
         assertEquals(rawReturnType, method.getGenericReturnType());
     }
 }

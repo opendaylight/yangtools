@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
     @Test
-    public void testUnionTypedefUnusedImport() throws Exception {
+    public void testUnionTypedefUnusedImport() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-typedef");
         final var types = generateTestSources("/compilation/union-typedef", sourcesOutputDir);
         assertEquals(2, types.size());

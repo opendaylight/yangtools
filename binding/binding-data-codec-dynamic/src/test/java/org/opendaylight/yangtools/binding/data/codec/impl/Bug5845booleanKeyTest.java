@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collections;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainer;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainerBuilder;
@@ -17,27 +16,26 @@ import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.Bo
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListIntBuilder;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListIntKey;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListKey;
+import org.opendaylight.yangtools.binding.util.BindingMap;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
     @Test
-    public void testBug5845() throws Exception {
-        final BooleanListKey blk = new BooleanListKey(true, true);
-        final BooleanContainer booleanContainer = new BooleanContainerBuilder()
-                .setBooleanList(Collections.singletonMap(blk, new BooleanListBuilder()
-                    .withKey(blk)
-                    .setBooleanLeaf1(true)
-                    .setBooleanLeaf2(true)
-                    .build()))
-                .build();
+    public void testBug5845() {
+        final var booleanContainer = new BooleanContainerBuilder()
+            .setBooleanList(BindingMap.of(new BooleanListBuilder()
+                .withKey(new BooleanListKey(true, true))
+                .setBooleanLeaf1(true)
+                .setBooleanLeaf2(true)
+                .build()))
+            .build();
 
-        final BooleanListIntKey blik = new BooleanListIntKey((byte) 1);
         final BooleanContainer booleanContainerInt = new BooleanContainerBuilder()
-                .setBooleanListInt(Collections.singletonMap(blik, new BooleanListIntBuilder()
-                        .withKey(blik)
-                        .setBooleanLeafInt((byte) 1)
-                        .build()))
-                .build();
+            .setBooleanListInt(BindingMap.of(new BooleanListIntBuilder()
+                .withKey(new BooleanListIntKey((byte) 1))
+                .setBooleanLeafInt((byte) 1)
+                .build()))
+            .build();
 
         final var subtreeCodec = codecContext.getDataObjectCodec(InstanceIdentifier.create(BooleanContainer.class));
         final var serializedInt = subtreeCodec.serialize(booleanContainerInt);
