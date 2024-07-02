@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.test.mock;
 
-public interface GroupingFoo {
+import org.opendaylight.yangtools.binding.Grouping;
 
+public interface GroupingFoo extends Grouping {
+    @Override
+    Class<? extends GroupingFoo> implementedInterface();
 }

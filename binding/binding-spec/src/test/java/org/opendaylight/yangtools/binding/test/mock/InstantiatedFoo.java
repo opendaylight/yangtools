@@ -11,5 +11,8 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
 
 public interface InstantiatedFoo extends DataObject, GroupingFoo, ChildOf<Nodes> {
-
+    @Override
+    default Class<InstantiatedFoo> implementedInterface() {
+        return InstantiatedFoo.class;
+    }
 }

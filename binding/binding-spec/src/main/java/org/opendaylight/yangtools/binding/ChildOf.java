@@ -12,14 +12,14 @@ package org.opendaylight.yangtools.binding;
  *
  * <p>
  * Any nested Java interface generated from YANG must implement this interface, where parameter <code>P</code> points
- * to it's defining data node container (interface generated for List, Container, Case).
+ * to it's defining {@link DataContainer} (interface generated for List, Container, Case).
  *
  * <p>
  * In case of children added by augmentation (which implements {@link Augmentation}) interfaces representing nested
  * container must implements {@link ChildOf} with same argument as Augmentation.
  *
- * @param <P> Parent container
+ * @param <P> Parent {@link DataContainer} type
  */
-public interface ChildOf<P> extends DataObject {
-
+public interface ChildOf<P extends DataContainer> extends DataObject {
+    // Nothing else
 }
