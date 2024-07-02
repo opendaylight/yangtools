@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding;
 
 import java.io.Serializable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -16,5 +17,18 @@ import org.opendaylight.yangtools.concepts.Immutable;
 public sealed interface BindingInstanceIdentifier extends Immutable, Serializable
         // FIXME: YANGTOOLS-1577: PropertyIdentifier as well
         permits DataObjectIdentifier {
-    // Nothing else
+    /**
+     * A single step in a {@link BindingInstanceIdentifier}.
+     */
+    sealed interface Step permits ExactDataObjectStep {
+        // Nothing else
+    }
+
+    /**
+     * Return the individual steps of this identifier. Returned {@link Iterable} does not support removals and contains
+     * one or more non-null items.
+     *
+     * @return the individual steps of this identifier.
+     */
+    Iterable<? extends @NonNull Step> steps();
 }

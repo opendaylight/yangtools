@@ -20,7 +20,7 @@ package org.opendaylight.yangtools.binding;
  *
  * @param <T> DataObject type
  */
-public sealed interface ExactDataObjectStep<T extends DataObject> extends DataObjectStep<T>
-    permits KeyStep, NodeStep {
+public sealed interface ExactDataObjectStep<T extends DataObject>
+    extends DataObjectStep<T>, BindingInstanceIdentifier.Step permits KeyStep, NodeStep {
     // for class hierarchy only
 }
