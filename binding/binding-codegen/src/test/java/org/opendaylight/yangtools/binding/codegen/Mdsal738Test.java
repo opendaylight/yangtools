@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import org.junit.After;
 import org.junit.Before;
@@ -22,7 +20,7 @@ public class Mdsal738Test extends BaseCompilationTest {
     private File compiledOutputDir;
 
     @Before
-    public void before() throws IOException, URISyntaxException {
+    public void before() throws Exception {
         sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal738");
         compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal738");
     }
@@ -33,7 +31,7 @@ public class Mdsal738Test extends BaseCompilationTest {
     }
 
     @Test
-    public void testUnionOfDecimal64() throws IOException, URISyntaxException {
+    public void testUnionOfDecimal64() throws Exception {
         generateTestSources("/compilation/mdsal738", sourcesOutputDir);
         final var pmDataType = FileSearchUtil.getFiles(sourcesOutputDir).get("PmDataType.java");
         assertNotNull(pmDataType);

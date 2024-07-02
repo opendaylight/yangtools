@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import org.junit.After;
 import org.junit.Before;
@@ -22,7 +20,7 @@ public class Mdsal732Test extends BaseCompilationTest {
     private File compiledOutputDir;
 
     @Before
-    public void before() throws IOException, URISyntaxException {
+    public void before() throws Exception {
         sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal732");
         compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal732");
     }
@@ -33,7 +31,7 @@ public class Mdsal732Test extends BaseCompilationTest {
     }
 
     @Test
-    public void testIdentityrefLeafrefSpecialization() throws IOException, URISyntaxException {
+    public void testIdentityrefLeafrefSpecialization() throws Exception {
         generateTestSources("/compilation/mdsal732", sourcesOutputDir);
         final var xyzzyBuilder = FileSearchUtil.getFiles(sourcesOutputDir).get("XyzzyBuilder.java");
         assertNotNull(xyzzyBuilder);

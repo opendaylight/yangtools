@@ -73,10 +73,8 @@ public final class DefaultBindingGenerator implements BindingGenerator {
 
     private static void addTypes(final List<GeneratedType> result, final Generator gen) {
         final var type = gen.generatedType();
-        if (type != null) {
-            if (type.getIdentifier().immediatelyEnclosingClass().isEmpty()) {
-                result.add(type);
-            }
+        if (type != null && type.getIdentifier().immediatelyEnclosingClass().isEmpty()) {
+            result.add(type);
         }
 
         result.addAll(gen.auxiliaryGeneratedTypes());

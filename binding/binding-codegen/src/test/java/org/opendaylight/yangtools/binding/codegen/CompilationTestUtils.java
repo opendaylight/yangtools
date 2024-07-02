@@ -296,11 +296,9 @@ public final class CompilationTestUtils {
     static void assertImplementsParameterizedIfc(final Class<?> clazz, final String ifcName,
             final String genericTypeName) {
         ParameterizedType ifcType = null;
-        for (Type ifc : clazz.getGenericInterfaces()) {
-            if (ifc instanceof ParameterizedType pt) {
-                if (ifcName.equals(pt.getRawType().toString())) {
-                    ifcType = pt;
-                }
+        for (var ifc : clazz.getGenericInterfaces()) {
+            if (ifc instanceof ParameterizedType pt && ifcName.equals(pt.getRawType().toString())) {
+                ifcType = pt;
             }
         }
         assertNotNull(ifcType);
