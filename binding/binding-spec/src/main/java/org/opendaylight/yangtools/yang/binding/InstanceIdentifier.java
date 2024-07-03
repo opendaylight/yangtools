@@ -378,7 +378,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      *
      * @return A non-InstanceIdentifier {@link DataObjectReference}
      */
-    public DataObjectReference<T> toReference() {
+    public @NonNull DataObjectReference<T> toReference() {
         final var steps = steps();
         return wildcarded ? new DataObjectReferenceImpl<>(steps) : new DataObjectIdentifierImpl<>(null, steps);
     }
