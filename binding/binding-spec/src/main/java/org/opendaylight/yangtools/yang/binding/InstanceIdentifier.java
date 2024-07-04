@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
@@ -423,7 +421,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     /**
-     * Create a {@link Builder} for a specific type of InstanceIdentifier which represents an {@link IdentifiableItem}.
+     * Create a {@link Builder} for a specific type of InstanceIdentifier which represents an {@link EntryObject}.
      *
      * @param listItem list item class
      * @param listKey key value
@@ -438,8 +436,8 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     /**
-     * Create a {@link Builder} for a specific type of InstanceIdentifier which represents an {@link IdentifiableItem}
-     *  in a {@code grouping} used in the {@code case} statement.
+     * Create a {@link Builder} for a specific type of InstanceIdentifier which represents an {@link EntryObject} in a
+     * {@code grouping} used in the {@code case} statement.
      *
      * @param caze Choice case class
      * @param listItem list item class
@@ -586,185 +584,6 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
             case KeyStep<?, ?> cast -> new KeyedInstanceIdentifier(pathArguments, wildcarded);
             case KeylessStep<?> cast -> new InstanceIdentifier(pathArguments, true);
         };
-    }
-
-    @Deprecated(since = "13.0.0", forRemoval = true)
-    private abstract static sealed class AbstractPathArgument<T extends DataObject>
-            implements Comparable<AbstractPathArgument<?>>, Serializable {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        private final @NonNull Class<T> type;
-
-        AbstractPathArgument(final Class<T> type) {
-            this.type = requireNonNull(type, "Type may not be null.");
-        }
-
-        /**
-         * Return the data object type backing this PathArgument.
-         *
-         * @return Data object type.
-         */
-        final @NonNull Class<T> type() {
-            return type;
-        }
-
-        /**
-         * Return an optional enclosing case type. This is used only when {@link #type()} references a node defined
-         * in a {@code grouping} which is reference inside a {@code case} statement in order to safely reference the
-         * node.
-         *
-         * @return case class or {@code null}
-         */
-        Class<? extends DataObject> caseType() {
-            return null;
-        }
-
-        @Nullable Object key() {
-            return null;
-        }
-
-        @Override
-        public final int hashCode() {
-            return Objects.hash(type, caseType(), key());
-        }
-
-        @Override
-        public final boolean equals(final Object obj) {
-            return this == obj || obj instanceof AbstractPathArgument<?> other && type.equals(other.type)
-                && Objects.equals(key(), other.key()) && Objects.equals(caseType(), other.caseType());
-        }
-
-        @Override
-        public final int compareTo(final AbstractPathArgument<?> arg) {
-            final int cmp = compareClasses(type, arg.type());
-            if (cmp != 0) {
-                return cmp;
-            }
-            final var caseType = caseType();
-            final var argCaseType = arg.caseType();
-            if (caseType == null) {
-                return argCaseType == null ? 1 : -1;
-            }
-            return argCaseType == null ? 1 : compareClasses(caseType, argCaseType);
-        }
-
-        private static int compareClasses(final Class<?> first, final Class<?> second) {
-            return first.getCanonicalName().compareTo(second.getCanonicalName());
-        }
-
-        @java.io.Serial
-        final Object readResolve() throws ObjectStreamException {
-            return toStep();
-        }
-
-        abstract DataObjectStep<?> toStep();
-    }
-
-    /**
-     * An Item represents an object that probably is only one of it's kind. For example a Nodes object is only one of
-     * a kind. In YANG terms this would probably represent a container.
-     *
-     * @param <T> Item type
-     */
-    @Deprecated(since = "13.0.0", forRemoval = true)
-    private static sealed class Item<T extends DataObject> extends AbstractPathArgument<T> {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        Item(final Class<T> type) {
-            super(type);
-        }
-
-        @Override
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        final DataObjectStep<?> toStep() {
-            return DataObjectStep.of((Class) caseType(), type());
-        }
-
-        @Override
-        public String toString() {
-            return type().getName();
-        }
-    }
-
-    /**
-     * An IdentifiableItem represents a object that is usually present in a collection and can be identified uniquely
-     * by a key. In YANG terms this would probably represent an item in a list.
-     *
-     * @param <I> An object that is identifiable by an identifier
-     * @param <T> The identifier of the object
-     */
-    @Deprecated(since = "13.0.0", forRemoval = true)
-    private static sealed class IdentifiableItem<I extends EntryObject<I, T>, T extends Key<I>>
-            extends AbstractPathArgument<I> {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        private final @NonNull T key;
-
-        IdentifiableItem(final Class<I> type, final T key) {
-            super(type);
-            this.key = requireNonNull(key, "Key may not be null.");
-        }
-
-        /**
-         * Return the data object type backing this PathArgument.
-         *
-         * @return Data object type.
-         */
-        @Override
-        final @NonNull T key() {
-            return key;
-        }
-
-        @Override
-        final KeyStep<?, ?> toStep() {
-            return new KeyStep<>(type(), caseType(), key);
-        }
-
-        @Override
-        public String toString() {
-            return type().getName() + "[key=" + key + "]";
-        }
-    }
-
-    @Deprecated(since = "13.0.0", forRemoval = true)
-    private static final class CaseItem<C extends ChoiceIn<?> & DataObject, T extends ChildOf<? super C>>
-            extends Item<T> {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        private final Class<C> caseType;
-
-        CaseItem(final Class<C> caseType, final Class<T> type) {
-            super(type);
-            this.caseType = requireNonNull(caseType);
-        }
-
-        @Override
-        Class<C> caseType() {
-            return caseType;
-        }
-    }
-
-    @Deprecated(since = "13.0.0", forRemoval = true)
-    private static final class CaseIdentifiableItem<C extends ChoiceIn<?> & DataObject,
-            T extends ChildOf<? super C> & EntryObject<T, K>, K extends Key<T>> extends IdentifiableItem<T, K> {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        private final Class<C> caseType;
-
-        CaseIdentifiableItem(final Class<C> caseType, final Class<T> type, final K key) {
-            super(type, key);
-            this.caseType = requireNonNull(caseType);
-        }
-
-        @Override
-        Class<C> caseType() {
-            return caseType;
-        }
     }
 
     /**
