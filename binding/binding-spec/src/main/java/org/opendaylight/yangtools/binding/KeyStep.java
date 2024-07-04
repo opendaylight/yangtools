@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * {@code key-predicate}.
  *
  * @param <K> Key type
- * @param <T> KeyAware type
+ * @param <T> EntryObject type
  */
 public record KeyStep<K extends Key<T>, T extends EntryObject<T, K>>(
         @NonNull Class<T> type,
