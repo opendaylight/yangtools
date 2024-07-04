@@ -72,7 +72,11 @@ import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
  *
  * <p>
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
+ *
+ * @deprecated Use {@link DataObjectIdentifier} for the {@link #isExact()} case and {@link DataObjectReference} for the
+ *             {@link #isWildcarded()} case.
  */
+@Deprecated(since = "14.0.0")
 public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDataObjectReference<T, DataObjectStep<?>>
         implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
         permits KeyedInstanceIdentifier {
