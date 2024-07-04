@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyAware;
 
 /**
  * Utility class for instantiating Maps containing {@link EntryObject} values. Unlike normal Map instantiation
@@ -308,8 +307,8 @@ public final class BindingMap {
     }
 
     /**
-     * Returns a collector which collects binding {@link KeyAware} objects into an unmodifiable map. The resulting
-     * map is <b>NOT</b> guaranteed to retain iteration order of the stream it collects.
+     * Returns a collector which collects binding {@link EntryObject}s into an unmodifiable map. The resulting map is
+     * <b>NOT</b> guaranteed to retain iteration order of the stream it collects.
      *
      * @param <K> the {@code Map}'s key type
      * @param <V> the {@code Map}'s value type
@@ -317,7 +316,7 @@ public final class BindingMap {
      */
     public static <K extends Key<V>, V extends EntryObject<V, K>>
             @NonNull Collector<V, ?, ? extends Map<K, V>> toMap() {
-        return Collectors.toUnmodifiableMap(KeyAware::key, v -> v);
+        return Collectors.toUnmodifiableMap(EntryObject::key, v -> v);
     }
 
     /**
@@ -458,7 +457,7 @@ public final class BindingMap {
      */
     public static <K extends Key<V>, V extends EntryObject<V, K>>
             @NonNull Collector<V, ?, ? extends Map<K, V>> toOrderedMap() {
-        return ImmutableMap.<V, K, V>toImmutableMap(KeyAware::key, v -> v);
+        return ImmutableMap.<V, K, V>toImmutableMap(EntryObject::key, v -> v);
     }
 
     /**
