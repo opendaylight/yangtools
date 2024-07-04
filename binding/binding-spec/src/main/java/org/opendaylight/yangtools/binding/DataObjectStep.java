@@ -72,28 +72,27 @@ public sealed interface DataObjectStep<T extends DataObject> extends Comparable<
     }
 
     private static int compareHierarchy(final DataObjectStep<?> recv, final DataObjectStep<?> other) {
-        if (recv instanceof NodeStep) {
-            if (other instanceof NodeStep) {
-                return 0;
-            } else if (other instanceof KeylessStep || other instanceof KeyStep) {
-                return -1;
-            }
-        } else if (recv instanceof KeyStep thisAware) {
-            if (other instanceof KeyStep otherAware) {
-                @SuppressWarnings("unchecked")
-                final var thisKey = (Comparable<Object>) thisAware.key();
-                return  thisKey.compareTo(otherAware.key());
-            } else if (other instanceof NodeStep || other instanceof KeylessStep) {
-                return 1;
-            }
-        } else if (recv instanceof KeylessStep) {
-            if (other instanceof KeylessStep) {
-                return 0;
-            } else if (other instanceof NodeStep || other instanceof KeyStep) {
-                return 1;
-            }
-        }
-        throw new IllegalStateException("Unhandled " + recv + ".compareTo(" + other + ")");
+        return switch (recv) {
+            case NodeStep<?> cast -> switch (other) {
+                case NodeStep<?> otherCast -> 0;
+                case KeyStep<?, ?> otherCast -> -1;
+                case KeylessStep<?> otherCast -> -1;
+            };
+            case KeyStep<?, ?> cast -> switch (other) {
+                case NodeStep<?> otherCast -> -1;
+                case KeyStep<?, ?> otherCast -> {
+                    @SuppressWarnings("unchecked")
+                    final var thisKey = (Comparable<Object>) cast.key();
+                    yield thisKey.compareTo(otherCast.key());
+                }
+                case KeylessStep<?> otherCast -> -1;
+            };
+            case KeylessStep<?> cast -> switch (other) {
+                case NodeStep<?> otherCast -> 1;
+                case KeyStep<?, ?> otherCast -> 1;
+                case KeylessStep<?> otherCast -> 0;
+            };
+        };
     }
 
     private static int compareClasses(final Class<?> first, final Class<?> second) {
