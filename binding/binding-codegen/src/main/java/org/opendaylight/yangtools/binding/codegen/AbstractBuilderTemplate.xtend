@@ -71,8 +71,8 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                 private«IF makeFinal» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
-        «IF keyType !== null»
-            private«IF makeFinal» final«ENDIF» «keyType.importedName» key;
+        «IF keyType !== null && !makeFinal»
+            private «keyType.importedName» key;
         «ENDIF»
     '''
 
