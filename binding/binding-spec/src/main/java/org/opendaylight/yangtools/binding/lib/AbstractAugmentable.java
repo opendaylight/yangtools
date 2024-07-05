@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.lib;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
@@ -21,12 +20,11 @@ import org.opendaylight.yangtools.binding.Augmentation;
  *
  * @param <T> Augmentable type
  */
-@Beta
 public abstract class AbstractAugmentable<T extends Augmentable<T>> implements Augmentable<T> {
     private final @NonNull ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations;
 
     protected AbstractAugmentable() {
-        this.augmentations = ImmutableMap.of();
+        augmentations = ImmutableMap.of();
     }
 
     protected AbstractAugmentable(final Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations) {
@@ -52,4 +50,13 @@ public abstract class AbstractAugmentable<T extends Augmentable<T>> implements A
     public final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations() {
         return augmentations;
     }
+
+    @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract boolean equals(Object obj);
+
+    @Override
+    public abstract String toString();
 }
