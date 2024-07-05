@@ -42,7 +42,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         «targetType.annotations.generateDeprecatedAnnotation»
         private static final class «type.name»
             «val impIface = targetType.importedName»
-            «IF augmentType !== null»
+            «IF augmentType !== null || keyType !== null»
                 extends «AbstractAugmentable.importedName»<«impIface»>
             «ENDIF»
             implements «impIface» {
