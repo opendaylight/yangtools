@@ -24,11 +24,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.ScalarTypeObject;
+import org.opendaylight.yangtools.binding.contract.ContractTrust;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
+import org.opendaylight.yangtools.binding.impl.CodegenTrust;
 
 /**
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
@@ -479,5 +483,18 @@ public final class CodeHelpers {
             final @NonNull String fieldName, final @Nullable Set<?> set) {
         DoNotLeakSpotbugs.checkCollectionField(requiredClass, fieldName, set);
         return (Set<T>) set;
+    }
+
+    /**
+     * Establish {@link ContractTrust} based on implemented {@link ScalarTypeObject} subclass.
+     *
+     * @return A {@link ContractTrust}
+     */
+    @NonNullByDefault
+    public static <T extends ScalarTypeObject<?>> ContractTrust<T> establishScalarTrust(final Class<T> contractClass) {
+        if (ScalarTypeObject.class.isAssignableFrom(contractClass)) {
+            return new CodegenTrust<>(contractClass);
+        }
+        throw new VerifyException("Unexpected contract " + contractClass);
     }
 }
