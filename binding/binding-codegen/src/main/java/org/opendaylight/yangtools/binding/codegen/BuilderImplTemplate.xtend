@@ -24,12 +24,18 @@ import org.opendaylight.yangtools.binding.lib.AbstractAugmentable
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.Types
 
 class BuilderImplTemplate extends AbstractBuilderTemplate {
+    /**
+     * {@code AbstractAugmentable} as a JavaTypeName.
+     */
+    static val ABSTRACT_AUGMENTABLE = JavaTypeName.create(AbstractAugmentable)
+
     val BuilderTemplate builder;
 
     new(BuilderTemplate builder, GeneratedType type) {
@@ -43,7 +49,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         private static final class «type.name»
             «val impIface = targetType.importedName»
             «IF augmentType !== null»
-                extends «AbstractAugmentable.importedName»<«impIface»>
+                extends «ABSTRACT_AUGMENTABLE.importedName»<«impIface»>
             «ENDIF»
             implements «impIface» {
 
