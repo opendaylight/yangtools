@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 
 /**
@@ -56,5 +60,18 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
 
     static final @NonNull String getterMethodName(final GeneratedProperty field) {
         return getterMethodName(field.getName());
+    }
+
+    /**
+     * Return properties participating in the construction of a key type. Returned list is guaranteed to be ordered to
+     * match order the type constructor expects.
+     *
+     * @param keyType key type
+     * @return properties participating in the construction of a key type, in constructor order
+     */
+    static final @NonNull List<GeneratedProperty> keyConstructorArgs(final GeneratedTransferObject keyType) {
+        return keyType.getProperties().stream()
+            .sorted(Comparator.comparing(GeneratedProperty::getName))
+            .collect(Collectors.toList());
     }
 }

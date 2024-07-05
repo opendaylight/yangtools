@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.VerifyException;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
@@ -82,10 +83,14 @@ public final class BuilderGenerator implements CodeGenerator {
             .build(), type, getKey(type));
     }
 
-    private static Type getKey(final GeneratedType type) {
+    private static GeneratedTransferObject getKey(final GeneratedType type) {
         for (var method : type.getMethodDefinitions()) {
             if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
-                return method.getReturnType();
+                final var keyType = method.getReturnType();
+                if (keyType instanceof GeneratedTransferObject gto) {
+                    return gto;
+                }
+                throw new VerifyException("Unexpected key type " + keyType);
             }
         }
         return null;

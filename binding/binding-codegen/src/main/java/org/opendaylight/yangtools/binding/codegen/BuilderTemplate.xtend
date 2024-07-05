@@ -46,7 +46,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      * Constructs new instance of this class.
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
-    new(GeneratedType genType, GeneratedType targetType, Type keyType) {
+    new(GeneratedType genType, GeneratedType targetType, GeneratedTransferObject keyType) {
         super(genType, targetType, keyType)
         implTemplate = new BuilderImplTemplate(this, type.enclosedTypes.get(0))
     }

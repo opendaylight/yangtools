@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen
 
 import java.util.ArrayList
 import java.util.Collection
-import java.util.Comparator
 import java.util.List
 import java.util.Set
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
@@ -21,8 +20,6 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes
 import org.opendaylight.yangtools.binding.contract.Naming
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
-    static val Comparator<GeneratedProperty> KEY_PROPS_COMPARATOR = [ p1, p2 | return p1.name.compareTo(p2.name) ]
-
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
      */
@@ -34,14 +31,14 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     protected val Set<BuilderGeneratedProperty> properties
 
     /**
-     * GeneratedType for key type, {@code null} if this type does not have a key.
+     * GeneratedTransferObject for key type, {@code null} if this type does not have a key.
      */
-    protected val Type keyType
+    protected val GeneratedTransferObject keyType
 
     protected val GeneratedType targetType;
 
     new(AbstractJavaGeneratedType javaType, GeneratedType type, GeneratedType targetType,
-            Set<BuilderGeneratedProperty> properties, Type augmentType, Type keyType) {
+            Set<BuilderGeneratedProperty> properties, Type augmentType, GeneratedTransferObject keyType) {
         super(javaType, type)
         this.targetType = targetType
         this.properties = properties
@@ -49,7 +46,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         this.keyType = keyType
     }
 
-    new(GeneratedType type, GeneratedType targetType, Type keyType) {
+    new(GeneratedType type, GeneratedType targetType, GeneratedTransferObject keyType) {
         super(type)
         this.targetType = targetType
         this.keyType = keyType
@@ -119,8 +116,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                 «generateCopyAugmentation(implType)»
             «ENDIF»
             «IF keyType !== null && implementsIfc(targetType, BindingTypes.entryObject(targetType, keyType))»
-                «val keyProps = new ArrayList((keyType as GeneratedTransferObject).properties)»
-                «keyProps.sort(KEY_PROPS_COMPARATOR)»
+                «val keyProps = keyConstructorArgs(keyType)»
                 «val allProps = new ArrayList(properties)»
                 «FOR field : keyProps»
                     «removeProperty(allProps, field.name)»
