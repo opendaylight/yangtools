@@ -16,7 +16,11 @@ package org.opendaylight.yangtools.binding;
  *     someone is faced with this interface. We forego the 'Map' part, as it is implied.
  *     The logic here is that {@code EntryObject} is an entry on a {@code Map<Key, EntryObject>}, whereas {@code list}
  *     statements are mapped to {@code List<ElementObject>}.
+ *
+ * @param <T> {@link EntryObject} type
+ * @param <K> {@link Key} type
  */
-public non-sealed interface EntryObject<T extends EntryObject<T, K>, K extends Key<T>> extends DataObject, KeyAware<K> {
+public non-sealed interface EntryObject<T extends EntryObject<T, K>, K extends Key<T>>
+        extends Augmentable<T>, DataObject, KeyAware<K> {
     // Nothing else
 }

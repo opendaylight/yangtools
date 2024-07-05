@@ -387,11 +387,25 @@ public final class BindingTypes {
      * Return the {@link Augmentable} type a parameterized {@link Augmentable} type references.
      *
      * @param type Parameterized type
-     * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentable(Type)}
+     * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentable(Type)} or
+     *         {@link #entryObject(Type, Type)}
      * @throws NullPointerException if {@code type} is {@code null}
      */
     public static @Nullable Type extractAugmentableTarget(final ParameterizedType type) {
-        return AUGMENTABLE.equals(type.getRawType()) ? onlyTypeArgument(type) : null;
+        final var rawType = type.getRawType();
+        if (AUGMENTABLE.equals(rawType)) {
+            return onlyTypeArgument(type);
+        }
+        if (ENTRY_OBJECT.equals(rawType)) {
+            final var args = type.getActualTypeArguments();
+            if (args.length == 2) {
+                final var arg = args[0];
+                if (arg != null) {
+                    return arg;
+                }
+            }
+        }
+        return null;
     }
 
     /**
