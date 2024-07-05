@@ -16,7 +16,6 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
-import java.lang.reflect.Method;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +36,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
-import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -173,18 +171,6 @@ class JavaFileTemplate {
         .addIgnoredStatement(YangStmtMapping.ORGANIZATION)
         .build();
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
-    private static final Type AUGMENTATION_RET_TYPE;
-
-    static {
-        final Method m;
-        try {
-            m = Augmentable.class.getDeclaredMethod(Naming.AUGMENTABLE_AUGMENTATION_NAME, Class.class);
-        } catch (NoSuchMethodException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-
-        AUGMENTATION_RET_TYPE = Type.of(JavaTypeName.create(m.getReturnType()));
-    }
 
     private final AbstractJavaGeneratedType javaType;
     private final GeneratedType type;
@@ -352,16 +338,19 @@ class JavaFileTemplate {
         }
 
         ParameterizedType augmentType = null;
-        for (Type implementedIfc : implementedIfcs) {
+        for (var implementedIfc : implementedIfcs) {
             if (implementedIfc instanceof GeneratedType ifc && !(implementedIfc instanceof GeneratedTransferObject)) {
                 addImplMethods(methods, ifc);
 
-                final ParameterizedType t = collectImplementedMethods(type, methods, ifc.getImplements());
+                final var t = collectImplementedMethods(type, methods, ifc.getImplements());
                 if (t != null && augmentType == null) {
                     augmentType = t;
                 }
-            } else if (Augmentable.class.getName().equals(implementedIfc.getFullyQualifiedName())) {
-                augmentType = Types.parameterizedTypeFor(AUGMENTATION_RET_TYPE, Type.of(type.getIdentifier()));
+            } else if (implementedIfc instanceof ParameterizedType parameterized) {
+                final var augmentation = BindingTypes.extractAugmentableTarget(parameterized);
+                if (augmentation != null) {
+                    augmentType = BindingTypes.augmentation(augmentation);
+                }
             }
         }
 
@@ -488,7 +477,7 @@ class JavaFileTemplate {
     private static @Nullable Type findAugmentationArgument(final GeneratedType genType) {
         for (var implType : genType.getImplements()) {
             if (implType instanceof ParameterizedType parameterized) {
-                final var augmentType = BindingTypes.extractAugmentable(parameterized);
+                final var augmentType = BindingTypes.extractAugmentationTarget(parameterized);
                 if (augmentType != null) {
                     return augmentType;
                 }
