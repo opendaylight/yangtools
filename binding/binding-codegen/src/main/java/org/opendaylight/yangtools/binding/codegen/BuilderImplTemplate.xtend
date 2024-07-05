@@ -21,6 +21,7 @@ import java.util.Collection
 import java.util.List
 import java.util.Optional
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable
+import org.opendaylight.yangtools.binding.lib.AbstractEntryObject
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
@@ -35,6 +36,10 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
      * {@code AbstractAugmentable} as a JavaTypeName.
      */
     static val ABSTRACT_AUGMENTABLE = JavaTypeName.create(AbstractAugmentable)
+    /**
+     * {@code AbstractAugmentable} as a JavaTypeName.
+     */
+    static val ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject)
 
     val BuilderTemplate builder;
 
@@ -48,7 +53,9 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         «targetType.annotations.generateDeprecatedAnnotation»
         private static final class «type.name»
             «val impIface = targetType.importedName»
-            «IF augmentType !== null»
+            «IF keyType !== null»
+                extends «ABSTRACT_ENTRY_OBJECT.importedName»<«impIface», «keyType.importedName»>
+            «ELSEIF augmentType !== null»
                 extends «ABSTRACT_AUGMENTABLE.importedName»<«impIface»>
             «ENDIF»
             implements «impIface» {
@@ -56,6 +63,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
             «generateFields(true)»
 
             «generateCopyConstructor(builder.type, type)»
+            «generateExtractKey»
 
             «generateGetters()»
 
@@ -69,18 +77,26 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         }
     '''
 
+    // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining this
+    //       code into the constructor once JEP-482 Flexible Constructor Bodies available. We should construct the key
+    //       into a 'key' local variable, so that generateCopyKeys() below can reference it
+    def private generateExtractKey() '''
+        «IF keyType !== null»
+
+            private static «keyType.importedNonNull» extractKey(final «builder.type.importedName» base) {
+                «val keyProps = keyConstructorArgs(keyType)»
+                final var key = base.«KEY_AWARE_KEY_NAME»();
+                return key != null ? key
+                    : new «keyType.importedName»(«FOR keyProp : keyProps SEPARATOR ", "»base.«keyProp.getterMethodName»()«ENDFOR»);
+            }
+        «ENDIF»
+    '''
+
     override generateDeprecatedAnnotation(AnnotationType ann) {
         return generateAnnotation(ann)
     }
 
     def private generateGetters() '''
-        «IF keyType !== null»
-            @«OVERRIDE.importedName»
-            public «keyType.importedName» «KEY_AWARE_KEY_NAME»() {
-                return key;
-            }
-
-        «ENDIF»
         «IF !properties.empty»
             «FOR field : properties SEPARATOR '\n'»
                 «field.getterMethod»
@@ -209,11 +225,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
-        if (base.«KEY_AWARE_KEY_NAME»() != null) {
-            this.key = base.«KEY_AWARE_KEY_NAME»();
-        } else {
-            this.key = new «keyType.importedName»(«FOR keyProp : keyProps SEPARATOR ", "»base.«keyProp.getterMethodName»()«ENDFOR»);
-        }
+        final var key = key();
         «FOR field : keyProps»
             this.«field.fieldName» = key.«field.getterMethodName»();
         «ENDFOR»
@@ -230,6 +242,10 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyAugmentation(Type implType) '''
-        super(base.«AUGMENTATION_FIELD»);
+        «IF keyType !== null»
+            super(base.«AUGMENTATION_FIELD», extractKey(base));
+        «ELSE»
+            super(base.«AUGMENTATION_FIELD»);
+        «ENDIF»
     '''
 }
