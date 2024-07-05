@@ -68,8 +68,8 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                 private«IF makeFinal» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
-        «IF keyType !== null»
-            private«IF makeFinal» final«ENDIF» «keyType.importedName» key;
+        «IF keyType !== null && !makeFinal»
+            private «keyType.importedName» key;
         «ENDIF»
     '''
 
@@ -111,7 +111,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     '''
 
     def protected final CharSequence generateCopyConstructor(Type fromType, Type implType) '''
-        «type.name»(«fromType.importedName» base) {
+        «type.name»(final «fromType.importedName» base) {
             «IF augmentType !== null»
                 «generateCopyAugmentation(implType)»
             «ENDIF»
