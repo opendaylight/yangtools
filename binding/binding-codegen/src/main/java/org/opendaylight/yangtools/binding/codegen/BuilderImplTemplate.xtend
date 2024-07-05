@@ -21,6 +21,7 @@ import java.util.Collection
 import java.util.List
 import java.util.Optional
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable
+import org.opendaylight.yangtools.binding.lib.AbstractEntryObject
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
@@ -35,6 +36,10 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
      * {@code AbstractAugmentable} as a JavaTypeName.
      */
     static val ABSTRACT_AUGMENTABLE = JavaTypeName.create(AbstractAugmentable)
+    /**
+     * {@code AbstractAugmentable} as a JavaTypeName.
+     */
+    static val ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject)
 
     val BuilderTemplate builder;
 
@@ -48,7 +53,9 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         «targetType.annotations.generateDeprecatedAnnotation»
         private static final class «type.name»
             «val impIface = targetType.importedName»
-            «IF augmentType !== null || keyType !== null»
+            «IF keyType !== null»
+                extends «ABSTRACT_ENTRY_OBJECT.importedName»<«impIface», «keyType.importedName»>
+            «ELSEIF augmentType !== null»
                 extends «ABSTRACT_AUGMENTABLE.importedName»<«impIface»>
             «ENDIF»
             implements «impIface» {
@@ -74,13 +81,6 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     def private generateGetters() '''
-        «IF keyType !== null»
-            @«OVERRIDE.importedName»
-            public «keyType.importedName» «KEY_AWARE_KEY_NAME»() {
-                return key;
-            }
-
-        «ENDIF»
         «IF !properties.empty»
             «FOR field : properties SEPARATOR '\n'»
                 «field.getterMethod»
