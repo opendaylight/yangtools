@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderGeneratorTest {
@@ -323,11 +324,7 @@ public class BuilderGeneratorTest {
     }
 
     private static GeneratedType mockAugment(final GeneratedType genType) {
-        final List<Type> impls = new ArrayList<>();
-        final Type impl = mock(Type.class);
-        doReturn("org.opendaylight.yangtools.binding.Augmentable").when(impl).getFullyQualifiedName();
-        impls.add(impl);
-        doReturn(impls).when(genType).getImplements();
+        doReturn(List.of(BindingTypes.augmentable(genType))).when(genType).getImplements();
         return genType;
     }
 
