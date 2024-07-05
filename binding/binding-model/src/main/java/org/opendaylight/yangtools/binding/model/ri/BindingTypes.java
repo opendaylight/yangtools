@@ -379,18 +379,19 @@ public final class BindingTypes {
      * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentation(Type)}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    @Beta
-    public static @Nullable Type extractAugmentable(final ParameterizedType type) {
-        if (AUGMENTATION.equals(type.getRawType())) {
-            final var args = type.getActualTypeArguments();
-            if (args.length == 1) {
-                final var arg = args[0];
-                if (arg != null) {
-                    return arg;
-                }
-            }
-        }
-        return null;
+    public static @Nullable Type extractAugmentationTarget(final ParameterizedType type) {
+        return AUGMENTATION.equals(type.getRawType()) ? onlyTypeArgument(type) : null;
+    }
+
+    /**
+     * Return the {@link Augmentable} type a parameterized {@link Augmentable} type references.
+     *
+     * @param type Parameterized type
+     * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentable(Type)}
+     * @throws NullPointerException if {@code type} is {@code null}
+     */
+    public static @Nullable Type extractAugmentableTarget(final ParameterizedType type) {
+        return AUGMENTABLE.equals(type.getRawType()) ? onlyTypeArgument(type) : null;
     }
 
     /**
@@ -400,15 +401,16 @@ public final class BindingTypes {
      * @return Identifiable target, or null if {@code type} does not match the result of {@link #key(Type)}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    @Beta
     public static @Nullable Type extractKeyType(final ParameterizedType type) {
-        if (KEY.equals(type.getRawType())) {
-            final var args = type.getActualTypeArguments();
-            if (args.length == 1) {
-                final var arg = args[0];
-                if (arg != null) {
-                    return arg;
-                }
+        return KEY.equals(type.getRawType()) ? onlyTypeArgument(type) : null;
+    }
+
+    private static Type onlyTypeArgument(final ParameterizedType type) {
+        final var args = type.getActualTypeArguments();
+        if (args.length == 1) {
+            final var arg = args[0];
+            if (arg != null) {
+                return arg;
             }
         }
         return null;
