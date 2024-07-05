@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import com.google.common.annotations.VisibleForTesting;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
 public final class BuilderGenerator implements CodeGenerator {
     private static final JavaTypeName AUGMENTABLE = JavaTypeName.create(Augmentable.class);
     private static final JavaTypeName AUGMENTATION = JavaTypeName.create(Augmentation.class);
+    private static final JavaTypeName ENTRY_OBJECT = JavaTypeName.create(EntryObject.class);
     private static final JavaTypeName YANG_DATA = JavaTypeName.create(YangData.class);
 
     /**
@@ -38,10 +40,11 @@ public final class BuilderGenerator implements CodeGenerator {
     @Override
     public boolean isAcceptable(final Type type) {
         if (type instanceof GeneratedType generated && !(type instanceof GeneratedTransferObject)) {
-            for (Type t : generated.getImplements()) {
+            for (var impl : generated.getImplements()) {
                 // "rpc" and "grouping" elements do not implement Augmentable
-                final JavaTypeName name = t.getIdentifier();
-                if (name.equals(AUGMENTABLE) || name.equals(AUGMENTATION) || name.equals(YANG_DATA)) {
+                final var name = impl.getIdentifier();
+                if (name.equals(AUGMENTABLE) || name.equals(AUGMENTATION) || name.equals(ENTRY_OBJECT)
+                    || name.equals(YANG_DATA)) {
                     return true;
                 }
             }
