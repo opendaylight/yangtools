@@ -59,7 +59,6 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         addImplementsChildOf(builder);
-        addAugmentable(builder);
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
 
@@ -74,6 +73,8 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
             builder.addMethod(Naming.KEY_AWARE_KEY_NAME)
                 .setReturnType(keyType)
                 .addAnnotation(OVERRIDE_ANNOTATION);
+        } else {
+            addAugmentable(builder);
         }
 
         addGetterMethods(builder, builderFactory);

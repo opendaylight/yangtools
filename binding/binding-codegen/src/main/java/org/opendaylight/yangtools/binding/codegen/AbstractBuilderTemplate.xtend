@@ -115,7 +115,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
 
     def protected final CharSequence generateCopyConstructor(Type fromType, Type implType) '''
         «type.name»(«fromType.importedName» base) {
-            «IF augmentType !== null»
+            «IF augmentType !== null || keyType !== null»
                 «generateCopyAugmentation(implType)»
             «ENDIF»
             «IF keyType !== null && implementsIfc(targetType, BindingTypes.entryObject(targetType, keyType))»
