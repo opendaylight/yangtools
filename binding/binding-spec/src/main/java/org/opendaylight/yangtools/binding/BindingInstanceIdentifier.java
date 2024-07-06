@@ -15,12 +15,11 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * Binding representation of a {@code instance-identifier}.
  */
 public sealed interface BindingInstanceIdentifier extends Immutable, Serializable
-        // FIXME: YANGTOOLS-1577: PropertyIdentifier as well
-        permits DataObjectIdentifier {
+        permits DataObjectIdentifier, PropertyIdentifier {
     /**
      * A single step in a {@link BindingInstanceIdentifier}.
      */
-    sealed interface Step permits ExactDataObjectStep {
+    sealed interface Step extends Serializable permits ExactDataObjectStep, ExactPropertyStep {
         // Nothing else
     }
 
