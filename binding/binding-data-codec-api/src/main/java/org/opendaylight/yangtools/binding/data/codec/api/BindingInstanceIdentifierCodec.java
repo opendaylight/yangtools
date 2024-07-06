@@ -17,6 +17,11 @@ import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.PropertyIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 
 @Beta
 public interface BindingInstanceIdentifierCodec extends Immutable {
@@ -24,13 +29,28 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      * Translates supplied {@link YangInstanceIdentifier} into a {@link DataObjectReference}, if possible.
      *
      * @param domPath YANG Instance Identifier
-     * @return Binding Instance Identifier, or null if the instance identifier is not representable.
-     * @throws NullPointerException if domPath is null
+     * @return a DataObjectReference, or {@code null} if the instance identifier is not representable.
+     * @throws NullPointerException if domPath is {@code null}
      * @throws IllegalArgumentException if domPath is not valid.
      */
     // FIXME: Document MissingSchemaException being thrown?
     // FIXME: Document MissingSchemaForClassException being thrown?
     <T extends DataObject> @Nullable DataObjectReference<T> toBinding(@NonNull YangInstanceIdentifier domPath);
+
+    /**
+     * Translates supplied {@link YangInstanceIdentifier} into a {@link BindingInstanceIdentifier}, if possible.
+     * Identifiers which refer to {@link ChoiceNode}, {@link MapNode}, {@link UnkeyedListNode} and {@link LeafSetNode}
+     * are impossible to translate into a {@link BindingInstanceIdentifier} because they are an addressing artifact
+     * of {@link NormalizedNode} representation.
+     *
+     * @param domPath YANG Instance Identifier
+     * @return BindingInstanceIdentifier, or {@code null} if the {@link YangInstanceIdentifier} is not representable.
+     * @throws NullPointerException if domPath is {@code null}
+     * @throws IllegalArgumentException if domPath is not valid.
+     */
+    // FIXME: Document MissingSchemaException being thrown?
+    // FIXME: Document MissingSchemaForClassException being thrown?
+    @Nullable BindingInstanceIdentifier toBindingInstanceIdentifier(@NonNull YangInstanceIdentifier domPath);
 
     /**
      * Translates supplied {@link DataObjectReference} into a {@link YangInstanceIdentifier}.
@@ -54,7 +74,7 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      */
     // FIXME: Document MissingSchemaException being thrown
     // FIXME: Document MissingSchemaForClassException being thrown
-    default @NonNull YangInstanceIdentifier fromBinding(@NonNull DataObjectIdentifier<?> bindingPath) {
+    default @NonNull YangInstanceIdentifier fromBinding(final @NonNull DataObjectIdentifier<?> bindingPath) {
         return fromBinding((DataObjectReference<?>) bindingPath);
     }
 

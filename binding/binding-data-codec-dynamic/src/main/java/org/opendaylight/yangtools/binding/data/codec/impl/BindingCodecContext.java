@@ -32,7 +32,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +66,7 @@ import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingYangDataCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.CommonDataObjectCodecTreeNode;
@@ -474,6 +474,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return current;
     }
 
+    @NonNull BindingObjectCodecTreeNode getCodecContext(final @NonNull YangInstanceIdentifier dom,
+            final ImmutableList.@Nullable Builder<DataObjectStep<?>> bindingArguments) {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Multi-purpose utility function. Traverse the codec tree, looking for the appropriate codec for the specified
      * {@link YangInstanceIdentifier}. As a side-effect, gather all traversed binding {@link DataObjectStep}s into the
@@ -486,7 +492,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
      * @throws IllegalArgumentException if {@code dom} is empty
      */
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
-            final @Nullable Collection<DataObjectStep<?>> bindingArguments) {
+            final ImmutableList.@Nullable Builder<DataObjectStep<?>> bindingArguments) {
         final var it = dom.getPathArguments().iterator();
         if (!it.hasNext()) {
             throw new IllegalArgumentException("Path may not be empty");
@@ -921,8 +927,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             return null;
         }
 
-        final var builder = new ArrayList<DataObjectStep<?>>();
-        final var codec = getCodecContextNode(path, builder);
+        final var steps = ImmutableList.<DataObjectStep<?>>builder();
+        final var codec = getCodecContextNode(path, steps);
         if (codec == null) {
             if (data != null) {
                 LOG.warn("Path {} does not have a binding equivalent, should have been caught earlier ({})", path,
@@ -932,7 +938,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         }
 
         final DataObject lazyObj = codec.deserialize(data);
-        return Map.entry(DataObjectReference.ofUnsafeSteps(builder), lazyObj);
+        return Map.entry(DataObjectReference.ofUnsafeSteps(steps.build()), lazyObj);
     }
 
     @Override
