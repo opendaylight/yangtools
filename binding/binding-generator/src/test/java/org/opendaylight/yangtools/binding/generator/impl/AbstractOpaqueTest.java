@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -30,9 +29,6 @@ abstract class AbstractOpaqueTest {
         final var it = genType.getImplements().iterator();
         final var first = assertInstanceOf(ParameterizedType.class, it.next());
         assertEquals(JavaTypeName.create(OpaqueObject.class), first.getRawType().getIdentifier());
-
-        final var second = assertInstanceOf(ParameterizedType.class, it.next());
-        assertEquals(JavaTypeName.create(ChildOf.class), second.getRawType().getIdentifier());
 
         assertFalse(it.hasNext());
     }
