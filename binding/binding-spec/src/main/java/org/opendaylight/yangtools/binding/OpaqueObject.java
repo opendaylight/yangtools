@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
  * @param <T> Generated interface
  */
 @Beta
+// FIXME: should not imply DataContainer, should not be a ChildOf
 public non-sealed interface OpaqueObject<T extends OpaqueObject<T>> extends BindingObject, DataContainer,
         ValueAware<OpaqueData<?>> {
     @Override

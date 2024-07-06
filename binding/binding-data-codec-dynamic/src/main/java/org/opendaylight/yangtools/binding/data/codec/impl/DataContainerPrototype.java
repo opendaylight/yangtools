@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -57,4 +58,15 @@ abstract sealed class DataContainerPrototype<C extends DataContainerCodecContext
     abstract @NonNull Class<? extends DataContainer> javaClass();
 
     abstract @NonNull NodeIdentifier yangArg();
+
+    /**
+     * Bind an unqualified YANG identifier to this container's namespace.
+     *
+     * @param identifier identifier to bind
+     * @return a {@link NodeIdentifier}
+     * @throws IllegalArgumentException if the identifier cannot be bound
+     */
+    @NonNull NodeIdentifier bindIdentifier(final Unqualified identifier) {
+        return new NodeIdentifier(identifier.bindTo(yangArg().getNodeType().getModule()));
+    }
 }

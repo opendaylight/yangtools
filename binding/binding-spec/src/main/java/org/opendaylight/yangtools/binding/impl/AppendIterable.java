@@ -17,8 +17,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * An {@link Iterable} which concatenates another {@link Iterable} with a subsequent element.
  */
 @NonNullByDefault
-record AppendIterable<T>(Iterable<? extends T> others, T last) implements Iterable<T> {
-    AppendIterable {
+public record AppendIterable<T>(Iterable<? extends T> others, T last) implements Iterable<T> {
+    public AppendIterable {
         requireNonNull(others);
         requireNonNull(last);
     }
