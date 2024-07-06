@@ -106,15 +106,6 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void anyDataIsNotADataContainer() {
-        // It should not be possible to create this DataObjectIdentifier
-        final var id = InstanceIdentifier.create(Cont.class).child(ContAny.class).toIdentifier();
-        // DataContainer implies CompositeRuntimeType, so this fails
-        assertThrows(ClassCastException.class, () -> codecContext.getDataObjectCodec(id));
-        assertThrows(ClassCastException.class, () -> codecContext.getInstanceIdentifierCodec().fromBinding(id));
-    }
-
-    @Test
     public void anyDataIsPropertyAddressable() {
         final BindingInstanceIdentifier id = new PropertyIdentifier<>(
             InstanceIdentifier.create(Cont.class).toIdentifier(),
