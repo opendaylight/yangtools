@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
+import org.opendaylight.yangtools.binding.PropertyIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
@@ -44,6 +45,32 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
     @NonNull YangInstanceIdentifier fromBinding(@NonNull DataObjectReference<?> bindingPath);
 
     /**
+     * Translates supplied {@link DataObjectIdentifier} into a {@link YangInstanceIdentifier}.
+     *
+     * @param bindingPath a data object reference
+     * @return DOM Instance Identifier
+     * @throws NullPointerException if bindingPath is null
+     * @throws IllegalArgumentException if bindingPath is not valid.
+     */
+    // FIXME: Document MissingSchemaException being thrown
+    // FIXME: Document MissingSchemaForClassException being thrown
+    default @NonNull YangInstanceIdentifier fromBinding(@NonNull DataObjectIdentifier<?> bindingPath) {
+        return fromBinding((DataObjectReference<?>) bindingPath);
+    }
+
+    /**
+     * Translates supplied {@link PropertyIdentifier} into a {@link YangInstanceIdentifier}.
+     *
+     * @param bindingPath a property identifier
+     * @return DOM Instance Identifier
+     * @throws NullPointerException if bindingPath is null
+     * @throws IllegalArgumentException if bindingPath is not valid.
+     */
+    // FIXME: Document MissingSchemaException being thrown
+    // FIXME: Document MissingSchemaForClassException being thrown
+    @NonNull YangInstanceIdentifier fromBinding(@NonNull PropertyIdentifier<?, ?> bindingPath);
+
+    /**
      * Translates supplied {@link BindingInstanceIdentifier} into a {@link YangInstanceIdentifier}.
      *
      * @param bindingPath Binding Instance Identifier
@@ -55,7 +82,8 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
     // FIXME: Document MissingSchemaForClassException being thrown
     default @NonNull YangInstanceIdentifier fromBinding(final @NonNull BindingInstanceIdentifier bindingPath) {
         return switch (bindingPath) {
-            case DataObjectIdentifier<?> doi -> fromBinding((DataObjectReference<?>) doi);
+            case DataObjectIdentifier<?> doi -> fromBinding(doi);
+            case PropertyIdentifier<?, ?> pi -> fromBinding(pi);
         };
     }
 }

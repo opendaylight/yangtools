@@ -14,18 +14,23 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.Cont;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.ContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.cont.ContAny;
+import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.LeafPropertyStep;
 import org.opendaylight.yangtools.binding.OpaqueData;
+import org.opendaylight.yangtools.binding.PropertyIdentifier;
 import org.opendaylight.yangtools.binding.lib.AbstractOpaqueData;
 import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -98,6 +103,23 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
             new ContBuilder().setContAny(new FakeCont()).build());
         assertEquals(YangInstanceIdentifier.of(CONT_NODE_ID), entry.path());
         assertEquals(cont, entry.node());
+    }
+
+    @Test
+    public void anyxmlIsNotADataContainer() {
+        // It should not be possible to create this DataObjectIdentifier
+        final var id = InstanceIdentifier.create(Cont.class).child(ContAny.class).toIdentifier();
+        // DataContainer implies CompositeRuntimeType, so this fails
+        assertThrows(ClassCastException.class, () -> codecContext.getDataObjectCodec(id));
+        assertThrows(ClassCastException.class, () -> codecContext.getInstanceIdentifierCodec().fromBinding(id));
+    }
+
+    @Test
+    public void anyxmlIsPropertyAddressable() {
+        assertEquals(YangInstanceIdentifier.of(Cont.QNAME, ContAny.QNAME), codecContext.getInstanceIdentifierCodec()
+            .fromBinding((BindingInstanceIdentifier)
+                new PropertyIdentifier<>(InstanceIdentifier.create(Cont.class).toIdentifier(),
+                new LeafPropertyStep<>(Cont.class, ContAny.class, Unqualified.of("cont-any")))));
     }
 
     private final class FakeData extends AbstractOpaqueData<DOMSource> {

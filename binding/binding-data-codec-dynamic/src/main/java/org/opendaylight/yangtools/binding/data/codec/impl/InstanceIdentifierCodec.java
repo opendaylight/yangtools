@@ -16,8 +16,12 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
+import org.opendaylight.yangtools.binding.LeafListPropertyStep;
+import org.opendaylight.yangtools.binding.LeafPropertyStep;
+import org.opendaylight.yangtools.binding.PropertyIdentifier;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
@@ -50,6 +54,41 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     public YangInstanceIdentifier fromBinding(final DataObjectReference<?> bindingPath) {
         final var domArgs = new ArrayList<PathArgument>();
         context.getCodecContextNode(bindingPath, domArgs);
+        return YangInstanceIdentifier.of(domArgs);
+    }
+
+    @Override
+    public YangInstanceIdentifier fromBinding(final PropertyIdentifier<?, ?> bindingPath) {
+        final var domArgs = new ArrayList<PathArgument>();
+        // resolve DataContainer part of the path and remember the codec
+        final var containerCodec = context.getCodecContextNode(bindingPath.container(), domArgs);
+
+        final var property = bindingPath.property();
+        final var childArg = containerCodec.prototype().bindIdentifier(property.yangIdentifier());
+        // This has a side-effect of validating childArg
+        final var codec = containerCodec.yangPathArgumentChild(childArg);
+
+        // AnydataNode, AnyxmlNode, LeafNode and LeafSetNode are all addressed by NodeIdentifier
+        domArgs.add(childArg);
+
+        switch (property) {
+            case LeafPropertyStep<?, ?> leaf -> {
+                // validate only
+                if (!(codec instanceof LeafNodeCodecContext) && !(codec instanceof AbstractOpaqueCodecContext)) {
+                    throw new IllegalArgumentException(leaf + " does not match context " + codec);
+                }
+            }
+            case LeafListPropertyStep<?, ?> leafList -> {
+                // validate and add step into the individual LeafSetEntryNode
+                if (codec instanceof LeafSetNodeCodecContext leafListCodec) {
+                    domArgs.add(new NodeWithValue<>(childArg.getNodeType(),
+                        leafListCodec.getValueCodec().deserialize(leafList.value())));
+                } else {
+                    throw new IllegalArgumentException(leafList + " does not match context " + codec);
+                }
+            }
+        }
+
         return YangInstanceIdentifier.of(domArgs);
     }
 

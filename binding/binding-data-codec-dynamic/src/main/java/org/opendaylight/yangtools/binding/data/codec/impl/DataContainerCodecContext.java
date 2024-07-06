@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataContainerCodecTreeNode;
-import org.opendaylight.yangtools.binding.data.codec.api.BindingDataContainerCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
