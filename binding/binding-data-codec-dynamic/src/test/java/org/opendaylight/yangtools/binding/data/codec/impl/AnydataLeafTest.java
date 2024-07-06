@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
 
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
@@ -103,15 +102,6 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
             new ContBuilder().setContAny(new FakeCont()).build());
         assertEquals(YangInstanceIdentifier.of(CONT_NODE_ID), entry.path());
         assertEquals(cont, entry.node());
-    }
-
-    @Test
-    public void anydataIsNotADataContainer() {
-        // It should not be possible to create this DataObjectIdentifier
-        final var id = InstanceIdentifier.create(Cont.class).child(ContAny.class).toIdentifier();
-        // DataContainer implies CompositeRuntimeType, so this fails
-        assertThrows(ClassCastException.class, () -> codecContext.getDataObjectCodec(id));
-        assertThrows(ClassCastException.class, () -> codecContext.getInstanceIdentifierCodec().fromBinding(id));
     }
 
     @Test

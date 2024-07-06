@@ -14,12 +14,12 @@ import org.eclipse.jdt.annotation.NonNull;
  * Base interface for all interfaces generated to capture a specific contract. There are five basic contracts defined
  * by YANG statements:
  * <ul>
+ *   <li>{@code action}, represented by {@link Action}</li>
+ *   <li>{@code anydata} and {@code anyxml}, represented by {@link OpaqueObject}</li>
  *   <li>{@code feature}, represented by {@link YangFeature}</li>
  *   <li>{@code identity}, represented by {@link BaseIdentity}</li>
- *   <li>{@code action}, represented by {@link Action}</li>
- *   <li>{@code rpc}, presented by {@link Rpc}</li>
- *   <li>data definition statements expressing data and metadata exchanged between two parties, represeented by
- *       {@link DataContainer}</li>
+ *   <li>{@code rpc}, represented by {@link Rpc}</li>
+ *   <li>structured data and metadata exchanged between two parties, represented by {@link DataContainer}</li>
  * </ul>
  *
  * <p>
@@ -29,7 +29,7 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 @Beta
 public sealed interface BindingContract<T extends BindingContract<T>>
-        permits Action, BaseIdentity, DataContainer, Rpc, YangFeature {
+        permits Action, BaseIdentity, DataContainer, OpaqueObject, Rpc, YangFeature {
     /**
      * Return the interface implemented by this object. This method differs from {@link Object#getClass()} in that it
      * returns the interface contract, not a concrete implementation class.

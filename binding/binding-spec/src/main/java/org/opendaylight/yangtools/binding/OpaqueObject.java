@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
 
 /**
@@ -26,10 +25,8 @@ import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
  *
  * @param <T> Generated interface
  */
-@Beta
-// FIXME: should not imply DataContainer, should not be a ChildOf
-public non-sealed interface OpaqueObject<T extends OpaqueObject<T>> extends BindingObject, DataContainer,
-        ValueAware<OpaqueData<?>> {
+public non-sealed interface OpaqueObject<T extends OpaqueObject<T>>
+        extends BindingObject, BindingContract<OpaqueObject<T>>, ValueAware<OpaqueData<?>> {
     @Override
     Class<T> implementedInterface();
 
