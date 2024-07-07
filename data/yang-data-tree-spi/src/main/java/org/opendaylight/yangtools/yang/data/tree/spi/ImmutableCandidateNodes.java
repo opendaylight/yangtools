@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode.Appeared;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode.Compacted;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode.Created;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode.Deleted;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode.Disappeared;
@@ -46,6 +47,10 @@ public final class ImmutableCandidateNodes {
 
     public static Appeared appeared(final NormalizedNode dataAfter, final Map<PathArgument, CandidateNode> children) {
         return appeared(dataAfter, WithChildrenImpl.of(children));
+    }
+
+    public static Compacted compacted(final NormalizedNode dataAfter) {
+        return new CompactedImpl(dataAfter);
     }
 
     public static Created created(final NormalizedNode dataAfter) {
@@ -188,6 +193,18 @@ public final class ImmutableCandidateNodes {
         @Deprecated
         public DataTreeCandidateNode toLegacy() {
             return new CompatDataTreeCandidateNode<>(ModificationType.APPEARED, this, null, dataAfter);
+        }
+    }
+
+    private record CompactedImpl(NormalizedNode dataAfter) implements Compacted {
+        CompactedImpl {
+            requireNonNull(dataAfter);
+        }
+
+        @Override
+        @Deprecated
+        public DataTreeCandidateNode toLegacy() {
+            return CreatedDataTreeCandidateNode.of(dataAfter);
         }
     }
 

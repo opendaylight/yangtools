@@ -89,6 +89,15 @@ public interface DataTreeCandidate {
         }
 
         /**
+         * An {@link Unmodified} event indicating the backing metadata has been compacted to appear as if this node has
+         * been {@link Created} with current #{@link #dataAfter()}. Users are <b>strongly encouraged</b> to refresh
+         * their view with #{@link #dataAfter()}.
+         */
+        interface Compacted extends Unmodified {
+            // Nothing else
+        }
+
+        /**
          * A {@link NormalizedNode} is being introduced without being previously present.
          */
         non-sealed interface Created extends WithDataAfter {
@@ -125,7 +134,11 @@ public interface DataTreeCandidate {
         }
 
         /**
-         * The node has not been modified.
+         * The {@link NormalizedNode} has not been modified in a way its {@link NormalizedNode#equals(Object)} contract
+         * has been left unchanged. Users who retain current {@link NormalizedNode} view are <b>strongly encouraged</b>
+         * to refresh that view with {@link #dataAfter()}
+         *
+         * @see Compacted
          */
         non-sealed interface Unmodified extends WithDataAfter {
             // Nothing else
