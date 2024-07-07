@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a635520_17a965ee",
+        "filename": "data/yang-data-tree-ri/src/main/java/org/opendaylight/yangtools/yang/data/tree/impl/node/RawTreeNode.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-07-07T22:04:45Z",
+      "side": 1,
+      "message": "empty line",
+      "revId": "9a57e1c5a83cd73263110256ae7f5ce73dd83757",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
