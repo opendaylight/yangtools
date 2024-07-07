@@ -47,7 +47,7 @@ public final class DataTreeCandidates {
 
     public static @NonNull DataTreeCandidate fromNormalizedNode(final YangInstanceIdentifier rootPath,
                                                                 final NormalizedNode node) {
-        return new DefaultDataTreeCandidate(rootPath, new NormalizedNodeDataTreeCandidateNode(node));
+        return new DefaultDataTreeCandidate(rootPath, CreatedDataTreeCandidateNode.of(node));
     }
 
     public static void applyToCursor(final DataTreeModificationCursor cursor, final DataTreeCandidate candidate) {

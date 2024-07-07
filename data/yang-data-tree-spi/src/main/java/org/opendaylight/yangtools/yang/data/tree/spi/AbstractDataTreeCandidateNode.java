@@ -9,31 +9,56 @@ package org.opendaylight.yangtools.yang.data.tree.spi;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
+import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.collect.Collections2;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
+import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
-abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
-    final @NonNull DistinctNodeContainer<PathArgument, NormalizedNode> data;
+/**
+ * Abstract base class for {@link DataTreeCandidateNode} implementations.
+ */
+public abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
+    private final @NonNull ModificationType modificationType;
 
-    AbstractDataTreeCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
-        this.data = requireNonNull(data);
+    protected AbstractDataTreeCandidateNode(final ModificationType modificationType) {
+        this.modificationType = requireNonNull(modificationType);
     }
 
     @Override
-    public final PathArgument name() {
-        return data.name();
-    }
-
-    final @NonNull Optional<NormalizedNode> dataOptional() {
-        return Optional.of(data);
+    public final ModificationType modificationType() {
+        return modificationType;
     }
 
     @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "{data = " + data + "}";
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(DataTreeCandidateNode.class)
+            .add("modificationType", modificationType))
+            .toString();
+    }
+
+    protected abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
+
+    @SuppressWarnings("null")
+    protected static final @NonNull Collection<DataTreeCandidateNode> childNodes(
+            final DistinctNodeContainer<?, ?> container,
+            final Function<NormalizedNode, DataTreeCandidateNode> function) {
+        @SuppressWarnings("unchecked")
+        final var body = (Collection<NormalizedNode>) container.body();
+        return Collections2.transform(body, function);
+    }
+
+    protected static final @Nullable DataTreeCandidateNode modifiedChild(final DistinctNodeContainer<?, ?> container,
+            final Function<NormalizedNode, DataTreeCandidateNode> function, final PathArgument childName) {
+        @SuppressWarnings("unchecked")
+        final var child = ((DistinctNodeContainer<PathArgument, ?>) container).childByArg(childName);
+        return child != null ? function.apply(child) : null;
     }
 }
