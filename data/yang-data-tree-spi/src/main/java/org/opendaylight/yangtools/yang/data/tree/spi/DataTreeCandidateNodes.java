@@ -49,21 +49,19 @@ public final class DataTreeCandidateNodes {
      * @return An empty DataTreeCandidateNode
      */
     public static @NonNull DataTreeCandidateNode unmodified(final NormalizedNode node) {
-        if (node instanceof DistinctNodeContainer) {
-            return new RecursiveUnmodifiedCandidateNode((DistinctNodeContainer<PathArgument, NormalizedNode>) node);
-        }
-        return new UnmodifiedLeafCandidateNode(node);
+        return UnmodifiedDataTreeCandidateNode.of(node);
     }
 
     /**
-     * Return a {@link DataTreeCandidateNode} pretending specified node was written without the data exsting beforehand.
+     * Return a {@link DataTreeCandidateNode} pretending specified node was written without the data existing
+     * beforehand.
      *
      * @param node Unchanged normalized node
      * @return An empty DataTreeCandidateNode
      * @throws NullPointerException if {@code node} is null
      */
     public static @NonNull DataTreeCandidateNode written(final NormalizedNode node) {
-        return new NormalizedNodeDataTreeCandidateNode(node);
+        return CreatedDataTreeCandidateNode.of(node);
     }
 
     /**
@@ -78,10 +76,10 @@ public final class DataTreeCandidateNodes {
             final @Nullable DistinctNodeContainer<?, ?> oldData, final @Nullable DistinctNodeContainer<?, ?> newData) {
         if (newData == null) {
             return oldData == null ? ImmutableList.of()
-                    : Collections2.transform(oldData.body(), DataTreeCandidateNodes::deleteNode);
+                    : Collections2.transform(oldData.body(), DeletedDataTreeCandidateNode::of);
         }
         if (oldData == null) {
-            return Collections2.transform(newData.body(), DataTreeCandidateNodes::writeNode);
+            return Collections2.transform(newData.body(), CreatedDataTreeCandidateNode::of);
         }
 
         /*
@@ -98,10 +96,10 @@ public final class DataTreeCandidateNodes {
         final var oldCast = (DistinctNodeContainer<PathArgument, ?>) oldData;
         for (var child : newData.body()) {
             final var oldChild = oldCast.childByArg(child.name());
-            result.add(oldChild == null ? writeNode(child)
+            result.add(oldChild == null ? CreatedDataTreeCandidateNode.of(child)
                 // This does not find children which have not in fact been modified, as doing that
                 // reliably would require us running a full equals() on the two nodes.
-                : replaceNode(oldChild, child));
+                : ReplacedDataTreeCandidateNode.of(oldChild, child));
         }
 
         // Process removals next, looking into new data to see if we processed it
@@ -109,7 +107,7 @@ public final class DataTreeCandidateNodes {
         final var newCast = (DistinctNodeContainer<PathArgument, ?>) newData;
         for (var child : oldData.body()) {
             if (newCast.childByArg(child.name()) == null) {
-                result.add(deleteNode(child));
+                result.add(DeletedDataTreeCandidateNode.of(child));
             }
         }
 
@@ -125,15 +123,16 @@ public final class DataTreeCandidateNodes {
      * @return A {@link DataTreeCandidateNode} describing the change, or empty if the node is not present
      */
     public static @Nullable DataTreeCandidateNode containerDelta(
-            final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> oldData,
-            final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> newData,
+            final @Nullable DistinctNodeContainer<?, ?> oldData,
+            final @Nullable DistinctNodeContainer<?, ?> newData,
             final @NonNull PathArgument child) {
         final var newChild = getChild(newData, child);
         final var oldChild = getChild(oldData, child);
         if (oldChild != null) {
-            return newChild != null ? replaceNode(oldChild, newChild) : deleteNode(oldChild);
+            return newChild != null ? ReplacedDataTreeCandidateNode.of(oldChild, newChild)
+                : DeletedDataTreeCandidateNode.of(oldChild);
         } else {
-            return newChild != null ? DataTreeCandidateNodes.writeNode(newChild) : null;
+            return newChild != null ? CreatedDataTreeCandidateNode.of(newChild) : null;
         }
     }
 
@@ -209,37 +208,10 @@ public final class DataTreeCandidateNodes {
         }
     }
 
-    private static @Nullable NormalizedNode getChild(final DistinctNodeContainer<PathArgument, ?> container,
+    @SuppressWarnings("unchecked")
+    private static @Nullable NormalizedNode getChild(final DistinctNodeContainer<?, ?> container,
             final PathArgument identifier) {
-        return container == null ? null : container.childByArg(identifier);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static @NonNull DataTreeCandidateNode deleteNode(final NormalizedNode data) {
-        if (data instanceof DistinctNodeContainer) {
-            return new RecursiveDeleteCandidateNode(
-                (DistinctNodeContainer<PathArgument, NormalizedNode>) data);
-        }
-        return new DeleteLeafCandidateNode(data);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static @NonNull DataTreeCandidateNode replaceNode(final NormalizedNode oldData,
-            final NormalizedNode newData) {
-        if (oldData instanceof DistinctNodeContainer) {
-            return new RecursiveReplaceCandidateNode(
-                (DistinctNodeContainer<PathArgument, NormalizedNode>) oldData,
-                (DistinctNodeContainer<PathArgument, NormalizedNode>) newData);
-        }
-        return new ReplaceLeafCandidateNode(oldData, newData);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static @NonNull DataTreeCandidateNode writeNode(final NormalizedNode data) {
-        if (data instanceof DistinctNodeContainer) {
-            return new RecursiveWriteCandidateNode((DistinctNodeContainer<PathArgument, NormalizedNode>) data);
-        }
-        return new WriteLeafCandidateNode(data);
+        return container == null ? null : ((DistinctNodeContainer<PathArgument, ?>) container).childByArg(identifier);
     }
 
     private abstract static class AbstractNodeIterator {

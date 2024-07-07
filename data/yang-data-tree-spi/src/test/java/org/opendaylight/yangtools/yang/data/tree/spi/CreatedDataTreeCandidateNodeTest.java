@@ -27,12 +27,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
-class NormalizedNodeDataTreeCandidateNodeTest {
+class CreatedDataTreeCandidateNodeTest {
     @Test
     void testNormalizedNodeDataTreeCandidateNode() {
         final var mockedNormalizedNode = mock(LeafNode.class);
-        final var normalizedNodeDataTreeCandidateNode = new
-                NormalizedNodeDataTreeCandidateNode(mockedNormalizedNode);
+        final var normalizedNodeDataTreeCandidateNode = CreatedDataTreeCandidateNode.of(mockedNormalizedNode);
 
         final var mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
         doReturn(mockedPathArgument).when(mockedNormalizedNode).name();
@@ -49,8 +48,7 @@ class NormalizedNodeDataTreeCandidateNodeTest {
         assertNull(normalizedNodeDataTreeCandidateNode.dataBefore());
 
         final var mockedNormalizedNodeContainer = mock(ContainerNode.class);
-        final var normalizedNodeDataTreeCandidateNode2 = new
-                NormalizedNodeDataTreeCandidateNode(mockedNormalizedNodeContainer);
+        final var normalizedNodeDataTreeCandidateNode2 = CreatedDataTreeCandidateNode.of(mockedNormalizedNodeContainer);
         final var mockedChildNormNode1 = mock(LeafNode.class);
         final var mockedChildNormNode2 = mock(LeafNode.class);
         final var mockedChildNodes = Arrays.asList(mockedChildNormNode1, mockedChildNormNode2, null);
