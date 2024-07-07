@@ -9,18 +9,20 @@ package org.opendaylight.yangtools.yang.data.tree.spi;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
-final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
+final class EmptyDataTreeCandidateNode extends AbstractDataTreeCandidateNode {
     private final @NonNull PathArgument name;
 
     EmptyDataTreeCandidateNode(final PathArgument name) {
+        super(ModificationType.UNMODIFIED);
         this.name = requireNonNull(name);
     }
 
@@ -31,17 +33,12 @@ final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
 
     @Override
     public Collection<DataTreeCandidateNode> childNodes() {
-        return ImmutableList.of();
+        return List.of();
     }
 
     @Override
     public DataTreeCandidateNode modifiedChild(final PathArgument childName) {
         return null;
-    }
-
-    @Override
-    public ModificationType modificationType() {
-        return ModificationType.UNMODIFIED;
     }
 
     @Override
@@ -52,5 +49,10 @@ final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
     @Override
     public NormalizedNode dataBefore() {
         return null;
+    }
+
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper;
     }
 }

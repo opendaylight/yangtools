@@ -58,7 +58,7 @@ class DataTreeCandidatesTest {
 
         assertInstanceOf(DefaultDataTreeCandidate.class, dataTreeCandidate);
         assertSame(YangInstanceIdentifier.of(), dataTreeCandidate.getRootPath());
-        assertInstanceOf(NormalizedNodeDataTreeCandidateNode.class, dataTreeCandidate.getRootNode());
+        assertInstanceOf(CreatedDataTreeCandidateNode.class, dataTreeCandidate.getRootNode());
     }
 
     @Test
