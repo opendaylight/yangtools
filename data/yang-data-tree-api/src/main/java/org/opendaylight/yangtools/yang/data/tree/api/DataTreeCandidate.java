@@ -80,6 +80,12 @@ public interface DataTreeCandidate {
         @Deprecated(since = "14.0.0", forRemoval = true)
         ModificationType modificationType();
 
+        /**
+         * Return this {@link CandidateNode} as a legacy {@link DataTreeCandidateNode}.
+         */
+        @Deprecated(since = "14.0.0", forRemoval = true)
+        DataTreeCandidateNode toLegacy();
+
         non-sealed interface Appeared extends WithDataAfter, WithChildren {
             @Override
             @Deprecated(since = "14.0.0", forRemoval = true)
