@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -20,20 +21,21 @@ import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
-import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
+import org.opendaylight.yangtools.yang.data.tree.spi.AbstractDataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.spi.DataTreeCandidateNodes;
 
-abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandidateNode {
+abstract class AbstractModifiedNodeBasedCandidateNode extends AbstractDataTreeCandidateNode {
     private final ModifiedNode mod;
     private final TreeNode newMeta;
     private final TreeNode oldMeta;
 
     protected AbstractModifiedNodeBasedCandidateNode(final ModifiedNode mod, final TreeNode oldMeta,
             final TreeNode newMeta) {
+        super(verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod));
         this.newMeta = newMeta;
         this.oldMeta = oldMeta;
-        this.mod = requireNonNull(mod);
+        this.mod = mod;
     }
 
     protected final ModifiedNode getMod() {
@@ -93,11 +95,6 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
-    public ModificationType modificationType() {
-        return verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
-    }
-
-    @Override
     public final NormalizedNode dataBefore() {
         return data(oldMeta);
     }
@@ -148,7 +145,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName() + "{mod = " + mod + ", oldMeta = " + oldMeta + ", newMeta = " + newMeta + "}";
+    protected final ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.omitNullValues().add("oldMeta", oldMeta).add("newMeta", newMeta);
     }
 }
