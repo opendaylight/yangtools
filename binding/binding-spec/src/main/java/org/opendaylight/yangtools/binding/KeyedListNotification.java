@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import com.google.common.annotations.Beta;
-
 /**
  * An {@code notification} which is defined within the schema tree and is thus tied to a data tree instance and
  * additionally its parent is a {code list} with a {@code key} statement. A concrete KeyedListNotification and its
@@ -19,7 +17,6 @@ import com.google.common.annotations.Beta;
  * @param <T> Parent data tree instance type
  * @param <K> Parent data tree key type
  */
-@Beta
 public interface KeyedListNotification<N extends KeyedListNotification<N, T, K>, T extends EntryObject<T, K>,
     K extends Key<T>> extends InstanceNotification<N, T> {
 

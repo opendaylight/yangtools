@@ -42,6 +42,12 @@ module opendaylight-test-notification {
             uses tree-fell-properties;
         }
 
+        grouping notif-grp {
+            notification in-grp;
+        }
+
+        uses notif-grp;
+
         list tree {
             leaf id {
                 type tree-id;
@@ -51,6 +57,8 @@ module opendaylight-test-notification {
             notification i-fell {
                 uses tree-fell-properties;
             }
+
+            uses notif-grp;
         }
     }
 }
