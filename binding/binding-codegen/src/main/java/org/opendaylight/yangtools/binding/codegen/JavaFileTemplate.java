@@ -19,7 +19,6 @@ import com.google.common.collect.ImmutableSortedSet;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -435,7 +434,8 @@ class JavaFileTemplate {
 //                    appendPath(sb.append("<i>"), def.getModule(), schema.getPath().getPathFromRoot());
 //                    sb.append("</i>\n");
 
-                    if (hasBuilderClass(schema)) {
+                    if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode
+                        || schema instanceof NotificationDefinition && !BindingTypes.isNotificationBody(genType)) {
                         final String builderName = genType.getName() + Naming.BUILDER_SUFFIX;
 
                         sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
@@ -518,11 +518,6 @@ class JavaFileTemplate {
 //        }
 //    }
 
-    private static boolean hasBuilderClass(final SchemaNode schemaNode) {
-        return schemaNode instanceof ContainerSchemaNode || schemaNode instanceof ListSchemaNode
-                || schemaNode instanceof NotificationDefinition;
-    }
-
     private static boolean isSameProperty(final String getterName1, final String getterName2) {
         return propertyNameFromGetter(getterName1).equals(propertyNameFromGetter(getterName2));
     }
@@ -535,11 +530,11 @@ class JavaFileTemplate {
      */
     private static Set<BuilderGeneratedProperty> propertiesFromMethods(final Collection<MethodSignature> methods) {
         if (methods == null || methods.isEmpty()) {
-            return Collections.emptySet();
+            return Set.of();
         }
-        final Set<BuilderGeneratedProperty> result = new LinkedHashSet<>();
-        for (MethodSignature m : methods) {
-            final BuilderGeneratedProperty createdField = propertyFromGetter(m);
+        final var result = new LinkedHashSet<BuilderGeneratedProperty>();
+        for (var method : methods) {
+            final var createdField = propertyFromGetter(method);
             if (createdField != null) {
                 result.add(createdField);
             }
