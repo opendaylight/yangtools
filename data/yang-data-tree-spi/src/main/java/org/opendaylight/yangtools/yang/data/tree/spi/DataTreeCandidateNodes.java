@@ -33,16 +33,6 @@ public final class DataTreeCandidateNodes {
     }
 
     /**
-     * Return an empty {@link DataTreeCandidateNode} identified by specified {@link PathArgument}.
-     *
-     * @param identifier Node identifier
-     * @return An empty DataTreeCandidateNode
-     */
-    public static @NonNull DataTreeCandidateNode empty(final PathArgument identifier) {
-        return new EmptyDataTreeCandidateNode(identifier);
-    }
-
-    /**
      * Return an unmodified {@link DataTreeCandidateNode} identified by specified {@link NormalizedNode}.
      *
      * @param node Unchanged normalized node
