@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Grouping;
+import org.opendaylight.yangtools.binding.GroupingNotification;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
@@ -95,6 +96,7 @@ public final class BindingTypes {
     private static final ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
     private static final ConcreteType YANG_FEATURE = typeForClass(YangFeature.class);
     private static final ConcreteType YANG_DATA = typeForClass(YangData.class);
+    private static final ConcreteType GROUPING_NOTIFICATION = typeForClass(GroupingNotification.class);
 
     private BindingTypes() {
         //  Hidden on purpose
@@ -137,6 +139,17 @@ public final class BindingTypes {
      */
     public static ParameterizedType notification(final Type concreteType) {
         return parameterizedTypeFor(NOTIFICATION, concreteType);
+    }
+
+    /**
+     * Type specializing {@link GroupingNotification} for a particular type.
+     *
+     * @param concreteType The concrete type of this notification
+     * @return A parameterized type corresponding to {@code GroupingNotification<ConcreteType>}
+     * @throws NullPointerException if {@code parent} is {@code null}
+     */
+    public static ParameterizedType instanceNotification(final Type concreteType) {
+        return parameterizedTypeFor(GROUPING_NOTIFICATION, concreteType);
     }
 
     /**

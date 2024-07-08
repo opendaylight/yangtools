@@ -15,7 +15,7 @@ package org.opendaylight.yangtools.binding;
  *   <li>{@code input} based on {@link RpcInput}</li>
  *   <li>{@code output} based on {@link RpcOutput}</li>
  *   <li>{@code notification} based on {@link BaseNotification}, either {@link Notification} or
- *       {@link InstanceNotification}</li>
+ *       {@link InstanceNotification}, potentially with a shared {@link GroupingNotification} definition</li>
  *   <li>{@code container}, {@code list} and {@code case} based on {@link DataObject}</li>
  *   <li>a {@code module}'s data schema nodes based on {@link DataRoot}
  *   <li>{@code rc:yang-data} based on {@link YangData}
