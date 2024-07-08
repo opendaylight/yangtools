@@ -28,19 +28,42 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 @NonNullByDefault
 public interface DataTreeCandidate {
     /**
+     * Get the root {@link CandidateNode}.
+     *
+     * @return the root {@link CandidateNode}
+     */
+    CandidateNode rootNode();
+
+    /**
      * Get the candidate tree root node.
      *
      * @return Candidate tree root node
+     * @deprecated Use {@link #rootNode()} instead.
      */
-    DataTreeCandidateNode getRootNode();
+    @Deprecated(since = "14.0.0")
+    default DataTreeCandidateNode getRootNode() {
+        return rootNode().toLegacy();
+    }
+
+    /**
+     * Get the candidate tree root path. This is the path of the root node relative to the root of InstanceIdentifier
+     * namespace.
+     *
+     * @return Relative path of the root node
+     */
+    YangInstanceIdentifier rootPath();
 
     /**
      * Get the candidate tree root path. This is the path of the root node
      * relative to the root of InstanceIdentifier namespace.
      *
      * @return Relative path of the root node
+     * @deprecated Use {@link #rootPath()} instead
      */
-    YangInstanceIdentifier getRootPath();
+    @Deprecated(since = "14.0.0")
+    default YangInstanceIdentifier getRootPath() {
+        return rootPath();
+    }
 
     /**
      * {@inheritDoc}
@@ -77,7 +100,7 @@ public interface DataTreeCandidate {
          *
          * @return a {@link DataTreeCandidateNode}
          */
-        @Deprecated(since = "14.0.0", forRemoval = true)
+        @Deprecated(since = "14.0.0")
         DataTreeCandidateNode toLegacy();
 
         /**

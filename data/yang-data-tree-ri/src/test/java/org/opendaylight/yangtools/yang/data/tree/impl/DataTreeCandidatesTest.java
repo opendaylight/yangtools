@@ -75,14 +75,13 @@ class DataTreeCandidatesTest extends AbstractTestModelTest {
 
         final var newModification = dataTree.takeSnapshot().newModification();
         final var newCandidate = DataTreeCandidates.newDataTreeCandidate(TestModel.INNER_CONTAINER_PATH,
-            candidate.getRootNode());
+            candidate.rootNode());
 
         // lets see if getting the identifier of the root node throws an exception
         assertThrows(IllegalStateException.class, () ->  newCandidate.getRootNode().name());
 
         // lets see if we can apply this rooted candidate to a new dataTree
-        DataTreeCandidates.applyToModification(newModification,
-                newCandidate);
+        DataTreeCandidates.applyToModification(newModification, newCandidate);
 
         final var readLeaf = (LeafNode<?>) newModification.readNode(TestModel.INNER_VALUE_PATH).orElseThrow();
         assertEquals(readLeaf, leaf);
