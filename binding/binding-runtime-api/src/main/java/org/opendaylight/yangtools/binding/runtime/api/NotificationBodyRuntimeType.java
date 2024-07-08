@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.binding.runtime.api;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
- * A {@link RuntimeType} associated with a {@code notification} statement defined in a {@code grouping}.
+ * A {@link RuntimeType} associated with a {@code notification} statement.
  */
-public interface NotificationRuntimeType extends CompositeRuntimeType {
+public interface NotificationBodyRuntimeType extends AugmentableRuntimeType {
     @Override
     NotificationEffectiveStatement statement();
 }

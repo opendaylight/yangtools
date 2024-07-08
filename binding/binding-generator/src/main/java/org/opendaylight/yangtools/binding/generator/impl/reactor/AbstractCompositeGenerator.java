@@ -557,6 +557,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 case NotificationEffectiveStatement notification -> {
                     if (!isAugmenting(notification)) {
                         tmp.add(switch (this) {
+                            case GroupingGenerator grouping -> new NotificationBodyGenerator(notification, grouping);
                             case ModuleGenerator module -> new NotificationGenerator(notification, module);
                             case ListGenerator listGen -> {
                                 final var keyGen = listGen.keyGenerator();
