@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -18,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <N> Concrete notification type
  * @param <T> Parent data tree instance type
  */
-@Beta
 public non-sealed interface InstanceNotification<N extends InstanceNotification<N, T>, T extends DataObject>
         extends BaseNotification {
     @Override
