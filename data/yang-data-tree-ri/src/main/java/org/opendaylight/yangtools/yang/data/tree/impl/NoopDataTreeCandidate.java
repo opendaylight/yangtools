@@ -56,6 +56,11 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
         public DataTreeCandidateNode modifiedChild(final PathArgument identifier) {
             return null;
         }
+
+        @Override
+        public CandidateNode toModern() {
+            throw new IllegalStateException("Attempted to convert  the no-operation change");
+        }
     };
 
     private final @NonNull TreeNode afterRoot;

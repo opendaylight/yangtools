@@ -17,12 +17,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode.Deleted;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
 /**
- * A {@link DataTreeCandidateNode} corresponding to {@link DataTreeCandidate.CandidateNode.Deleted}.
+ * A {@link DataTreeCandidateNode} corresponding to {@link Deleted}.
  */
 abstract sealed class DeletedDataTreeCandidateNode<T extends NormalizedNode> extends AbstractDataTreeCandidateNode {
     private static final class Leaf extends DeletedDataTreeCandidateNode<NormalizedNode> {
@@ -84,6 +84,11 @@ abstract sealed class DeletedDataTreeCandidateNode<T extends NormalizedNode> ext
     @Override
     public final T dataAfter() {
         return null;
+    }
+
+    @Override
+    public final Deleted toModern() {
+        return ImmutableCandidateNodes.deleted(dataBefore);
     }
 
     @Override
