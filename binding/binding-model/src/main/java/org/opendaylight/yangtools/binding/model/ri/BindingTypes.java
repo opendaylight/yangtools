@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
+import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
@@ -87,9 +88,10 @@ public final class BindingTypes {
     private static final ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
     private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
+    private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
+    private static final ConcreteType NOTIFICATION_BODY = typeForClass(NotificationBody.class);
     private static final ConcreteType OBJECT_REFERENCE = typeForClass(DataObjectIdentifier.class);
     private static final ConcreteType OBJECT_REFERENCE_WITH_KEY = typeForClass(DataObjectIdentifier.WithKey.class);
-    private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
     private static final ConcreteType RPC = typeForClass(Rpc.class);
     private static final ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
@@ -137,6 +139,17 @@ public final class BindingTypes {
      */
     public static ParameterizedType notification(final Type concreteType) {
         return parameterizedTypeFor(NOTIFICATION, concreteType);
+    }
+
+    /**
+     * Type specializing {@link NotificationBody} for a particular type.
+     *
+     * @param concreteType The concrete type of this notification
+     * @return A parameterized type corresponding to {@code NotificationBody<ConcreteType>}
+     * @throws NullPointerException if {@code parent} is {@code null}
+     */
+    public static ParameterizedType notificationBody(final Type concreteType) {
+        return parameterizedTypeFor(NOTIFICATION_BODY, concreteType);
     }
 
     /**

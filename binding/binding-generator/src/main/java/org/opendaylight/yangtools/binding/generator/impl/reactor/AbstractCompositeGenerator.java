@@ -556,15 +556,24 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 }
                 case NotificationEffectiveStatement notification -> {
                     if (!isAugmenting(notification)) {
-                        tmp.add(switch (this) {
-                            case ModuleGenerator module -> new NotificationGenerator(notification, module);
+                        switch (this) {
+                            case GroupingGenerator grouping -> {
+                                if (!isAddedByUses(notification)) {
+                                    tmp.add(new NotificationBodyGenerator(notification, grouping));
+                                }
+                            }
                             case ListGenerator listGen -> {
                                 final var keyGen = listGen.keyGenerator();
-                                yield keyGen != null ? new KeyedListNotificationGenerator(notification, listGen, keyGen)
-                                    : new InstanceNotificationGenerator(notification, this);
+                                tmp.add(keyGen == null ? new InstanceNotificationGenerator(notification, this)
+                                    : new KeyedListNotificationGenerator(notification, listGen, keyGen));
                             }
-                            default -> new InstanceNotificationGenerator(notification, this);
-                        });
+                            case ModuleGenerator module -> {
+                                tmp.add(new NotificationGenerator(notification, module));
+                            }
+                            default -> {
+                                tmp.add(new InstanceNotificationGenerator(notification, this));
+                            }
+                        }
                     }
                 }
                 case OutputEffectiveStatement output -> {
