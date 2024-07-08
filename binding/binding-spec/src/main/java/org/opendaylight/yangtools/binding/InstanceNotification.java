@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <T> Parent data tree instance type
  */
 @Beta
-public non-sealed interface InstanceNotification<N extends InstanceNotification<N, T>, T extends DataObject>
+public non-sealed interface InstanceNotification<N extends InstanceNotification<N, T>, T extends DataContainer>
         extends BaseNotification {
     @Override
     @NonNull Class<N> implementedInterface();
