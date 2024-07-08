@@ -22,7 +22,7 @@ abstract class AbstractDataTreeCandidate extends AbstractDataTreeTip implements 
     }
 
     @Override
-    public final YangInstanceIdentifier getRootPath() {
+    public final YangInstanceIdentifier rootPath() {
         return rootPath;
     }
 }

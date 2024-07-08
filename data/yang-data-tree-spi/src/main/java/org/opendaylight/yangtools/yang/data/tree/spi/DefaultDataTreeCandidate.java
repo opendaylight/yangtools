@@ -10,35 +10,34 @@ package org.opendaylight.yangtools.yang.data.tree.spi;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
-import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 
 /**
  * Default utility implementation of the {@link DataTreeCandidate} contract.
  */
 final class DefaultDataTreeCandidate implements DataTreeCandidate {
-    private final YangInstanceIdentifier rootPath;
-    private final DataTreeCandidateNode rootNode;
+    private final @NonNull YangInstanceIdentifier rootPath;
+    private final @NonNull CandidateNode rootNode;
 
-    DefaultDataTreeCandidate(final YangInstanceIdentifier rootPath, final DataTreeCandidateNode rootNode) {
+    DefaultDataTreeCandidate(final YangInstanceIdentifier rootPath, final CandidateNode rootNode) {
         this.rootPath = requireNonNull(rootPath);
         this.rootNode = requireNonNull(rootNode);
     }
 
     @Override
-    public DataTreeCandidateNode getRootNode() {
+    public CandidateNode rootNode() {
         return rootNode;
     }
 
     @Override
-    public YangInstanceIdentifier getRootPath() {
+    public YangInstanceIdentifier rootPath() {
         return rootPath;
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("rootPath", getRootPath()).add("rootNode", getRootNode())
-            .toString();
+        return MoreObjects.toStringHelper(this).add("rootPath", rootPath()).add("rootNode", rootNode()).toString();
     }
 }

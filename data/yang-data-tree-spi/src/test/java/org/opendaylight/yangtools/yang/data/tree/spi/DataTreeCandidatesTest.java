@@ -39,15 +39,16 @@ class DataTreeCandidatesTest {
 
     @Test
     void testNewDataTreeCandidate() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        final var mockedNormalizedNode = mock(LeafNode.class);
+        final var mockedDataTreeCandidateNode = ImmutableCandidateNodes.deleted(mockedNormalizedNode);
         final var dataTreeCandidate = DataTreeCandidates.newDataTreeCandidate(
             YangInstanceIdentifier.of(), mockedDataTreeCandidateNode);
 
         assertInstanceOf(DefaultDataTreeCandidate.class, dataTreeCandidate);
-        assertSame(YangInstanceIdentifier.of(), dataTreeCandidate.getRootPath());
-        assertEquals(mockedDataTreeCandidateNode, dataTreeCandidate.getRootNode());
-        assertTrue(dataTreeCandidate.toString()
-                .contains("DefaultDataTreeCandidate{rootPath=/, rootNode=Mock for DataTreeCandidateNode, hashCode: "));
+        assertSame(YangInstanceIdentifier.of(), dataTreeCandidate.rootPath());
+        assertEquals(mockedDataTreeCandidateNode, dataTreeCandidate.rootNode());
+        assertTrue(dataTreeCandidate.toString().contains(
+            "DefaultDataTreeCandidate{rootPath=/, rootNode=DeletedImpl[dataBefore=Mock for LeafNode, hashCode: "));
     }
 
     @Test
