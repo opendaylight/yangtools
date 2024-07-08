@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode;
 
 /**
  * A single node within a {@link DataTreeCandidate}. The nodes are organized in tree hierarchy, reflecting
@@ -141,4 +142,11 @@ public interface DataTreeCandidateNode {
     default @NonNull NormalizedNode getDataAfter() {
         return verifyNotNull(dataAfter(), "No after-image available");
     }
+
+    /**
+     * Convert this object into a {@link CandidateNode}.
+     *
+     * @return an equivalent {@link CandidateNode}
+     */
+    @NonNull CandidateNode toModern();
 }

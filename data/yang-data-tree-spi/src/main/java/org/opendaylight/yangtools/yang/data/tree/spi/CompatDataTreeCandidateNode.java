@@ -63,6 +63,11 @@ final class CompatDataTreeCandidateNode<T extends CandidateNode & WithChildren> 
     }
 
     @Override
+    public CandidateNode toModern() {
+        return node;
+    }
+
+    @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper.add("delegate", node);
     }

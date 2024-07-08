@@ -19,8 +19,10 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
+import org.opendaylight.yangtools.yang.data.tree.spi.ImmutableCandidateNodes.WithChildrenImpl;
 
 /**
  * Abstract base class for {@link DataTreeCandidateNode} implementations.
@@ -35,6 +37,32 @@ public abstract class AbstractDataTreeCandidateNode implements DataTreeCandidate
     @Override
     public final ModificationType modificationType() {
         return modificationType;
+    }
+
+    @Override
+    public CandidateNode toModern() {
+        return toModern(this);
+    }
+
+    protected static final @NonNull CandidateNode toModern(final DataTreeCandidateNode node) {
+        return switch (node.modificationType()) {
+            case APPEARED -> ImmutableCandidateNodes.appeared(node.getDataAfter(), modernChildren(node));
+            case DELETE -> ImmutableCandidateNodes.deleted(node.getDataBefore());
+            case DISAPPEARED -> ImmutableCandidateNodes.disappeared(node.getDataBefore(), modernChildren(node));
+            case SUBTREE_MODIFIED ->
+                ImmutableCandidateNodes.modified(node.getDataBefore(), node.getDataAfter(), modernChildren(node));
+            case UNMODIFIED -> ImmutableCandidateNodes.unmodified(node.getDataAfter());
+            case WRITE -> {
+                final var dataBefore = node.dataBefore();
+                final var dataAfter = node.getDataAfter();
+                yield dataBefore != null ? ImmutableCandidateNodes.replaced(dataBefore, dataAfter)
+                    : ImmutableCandidateNodes.created(dataAfter);
+            }
+        };
+    }
+
+    private static @NonNull WithChildrenImpl modernChildren(final DataTreeCandidateNode node) {
+        return WithChildrenImpl.of(Collections2.transform(node.childNodes(), DataTreeCandidateNode::toModern));
     }
 
     @Override

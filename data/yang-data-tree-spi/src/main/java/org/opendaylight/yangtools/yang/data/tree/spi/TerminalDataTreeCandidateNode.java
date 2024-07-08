@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 
@@ -68,6 +69,11 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
     @Override
     public ModificationType modificationType() {
         return requireNonNull(modificationType);
+    }
+
+    @Override
+    public CandidateNode toModern() {
+        return AbstractDataTreeCandidateNode.toModern(this);
     }
 
     @Override
