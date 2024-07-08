@@ -42,17 +42,26 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
+    ClassPlacement classPlacement() {
+        return ClassPlacement.TOP_LEVEL;
+    }
+
+    @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
-
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         builder.addImplementsType(notificationType(builder, builderFactory));
 
-        addAugmentable(builder);
-        addUsesInterfaces(builder, builderFactory);
+        final var orig = getOriginal();
+        if (equals(orig)) {
+            addUsesInterfaces(builder, builderFactory);
+            addGetterMethods(builder, builderFactory);
+        } else {
+            builder.addImplementsType(orig.getGeneratedType(builderFactory));
+        }
 
+        addAugmentable(builder);
         addConcreteInterfaceMethods(builder);
-        addGetterMethods(builder, builderFactory);
 
         final var module = currentModule();
         module.addQNameConstant(builder, localName());
