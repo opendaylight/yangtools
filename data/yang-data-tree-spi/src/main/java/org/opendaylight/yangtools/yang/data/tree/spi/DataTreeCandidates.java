@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
@@ -41,13 +42,13 @@ public final class DataTreeCandidates {
     }
 
     public static @NonNull DataTreeCandidate newDataTreeCandidate(final YangInstanceIdentifier rootPath,
-                                                                  final DataTreeCandidateNode rootNode) {
+            final CandidateNode rootNode) {
         return new DefaultDataTreeCandidate(rootPath, rootNode);
     }
 
     public static @NonNull DataTreeCandidate fromNormalizedNode(final YangInstanceIdentifier rootPath,
-                                                                final NormalizedNode node) {
-        return new DefaultDataTreeCandidate(rootPath, CreatedDataTreeCandidateNode.of(node));
+            final NormalizedNode node) {
+        return new DefaultDataTreeCandidate(rootPath, ImmutableCandidateNodes.created(node));
     }
 
     public static void applyToCursor(final DataTreeModificationCursor cursor, final DataTreeCandidate candidate) {
@@ -109,11 +110,11 @@ public final class DataTreeCandidates {
         final var roots = new ArrayList<DataTreeCandidateNode>(candidates.size());
         roots.add(first.getRootNode());
         it.forEachRemaining(candidate -> {
-            final var root = candidate.getRootPath();
+            final var root = candidate.rootPath();
             checkArgument(rootPath.equals(root), "Expecting root path %s, encountered %s", rootPath, root);
             roots.add(candidate.getRootNode());
         });
-        return DataTreeCandidates.newDataTreeCandidate(rootPath, fastCompressNode(roots.get(0), roots));
+        return DataTreeCandidates.newDataTreeCandidate(rootPath, fastCompressNode(roots.get(0), roots).toModern());
     }
 
     private static DataTreeCandidateNode fastCompressNode(final DataTreeCandidateNode first,

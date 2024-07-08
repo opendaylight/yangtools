@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate.CandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
@@ -39,13 +40,13 @@ class DataTreeCandidatesTest {
 
     @Test
     void testNewDataTreeCandidate() {
-        final var mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
+        final var mockedDataTreeCandidateNode = mock(CandidateNode.class);
         final var dataTreeCandidate = DataTreeCandidates.newDataTreeCandidate(
             YangInstanceIdentifier.of(), mockedDataTreeCandidateNode);
 
         assertInstanceOf(DefaultDataTreeCandidate.class, dataTreeCandidate);
-        assertSame(YangInstanceIdentifier.of(), dataTreeCandidate.getRootPath());
-        assertEquals(mockedDataTreeCandidateNode, dataTreeCandidate.getRootNode());
+        assertSame(YangInstanceIdentifier.of(), dataTreeCandidate.rootPath());
+        assertEquals(mockedDataTreeCandidateNode, dataTreeCandidate.rootNode());
         assertTrue(dataTreeCandidate.toString()
                 .contains("DefaultDataTreeCandidate{rootPath=/, rootNode=Mock for DataTreeCandidateNode, hashCode: "));
     }
