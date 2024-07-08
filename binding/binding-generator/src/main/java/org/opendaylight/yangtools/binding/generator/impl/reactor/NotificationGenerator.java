@@ -81,12 +81,14 @@ final class NotificationGenerator
     }
 
     private Type notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        final AbstractCompositeGenerator<?, ?> parent = getParent();
+        final var parent = getParent();
         if (parent instanceof ModuleGenerator) {
             return BindingTypes.notification(builder);
+        } else if (parent instanceof GroupingGenerator) {
+            return BindingTypes.groupingNotification(null);
         }
 
-        final Type parentType = Type.of(parent.typeName());
+        final var parentType = Type.of(parent.typeName());
         if (parent instanceof ListGenerator listGen) {
             final KeyGenerator keyGen = listGen.keyGenerator();
             if (keyGen != null) {
