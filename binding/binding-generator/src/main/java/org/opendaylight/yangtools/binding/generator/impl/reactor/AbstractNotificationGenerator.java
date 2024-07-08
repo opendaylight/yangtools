@@ -33,16 +33,16 @@ abstract class AbstractNotificationGenerator
 
     static final AbstractNotificationGenerator of(final NotificationEffectiveStatement statement,
             final AbstractCompositeGenerator<?, ?> parent) {
-        if (parent instanceof ModuleGenerator module) {
-            return new NotificationGenerator(statement, module);
-        }
-        if (parent instanceof ListGenerator listGen) {
-            final var keyGen = listGen.keyGenerator();
-            if (keyGen != null) {
-                return new KeyedListNotificationGenerator(statement, listGen, keyGen);
+        return switch (parent) {
+            case GroupingGenerator grouping -> new GroupingNotificationGenerator(statement, grouping);
+            case ModuleGenerator module -> new NotificationGenerator(statement, module);
+            case ListGenerator listGen -> {
+                final var keyGen = listGen.keyGenerator();
+                yield keyGen != null ? new KeyedListNotificationGenerator(statement, listGen, keyGen)
+                    : new InstanceNotificationGenerator(statement, listGen);
             }
-        }
-        return new InstanceNotificationGenerator(statement, parent);
+            default -> new InstanceNotificationGenerator(statement, parent);
+        };
     }
 
     @Override
