@@ -13,6 +13,7 @@ import java.util.Collections;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.ThirdParty;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ContainerWithUsesBuilder;
@@ -41,7 +42,7 @@ public class CaseSubstitutionTest extends AbstractBindingCodecTest {
             .build();
     private static final DataObjectIdentifier<TreeComplexUsesAugment> BA_TREE_COMPLEX_USES =
         BA_TOP_LEVEL_LIST.toBuilder().augmentation(TreeComplexUsesAugment.class).build();
-    private static final QName SIMPLE_VALUE_QNAME = QName.create(TreeComplexUsesAugment.QNAME, "simple-value");
+    private static final QName SIMPLE_VALUE_QNAME = QName.create(ThirdParty.QNAME, "simple-value");
 
     @Test
     public void choiceInGroupingSubstituted() {
