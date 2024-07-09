@@ -556,7 +556,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 }
                 case NotificationEffectiveStatement notification -> {
                     if (!isAugmenting(notification)) {
-                        tmp.add(new NotificationGenerator(notification, this));
+                        tmp.add(AbstractNotificationGenerator.of(notification, this));
                     }
                 }
                 case OutputEffectiveStatement output -> {
