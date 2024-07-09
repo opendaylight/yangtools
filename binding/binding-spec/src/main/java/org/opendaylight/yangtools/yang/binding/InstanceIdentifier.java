@@ -592,16 +592,20 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * @param <T> Instance identifier target type
      */
     public abstract static sealed class Builder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
-        Builder(final Builder<?> prev, final DataObjectStep<?> item) {
-            super(prev, item);
+        Builder(final Builder<?> prev) {
+            super(prev);
         }
 
         Builder(final InstanceIdentifier<T> identifier) {
             super(identifier);
         }
 
-        Builder(final DataObjectStep<?> item, final boolean wildcard) {
-            super(item, wildcard);
+        Builder(final DataObjectStep<?> item) {
+            super(item);
+        }
+
+        Builder(final ExactDataObjectStep<?> item) {
+            super(item);
         }
 
         @Override
@@ -647,15 +651,15 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     public static final class KeyedBuilder<T extends EntryObject<T, K>, K extends Key<T>> extends Builder<T>
             implements DataObjectReference.Builder.WithKey<T, K> {
         KeyedBuilder(final KeyStep<K, T> firstStep) {
-            super(firstStep, false);
+            super(firstStep);
         }
 
         KeyedBuilder(final KeyedInstanceIdentifier<T, K> identifier) {
             super(identifier);
         }
 
-        private KeyedBuilder(final RegularBuilder<?> prev, final KeyStep<K, T> lastStep) {
-            super(prev, lastStep);
+        private KeyedBuilder(final RegularBuilder<?> prev) {
+            super(prev);
         }
 
         /**
@@ -670,7 +674,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
         @Override
         protected <X extends DataObject> @NonNull RegularBuilder<X> append(final DataObjectStep<X> step) {
-            return new RegularBuilder<>(this, step);
+            return new RegularBuilder<X>(this).append(step);
         }
 
         @Override
@@ -683,15 +687,15 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
 
     private static final class RegularBuilder<T extends DataObject> extends Builder<T> {
         RegularBuilder(final DataObjectStep<T> item) {
-            super(item, !(item instanceof ExactDataObjectStep));
+            super(item);
         }
 
         RegularBuilder(final InstanceIdentifier<T> identifier) {
             super(identifier);
         }
 
-        private RegularBuilder(final KeyedBuilder<?, ?> prev, final DataObjectStep<T> item) {
-            super(prev, item);
+        private RegularBuilder(final KeyedBuilder<?, ?> prev) {
+            super(prev);
         }
 
         @Override
@@ -709,7 +713,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         @Override
         protected <X extends EntryObject<X, Y>, Y extends Key<X>> KeyedBuilder<X, Y> append(
                 final KeyStep<Y, X> item) {
-            return new KeyedBuilder<>(this, item);
+            return new KeyedBuilder<>(this).append(item);
         }
     }
 }

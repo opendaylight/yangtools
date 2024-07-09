@@ -38,8 +38,8 @@ public final class DataObjectIdentifierWithKey<T extends EntryObject<T, K>, K ex
     }
 
     @Override
-    public DataObjectReferenceBuilderWithKey<T, K> toBuilder() {
-        return new DataObjectReferenceBuilderWithKey<>(this);
+    public DataObjectIdentifierBuilderWithKey<T, K> toBuilder() {
+        return new DataObjectIdentifierBuilderWithKey<>(this);
     }
 
     @Override

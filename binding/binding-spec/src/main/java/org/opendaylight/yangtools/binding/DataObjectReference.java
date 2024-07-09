@@ -56,7 +56,8 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      *
      * @param <T> type of {@link DataObject} held in the last step.
      */
-    sealed interface Builder<T extends DataObject> permits Builder.WithKey, AbstractDataObjectReferenceBuilder {
+    sealed interface Builder<T extends DataObject>
+            permits Builder.WithKey, DataObjectIdentifier.Builder, AbstractDataObjectReferenceBuilder {
         /**
          * A builder of {@link DataObjectReference.WithKey} objects.
          *
@@ -64,7 +65,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @param <K> {@link Key} type
          */
         sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>> extends Builder<T>
-                permits DataObjectReferenceBuilderWithKey, KeyedBuilder {
+                permits DataObjectIdentifier.Builder.WithKey, DataObjectReferenceBuilderWithKey, KeyedBuilder {
             @Override
             DataObjectReference.WithKey<T, K> build();
         }

@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.binding.DataObjectReference.Builder;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
+import org.opendaylight.yangtools.binding.InexactDataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.NodeStep;
@@ -30,18 +31,17 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  * Base implementation of {@link Builder}.
  */
 public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataObject> implements Builder<T>
-        permits DataObjectReferenceBuilder, DataObjectReferenceBuilderWithKey, InstanceIdentifier.Builder {
+        permits AbstractDataObjectIdentifierBuilder, DataObjectReferenceBuilder, DataObjectReferenceBuilderWithKey,
+                InstanceIdentifier.Builder {
     private final ArrayList<@NonNull DataObjectStep<?>> pathBuilder;
     private final Iterable<? extends @NonNull DataObjectStep<?>> basePath;
 
     private boolean wildcard;
 
-    protected AbstractDataObjectReferenceBuilder(final AbstractDataObjectReferenceBuilder<?> prev,
-            final DataObjectStep<?> item) {
+    protected AbstractDataObjectReferenceBuilder(final AbstractDataObjectReferenceBuilder<?> prev) {
         pathBuilder = prev.pathBuilder;
         basePath = prev.basePath;
         wildcard = prev.wildcard;
-        appendItem(item);
     }
 
     protected AbstractDataObjectReferenceBuilder(final DataObjectReference<T> base) {
@@ -50,11 +50,18 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
         basePath = base.steps();
     }
 
-    protected AbstractDataObjectReferenceBuilder(final DataObjectStep<?> item, final boolean wildcard) {
+    protected AbstractDataObjectReferenceBuilder(final DataObjectStep<?> item) {
         pathBuilder = new ArrayList<>(4);
         basePath = null;
-        this.wildcard = wildcard;
-        appendItem(item);
+        pathBuilder.add(requireNonNull(item));
+        wildcard = item instanceof InexactDataObjectStep;
+    }
+
+    protected AbstractDataObjectReferenceBuilder(final ExactDataObjectStep<?> item) {
+        pathBuilder = new ArrayList<>(4);
+        basePath = null;
+        pathBuilder.add(requireNonNull(item));
+        wildcard = false;
     }
 
     @Override
@@ -99,10 +106,20 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     protected final void appendItem(final DataObjectStep<?> item) {
-        pathBuilder.add(requireNonNull(item));
-        if (!(item instanceof ExactDataObjectStep)) {
-            wildcard = true;
+        switch (item) {
+            case ExactDataObjectStep<?> exact -> appendItem(exact);
+            case InexactDataObjectStep<?> inexact -> appendItem(inexact);
         }
+    }
+
+    protected final void appendItem(final @NonNull ExactDataObjectStep<?> item) {
+        pathBuilder.add(item);
+    }
+
+    // see AbstractDataObjectIdentifierBuilder.appendItem()
+    protected void appendItem(final @NonNull InexactDataObjectStep<?> item) {
+        pathBuilder.add(item);
+        wildcard = true;
     }
 
     protected final @NonNull Iterable<? extends @NonNull DataObjectStep<?>> buildSteps() {

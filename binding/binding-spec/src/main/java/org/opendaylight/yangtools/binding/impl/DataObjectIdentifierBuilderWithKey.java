@@ -8,31 +8,30 @@
 package org.opendaylight.yangtools.binding.impl;
 
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.DataObjectReference;
-import org.opendaylight.yangtools.binding.DataObjectReference.Builder.WithKey;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier.Builder.WithKey;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-public final class DataObjectReferenceBuilderWithKey<T extends EntryObject<T, K>, K extends Key<T>>
-        extends AbstractDataObjectReferenceBuilder<T> implements WithKey<T, K> {
-    DataObjectReferenceBuilderWithKey(final DataObjectReferenceBuilder<?> prev) {
+public final class DataObjectIdentifierBuilderWithKey<T extends EntryObject<T, K>, K extends Key<T>>
+        extends AbstractDataObjectIdentifierBuilder<T> implements WithKey<T, K> {
+    DataObjectIdentifierBuilderWithKey(final DataObjectIdentifierBuilder<?> prev) {
         super(prev);
     }
 
-    DataObjectReferenceBuilderWithKey(final DataObjectReference.WithKey<T, K> base) {
+    DataObjectIdentifierBuilderWithKey(final DataObjectIdentifier.WithKey<T, K> base) {
         super(base);
     }
 
-    DataObjectReferenceBuilderWithKey(final KeyStep<K, T> item) {
+    DataObjectIdentifierBuilderWithKey(final KeyStep<K, T> item) {
         super(item);
     }
 
     @Override
-    public DataObjectReference.WithKey<T, K> build() {
-        final var steps = buildSteps();
-        return wildcard() ? new DataObjectReferenceWithKey<>(steps) : new DataObjectIdentifierWithKey<>(null, steps);
+    public DataObjectIdentifier.WithKey<T, K> build() {
+        return new DataObjectIdentifierWithKey<>(null, buildSteps());
     }
 
     @Override
@@ -42,9 +41,9 @@ public final class DataObjectReferenceBuilderWithKey<T extends EntryObject<T, K>
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
+    protected <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectIdentifierBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         appendItem(step);
-        return (DataObjectReferenceBuilderWithKey<X, Y>) this;
+        return (DataObjectIdentifierBuilderWithKey<X, Y>) this;
     }
 }

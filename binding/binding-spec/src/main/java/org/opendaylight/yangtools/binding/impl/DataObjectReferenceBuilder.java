@@ -15,16 +15,16 @@ import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 
 final class DataObjectReferenceBuilder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
-    DataObjectReferenceBuilder(final AbstractDataObjectReferenceBuilder<?> prev, final DataObjectStep<?> item) {
-        super(prev, item);
+    DataObjectReferenceBuilder(final AbstractDataObjectReferenceBuilder<?> prev) {
+        super(prev);
     }
 
     DataObjectReferenceBuilder(final DataObjectReference<T> base) {
         super(base);
     }
 
-    DataObjectReferenceBuilder(final DataObjectStep<?> item, final boolean wildcard) {
-        super(item, wildcard);
+    DataObjectReferenceBuilder(final DataObjectStep<?> item) {
+        super(item);
     }
 
     @Override
@@ -43,6 +43,6 @@ final class DataObjectReferenceBuilder<T extends DataObject> extends AbstractDat
     @Override
     protected <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
-        return new DataObjectReferenceBuilderWithKey<>(this, step);
+        return new DataObjectReferenceBuilderWithKey<X, Y>(this).append(step);
     }
 }

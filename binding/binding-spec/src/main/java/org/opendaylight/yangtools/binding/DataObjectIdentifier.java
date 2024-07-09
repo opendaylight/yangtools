@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.impl.AbstractDataObjectIdentifierBuilder;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierWithKey;
 
@@ -23,6 +24,30 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         extends DataObjectReference<T>, BindingInstanceIdentifier
         permits DataObjectIdentifier.WithKey, DataObjectIdentifierImpl {
     /**
+     * A builder of {@link DataObjectReference} objects.
+     *
+     * @param <T> type of {@link DataObject} held in the last step.
+     */
+    sealed interface Builder<T extends DataObject> extends DataObjectReference.Builder<T>
+            permits Builder.WithKey, AbstractDataObjectIdentifierBuilder {
+        /**
+         * A builder of {@link DataObjectReference.WithKey} objects.
+         *
+         * @param <T> type of {@link EntryObject} held in the last step.
+         * @param <K> {@link Key} type
+         */
+        non-sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>>
+                extends Builder<T>, DataObjectReference.Builder.WithKey<T, K>
+                /* permits DataObjectReferenceBuilderWithKey, KeyedBuilder */ {
+            @Override
+            DataObjectIdentifier.WithKey<T, K> build();
+        }
+
+        @Override
+        DataObjectIdentifier<T> build();
+    }
+
+    /**
      * A {@link DataObjectIdentifier} pointing to an {@link EntryObject}.
      *
      * @param <K> Key type
@@ -35,7 +60,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         KeyStep<K, T> lastStep();
 
         @Override
-        Builder.WithKey<T, K> toBuilder();
+        DataObjectIdentifier.Builder.WithKey<T, K> toBuilder();
     }
 
     static @NonNull DataObjectIdentifier<?> ofUnsafeSteps(
