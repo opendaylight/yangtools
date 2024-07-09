@@ -44,7 +44,7 @@ public class Mdsal732Test extends BaseCompilationTest {
             "        this._baz = CodeHelpers.checkListFieldCast(Foo.class, \"baz\", arg.getBaz());",
             "    }");
         FileSearchUtil.assertFileContainsConsecutiveLines(xyzzyBuilder, content,
-            "    public void fieldsFrom(DataObject arg) {",
+            "    public void fieldsFrom(final Grouping arg) {",
             "        boolean isValidArg = false;",
             "        if (arg instanceof Grp castArg) {",
             "            this._foo = CodeHelpers.checkFieldCast(Foo.class, \"foo\", castArg.getFoo());",

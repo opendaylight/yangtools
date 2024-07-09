@@ -68,7 +68,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static final String LEAF2_ASSIGNMENT = "this._leaf2 = arg.getLeaf2();";
 
-    private static final String TAB_FIELDS_FROM_SIGNATURE = TAB + "public void fieldsFrom(DataObject arg) {";
+    private static final String TAB_FIELDS_FROM_SIGNATURE = TAB + "public void fieldsFrom(final Grouping arg) {";
     private static final String TTAB_SET_IS_VALID_ARG_TRUE = TRIPLE_TAB + "isValidArg = true;";
     private static final String DTAB_INIT_IS_VALID_ARG_FALSE = DOUBLE_TAB + "boolean isValidArg = false;";
 

@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.codegen
 
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 import static extension org.opendaylight.yangtools.binding.codegen.GeneratorUtil.isNonPresenceContainer;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.DATA_OBJECT
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.GROUPING
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
@@ -211,7 +211,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «IF targetType.hasImplementsFromUses»
                 «val List<Type> done = targetType.getBaseIfcs»
                 «generateMethodFieldsFromComment(targetType)»
-                public void fieldsFrom(«DATA_OBJECT.importedName» arg) {
+                public void fieldsFrom(final «GROUPING.importedName» arg) {
                     boolean isValidArg = false;
                     «FOR impl : targetType.getAllIfcs»
                         «generateIfCheck(impl, done)»
