@@ -73,11 +73,8 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
         addUsesInterfaces(builder, builderFactory);
         addGetterMethods(builder, builderFactory);
 
-        final var module = currentModule();
-        module.addQNameConstant(builder, statement().argument());
-
         annotateDeprecatedIfNecessary(builder);
-        builderFactory.addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(currentModule(), statement(), builder);
 
         return builder.build();
     }
