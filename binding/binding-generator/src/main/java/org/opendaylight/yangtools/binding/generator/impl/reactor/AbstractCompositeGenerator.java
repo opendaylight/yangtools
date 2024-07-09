@@ -489,97 +489,119 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         final var tmpAug = new ArrayList<AbstractAugmentGenerator>();
 
         for (var stmt : statement.effectiveSubstatements()) {
-            if (stmt instanceof ActionEffectiveStatement action) {
-                if (!isAugmenting(action)) {
-                    tmp.add(new ActionGenerator(action, this));
+            switch (stmt) {
+                case ActionEffectiveStatement action -> {
+                    if (!isAugmenting(action)) {
+                        tmp.add(new ActionGenerator(action, this));
+                    }
                 }
-            } else if (stmt instanceof AnydataEffectiveStatement anydata) {
-                if (!isAugmenting(anydata)) {
-                    tmp.add(new OpaqueObjectGenerator.Anydata(anydata, this));
+                case AnydataEffectiveStatement anydata -> {
+                    if (!isAugmenting(anydata)) {
+                        tmp.add(new OpaqueObjectGenerator.Anydata(anydata, this));
+                    }
                 }
-            } else if (stmt instanceof AnyxmlEffectiveStatement anyxml) {
-                if (!isAugmenting(anyxml)) {
-                    tmp.add(new OpaqueObjectGenerator.Anyxml(anyxml, this));
+                case AnyxmlEffectiveStatement anyxml -> {
+                    if (!isAugmenting(anyxml)) {
+                        tmp.add(new OpaqueObjectGenerator.Anyxml(anyxml, this));
+                    }
                 }
-            } else if (stmt instanceof CaseEffectiveStatement cast) {
-                tmp.add(new CaseGenerator(cast, this));
-            } else if (stmt instanceof ChoiceEffectiveStatement choice) {
-                // FIXME: use isOriginalDeclaration() ?
-                if (!isAddedByUses(choice)) {
-                    tmp.add(new ChoiceGenerator(choice, this));
+                case CaseEffectiveStatement cast -> {
+                    tmp.add(new CaseGenerator(cast, this));
                 }
-            } else if (stmt instanceof ContainerEffectiveStatement container) {
-                if (isOriginalDeclaration(container)) {
-                    tmp.add(new ContainerGenerator(container, this));
+                case ChoiceEffectiveStatement choice -> {
+                    // FIXME: use isOriginalDeclaration() ?
+                    if (!isAddedByUses(choice)) {
+                        tmp.add(new ChoiceGenerator(choice, this));
+                    }
                 }
-            } else if (stmt instanceof FeatureEffectiveStatement feature && this instanceof ModuleGenerator parent) {
-                tmp.add(new FeatureGenerator(feature, parent));
-            } else if (stmt instanceof GroupingEffectiveStatement grouping) {
-                tmp.add(new GroupingGenerator(grouping, this));
-            } else if (stmt instanceof IdentityEffectiveStatement identity) {
-                tmp.add(new IdentityGenerator(identity, this));
-            } else if (stmt instanceof InputEffectiveStatement input) {
-                tmp.add(new InputGenerator(input, this));
-            } else if (stmt instanceof LeafEffectiveStatement leaf) {
-                if (!isAugmenting(leaf)) {
-                    tmp.add(new LeafGenerator(leaf, this));
+                case ContainerEffectiveStatement container -> {
+                    if (isOriginalDeclaration(container)) {
+                        tmp.add(new ContainerGenerator(container, this));
+                    }
                 }
-            } else if (stmt instanceof LeafListEffectiveStatement leafList) {
-                if (!isAugmenting(leafList)) {
-                    tmp.add(new LeafListGenerator(leafList, this));
+                case FeatureEffectiveStatement feature -> {
+                    if (this instanceof ModuleGenerator parent) {
+                        tmp.add(new FeatureGenerator(feature, parent));
+                    }
                 }
-            } else if (stmt instanceof ListEffectiveStatement list) {
-                if (isOriginalDeclaration(list)) {
-                    final var listGen = new ListGenerator(list, this);
-                    tmp.add(listGen);
+                case GroupingEffectiveStatement grouping -> {
+                    tmp.add(new GroupingGenerator(grouping, this));
+                }
+                case IdentityEffectiveStatement identity -> {
+                    tmp.add(new IdentityGenerator(identity, this));
+                }
+                case InputEffectiveStatement input -> {
+                    tmp.add(new InputGenerator(input, this));
+                }
+                case LeafEffectiveStatement leaf -> {
+                    if (!isAugmenting(leaf)) {
+                        tmp.add(new LeafGenerator(leaf, this));
+                    }
+                }
+                case LeafListEffectiveStatement leafList -> {
+                    if (!isAugmenting(leafList)) {
+                        tmp.add(new LeafListGenerator(leafList, this));
+                    }
+                }
+                case ListEffectiveStatement list -> {
+                    if (isOriginalDeclaration(list)) {
+                        final var listGen = new ListGenerator(list, this);
+                        tmp.add(listGen);
 
-                    final var keyGen = listGen.keyGenerator();
-                    if (keyGen != null) {
-                        tmp.add(keyGen);
+                        final var keyGen = listGen.keyGenerator();
+                        if (keyGen != null) {
+                            tmp.add(keyGen);
+                        }
                     }
                 }
-            } else if (stmt instanceof NotificationEffectiveStatement notification) {
-                if (!isAugmenting(notification)) {
-                    tmp.add(new NotificationGenerator(notification, this));
-                }
-            } else if (stmt instanceof OutputEffectiveStatement output) {
-                tmp.add(new OutputGenerator(output, this));
-            } else if (stmt instanceof RpcEffectiveStatement rpc) {
-                if (this instanceof ModuleGenerator module) {
-                    tmp.add(new RpcGenerator(rpc, module));
-                }
-            } else if (stmt instanceof TypedefEffectiveStatement typedef) {
-                tmp.add(new TypedefGenerator(typedef, this));
-            } else if (stmt instanceof AugmentEffectiveStatement augment) {
-                // FIXME: MDSAL-695: So here we are ignoring any augment which is not in a module, while the 'uses'
-                //                   processing takes care of the rest. There are two problems here:
-                //
-                //                   1) this could be an augment introduced through uses -- in this case we are picking
-                //                      confusing it with this being its declaration site, we should probably be
-                //                      ignoring it, but then
-                //
-                //                   2) we are losing track of AugmentEffectiveStatement for which we do not generate
-                //                      interfaces -- and recover it at runtime through explicit walk along the
-                //                      corresponding AugmentationSchemaNode.getOriginalDefinition() pointer
-                //
-                //                   So here is where we should decide how to handle this augment, and make sure we
-                //                   retain information about this being an alias. That will serve as the base for keys
-                //                   in the augment -> original map we provide to BindingRuntimeTypes.
-                if (this instanceof ModuleGenerator module) {
-                    tmpAug.add(new ModuleAugmentGenerator(augment, module));
-                }
-            } else if (stmt instanceof UsesEffectiveStatement uses) {
-                for (var usesSub : uses.effectiveSubstatements()) {
-                    if (usesSub instanceof AugmentEffectiveStatement usesAug) {
-                        tmpAug.add(new UsesAugmentGenerator(usesAug, uses, this));
+                case NotificationEffectiveStatement notification -> {
+                    if (!isAugmenting(notification)) {
+                        tmp.add(new NotificationGenerator(notification, this));
                     }
                 }
-            } else if (stmt instanceof YangDataEffectiveStatement yangData) {
-                if (this instanceof ModuleGenerator moduleGen) {
-                    tmp.add(YangDataGenerator.of(yangData, moduleGen));
+                case OutputEffectiveStatement output -> {
+                    tmp.add(new OutputGenerator(output, this));
                 }
-            } else {
-                LOG.trace("Ignoring statement {}", stmt);
+                case RpcEffectiveStatement rpc -> {
+                    if (this instanceof ModuleGenerator module) {
+                        tmp.add(new RpcGenerator(rpc, module));
+                    }
+                }
+                case TypedefEffectiveStatement typedef -> {
+                    tmp.add(new TypedefGenerator(typedef, this));
+                }
+                case AugmentEffectiveStatement augment -> {
+                    // FIXME: MDSAL-695: So here we are ignoring any augment which is not in a module, while the 'uses'
+                    //                   processing takes care of the rest. There are two problems here:
+                    //
+                    //                   1) this could be an augment introduced through uses -- in this case we are
+                    //                      picking confusing it with this being its declaration site, we should
+                    //                      probably be ignoring it, but then
+                    //
+                    //                   2) we are losing track of AugmentEffectiveStatement for which we do not
+                    //                      generate interfaces -- and recover it at runtime through explicit walk along
+                    //                      the corresponding AugmentationSchemaNode.getOriginalDefinition() pointer
+                    //
+                    //                   So here is where we should decide how to handle this augment, and make sure we
+                    //                   retain information about this being an alias. That will serve as the base for
+                    //                   keys in the augment -> original map we provide to BindingRuntimeTypes.
+                    if (this instanceof ModuleGenerator module) {
+                        tmpAug.add(new ModuleAugmentGenerator(augment, module));
+                    }
+                }
+                case UsesEffectiveStatement uses -> {
+                    for (var usesSub : uses.effectiveSubstatements()) {
+                        if (usesSub instanceof AugmentEffectiveStatement usesAug) {
+                            tmpAug.add(new UsesAugmentGenerator(usesAug, uses, this));
+                        }
+                    }
+                }
+                case YangDataEffectiveStatement yangData -> {
+                    if (this instanceof ModuleGenerator moduleGen) {
+                        tmp.add(YangDataGenerator.of(yangData, moduleGen));
+                    }
+                }
+                default -> LOG.trace("Ignoring statement {}", stmt);
             }
         }
 
