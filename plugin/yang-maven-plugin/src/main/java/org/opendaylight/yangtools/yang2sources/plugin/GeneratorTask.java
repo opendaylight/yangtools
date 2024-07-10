@@ -20,6 +20,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.build.BuildContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
@@ -29,7 +30,6 @@ import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 final class GeneratorTask implements Identifiable<String> {
     private static final Logger LOG = LoggerFactory.getLogger(GeneratorTask.class);

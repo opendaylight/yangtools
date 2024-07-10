@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
+import org.codehaus.plexus.build.BuildContext;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * A {@link StateStorage} based on {@link BuildContext}.
