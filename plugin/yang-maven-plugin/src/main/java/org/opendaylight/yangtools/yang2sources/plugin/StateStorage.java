@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import org.codehaus.plexus.build.BuildContext;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * A storage engine able to store and load {@link YangToSourcesState}.

@@ -17,10 +17,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import org.codehaus.plexus.build.BuildContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Support for incremental builds. It provides interface between {@link YangToSourcesProcessor} execution, observed
