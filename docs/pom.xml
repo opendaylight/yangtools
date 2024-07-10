@@ -271,7 +271,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.sonatype.plexus</groupId>
+            <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-build-api</artifactId>
             <scope>provided</scope>
         </dependency>
