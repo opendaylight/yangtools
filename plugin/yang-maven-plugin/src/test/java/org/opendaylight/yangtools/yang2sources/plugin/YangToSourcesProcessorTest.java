@@ -15,12 +15,12 @@ import com.google.common.collect.ImmutableTable;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+import org.codehaus.plexus.build.BuildContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 @ExtendWith(MockitoExtension.class)
 class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
