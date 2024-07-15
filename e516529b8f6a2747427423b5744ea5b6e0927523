@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "62f0c30b_87fa427d",
+        "filename": "binding/binding-data-codec-dynamic/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingCodecContext.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-07-15T18:11:50Z",
+      "side": 1,
+      "message": "as noted below -- this should be PathExpression.Steps",
+      "range": {
+        "startLine": 761,
+        "startChar": 99,
+        "endLine": 761,
+        "endChar": 105
+      },
+      "revId": "e516529b8f6a2747427423b5744ea5b6e0927523",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d3c228c8_6224103f",
+        "filename": "binding/binding-data-codec-dynamic/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingCodecContext.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-07-15T18:11:50Z",
+      "side": 1,
+      "message": "err, no: this is re-parsing a string -- something which is already available via getSteps()",
+      "range": {
+        "startLine": 816,
+        "startChar": 66,
+        "endLine": 816,
+        "endChar": 96
+      },
+      "revId": "e516529b8f6a2747427423b5744ea5b6e0927523",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
