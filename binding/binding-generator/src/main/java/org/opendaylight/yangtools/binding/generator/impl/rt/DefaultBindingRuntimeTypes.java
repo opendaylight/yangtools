@@ -87,6 +87,11 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     }
 
     @Override
+    public Optional<ModuleRuntimeType> findModule(final QNameModule module) {
+        return Optional.ofNullable(modulesByNamespace.get(module));
+    }
+
+    @Override
     public Optional<YangDataRuntimeType> findYangData(final YangDataName templateName) {
         final var module = modulesByNamespace.get(templateName.module());
         return module == null ? Optional.empty() : Optional.ofNullable(module.yangDataChild(templateName));
