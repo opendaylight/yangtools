@@ -15,6 +15,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import javax.xml.transform.dom.DOMSource;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.Any;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.Cont;
@@ -118,6 +119,15 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
         final var any = assertInstanceOf(AnyxmlCodecContext.class,
             codecContext.getSubtreeCodec(YangInstanceIdentifier.of(Any.QNAME)));
         assertEquals(Any.class, any.getBindingClass());
+    }
+
+    @Test
+    @Ignore
+    public void anyxmlIsYangAddressable() {
+        assertEquals(new PropertyIdentifier<>(InstanceIdentifier.create(Cont.class).toIdentifier(),
+            new LeafPropertyStep<>(Cont.class, ContAny.class, Unqualified.of("cont-any"))),
+            codecContext.getInstanceIdentifierCodec().toBindingInstanceIdentifier(
+                YangInstanceIdentifier.of(Cont.QNAME, ContAny.QNAME)));
     }
 
     private final class FakeData extends AbstractOpaqueData<DOMSource> {
