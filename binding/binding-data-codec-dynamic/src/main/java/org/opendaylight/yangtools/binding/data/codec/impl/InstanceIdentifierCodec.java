@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.LeafListPropertyStep;
 import org.opendaylight.yangtools.binding.LeafPropertyStep;
 import org.opendaylight.yangtools.binding.PropertyIdentifier;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -37,6 +38,39 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
         final var builder = new ArrayList<DataObjectStep<?>>();
         final var codec = context.getCodecContextNode(domPath, builder);
         return codec == null ? null : (DataObjectReference<T>) DataObjectReference.ofUnsafeSteps(builder);
+    }
+
+    @Override
+    public BindingInstanceIdentifier toBindingInstanceIdentifier(final YangInstanceIdentifier domPath) {
+        final var builder = new ArrayList<DataObjectStep<?>>();
+        return switch (context.lookupCodecContext(domPath, builder)) {
+            case CaseCodecContext<?> caseCodec -> null;
+            case BindingDataObjectCodecTreeNode<?> dataObject ->
+                DataObjectReference.ofUnsafeSteps(builder).toIdentifier();
+            case null -> null;
+        };
+//        final var steps = new ArrayList<DataObjectStep<?>>();
+//        return switch (context.getCodecContext(domPath, steps)) {
+//            case BindingDataContainerCodecTreeNode<?> dataContainer -> {
+//                final var ref = toDataObjectReference(steps, dataContainer);
+//                if (ref == null) {
+//                    yield null;
+//                }
+//                try {
+//                    yield ref.toIdentifier();
+//                } catch (UnsupportedOperationException e) {
+//                    throw new IllegalArgumentException(e);
+//                }
+//            }
+//            case BindingOpaqueObjectCodecTreeNode<?> opaqueObject -> {
+//                // FIXME: implement this
+//                throw new UnsupportedOperationException();
+//            }
+//            case BindingTypeObjectCodecTreeNode<?> typeObject -> {
+//                // FIXME: implement this
+//                throw new UnsupportedOperationException();
+//            }
+//        };
     }
 
     @Override
@@ -90,15 +124,10 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     @Override
     @Deprecated
     public BindingInstanceIdentifier deserialize(final YangInstanceIdentifier input) {
-        // FIXME: YANGTOOLS-1577: do not defer to InstanceIdentifier here
-        final var binding = toBinding(input);
+        final var binding = toBindingInstanceIdentifier(input);
         if (binding == null) {
             throw new IllegalArgumentException(input + " cannot be represented as a BindingInstanceIdentifier");
         }
-        try {
-            return binding.toIdentifier();
-        } catch (UnsupportedOperationException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return binding;
     }
 }
