@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-final class DataObjectReferenceBuilder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
+public final class DataObjectReferenceBuilder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
     DataObjectReferenceBuilder(final AbstractDataObjectReferenceBuilder<?> prev) {
         super(prev);
     }
@@ -23,7 +23,7 @@ final class DataObjectReferenceBuilder<T extends DataObject> extends AbstractDat
         super(base);
     }
 
-    DataObjectReferenceBuilder(final DataObjectStep<?> item) {
+    public DataObjectReferenceBuilder(final DataObjectStep<?> item) {
         super(item);
     }
 
