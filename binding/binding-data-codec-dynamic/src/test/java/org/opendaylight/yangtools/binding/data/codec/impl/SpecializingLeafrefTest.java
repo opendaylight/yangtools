@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 import org.junit.Test;
@@ -16,14 +16,14 @@ import org.opendaylight.yang.gen.v1.mdsal426.norev.BarCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanContBuilder;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 
 public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
-    private static final InstanceIdentifier<BooleanCont> BOOLEAN_CONT_II = InstanceIdentifier
-            .builder(BooleanCont.class).build();
+    private static final DataObjectIdentifier<BooleanCont> BOOLEAN_CONT_II =
+        DataObjectIdentifier.builder(BooleanCont.class).build();
 
-    private static final InstanceIdentifier<BarCont> BAR_CONT_II = InstanceIdentifier
-            .builder(BarCont.class).build();
+    private static final DataObjectIdentifier<BarCont> BAR_CONT_II =
+        DataObjectIdentifier.builder(BarCont.class).build();
 
     @Test
     public void specifiedBooleanLeafTest() {

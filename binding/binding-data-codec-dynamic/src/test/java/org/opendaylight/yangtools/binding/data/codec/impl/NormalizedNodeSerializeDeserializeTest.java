@@ -43,6 +43,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
 import org.opendaylight.yang.gen.v1.urn.test.foo4798.rev160101.Root;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -70,8 +71,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     public static final QName EXTENDED_ID_QNAME = QName.create(CHOICE_CONTAINER_QNAME, "extended-id");
     private static final QName SIMPLE_VALUE_QNAME = QName.create(TreeComplexUsesAugment.QNAME, "simple-value");
 
-    private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier
-            .builder(Top.class).child(TopLevelList.class, TOP_LEVEL_LIST_FOO_KEY).build();
+    private static final DataObjectIdentifier<TopLevelList> BA_TOP_LEVEL_LIST =
+        DataObjectIdentifier.builder(Top.class).child(TopLevelList.class, TOP_LEVEL_LIST_FOO_KEY).build();
 
     public static final YangInstanceIdentifier BI_TOP_PATH = YangInstanceIdentifier.of(TOP_QNAME);
     public static final YangInstanceIdentifier BI_TOP_LEVEL_LIST_PATH = BI_TOP_PATH.node(TOP_LEVEL_LIST_QNAME);
@@ -83,7 +84,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void containerToNormalized() {
-        final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Top.class), top());
+        final var entry = codecContext.toNormalizedDataObject(DataObjectIdentifier.builder(Top.class).build(), top());
         assertEquals(getEmptyTop(), entry.node());
     }
 
@@ -230,7 +231,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void orderedleafListToNormalized() {
-        final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Top.class),
+        final var entry = codecContext.toNormalizedDataObject(DataObjectIdentifier.builder(Top.class).build(),
             new TopBuilder().setTopLevelOrderedLeafList(List.of("foo")).build());
         assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
@@ -244,8 +245,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void leafListToNormalized() {
-        final var entry = codecContext.toNormalizedDataObject(
-            InstanceIdentifier.create(Top.class), new TopBuilder().setTopLevelLeafList(Set.of("foo")).build());
+        final var entry = codecContext.toNormalizedDataObject(DataObjectIdentifier.builder(Top.class).build(),
+            new TopBuilder().setTopLevelLeafList(Set.of("foo")).build());
         assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
             .withChild(ImmutableNodes.newSystemLeafSetBuilder()

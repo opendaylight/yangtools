@@ -50,8 +50,8 @@ public sealed class DataObjectIdentifierImpl<T extends DataObject>
     }
 
     @Override
-    public AbstractDataObjectReferenceBuilder<T> toBuilder() {
-        return new DataObjectReferenceBuilder<>(this);
+    public AbstractDataObjectIdentifierBuilder<T> toBuilder() {
+        return new DataObjectIdentifierBuilder<>(this);
     }
 
     @Override

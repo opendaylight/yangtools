@@ -25,7 +25,7 @@ public final class DataObjectIdentifierBuilderWithKey<T extends EntryObject<T, K
         super(base);
     }
 
-    DataObjectIdentifierBuilderWithKey(final KeyStep<K, T> item) {
+    public DataObjectIdentifierBuilderWithKey(final KeyStep<K, T> item) {
         super(item);
     }
 
@@ -35,8 +35,8 @@ public final class DataObjectIdentifierBuilderWithKey<T extends EntryObject<T, K
     }
 
     @Override
-    protected <X extends DataObject> DataObjectReferenceBuilder<X> append(final DataObjectStep<X> step) {
-        return new DataObjectReferenceBuilder<X>(this).append(step);
+    protected <X extends DataObject> DataObjectIdentifierBuilder<X> append(final DataObjectStep<X> step) {
+        return new DataObjectIdentifierBuilder<X>(this).append(step);
     }
 
     @Override

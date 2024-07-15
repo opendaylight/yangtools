@@ -12,12 +12,13 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.test.top.via.uses.rev151112.OpendaylightBindingTopLevelViaUsesData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.test.top.via.uses.rev151112.container.top.ContainerTop;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 public class TopLevelContainerViaUsesTest extends AbstractBindingCodecTest {
-    private static final InstanceIdentifier<ContainerTop> TOP_LEVEL_CONTAINER_FROM_USES =
-        InstanceIdentifier.builderOfInherited(OpendaylightBindingTopLevelViaUsesData.class, ContainerTop.class).build();
+    private static final DataObjectIdentifier<ContainerTop> TOP_LEVEL_CONTAINER_FROM_USES =
+        DataObjectIdentifier.builderOfInherited(OpendaylightBindingTopLevelViaUsesData.class, ContainerTop.class)
+            .build();
 
     @Test
     public void testBindingToDomFirst() {

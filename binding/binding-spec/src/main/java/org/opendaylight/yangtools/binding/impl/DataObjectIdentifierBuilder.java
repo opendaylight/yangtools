@@ -28,6 +28,10 @@ public final class DataObjectIdentifierBuilder<T extends DataObject> extends Abs
         super(item);
     }
 
+    public DataObjectIdentifierBuilder(final DataObjectStep<?> item) {
+        this(validate(item));
+    }
+
     @Override
     public DataObjectIdentifier<T> build() {
         return new DataObjectIdentifierImpl<>(null, buildSteps());
@@ -44,5 +48,12 @@ public final class DataObjectIdentifierBuilder<T extends DataObject> extends Abs
     protected <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectIdentifierBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         return new DataObjectIdentifierBuilderWithKey<X, Y>(this).append(step);
+    }
+
+    private static <T extends DataObject> ExactDataObjectStep<T> validate(final DataObjectStep<T> step) {
+        if (step instanceof ExactDataObjectStep<T> exact) {
+            return exact;
+        }
+        throw new IllegalArgumentException("Cannot use with " + step);
     }
 }
