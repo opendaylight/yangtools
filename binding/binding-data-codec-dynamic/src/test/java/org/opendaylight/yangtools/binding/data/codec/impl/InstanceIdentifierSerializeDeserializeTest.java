@@ -32,6 +32,8 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.con
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.cont.cont.choice.ContBase;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.grp.GrpCont;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.root.RootBase;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -56,13 +58,13 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
     @Test
     public void testYangIIToBindingAwareII() {
-        assertEquals(InstanceIdentifier.create(Top.class).toIdentifier(),
+        assertEquals(DataObjectReference.builder(Top.class).build(),
             codecContext.fromYangInstanceIdentifier(BI_TOP_PATH));
     }
 
     @Test
     public void testYangIIToBindingAwareIIListWildcarded() {
-        assertEquals(InstanceIdentifier.builder(Top.class).child(TopLevelList.class).build().toReference(),
+        assertEquals(DataObjectReference.builder(Top.class).child(TopLevelList.class).build(),
             codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_PATH));
     }
 
@@ -109,12 +111,12 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     @Test
     public void testChoiceCaseGroupingFromBinding() {
         final var contBase = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build());
+            DataObjectIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME), NodeIdentifier.create(GrpCont.QNAME)), contBase);
 
         final var contAug = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build());
+            DataObjectIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME),
             NodeIdentifier.create(GrpCont.QNAME.bindTo(ContAug.QNAME.getModule()))), contAug);
@@ -123,16 +125,16 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
         //         select the lexically-lower class
         assertEquals(1, ContBase.class.getCanonicalName().compareTo(ContAug.class.getCanonicalName()));
         final var contAugLegacy = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(Cont.class).child((Class) GrpCont.class).build());
+            DataObjectIdentifier.builder(Cont.class).child((Class) GrpCont.class).build());
         assertEquals(contAug, contAugLegacy);
 
         final var rootBase = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(RootBase.class, GrpCont.class).build());
+            DataObjectIdentifier.builder(RootBase.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Root.QNAME),
             NodeIdentifier.create(GrpCont.QNAME)), rootBase);
 
         final var rootAug = codecContext.toYangInstanceIdentifier(
-            InstanceIdentifier.builder(RootAug.class, GrpCont.class).build());
+            DataObjectIdentifier.builder(RootAug.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Root.QNAME),
             NodeIdentifier.create(GrpCont.QNAME.bindTo(RootAug.QNAME.getModule()))), rootAug);
     }
@@ -141,19 +143,19 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     public void testChoiceCaseGroupingToBinding() {
         final var contBase = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Cont.QNAME, ContChoice.QNAME, GrpCont.QNAME));
-        assertEquals(InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build(), contBase);
+        assertEquals(DataObjectIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build(), contBase);
 
         final var contAug = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Cont.QNAME, ContChoice.QNAME, GrpCont.QNAME.bindTo(ContAug.QNAME.getModule())));
-        assertEquals(InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
+        assertEquals(DataObjectIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
 
         final var rootBase = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Root.QNAME, GrpCont.QNAME));
-        assertEquals(InstanceIdentifier.builder(RootBase.class, GrpCont.class).build(), rootBase);
+        assertEquals(DataObjectIdentifier.builder(RootBase.class, GrpCont.class).build(), rootBase);
 
         final var rootAug = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Root.QNAME, GrpCont.QNAME.bindTo(RootAug.QNAME.getModule())));
-        assertEquals(InstanceIdentifier.builder(RootAug.class, GrpCont.class).build(), rootAug);
+        assertEquals(DataObjectIdentifier.builder(RootAug.class, GrpCont.class).build(), rootAug);
     }
 
     @Test
