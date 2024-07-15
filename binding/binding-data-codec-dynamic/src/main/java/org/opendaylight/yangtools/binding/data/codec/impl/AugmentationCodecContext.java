@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class AugmentationCodecContext<A extends Augmentation<?>>
-        extends AbstractDataObjectCodecContext<A, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<A> {
+        extends CommonDataObjectCodecContext<A, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<A> {
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
-        AbstractDataObjectCodecContext.class, DataContainerNode.class);
+        CommonDataObjectCodecContext.class, DataContainerNode.class);
     private static final MethodType AUGMENTATION_TYPE = MethodType.methodType(Augmentation.class,
         AugmentationCodecContext.class, DataContainerNode.class);
 

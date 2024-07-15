@@ -142,7 +142,7 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
         static {
             try {
                 LOAD_CTOR_ARGS = MethodVariableAccess.allArgumentsOf(new MethodDescription.ForLoadedConstructor(
-                    AugmentableCodecDataObject.class.getDeclaredConstructor(AbstractDataObjectCodecContext.class,
+                    AugmentableCodecDataObject.class.getDeclaredConstructor(CommonDataObjectCodecContext.class,
                         DataContainerNode.class)));
             } catch (NoSuchMethodException e) {
                 throw new ExceptionInInitializerError(e);

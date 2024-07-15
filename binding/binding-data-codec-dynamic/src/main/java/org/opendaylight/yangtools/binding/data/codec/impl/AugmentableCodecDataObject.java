@@ -46,7 +46,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> cachedAugmentations;
 
-    protected AugmentableCodecDataObject(final AbstractDataObjectCodecContext<T, ?> context,
+    protected AugmentableCodecDataObject(final CommonDataObjectCodecContext<T, ?> context,
             final DataContainerNode data) {
         super(context, data);
     }
