@@ -33,6 +33,7 @@ import java.lang.reflect.WildcardType;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -172,8 +173,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 return new DataContainerSerializer(BindingCodecContext.this, streamers.get(key));
             }
         });
-    private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>> childrenByClass =
-        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+    private final LoadingCache<@NonNull Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>>
+        childrenByClass = CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> key) {
                 final var childSchema = context.getTypes().bindingChild(JavaTypeName.create(key));
@@ -197,11 +198,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
         });
 
-    // FIXME: this could also be a leaf!
-    private final LoadingCache<QName, DataContainerCodecContext<?, ?, ?>> childrenByDomArg =
+    private final LoadingCache<@NonNull QName, CodecContext> childrenByDomArg =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public DataContainerCodecContext<?, ?, ?> load(final QName qname) throws ClassNotFoundException {
+            public CodecContext load(final QName qname) throws ClassNotFoundException {
                 final var type = context.getTypes();
                 final var child = type.schemaTreeChild(qname);
                 if (child == null) {
@@ -221,9 +221,19 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 final var childSchema = child.statement();
                 if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
                     return getStreamChild(context.loadClass(child.javaType()));
+                } else if (childSchema instanceof AnydataSchemaNode || childSchema instanceof AnyxmlSchemaNode
+                    || childSchema instanceof LeafSchemaNode || childSchema instanceof LeafListSchemaNode) {
+                    final var module = type.findModule(qname.getModule()).orElseThrow();
+                    final var moduleChildren = getLeafNodes(context.loadClass(module.javaType()), module.statement());
+                    for (var moduleChild : moduleChildren.values()) {
+                        if (childSchema.equals(moduleChild.getSchema())) {
+                            return moduleChild;
+                        }
+                    }
+                    throw new IllegalArgumentException("Failed to resolve " + child + " in " + module);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
                 }
-
-                throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
             }
         });
 
@@ -486,7 +496,20 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
      */
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
             final @Nullable List<DataObjectStep<?>> bindingArguments) {
-        final var it = dom.getPathArguments().iterator();
+        final var codec = lookupCodecContext(dom, bindingArguments);
+        if (!(codec instanceof BindingDataObjectCodecTreeNode<?> dataObjectCodec)) {
+            return null;
+        }
+        if (dataObjectCodec instanceof CaseCodecContext) {
+            LOG.debug("Instance identifier targeting a case is not representable ({})", dom);
+            return null;
+        }
+        return dataObjectCodec;
+    }
+
+    @Nullable CodecContext lookupCodecContext(final @NonNull YangInstanceIdentifier path,
+            final @Nullable List<DataObjectStep<?>> bindingArguments) {
+        final var it = path.getPathArguments().iterator();
         if (!it.hasNext()) {
             throw new IllegalArgumentException("Path may not be empty");
         }
@@ -500,36 +523,40 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         CodecContext nextNode = getOrRethrow(childrenByDomArg, domArg.getNodeType());
 
         CodecContext currentNode;
-        if (nextNode instanceof ListCodecContext<?> listNode) {
-            // 2. if it is a list, we need to see if we are consuming another item.
-            if (!it.hasNext()) {
-                // 2a: not further items: it boils down to a wildcard
-                if (bindingArguments != null) {
-                    bindingArguments.add(listNode.getBindingPathArgument(null));
+        switch (nextNode) {
+            case ListCodecContext<?> listNode -> {
+                // 2. if it is a list, we need to see if we are consuming another item.
+                if (!it.hasNext()) {
+                    // 2a: not further items: it boils down to a wildcard
+                    if (bindingArguments != null) {
+                        bindingArguments.add(listNode.getBindingPathArgument(null));
+                    }
+                    return listNode;
                 }
-                return listNode;
-            }
 
-            // 2b: there is a next item: it should either be a NodeIdentifier or a NodeIdentifierWithPredicates, but it
-            //     has to have the same node type
-            final var nextArg = it.next();
-            if (nextArg instanceof NodeWithValue || !nextArg.getNodeType().equals(domArg.getNodeType())) {
-                throw new IllegalArgumentException(
-                    "List should be referenced two times in YANG Instance Identifier " + dom);
+                // 2b: there is a next item: it should either be a NodeIdentifier or a NodeIdentifierWithPredicates, but it
+                //     has to have the same node type
+                final var nextArg = it.next();
+                if (nextArg instanceof NodeWithValue || !nextArg.getNodeType().equals(domArg.getNodeType())) {
+                    throw new IllegalArgumentException("List should be referenced twice in " + path);
+                }
+                if (bindingArguments != null) {
+                    bindingArguments.add(listNode.getBindingPathArgument(nextArg));
+                }
+                currentNode = listNode;
             }
-            if (bindingArguments != null) {
-                bindingArguments.add(listNode.getBindingPathArgument(nextArg));
+            case ChoiceCodecContext<?> choiceNode -> {
+                currentNode = choiceNode;
             }
-            currentNode = nextNode;
-        } else if (nextNode instanceof ChoiceCodecContext) {
-            currentNode = nextNode;
-        } else if (nextNode instanceof CommonDataObjectCodecContext<?, ?> firstContainer) {
-            if (bindingArguments != null) {
-                bindingArguments.add(firstContainer.getBindingPathArgument(domArg));
+            case CommonDataObjectCodecContext<?, ?> firstContainer -> {
+                if (bindingArguments != null) {
+                    bindingArguments.add(firstContainer.getBindingPathArgument(domArg));
+                }
+                currentNode = firstContainer;
             }
-            currentNode = nextNode;
-        } else {
-            return null;
+            case ValueNodeCodecContext valueNode -> {
+                return checkValueCodec(valueNode, it);
+            }
         }
 
         ListCodecContext<?> currentList = null;
@@ -560,8 +587,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
              * DataObjectReference as am ExactDataObjectStep.
              */
             if (currentList != null) {
-                checkArgument(currentList == nextNode,
-                        "List should be referenced two times in YANG Instance Identifier %s", dom);
+                checkArgument(currentList == nextNode, "List should be referenced two times in %s", path);
 
                 // We entered list, so now we have all information to emit
                 // list path using second list argument.
@@ -583,35 +609,34 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     bindingArguments.add(containerNode.getBindingPathArgument(domArg));
                 }
                 currentNode = nextNode;
-            } else if (nextNode instanceof ValueNodeCodecContext) {
-                LOG.debug("Instance identifier referencing a leaf is not representable ({})", dom);
-                return null;
+            } else if (nextNode instanceof ValueNodeCodecContext valueNode) {
+                return checkValueCodec(valueNode, it);
             }
         }
 
-        // Algorithm ended in list as whole representation
-        // we sill need to emit identifier for list
-        if (currentNode instanceof ChoiceCodecContext) {
-            LOG.debug("Instance identifier targeting a choice is not representable ({})", dom);
-            return null;
-        }
-        if (currentNode instanceof CaseCodecContext) {
-            LOG.debug("Instance identifier targeting a case is not representable ({})", dom);
-            return null;
-        }
-
+        // Algorithm ended in list as whole representation, we still need to emit identifier for list
         if (currentList != null) {
             if (bindingArguments != null) {
                 bindingArguments.add(currentList.getBindingPathArgument(null));
             }
             return currentList;
         }
-        if (currentNode != null) {
-            verify(currentNode instanceof BindingDataObjectCodecTreeNode, "Illegal return node %s for identifier %s",
-                currentNode, dom);
-            return (BindingDataObjectCodecTreeNode<?>) currentNode;
+        return currentNode;
+    }
+
+    private static ValueNodeCodecContext checkValueCodec(final ValueNodeCodecContext codec,
+            final Iterator<PathArgument> it) {
+        if (codec instanceof LeafSetNodeCodecContext leafSet && it.hasNext()) {
+            final var nextArg = it.next();
+            if (!(nextArg instanceof NodeWithValue)) {
+                throw new IllegalArgumentException(nextArg + " should be a NodeWithValue matching " + leafSet);
+            }
         }
-        return null;
+        if (it.hasNext()) {
+            throw new IllegalArgumentException(
+                "Attempted to step " + ImmutableList.copyOf(it) + " past " + codec);
+        }
+        return codec;
     }
 
     NotificationCodecContext<?> getNotificationContext(final Absolute notification) {
@@ -836,7 +861,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public BindingCodecTreeNode getSubtreeCodec(final YangInstanceIdentifier path) {
-        return getCodecContextNode(requireNonNull(path), null);
+        return lookupCodecContext(requireNonNull(path), null);
     }
 
     @Override
