@@ -54,12 +54,12 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 public abstract sealed class DataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
-        extends AbstractDataObjectCodecContext<D, T> implements BindingDataObjectCodecTreeNode<D>
+        extends CommonDataObjectCodecContext<D, T> implements BindingDataObjectCodecTreeNode<D>
         permits CaseCodecContext, ContainerLikeCodecContext, ListCodecContext, NotificationCodecContext {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
 
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
-        AbstractDataObjectCodecContext.class, DataContainerNode.class);
+        CommonDataObjectCodecContext.class, DataContainerNode.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
         DataObjectCodecContext.class, DataContainerNode.class);
     private static final VarHandle MISMATCHED_AUGMENTED;

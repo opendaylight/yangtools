@@ -41,7 +41,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         }
     }
 
-    private final @NonNull AbstractDataObjectCodecContext<T, ?> context;
+    private final @NonNull CommonDataObjectCodecContext<T, ?> context;
     private final @NonNull DataContainerNode data;
 
     // Accessed via a VarHandle
@@ -50,7 +50,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile Integer cachedHashcode;
 
-    protected CodecDataObject(final AbstractDataObjectCodecContext<T, ?> context, final DataContainerNode data) {
+    protected CodecDataObject(final CommonDataObjectCodecContext<T, ?> context, final DataContainerNode data) {
         this.data = requireNonNull(data, "Data must not be null");
         this.context = requireNonNull(context, "Context must not be null");
     }
@@ -107,7 +107,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     protected abstract boolean codecEquals(Object obj);
 
-    final @NonNull AbstractDataObjectCodecContext<T, ?> codecContext() {
+    final @NonNull CommonDataObjectCodecContext<T, ?> codecContext() {
         return context;
     }
 
