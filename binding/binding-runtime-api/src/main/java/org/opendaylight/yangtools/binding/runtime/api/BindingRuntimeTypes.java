@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -42,6 +43,8 @@ public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
     @Nullable IdentityRuntimeType identityChild(@NonNull QName qname);
 
     Optional<RuntimeType> findSchema(JavaTypeName typeName);
+
+    Optional<ModuleRuntimeType> findModule(QNameModule module);
 
     Optional<YangDataRuntimeType> findYangData(YangDataName templateName);
 

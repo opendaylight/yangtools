@@ -206,7 +206,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 final var child = type.schemaTreeChild(qname);
                 if (child == null) {
                     final var module = qname.getModule();
-                    if (context.modelContext().findModule(module).isEmpty()) {
+                    if (type.findModule(module).isEmpty()) {
                         throw new MissingSchemaException(
                             "Module " + module + " is not present in current schema context.");
                     }
