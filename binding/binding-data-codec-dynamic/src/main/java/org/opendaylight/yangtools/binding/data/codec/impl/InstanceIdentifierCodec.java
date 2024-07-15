@@ -9,13 +9,11 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
-import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.LeafListPropertyStep;
 import org.opendaylight.yangtools.binding.LeafPropertyStep;
 import org.opendaylight.yangtools.binding.PropertyIdentifier;
@@ -38,16 +36,7 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     public <T extends DataObject> DataObjectReference<T> toBinding(final YangInstanceIdentifier domPath) {
         final var builder = new ArrayList<DataObjectStep<?>>();
         final var codec = context.getCodecContextNode(domPath, builder);
-        if (codec == null) {
-            return null;
-        }
-        if (codec instanceof ListCodecContext && Iterables.getLast(builder) instanceof KeylessStep) {
-            // We ended up in list, but without key, which means it represent list as a whole,
-            // which is not binding representable.
-            return null;
-        }
-
-        return (DataObjectReference<T>) DataObjectReference.ofUnsafeSteps(builder);
+        return codec == null ? null : (DataObjectReference<T>) DataObjectReference.ofUnsafeSteps(builder);
     }
 
     @Override

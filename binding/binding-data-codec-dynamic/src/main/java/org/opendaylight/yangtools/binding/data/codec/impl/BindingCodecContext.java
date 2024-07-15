@@ -32,7 +32,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -486,7 +485,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
      * @throws IllegalArgumentException if {@code dom} is empty
      */
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
-            final @Nullable Collection<DataObjectStep<?>> bindingArguments) {
+            final @Nullable List<DataObjectStep<?>> bindingArguments) {
         final var it = dom.getPathArguments().iterator();
         if (!it.hasNext()) {
             throw new IllegalArgumentException("Path may not be empty");

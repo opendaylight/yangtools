@@ -11,7 +11,6 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -45,29 +44,26 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     public static final String TOP_LEVEL_LIST_KEY_VALUE = "foo";
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
-    private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier
-            .builder(Top.class).child(TopLevelList.class, TOP_FOO_KEY).build();
+    private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST =
+        InstanceIdentifier.builder(Top.class).child(TopLevelList.class, TOP_FOO_KEY).build();
 
-    public static final QName TOP_QNAME = Top.QNAME;
-    public static final QName TOP_LEVEL_LIST_QNAME = QName.create(TOP_QNAME, "top-level-list");
-    public static final QName TOP_LEVEL_LIST_KEY = QName.create(TOP_QNAME, "name");
+    public static final QName TOP_LEVEL_LIST_KEY = QName.create(TopLevelList.QNAME, "name");
 
-    public static final YangInstanceIdentifier BI_TOP_PATH = YangInstanceIdentifier.of(TOP_QNAME);
-    public static final YangInstanceIdentifier BI_TOP_LEVEL_LIST_PATH = BI_TOP_PATH.node(TOP_LEVEL_LIST_QNAME);
+    public static final YangInstanceIdentifier BI_TOP_PATH = YangInstanceIdentifier.of(Top.QNAME);
+    public static final YangInstanceIdentifier BI_TOP_LEVEL_LIST_PATH = BI_TOP_PATH.node(TopLevelList.QNAME);
     public static final YangInstanceIdentifier BI_TOP_LEVEL_LIST_1_PATH = BI_TOP_LEVEL_LIST_PATH
-            .node(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY,
-                TOP_LEVEL_LIST_KEY_VALUE));
+            .node(NodeIdentifierWithPredicates.of(TopLevelList.QNAME, TOP_LEVEL_LIST_KEY, TOP_LEVEL_LIST_KEY_VALUE));
 
     @Test
     public void testYangIIToBindingAwareII() {
-        final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_PATH);
-        assertEquals(Top.class, instanceIdentifier.lastStep().type());
+        assertEquals(InstanceIdentifier.create(Top.class).toIdentifier(),
+            codecContext.fromYangInstanceIdentifier(BI_TOP_PATH));
     }
 
     @Test
     public void testYangIIToBindingAwareIIListWildcarded() {
-        final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_PATH);
-        assertNull(instanceIdentifier);
+        assertEquals(InstanceIdentifier.builder(Top.class).child(TopLevelList.class).build().toReference(),
+            codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_PATH));
     }
 
     @Test
