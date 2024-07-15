@@ -54,7 +54,7 @@ public interface BindingInstanceIdentifierCodec extends Immutable {
      */
     // FIXME: Document MissingSchemaException being thrown
     // FIXME: Document MissingSchemaForClassException being thrown
-    default @NonNull YangInstanceIdentifier fromBinding(@NonNull DataObjectIdentifier<?> bindingPath) {
+    default @NonNull YangInstanceIdentifier fromBinding(final @NonNull DataObjectIdentifier<?> bindingPath) {
         return fromBinding((DataObjectReference<?>) bindingPath);
     }
 
