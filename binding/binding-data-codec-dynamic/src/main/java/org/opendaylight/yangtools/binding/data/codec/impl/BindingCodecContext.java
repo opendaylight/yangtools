@@ -172,8 +172,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 return new DataContainerSerializer(BindingCodecContext.this, streamers.get(key));
             }
         });
-    private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>> childrenByClass =
-        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+    private final LoadingCache<@NonNull Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>>
+        childrenByClass = CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> key) {
                 final var childSchema = context.getTypes().bindingChild(JavaTypeName.create(key));
@@ -197,11 +197,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
         });
 
-    // FIXME: this could also be a leaf!
-    private final LoadingCache<QName, DataContainerCodecContext<?, ?, ?>> childrenByDomArg =
+    private final LoadingCache<@NonNull QName, CodecContext> childrenByDomArg =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public DataContainerCodecContext<?, ?, ?> load(final QName qname) throws ClassNotFoundException {
+            public CodecContext load(final QName qname) throws ClassNotFoundException {
                 final var type = context.getTypes();
                 final var child = type.schemaTreeChild(qname);
                 if (child == null) {
@@ -486,7 +485,20 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
      */
     @Nullable BindingDataObjectCodecTreeNode<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
             final @Nullable List<DataObjectStep<?>> bindingArguments) {
-        final var it = dom.getPathArguments().iterator();
+        final var codec = lookupCodecContext(dom, bindingArguments);
+        if (!(codec instanceof BindingDataObjectCodecTreeNode<?> dataObjectCodec)) {
+            return null;
+        }
+        if (dataObjectCodec instanceof CaseCodecContext) {
+            LOG.debug("Instance identifier targeting a case is not representable ({})", dom);
+            return null;
+        }
+        return dataObjectCodec;
+    }
+
+    @Nullable CodecContext lookupCodecContext(final @NonNull YangInstanceIdentifier path,
+            final @Nullable List<DataObjectStep<?>> bindingArguments) {
+        final var it = path.getPathArguments().iterator();
         if (!it.hasNext()) {
             throw new IllegalArgumentException("Path may not be empty");
         }
@@ -514,8 +526,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             //     has to have the same node type
             final var nextArg = it.next();
             if (nextArg instanceof NodeWithValue || !nextArg.getNodeType().equals(domArg.getNodeType())) {
-                throw new IllegalArgumentException(
-                    "List should be referenced two times in YANG Instance Identifier " + dom);
+                throw new IllegalArgumentException("List should be referenced twice in " + path);
             }
             if (bindingArguments != null) {
                 bindingArguments.add(listNode.getBindingPathArgument(nextArg));
@@ -560,8 +571,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
              * DataObjectReference as am ExactDataObjectStep.
              */
             if (currentList != null) {
-                checkArgument(currentList == nextNode,
-                        "List should be referenced two times in YANG Instance Identifier %s", dom);
+                checkArgument(currentList == nextNode, "List should be referenced two times in %s", path);
 
                 // We entered list, so now we have all information to emit
                 // list path using second list argument.
@@ -583,35 +593,29 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     bindingArguments.add(containerNode.getBindingPathArgument(domArg));
                 }
                 currentNode = nextNode;
-            } else if (nextNode instanceof ValueNodeCodecContext) {
-                LOG.debug("Instance identifier referencing a leaf is not representable ({})", dom);
-                return null;
+            } else if (nextNode instanceof ValueNodeCodecContext valueNode) {
+                if (valueNode instanceof LeafSetNodeCodecContext leafSet && it.hasNext()) {
+                    final var nextArg = it.next();
+                    if (!(nextArg instanceof NodeWithValue)) {
+                        throw new IllegalArgumentException(nextArg + " should be a NodeWithValue matching " + leafSet);
+                    }
+                }
+                if (it.hasNext()) {
+                    throw new IllegalArgumentException(
+                        "Attempted to step " + ImmutableList.copyOf(it) + " past " + valueNode);
+                }
+                return valueNode;
             }
         }
 
-        // Algorithm ended in list as whole representation
-        // we sill need to emit identifier for list
-        if (currentNode instanceof ChoiceCodecContext) {
-            LOG.debug("Instance identifier targeting a choice is not representable ({})", dom);
-            return null;
-        }
-        if (currentNode instanceof CaseCodecContext) {
-            LOG.debug("Instance identifier targeting a case is not representable ({})", dom);
-            return null;
-        }
-
+        // Algorithm ended in list as whole representation, we still need to emit identifier for list
         if (currentList != null) {
             if (bindingArguments != null) {
                 bindingArguments.add(currentList.getBindingPathArgument(null));
             }
             return currentList;
         }
-        if (currentNode != null) {
-            verify(currentNode instanceof BindingDataObjectCodecTreeNode, "Illegal return node %s for identifier %s",
-                currentNode, dom);
-            return (BindingDataObjectCodecTreeNode<?>) currentNode;
-        }
-        return null;
+        return currentNode;
     }
 
     NotificationCodecContext<?> getNotificationContext(final Absolute notification) {
@@ -836,7 +840,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public BindingCodecTreeNode getSubtreeCodec(final YangInstanceIdentifier path) {
-        return getCodecContextNode(requireNonNull(path), null);
+        return lookupCodecContext(requireNonNull(path), null);
     }
 
     @Override
