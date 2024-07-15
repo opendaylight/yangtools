@@ -7,21 +7,20 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
+import org.opendaylight.yang.gen.v1.mdsal437.norev.Any;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.Cont;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.ContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.cont.ContAny;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.LeafPropertyStep;
 import org.opendaylight.yangtools.binding.OpaqueData;
 import org.opendaylight.yangtools.binding.PropertyIdentifier;
@@ -65,11 +64,9 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
     public void testAnyxmlToBinding() {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(CONT_NODE_ID), cont);
         assertEquals(InstanceIdentifier.create(Cont.class), entry.getKey());
-        final DataObject ldo = entry.getValue();
-        assertThat(ldo, instanceOf(Cont.class));
 
         // So no... GrpAny should be null ..
-        final Cont contValue = (Cont) ldo;
+        final Cont contValue = assertInstanceOf(Cont.class, entry.getValue());
         assertNull(contValue.getGrpAny());
 
         // ContAny is interesting
@@ -110,6 +107,17 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
             .fromBinding((BindingInstanceIdentifier) new PropertyIdentifier<>(
                 InstanceIdentifier.create(Cont.class).toIdentifier(),
                 new LeafPropertyStep<>(Cont.class, ContAny.class, Unqualified.of("cont-any")))));
+    }
+
+    @Test
+    public void anyxmlHasCodecNode() {
+        final var contAny = assertInstanceOf(AnyxmlCodecContext.class,
+            codecContext.getSubtreeCodec(YangInstanceIdentifier.of(Cont.QNAME, ContAny.QNAME)));
+        assertEquals(ContAny.class, contAny.getBindingClass());
+
+        final var any = assertInstanceOf(AnyxmlCodecContext.class,
+            codecContext.getSubtreeCodec(YangInstanceIdentifier.of(Any.QNAME)));
+        assertEquals(Any.class, any.getBindingClass());
     }
 
     private final class FakeData extends AbstractOpaqueData<DOMSource> {
