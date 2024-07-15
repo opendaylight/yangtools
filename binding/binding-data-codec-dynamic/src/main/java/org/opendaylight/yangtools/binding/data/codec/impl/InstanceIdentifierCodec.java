@@ -40,6 +40,33 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     }
 
     @Override
+    public BindingInstanceIdentifier toBindingInstanceIdentifier(final YangInstanceIdentifier domPath) {
+        throw new UnsupportedOperationException();
+//        final var steps = new ArrayList<DataObjectStep<?>>();
+//        return switch (context.getCodecContext(domPath, steps)) {
+//            case BindingDataContainerCodecTreeNode<?> dataContainer -> {
+//                final var ref = toDataObjectReference(steps, dataContainer);
+//                if (ref == null) {
+//                    yield null;
+//                }
+//                try {
+//                    yield ref.toIdentifier();
+//                } catch (UnsupportedOperationException e) {
+//                    throw new IllegalArgumentException(e);
+//                }
+//            }
+//            case BindingOpaqueObjectCodecTreeNode<?> opaqueObject -> {
+//                // FIXME: implement this
+//                throw new UnsupportedOperationException();
+//            }
+//            case BindingTypeObjectCodecTreeNode<?> typeObject -> {
+//                // FIXME: implement this
+//                throw new UnsupportedOperationException();
+//            }
+//        };
+    }
+
+    @Override
     public YangInstanceIdentifier fromBinding(final DataObjectReference<?> bindingPath) {
         final var domArgs = new ArrayList<PathArgument>();
         context.getCodecContextNode(bindingPath, domArgs);
@@ -90,15 +117,10 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     @Override
     @Deprecated
     public BindingInstanceIdentifier deserialize(final YangInstanceIdentifier input) {
-        // FIXME: YANGTOOLS-1577: do not defer to InstanceIdentifier here
-        final var binding = toBinding(input);
+        final var binding = toBindingInstanceIdentifier(input);
         if (binding == null) {
             throw new IllegalArgumentException(input + " cannot be represented as a BindingInstanceIdentifier");
         }
-        try {
-            return binding.toIdentifier();
-        } catch (UnsupportedOperationException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return binding;
     }
 }
