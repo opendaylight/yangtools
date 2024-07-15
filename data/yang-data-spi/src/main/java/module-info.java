@@ -6,6 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 module org.opendaylight.yangtools.yang.data.spi {
+    exports org.opendaylight.yangtools.yang.data.spi.codec;
     exports org.opendaylight.yangtools.yang.data.spi.node;
 
     requires transitive com.google.common;
@@ -13,6 +14,7 @@ module org.opendaylight.yangtools.yang.data.spi {
     requires transitive org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.model.api;
     requires org.slf4j;
 
     // Annotations

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.ImmutableYangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
  * This exception is typically reported by methods which normalize some external format into a
@@ -44,7 +45,18 @@ public final class NormalizationException extends Exception implements YangNetco
         this.netconfErrors = requireNonNull(netconfErrors);
     }
 
-    public static @NonNull NormalizationException ofMessage(final String message) {
+    public static @NonNull NormalizationException ofConstraint(final @NonNull String message,
+            final @NonNull ErrorType type, final @NonNull ConstraintMetaDefinition constraint) {
+        return new NormalizationException(requireNonNull(message), null, List.of(ImmutableYangNetconfError.builder()
+            .severity(ErrorSeverity.ERROR)
+            .type(ErrorType.PROTOCOL)
+            .tag(ErrorTag.MALFORMED_MESSAGE)
+            .message(constraint.getErrorMessage().orElse(null))
+            .appTag(constraint.getErrorAppTag().orElse(null))
+            .build()));
+    }
+
+    public static @NonNull NormalizationException ofMessage(final @NonNull String message) {
         return new NormalizationException(requireNonNull(message), null, constructErrors(message));
     }
 
