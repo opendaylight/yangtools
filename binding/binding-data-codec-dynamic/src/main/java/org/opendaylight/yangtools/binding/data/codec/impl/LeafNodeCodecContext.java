@@ -31,7 +31,7 @@ sealed class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
 
         OfTypeObject(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec, final String getterName,
                 final EffectiveModelContext schemaContext, final Class<T> bindingClass) {
-            super(schema, codec, getterName, schemaContext);
+            super(schema, codec, getterName, schemaContext, bindingClass);
             this.bindingClass = requireNonNull(bindingClass);
         }
 
@@ -52,15 +52,15 @@ sealed class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     }
 
     LeafNodeCodecContext(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec, final String getterName,
-            final EffectiveModelContext schemaContext) {
-        super(schema, codec, getterName, createDefaultObject(schema, codec, schemaContext));
+            final EffectiveModelContext schemaContext, final Class<?> valueType) {
+        super(schema, codec, getterName, valueType, createDefaultObject(schema, codec, schemaContext));
     }
 
     static LeafNodeCodecContext of(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec,
             final String getterName, final Class<?> valueType, final EffectiveModelContext schemaContext) {
         return TypeObject.class.isAssignableFrom(valueType)
                 ? new OfTypeObject<>(schema, codec, getterName, schemaContext, valueType.asSubclass(TypeObject.class))
-                        : new LeafNodeCodecContext(schema, codec, getterName, schemaContext);
+                    : new LeafNodeCodecContext(schema, codec, getterName, schemaContext, valueType);
     }
 
     @Override

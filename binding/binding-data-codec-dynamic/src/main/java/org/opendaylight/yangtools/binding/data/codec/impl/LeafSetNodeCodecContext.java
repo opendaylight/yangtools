@@ -19,9 +19,9 @@ final class LeafSetNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     private final IntFunction<ImmutableCollection.Builder<Object>> builderFactory;
 
     LeafSetNodeCodecContext(final LeafListSchemaNode schema, final ValueCodec<Object, Object> codec,
-            final String getterName) {
+            final String getterName, final Class<?> valueType) {
         // FIXME: add support for defaults
-        super(schema, codec, getterName, null);
+        super(schema, codec, getterName, valueType, null);
         builderFactory = schema.isUserOrdered() ? ImmutableList::builderWithExpectedSize
             : ImmutableSet::builderWithExpectedSize;
     }

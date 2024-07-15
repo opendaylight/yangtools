@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.LeafListPropertyStep;
@@ -37,6 +39,42 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
         final var builder = new ArrayList<DataObjectStep<?>>();
         final var codec = context.getCodecContextNode(domPath, builder);
         return codec == null ? null : (DataObjectReference<T>) DataObjectReference.ofUnsafeSteps(builder);
+    }
+
+    @Override
+    public BindingInstanceIdentifier toBindingInstanceIdentifier(final YangInstanceIdentifier domPath) {
+        final var steps = new ArrayList<DataObjectStep<?>>();
+        return switch (context.lookupCodecContext(domPath, steps)) {
+            case null -> null;
+            case CaseCodecContext<?> caseCodec -> null;
+            case ChoiceCodecContext<?> choice -> null;
+            case CommonDataObjectCodecContext<?, ?> dataObjectCodec -> newDataObjectIdentifier(steps);
+            case LeafSetNodeCodecContext leafSetCodec -> {
+                if (domPath.getLastPathArgument() instanceof NodeWithValue<?> withValue) {
+                    final var doi = newDataObjectIdentifier(steps);
+                    yield new PropertyIdentifier<>(doi,
+                        new LeafListPropertyStep(doi.lastStep().type(), leafSetCodec.valueType(),
+                            leafSetCodec.getSchema().getQName().unbind(),
+                            leafSetCodec.getValueCodec().deserialize(withValue.getValue())));
+                }
+                yield null;
+            }
+            case ValueNodeCodecContext valueCodec -> {
+                final var doi = newDataObjectIdentifier(steps);
+                yield new PropertyIdentifier(doi,
+                    new LeafPropertyStep<>(doi.lastStep().type(), valueCodec.valueType(),
+                        valueCodec.getSchema().getQName().unbind()));
+            }
+        };
+    }
+
+    private static DataObjectIdentifier<?> newDataObjectIdentifier(final List<DataObjectStep<?>> steps) {
+        final var ref = DataObjectReference.ofUnsafeSteps(steps);
+        try {
+            return ref.toIdentifier();
+        } catch (UnsupportedOperationException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
@@ -90,15 +128,10 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     @Override
     @Deprecated
     public BindingInstanceIdentifier deserialize(final YangInstanceIdentifier input) {
-        // FIXME: YANGTOOLS-1577: do not defer to InstanceIdentifier here
-        final var binding = toBinding(input);
+        final var binding = toBindingInstanceIdentifier(input);
         if (binding == null) {
             throw new IllegalArgumentException(input + " cannot be represented as a BindingInstanceIdentifier");
         }
-        try {
-            return binding.toIdentifier();
-        } catch (UnsupportedOperationException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return binding;
     }
 }

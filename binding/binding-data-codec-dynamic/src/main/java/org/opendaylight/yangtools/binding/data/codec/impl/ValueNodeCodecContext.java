@@ -24,8 +24,8 @@ abstract sealed class ValueNodeCodecContext extends CodecContext implements Code
         private final @NonNull ValueCodec<Object, Object> valueCodec;
 
         WithCodec(final DataSchemaNode schema, final ValueCodec<Object, Object> codec, final String getterName,
-                final Object defaultObject) {
-            super(schema, getterName, defaultObject);
+                final Class<?> valueType, final Object defaultObject) {
+            super(schema, getterName, valueType, defaultObject);
             valueCodec = requireNonNull(codec);
         }
 
@@ -37,12 +37,15 @@ abstract sealed class ValueNodeCodecContext extends CodecContext implements Code
 
     private final @NonNull NodeIdentifier yangIdentifier;
     private final @NonNull DataSchemaNode dataSchema;
+    private final @NonNull Class<?> valueType;
     private final @NonNull String getterName;
     private final Object defaultObject;
 
-    ValueNodeCodecContext(final DataSchemaNode dataSchema, final String getterName, final Object defaultObject) {
+    ValueNodeCodecContext(final DataSchemaNode dataSchema, final String getterName, final Class<?> valueType,
+            final Object defaultObject) {
         this.getterName = requireNonNull(getterName);
         this.dataSchema = requireNonNull(dataSchema);
+        this.valueType = requireNonNull(valueType);
         yangIdentifier = NodeIdentifier.create(dataSchema.getQName());
         this.defaultObject = defaultObject;
     }
@@ -59,6 +62,10 @@ abstract sealed class ValueNodeCodecContext extends CodecContext implements Code
 
     final String getGetterName() {
         return getterName;
+    }
+
+    final @NonNull Class<?> valueType() {
+        return valueType;
     }
 
     abstract ValueCodec<Object, Object> getValueCodec();

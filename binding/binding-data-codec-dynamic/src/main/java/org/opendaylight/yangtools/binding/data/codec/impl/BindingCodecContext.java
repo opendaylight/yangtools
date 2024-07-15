@@ -714,7 +714,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     }
 
                     final ValueCodec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
-                    valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName());
+                    valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName(), valueType);
                 } else if (schema instanceof AnyxmlSchemaNode anyxmlSchema) {
                     valueNode = new AnyxmlCodecContext<>(anyxmlSchema, method.getName(), opaqueReturnType(method),
                         loader);

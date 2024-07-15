@@ -120,6 +120,14 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
         assertEquals(Any.class, any.getBindingClass());
     }
 
+    @Test
+    public void anyxmlIsYangAddressable() {
+        assertEquals(new PropertyIdentifier<>(InstanceIdentifier.create(Cont.class).toIdentifier(),
+            new LeafPropertyStep<>(Cont.class, ContAny.class, Unqualified.of("cont-any"))),
+            codecContext.getInstanceIdentifierCodec().toBindingInstanceIdentifier(
+                YangInstanceIdentifier.of(Cont.QNAME, ContAny.QNAME)));
+    }
+
     private final class FakeData extends AbstractOpaqueData<DOMSource> {
         @Override
         public Class<DOMSource> getObjectModel() {

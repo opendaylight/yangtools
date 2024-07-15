@@ -39,12 +39,20 @@ abstract sealed class AbstractOpaqueCodecContext<T extends OpaqueObject<T>> exte
     private final AbstractValueCodec<Object, Object> valueCodec = new AbstractValueCodec<>() {
         @Override
         protected Object serializeImpl(final Object input) {
-            checkArgument(bindingClass.isInstance(input), "Unexpected input %s", input);
+            final T cast;
+            try {
+                cast = getBindingClass().cast(input);
+            } catch (ClassCastException e) {
+                throw new IllegalArgumentException("Unexpected input " + input, e);
+            }
+
             // FIXME: this works for DOMSource only, for generalization we need to pass down the object model, too
-            final OpaqueData<?> opaqueData = bindingClass.cast(input).getValue();
-            final Object data = opaqueData.getData();
-            checkArgument(data instanceof DOMSource, "Unexpected data %s", data);
-            return data;
+            final var opaqueData = requireNonNull(cast).getValue();
+            final var data = opaqueData.getData();
+            if (data instanceof DOMSource dom) {
+                return dom;
+            }
+            throw new IllegalArgumentException("Unexpected data " + data);
         }
 
         @Override
@@ -55,18 +63,17 @@ abstract sealed class AbstractOpaqueCodecContext<T extends OpaqueObject<T>> exte
     };
 
     private final MethodHandle proxyConstructor;
-    private final @NonNull Class<T> bindingClass;
 
     AbstractOpaqueCodecContext(final DataSchemaNode schema, final String getterName, final Class<T> bindingClass,
             final BindingClassLoader loader) {
-        super(schema, getterName, null);
-        this.bindingClass = requireNonNull(bindingClass);
+        super(schema, getterName, bindingClass, null);
         proxyConstructor = createImpl(loader, bindingClass);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public final Class<T> getBindingClass() {
-        return bindingClass;
+        return (Class<T>) valueType();
     }
 
     @Override
@@ -78,7 +85,7 @@ abstract sealed class AbstractOpaqueCodecContext<T extends OpaqueObject<T>> exte
     }
 
     T deserialize(final ForeignDataNode<?> foreignData) {
-        return bindingClass.cast(createBindingProxy(new ForeignOpaqueData<>(foreignData)));
+        return getBindingClass().cast(createBindingProxy(new ForeignOpaqueData<>(foreignData)));
     }
 
     @Override
