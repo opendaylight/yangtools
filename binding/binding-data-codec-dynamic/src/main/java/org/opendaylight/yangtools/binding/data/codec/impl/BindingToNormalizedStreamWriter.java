@@ -82,7 +82,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
 
     private <T extends PathArgument> T enter(final String localName, final Class<T> identifier) {
         final var current = current();
-        final var next = ((AbstractDataObjectCodecContext<?, ?>) current).getLeafChild(localName);
+        final var next = ((CommonDataObjectCodecContext<?, ?>) current).getLeafChild(localName);
         schema.push(next);
         return identifier.cast(next.getDomPathArgument());
     }
@@ -104,7 +104,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
 
     private Map.Entry<NodeIdentifier, Object> serializeLeaf(final String localName, final Object value) {
         final var current = current();
-        if (!(current instanceof AbstractDataObjectCodecContext<?, ?> currentCasted)) {
+        if (!(current instanceof CommonDataObjectCodecContext<?, ?> currentCasted)) {
             throw new IllegalArgumentException("Unexpected current context " + current);
         }
 
