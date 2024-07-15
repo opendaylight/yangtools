@@ -25,7 +25,7 @@ public final class DataObjectIdentifierBuilderWithKey<T extends EntryObject<T, K
         super(base);
     }
 
-    DataObjectIdentifierBuilderWithKey(final KeyStep<K, T> item) {
+    public DataObjectIdentifierBuilderWithKey(final KeyStep<K, T> item) {
         super(item);
     }
 

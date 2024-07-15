@@ -25,7 +25,7 @@ public final class DataObjectReferenceBuilderWithKey<T extends EntryObject<T, K>
         super(base);
     }
 
-    DataObjectReferenceBuilderWithKey(final KeyStep<K, T> item) {
+    public DataObjectReferenceBuilderWithKey(final KeyStep<K, T> item) {
         super(item);
     }
 

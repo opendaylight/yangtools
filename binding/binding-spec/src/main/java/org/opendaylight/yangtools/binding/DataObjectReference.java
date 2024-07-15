@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.util.List;
@@ -14,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReferenceBuilder;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
+import org.opendaylight.yangtools.binding.impl.DataObjectReferenceBuilder;
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceBuilderWithKey;
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceImpl;
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
@@ -181,6 +184,66 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         }
     }
 
+    /**
+     * Create a new {@link Builder} initialized to produce a reference equal to this one.
+     *
+     * @return A builder instance
+     * @deprecated Use {@link #toBuilder()} instead.
+     */
+    @Deprecated(since = "14.0.0")
+    default @NonNull Builder<T> builder() {
+        return toBuilder();
+    }
+
+    static <T extends ChildOf<? extends DataRoot<?>>> @NonNull Builder<T> builder(final @NonNull Class<T> container) {
+        return new DataObjectReferenceBuilder<>(DataObjectStep.of(container));
+    }
+
+    static <C extends ChoiceIn<? extends DataRoot<?>> & DataObject, T extends ChildOf<? super C>>
+            @NonNull Builder<T> builder(final @NonNull Class<C> caze, final @NonNull Class<T> container) {
+        return new DataObjectReferenceBuilder<>(DataObjectStep.of(caze, container));
+    }
+
+    static <N extends EntryObject<N, K> & ChildOf<? extends DataRoot<?>>, K extends Key<N>>
+            Builder.@NonNull WithKey<N, K> builder(final Class<N> listItem, final K listKey) {
+        return new DataObjectReferenceBuilderWithKey<>(new KeyStep<>(listItem, listKey));
+    }
+
+    static <C extends ChoiceIn<? extends DataRoot<?>> & DataObject,
+            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
+            Builder.@NonNull WithKey<N, K> builder(final @NonNull Class<C> caze, final @NonNull Class<N> listItem,
+                final @NonNull K listKey) {
+        return new DataObjectReferenceBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
+    }
+
+    static <R extends DataRoot<R>, T extends ChildOf<? super R>>
+            @NonNull Builder<T> builderOfInherited(final @NonNull Class<R> root, final @NonNull Class<T> container) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new DataObjectReferenceBuilder<>(DataObjectStep.of(container));
+    }
+
+    static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject, T extends ChildOf<? super C>>
+            @NonNull Builder<T> builderOfInherited(final Class<R> root,
+                final Class<C> caze, final Class<T> container) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new DataObjectReferenceBuilder<>(DataObjectStep.of(caze, container));
+    }
+
+    static <R extends DataRoot<R>, N extends EntryObject<N, K> & ChildOf<? super R>, K extends Key<N>>
+            Builder.@NonNull WithKey<N, K> builderOfInherited(final @NonNull Class<R> root,
+                final @NonNull Class<N> listItem, final @NonNull K listKey) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new DataObjectReferenceBuilderWithKey<>(new KeyStep<>(listItem, listKey));
+    }
+
+    static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject,
+            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
+                Builder.@NonNull WithKey<N, K> builderOfInherited(final Class<R> root,
+                    final Class<C> caze, final Class<N> listItem, final K listKey) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new DataObjectReferenceBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
+    }
+
     static @NonNull DataObjectReference<?> ofUnsafeSteps(final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
         return ofUnsafeSteps(ImmutableList.copyOf(steps));
     }
@@ -247,17 +310,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      */
     default @NonNull InstanceIdentifier<T> toLegacy() {
         return InstanceIdentifier.unsafeOf(ImmutableList.copyOf(steps()));
-    }
-
-    /**
-     * Create a new {@link Builder} initialized to produce a reference equal to this one.
-     *
-     * @return A builder instance
-     * @deprecated Use {@link #toBuilder()} instead.
-     */
-    @Deprecated(since = "14.0.0")
-    default @NonNull Builder<T> builder() {
-        return toBuilder();
     }
 
     /**

@@ -7,10 +7,14 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectIdentifierBuilder;
+import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierBuilder;
+import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierBuilderWithKey;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierWithKey;
 
@@ -76,6 +80,56 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
     static @NonNull DataObjectIdentifier<?> ofUnsafeSteps(
             final ImmutableList<? extends @NonNull ExactDataObjectStep<?>> steps) {
         return DataObjectIdentifierImpl.ofUnsafeSteps(steps);
+    }
+
+    static <T extends ChildOf<? extends DataRoot<?>>> @NonNull Builder<T> builder(
+            final @NonNull Class<T> container) {
+        return new DataObjectIdentifierBuilder<>(DataObjectStep.of(container));
+    }
+
+    static <C extends ChoiceIn<? extends DataRoot<?>> & DataObject, T extends ChildOf<? super C>>
+            @NonNull Builder<T> builder(final @NonNull Class<C> caze, final @NonNull Class<T> container) {
+        return new DataObjectIdentifierBuilder<>(DataObjectStep.of(caze, container));
+    }
+
+    static <N extends EntryObject<N, K> & ChildOf<? extends DataRoot<?>>, K extends Key<N>>
+            Builder.@NonNull WithKey<N, K> builder(final Class<N> listItem, final K listKey) {
+        return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, listKey));
+    }
+
+    static <C extends ChoiceIn<? extends DataRoot<?>> & DataObject,
+            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
+            Builder.@NonNull WithKey<N, K> builder(final @NonNull Class<C> caze, final @NonNull Class<N> listItem,
+                    final @NonNull K listKey) {
+        return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
+    }
+
+    static <R extends DataRoot<R>, T extends ChildOf<? super R>>
+            @NonNull Builder<T> builderOfInherited(final @NonNull Class<R> root, final @NonNull Class<T> container) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new DataObjectIdentifierBuilder<>(DataObjectStep.of(container));
+    }
+
+    static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject, T extends ChildOf<? super C>>
+            @NonNull Builder<T> builderOfInherited(final Class<R> root,
+                final Class<C> caze, final Class<T> container) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new DataObjectIdentifierBuilder<>(DataObjectStep.of(caze, container));
+    }
+
+    static <R extends DataRoot<R>, N extends EntryObject<N, K> & ChildOf<? super R>, K extends Key<N>>
+            Builder.@NonNull WithKey<N, K> builderOfInherited(final @NonNull Class<R> root,
+                final @NonNull Class<N> listItem, final @NonNull K listKey) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, listKey));
+    }
+
+    static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject,
+            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
+            Builder.@NonNull WithKey<N, K> builderOfInherited(final Class<R> root,
+                final Class<C> caze, final Class<N> listItem, final K listKey) {
+        // FIXME: we are losing root identity, hence namespaces may not work correctly
+        return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 
     @Override
