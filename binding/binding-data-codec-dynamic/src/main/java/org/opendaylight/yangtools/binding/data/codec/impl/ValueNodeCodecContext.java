@@ -48,7 +48,7 @@ abstract sealed class ValueNodeCodecContext extends CodecContext implements Code
     }
 
     @Override
-    final NodeIdentifier getDomPathArgument() {
+    final @NonNull NodeIdentifier getDomPathArgument() {
         return yangIdentifier;
     }
 
