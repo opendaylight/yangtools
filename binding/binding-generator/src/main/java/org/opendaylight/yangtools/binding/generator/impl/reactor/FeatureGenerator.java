@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultFeatureRuntimeType;
+import org.opendaylight.yangtools.binding.model.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -51,7 +52,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
 
     @Override
     GeneratedTransferObject createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTOBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTOBuilder(new FeatureArchetype(typeName()));
         builder.addImplementsType(BindingTypes.yangFeature(builder, Type.of(getParent().typeName())));
 
         annotateDeprecatedIfNecessary(statement(), builder);
