@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.put.top.input.choice.list.choice.in.choice.list.ComplexViaUsesBuilder;
 
-public class TestCopyBuilders {
+class CopyBuildersTest {
     @Test
-    public void testBuilderListCopy() {
+    void testBuilderListCopy() {
         final var source = new TreeComplexUsesAugmentBuilder().build();
         final var viaUses = new ComplexViaUsesBuilder().build();
         final var copied = new TreeComplexUsesAugmentBuilder(viaUses).build();

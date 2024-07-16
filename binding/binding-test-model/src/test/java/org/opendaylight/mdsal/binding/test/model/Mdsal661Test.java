@@ -13,15 +13,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal661.norev.Foo;
 
-public class Mdsal661Test {
+class Mdsal661Test {
     @Test
-    public void testLengthEnforcerReject() {
+    void testLengthEnforcerReject() {
         assertThrows(IllegalArgumentException.class, () -> new Foo(""));
         assertThrows(IllegalArgumentException.class, () -> new Foo("ab"));
     }
 
     @Test
-    public void testLengthEnforcerAccept() {
+    void testLengthEnforcerAccept() {
         assertNotNull(new Foo("a"));
         // U+1F31E, encodes to UTF-16 as "\uD83C\uDF1E", i.e. two code units
         assertNotNull(new Foo("🌞"));

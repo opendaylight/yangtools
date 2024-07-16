@@ -17,9 +17,9 @@ import org.opendaylight.yang.gen.v1.mdsal766.norev.Mdsal766Data;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public class Mdsal766Test {
+class Mdsal766Test {
     @Test
-    public void featureClassShape() {
+    void featureClassShape() {
         final var instance = GlobalFoo.VALUE;
         assertInstanceOf(YangFeature.class, instance);
         assertEquals("public final", Modifier.toString(GlobalFoo.class.getModifiers()));
