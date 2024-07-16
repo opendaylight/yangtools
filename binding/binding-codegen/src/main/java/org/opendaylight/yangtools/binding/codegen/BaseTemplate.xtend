@@ -291,6 +291,9 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
              * Singleton value representing the {@link «typeName»} identity.
              */
             public static final «c.type.importedNonNull» «c.name» = new «typeName»() {
+                @java.io.Serial
+                private static final long serialVersionUID = 1L;
+
                 @«override»
                 public «CLASS.importedName»<«typeName»> «Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»() {
                     return «typeName».class;
@@ -310,6 +313,11 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
                 @«override»
                 public «STRING.importedName» toString() {
                     return «MOREOBJECTS.importedName».toStringHelper("«c.type.name»").add("qname", QNAME).toString();
+                }
+
+                @java.io.Serial
+                private Object readResolve() throws java.io.ObjectStreamException {
+                    return «c.name»;
                 }
             };
         «ELSE»
