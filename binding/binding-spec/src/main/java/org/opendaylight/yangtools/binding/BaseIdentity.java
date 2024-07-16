@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import java.io.Serializable;
+
 /**
  * Base Identity. Interface generated for {@code identity} statements extend this interface.
  */
-public non-sealed interface BaseIdentity extends BindingObject, BindingContract<BaseIdentity> {
+public non-sealed interface BaseIdentity extends BindingObject, BindingContract<BaseIdentity>, Serializable {
 
 }
