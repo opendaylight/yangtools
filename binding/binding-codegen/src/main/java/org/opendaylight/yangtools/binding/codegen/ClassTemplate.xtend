@@ -487,7 +487,7 @@ class ClassTemplate extends BaseTemplate {
         ELSEIF (type.abstract)»«
             " abstract "»«
         ELSE»«
-            " "»«
+            finalClass()»«
         ENDIF»class «type.name»«
         IF (genTO.superType !== null)»«
             " extends "»«genTO.superType.importedName»«
@@ -499,6 +499,10 @@ class ClassTemplate extends BaseTemplate {
             ENDFOR»«
         ENDIF
     »'''
+
+    def protected String finalClass() {
+        return " "
+    }
 
     /**
      * Template method which generates JAVA enum type.

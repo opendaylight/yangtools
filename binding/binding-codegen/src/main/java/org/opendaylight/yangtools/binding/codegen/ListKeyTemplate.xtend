@@ -27,6 +27,10 @@ final class ListKeyTemplate extends ClassTemplate {
         super(genType)
     }
 
+    override finalClass() {
+        return " final "
+    }
+
     override allValuesConstructor() '''
         /**
          * Constructs an instance.
