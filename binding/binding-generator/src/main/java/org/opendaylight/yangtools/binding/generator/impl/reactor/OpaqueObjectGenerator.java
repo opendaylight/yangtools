@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
+import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -83,7 +84,7 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(new OpaqueObjectArchetype(typeName()));
         builder.addImplementsType(BindingTypes.opaqueObject(builder));
         defaultImplementedInterace(builder);
         annotateDeprecatedIfNecessary(builder);

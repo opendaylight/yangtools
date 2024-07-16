@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -68,7 +69,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
             throw new UnsupportedOperationException("Lookup in original");
         }
 
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(newArchetype());
         builder.addImplementsType(baseInterface);
         addAugmentable(builder);
 
@@ -86,4 +87,6 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
 
         return builder.build();
     }
+
+    abstract @NonNull Archetype<?> newArchetype();
 }
