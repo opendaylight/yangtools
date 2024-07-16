@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,13 +16,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -33,6 +35,7 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 
 abstract class AbstractGeneratedType extends AbstractType implements GeneratedType {
+    private final Archetype<?> archetype;
     private final TypeComment comment;
     private final List<AnnotationType> annotations;
     private final List<Type> implementsTypes;
@@ -45,7 +48,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     private final YangSourceDefinition definition;
 
     AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?> builder) {
-        super(builder.getIdentifier());
+        archetype = builder.getArchetype();
         comment = builder.getComment();
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
         implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
@@ -58,13 +61,13 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
         definition = builder.getYangSourceDefinition().orElse(null);
     }
 
-    AbstractGeneratedType(final JavaTypeName identifier, final TypeComment comment,
+    AbstractGeneratedType(final Archetype<?> archetype, final TypeComment comment,
             final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
             final List<Type> implementsTypes, final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
             final List<GeneratedTOBuilder> enclosedGenTOBuilders, final List<EnumBuilder> enumBuilders,
             final List<Constant> constants, final List<MethodSignatureBuilder> methodBuilders,
             final List<GeneratedPropertyBuilder> propertyBuilders) {
-        super(identifier);
+        this.archetype = requireNonNull(archetype);
         this.comment = comment;
         annotations = toUnmodifiableAnnotations(annotationBuilders);
         this.implementsTypes = makeUnmodifiable(implementsTypes);
@@ -146,13 +149,18 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
         return makeUnmodifiable(enums);
     }
 
-    protected final List<GeneratedProperty> toUnmodifiableProperties(
+    protected static final List<GeneratedProperty> toUnmodifiableProperties(
             final List<GeneratedPropertyBuilder> methodBuilders) {
-        final List<GeneratedProperty> methods = new ArrayList<>(methodBuilders.size());
-        for (final GeneratedPropertyBuilder methodBuilder : methodBuilders) {
+        final var methods = new ArrayList<GeneratedProperty>(methodBuilders.size());
+        for (var methodBuilder : methodBuilders) {
             methods.add(methodBuilder.toInstance());
         }
         return makeUnmodifiable(methods);
+    }
+
+    @Override
+    public final Archetype<?> archetype() {
+        return archetype;
     }
 
     @Override

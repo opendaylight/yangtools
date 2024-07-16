@@ -11,6 +11,7 @@ import java.util.List;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultOutputRuntimeType;
+import org.opendaylight.yangtools.binding.model.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -46,5 +47,10 @@ final class OutputGenerator extends OperationContainerGenerator<OutputEffectiveS
                 return new DefaultOutputRuntimeType(type, statement, children, augments);
             }
         };
+    }
+
+    @Override
+    RpcOutputArchetype newArchetype() {
+        return new RpcOutputArchetype(typeName());
     }
 }
