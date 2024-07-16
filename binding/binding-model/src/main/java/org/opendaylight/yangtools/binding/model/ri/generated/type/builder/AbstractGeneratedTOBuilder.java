@@ -11,9 +11,9 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import java.util.Collections;
 import java.util.List;
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
@@ -34,8 +34,8 @@ abstract class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<G
     private boolean isUnionType = false;
     private TypeDefinition<?> baseType = null;
 
-    AbstractGeneratedTOBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    AbstractGeneratedTOBuilder(final Archetype<?> archetype) {
+        super(archetype);
         setAbstract(false);
     }
 

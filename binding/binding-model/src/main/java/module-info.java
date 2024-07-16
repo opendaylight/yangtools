@@ -6,6 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 module org.opendaylight.yangtools.binding.model {
+    exports org.opendaylight.yangtools.binding.model;
     exports org.opendaylight.yangtools.binding.model.api;
     exports org.opendaylight.yangtools.binding.model.api.type.builder;
     exports org.opendaylight.yangtools.binding.model.ri;
