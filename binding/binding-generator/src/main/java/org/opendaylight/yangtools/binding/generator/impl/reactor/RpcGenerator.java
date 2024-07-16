@@ -11,6 +11,7 @@ import java.util.List;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultRpcRuntimeType;
+import org.opendaylight.yangtools.binding.model.RpcArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -35,6 +36,11 @@ final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatemen
     @Override
     ClassPlacement classPlacement() {
         return ClassPlacement.TOP_LEVEL;
+    }
+
+    @Override
+    RpcArchetype newArchetype() {
+        return new RpcArchetype(typeName());
     }
 
     @Override

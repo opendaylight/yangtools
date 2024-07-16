@@ -7,11 +7,23 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Wraps combination of <code>packageName</code> and <code>name</code> to the object representation.
  */
-final class DefaultType extends AbstractType {
-    DefaultType(final JavaTypeName identifier) {
-        super(identifier);
+@NonNullByDefault
+public class DefaultType extends AbstractType {
+    private final JavaTypeName identifier;
+
+    protected DefaultType(final JavaTypeName identifier) {
+        this.identifier = requireNonNull(identifier);
+    }
+
+    @Override
+    public final JavaTypeName getIdentifier() {
+        return identifier;
     }
 }

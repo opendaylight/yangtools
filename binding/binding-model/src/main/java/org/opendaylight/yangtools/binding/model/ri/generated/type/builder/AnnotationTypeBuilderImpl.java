@@ -9,18 +9,16 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.DefaultType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 
-final class AnnotationTypeBuilderImpl extends AbstractType implements AnnotationTypeBuilder {
-
+final class AnnotationTypeBuilderImpl extends DefaultType implements AnnotationTypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
     private List<AnnotationType.Parameter> parameters = Collections.emptyList();
 
@@ -81,7 +79,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
             .add("parameters", parameters);
     }
 
-    private static final class AnnotationTypeImpl extends AbstractType implements AnnotationType {
+    private static final class AnnotationTypeImpl extends DefaultType implements AnnotationType {
         private final List<AnnotationType> annotations;
         private final List<AnnotationType.Parameter> parameters;
         private final List<String> paramNames;
@@ -89,19 +87,12 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
         AnnotationTypeImpl(final JavaTypeName identifier, final List<AnnotationTypeBuilder> annotationBuilders,
                 final List<AnnotationType.Parameter> parameters) {
             super(identifier);
-
-            final List<AnnotationType> a = new ArrayList<>();
-            for (final AnnotationTypeBuilder builder : annotationBuilders) {
-                a.add(builder.build());
-            }
-            annotations = ImmutableList.copyOf(a);
-
-            final List<String> p = new ArrayList<>();
-            for (final AnnotationType.Parameter parameter : parameters) {
-                p.add(parameter.getName());
-            }
-            paramNames = ImmutableList.copyOf(p);
-
+            annotations = annotationBuilders.stream()
+                .map(AnnotationTypeBuilder::build)
+                .collect(ImmutableList.toImmutableList());
+            paramNames = parameters.stream()
+                .map(AnnotationType.Parameter::getName)
+                .collect(ImmutableList.toImmutableList());
             this.parameters = parameters.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(parameters);
         }
 

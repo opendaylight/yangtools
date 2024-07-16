@@ -15,10 +15,13 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.DefaultType;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -34,7 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 // FIXME: public because EnumBuilder does not have setters we are exposing
-public abstract class AbstractEnumerationBuilder extends AbstractType implements EnumBuilder {
+public abstract class AbstractEnumerationBuilder extends DefaultType implements EnumBuilder {
     private List<Enumeration.Pair> values = ImmutableList.of();
     private List<AnnotationTypeBuilder> annotationBuilders = ImmutableList.of();
 
@@ -131,15 +134,21 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
     }
 
     abstract static class AbstractEnumeration extends AbstractType implements Enumeration {
+        private final @NonNull EnumTypeObjectArchetype archetype;
         private final List<AnnotationType> annotations;
         private final List<Pair> values;
 
         AbstractEnumeration(final AbstractEnumerationBuilder builder) {
-            super(builder.getIdentifier());
+            archetype = new EnumTypeObjectArchetype(builder.getIdentifier());
             values = ImmutableList.copyOf(builder.values);
             annotations = builder.annotationBuilders.stream()
                 .map(AnnotationTypeBuilder::build)
                 .collect(ImmutableList.toImmutableList());
+        }
+
+        @Override
+        public final EnumTypeObjectArchetype archetype() {
+            return archetype;
         }
 
         @Override

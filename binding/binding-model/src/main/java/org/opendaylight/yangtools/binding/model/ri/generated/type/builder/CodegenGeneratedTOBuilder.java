@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
@@ -20,8 +20,8 @@ public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     private String description;
     private String moduleName;
 
-    public CodegenGeneratedTOBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    public CodegenGeneratedTOBuilder(final Archetype<?> archetype) {
+        super(archetype);
     }
 
     @Override

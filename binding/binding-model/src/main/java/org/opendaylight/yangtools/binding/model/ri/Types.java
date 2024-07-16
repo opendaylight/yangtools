@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.BaseTypeWithRestrictions;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.DefaultType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -296,7 +297,7 @@ public final class Types {
     /**
      * Represents a concrete Java type.
      */
-    private static final class ConcreteTypeImpl extends AbstractType implements ConcreteType {
+    private static final class ConcreteTypeImpl extends DefaultType implements ConcreteType {
         private final Restrictions restrictions;
 
         /**
@@ -319,8 +320,7 @@ public final class Types {
     /**
      * Represents a concrete Java type with changed restriction values.
      */
-    private static final class BaseTypeWithRestrictionsImpl extends AbstractType implements
-            BaseTypeWithRestrictions {
+    private static final class BaseTypeWithRestrictionsImpl extends DefaultType implements BaseTypeWithRestrictions {
         private final Restrictions restrictions;
 
         /**
@@ -343,7 +343,7 @@ public final class Types {
     /**
      * Represents a parameterized Java type.
      */
-    private static class ParametrizedTypeImpl extends AbstractType implements ParameterizedType {
+    private static final class ParametrizedTypeImpl extends AbstractType implements ParameterizedType {
         /**
          * Array of JAVA actual type parameters.
          */
@@ -361,7 +361,6 @@ public final class Types {
          * @param actTypes array of actual parameters
          */
         ParametrizedTypeImpl(final Type rawType, final Type[] actTypes) {
-            super(rawType.getIdentifier());
             this.rawType = requireNonNull(rawType);
             actualTypes = actTypes.clone();
             if (Arrays.stream(actualTypes).anyMatch(Objects::isNull)) {
@@ -370,8 +369,12 @@ public final class Types {
         }
 
         @Override
-        public Type[] getActualTypeArguments() {
+        public JavaTypeName getIdentifier() {
+            return rawType.getIdentifier();
+        }
 
+        @Override
+        public Type[] getActualTypeArguments() {
             return actualTypes;
         }
 
@@ -384,7 +387,7 @@ public final class Types {
     /**
      * Represents a Java bounded wildcard type.
      */
-    private static class WildcardTypeImpl extends AbstractType implements WildcardType {
+    private static class WildcardTypeImpl extends DefaultType implements WildcardType {
         /**
          * Default constructor.
          *

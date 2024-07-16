@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -37,7 +39,7 @@ abstract class AbstractInvokableGenerator<S extends SchemaTreeEffectiveStatement
 
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(newArchetype());
         final var inputType = getChild(this, InputEffectiveStatement.class).getOriginal()
             .getGeneratedType(builderFactory);
         final var outputType = getChild(this, OutputEffectiveStatement.class).getOriginal()
@@ -54,6 +56,8 @@ abstract class AbstractInvokableGenerator<S extends SchemaTreeEffectiveStatement
 
         return builder.build();
     }
+
+    abstract @NonNull Archetype<?> newArchetype();
 
     abstract void addImplementedType(TypeBuilderFactory builderFactory, GeneratedTypeBuilder builder,
         GeneratedType input, GeneratedType output);

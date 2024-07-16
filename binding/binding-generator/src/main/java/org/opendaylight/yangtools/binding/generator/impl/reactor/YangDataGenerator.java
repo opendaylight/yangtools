@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultYangDataRuntimeType;
+import org.opendaylight.yangtools.binding.model.YangDataArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -95,7 +96,7 @@ abstract sealed class YangDataGenerator
 
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(new YangDataArchetype(typeName()));
 
         builder.addImplementsType(BindingTypes.yangData(builder));
         addUsesInterfaces(builder, builderFactory);

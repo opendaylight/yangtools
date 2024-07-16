@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -58,9 +59,9 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
     }
 
     private static final class EnumPair extends AbstractPair {
+        private final @NonNull Status status;
         private final String description;
         private final String reference;
-        private final Status status;
 
         EnumPair(final String name, final String mappedName, final int value, final Status status,
                 final String description, final String reference) {

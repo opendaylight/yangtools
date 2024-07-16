@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultGroupingRuntimeType;
+import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -67,7 +68,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(new GroupingArchetype(typeName()));
         builder.addImplementsType(BindingTypes.GROUPING);
         addUsesInterfaces(builder, builderFactory);
         addGetterMethods(builder, builderFactory);

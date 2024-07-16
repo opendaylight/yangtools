@@ -13,7 +13,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
+import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
@@ -49,13 +52,13 @@ public abstract class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        GeneratedTOBuilder newGeneratedTOBuilder(final JavaTypeName identifier) {
-            return new CodegenGeneratedTOBuilder(identifier);
+        GeneratedTOBuilder newGeneratedTOBuilder(final Archetype<?> archetype) {
+            return new CodegenGeneratedTOBuilder(archetype);
         }
 
         @Override
-        GeneratedTypeBuilder newGeneratedTypeBuilder(final JavaTypeName identifier) {
-            return new CodegenGeneratedTypeBuilder(identifier);
+        GeneratedTypeBuilder newGeneratedTypeBuilder(final Archetype<?> archetype) {
+            return new CodegenGeneratedTypeBuilder(archetype);
         }
 
         @Override
@@ -108,7 +111,7 @@ public abstract class TypeBuilderFactory implements Immutable {
 
         private static final class UnionBuilder extends CodegenGeneratedTOBuilder implements GeneratedUnionBuilder {
             UnionBuilder(final JavaTypeName identifier) {
-                super(identifier);
+                super(new UnionTypeObjectArchetype(identifier));
                 setIsUnion(true);
             }
 
@@ -128,13 +131,13 @@ public abstract class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        GeneratedTOBuilder newGeneratedTOBuilder(final JavaTypeName identifier) {
-            return new RuntimeGeneratedTOBuilder(identifier);
+        GeneratedTOBuilder newGeneratedTOBuilder(final Archetype<?> archetype) {
+            return new RuntimeGeneratedTOBuilder(archetype);
         }
 
         @Override
-        GeneratedTypeBuilder newGeneratedTypeBuilder(final JavaTypeName identifier) {
-            return new RuntimeGeneratedTypeBuilder(identifier);
+        GeneratedTypeBuilder newGeneratedTypeBuilder(final Archetype<?> archetype) {
+            return new RuntimeGeneratedTypeBuilder(archetype);
         }
 
         @Override
@@ -172,7 +175,7 @@ public abstract class TypeBuilderFactory implements Immutable {
             private List<String> typePropertyNames;
 
             UnionBuilder(final JavaTypeName identifier) {
-                super(identifier);
+                super(new UnionTypeObjectArchetype(identifier));
                 setIsUnion(true);
             }
 
@@ -215,13 +218,17 @@ public abstract class TypeBuilderFactory implements Immutable {
         return Runtime.INSTANCE;
     }
 
-    abstract @NonNull AbstractEnumerationBuilder newEnumerationBuilder(JavaTypeName identifier);
+    @NonNullByDefault
+    abstract AbstractEnumerationBuilder newEnumerationBuilder(JavaTypeName identifier);
 
-    abstract @NonNull GeneratedTOBuilder newGeneratedTOBuilder(JavaTypeName identifier);
+    @NonNullByDefault
+    abstract GeneratedTOBuilder newGeneratedTOBuilder(Archetype<?> archetype);
 
-    abstract @NonNull GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
+    @NonNullByDefault
+    abstract GeneratedTypeBuilder newGeneratedTypeBuilder(Archetype<?> archetype);
 
-    abstract @NonNull GeneratedUnionBuilder newGeneratedUnionBuilder(JavaTypeName identifier);
+    @NonNullByDefault
+    abstract GeneratedUnionBuilder newGeneratedUnionBuilder(JavaTypeName identifier);
 
     abstract void addCodegenInformation(EffectiveStatement<?, ?> stmt, GeneratedTypeBuilderBase<?> builder);
 

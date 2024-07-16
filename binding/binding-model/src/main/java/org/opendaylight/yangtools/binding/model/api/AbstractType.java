@@ -8,23 +8,15 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 
 /**
  * It is used only as ancestor for other <code>Type</code>s. Note this forms the equality domain over most types, please
  * consider joining the party.
  */
 @Beta
-public abstract class AbstractType extends AbstractSimpleIdentifiable<JavaTypeName> implements Type {
-    /**
-     * Constructs the instance of this class with a JavaTypeName.
-     *
-     * @param identifier for this <code>Type</code>
-     */
-    protected AbstractType(final JavaTypeName identifier) {
-        super(identifier);
-    }
-
+public abstract class AbstractType implements Type {
     @Override
     public final int hashCode() {
         return getIdentifier().hashCode();
@@ -33,5 +25,14 @@ public abstract class AbstractType extends AbstractSimpleIdentifiable<JavaTypeNa
     @Override
     public final boolean equals(final Object obj) {
         return this == obj || obj instanceof Type type && getIdentifier().equals(type.getIdentifier());
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("identifier", getIdentifier());
     }
 }

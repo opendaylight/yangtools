@@ -11,6 +11,7 @@ import java.util.List;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
+import org.opendaylight.yangtools.binding.model.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -39,6 +40,11 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
         // therefore they do not have an InstanceIdentifier. We still need to allocate a package name for the purposes
         // of generating shared classes for input/output
         return getParent() instanceof GroupingGenerator ? ClassPlacement.PHANTOM : ClassPlacement.TOP_LEVEL;
+    }
+
+    @Override
+    ActionArchetype newArchetype() {
+        return new ActionArchetype(typeName());
     }
 
     @Override

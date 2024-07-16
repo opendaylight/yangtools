@@ -8,12 +8,16 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import java.util.List;
+import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**
  * Interface provide methods for reading data of enumeration class.
  */
 public interface Enumeration extends GeneratedType {
+    @Override
+    EnumTypeObjectArchetype archetype();
+
     /**
      * Returns list of the couples - name and value.
      *

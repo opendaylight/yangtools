@@ -14,6 +14,8 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -31,6 +33,7 @@ import org.opendaylight.yangtools.util.LazyCollections;
 
 abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractType
         implements GeneratedTypeBuilderBase<T> {
+    private final @NonNull Archetype<?> archetype;
 
     private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
     private List<Type> implementsTypes = Collections.emptyList();
@@ -43,43 +46,52 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     private boolean isAbstract;
     private YangSourceDefinition yangSourceDefinition;
 
-    protected AbstractGeneratedTypeBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    protected AbstractGeneratedTypeBuilder(final Archetype<?> archetype) {
+        this.archetype = requireNonNull(archetype);
+    }
+
+    @Override
+    public final JavaTypeName getIdentifier() {
+        return archetype.typeName();
+    }
+
+    protected final @NonNull Archetype<?> getArchetype() {
+        return archetype;
     }
 
     protected TypeComment getComment() {
-        return this.comment;
+        return comment;
     }
 
     protected List<AnnotationTypeBuilder> getAnnotations() {
-        return this.annotationBuilders;
+        return annotationBuilders;
     }
 
     @Override
     public boolean isAbstract() {
-        return this.isAbstract;
+        return isAbstract;
     }
 
     @Override
     public List<Type> getImplementsTypes() {
-        return this.implementsTypes;
+        return implementsTypes;
     }
 
     protected List<Enumeration> getEnumerations() {
-        return this.enumDefinitions;
+        return enumDefinitions;
     }
 
     protected List<Constant> getConstants() {
-        return this.constants;
+        return constants;
     }
 
     @Override
     public List<MethodSignatureBuilder> getMethodDefinitions() {
-        return this.methodDefinitions;
+        return methodDefinitions;
     }
 
     protected List<GeneratedTransferObject> getEnclosedTransferObjects() {
-        return this.enclosedTransferObjects;
+        return enclosedTransferObjects;
     }
 
     protected abstract T thisInstance();
@@ -89,13 +101,13 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         checkArgument(genTO != null, "Parameter genTO cannot be null!");
         checkArgument(!enclosedTransferObjects.contains(genTO),
             "This generated type already contains equal enclosing transfer object.");
-        this.enclosedTransferObjects = LazyCollections.lazyAdd(this.enclosedTransferObjects, genTO);
+        enclosedTransferObjects = LazyCollections.lazyAdd(enclosedTransferObjects, genTO);
         return thisInstance();
     }
 
     @Override
     public T addComment(final TypeComment newComment) {
-        this.comment = requireNonNull(newComment);
+        comment = requireNonNull(newComment);
         return thisInstance();
     }
 
@@ -104,13 +116,13 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(identifier);
 
         checkArgument(!annotationBuilders.contains(builder), "This generated type already contains equal annotation.");
-        this.annotationBuilders = LazyCollections.lazyAdd(this.annotationBuilders, builder);
+        annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
         return builder;
     }
 
     @Override
     public T setAbstract(final boolean newIsAbstract) {
-        this.isAbstract = newIsAbstract;
+        isAbstract = newIsAbstract;
         return thisInstance();
     }
 
@@ -119,7 +131,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         checkArgument(genType != null, "Type cannot be null");
         checkArgument(!implementsTypes.contains(genType),
             "This generated type already contains equal implements type.");
-        this.implementsTypes = LazyCollections.lazyAdd(this.implementsTypes, genType);
+        implementsTypes = LazyCollections.lazyAdd(implementsTypes, genType);
         return thisInstance();
     }
 
@@ -131,13 +143,13 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
             "This generated type already contains a \"%s\" constant", name);
 
         final Constant constant = new ConstantImpl(type, name, value);
-        this.constants = LazyCollections.lazyAdd(this.constants, constant);
+        constants = LazyCollections.lazyAdd(constants, constant);
         return constant;
     }
 
     public boolean containsConstant(final String name) {
         checkArgument(name != null, "Parameter name can't be null");
-        for (final Constant constant : this.constants) {
+        for (final Constant constant : constants) {
             if (name.equals(constant.getName())) {
                 return true;
             }
@@ -154,7 +166,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         // and hence is marking our namespace
         checkArgument(!enumDefinitions.contains(enumeration),
             "Generated type %s already contains an enumeration for %s", this, enumeration);
-        this.enumDefinitions = LazyCollections.lazyAdd(this.enumDefinitions, enumeration);
+        enumDefinitions = LazyCollections.lazyAdd(enumDefinitions, enumeration);
     }
 
     @Override
@@ -163,14 +175,14 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         final MethodSignatureBuilder builder = new MethodSignatureBuilderImpl(name);
         builder.setAccessModifier(AccessModifier.PUBLIC);
         builder.setAbstract(true);
-        this.methodDefinitions = LazyCollections.lazyAdd(this.methodDefinitions, builder);
+        methodDefinitions = LazyCollections.lazyAdd(methodDefinitions, builder);
         return builder;
     }
 
     @Override
     public boolean containsMethod(final String name) {
         checkArgument(name != null, "Parameter name can't be null");
-        for (final MethodSignatureBuilder methodDefinition : this.methodDefinitions) {
+        for (final MethodSignatureBuilder methodDefinition : methodDefinitions) {
             if (name.equals(methodDefinition.getName())) {
                 return true;
             }
@@ -186,14 +198,14 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
         final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);
         builder.setAccessModifier(AccessModifier.PUBLIC);
-        this.properties = LazyCollections.lazyAdd(this.properties, builder);
+        properties = LazyCollections.lazyAdd(properties, builder);
         return builder;
     }
 
     @Override
     public boolean containsProperty(final String name) {
         checkArgument(name != null, "Parameter name can't be null");
-        for (final GeneratedPropertyBuilder property : this.properties) {
+        for (final GeneratedPropertyBuilder property : properties) {
             if (name.equals(property.getName())) {
                 return true;
             }
@@ -207,7 +219,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public List<GeneratedPropertyBuilder> getProperties() {
-        return this.properties;
+        return properties;
     }
 
     @Override

@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
 public class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
-    public RuntimeGeneratedTOBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    public RuntimeGeneratedTOBuilder(final Archetype<?> archetype) {
+        super(archetype);
     }
 
     @Override
