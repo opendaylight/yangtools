@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.test.rev170101.Cont.VlanId;
 import org.opendaylight.yang.gen.v1.urn.test.rev170101.Cont.VlanId.Enumeration;
 
-public class Mdsal792Test {
+class Mdsal792Test {
     @Test
-    public void testRejectNulls() {
+    void testRejectNulls() {
         assertThrows(NullPointerException.class, () -> new VlanId((Enumeration) null));
     }
 }

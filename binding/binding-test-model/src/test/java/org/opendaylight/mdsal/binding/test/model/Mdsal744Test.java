@@ -9,21 +9,21 @@ package org.opendaylight.mdsal.binding.test.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.stream.Stream;
+import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns._default.value.test.norev.MyBits;
 
-public class Mdsal744Test {
+class Mdsal744Test {
     @ParameterizedTest
-    @MethodSource("values")
-    public void testBitsToString(final String expected, final boolean zero, final boolean one) {
+    @MethodSource
+    void testBitsToString(final String expected, final boolean zero, final boolean one) {
         assertEquals(expected, new MyBits(one, false, zero).toString());
     }
 
-    static Stream<Arguments> values() {
-        return Stream.of(
+    private static List<Arguments> testBitsToString() {
+        return List.of(
             Arguments.of("MyBits{}", false, false),
             Arguments.of("MyBits{bitOne}", false, true),
             Arguments.of("MyBits{bitZero}", true, false),

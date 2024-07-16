@@ -21,7 +21,7 @@ import org.opendaylight.yang.gen.v1.lal.norev.foo.BarBuilder;
 import org.opendaylight.yang.gen.v1.lal.norev.foo.BarKey;
 import org.opendaylight.yangtools.binding.util.BindingMap;
 
-public class TestBindingMap {
+class BindingMapTest {
     private static final BarKey BAR_KEY_ONE = new BarKey(1);
     private static final BarKey BAR_KEY_TWO = new BarKey(2);
     private static final BarKey BAR_KEY_THREE = new BarKey(3);
@@ -33,7 +33,7 @@ public class TestBindingMap {
     private static final List<Bar> BAR_LIST = List.of(BAR_TWO, BAR_ONE, BAR_FOUR, BAR_THREE);
 
     @Test
-    public void ofTest() {
+    void ofTest() {
         final Foo foo = new FooBuilder()
                 .setBar(BindingMap.of(BAR_ONE, BAR_TWO))
                 .build();
@@ -44,7 +44,7 @@ public class TestBindingMap {
     }
 
     @Test
-    public void builderTest() {
+    void builderTest() {
         final BindingMap.Builder<BarKey, Bar> builder = BindingMap.builder();
         for (Bar bar : BAR_LIST) {
             builder.add(bar);
@@ -61,7 +61,7 @@ public class TestBindingMap {
     }
 
     @Test
-    public void orderedTest() {
+    void orderedTest() {
         final Foo foo = new FooBuilder()
                 .setBar(BindingMap.ordered(BAR_TWO, BAR_ONE, BAR_FOUR, BAR_THREE))
                 .build();
@@ -71,7 +71,7 @@ public class TestBindingMap {
     }
 
     @Test
-    public void orderedBuilderTest() {
+    void orderedBuilderTest() {
         final Foo foo = new FooBuilder()
                 .setBar(BindingMap.<BarKey, Bar>orderedBuilder()
                         .add(BAR_TWO)
