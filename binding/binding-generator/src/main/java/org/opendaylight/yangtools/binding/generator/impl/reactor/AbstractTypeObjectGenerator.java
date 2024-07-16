@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
+import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -530,7 +531,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         }
 
         // Base type is a GTO, we need to re-adjust it with new restrictions
-        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(gto.getIdentifier());
+        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(gto.archetype());
         final GeneratedTransferObject parent = gto.getSuperType();
         if (parent != null) {
             builder.setExtendsType(parent);
@@ -619,7 +620,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     private static @NonNull GeneratedTransferObject createBits(final TypeBuilderFactory builderFactory,
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final BitsTypeDefinition typedef, final boolean isTypedef) {
-        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName);
+        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(new BitsTypeObjectArchetype(typeName));
         builder.setTypedef(isTypedef);
         builder.addImplementsType(BindingTypes.BITS_TYPE_OBJECT);
         builder.setBaseType(typedef);

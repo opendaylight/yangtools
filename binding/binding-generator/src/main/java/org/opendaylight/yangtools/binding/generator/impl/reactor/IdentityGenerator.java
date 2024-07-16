@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultIdentityRuntimeType;
+import org.opendaylight.yangtools.binding.model.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -54,7 +55,7 @@ public final class IdentityGenerator
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(new IdentityArchetype(typeName()));
         if (!baseIdentities.isEmpty()) {
             for (var baseIdentity : baseIdentities) {
                 builder.addImplementsType(baseIdentity.getGeneratedType(builderFactory));

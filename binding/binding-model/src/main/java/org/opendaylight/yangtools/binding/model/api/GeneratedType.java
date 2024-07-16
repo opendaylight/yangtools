@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.Archetype;
 
 /**
  * Every Java interface has to be specified with:
@@ -30,6 +32,18 @@ import java.util.Optional;
  * no need to specify the scope of visibility.
  */
 public interface GeneratedType extends Type, DocumentedType {
+    /**
+     * Returns the {@link Archetype} associated with this {@link GeneratedType}.
+     *
+     * @return the Archetype associated with this type
+     */
+    @NonNull Archetype<?> archetype();
+
+    @Override
+    default JavaTypeName getIdentifier() {
+        return archetype().typeName();
+    }
+
     /**
      * Returns comment string associated with Generated Type.
      *

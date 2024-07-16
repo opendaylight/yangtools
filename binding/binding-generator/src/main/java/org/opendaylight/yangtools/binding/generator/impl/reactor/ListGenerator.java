@@ -12,6 +12,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultListRuntimeType;
+import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -57,7 +59,9 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var local = keyGen;
+        final var builder = builderFactory.newGeneratedTypeBuilder(
+            local == null ? new ItemObjectArchetype(typeName()) : new EntryObjectArchetype(typeName()));
         addImplementsChildOf(builder);
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
@@ -65,7 +69,6 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         final var module = currentModule();
         module.addQNameConstant(builder, localName());
 
-        final var local = keyGen;
         if (local != null) {
             // Add yang.binding.Identifiable and its key() method
             final var keyType = local.getGeneratedType(builderFactory);
