@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
 /**
  * A base class for {@link DataObject}s backed by {@link DataObjectCodecContext}. While this class is public, it not
@@ -67,11 +66,6 @@ public abstract class CodecDataObject<T extends DataObject & JavaDataContainer<T
         throw new VerifyException("Unexpected context " + childContext);
     }
 
-    protected final @NonNull Object codecKey(final VarHandle handle) {
-        final Object cached = handle.getAcquire(this);
-        return cached != null ? cached : loadKey(handle);
-    }
-
     final @NonNull CommonDataObjectCodecContext<T, ?> codecContext() {
         return context;
     }
@@ -89,21 +83,6 @@ public abstract class CodecDataObject<T extends DataObject & JavaDataContainer<T
         final Object obj = child != null ? childCtx.deserializeObject(child) : childCtx.defaultObject();
         final Object witness = handle.compareAndExchangeRelease(this, null, maskNull(obj));
         return witness == null ? obj : unmaskNull(witness);
-    }
-
-    // Helper split out of codecKey to aid its inlining
-    private @NonNull Object loadKey(final VarHandle handle) {
-        if (!(data instanceof MapEntryNode mapEntry)) {
-            throw new VerifyException("Unsupported value " + data);
-        }
-        if (!(context instanceof MapCodecContext<?, ?> listContext)) {
-            throw new VerifyException("Unexpected context " + context);
-        }
-
-        final Object obj = listContext.deserialize(mapEntry.name());
-        // key is known to be non-null, no need to mask it
-        final Object witness = handle.compareAndExchangeRelease(this, null, obj);
-        return witness == null ? obj : witness;
     }
 
     private static @NonNull Object maskNull(final @Nullable Object unmasked) {
