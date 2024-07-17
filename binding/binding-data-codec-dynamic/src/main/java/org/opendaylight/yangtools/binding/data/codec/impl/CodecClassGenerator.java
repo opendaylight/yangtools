@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * Abstract base class for {@link ClassGenerator}s for binding interfaces.
  */
 abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T>
-        permits CodecDataObjectGenerator {
+        permits CodecDataObjectGenerator, CodecEntryObjectGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(CodecClassGenerator.class);
 
     private static final ByteBuddy BB = new ByteBuddy();
