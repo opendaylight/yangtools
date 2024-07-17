@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -45,8 +46,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is an implementation detail. It is public only due to technical reasons and may change at any time.
@@ -55,8 +54,6 @@ import org.slf4j.LoggerFactory;
 public abstract sealed class DataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
         extends CommonDataObjectCodecContext<D, T> implements BindingDataObjectCodecTreeNode<D>
         permits CaseCodecContext, ContainerLikeCodecContext, ListCodecContext, NotificationCodecContext {
-    private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
-
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
         CommonDataObjectCodecContext.class, DataContainerNode.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
@@ -99,12 +96,17 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             }
 
             possibleAugmentations = augmentableRuntimeType.augments();
-            generatedClass = CodecDataObjectGenerator.generateAugmentable(loader, bindingClass, analysis.leafContexts,
-                analysis.daoProperties, keyMethod);
+            if (EntryObject.class.isAssignableFrom(bindingClass)) {
+                generatedClass = CodecEntryObjectGenerator.generate(loader, bindingClass,
+                    analysis.leafContexts, analysis.daoProperties, keyMethod);
+            } else {
+                generatedClass = CodecDataObjectGenerator.generateAugmentable(loader, bindingClass,
+                    analysis.leafContexts, analysis.daoProperties);
+            }
         } else {
             possibleAugmentations = List.of();
             generatedClass = CodecDataObjectGenerator.generate(loader, bindingClass, analysis.leafContexts,
-                analysis.daoProperties, keyMethod);
+                analysis.daoProperties);
         }
 
         // All done: acquire the constructor: it is supposed to be public
