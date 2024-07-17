@@ -7,27 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static net.bytebuddy.implementation.bytecode.member.MethodVariableAccess.loadThis;
-import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.getField;
-import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.invokeMethod;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
-import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 import java.util.Map;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.ForLoadedType;
+import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
-import net.bytebuddy.implementation.bytecode.StackManipulation;
-import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
-import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Private support for generating {@link CodecDataObject} and {@link AugmentableCodecDataObject} specializations.
@@ -120,65 +111,33 @@ import org.slf4j.LoggerFactory;
  * completes.
  */
 final class CodecDataObjectGenerator<T extends CodecDataObject<?>> extends CodecClassGenerator<T> {
-    private static final class KeyMethodImplementation extends CachedMethodImplementation {
-        private static final StackManipulation CODEC_KEY =
-            invokeMethod(CodecDataObject.class, "codecKey", VarHandle.class);
-
-        @NonNullByDefault
-        KeyMethodImplementation(final String methodName, final TypeDescription retType) {
-            super(methodName, retType);
-        }
-
-        @Override
-        public ByteCodeAppender appender(final Target implementationTarget) {
-            return new ByteCodeAppender.Simple(
-                // return (FooType) codecKey(getFoo$$$V);
-                loadThis(),
-                getField(implementationTarget.getInstrumentedType(), handleName),
-                CODEC_KEY,
-                TypeCasting.to(retType),
-                MethodReturn.REFERENCE);
-        }
-    }
-
-    private static final Logger LOG = LoggerFactory.getLogger(CodecDataObjectGenerator.class);
     private static final TypeDescription BB_CDO = ForLoadedType.of(CodecDataObject.class);
     private static final TypeDescription BB_ACDO = ForLoadedType.of(AugmentableCodecDataObject.class);
 
-    private final Method keyMethod;
+    private final @NonNull TypeDescription superClass;
 
-    private CodecDataObjectGenerator(final @NonNull TypeDescription superClass,
-            final @NonNull GetterGenerator getterGenerator, final @Nullable Method keyMethod) {
-        super(superClass, getterGenerator);
-        this.keyMethod = keyMethod;
+    @NonNullByDefault
+    private CodecDataObjectGenerator(final TypeDescription superClass, final GetterGenerator getterGenerator) {
+        super(getterGenerator);
+        this.superClass = requireNonNull(superClass);
     }
 
     static <T extends CodecDataObject<T>> @NonNull Class<T> generate(final BindingClassLoader loader,
             final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
-            final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
+            final Map<Class<?>, PropertyInfo> daoProperties) {
         return CodecPackage.CODEC.generateClass(loader, bindingInterface,
-            new CodecDataObjectGenerator<>(BB_CDO, new ReusableGetterGenerator(simpleProperties, daoProperties),
-                keyMethod));
+            new CodecDataObjectGenerator<>(BB_CDO, new ReusableGetterGenerator(simpleProperties, daoProperties)));
     }
 
     static <T extends CodecDataObject<T>> @NonNull Class<T> generateAugmentable(final BindingClassLoader loader,
             final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
-            final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
+            final Map<Class<?>, PropertyInfo> daoProperties) {
         return CodecPackage.CODEC.generateClass(loader, bindingInterface,
-            new CodecDataObjectGenerator<>(BB_ACDO, new ReusableGetterGenerator(simpleProperties, daoProperties),
-                keyMethod));
+            new CodecDataObjectGenerator<>(BB_ACDO, new ReusableGetterGenerator(simpleProperties, daoProperties)));
     }
 
     @Override
-    DynamicType.Builder<T> customizeBuilder(final DynamicType.Builder<T> builder) {
-        if (keyMethod == null) {
-            return builder;
-        }
-
-        LOG.trace("Generating for key {}", keyMethod);
-        final var methodName = keyMethod.getName();
-        final var retType = ForLoadedType.of(keyMethod.getReturnType());
-        return builder.defineMethod(methodName, retType, PUB_FINAL)
-            .intercept(new KeyMethodImplementation(methodName, retType));
+    DynamicType.Builder<?> newBuilder(final TypeDescription.Generic bindingDef) {
+        return BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef).build());
     }
 }

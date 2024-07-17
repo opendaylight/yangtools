@@ -13,9 +13,7 @@ import java.util.function.Supplier;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -29,19 +27,16 @@ import org.slf4j.LoggerFactory;
  * Abstract base class for {@link ClassGenerator}s for binding interfaces.
  */
 abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T>
-        permits CodecDataObjectGenerator {
+        permits CodecDataObjectGenerator, CodecEntryObjectGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(CodecClassGenerator.class);
 
-    private static final ByteBuddy BB = new ByteBuddy();
-
+    static final @NonNull ByteBuddy BB = new ByteBuddy();
     static final int PUB_FINAL = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
-    private final @NonNull TypeDescription superClass;
     private final @NonNull GetterGenerator getterGenerator;
 
     @NonNullByDefault
-    CodecClassGenerator(final TypeDescription superClass, final GetterGenerator getterGenerator) {
-        this.superClass = requireNonNull(superClass);
+    CodecClassGenerator(final GetterGenerator getterGenerator) {
         this.getterGenerator = requireNonNull(getterGenerator);
     }
 
@@ -57,19 +52,10 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
 
         final var bindingDef = TypeDefinition.Sort.describe(bindingInterface);
         @SuppressWarnings("unchecked")
-        var builder = (Builder<T>) BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef).build())
-            .name(fqcn).implement(bindingDef);
+        final var builder = (DynamicType.Builder<T>) newBuilder(bindingDef).name(fqcn).implement(bindingDef);
 
-        builder = customizeBuilder(getterGenerator.generateGetters(builder));
-
-        return GeneratorResult.of(new UnloadedLoadableClass<>(builder.make()));
+        return GeneratorResult.of(new UnloadedLoadableClass<>(getterGenerator.generateGetters(builder).make()));
     }
 
-    /**
-     * Customize the layout of a {@link DynamicType.Builder}.
-     *
-     * @param builder the {@link DynamicType.Builder}
-     * @return a possibly updated {@link DynamicType.Builder}
-     */
-    abstract DynamicType.Builder<T> customizeBuilder(DynamicType.Builder<T> builder);
+    abstract DynamicType.Builder<?> newBuilder(TypeDescription.Generic bindingDef);
 }

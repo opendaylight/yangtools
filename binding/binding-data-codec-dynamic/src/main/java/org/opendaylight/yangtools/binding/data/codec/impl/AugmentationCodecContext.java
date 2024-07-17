@@ -37,7 +37,7 @@ final class AugmentationCodecContext<A extends Augmentation<?>>
         super(prototype, analysis);
 
         final var bindingClass = CodecDataObjectGenerator.generate(prototype.contextFactory().getLoader(),
-            prototype.javaClass(), analysis.leafContexts, analysis.daoProperties, null);
+            prototype.javaClass(), analysis.leafContexts, analysis.daoProperties);
 
         final MethodHandle ctor;
         try {
