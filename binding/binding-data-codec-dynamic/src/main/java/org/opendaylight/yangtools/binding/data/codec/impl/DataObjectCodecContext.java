@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -115,8 +116,13 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             }
 
             possibleAugmentations = augmentableRuntimeType.augments();
-            generatedClass = CodecDataObjectGenerator.generateAugmentable(loader, bindingClass, analysis.leafContexts,
-                analysis.daoProperties, keyMethod);
+            if (MapEntryNode.class.isAssignableFrom(bindingClass)) {
+                generatedClass = CodecDataObjectGenerator.generateEntry(loader, bindingClass, analysis.leafContexts,
+                    analysis.daoProperties, keyMethod);
+            } else {
+                generatedClass = CodecDataObjectGenerator.generateAugmentable(loader, bindingClass,
+                    analysis.leafContexts, analysis.daoProperties, keyMethod);
+            }
         } else {
             possibleAugmentations = List.of();
             generatedClass = CodecDataObjectGenerator.generate(loader, bindingClass, analysis.leafContexts,
