@@ -234,6 +234,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
     private static final TypeDescription BB_CDO = ForLoadedType.of(CodecDataObject.class);
     private static final TypeDescription BB_ACDO = ForLoadedType.of(AugmentableCodecDataObject.class);
+    private static final TypeDescription BB_CEO = ForLoadedType.of(CodecEntryObject.class);
 
     private static final StackManipulation FIRST_ARG_REF = MethodVariableAccess.REFERENCE.loadFrom(1);
 
@@ -264,6 +265,13 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             new Reusable<>(BB_ACDO, simpleProperties, daoProperties, keyMethod));
     }
 
+    static <T extends CodecDataObject<T>> Class<T> generateEntry(final BindingClassLoader loader,
+            final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
+            final Map<Class<?>, PropertyInfo> daoProperties, final Method keyMethod) {
+        return CodecPackage.CODEC.generateClass(loader, bindingInterface,
+            new Reusable<>(BB_CEO, simpleProperties, daoProperties, keyMethod));
+    }
+
     @Override
     public final GeneratorResult<T> generateClass(final BindingClassLoader loader, final String fqcn,
             final Class<?> bindingInterface) {
@@ -271,18 +279,17 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
 
         final Generic bindingDef = TypeDefinition.Sort.describe(bindingInterface);
         @SuppressWarnings("unchecked")
-        Builder<T> builder = (Builder<T>) BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef).build())
-            .name(fqcn).implement(bindingDef);
+        Builder<T> builder;
+        if (keyMethod == null) {
+            builder = (Builder<T>) BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef).build())
+                .name(fqcn).implement(bindingDef);
+        } else {
+            final TypeDescription keyMethodType = ForLoadedType.of(keyMethod.getReturnType());
+            builder = (Builder<T>) BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef, keyMethodType)
+                .build()).name(fqcn).implement(bindingDef);
+        }
 
         builder = generateGetters(builder);
-
-        if (keyMethod != null) {
-            LOG.trace("Generating for key {}", keyMethod);
-            final String methodName = keyMethod.getName();
-            final TypeDescription retType = ForLoadedType.of(keyMethod.getReturnType());
-            builder = builder.defineMethod(methodName, retType, PUB_FINAL).intercept(
-                new KeyMethodImplementation(methodName, retType));
-        }
 
         // Final bits:
         return GeneratorResult.of(builder
@@ -374,26 +381,6 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
                 OBJECT_CLASS,
                 FIND_VAR_HANDLE,
                 putField(tmp, handleName)));
-        }
-    }
-
-    private static final class KeyMethodImplementation extends AbstractCachedMethodImplementation {
-        private static final StackManipulation CODEC_KEY = invokeMethod(CodecDataObject.class,
-            "codecKey", VarHandle.class);
-
-        KeyMethodImplementation(final String methodName, final TypeDescription retType) {
-            super(methodName, retType);
-        }
-
-        @Override
-        public ByteCodeAppender appender(final Target implementationTarget) {
-            return new ByteCodeAppender.Simple(
-                // return (FooType) codecKey(getFoo$$$V);
-                loadThis(),
-                getField(implementationTarget.getInstrumentedType(), handleName),
-                CODEC_KEY,
-                TypeCasting.to(retType),
-                MethodReturn.REFERENCE);
         }
     }
 
