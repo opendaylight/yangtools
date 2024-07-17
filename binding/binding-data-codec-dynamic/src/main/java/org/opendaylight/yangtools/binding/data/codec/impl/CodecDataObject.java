@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
 /**
  * A base class for {@link DataObject}s backed by {@link DataObjectCodecContext}. While this class is public, it not
@@ -98,11 +97,6 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         throw new VerifyException("Unexpected context " + childContext);
     }
 
-    protected final @NonNull Object codecKey(final VarHandle handle) {
-        final Object cached = handle.getAcquire(this);
-        return cached != null ? cached : loadKey(handle);
-    }
-
     protected abstract int codecHashCode();
 
     protected abstract boolean codecEquals(Object obj);
@@ -124,21 +118,6 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         final Object obj = child != null ? childCtx.deserializeObject(child) : childCtx.defaultObject();
         final Object witness = handle.compareAndExchangeRelease(this, null, maskNull(obj));
         return witness == null ? obj : unmaskNull(witness);
-    }
-
-    // Helper split out of codecKey to aid its inlining
-    private @NonNull Object loadKey(final VarHandle handle) {
-        if (!(data instanceof MapEntryNode mapEntry)) {
-            throw new VerifyException("Unsupported value " + data);
-        }
-        if (!(context instanceof MapCodecContext<?, ?> listContext)) {
-            throw new VerifyException("Unexpected context " + context);
-        }
-
-        final Object obj = listContext.deserialize(mapEntry.name());
-        // key is known to be non-null, no need to mask it
-        final Object witness = handle.compareAndExchangeRelease(this, null, obj);
-        return witness == null ? obj : witness;
     }
 
     // Helper split out of hashCode() to aid its inlining
