@@ -20,6 +20,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRAC
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME
+import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List
@@ -195,7 +196,7 @@ class InterfaceTemplate extends BaseTemplate {
                     «generateAccessorMethod(m)»
                 «ELSEIF m.parameters.empty && m.name.isNonnullMethodName»
                     «generateNonnullAccessorMethod(m)»
-                «ELSE»
+                «ELSEIF !KEY_AWARE_KEY_NAME.equals(m.name)»
                     «generateMethod(m)»
                 «ENDIF»
             «ENDFOR»

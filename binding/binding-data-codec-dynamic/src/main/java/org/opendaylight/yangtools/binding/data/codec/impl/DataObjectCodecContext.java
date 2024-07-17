@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -117,8 +118,13 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             }
 
             possibleAugmentations = augmentableRuntimeType.augments();
-            generatedClass = CodecDataObjectGenerator.generateAugmentable(loader, bindingClass, analysis.leafContexts,
-                analysis.daoProperties, keyMethod);
+            if (EntryObject.class.isAssignableFrom(bindingClass)) {
+                generatedClass = CodecDataObjectGenerator.generateEntry(loader, bindingClass,
+                    analysis.leafContexts, analysis.daoProperties, keyMethod);
+            } else {
+                generatedClass = CodecDataObjectGenerator.generateAugmentable(loader, bindingClass,
+                    analysis.leafContexts, analysis.daoProperties, keyMethod);
+            }
         } else {
             possibleAugmentations = List.of();
             generatedClass = CodecDataObjectGenerator.generate(loader, bindingClass, analysis.leafContexts,
