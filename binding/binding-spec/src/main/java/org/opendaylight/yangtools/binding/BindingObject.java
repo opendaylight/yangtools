@@ -17,10 +17,12 @@ package org.opendaylight.yangtools.binding;
  *   <li>{@code typedef} and {@code type}, represented by {@link TypeObject}</li>
  *   <li>{@code md:annotation}, represented by {@link Annotation}</li>
  *   <li>{@code rc:yang-data}, represented by {@link YangData}</li>
+ *   <li>{@code grouping}, represented by {@link Grouping}</li>
  *   <li>all others, represented by {@link DataObject} and its further specializations</li>
  * </ul>
  *
  * @author Jie Han
  */
-public sealed interface BindingObject permits Annotation, BaseIdentity, DataObject, OpaqueObject, TypeObject, YangData {
+public sealed interface BindingObject
+    permits Annotation, BaseIdentity, Grouping, DataObject, OpaqueObject, TypeObject, YangData {
 }
