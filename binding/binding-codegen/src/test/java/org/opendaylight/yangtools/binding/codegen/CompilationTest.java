@@ -115,7 +115,7 @@ class CompilationTest extends BaseCompilationTest {
         // Test generated 'list links'
         assertTrue(linksClass.isInterface());
         CompilationTestUtils.assertImplementsIfc(linksClass, keyArgsClass);
-        assertEquals(8, abstractMethods(linksClass).size());
+        assertEquals(7, abstractMethods(linksClass).size());
         CompilationTestUtils.assertContainsMethod(linksClass,
             "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.links.Text", "getText", loader);
         CompilationTestUtils.assertContainsMethod(linksClass,
