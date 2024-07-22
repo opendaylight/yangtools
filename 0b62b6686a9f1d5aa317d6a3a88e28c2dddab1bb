@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ad5e200_86befb7e",
+        "filename": "tools/yang-validation-tool/dependency-reduced-pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-07-22T23:52:08Z",
+      "side": 1,
+      "message": "please do not commit this",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 39
+      },
+      "revId": "0b62b6686a9f1d5aa317d6a3a88e28c2dddab1bb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
