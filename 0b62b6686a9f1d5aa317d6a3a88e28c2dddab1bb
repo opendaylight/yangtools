@@ -22,6 +22,30 @@
       },
       "revId": "0b62b6686a9f1d5aa317d6a3a88e28c2dddab1bb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a809537_e8e70fc9",
+        "filename": "tools/yang-validation-tool/dependency-reduced-pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2024-07-23T08:25:10Z",
+      "side": 1,
+      "message": "My bad. It keep on generating and I totally missed it at some point.",
+      "parentUuid": "6ad5e200_86befb7e",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 39
+      },
+      "revId": "0b62b6686a9f1d5aa317d6a3a88e28c2dddab1bb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
