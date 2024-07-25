@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.HashMap;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -45,8 +44,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
             if (item.getName().equals(baseTypeEnumPair.getName())) {
                 if (item.getValue() != baseTypeEnumPair.getValue()) {
                     throw new InvalidEnumDefinitionException(item, "Value of enum '%s' must be the same as the value"
-                            + " of corresponding enum in the base enumeration type %s.", item.getName(),
-                            base.getQName());
+                        + " of corresponding enum in the base enumeration type %s.", item.getName(), base.getQName());
                 }
                 isASubsetOfBaseEnums = true;
                 break;
@@ -55,23 +53,25 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
 
         if (!isASubsetOfBaseEnums) {
             throw new InvalidEnumDefinitionException(item, "Enum '%s' is not a subset of its base enumeration type %s.",
-                    item.getName(), base.getQName());
+                item.getName(), base.getQName());
         }
     }
 
     @Override
     public EnumTypeDefinition buildType() {
-        final Map<String, EnumPair> map = builder.build();
-        final Map<Integer, EnumPair> positionMap = new HashMap<>();
+        final var byName = builder.build();
+        final var byValue = new HashMap<Integer, EnumPair>();
 
-        for (EnumPair p : map.values()) {
-            final EnumPair conflict = positionMap.put(p.getValue(), p);
+        for (var pair : byName.values()) {
+            final var value = pair.getValue();
+            final var conflict = byValue.put(value, pair);
             if (conflict != null) {
-                throw new InvalidEnumDefinitionException(p, "Enum '%s' conflicts on value with enum ", conflict);
+                throw new InvalidEnumDefinitionException(pair, "Enum '%s' conflicts on value %s with enum '%s'",
+                    pair.getName(), value, conflict.getName());
             }
         }
 
-        return getBaseType() == null ? new BaseEnumerationType(getQName(), getUnknownSchemaNodes(), map.values())
-                : new RestrictedEnumerationType(getBaseType(), getQName(), getUnknownSchemaNodes(), map.values());
+        return getBaseType() == null ? new BaseEnumerationType(getQName(), getUnknownSchemaNodes(), byName.values())
+                : new RestrictedEnumerationType(getBaseType(), getQName(), getUnknownSchemaNodes(), byName.values());
     }
 }
