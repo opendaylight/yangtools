@@ -160,4 +160,5 @@
  * clients for serialization / debugability it SHOULD be done externally in
  * code using these interfaces.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.data.api.schema;
