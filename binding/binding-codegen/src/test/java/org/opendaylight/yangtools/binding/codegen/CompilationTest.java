@@ -113,7 +113,7 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(keyArgsClass.isInterface());
         CompilationTestUtils.assertContainsMethod(keyArgsClass, String.class, "getName");
         CompilationTestUtils.assertContainsMethod(keyArgsClass, Integer.class, "getSize");
-        assertEquals(3, abstractMethods(keyArgsClass).size());
+        assertEquals(2, abstractMethods(keyArgsClass).size());
 
         // Test generated 'list links'
         assertTrue(linksClass.isInterface());

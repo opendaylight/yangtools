@@ -69,7 +69,6 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         builder.addImplementsType(BindingTypes.GROUPING);
-        narrowImplementedInterface(builder);
         addUsesInterfaces(builder, builderFactory);
         addGetterMethods(builder, builderFactory);
 
