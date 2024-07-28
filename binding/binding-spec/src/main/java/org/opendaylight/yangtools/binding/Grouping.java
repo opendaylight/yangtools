@@ -9,24 +9,36 @@ package org.opendaylight.yangtools.binding;
 
 /**
  * Base interface extended by all interfaces generated for {@code grouping} statements. This interface can be inherited
- * by other Binding interfaces and therefore cannot capture its identity via generics and is therefore left with
- * type safety afforded to by {@link #implementedInterface()} specialization. Binding code generation is required to
- * generate an abstract method declaration which appropriately narrows the return type. For example:
+ * by other Binding interfaces and therefore cannot capture its identity via generics. Furthermore it can be used by
+ * users to more closely specify what {@link DataObject} species is acceptable in generics, for example:
  * <pre>{@code
  *     public interface Foo extends Grouping {
- *         @Override
- *         Class<? extends Foo> implementedInterface();
+ *
+ *     }
+ *
+ *     public interface Bar extends DataObject, Foo {
+ *
+ *     }
+ *
+ *     public interface Baz extends DataObject, Foo {
+ *
+ *     }
+
+ *     public interface Service<T extends Foo & DataObject> {
+ *
+ *        // ...
+ *
  *     }
  * }</pre>
+ * This precludes generated grouping interfaces from specializing {@code implementedInterface}.
  *
  * <p>
  * Unlike most other {@link BindingObject}s and {@link DataContainer}s, groupings are not instantiated, but capture a
  * reusable trait, which is usually implemented by other {@link DataContainer}s.
  *
  * <p>
- * Please note that the restriction on generics applies to all interfaces extending this contract.
+ * Please note that above restrictions on generics applies to all interfaces extending this contract.
  */
 public non-sealed interface Grouping extends BindingObject, DataContainer {
-    @Override
-    Class<? extends Grouping> implementedInterface();
+    // Nothing else
 }
