@@ -11,14 +11,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>bundle-parent</artifactId>
+        <artifactId>bnd-parent</artifactId>
         <version>14.0.2-SNAPSHOT</version>
-        <relativePath>../../bundle-parent</relativePath>
+        <relativePath>../../bnd-parent</relativePath>
     </parent>
 
     <artifactId>binding-loader</artifactId>
-    <packaging>bundle</packaging>
-    <description>YANG Binding runtime for JIT environments</description>
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>YANG Binding class loader for JIT environments</description>
 
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->

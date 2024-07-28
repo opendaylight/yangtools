@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.loader;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
@@ -163,8 +162,9 @@ public abstract sealed class BindingClassLoader extends ClassLoader
         synchronized (loader.getClassLoadingLock(fqcn)) {
             ret = loader.findLoadedClass(fqcn);
         }
-
-        checkArgument(ret != null, "Failed to find generated class %s for %s", fqcn, bindingInterface);
+        if (ret == null) {
+            throw new IllegalArgumentException("Failed to find generated class " + fqcn + " for " + bindingInterface);
+        }
         return ret;
     }
 

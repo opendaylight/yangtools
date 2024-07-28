@@ -20,4 +20,5 @@ module org.opendaylight.yangtools.binding.loader {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }

@@ -14,4 +14,5 @@
  * While the interfaces and classes in this package may be publicly accessible, they are an implementation detail and
  * may change incompatibly at any time.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.binding.loader;
