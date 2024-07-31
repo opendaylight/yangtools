@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 @MetaInfServices
 @Component(immediate = true)
+@Deprecated(since = "14.0.2", forRemoval = true)
 public final class SimpleBindingCodecTreeFactory implements BindingCodecTreeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleBindingCodecTreeFactory.class);
 
@@ -30,12 +31,12 @@ public final class SimpleBindingCodecTreeFactory implements BindingCodecTreeFact
     @Activate
     @SuppressWarnings("static-method")
     void activate() {
-        LOG.info("Binding-DOM Codec enabled");
+        LOG.info("Binding Codec Tree services enabled");
     }
 
     @Deactivate
     @SuppressWarnings("static-method")
     void deactivate() {
-        LOG.info("Binding-DOM Codec disabled");
+        LOG.info("Binding Codec Tree services disabled");
     }
 }

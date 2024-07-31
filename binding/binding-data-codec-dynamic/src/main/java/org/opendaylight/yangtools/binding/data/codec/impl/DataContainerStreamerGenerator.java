@@ -171,7 +171,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     static Class<? extends DataContainerStreamer<?>> generateStreamer(final BindingClassLoader loader,
             final CodecContextFactory registry, final Class<?> type) {
 
-        final var typeAndSchema = registry.getRuntimeContext().getTypeWithSchema(type);
+        final var typeAndSchema = registry.runtimeContext().getTypeWithSchema(type);
         final var schema = typeAndSchema.statement();
 
         final StackManipulation startEvent;

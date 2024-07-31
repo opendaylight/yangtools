@@ -205,7 +205,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
     @CheckReturnValue
     private IllegalArgumentException childNullException(final QName child, final String message, final Object... args) {
         final var module = child.getModule();
-        if (!prototype().contextFactory().getRuntimeContext().modelContext().findModule(module).isPresent()) {
+        if (!prototype().contextFactory().runtimeContext().modelContext().findModule(module).isPresent()) {
             return new MissingSchemaException("Module " + module + " is not present in current schema context.");
         }
         return new IncorrectNestingException(message, args);
@@ -214,7 +214,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
     @CheckReturnValue
     private @NonNull IllegalArgumentException childNullException(final Class<?> childClass, final String message,
             final Object... args) {
-        return childNullException(prototype().contextFactory().getRuntimeContext(), childClass, message, args);
+        return childNullException(prototype().contextFactory().runtimeContext(), childClass, message, args);
     }
 
     @CheckReturnValue

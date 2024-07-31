@@ -63,15 +63,19 @@ import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingAugmentationCodecTreeNode;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeNode;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingInstanceIdentifierCodec;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingYangDataCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.CommonDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaException;
+import org.opendaylight.yangtools.binding.data.codec.dynamic.DynamicBindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.spi.AbstractBindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
@@ -127,9 +131,10 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@MetaInfServices(value = BindingDOMCodecServices.class)
+@MetaInfServices(value = { BindingDataCodec.class, DynamicBindingDataCodec.class, BindingDOMCodecServices.class })
 public final class BindingCodecContext extends AbstractBindingNormalizedNodeSerializer
-        implements BindingDOMCodecServices, Immutable, CodecContextFactory, DataContainerSerializerRegistry {
+        implements DynamicBindingDataCodec, CodecContextFactory, DataContainerSerializerRegistry, Immutable,
+                   BindingDOMCodecServices {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
     private static final @NonNull NodeIdentifier FAKE_NODEID = new NodeIdentifier(QName.create("fake", "fake"));
     private static final File BYTECODE_DIRECTORY;
@@ -374,8 +379,29 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
+    @Deprecated(since = "14.0.2", forRemoval = true)
     public BindingRuntimeContext getRuntimeContext() {
         return context;
+    }
+
+    @Override
+    public BindingRuntimeContext runtimeContext() {
+        return context;
+    }
+
+    @Override
+    public BindingNormalizedNodeSerializer nodeSerializer() {
+        return this;
+    }
+
+    @Override
+    public BindingCodecTree tree() {
+        return this;
+    }
+
+    @Override
+    public BindingNormalizedNodeWriterFactory writerFactory() {
+        return this;
     }
 
     @Override
