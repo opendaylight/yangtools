@@ -240,7 +240,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     private boolean belongsToRuntimeContext(final Class<?> cls) {
-        final var ctx = prototype().contextFactory().getRuntimeContext();
+        final var ctx = prototype().contextFactory().runtimeContext();
         final Class<?> loaded;
         try {
             loaded = ctx.loadClass(Type.of(cls));
@@ -267,7 +267,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         final GeneratedType javaType = augment.javaType();
         final Class<? extends Augmentation<?>> augClass;
         try {
-            augClass = factory.getRuntimeContext().loadClass(javaType);
+            augClass = factory.runtimeContext().loadClass(javaType);
         } catch (final ClassNotFoundException e) {
             throw new IllegalStateException(
                 "RuntimeContext references type " + javaType + " but failed to load its class", e);

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl.di;
 
-import com.google.common.annotations.Beta;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
@@ -18,8 +17,8 @@ import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 /**
  * Default implementation of {@link BindingCodecTreeFactory}.
  */
-@Beta
 @Singleton
+@Deprecated(since = "14.0.2", forRemoval = true)
 public final class DefaultBindingCodecTreeFactory implements BindingCodecTreeFactory {
     @Inject
     public DefaultBindingCodecTreeFactory() {

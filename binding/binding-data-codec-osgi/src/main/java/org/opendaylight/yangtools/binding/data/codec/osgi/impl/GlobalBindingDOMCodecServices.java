@@ -14,14 +14,17 @@ import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingLazyContainerNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
+import org.opendaylight.yangtools.binding.data.codec.dynamic.DynamicBindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.osgi.OSGiBindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.ForwardingBindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.LazyActionInputContainerNode;
 import org.opendaylight.yangtools.binding.data.codec.spi.LazyActionOutputContainerNode;
+import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.osgi.service.component.annotations.Activate;
@@ -37,12 +40,18 @@ import org.slf4j.LoggerFactory;
 @Beta
 @Component(immediate = true,
            service = {
-               BindingDOMCodecServices.class,
-               BindingNormalizedNodeWriterFactory.class,
+               // primary services
+               BindingDataCodec.class,
+               DynamicBindingDataCodec.class,
+               // direct access to components
+               BindingCodecTree.class,
                BindingNormalizedNodeSerializer.class,
-               BindingCodecTree.class
+               BindingNormalizedNodeWriterFactory.class,
+               // legacy
+               BindingDOMCodecServices.class
            })
-public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCodecServices {
+public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCodecServices
+        implements DynamicBindingDataCodec {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalBindingDOMCodecServices.class);
 
     private BindingDOMCodecServices delegate;
@@ -68,6 +77,26 @@ public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCod
     private void updateDelegate(final OSGiBindingDOMCodecServices services) {
         generation = services.generation();
         delegate = services.service();
+    }
+
+    @Override
+    public BindingRuntimeContext runtimeContext() {
+        return delegate().getRuntimeContext();
+    }
+
+    @Override
+    public BindingNormalizedNodeSerializer nodeSerializer() {
+        return delegate();
+    }
+
+    @Override
+    public BindingCodecTree tree() {
+        return delegate();
+    }
+
+    @Override
+    public BindingNormalizedNodeWriterFactory writerFactory() {
+        return delegate();
     }
 
     @Override

@@ -6,6 +6,9 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeFactory;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingDataCodec;
+import org.opendaylight.yangtools.binding.data.codec.dynamic.BindingDataCodecFactory;
+import org.opendaylight.yangtools.binding.data.codec.dynamic.DynamicBindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingCodecContext;
 import org.opendaylight.yangtools.binding.data.codec.impl.SimpleBindingCodecTreeFactory;
 import org.opendaylight.yangtools.binding.data.codec.impl.SimpleBindingDOMCodecFactory;
@@ -14,12 +17,16 @@ import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 module org.opendaylight.yangtools.binding.data.codec.dynamic {
+    exports org.opendaylight.yangtools.binding.data.codec.dynamic;
     // FIXME: MDSAL-828: do not export this package
     exports org.opendaylight.yangtools.binding.data.codec.impl;
     exports org.opendaylight.yangtools.binding.data.codec.impl.di;
 
     uses BindingRuntimeContext;
+    provides BindingDataCodecFactory with SimpleBindingDOMCodecFactory;
     provides BindingDOMCodecFactory with SimpleBindingDOMCodecFactory;
+    provides BindingDataCodec with BindingCodecContext;
+    provides DynamicBindingDataCodec with BindingCodecContext;
     provides BindingDOMCodecServices with BindingCodecContext;
     provides BindingCodecTreeFactory with SimpleBindingCodecTreeFactory;
 
