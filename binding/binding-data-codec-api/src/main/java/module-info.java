@@ -8,7 +8,6 @@
 module org.opendaylight.yangtools.binding.data.codec.api {
     exports org.opendaylight.yangtools.binding.data.codec.api;
 
-    requires transitive org.opendaylight.yangtools.binding.runtime.api;
     requires transitive org.opendaylight.yangtools.binding.spec;
     requires transitive org.opendaylight.yangtools.yang.data.api;
     requires transitive org.opendaylight.yangtools.yang.model.api;
