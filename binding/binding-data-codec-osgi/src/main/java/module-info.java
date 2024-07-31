@@ -10,6 +10,7 @@ module org.opendaylight.yangtools.binding.data.codec.osgi {
 
     requires transitive org.opendaylight.yangtools.binding.runtime.osgi;
     requires org.opendaylight.yangtools.binding.data.codec.api;
+    requires org.opendaylight.yangtools.binding.data.codec.dynamic;
     requires org.opendaylight.yangtools.binding.data.codec.spi;
     requires org.opendaylight.yangtools.binding.spec;
     requires org.opendaylight.yangtools.yang.common;

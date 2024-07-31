@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.spi;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
@@ -17,8 +17,10 @@ import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 /**
  * Collection of services provided by a Binding-DOM codec instance. This interface serves as an atomic unit for
  * acquiring a consistent set of these services.
+ *
+ * @deprecated Use {@link BindingDataCodec} instead.
  */
-@Beta
+@Deprecated(since = "14.0.2", forRemoval = true)
 public interface BindingDOMCodecServices
         extends BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer, BindingCodecTree {
 

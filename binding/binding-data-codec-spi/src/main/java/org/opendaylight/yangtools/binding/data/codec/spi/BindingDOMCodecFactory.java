@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.spi;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
-@Beta
+@Deprecated(since = "14.0.2", forRemoval = true)
 @NonNullByDefault
 public interface BindingDOMCodecFactory {
 

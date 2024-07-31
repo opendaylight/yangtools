@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.api;
 
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
+@Deprecated(since = "14.0.2", forRemoval = true)
 public interface BindingCodecTreeFactory {
     /**
      * Creates Binding Codec Tree for specified Binding runtime context.

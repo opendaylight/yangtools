@@ -120,7 +120,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
         final var localCases = new HashSet<JavaTypeName>();
         for (var caseType : choiceType.validCaseChildren()) {
             @SuppressWarnings("unchecked")
-            final var caseClass = (Class<? extends DataObject>) loadCase(factory.getRuntimeContext(), caseType);
+            final var caseClass = (Class<? extends DataObject>) loadCase(factory.runtimeContext(), caseType);
             final var caseProto = new CaseCodecPrototype(caseClass, caseType, factory);
 
             localCases.add(caseType.getIdentifier());
@@ -169,7 +169,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
          * lost, and users may use incorrect case class using copy builders.
          */
         final var bySubstitutionBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
-        final var context = factory.getRuntimeContext();
+        final var context = factory.runtimeContext();
         for (var caseType : context.getTypes().allCaseChildren(choiceType)) {
             final var caseName = caseType.getIdentifier();
             if (!localCases.contains(caseName)) {
