@@ -35,7 +35,7 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
 
     static UnionTypeCodec of(final Class<?> unionCls, final UnionTypeDefinition unionType,
             final BindingCodecContext codecContext) throws Exception {
-        final List<String> unionProperties = extractUnionProperties(codecContext.getRuntimeContext()
+        final List<String> unionProperties = extractUnionProperties(codecContext.runtimeContext()
             .getTypeWithSchema(unionCls).javaType());
         final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
         verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",

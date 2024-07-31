@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.data.codec.dynamic.BindingDataCodecFactory;
 import org.opendaylight.yangtools.binding.data.codec.osgi.OSGiBindingDOMCodecServices;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecFactory;
 import org.opendaylight.yangtools.binding.runtime.osgi.OSGiBindingRuntimeContext;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
@@ -40,7 +40,7 @@ public final class OSGiBindingDOMCodec {
 
         abstract void remove(OSGiBindingRuntimeContext runtimeContext);
 
-        abstract @NonNull AbstractInstances toActive(BindingDOMCodecFactory codecFactory,
+        abstract @NonNull AbstractInstances toActive(BindingDataCodecFactory codecFactory,
             ComponentFactory<OSGiBindingDOMCodecServices> factory);
 
         abstract @NonNull AbstractInstances toInactive();
@@ -68,7 +68,7 @@ public final class OSGiBindingDOMCodec {
         }
 
         @Override
-        AbstractInstances toActive(final BindingDOMCodecFactory codecFactory,
+        AbstractInstances toActive(final BindingDataCodecFactory codecFactory,
                 final ComponentFactory<OSGiBindingDOMCodecServices> factory) {
             final ActiveInstances active = new ActiveInstances(codecFactory, factory);
             instances.stream()
@@ -87,9 +87,9 @@ public final class OSGiBindingDOMCodec {
         private final Map<OSGiBindingRuntimeContext, ComponentInstance<OSGiBindingDOMCodecServices>> instances =
             new IdentityHashMap<>();
         private final ComponentFactory<OSGiBindingDOMCodecServices> factory;
-        private final BindingDOMCodecFactory codecFactory;
+        private final BindingDataCodecFactory codecFactory;
 
-        ActiveInstances(final BindingDOMCodecFactory codecFactory,
+        ActiveInstances(final BindingDataCodecFactory codecFactory,
                 final ComponentFactory<OSGiBindingDOMCodecServices> factory) {
             this.codecFactory = requireNonNull(codecFactory);
             this.factory = requireNonNull(factory);
@@ -101,7 +101,7 @@ public final class OSGiBindingDOMCodec {
 
             instances.put(runtimeContext, factory.newInstance(OSGiBindingDOMCodecServicesImpl.props(
                 runtimeContext.generation(), runtimeContext.getServiceRanking(),
-                codecFactory.createBindingDOMCodec(context))));
+                codecFactory.newBindingDataCodec(context))));
         }
 
         @Override
@@ -115,7 +115,7 @@ public final class OSGiBindingDOMCodec {
         }
 
         @Override
-        AbstractInstances toActive(final BindingDOMCodecFactory ignoreCodecFactory,
+        AbstractInstances toActive(final BindingDataCodecFactory ignoreCodecFactory,
                 final ComponentFactory<OSGiBindingDOMCodecServices> ignoreFactory) {
             throw new IllegalStateException("Attempted to activate active instances");
         }
@@ -131,7 +131,7 @@ public final class OSGiBindingDOMCodec {
     private static final Logger LOG = LoggerFactory.getLogger(OSGiBindingDOMCodec.class);
 
     @Reference
-    BindingDOMCodecFactory codecFactory = null;
+    BindingDataCodecFactory codecFactory = null;
 
     @Reference(target = "(component.factory=" + OSGiBindingDOMCodecServicesImpl.FACTORY_NAME + ")")
     ComponentFactory<OSGiBindingDOMCodecServices> contextFactory = null;

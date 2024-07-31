@@ -11,8 +11,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.dynamic.BindingDataCodecFactory;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecFactory;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -21,20 +19,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @NonNullByDefault
-@MetaInfServices(value = { BindingDataCodecFactory.class, BindingDOMCodecFactory.class })
-@Component(immediate = true, service = { BindingDataCodecFactory.class, BindingDOMCodecFactory.class })
-public final class SimpleBindingDOMCodecFactory implements BindingDataCodecFactory, BindingDOMCodecFactory {
+@MetaInfServices
+@Component(immediate = true)
+public final class SimpleBindingDOMCodecFactory implements BindingDataCodecFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleBindingDOMCodecFactory.class);
 
     @Override
     public BindingDataCodec newBindingDataCodec(final BindingRuntimeContext runtimeContext) {
         return new BindingCodecContext(runtimeContext);
-    }
-
-    @Override
-    @Deprecated(since = "14.0.2", forRemoval = true)
-    public BindingDOMCodecServices createBindingDOMCodec(final BindingRuntimeContext context) {
-        return new BindingCodecContext(context);
     }
 
     @Activate

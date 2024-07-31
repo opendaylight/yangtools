@@ -20,8 +20,6 @@ import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSe
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.dynamic.DynamicBindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.osgi.OSGiBindingDOMCodecServices;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
-import org.opendaylight.yangtools.binding.data.codec.spi.ForwardingBindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.LazyActionInputContainerNode;
 import org.opendaylight.yangtools.binding.data.codec.spi.LazyActionOutputContainerNode;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
@@ -47,14 +45,12 @@ import org.slf4j.LoggerFactory;
                BindingCodecTree.class,
                BindingNormalizedNodeSerializer.class,
                BindingNormalizedNodeWriterFactory.class,
-               // legacy
-               BindingDOMCodecServices.class
            })
-public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCodecServices
-        implements DynamicBindingDataCodec {
+public final class GlobalBindingDOMCodecServices implements DynamicBindingDataCodec, BindingCodecTree,
+        BindingNormalizedNodeSerializer, BindingNormalizedNodeWriterFactory {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalBindingDOMCodecServices.class);
 
-    private BindingDOMCodecServices delegate;
+    private DynamicBindingDataCodec delegate;
     private Uint64 generation;
 
     @Activate
@@ -81,22 +77,22 @@ public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCod
 
     @Override
     public BindingRuntimeContext runtimeContext() {
-        return delegate().getRuntimeContext();
+        return delegate().runtimeContext();
     }
 
     @Override
     public BindingNormalizedNodeSerializer nodeSerializer() {
-        return delegate();
+        return delegate().nodeSerializer();
     }
 
     @Override
     public BindingCodecTree tree() {
-        return delegate();
+        return delegate().tree();
     }
 
     @Override
     public BindingNormalizedNodeWriterFactory writerFactory() {
-        return delegate();
+        return delegate().writerFactory();
     }
 
     @Override
@@ -112,7 +108,7 @@ public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCod
     }
 
     @Override
-    protected BindingDOMCodecServices delegate() {
+    protected DynamicBindingDataCodec delegate() {
         return verifyNotNull(delegate);
     }
 }

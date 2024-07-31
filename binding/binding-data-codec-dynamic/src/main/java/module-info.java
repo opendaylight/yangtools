@@ -10,8 +10,6 @@ import org.opendaylight.yangtools.binding.data.codec.dynamic.BindingDataCodecFac
 import org.opendaylight.yangtools.binding.data.codec.dynamic.DynamicBindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingCodecContext;
 import org.opendaylight.yangtools.binding.data.codec.impl.SimpleBindingDOMCodecFactory;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecFactory;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 module org.opendaylight.yangtools.binding.data.codec.dynamic {
@@ -22,10 +20,8 @@ module org.opendaylight.yangtools.binding.data.codec.dynamic {
 
     uses BindingRuntimeContext;
     provides BindingDataCodecFactory with SimpleBindingDOMCodecFactory;
-    provides BindingDOMCodecFactory with SimpleBindingDOMCodecFactory;
     provides BindingDataCodec with BindingCodecContext;
     provides DynamicBindingDataCodec with BindingCodecContext;
-    provides BindingDOMCodecServices with BindingCodecContext;
 
     requires transitive org.opendaylight.yangtools.binding.data.codec.api;
     requires transitive org.opendaylight.yangtools.binding.data.codec.spi;

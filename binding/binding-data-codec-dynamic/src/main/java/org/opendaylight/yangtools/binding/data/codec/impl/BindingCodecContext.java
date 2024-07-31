@@ -77,7 +77,6 @@ import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingExcepti
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaException;
 import org.opendaylight.yangtools.binding.data.codec.dynamic.DynamicBindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.spi.AbstractBindingNormalizedNodeSerializer;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -131,10 +130,10 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@MetaInfServices(value = { BindingDataCodec.class, DynamicBindingDataCodec.class, BindingDOMCodecServices.class })
+@MetaInfServices(value = { BindingDataCodec.class, DynamicBindingDataCodec.class })
 public final class BindingCodecContext extends AbstractBindingNormalizedNodeSerializer
-        implements DynamicBindingDataCodec, CodecContextFactory, DataContainerSerializerRegistry, Immutable,
-                   BindingDOMCodecServices {
+        implements BindingNormalizedNodeWriterFactory, BindingCodecTree, DynamicBindingDataCodec, CodecContextFactory,
+                   DataContainerSerializerRegistry, Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
     private static final @NonNull NodeIdentifier FAKE_NODEID = new NodeIdentifier(QName.create("fake", "fake"));
     private static final File BYTECODE_DIRECTORY;
@@ -376,12 +375,6 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         this.context = requireNonNull(context, "Binding Runtime Context is required.");
         identityCodec = new IdentityCodec(context);
         instanceIdentifierCodec = new InstanceIdentifierCodec(this);
-    }
-
-    @Override
-    @Deprecated(since = "14.0.2", forRemoval = true)
-    public BindingRuntimeContext getRuntimeContext() {
-        return context;
     }
 
     @Override

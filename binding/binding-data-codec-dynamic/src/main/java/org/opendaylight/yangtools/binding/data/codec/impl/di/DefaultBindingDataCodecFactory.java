@@ -10,27 +10,24 @@ package org.opendaylight.yangtools.binding.data.codec.impl.di;
 import com.google.common.annotations.Beta;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingDataCodec;
+import org.opendaylight.yangtools.binding.data.codec.dynamic.BindingDataCodecFactory;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingCodecContext;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
-import org.opendaylight.yangtools.binding.data.codec.spi.ForwardingBindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 /**
- * Default implementation of {@link BindingDOMCodecServices}.
+ * Default implementation of {@link BindingDataCodecFactory}.
  */
 @Beta
 @Singleton
-public final class DefaultBindingDOMCodecServices extends ForwardingBindingDOMCodecServices {
-    private final @NonNull BindingDOMCodecServices delegate;
-
+public final class DefaultBindingDataCodecFactory implements BindingDataCodecFactory {
     @Inject
-    public DefaultBindingDOMCodecServices(final BindingRuntimeContext context) {
-        delegate = new BindingCodecContext(context);
+    public DefaultBindingDataCodecFactory() {
+        // Exposed for DI
     }
 
     @Override
-    protected BindingDOMCodecServices delegate() {
-        return delegate;
+    public BindingDataCodec newBindingDataCodec(final BindingRuntimeContext runtimeContext) {
+        return new BindingCodecContext(runtimeContext);
     }
 }

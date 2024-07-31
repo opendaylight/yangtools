@@ -14,8 +14,8 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.Dictionary;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.data.codec.dynamic.DynamicBindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.osgi.OSGiBindingDOMCodecServices;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
@@ -43,13 +43,13 @@ public final class OSGiBindingDOMCodecServicesImpl implements OSGiBindingDOMCode
 
     private static final Logger LOG = LoggerFactory.getLogger(OSGiBindingDOMCodecServicesImpl.class);
 
-    private BindingDOMCodecServices delegate;
+    private DynamicBindingDataCodec delegate;
     private final Uint64 generation;
 
     @Activate
     public OSGiBindingDOMCodecServicesImpl(final Map<String, ?> properties) {
         generation = (Uint64) verifyNotNull(properties.get(GENERATION));
-        delegate = (BindingDOMCodecServices) verifyNotNull(properties.get(DELEGATE));
+        delegate = (DynamicBindingDataCodec) verifyNotNull(properties.get(DELEGATE));
         LOG.info("Binding/DOM Codec generation {} activated", generation);
     }
 
@@ -59,7 +59,7 @@ public final class OSGiBindingDOMCodecServicesImpl implements OSGiBindingDOMCode
     }
 
     @Override
-    public BindingDOMCodecServices service() {
+    public DynamicBindingDataCodec service() {
         return verifyNotNull(delegate);
     }
 
@@ -70,7 +70,7 @@ public final class OSGiBindingDOMCodecServicesImpl implements OSGiBindingDOMCode
     }
 
     static Dictionary<String, ?> props(final @NonNull Uint64 generation, final @NonNull Integer ranking,
-            final @NonNull BindingDOMCodecServices delegate) {
+            final @NonNull DynamicBindingDataCodec delegate) {
         return FrameworkUtil.asDictionary(Map.of(
             Constants.SERVICE_RANKING, ranking,
             GENERATION, generation,
