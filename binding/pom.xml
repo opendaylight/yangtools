@@ -36,6 +36,7 @@
         <module>binding-data-codec-osgi</module>
         <module>binding-data-codec-spi</module>
         <module>binding-generator</module>
+        <module>binding-json-codec</module>
         <module>binding-loader</module>
         <module>binding-model</module>
         <module>binding-reflect</module>
