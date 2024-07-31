@@ -28,7 +28,7 @@ sealed interface CodecContextFactory permits BindingCodecContext {
      *
      * @return runtime context
      */
-    BindingRuntimeContext getRuntimeContext();
+    @NonNull BindingRuntimeContext runtimeContext();
 
     /**
      * Returns leaf nodes for supplied data container and parent class.
