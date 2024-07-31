@@ -141,7 +141,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
             final Class<? extends DataContainer> childClass) {
         final var child = type.bindingChild(JavaTypeName.create(childClass));
         if (child == null) {
-            throw DataContainerCodecContext.childNullException(factory.getRuntimeContext(), childClass,
+            throw DataContainerCodecContext.childNullException(factory.runtimeContext(), childClass,
                 "Node %s does not have child named %s", type, childClass);
         }
 
