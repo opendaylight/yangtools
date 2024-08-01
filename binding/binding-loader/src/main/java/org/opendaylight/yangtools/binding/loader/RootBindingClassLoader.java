@@ -16,6 +16,7 @@ import java.lang.invoke.VarHandle;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.slf4j.Logger;
@@ -59,7 +60,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
 
         // Alright, we need to determine if the class is accessible through our hierarchy (in which case we use
         // ourselves) or we need to create a new Leaf.
-        final BindingClassLoader found;
+        final @NonNull BindingClassLoader found;
         if (!isOurClass(bindingClass)) {
             verifyStaticLinkage(target);
             found = AccessController.doPrivileged(
