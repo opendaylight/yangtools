@@ -81,7 +81,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
 
             final var witness = (ImmutableMap<ClassLoader, BindingClassLoader>)
                 LOADERS.compareAndExchange(this, local, updated);
-            if (witness == updated) {
+            if (witness == local) {
                 LOG.debug("Using {} for {}", found, bindingClass);
                 return found;
             }
