@@ -48,6 +48,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
         final var target = bindingClass.getClassLoader();
         if (target == null) {
             // No class loader associated ... well, let's use root then
+            LOG.debug("Using existing {} for {}", this, bindingClass);
             return this;
         }
 
@@ -55,6 +56,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
         var local = loaders;
         final var known = local.get(target);
         if (known != null) {
+            LOG.debug("Using existing {} for {}", known, bindingClass);
             return known;
         }
 
@@ -65,6 +67,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
             verifyStaticLinkage(target);
             found = AccessController.doPrivileged(
                 (PrivilegedAction<BindingClassLoader>)() -> new LeafBindingClassLoader(this, target));
+            LOG.debug("Allocated {} for {}", found, target);
         } else {
             found = this;
         }
@@ -79,10 +82,12 @@ final class RootBindingClassLoader extends BindingClassLoader {
             final var witness = (ImmutableMap<ClassLoader, BindingClassLoader>)
                 LOADERS.compareAndExchange(this, local, updated);
             if (witness == updated) {
+                LOG.debug("Using {} for {}", found, bindingClass);
                 return found;
             }
             final var recheck = witness.get(target);
             if (recheck != null) {
+                LOG.debug("Using {} for {}", recheck, bindingClass);
                 return recheck;
             }
 
@@ -103,7 +108,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
         try {
             ourClass = loadClass(bindingClass.getName(), false);
         } catch (ClassNotFoundException e) {
-            LOG.debug("Failed to load {}", bindingClass, e);
+            LOG.trace("Failed to load {}", bindingClass, e);
             return false;
         }
         return bindingClass.equals(ourClass);
