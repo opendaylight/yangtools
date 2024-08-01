@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.binding.loader;
 
 import static com.google.common.base.Verify.verify;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -95,6 +98,13 @@ final class RootBindingClassLoader extends BindingClassLoader {
         // of generated code: if a binding class is hosted in root loader, all its references must be visible from
         // the root loader and hence all the generated code ends up residing in the root loader, too.
         throw new IllegalStateException("Attempted to extend root loader with " + newLoaders);
+    }
+
+    @Override
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return addIdentity(helper)
+            .add("loaders", Maps.transformValues(loaders,
+                loader -> loader.addIdentity(MoreObjects.toStringHelper(loader)).toString()));
     }
 
     private boolean isOurClass(final Class<?> bindingClass) {
