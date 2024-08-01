@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.binding.loader;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
@@ -18,6 +20,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.HexFormat;
 import java.util.Set;
 import java.util.function.Supplier;
 import net.bytebuddy.dynamic.DynamicType.Unloaded;
@@ -166,6 +169,27 @@ public abstract sealed class BindingClassLoader extends ClassLoader
             throw new IllegalArgumentException("Failed to find generated class " + fqcn + " for " + bindingInterface);
         }
         return ret;
+    }
+
+    @Override
+    public final int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
+
+    final ToStringHelper addIdentity(final ToStringHelper helper) {
+        return helper.add("identity", HexFormat.of().toHexDigits(hashCode()));
     }
 
     /**

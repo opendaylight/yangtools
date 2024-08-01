@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.loader;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -97,5 +98,10 @@ final class LeafBindingClassLoader extends BindingClassLoader {
 
             local = witness;
         }
+    }
+
+    @Override
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return addIdentity(helper).add("target", target);
     }
 }
