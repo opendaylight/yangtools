@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 module org.opendaylight.yangtools.binding.data.codec.dynamic {
     exports org.opendaylight.yangtools.binding.data.codec.dynamic;
+    // FIXME: do not export this package, if at all possible
+    exports org.opendaylight.yangtools.binding.data.codec.impl;
     // FIXME: relocate these classes to .dynamic
     exports org.opendaylight.yangtools.binding.data.codec.impl.di;
 
