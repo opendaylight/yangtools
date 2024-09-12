@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.Uint8;
  * @provides CanonicalValueSupport for core YANG types
  */
 module org.opendaylight.yangtools.yang.common {
+    exports org.opendaylight.yangtools.data;
     exports org.opendaylight.yangtools.yang.common;
 
     provides CanonicalValueSupport with

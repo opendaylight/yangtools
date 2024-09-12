@@ -18,13 +18,14 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
+import org.opendaylight.yangtools.data.ScalarValue;
 
 /**
  * Dedicated type for YANG's 'type decimal64' type. This class is similar to {@link BigDecimal}, but provides more
  * efficient storage, as it has fixed precision.
  */
 @NonNullByDefault
-public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
+public non-sealed class Decimal64 extends Number implements CanonicalValue<Decimal64>, ScalarValue {
     public static final class Support extends AbstractCanonicalValueSupport<Decimal64> {
         public Support() {
             super(Decimal64.class);

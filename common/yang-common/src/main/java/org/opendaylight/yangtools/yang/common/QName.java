@@ -21,6 +21,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.data.InstanceIdentifier;
+import org.opendaylight.yangtools.data.ScalarValue;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but for our use, we added module revision to
@@ -42,7 +44,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * node in the YANG module</li>
  * </ul>
  */
-public final class QName extends AbstractQName implements Comparable<QName> {
+public final class QName extends AbstractQName implements Comparable<QName>, InstanceIdentifier.Step, ScalarValue {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
     @java.io.Serial
