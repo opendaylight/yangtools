@@ -30,8 +30,8 @@ final class SimpleContainerNode extends AbstractContainerNode {
     }
 
     @Override
-    public MutableTreeNode toMutable() {
-        return new LazyMutableContainerNode(this);
+    public MutableTreeNode toMutable(final Version subtreeVersion) {
+        return new LazyMutableContainerNode(this, subtreeVersion);
     }
 
     @Override

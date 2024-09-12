@@ -107,7 +107,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return local != null ? local.childByArg(child) : null;
     }
 
-    private @Nullable TreeNode metadataFromData(final @NonNull PathArgument child, final Version modVersion) {
+    private @Nullable TreeNode metadataFromData(final @NonNull PathArgument child, final @NonNull Version modVersion) {
         if (writtenOriginal == null) {
             // Lazy instantiation, as we do not want do this for all writes. We are using the modification's version
             // here, as that version is what the SchemaAwareApplyOperation will see when dealing with the resulting
@@ -127,7 +127,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param modVersion Version allocated by the calling {@link InMemoryDataTreeModification}
      * @return Before-image tree node as observed by that child.
      */
-    private @Nullable TreeNode originalMetadata(final @NonNull PathArgument child, final Version modVersion) {
+    private @Nullable TreeNode originalMetadata(final @NonNull PathArgument child, final @NonNull Version modVersion) {
         return switch (operation) {
             case DELETE ->
                 // DELETE implies non-presence
@@ -237,7 +237,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param schema associated apply operation
      * @param version target version
      */
-    void seal(final ModificationApplyOperation schema, final Version version) {
+    void seal(final ModificationApplyOperation schema, final @NonNull Version version) {
         clearSnapshot();
         writtenOriginal = null;
 

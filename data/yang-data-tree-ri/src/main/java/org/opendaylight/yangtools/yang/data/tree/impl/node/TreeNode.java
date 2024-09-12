@@ -97,9 +97,10 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
     /**
      * Get a mutable, isolated copy of the node.
      *
+     * @param subtreeVersion new subtree version
      * @return Mutable copy
      */
-    public abstract MutableTreeNode toMutable();
+    public abstract MutableTreeNode toMutable(Version subtreeVersion);
 
     @Override
     public final String toString() {

@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -21,19 +22,21 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * correctly implementing {@link #seal()}.
  */
 abstract class AbstractMutableContainerNode extends MutableTreeNode {
-    private final Version version;
+    private final @NonNull Version version;
+    private final @NonNull Version subtreeVersion;
+
     private Map<PathArgument, TreeNode> children;
     private NormalizedNode data;
-    private Version subtreeVersion;
 
-    AbstractMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
+    AbstractMutableContainerNode(final AbstractContainerNode parent, final Version subtreeVersion,
+            final Map<PathArgument, TreeNode> children) {
         data = parent.data();
         version = parent.version();
-        subtreeVersion = parent.subtreeVersion();
+        this.subtreeVersion = requireNonNull(subtreeVersion);
         this.children = requireNonNull(children);
     }
 
-    final Version getVersion() {
+    final @NonNull Version getVersion() {
         return version;
     }
 
@@ -44,11 +47,6 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
     @SuppressWarnings("unchecked")
     final DistinctNodeContainer<PathArgument, NormalizedNode> getData() {
         return (DistinctNodeContainer<PathArgument, NormalizedNode>) data;
-    }
-
-    @Override
-    public final void setSubtreeVersion(final Version subtreeVersion) {
-        this.subtreeVersion = requireNonNull(subtreeVersion);
     }
 
     @Override

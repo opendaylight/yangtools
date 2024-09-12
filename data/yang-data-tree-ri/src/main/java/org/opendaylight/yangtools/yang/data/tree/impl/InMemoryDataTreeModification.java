@@ -16,6 +16,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Map.Entry;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -50,9 +51,9 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     private final RootApplyStrategy strategyTree;
-    private final InMemoryDataTreeSnapshot snapshot;
+    private final @NonNull InMemoryDataTreeSnapshot snapshot;
     private final ModifiedNode rootNode;
-    private final Version version;
+    private final @NonNull Version version;
 
     // All access needs to go through STATE
     @SuppressWarnings("unused")
@@ -231,7 +232,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return new InMemoryDataTreeSnapshot(snapshot.modelContext(), newRoot, strategyTree).newModification();
     }
 
-    Version getVersion() {
+    @NonNull Version getVersion() {
         return version;
     }
 

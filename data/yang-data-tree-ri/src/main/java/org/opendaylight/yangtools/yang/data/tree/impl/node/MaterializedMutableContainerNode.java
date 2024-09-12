@@ -11,8 +11,9 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class MaterializedMutableContainerNode extends AbstractMutableContainerNode {
-    MaterializedMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
-        super(parent, children);
+    MaterializedMutableContainerNode(final AbstractContainerNode parent, final Version subtreeVersion,
+            final Map<PathArgument, TreeNode> children) {
+        super(parent, subtreeVersion, children);
     }
 
     @Override

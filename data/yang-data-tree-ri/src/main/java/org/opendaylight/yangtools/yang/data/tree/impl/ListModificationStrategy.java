@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -80,11 +81,8 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
          * As it turns out, once we materialize the written data, we can share the code path with the subtree change. So
          * let's create an unsealed TreeNode and run the common parts on it -- which end with the node being sealed.
          */
-        final var mutable = newValueMeta.toMutable();
-        mutable.setSubtreeVersion(version);
-
-        return mutateChildren(mutable, BUILDER_FACTORY.newUnkeyedListBuilder((UnkeyedListNode) newValue), version,
-            modification.getChildren());
+        return mutateChildren(newValueMeta.toMutable(version),
+            BUILDER_FACTORY.newUnkeyedListBuilder((UnkeyedListNode) newValue), version, modification.getChildren());
     }
 
     /**
@@ -99,7 +97,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
-            final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
+            final @NonNull Version nodeVersion, final Iterable<ModifiedNode> modifications) {
         for (var mod : modifications) {
             final var id = mod.getIdentifier();
             final var cm = meta.childByArg(id);

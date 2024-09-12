@@ -16,12 +16,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * before creating a new child node from backing data. Since the child is immutable, we do not have to track it.
  */
 final class LazyMutableContainerNode extends AbstractMutableContainerNode {
-    LazyMutableContainerNode(final AbstractContainerNode parent) {
-        this(parent, MapAdaptor.getDefaultInstance().initialSnapshot(1));
+    LazyMutableContainerNode(final AbstractContainerNode parent, final Version subtreeVersion) {
+        this(parent, subtreeVersion, MapAdaptor.getDefaultInstance().initialSnapshot(1));
     }
 
-    LazyMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
-        super(parent, children);
+    LazyMutableContainerNode(final AbstractContainerNode parent, final Version subtreeVersion,
+            final Map<PathArgument, TreeNode> children) {
+        super(parent, subtreeVersion, children);
     }
 
     @Override

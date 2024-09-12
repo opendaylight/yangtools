@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -20,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
     private final Map<PathArgument, TreeNode> children;
-    private final Version subtreeVersion;
+    private final @NonNull Version subtreeVersion;
 
     AbstractModifiedContainerNode(final NormalizedNode data, final Version version,
             final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {

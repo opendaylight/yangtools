@@ -28,15 +28,6 @@ public abstract class MutableTreeNode implements StoreTreeNode<TreeNode> {
     public abstract void setData(NormalizedNode data);
 
     /**
-     * Set the new subtree version. This is typically invoked when the user
-     * has modified some of this node's children.
-     *
-     * @param subtreeVersion New subtree version.
-     * @throws NullPointerException if {@code subtreeVersion} is null
-     */
-    public abstract void setSubtreeVersion(Version subtreeVersion);
-
-    /**
      * Add a new child node. This acts as add-or-replace operation, e.g. it succeeds even if a conflicting child is
      * already present.
      *

@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 abstract class AbstractReadyIterator {
@@ -29,7 +30,7 @@ abstract class AbstractReadyIterator {
         return new RootReadyIterator(root, root.getChildren().iterator(), operation);
     }
 
-    final AbstractReadyIterator process(final Version version) {
+    final AbstractReadyIterator process(final @NonNull Version version) {
         // Walk all child nodes and remove any children which have not
         // been modified. If a child has children, we need to iterate
         // through it via re-entering this method on the child iterator.

@@ -139,7 +139,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
     }
 
     protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
-            final TreeNode currentMeta, final Version version) throws DataValidationFailedException {
+            final TreeNode currentMeta, final @NonNull Version version) throws DataValidationFailedException {
         final var orig = modification.original();
         if (orig != null && currentMeta != null) {
             /*
@@ -236,10 +236,10 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @return A sealed TreeNode representing applied operation.
      */
     protected abstract @NonNull TreeNode applyMerge(ModifiedNode modification, @NonNull TreeNode currentMeta,
-        Version version);
+        @NonNull Version version);
 
     protected abstract @NonNull TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue,
-        @Nullable TreeNode currentMeta, Version version);
+        @Nullable TreeNode currentMeta, @NonNull Version version);
 
     /**
      * Apply a nested operation. Since there may not actually be a nested operation
@@ -252,7 +252,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @return A sealed TreeNode representing applied operation.
      */
     protected abstract @NonNull TreeNode applyTouch(ModifiedNode modification, @NonNull TreeNode currentMeta,
-        Version version);
+        @NonNull Version version);
 
     /**
      * Checks is supplied {@link NodeModification} is applicable for Subtree Modification.
@@ -265,7 +265,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      *         modification is not applicable (e.g. leaf node).
      */
     protected abstract void checkTouchApplicable(ModificationPath path, NodeModification modification,
-        @Nullable TreeNode currentMeta, Version version) throws DataValidationFailedException;
+        @Nullable TreeNode currentMeta, @NonNull Version version) throws DataValidationFailedException;
 
     /**
      * Return the {@link DataSchemaNode}-subclass schema associated with this operation.

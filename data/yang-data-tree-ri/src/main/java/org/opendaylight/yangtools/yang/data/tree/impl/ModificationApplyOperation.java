@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -54,7 +55,8 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      *         resulted in deletion of this node.
      * @throws IllegalArgumentException If it is not possible to apply Operation on provided Metadata node
      */
-    abstract @Nullable TreeNode apply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
+    abstract @Nullable TreeNode apply(ModifiedNode modification, @Nullable TreeNode currentMeta,
+        @NonNull Version version);
 
     /**
      * Checks if provided node modification could be applied to current metadata node.
@@ -66,7 +68,7 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      * @throws DataValidationFailedException if the modification is not applicable
      */
     abstract void checkApplicable(ModificationPath path, NodeModification modification,
-        @Nullable TreeNode currentMeta, Version version) throws DataValidationFailedException;
+        @Nullable TreeNode currentMeta, @NonNull Version version) throws DataValidationFailedException;
 
     /**
      * Performs a quick structural verification of NodeModification, such as written values / types uses right
@@ -105,7 +107,7 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      * @param value Value which should be merge into the modification
      * @param version Data version as carried in the containing {@link InMemoryDataTreeModification}
      */
-    abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode value, Version version);
+    abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode value, @NonNull Version version);
 
     /**
      * {@inheritDoc}

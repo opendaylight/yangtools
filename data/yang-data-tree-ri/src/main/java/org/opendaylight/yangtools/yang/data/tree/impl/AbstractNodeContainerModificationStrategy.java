@@ -85,7 +85,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      * {@link #checkTouchApplicable(ModificationPath, NodeModification, TreeNode, Version)}
      * It is okay to use a global constant, as the delegate will ignore it anyway.
      */
-    private static final Version FAKE_VERSION = Version.initial(false);
+    private static final @NonNull Version FAKE_VERSION = Version.initial(false);
 
     private final NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
@@ -184,8 +184,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final var mutable = newValueMeta.toMutable();
-        mutable.setSubtreeVersion(version);
+        final var mutable = newValueMeta.toMutable(version);
 
         final var result = mutateChildren(mutable, support.createBuilder(newValue), version,
             modification.getChildren());
@@ -208,7 +207,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
-            final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
+            final @NonNull Version nodeVersion, final Iterable<ModifiedNode> modifications) {
         for (var mod : modifications) {
             final var id = mod.getIdentifier();
             final var result = resolveChildOperation(id).apply(mod, meta.childByArg(id), nodeVersion);
@@ -245,7 +244,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     }
 
     private void mergeChildrenIntoModification(final ModifiedNode modification,
-            final Collection<? extends NormalizedNode> children, final Version version) {
+            final Collection<? extends NormalizedNode> children, final @NonNull Version version) {
         for (final NormalizedNode c : children) {
             final ModificationApplyOperation childOp = resolveChildOperation(c.name());
             final ModifiedNode childNode = modification.modifyChild(c.name(), childOp, version);
@@ -316,8 +315,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          */
         if (!modification.isEmpty()) {
             final var dataBuilder = support.createBuilder(currentMeta.data());
-            final var newMeta = currentMeta.toMutable();
-            newMeta.setSubtreeVersion(version);
+            final var newMeta = currentMeta.toMutable(version);
             final var children = modification.getChildren();
             final var ret = mutateChildren(newMeta, dataBuilder, version, children);
 
@@ -398,7 +396,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      * @param currentMeta Current data tree node.
      */
     private void checkChildPreconditions(final ModificationPath path, final NodeModification modification,
-            final @NonNull TreeNode currentMeta, final Version version) throws DataValidationFailedException {
+            final @NonNull TreeNode currentMeta, final @NonNull Version version) throws DataValidationFailedException {
         for (var childMod : modification.getChildren()) {
             final var childId = childMod.getIdentifier();
             final var childMeta = currentMeta.childByArg(childId);
