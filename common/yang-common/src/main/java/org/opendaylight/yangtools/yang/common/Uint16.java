@@ -16,12 +16,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
+import org.opendaylight.yangtools.yang.data.NumberData;
 
 /**
  * Dedicated type for YANG's {@code type uint16} type.
  */
 @NonNullByDefault
-public class Uint16 extends Number implements CanonicalValue<Uint16> {
+public non-sealed class Uint16 extends Number implements CanonicalValue<Uint16>, NumberData {
     public static final class Support extends AbstractCanonicalValueSupport<Uint16> {
         public Support() {
             super(Uint16.class);
@@ -286,6 +287,11 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
             return Uint16.MAX_VALUE;
         }
         return instanceFor((short) longVal);
+    }
+
+    @Override
+    public final Class<Uint16> contract() {
+        return Uint16.class;
     }
 
     /**
