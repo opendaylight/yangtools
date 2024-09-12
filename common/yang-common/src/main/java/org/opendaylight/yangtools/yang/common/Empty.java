@@ -14,13 +14,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.data.ScalarValue;
 
 /**
  * Dedicated type for YANG's {@code type empty} value.
  */
 @NonNullByDefault
-public final class Empty implements Immutable, Serializable {
+public final class Empty implements ScalarValue, Serializable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final Empty VALUE = new Empty();
