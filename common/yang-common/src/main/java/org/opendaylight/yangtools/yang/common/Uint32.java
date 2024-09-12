@@ -16,12 +16,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
+import org.opendaylight.yangtools.data.ScalarValue;
 
 /**
  * Dedicated type for YANG's {@code type uint32} type.
  */
 @NonNullByDefault
-public class Uint32 extends Number implements CanonicalValue<Uint32> {
+public non-sealed class Uint32 extends Number implements CanonicalValue<Uint32>, ScalarValue {
     public static final class Support extends AbstractCanonicalValueSupport<Uint32> {
         public Support() {
             super(Uint32.class);
