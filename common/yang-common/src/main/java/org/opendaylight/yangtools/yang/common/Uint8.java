@@ -13,12 +13,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
+import org.opendaylight.yangtools.yang.data.NumberData;
 
 /**
  * Dedicated type for YANG's {@code type uint8} type.
  */
 @NonNullByDefault
-public class Uint8 extends Number implements CanonicalValue<Uint8> {
+public non-sealed class Uint8 extends Number implements CanonicalValue<Uint8>, NumberData {
     public static final class Support extends AbstractCanonicalValueSupport<Uint8> {
         public Support() {
             super(Uint8.class);
@@ -274,6 +275,11 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
             return Uint8.MAX_VALUE;
         }
         return instanceFor((byte) longVal);
+    }
+
+    @Override
+    public final Class<Uint8> contract() {
+        return Uint8.class;
     }
 
     /**
