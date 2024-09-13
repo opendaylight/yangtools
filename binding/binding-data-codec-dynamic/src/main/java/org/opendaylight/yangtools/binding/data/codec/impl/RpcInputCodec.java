@@ -20,9 +20,7 @@ import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSe
  * Without this interface we could end up with megamorphic invocation, as the two implementations cannot share class
  * hierarchy.
  *
- * @author Robert Varga
- *
- * @param <T> Binding representation of data
+ * @param <D> Binding representation of data
  */
 interface RpcInputCodec<D extends DataObject> extends BindingNormalizedNodeCodec<D> {
 
