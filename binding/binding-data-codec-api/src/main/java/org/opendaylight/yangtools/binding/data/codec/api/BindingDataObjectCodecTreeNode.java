@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.binding.DataObject;
 
 @Beta
 public interface BindingDataObjectCodecTreeNode<T extends DataObject>
-        extends CommonDataObjectCodecTreeNode<T>, BindingNormalizedNodeCodec<T> {
+        extends CommonDataObjectCodecTreeNode<T>, BindingNormalizedNodeCodec<T>, BindingDataContainerWriter<T> {
     /**
      * Returns codec which uses caches serialization / deserialization results.
      *

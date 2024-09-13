@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -44,6 +45,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.slf4j.Logger;
@@ -322,6 +324,12 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     @Override
     public final NormalizedNode serialize(final D data) {
         return serializeImpl(data);
+    }
+
+    @Override
+    public final void writeTo(final NormalizedNodeStreamWriter writer, final D dataContainer)
+            throws IOException {
+        eventStreamSerializer().serialize(dataContainer, new BindingToNormalizedStreamWriter(this, writer));
     }
 
     @Override
