@@ -320,7 +320,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
     }
 
     @Override
-    public NormalizedNode serialize(final D data) {
+    public final NormalizedNode serialize(final D data) {
         return serializeImpl(data);
     }
 
