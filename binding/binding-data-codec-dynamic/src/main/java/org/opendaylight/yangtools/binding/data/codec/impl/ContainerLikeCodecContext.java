@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 sealed class ContainerLikeCodecContext<D extends DataObject>
-        extends DataObjectCodecContext<D, ContainerLikeRuntimeType<?, ?>> implements RpcInputCodec<D>
+        extends DataObjectCodecContext<D, ContainerLikeRuntimeType<?, ?>>
         permits StructuralContainerCodecContext {
     ContainerLikeCodecContext(final Class<D> cls, final ContainerLikeRuntimeType<?, ?> type,
             final CodecContextFactory factory) {
