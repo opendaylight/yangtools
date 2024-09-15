@@ -57,6 +57,15 @@ public abstract sealed class BaseTreeNode extends TreeNode permits AbstractConta
         return version;
     }
 
+    /**
+     * Get a mutable, isolated copy of the node.
+     *
+     * @param nextSubtreeVersion next subtree version
+     * @return Mutable copy
+     * @throws NullPointerException if {@code nextSubtreeVersion} is {@code null}
+     */
+    public abstract MutableTreeNode toMutable(Version nextSubtreeVersion);
+
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper.add("version", version);

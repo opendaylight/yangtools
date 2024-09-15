@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.BaseTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -66,7 +65,7 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final TreeNode currentMeta, final Version version) {
-        return BaseTreeNode.of(newValue, version);
+        return newMeta(newValue, version);
     }
 
     @Override
