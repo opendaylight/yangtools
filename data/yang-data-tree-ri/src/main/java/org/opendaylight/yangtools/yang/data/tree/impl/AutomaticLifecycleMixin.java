@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.BaseTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
@@ -104,6 +105,6 @@ final class AutomaticLifecycleMixin {
     }
 
     private static @NonNull TreeNode fakeMeta(final NormalizedNode emptyNode, final Version version) {
-        return TreeNode.of(emptyNode, version);
+        return BaseTreeNode.of(emptyNode, version);
     }
 }

@@ -22,7 +22,7 @@ class TreeNodeFactoryTest {
     void testNormalizedNodeContainer() {
         final var data = Mockito.mock(ContainerNode.class);
         final var version = Version.initial(false);
-        final var node = TreeNode.of(data, version);
+        final var node = BaseTreeNode.of(data, version);
 
         assertInstanceOf(SimpleContainerNode.class, node);
         assertTreeNode(node, data, version);
@@ -32,7 +32,7 @@ class TreeNodeFactoryTest {
     void testOrderedNodeContainer() {
         final var data = Mockito.mock(UserMapNode.class);
         final var version = Version.initial(false);
-        final var node = TreeNode.of(data, version);
+        final var node = BaseTreeNode.of(data, version);
 
         assertInstanceOf(SimpleContainerNode.class, node);
         assertTreeNode(node, data, version);
@@ -42,7 +42,7 @@ class TreeNodeFactoryTest {
     void testLeaf() {
         final var data = Mockito.mock(LeafNode.class);
         final var version = Version.initial(false);
-        final var node = TreeNode.of(data, version);
+        final var node = BaseTreeNode.of(data, version);
 
         assertInstanceOf(ValueNode.class, node);
         assertTreeNode(node, data, version);
