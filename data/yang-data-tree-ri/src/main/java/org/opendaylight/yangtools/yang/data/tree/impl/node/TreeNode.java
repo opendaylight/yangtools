@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 // FIXME: BUG-2399: clarify that versioning rules are not enforced for non-presence containers, as they are not
 //                  considered to be data nodes.
 @NonNullByDefault
-public abstract sealed class TreeNode implements StoreTreeNode<TreeNode> permits BaseTreeNode {
+public abstract sealed class TreeNode implements StoreTreeNode<TreeNode> permits BaseTreeNode, ExtendedTreeNode {
     /**
      * Get a read-only view of the underlying data.
      *
@@ -58,15 +58,6 @@ public abstract sealed class TreeNode implements StoreTreeNode<TreeNode> permits
      * @return Current subtree version.
      */
     public abstract Version subtreeVersion();
-
-    /**
-     * Get a mutable, isolated copy of the node.
-     *
-     * @param nextSubtreeVersion next subtree version
-     * @return Mutable copy
-     * @throws NullPointerException if {@code nextSubtreeVersion} is {@code null}
-     */
-    public abstract MutableTreeNode toMutable(Version nextSubtreeVersion);
 
     @Override
     public final String toString() {

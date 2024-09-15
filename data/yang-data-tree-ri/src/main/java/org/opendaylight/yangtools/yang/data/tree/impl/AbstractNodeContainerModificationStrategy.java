@@ -14,6 +14,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -86,7 +87,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      * {@link #checkTouchApplicable(ModificationPath, NodeModification, TreeNode, Version)}
      * It is okay to use a global constant, as the delegate will ignore it anyway.
      */
-    private static final Version FAKE_VERSION = Version.initial(false);
+    private static final @NonNull Version FAKE_VERSION = Version.initial(false);
 
     private final NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
@@ -166,7 +167,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final TreeNode currentMeta, final Version version) {
-        final var newValueMeta = BaseTreeNode.of(newValue, version);
+        final var newValueMeta = newMeta(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
         }
@@ -191,7 +192,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
         // is larger than it needs to be. Create a new TreeNode to host the data.
-        return BaseTreeNode.of(result.data(), version);
+        return newMeta(result.data(), version);
     }
 
     /**
@@ -315,7 +316,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         if (!modification.isEmpty()) {
             final var dataBuilder = support.createBuilder(currentMeta.data());
             final var children = modification.getChildren();
-            final var ret = mutateChildren(currentMeta.toMutable(version), dataBuilder, version, children);
+            final var ret = mutateChildren(openMeta(currentMeta, version), dataBuilder, version, children);
 
             /*
              * It is possible that the only modifications under this node were empty merges, which were turned into
@@ -338,6 +339,19 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         // replace the metadata node.
         modification.resolveModificationType(ModificationType.UNMODIFIED);
         return currentMeta;
+    }
+
+    @NonNullByDefault
+    static final BaseTreeNode newMeta(final NormalizedNode data, final Version version) {
+        return BaseTreeNode.of(data, version);
+    }
+
+    @NonNullByDefault
+    private static MutableTreeNode openMeta(final TreeNode meta, final Version nextSubtreeVersion) {
+        if (meta instanceof BaseTreeNode base) {
+            return base.toMutable(nextSubtreeVersion);
+        }
+        throw new VerifyException("Unexpected meta " + meta);
     }
 
     @Override
@@ -374,8 +388,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         return null;
     }
 
+    @NonNullByDefault
     static final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
-        return BaseTreeNode.of(emptyNode, FAKE_VERSION);
+        return newMeta(emptyNode, FAKE_VERSION);
     }
 
     @Override
