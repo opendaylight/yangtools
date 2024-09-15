@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.BaseTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -76,7 +77,7 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
     }
 
     private static TreeNode treeNodeOne() {
-        return TreeNode.of(ImmutableNodes.newContainerBuilder()
+        return BaseTreeNode.of(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
             .withChild(createTestContainer())
             .build(),
