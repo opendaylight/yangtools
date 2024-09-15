@@ -14,9 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Concretization of AbstractTreeNode for leaf nodes which only contain data.
- * Instances of this class report all children as absent, subtree version
- * equal to this node's version and do not support mutable view.
+ * Concretization of AbstractTreeNode for leaf nodes which only contain data. Instances of this class report all
+ * children as absent, subtree version equal to this node's version and do not support mutable view.
  */
 final class ValueNode extends TreeNode {
     private static final Logger LOG = LoggerFactory.getLogger(ValueNode.class);
@@ -37,12 +36,12 @@ final class ValueNode extends TreeNode {
     }
 
     @Override
-    public MutableTreeNode toMutable() {
+    public MutableTreeNode toMutable(final Version nextSubtreeVersion) {
         /**
-         * Value nodes can only we read/written/delete, which does a straight
-         * replace. That means they don't haver need to be made mutable.
+         * Value nodes can only we read/written/delete, which does a straight replace. That means they do not have
+         * a need to be made mutable.
          */
-        throw new UnsupportedOperationException(String.format("Attempted to mutate value-node %s", this));
+        throw new UnsupportedOperationException("Attempted to mutate value-node " + this);
     }
 
     @Override

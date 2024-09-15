@@ -184,10 +184,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final var mutable = newValueMeta.toMutable();
-        mutable.setSubtreeVersion(version);
-
-        final var result = mutateChildren(mutable, support.createBuilder(newValue), version,
+        final var result = mutateChildren(newValueMeta.toMutable(version), support.createBuilder(newValue), version,
             modification.getChildren());
 
         // We are good to go except one detail: this is a single logical write, but
@@ -316,10 +313,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          */
         if (!modification.isEmpty()) {
             final var dataBuilder = support.createBuilder(currentMeta.data());
-            final var newMeta = currentMeta.toMutable();
-            newMeta.setSubtreeVersion(version);
             final var children = modification.getChildren();
-            final var ret = mutateChildren(newMeta, dataBuilder, version, children);
+            final var ret = mutateChildren(currentMeta.toMutable(version), dataBuilder, version, children);
 
             /*
              * It is possible that the only modifications under this node were empty merges, which were turned into
