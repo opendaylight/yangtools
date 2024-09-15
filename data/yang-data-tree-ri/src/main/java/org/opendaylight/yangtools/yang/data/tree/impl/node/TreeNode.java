@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -38,15 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 // FIXME: BUG-2399: clarify that versioning rules are not enforced for non-presence containers, as they are not
 //                  considered to be data nodes.
 @NonNullByDefault
-public abstract class TreeNode implements StoreTreeNode<TreeNode> {
-    private final NormalizedNode data;
-    private final Version version;
-
-    TreeNode(final NormalizedNode data, final Version version) {
-        this.data = requireNonNull(data);
-        this.version = requireNonNull(version);
-    }
-
+public abstract sealed class TreeNode implements StoreTreeNode<TreeNode> permits AbstractTreeNode {
     /**
      * Create a new AbstractTreeNode from a data node.
      *
@@ -71,9 +61,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
      *
      * @return Unmodifiable view of the underlying data.
      */
-    public final NormalizedNode data() {
-        return data;
-    }
+    public abstract NormalizedNode data();
 
     /**
      * Get the data node version. This version is updated whenever the data representation of this particular node
@@ -82,9 +70,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
      *
      * @return Current data node version.
      */
-    public final Version version() {
-        return version;
-    }
+    public abstract Version version();
 
     /**
      * Get the subtree version. This version is updated whenever the data representation of this particular node
@@ -105,7 +91,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("version", version)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
     abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
