@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.InMemoryDataTree;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.BaseTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -64,7 +64,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig) {
-        return new InMemoryDataTree(TreeNode.of(createRoot(treeConfig.getRootPath()),
+        return new InMemoryDataTree(BaseTreeNode.of(createRoot(treeConfig.getRootPath()),
             Version.initial(treeConfig.isVersionInfoTrackingEnabled())), treeConfig, null);
     }
 
@@ -106,7 +106,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final var rootSchemaNode = getRootSchemaNode(initialSchemaContext, rootPath);
         final var rootDataNode = createRoot((DataNodeContainer)rootSchemaNode, rootPath);
         return new InMemoryDataTree(
-            TreeNode.of(rootDataNode, Version.initial(treeConfig.isVersionInfoTrackingEnabled())), treeConfig,
+            BaseTreeNode.of(rootDataNode, Version.initial(treeConfig.isVersionInfoTrackingEnabled())), treeConfig,
             initialSchemaContext, rootSchemaNode, maskMandatory);
     }
 

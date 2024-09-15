@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.api.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.BaseTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
@@ -165,7 +166,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final TreeNode currentMeta, final Version version) {
-        final var newValueMeta = TreeNode.of(newValue, version);
+        final var newValueMeta = BaseTreeNode.of(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
         }
@@ -190,7 +191,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
         // is larger than it needs to be. Create a new TreeNode to host the data.
-        return TreeNode.of(result.data(), version);
+        return BaseTreeNode.of(result.data(), version);
     }
 
     /**
@@ -374,7 +375,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     }
 
     static final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
-        return TreeNode.of(emptyNode, FAKE_VERSION);
+        return BaseTreeNode.of(emptyNode, FAKE_VERSION);
     }
 
     @Override

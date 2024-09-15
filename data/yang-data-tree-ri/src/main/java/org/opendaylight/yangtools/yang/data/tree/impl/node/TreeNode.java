@@ -7,14 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
@@ -38,42 +34,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 // FIXME: BUG-2399: clarify that versioning rules are not enforced for non-presence containers, as they are not
 //                  considered to be data nodes.
 @NonNullByDefault
-public abstract class TreeNode implements StoreTreeNode<TreeNode> {
-    private final NormalizedNode data;
-    private final Version version;
-
-    TreeNode(final NormalizedNode data, final Version version) {
-        this.data = requireNonNull(data);
-        this.version = requireNonNull(version);
-    }
-
-    /**
-     * Create a new AbstractTreeNode from a data node.
-     *
-     * @param data data node
-     * @param version data node version
-     * @return new AbstractTreeNode instance, covering the data tree provided
-     */
-    public static final TreeNode of(final NormalizedNode data, final Version version) {
-        return switch (data) {
-            case DistinctNodeContainer<?, ?> distinct -> {
-                @SuppressWarnings("unchecked")
-                final var container = (DistinctNodeContainer<?, NormalizedNode>) data;
-                yield new SimpleContainerNode(container, version);
-            }
-            case OrderedNodeContainer<?> ordered -> new SimpleContainerNode(ordered, version);
-            default -> new ValueNode(data, version);
-        };
-    }
-
+public abstract sealed class TreeNode implements StoreTreeNode<TreeNode> permits BaseTreeNode {
     /**
      * Get a read-only view of the underlying data.
      *
      * @return Unmodifiable view of the underlying data.
      */
-    public final NormalizedNode data() {
-        return data;
-    }
+    public abstract NormalizedNode data();
 
     /**
      * Get the data node version. This version is updated whenever the data representation of this particular node
@@ -82,9 +49,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
      *
      * @return Current data node version.
      */
-    public final Version version() {
-        return version;
-    }
+    public abstract Version version();
 
     /**
      * Get the subtree version. This version is updated whenever the data representation of this particular node
@@ -105,7 +70,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("version", version)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
     abstract ToStringHelper addToStringAttributes(ToStringHelper helper);

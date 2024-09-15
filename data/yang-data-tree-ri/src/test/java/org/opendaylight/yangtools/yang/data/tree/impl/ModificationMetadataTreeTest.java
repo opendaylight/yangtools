@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
-import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.BaseTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -141,7 +141,7 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
     void basicReadWrites() {
         final var modificationTree = new InMemoryDataTreeModification(
             new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
-                TreeNode.of(createDocumentOne(), Version.initial(false)), rootOper), rootOper);
+                BaseTreeNode.of(createDocumentOne(), Version.initial(false)), rootOper), rootOper);
         final var originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
         assertSame(BAR_NODE, originalBarNode.orElseThrow());
