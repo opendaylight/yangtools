@@ -16,34 +16,15 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  */
 public interface DataTreeFactory {
     /**
-     * Create a new data tree based on specified configuration, with a best-guess root. Use this method only if you
-     * do not have a corresponding SchemaContext handy. Mandatory nodes whose enforcement point is the root node will
-     * not be enforced even if some are present in the SchemaContext and validation is requested in configuration.
-     *
-     * <p>
-     * Correctness note: this method may not accurately initialize the root node in certain non-root scenarios due to
-     * the impossibility to accurately derive root type from plain YangInstanceIdentifier. Using
-     * {@link #create(DataTreeConfiguration, EffectiveModelContext)} is recommended, as it does not suffer from this
-     * shortcoming.
-     *
-     * @param treeConfig Tree configuration.
-     * @return A data tree instance.
-     * @throws NullPointerException if treeConfig is null
-     * @deprecated Use {@link #create(DataTreeConfiguration, EffectiveModelContext)} instead.
-     */
-    @Deprecated(since = "14.0.5", forRemoval = true)
-    @NonNull DataTree create(DataTreeConfiguration treeConfig);
-
-    /**
      * Create a new data tree based on specified configuration, with a root node derived from the schema context lookup
      * of the configuration. Mandatory nodes whose enforcement point is the root node will not be enforced even if some
-     * are present in the SchemaContext and validation is requested in configuration.
+     * are present in the EffectiveModelContext and validation is requested in configuration.
      *
      * @param treeConfig Tree configuration.
      * @return A data tree instance.
      * @throws NullPointerException if any of the arguments are null
-     * @throws IllegalArgumentException if tree configuration does not match the SchemaContext, for example by root path
-     *                                  referring to a node which does not exist in the SchemaContext
+     * @throws IllegalArgumentException if tree configuration does not match the EffectiveModelContext, for example by
+     *                                  root path referring to a node which does not exist in the EffectiveModelContext
      */
     @NonNull DataTree create(DataTreeConfiguration treeConfig, EffectiveModelContext initialSchemaContext);
 
