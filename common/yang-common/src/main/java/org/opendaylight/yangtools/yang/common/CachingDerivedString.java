@@ -10,7 +10,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.Serial;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -18,19 +19,28 @@ import org.eclipse.jdt.annotation.Nullable;
  * A opportunistically-caching {@link DerivedString}. Canonical name is cached at first encounter.
  *
  * @param <T> derived string type
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
 public abstract class CachingDerivedString<T extends CachingDerivedString<T>> extends DerivedString<T> {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
+    private static final VarHandle STR;
 
+    static {
+        try {
+            STR = MethodHandles.lookup().findVarHandle(CachingDerivedString.class, "str", String.class);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    @SuppressWarnings("unused")
     private transient volatile @Nullable String str;
 
     @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
     protected CachingDerivedString() {
-        this.str = null;
+        str = null;
     }
 
     protected CachingDerivedString(final String str) {
@@ -39,8 +49,14 @@ public abstract class CachingDerivedString<T extends CachingDerivedString<T>> ex
 
     @Override
     public final String toCanonicalString() {
-        String local;
-        return (local = this.str) != null ? local : (str = computeCanonicalString());
+        final var local = (String) STR.getAcquire(this);
+        return local != null ? local : loadCanonicalString();
+    }
+
+    private String loadCanonicalString() {
+        final var computed = computeCanonicalString();
+        final var witness = (String) STR.compareAndExchangeRelease(this, null, computed);
+        return witness != null ? witness : computed;
     }
 
     /**
