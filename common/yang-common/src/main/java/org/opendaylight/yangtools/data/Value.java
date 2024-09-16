@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.data;
 
-import org.opendaylight.yangtools.concepts.Immutable;
-
 /**
  * An instantiation of a YANG type. There are two kinds of instantiations:
  * <ol>
@@ -17,6 +15,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * </ol>
  */
 // FIXME: this should become an abstract class once ScalarValue can be an abstract class
-public sealed interface Value extends Immutable permits ArrayValue, ScalarValue {
+public sealed interface Value extends ModeledData permits ArrayValue, ScalarValue {
     // Nothing else, really
 }
