@@ -36,12 +36,6 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     }
 
     @Override
-    @Deprecated(since = "14.0.21", forRemoval = true)
-    public DataTree create(final DataTreeConfiguration treeConfig) {
-        return delegate.create(treeConfig);
-    }
-
-    @Override
     public DataTree create(final DataTreeConfiguration treeConfig, final EffectiveModelContext initialSchemaContext) {
         return delegate.create(treeConfig, initialSchemaContext);
     }

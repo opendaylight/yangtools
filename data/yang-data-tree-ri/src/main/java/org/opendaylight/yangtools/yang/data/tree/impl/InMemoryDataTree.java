@@ -58,16 +58,6 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
     private volatile DataTreeState state;
 
     public InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
-            final EffectiveModelContext schemaContext) {
-        this.treeConfig = requireNonNull(treeConfig, "treeConfig");
-        maskMandatory = true;
-        state = DataTreeState.createInitial(rootNode);
-        if (schemaContext != null) {
-            setEffectiveModelContext(schemaContext);
-        }
-    }
-
-    public InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
             final EffectiveModelContext schemaContext, final DataSchemaNode rootSchemaNode,
             final boolean maskMandatory) {
         this.treeConfig = requireNonNull(treeConfig, "treeConfig");
