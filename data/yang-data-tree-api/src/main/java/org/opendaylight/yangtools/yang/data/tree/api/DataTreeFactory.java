@@ -29,7 +29,9 @@ public interface DataTreeFactory {
      * @param treeConfig Tree configuration.
      * @return A data tree instance.
      * @throws NullPointerException if treeConfig is null
+     * @deprecated Use {@link #create(DataTreeConfiguration, EffectiveModelContext)} instead.
      */
+    @Deprecated(since = "14.0.5", forRemoval = true)
     @NonNull DataTree create(DataTreeConfiguration treeConfig);
 
     /**

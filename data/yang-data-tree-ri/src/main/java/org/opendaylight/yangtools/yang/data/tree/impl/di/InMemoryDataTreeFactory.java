@@ -63,6 +63,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     }
 
     @Override
+    @Deprecated
     public DataTree create(final DataTreeConfiguration treeConfig) {
         return new InMemoryDataTree(TreeNode.of(createRoot(treeConfig.getRootPath()),
             Version.initial(treeConfig.isVersionInfoTrackingEnabled())), treeConfig, null);

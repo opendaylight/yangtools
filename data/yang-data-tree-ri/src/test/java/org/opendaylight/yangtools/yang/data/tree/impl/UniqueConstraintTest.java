@@ -253,9 +253,9 @@ class UniqueConstraintTest {
 
     private static InMemoryDataTree initDataTree(final EffectiveModelContext schemaContext, final boolean uniqueIndex)
             throws DataValidationFailedException {
-        final var inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory().create(
-            new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build());
-        inMemoryDataTree.setEffectiveModelContext(schemaContext);
+        final var inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory()
+            .create(new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build(),
+                schemaContext);
 
         final var taskNode = ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -271,8 +271,8 @@ class UniqueConstraintTest {
     private static InMemoryDataTree emptyDataTree(final EffectiveModelContext schemaContext,
             final boolean uniqueIndex) {
         final var inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory().create(
-            new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build());
-        inMemoryDataTree.setEffectiveModelContext(schemaContext);
+            new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build(),
+            schemaContext);
 
         return inMemoryDataTree;
     }

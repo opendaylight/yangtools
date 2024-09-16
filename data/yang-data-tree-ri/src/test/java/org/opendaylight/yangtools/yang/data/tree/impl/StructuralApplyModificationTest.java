@@ -26,8 +26,8 @@ final class StructuralApplyModificationTest extends AbstractTestModelTest {
 
     @BeforeEach
     void setUp() {
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION);
-        inMemoryDataTree.setEffectiveModelContext(SCHEMA_CONTEXT);
+        inMemoryDataTree = new InMemoryDataTreeFactory()
+            .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
     }
 
     @Test
