@@ -20,8 +20,7 @@ public interface DataTreeFactory {
      * do not have a corresponding SchemaContext handy. Mandatory nodes whose enforcement point is the root node will
      * not be enforced even if some are present in the SchemaContext and validation is requested in configuration.
      *
-     * <p>
-     * Correctness note: this method may not accurately initialize the root node in certain non-root scenarios due to
+     * <p>Correctness note: this method may not accurately initialize the root node in certain non-root scenarios due to
      * the impossibility to accurately derive root type from plain YangInstanceIdentifier. Using
      * {@link #create(DataTreeConfiguration, EffectiveModelContext)} is recommended, as it does not suffer from this
      * shortcoming.

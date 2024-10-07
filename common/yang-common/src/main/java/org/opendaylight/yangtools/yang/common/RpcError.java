@@ -21,8 +21,7 @@ public interface RpcError {
     /**
      * Returns a short string that identifies the general type of error condition.
      *
-     * <p>
-     * The following outlines suggested values as defined by
+     * <p>The following outlines suggested values as defined by
      * (<a href="https://www.rfc-editor.org/rfc/rfc6241#page-89">RFC6241</a>):
      *
      * <pre>

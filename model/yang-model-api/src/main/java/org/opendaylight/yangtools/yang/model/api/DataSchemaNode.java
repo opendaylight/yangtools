@@ -15,8 +15,7 @@ import java.util.Optional;
  * {@code data node}, yet it notably does not include {@link UsesNode} and {@link AugmentationSchemaNode}, which are
  * resolved separately.
  *
- * <p>
- * Common interface is composed of {@link #isConfiguration()}, governing validity in config/operation data stores
+ * <p>Common interface is composed of {@link #isConfiguration()}, governing validity in config/operation data stores
  * and {@link WhenConditionAware} mixin, which governs validity based on other document data.
  *
  * @see ContainerSchemaNode

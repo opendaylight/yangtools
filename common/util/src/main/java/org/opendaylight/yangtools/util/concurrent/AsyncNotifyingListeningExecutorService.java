@@ -30,13 +30,11 @@ import org.eclipse.jdt.annotation.Nullable;
  * blocking the thread that completed the task, as a common use case is to pass an executor that runs tasks in the same
  * thread as the caller (i.e. {@code MoreExecutors#sameThreadExecutor}) to {@link ListenableFuture#addListener}.
  *
- * <p>
- * Most commonly, this class would be used in lieu of {@code MoreExecutors#listeningDecorator} when the underlying
+ * <p>Most commonly, this class would be used in lieu of {@code MoreExecutors#listeningDecorator} when the underlying
  * delegate Executor is single-threaded, in which case, you may not want ListenableFuture callbacks to block the single
  * thread.
  *
- * <p>
- * Note: the Executor specified on construction does not replace the Executor specified
+ * <p>Note: the Executor specified on construction does not replace the Executor specified
  * in {@link ListenableFuture#addListener}. The latter Executor is still used however, if it is detected that
  * the listener Runnable would execute in the thread that completed the task, the listener is executed on Executor
  * specified on construction.

@@ -15,9 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 /**
  * Interface describing YANG 'deviation' statement.
  *
- * <p>
- * The 'deviation' statement defines a hierarchy of a module that the device does not implement faithfully. Deviations
- * define the way a device deviate from a standard.
+ * <p>The 'deviation' statement defines a hierarchy of a module that the device does not implement faithfully.
+ * Deviations define the way a device deviate from a standard.
  */
 public interface Deviation extends DocumentedNode, EffectiveStatementEquivalent<DeviationEffectiveStatement> {
     /**

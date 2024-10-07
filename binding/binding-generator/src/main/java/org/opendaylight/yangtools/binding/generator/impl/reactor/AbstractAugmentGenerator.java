@@ -50,8 +50,7 @@ abstract class AbstractAugmentGenerator
      * (or more) {@link AbstractAugmentGenerator}s need to be evaluated. This is necessary when augments are layered on
      * top of each other:
      *
-     * <p>
-     * <pre>
+     * <p><pre>
      *   <code>
      *     container foo;
      *
@@ -65,12 +64,10 @@ abstract class AbstractAugmentGenerator
      *   </code>
      * </pre>
      *
-     * <p>
-     * Evaluating these in the order of increasing argument component count solves this without having to perform a full
-     * analysis.
+     * <p>Evaluating these in the order of increasing argument component count solves this without having to perform a
+     * full analysis.
      *
-     * <p>
-     * Another problem we are solving here is augmentation target stability, as the declared order in YANG text may
+     * <p>Another problem we are solving here is augmentation target stability, as the declared order in YANG text may
      * change, which does not really change the semantics. If we only relied on length of argument, such a move would
      * result in changing the results of {@link #createMember(CollisionDomain)} and make upgrades rather unpredictable.
      * We solve this by using {@link QName#compareTo(QName)} to determine order.

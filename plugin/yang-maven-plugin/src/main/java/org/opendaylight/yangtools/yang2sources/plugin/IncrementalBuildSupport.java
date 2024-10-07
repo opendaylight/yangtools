@@ -27,8 +27,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * project input state (like dependencies, project YANG files, plugins and their configuration, etc.) and the contents
  * of the project build directory.
  *
- * <p>
- * While the logic here could be integrated, we keep it separate so we can test it separately.
+ * <p>While the logic here could be integrated, we keep it separate so we can test it separately.
  */
 // FIXME: rename to ExecutionSupport or something similar
 final class IncrementalBuildSupport {

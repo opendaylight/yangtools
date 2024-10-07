@@ -32,12 +32,10 @@ package org.opendaylight.yangtools.binding;
  * }</pre>
  * This precludes generated grouping interfaces from specializing {@code implementedInterface}.
  *
- * <p>
- * Unlike most other {@link BindingObject}s and {@link DataContainer}s, groupings are not instantiated, but capture a
- * reusable trait, which is usually implemented by other {@link DataContainer}s.
+ * <p>Unlike most other {@link BindingObject}s and {@link DataContainer}s, groupings are not instantiated, but capture
+ * a reusable trait, which is usually implemented by other {@link DataContainer}s.
  *
- * <p>
- * Please note that above restrictions on generics applies to all interfaces extending this contract.
+ * <p>Please note that above restrictions on generics applies to all interfaces extending this contract.
  */
 public non-sealed interface Grouping extends BindingObject, DataContainer {
     // Nothing else

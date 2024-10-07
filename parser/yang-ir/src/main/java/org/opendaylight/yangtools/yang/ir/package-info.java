@@ -10,9 +10,8 @@
  * ANTLR, except it is immutable and has a denser in-memory representation due to it not containing any metadata which
  * is not required for the purposes of statement inference.
  *
- * <p>
- * The main entry point into this package is {@link org.opendaylight.yangtools.yang.ir.IRStatement},
- * which represents a single YANG statement. Every YANG file is required to contain exactly one top-level statement,
+ * <p>The main entry point into this package is {@link org.opendaylight.yangtools.yang.ir.IRStatement}, which
+ * represents a single YANG statement. Every YANG file is required to contain exactly one top-level statement,
  * {@code module} or {@code submodule}, hence an IRStatement also represents the significant contents of a YANG file.
  */
 @org.osgi.annotation.bundle.Export

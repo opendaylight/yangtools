@@ -65,8 +65,7 @@ class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     /**
      * Test of translating internal augmentations to normalized nodes structure.
      *
-     * <p>
-     * 2 nodes are added via internal augmentation A, 1 node via internal augmentation B and one node is originally
+     * <p>nodes are added via internal augmentation A, 1 node via internal augmentation B and one node is originally
      * member of case.
      */
     @Test
@@ -107,8 +106,7 @@ class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     /**
      * Top level JSON element contains no information about module name.
      *
-     * <p>
-     * It should be possible to find out potential module name from available schema context.
+     * <p>It should be possible to find out potential module name from available schema context.
      */
     @Test
     void missingModuleInfoInTopLevelElement() throws Exception {
@@ -119,8 +117,7 @@ class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     /**
      * Exception expected.
      *
-     * <p>
-     * It tests case when several elements with the same name and various namespaces exists and are in JSON specified
+     * <p>It tests case when several elements with the same name and various namespaces exists and are in JSON specified
      * without module name prefix.
      */
     @Test
@@ -145,8 +142,7 @@ class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     /**
      * Exception expected.
      *
-     * <p>
-     * Json input contains element which doesn't exist in YANG schema
+     * <p>Json input contains element which doesn't exist in YANG schema
      */
     @Test
     void parsingNotExistingElement() throws Exception {
@@ -161,8 +157,7 @@ class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     /**
      * Should not fail as we set the parser to be lenient.
      *
-     * <p>
-     * Json input contains element which doesn't exist in YANG schema
+     * <p>Json input contains element which doesn't exist in YANG schema
      */
     @Test
     void parsingSkipNotExistingElement() throws Exception {

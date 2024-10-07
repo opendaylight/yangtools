@@ -43,9 +43,8 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * Return the portion of specified namespace stored in this node. Depending on namespace behaviour this may or may
      * not represent the complete contents of the namespace as available via {@link #namespace(ParserNamespace)}.
      *
-     * <p>
-     * This partial view is useful when the need is not to perform a proper namespace lookup, but rather act on current
-     * statement's contribution to the namespace.
+     * <p>This partial view is useful when the need is not to perform a proper namespace lookup, but rather act on
+     * current statement's contribution to the namespace.
      *
      * @param <K> namespace key type
      * @param <V> namespace value type

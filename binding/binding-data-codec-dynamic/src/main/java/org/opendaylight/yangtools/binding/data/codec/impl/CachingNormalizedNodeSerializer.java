@@ -22,11 +22,9 @@ import org.slf4j.LoggerFactory;
  * Serializer of Binding objects to Normalized Node which uses {@link DataObjectNormalizedNodeCache} to
  * cache already serialized values.
  *
- * <p>
- * This serializer implements {@link BindingStreamEventWriter} along with {@link BindingSerializer}.
+ * <p>This serializer implements {@link BindingStreamEventWriter} along with {@link BindingSerializer}.
  *
- * <p>
- * {@link BindingSerializer} interface is used by generated implementations of {@link DataContainerSerializer} to
+ * <p>{@link BindingSerializer} interface is used by generated implementations of {@link DataContainerSerializer} to
  * provide Binding object for inspection and to prevent streaming of already serialized object.
  */
 final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEventWriter
@@ -96,13 +94,11 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
     /**
      * Serializes input if it is cached, returns null otherwise.
      *
-     * <p>
-     * If input is cached it uses {@link NormalizedNodeWriterWithAddChild#addChild(NormalizedNode)}
+     * <p>If input is cached it uses {@link NormalizedNodeWriterWithAddChild#addChild(NormalizedNode)}
      * to provide already serialized value to underlying NormalizedNodeWriter in order to reuse
      * value instead of creating new one using Normalized Node stream APIs.
      *
-     * <p>
-     * Note that this optional is serialization of child node invoked from
+     * <p>Note that this optional is serialization of child node invoked from
      * {@link org.opendaylight.yangtools.binding.data.codec.impl.DataContainerSerializer}, which may opt-out from
      * streaming of data when non-null result is returned.
      */

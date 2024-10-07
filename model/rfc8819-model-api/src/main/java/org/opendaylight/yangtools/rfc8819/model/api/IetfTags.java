@@ -13,8 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * IETF YANG Module Tags Registry, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8819#section-7.2">RFC8819</a> section 7.2, table 2.
  *
- * <p>
- * This registry allocates tags that have the registered prefix "ietf:". New values should be well considered and not
+ * <p>This registry allocates tags that have the registered prefix "ietf:". New values should be well considered and not
  * achievable through a combination of already existing IETF tags. IANA assigned tags must conform to Net-Unicode as
  * defined in <a href="https://www.rfc-editor.org/rfc/rfc5198">RFC5198</a>, and they shall not need normalization.
  */

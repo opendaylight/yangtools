@@ -35,12 +35,10 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
  *       DistinctNodeContainer</li>
  * </ol>
  *
- * <p>
- * Unfortunately {@code Augmentation} is a also a {@link DataObject}, so things get a bit messy.
+ * <p>Unfortunately {@code Augmentation} is a also a {@link DataObject}, so things get a bit messy.
  *
- * <p>
- * While this class is public, it not part of API surface and is an implementation detail. The only reason for it being
- * public is that it needs to be accessible by code generated at runtime.
+ * <p>While this class is public, it not part of API surface and is an implementation detail. The only reason for it
+ * being public is that it needs to be accessible by code generated at runtime.
  */
 public abstract sealed class CommonDataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
         extends DataContainerCodecContext<D, T, CommonDataObjectCodecPrototype<T>>

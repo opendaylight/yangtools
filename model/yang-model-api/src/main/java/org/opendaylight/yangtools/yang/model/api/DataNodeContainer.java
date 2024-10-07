@@ -34,8 +34,7 @@ public interface DataNodeContainer {
      * Returns set of all child nodes defined within this DataNodeContainer. Although the return type is a collection,
      * each node is guaranteed to be present at most once.
      *
-     * <p>
-     * Note that the nodes returned are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
+     * <p>Note that the nodes returned are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
      * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are present instead of their children. This
      * is consistent with {@code schema tree}.
      *
@@ -53,8 +52,7 @@ public interface DataNodeContainer {
     /**
      * Returns the child node corresponding to the specified name.
      *
-     * <p>
-     * Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
+     * <p>Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
      * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are returned instead of their matching children. This
      * is consistent with {@code schema tree}.
      *
@@ -67,8 +65,7 @@ public interface DataNodeContainer {
     /**
      * Returns the child node corresponding to the specified name.
      *
-     * <p>
-     * Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
+     * <p>Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
      * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are returned instead of their matching children. This
      * is consistent with {@code schema tree}.
      *
@@ -84,8 +81,7 @@ public interface DataNodeContainer {
     /**
      * Returns the child node corresponding to the specified name.
      *
-     * <p>
-     * Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
+     * <p>Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
      * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are returned instead of their matching children.
      *
      * @param name QName of child
@@ -99,8 +95,7 @@ public interface DataNodeContainer {
     /**
      * Returns the child node corresponding to the specified name.
      *
-     * <p>
-     * Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
+     * <p>Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
      * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are returned instead of their matching children.
      *
      * @param first QName of first child

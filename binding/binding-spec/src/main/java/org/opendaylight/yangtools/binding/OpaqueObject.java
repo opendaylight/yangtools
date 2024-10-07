@@ -15,13 +15,11 @@ import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
  * known at compile-time. Schema may be unknown even at runtime, and furthermore the representation may vary during
  * run-time, based on source of the data.
  *
- * <p>
- * The code generation is therefore limited to a single interface, which only provides the default implementation
+ * <p>The code generation is therefore limited to a single interface, which only provides the default implementation
  * of {@link #implementedInterface()} bound to itself. The value is communicated through {@link #getValue()}, which
  * is only an encapsulation holding information about the object model and the data in that object model.
  *
- * <p>
- * Implementations are strongly encouraged to use {@link AbstractOpaqueObject} as their base implementation class.
+ * <p>Implementations are strongly encouraged to use {@link AbstractOpaqueObject} as their base implementation class.
  *
  * @param <T> Generated interface
  */

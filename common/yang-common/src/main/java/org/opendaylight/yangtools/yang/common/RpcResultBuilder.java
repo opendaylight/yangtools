@@ -398,8 +398,7 @@ public final class RpcResultBuilder<T> implements Mutable {
     /**
      * Builds RpcResult and wraps it in a Future.
      *
-     * <p>
-     * This is a convenience method to assist those writing RPCs that produce immediate results. It allows you to
+     * <p>This is a convenience method to assist those writing RPCs that produce immediate results. It allows you to
      * replace {@code FluentFuture.from(Futures.immediateFuture(rpcResult.build()))} with
      * {@code rpcResult.buildFuture()}
      *

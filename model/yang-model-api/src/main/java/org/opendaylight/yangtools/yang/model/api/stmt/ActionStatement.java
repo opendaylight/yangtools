@@ -13,11 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Represents YANG {@code action} statement.
  *
- * <p>
- * The "action" statement is used to define an operation connected to a
- * specific container or list data node.  It takes one argument, which
- * is an identifier, followed by a block of substatements that holds
- * detailed action information.  The argument is the name of the action.
+ * <p>The "action" statement is used to define an operation connected to a specific container or list data node. It
+ * takes one argument, which is an identifier, followed by a block of substatements that holds detailed action
+ * information. The argument is the name of the action.
  */
 public non-sealed interface ActionStatement extends OperationDeclaredStatement {
     @Override

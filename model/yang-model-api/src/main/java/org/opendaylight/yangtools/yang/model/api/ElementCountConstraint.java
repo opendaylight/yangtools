@@ -109,13 +109,10 @@ public abstract class ElementCountConstraint {
     }
 
     /**
-     * Returns the minimum required number of data elements for node where this
-     * constraint is specified.
+     * Returns the minimum required number of data elements for node where this constraint is specified.
      *
-     * <p>
-     * The returning value equals to value of the argument of the
-     * <b>min-elements</b> YANG substatement.
-     * It is used with YANG statements leaf-list, list, deviate.
+     * <p>The returning value equals to value of the argument of the <b>min-elements</b> YANG substatement. It is used
+     * with YANG statements leaf-list, list, deviate.
      *
      * @return integer with minimal number of elements, or null if no minimum is defined
      */
@@ -125,10 +122,8 @@ public abstract class ElementCountConstraint {
      * Returns the maximum admissible number of data elements for node where
      * this constraint is specified.
      *
-     * <p>
-     * The returning value equals to value of the argument of the
-     * <b>max-elements</b> YANG substatement.
-     * It is used with YANG statements leaf-list, list, deviate.
+     * <p>The returning value equals to value of the argument of the <b>max-elements</b> YANG substatement. It is used
+     * with YANG statements leaf-list, list, deviate.
      *
      * @return integer with maximum number of elements, or null if no maximum is defined
      */

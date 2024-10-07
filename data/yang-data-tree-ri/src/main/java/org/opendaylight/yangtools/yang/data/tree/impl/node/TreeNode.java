@@ -24,16 +24,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
  * corresponds to the this node's current Read Timestamp (RTS(P), where P is this node). The latter is the most recent
  * Read Timestamp in this node's accessible children.
  *
- * <p>
- * Semantic difference between these two is important when dealing with modifications involving parent/child
+ * <p>Semantic difference between these two is important when dealing with modifications involving parent/child
  * relationships and what operations can be execute concurrently without creating a data dependency conflict.
  *
- * <p>
- * A replace/delete operation cannot be applied to this node if the subtree version does not match. This mismatch
+ * <p>A replace/delete operation cannot be applied to this node if the subtree version does not match. This mismatch
  * still allows modifications to its descendants.
  *
- * <p>
- * A mismatch in node version indicates a replacement, preventing a modification of descendants or itself.
+ * <p>A mismatch in node version indicates a replacement, preventing a modification of descendants or itself.
  */
 // FIXME: BUG-2399: clarify that versioning rules are not enforced for non-presence containers, as they are not
 //                  considered to be data nodes.

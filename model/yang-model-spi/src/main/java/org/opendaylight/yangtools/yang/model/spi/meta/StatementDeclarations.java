@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
  * Factory for creating default {@link StatementDeclaration} implementations. This is preferred source of
  * {@link StatementSourceReference} for implementations of YANG / YIN statement stream sources.
  *
- * <p>
- * To create source reference use one of this static factories:
+ * <p>To create source reference use one of this static factories:
  * <ul>
  *   <li>{@link #inText(String, int, int)} - provides most specific reference of statement location, this is most
  *       preferred since it provides most context to debug YANG model</li>

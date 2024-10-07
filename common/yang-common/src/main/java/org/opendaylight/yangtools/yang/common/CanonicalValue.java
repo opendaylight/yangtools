@@ -20,15 +20,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <li>accurately define total ordering of values</li>
  * </ul>
  *
- * <p>
- * Aside from providing the ability to hold a canonical value, this interface and its implementations support carrying
- * additional information about how the value has been validated -- allowing efficient interchange of already-validated
- * values between users. {@link #validator()} provides the link to a {@link CanonicalValueValidator} which has declared
- * the value conform to it. Users can query the validator to establish whether the value needs to be further validated
- * to conform to their requirement.
+ * <p>Aside from providing the ability to hold a canonical value, this interface and its implementations support
+ * carrying additional information about how the value has been validated -- allowing efficient interchange of
+ * already-validated values between users. {@link #validator()} provides the link to a {@link CanonicalValueValidator}
+ * which has declared the value conform to it. Users can query the validator to establish whether the value needs to be
+ * further validated to conform to their requirement.
  *
  * @param <T> Canonical value type
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault

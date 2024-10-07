@@ -163,16 +163,14 @@ public final class BindingReflections {
          * Computes QName for supplied class. Namespace and revision are same as {@link YangModuleInfo} associated with
          * supplied class.
          *
-         * <p>
-         * If class is
+         * <p>If class is
          * <ul>
          * <li>rpc input: local name is "input".
          * <li>rpc output: local name is "output".
          * <li>augmentation: local name is "module name".
          * </ul>
          *
-         * <p>
-         * There is also fallback, if it is not possible to compute QName using following algorithm returns module
+         * <p>There is also fallback, if it is not possible to compute QName using following algorithm returns module
          * QName.
          *
          * @throws IllegalStateException If YangModuleInfo could not be resolved

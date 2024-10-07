@@ -33,8 +33,7 @@ import org.slf4j.LoggerFactory;
  * A validator for a single {@code unique} constraint. This class is further specialized for single- and
  * multiple-constraint implementations.
  *
- * <p>
- * The basic idea is that for each list entry there is a corresponding value vector of one or more values, each
+ * <p>The basic idea is that for each list entry there is a corresponding value vector of one or more values, each
  * corresponding to one component of the {@code unique} constraint.
  */
 abstract class UniqueValidator<T> implements Immutable {

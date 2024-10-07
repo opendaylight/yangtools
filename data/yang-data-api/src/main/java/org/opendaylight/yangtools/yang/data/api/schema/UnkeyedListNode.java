@@ -13,9 +13,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBui
  * Containment node, which contains {@link UnkeyedListEntryNode} of the same type, which may be quickly retrieved using
  * key. This node maps to the <code>list</code> statement in YANG schema, which did not define {@code key} substatement.
  *
- * <p>
- * Ordering of the elements is user-defined during construction of instance of this interface. Ordered view of elements
- * (iteration) is provided by {@link #body()} call.
+ * <p>Ordering of the elements is user-defined during construction of instance of this interface. Ordered view of
+ * elements (iteration) is provided by {@link #body()} call.
  */
 public non-sealed interface UnkeyedListNode
         extends OrderedNodeContainer<UnkeyedListEntryNode>, DataContainerChild, MixinNode {

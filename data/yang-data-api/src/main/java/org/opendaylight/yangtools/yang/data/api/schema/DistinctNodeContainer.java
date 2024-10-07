@@ -12,12 +12,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 /**
  * A {@link NormalizedNodeContainer} which contains directly-addressable children. It
  *
- * <p>
- * NormalizedNodeContainer does not have a value, but it has a child nodes. Definition of possible and valid child nodes
- * is introduced in subclasses of this interface.
+ * <p>NormalizedNodeContainer does not have a value, but it has a child nodes. Definition of possible and valid child
+ * nodes is introduced in subclasses of this interface.
  *
- * <p>
- * This interface should not be used directly, but rather use of of derived subclasses such as
+ * <p>This interface should not be used directly, but rather use of of derived subclasses such as
  * {@link DataContainerNode}, {@link MapNode}, {@link LeafSetNode}.
  *
  * @param <K> Child path argument type

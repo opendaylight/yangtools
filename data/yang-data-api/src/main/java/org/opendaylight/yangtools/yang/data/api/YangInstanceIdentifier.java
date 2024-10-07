@@ -49,14 +49,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 /**
  * Unique identifier of a particular node instance in the data tree.
  *
- * <p>
- * Java representation of YANG Built-in type {@code instance-identifier}, which conceptually is XPath expression
+ * <p>Java representation of YANG Built-in type {@code instance-identifier}, which conceptually is XPath expression
  * minimized to uniquely identify element in data tree which conforms to constraints maintained by YANG Model,
  * effectively this makes Instance Identifier a path to element in data tree.
  *
- * <p>
- * Constraints put in YANG specification on instance-identifier allowed it to be effectively represented in Java and its
- * evaluation does not require a full-blown XPath processor.
+ * <p>Constraints put in YANG specification on instance-identifier allowed it to be effectively represented in Java and
+ * its evaluation does not require a full-blown XPath processor.
  *
  * <h2>Path Arguments</h2>
  * Path to the node represented in instance identifier consists of {@link PathArgument} which carries necessary
@@ -530,24 +528,20 @@ public abstract sealed class YangInstanceIdentifier
     }
 
     /**
-     * Path argument / component of InstanceIdentifier.
-     * Path argument uniquely identifies node in data tree on particular
-     * level.
+     * Path argument / component of InstanceIdentifier. Path argument uniquely identifies node in data tree on
+     * particular level.
      *
-     * <p>
-     * This interface itself is used as common parent for actual
-     * path arguments types and should not be implemented by user code.
+     * <p>This interface itself is used as common parent for actual path arguments types and should not be
+     * implemented by user code.
      *
-     * <p>
-     * Path arguments SHOULD contain only minimum of information
-     * required to uniquely identify node on particular subtree level.
+     * <p>Path arguments SHOULD contain only minimum of information required to uniquely identify node on
+     * particular subtree level.
      *
-     * <p>
-     * For actual path arguments types see:
+     * <p>For actual path arguments types see:
      * <ul>
-     * <li>{@link NodeIdentifier} - Identifier of container or leaf
-     * <li>{@link NodeIdentifierWithPredicates} - Identifier of list entries, which have key defined
-     * <li>{@link NodeWithValue} - Identifier of leaf-list entry
+     *   <li>{@link NodeIdentifier} - Identifier of container or leaf</li>
+     *   <li>{@link NodeIdentifierWithPredicates} - Identifier of list entries, which have key defined</li>
+     *   <li>{@link NodeWithValue} - Identifier of leaf-list entry</li>
      * </ul>
      */
     public abstract static sealed class PathArgument implements Identifier, Comparable<PathArgument> {

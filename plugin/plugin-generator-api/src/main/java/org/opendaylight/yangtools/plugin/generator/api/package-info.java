@@ -9,9 +9,8 @@
  * API exposed by generator plugins, i.e. pluggable pieces of code which want to create code (and other) files from an
  * {@link org.opendaylight.yangtools.yang.model.api.EffectiveModelContext}.
  *
- * <p>
- * The primary entry point is {@link org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory}, which needs
- * to be implemented for bootstrapping a particular generator. Such implementations are discovered using normal
+ * <p>The primary entry point is {@link org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory}, which
+ * needs to be implemented for bootstrapping a particular generator. Such implementations are discovered using normal
  * discovery methods, for example they <b>should</b> always be published as {@link java.util.ServiceLoader} services.
  */
 @Export

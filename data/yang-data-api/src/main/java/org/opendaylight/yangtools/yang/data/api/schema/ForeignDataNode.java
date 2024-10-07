@@ -16,8 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * which must be the superclass of (or interface implemented by) all objects used to anchor that object model into
  * NormalizedNode model.
  *
- * <p>
- * This interface should not be implemented directly, but rather further specialized, like {@link AnyxmlNode}.
+ * <p>This interface should not be implemented directly, but rather further specialized, like {@link AnyxmlNode}.
  *
  * @param <V> Value type, uniquely identifying the object model used for values
  */
@@ -26,8 +25,7 @@ public sealed interface ForeignDataNode<V> extends DataContainerChild permits An
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * The body follows the object model exposed through {@link #bodyObjectModel()}
+     * <p>The body follows the object model exposed through {@link #bodyObjectModel()}
      */
     @Override
     V body();

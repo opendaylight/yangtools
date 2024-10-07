@@ -9,20 +9,15 @@
  * Statement library for YANG version 1 and 1.1, as defined in RFC6020 and RFC7950. Since YANG 1.1 is built on top
  * of YANG 1 and our semantic model follows version 1.1, base statements are organized in a single package hierarchy.
  *
- * <p>
- * Each statement has its own package underneath this package, from which it exports the StatementSupport instance,
+ * <p>Each statement has its own package underneath this package, from which it exports the StatementSupport instance,
  * which can be wired into the statement reactor. Other classes should be kept package-private, so inter-statement
  * interactions follow properly-exposed API interfaces.
  *
- * <p>
- * Common base and utility classes for individual statement implementations are maintained in this package. This package
- * is not meant for consumption by end users and should be used only by parser extensions.
+ * <p>Common base and utility classes for individual statement implementations are maintained in this package. This
+ * package is not meant for consumption by end users and should be used only by parser extensions.
  *
- * <p>
- * Do not use bare implementation classes exposed from statement sub-packages, as their details are explicitly outside
- * of API contract. The only exception to this rule are the StatementSupport classes, which allow for correlation and
- * creation of known YANG statements.
- *
- * @author Robert Varga
+ * <p>Do not use bare implementation classes exposed from statement sub-packages, as their details are explicitly
+ * outside of API contract. The only exception to this rule are the StatementSupport classes, which allow for
+ * correlation and creation of known YANG statements.
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;

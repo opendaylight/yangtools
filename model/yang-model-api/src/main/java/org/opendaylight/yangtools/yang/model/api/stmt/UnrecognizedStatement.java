@@ -14,16 +14,14 @@ import org.opendaylight.yangtools.yang.common.Empty;
  * defined via an {@code extension} statement, for which the parser did not have semantic support (in which case the
  * statement would result in a corresponding semantic subclass of {@link UnknownStatement}).
  *
- * <p>
- * This construct does not have a {@link UnknownEffectiveStatement} counterpart because we cannot reasonably build an
+ * <p>This construct does not have a {@link UnknownEffectiveStatement} counterpart because we cannot reasonably build an
  * effective model of something we do not recognize.
  */
 public interface UnrecognizedStatement extends UnknownStatement<Object> {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * This method can return
+     * <p>This method can return
      * <ul>
      *   <li>{@link String} if the statement has an argument</li>
      *   <li>{@link Empty} if the statement does not have an argument</li>

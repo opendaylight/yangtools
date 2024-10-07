@@ -20,8 +20,7 @@ import org.mockito.stubbing.Answer;
  * abstract method), and otherwise throws an {@link UnstubbedMethodException}, like the
  * {@link ThrowsMethodExceptionAnswer}.
  *
- * <p>
- * This can be useful to create light-weight <a href=
+ * <p>This can be useful to create light-weight <a href=
  * "http://googletesting.blogspot.ch/2013/07/testing-on-toilet-know-your-test-doubles.html">Fake Doubles</a>
  * (in particular some with state). For example:
  *
@@ -44,8 +43,7 @@ import org.mockito.stubbing.Answer;
  * Service fake = Mockito.mock(FakeService.class, realOrException())
  * </pre>
  *
- * <p>
- * TIP: An impact of Mockito is that, just like in standard Mockito, constructors
+ * <p>TIP: An impact of Mockito is that, just like in standard Mockito, constructors
  * (and thus field initializers) are not called. So in your abstract fake class,
  * instead of:
  *
@@ -64,8 +62,7 @@ import org.mockito.stubbing.Answer;
  * }
  * </pre>
  *
- * <p>
- * you'll just need to do:
+ * <p>you'll just need to do:
  *
  * <pre>
  * abstract class FakeService implements Service {
@@ -84,15 +81,12 @@ import org.mockito.stubbing.Answer;
  * }
  * </pre>
  *
- * <p>
- * The big advantage of Mikitos versus just writing classes implementing service
- * interfaces without using Mockito at all is that you don't have to implement a
- * lot of methods you don't care about - you can just make an abstract fake
- * class (incl. e.g. an inner class in your Test) and implement only one or some
- * methods. This keeps code shorter and thus more readable.
+ * <p>The big advantage of Mikitos versus just writing classes implementing service interfaces without using Mockito at
+ * all is that you don't have to implement a lot of methods you don't care about - you can just make an abstract fake
+ * class (incl. e.g. an inner class in your Test) and implement only one or some methods. This keeps code shorter and
+ * thus more readable.
  *
- * <p>
- * The advantage of Mikitos VS pure Mockito's when/thenAnswer are that they:
+ * <p>The advantage of Mikitos VS pure Mockito's when/thenAnswer are that they:
  * <ul>
  *
  * <li>are fully type safe and refactoring resistant; whereas Mockito is not,

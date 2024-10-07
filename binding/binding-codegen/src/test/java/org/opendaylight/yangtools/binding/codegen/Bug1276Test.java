@@ -16,8 +16,7 @@ import org.junit.Test;
 /**
  * Test for BG-1276. Previous construction of union constructor
  *
- * <p>
- * <code>
+ * <p><code>
  * public IpAddress(Arg1 _arg1) {
  *     super();
  *     this._arg1 = _arg1;
@@ -26,17 +25,13 @@ import org.junit.Test;
  * }
  * </code>
  *
- * <p>
- * was incorrect and setting
+ * <p>was incorrect and setting
  *
- * <p>
- * <code>this._value == null</code>
+ * <p><code>this._value == null</code>
  *
- * <p>
- * was replaced with setting _value to correct value, for example:
+ * <p>was replaced with setting _value to correct value, for example:
  *
- * <p>
- * <code>this._value = arg1.getValue()</code> or
+ * <p><code>this._value = arg1.getValue()</code> or
  * <code>this._value = _arg1.getValue().toString().toCharArray()</code>
  */
 public class Bug1276Test extends BaseCompilationTest {

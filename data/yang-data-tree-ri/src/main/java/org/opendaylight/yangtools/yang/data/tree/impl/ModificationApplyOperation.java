@@ -22,8 +22,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  * the operation on top level node consists of suboperations on child nodes. This allows to walk operation hierarchy and
  * invoke suboperations independently.
  *
- * <p>
- * <b>Implementation notes</b>
+ * <p><b>Implementation notes</b>
  * <ul>
  *   <li>Implementations MUST expose all nested suboperations which operates on child nodes expose via
  *       {@link #childByArg(PathArgument)} method.</li>

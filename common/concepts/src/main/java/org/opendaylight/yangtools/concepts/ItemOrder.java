@@ -35,10 +35,9 @@ public sealed interface ItemOrder<T extends ItemOrder<T>> {
         /**
          * {@inheritDoc}
          *
-         * <p>
-         * Hash code contract of {@link Ordered} objects <b>should</b> be sensitive to item order. In general similar to
-         * {@link List#hashCode()} (in the {@code must} reading of sensitivity. {@code need not} reading of sensitivity
-         * could also be implemented as {@code Map.hashCode()} in case of a map-like container.
+         * <p>Hash code contract of {@link Ordered} objects <b>should</b> be sensitive to item order. In general similar
+         * to {@link List#hashCode()} (in the {@code must} reading of sensitivity. {@code need not} reading of
+         * sensitivity could also be implemented as {@code Map.hashCode()} in case of a map-like container.
          */
         // FIXME: 8.0.0: tighten 'should' to 'must'?
         @Override
@@ -47,8 +46,7 @@ public sealed interface ItemOrder<T extends ItemOrder<T>> {
         /**
          * {@inheritDoc}
          *
-         * <p>
-         * Equality contract of {@link Ordered} objects <b>must</b> be sensitive to item order, similar to
+         * <p>Equality contract of {@link Ordered} objects <b>must</b> be sensitive to item order, similar to
          * {@link List#equals(Object)}.
          */
         @Override
@@ -68,12 +66,10 @@ public sealed interface ItemOrder<T extends ItemOrder<T>> {
         /**
          * {@inheritDoc}
          *
-         * <p>
-         * Hash code contract of {@link Unordered} objects <b>must</b> be insensitive to item order, similar to
+         * <p>Hash code contract of {@link Unordered} objects <b>must</b> be insensitive to item order, similar to
          * {@link Set#hashCode()}.
          *
-         * <p>
-         * This contract is also exposed through {@link #itemOrder()}.
+         * <p>This contract is also exposed through {@link #itemOrder()}.
          */
         @Override
         int hashCode();
@@ -81,12 +77,10 @@ public sealed interface ItemOrder<T extends ItemOrder<T>> {
         /**
          * {@inheritDoc}
          *
-         * <p>
-         * Equality contract of {@link Unordered} objects <b>must</b> be insensitive to item order, similar to
+         * <p>Equality contract of {@link Unordered} objects <b>must</b> be insensitive to item order, similar to
          * {@link Set#equals(Object)}.
          *
-         * <p>
-         * This contract is also exposed through {@link #itemOrder()}.
+         * <p>This contract is also exposed through {@link #itemOrder()}.
          */
         @Override
         boolean equals(Object obj);

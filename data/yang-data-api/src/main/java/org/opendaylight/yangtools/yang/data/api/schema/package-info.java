@@ -110,9 +110,7 @@
  *    {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue} SimpleValue
  * </pre>
  *
- * <p>
- * The resulting tree organization is following:
- *
+ * <p>The resulting tree organization is following:
  * <ul>
  * <li>(DataContainerNode)
  * <ul>
@@ -151,8 +149,7 @@
  * {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer}
  * which marks nodes with semantic constrain to preserve user-supplied ordering.
  *
- * <p>
- * Clients should not expect any specific ordering of child nodes for interfaces
+ * <p>Clients should not expect any specific ordering of child nodes for interfaces
  * from this package which does not extend
  * {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer},
  * since implementations are not required to have well-defined order, which

@@ -11,18 +11,13 @@ import com.google.common.collect.ForwardingObject;
 import java.util.Objects;
 
 /**
- * Represents a {@link ModificationApplyOperation} which is rooted at conceptual
- * top of data tree.
+ * Represents a {@link ModificationApplyOperation} which is rooted at conceptual top of data tree.
  *
- * <p>
- * This implementation differs from other implementations in this package that
- * is not immutable, but may be upgraded to newer state if available by
- * explicitly invoking {@link #upgradeIfPossible()} and also serves as factory
- * for deriving snapshot {@link RootApplyStrategy} which will not
- * be affected by upgrade of original one.
+ * <p>This implementation differs from other implementations in this package that is not immutable, but may be upgraded
+ * to a newer state if available by explicitly invoking {@link #upgradeIfPossible()} and also serves as factory for
+ * deriving snapshot {@link RootApplyStrategy} which will not be affected by upgrade of original one.
  *
- * <p>
- * There are two variations of this {@link ModificationApplyOperation}:
+ * <p>There are two variations of this {@link ModificationApplyOperation}:
  * <ul>
  * <li>
  * <b>Upgradable</b> - operation may be upgraded to different backing
@@ -41,18 +36,12 @@ import java.util.Objects;
  * implementation.
  * </ul>
  *
- * <p>
- * Upgradable root operation is never upgraded to latest operation
- * automatically, but client code must explicitly invoke
- * {@link #upgradeIfPossible()} to get latest implementation.
+ * <p>Upgradable root operation is never upgraded to latest operation automatically, but client code must explicitly
+ * invoke {@link #upgradeIfPossible()} to get latest implementation.
  *
- * <p>
- * Note: This is helpful for implementing
- * {@link org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification}
- * which may be derived from
- * {@link org.opendaylight.yangtools.yang.data.tree.api.DataTree} before
- * update of schema and user actually writes data after schema update. During
- * update user did not invoked any operation.
+ * <p>Note: This is helpful for implementing {@link org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification}
+ * which may be derived from {@link org.opendaylight.yangtools.yang.data.tree.api.DataTree} before update of schema and
+ * user actually writes data after schema update. During update user did not invoked any operation.
  */
 abstract class RootApplyStrategy extends ForwardingObject {
 
@@ -79,11 +68,10 @@ abstract class RootApplyStrategy extends ForwardingObject {
     }
 
     /**
-     * Creates a snapshot from this modification, which may have separate
-     * upgrade lifecycle and is not affected by upgrades.
+     * Creates a snapshot from this modification, which may have separate upgrade lifecycle and is not affected by
+     * upgrades.
      *
-     * <p>
-     * Newly created snapshot uses backing implementation of this modification.
+     * <p>Newly created snapshot uses backing implementation of this modification.
      *
      * @return Derived {@link RootApplyStrategy} with separate
      *         upgrade lifecycle.
@@ -93,10 +81,8 @@ abstract class RootApplyStrategy extends ForwardingObject {
     /**
      * Upgrades backing implementation to latest available, if possible.
      *
-     * <p>
-     * Latest implementation of {@link RootApplyStrategy} is
-     * managed by {@link LatestOperationHolder} which was used to construct this
-     * operation and latest operation is updated by
+     * <p>Latest implementation of {@link RootApplyStrategy} is managed by {@link LatestOperationHolder} which was used
+     * to construct this operation and latest operation is updated by
      * {@link LatestOperationHolder#setCurrent(ModificationApplyOperation)}.
      */
     abstract void upgradeIfPossible();

@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  * benefit of having a non-null string representation in {@link #unionString()}, which is also conveniently returned
  * from {@link #toString()}.
  *
- * <p>
- * This contract is exactly the same as this fragment from {@code ietf-yang-library}:
+ * <p>This contract is exactly the same as this fragment from {@code ietf-yang-library}:
  * <pre>{@code
  *   type union {
  *     type revision-identifier;

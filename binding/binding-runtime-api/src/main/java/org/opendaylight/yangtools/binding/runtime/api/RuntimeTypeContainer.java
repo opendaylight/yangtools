@@ -23,8 +23,7 @@ public interface RuntimeTypeContainer extends Immutable {
      * {@code notification}, {@code rpc} and {@code action}. Callers should check the traits exposed by the returned
      * object before accepting it.
      *
-     * <p>
-     * One important omission is this method <b>does not</b> resolve nodes which have been added via {@code augment}
+     * <p>One important omission is this method <b>does not</b> resolve nodes which have been added via {@code augment}
      * statement. Those are exposed indirectly as children of {@link AugmentRuntimeType}s returned via
      * {@link AugmentableRuntimeType#augments()}, if applicable.
      *

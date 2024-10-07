@@ -59,8 +59,7 @@ import org.slf4j.LoggerFactory;
  * the naming hierarchy 'under' the composite generator. To support this use case, each composite has a Java package
  * name assigned.
  *
- * <p>
- * State tracking for resolution of children to their original declaration, i.e. back along the 'uses' and 'augment'
+ * <p>State tracking for resolution of children to their original declaration, i.e. back along the 'uses' and 'augment'
  * axis. This is quite convoluted because we are traversing the generator tree recursively in the iteration order of
  * children, but actual dependencies may require resolution in a different order, for example in the case of:
  * <pre>
@@ -91,26 +90,22 @@ import org.slf4j.LoggerFactory;
  *   }
  * </pre>
  *
- * <p>
- * In this case we have three manifestations of 'leaf baz' -- marked A, E and F in the child iteration order. In order
- * to perform a resolution, we first have to determine that F is the original definition, then establish that E is using
- * the definition made by F and finally establish that A is using the definition made by F.
+ * <p>In this case we have three manifestations of 'leaf baz' -- marked A, E and F in the child iteration order. In
+ * order to perform a resolution, we first have to determine that F is the original definition, then establish that E
+ * is using the definition made by F and finally establish that A is using the definition made by F.
  *
- * <p>
- * Dealing with augmentations is harder still, because we need to attach them to the original definition, hence for the
- * /foo/bar container at A, we need to understand that its original definition is at D and we need to attach the augment
- * at B to D. Futhermore we also need to establish that the augmentation at G attaches to container defined in C, so
- * that the 'leaf xyzzy' existing as /foo/bar/xyzzy/xyzzy under C has its original definition at H.
+ * <p>Dealing with augmentations is harder still, because we need to attach them to the original definition, hence for
+ * the /foo/bar container at A, we need to understand that its original definition is at D and we need to attach the
+ * augment at B to D. Futhermore we also need to establish that the augmentation at G attaches to container defined in
+ * C, so that the 'leaf xyzzy' existing as /foo/bar/xyzzy/xyzzy under C has its original definition at H.
  *
- * <p>
- * Finally realize that the augment at G can actually exist in a different module and is shown in this example only
+ * <p>Finally realize that the augment at G can actually exist in a different module and is shown in this example only
  * the simplified form. That also means we could encounter G well before 'container foo' as well as we can have multiple
  * such augments sprinkled across multiple modules having the same dependency rules as between C and G -- but they still
  * have to form a directed acyclic graph and we partially deal with those complexities by having modules sorted by their
  * dependencies.
  *
- * <p>
- * For further details see {@link #linkOriginalGenerator()} and {@link #linkOriginalGeneratorRecursive()}, which deal
+ * <p>For further details see {@link #linkOriginalGenerator()} and {@link #linkOriginalGeneratorRecursive()}, which deal
  * with linking original instances in the tree iteration order. The part dealing with augment attachment lives mostly
  * in {@link AugmentRequirement}.
  */

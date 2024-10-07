@@ -40,13 +40,11 @@ public final class WritableObjects {
      * serializing counters and similar, which have a wide range, but typically do not use it. The value provided is
      * treated as unsigned.
      *
-     * <p>
-     * This methods writes the number of trailing non-zero in the value. It then writes the minimum required bytes
+     * <p>This methods writes the number of trailing non-zero in the value. It then writes the minimum required bytes
      * to reconstruct the value by left-padding zeroes. Inverse operation is performed by {@link #readLong(DataInput)}
      * or a combination of {@link #readLongHeader(DataInput)} and {@link #readLongBody(DataInput, byte)}.
      *
-     * <p>
-     * Additionally the caller can use the top four bits (i.e. {@code 0xF0}) for caller-specific flags. These will be
+     * <p>Additionally the caller can use the top four bits (i.e. {@code 0xF0}) for caller-specific flags. These will be
      * ignored by {@link #readLong(DataInput)}, but can be extracted via {@link #readLongHeader(DataInput)}.
      *
      * @param out Data output

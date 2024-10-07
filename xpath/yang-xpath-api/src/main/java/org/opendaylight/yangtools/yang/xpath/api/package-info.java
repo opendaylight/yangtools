@@ -12,8 +12,7 @@
  * {@link org.opendaylight.yangtools.yang.common.YangConstants#RFC6020_YIN_MODULE} the same way unprefixed statements
  * are.
  *
- * <p>
- * The model supports multiple number storage and math operations -- with IEEE754 being the default as per XPath 1.0
+ * <p>The model supports multiple number storage and math operations -- with IEEE754 being the default as per XPath 1.0
  * specifications, but additional exact operations being available.
  *
  * @author Robert Varga

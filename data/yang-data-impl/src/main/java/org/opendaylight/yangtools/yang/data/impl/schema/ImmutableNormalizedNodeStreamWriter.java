@@ -50,16 +50,13 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
  * Implementation of {@link NormalizedNodeStreamWriter}, which constructs immutable instances of
  * {@link NormalizedNode}s.
  *
- * <p>
- * This writer supports two modes of behaviour one is using {@link #from(NormalizedNodeResult)} where resulting
+ * <p>This writer supports two modes of behaviour one is using {@link #from(NormalizedNodeResult)} where resulting
  * NormalizedNode will be stored in supplied result object.
  *
- * <p>
- * Other mode of operation is using {@link #from(NormalizedNodeContainerBuilder)}, where all created nodes will be
+ * <p>Other mode of operation is using {@link #from(NormalizedNodeContainerBuilder)}, where all created nodes will be
  * written to this builder.
  *
- * <p>
- * This class is not final for purposes of customization, normal users should not need to subclass it.
+ * <p>This class is not final for purposes of customization, normal users should not need to subclass it.
  */
 public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     private static final Interner<LeafSetEntryNode<?>> ENTRY_INTERNER = Interners.newWeakInterner();
@@ -81,8 +78,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * Creates a {@link NormalizedNodeStreamWriter} which creates instances of supplied {@link NormalizedNode}s
      * and writes them to supplied builder as child nodes.
      *
-     * <p>
-     * Type of supplied {@link NormalizedNodeContainerBuilder} affects, which events could be emitted in order
+     * <p>Type of supplied {@link NormalizedNodeContainerBuilder} affects, which events could be emitted in order
      * to ensure proper construction of data.
      *
      * @param builder Builder to which data will be written.
@@ -96,16 +92,13 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * Creates a {@link NormalizedNodeStreamWriter} which creates one instance of top-level {@link NormalizedNode}
      * (type of NormalizedNode) is determined by first start event.
      *
-     * <p>
-     * Result is built when {@link #endNode()} associated with that start event is emitted.
+     * <p>Result is built when {@link #endNode()} associated with that start event is emitted.
      *
-     * <p>
-     * Writer properly creates also nested {@link NormalizedNode} instances, if their are supported inside the scope
+     * <p>Writer properly creates also nested {@link NormalizedNode} instances, if their are supported inside the scope
      * of the first event.
      *
-     * <p>
-     * This method is useful for clients, which knows there will be one top-level node written, but does not know which
-     * type of {@link NormalizedNode} will be written.
+     * <p>This method is useful for clients, which knows there will be one top-level node written, but does not know
+     * which type of {@link NormalizedNode} will be written.
      *
      * @param holder {@link NormalizationResultHolder} object which will hold result value.
      * @return {@link NormalizedNodeStreamWriter} which will write item to supplied result holder.

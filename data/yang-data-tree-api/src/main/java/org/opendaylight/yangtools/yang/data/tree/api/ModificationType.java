@@ -38,15 +38,14 @@ public enum ModificationType {
      * This node has appeared because it is implied by one of its children. This type is usually produced when a
      * structural container is created to host some leaf entries. It does not have an associated before-image.
      *
-     * <p>
-     * Its semantics is a combination of SUBTREE_MODIFIED and WRITE, depending on which context it is being interpreted.
+     * <p>Its semantics is a combination of SUBTREE_MODIFIED and WRITE, depending on which context it is being
+     * interpreted.
      *
-     * <p>
-     * Users who track the value of the node can treat it as a WRITE. Users transforming a {@link DataTreeCandidate} to
-     * operations on a {@link DataTreeModification} should interpret it as a SUBTREE_MODIFIED and examine its children.
-     * This is needed to correctly deal with concurrent operations on the nodes children, as issuing a write on the
-     * DataTreeModification could end up removing any leaves which have not been present at the DataTree which emitted
-     * this event.
+     * <p>Users who track the value of the node can treat it as a WRITE. Users transforming a {@link DataTreeCandidate}
+     * to operations on a {@link DataTreeModification} should interpret it as a SUBTREE_MODIFIED and examine its
+     * children. This is needed to correctly deal with concurrent operations on the nodes children, as issuing a write
+     * on the DataTreeModification could end up removing any leaves which have not been present at the DataTree which
+     * emitted this event.
      */
     APPEARED,
 
@@ -54,14 +53,12 @@ public enum ModificationType {
      * This node has disappeared because it is no longer implied by any children. This type is usually produced when a
      * structural container is removed because it has become empty. It does not have an associated after-image.
      *
-     * <p>
-     * Its semantics is a combination of SUBTREE_MODIFIED and DELETE, depending on which context it is being
+     * <p>Its semantics is a combination of SUBTREE_MODIFIED and DELETE, depending on which context it is being
      * interpreted. Users who track the value of the node can treat it as a DELETE, as the container has disappeared.
      * Users transforming a {@link DataTreeCandidate} to operations on a {@link DataTreeModification} should interpret
      * it as a SUBTREE_MODIFIED and examine its children.
      *
-     * <p>
-     * This is needed to correctly deal with concurrent operations on the nodes children, as issuing a delete on the
+     * <p>This is needed to correctly deal with concurrent operations on the nodes children, as issuing a delete on the
      * DataTreeModification would end up removing any leaves which have not been present at the DataTree which emitted
      * this event.
      */

@@ -28,13 +28,12 @@ import org.eclipse.jdt.annotation.Nullable;
  * The QName from XML consists of local name of element and XML namespace, but for our use, we added module revision to
  * it.
  *
- * <p>
- * In YANG context QName is full name of defined node, type, procedure or notification. QName consists of XML namespace,
- * YANG model revision and local name of defined type. It is used to prevent name clashes between nodes with same local
- * name, but from different schemas.
+ * <p>In YANG context QName is full name of defined node, type, procedure or notification. QName consists of XML
+ * namespace, YANG model revision and local name of defined type. It is used to prevent name clashes between nodes with
+ * same local name, but from different schemas.
  *
- * <p>
- * The local name must conform to <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.2">RFC7950 Section 6.2</a>.
+ * <p>The local name must conform to
+ * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.2">RFC7950 Section 6.2</a>.
  *
  * <ul>
  * <li><b>XMLNamespace</b> - {@link #getNamespace()} - the namespace assigned to the YANG module which
@@ -212,8 +211,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * Creates new QName composed of specified module and local name. This method does not perform lexical checking of
      * localName, and it is the caller's responsibility to performs these checks.
      *
-     * <p>
-     * When in doubt, use {@link #create(QNameModule, String)} instead.
+     * <p>When in doubt, use {@link #create(QNameModule, String)} instead.
      *
      * @param qnameModule Namespace and revision enclosed as a QNameModule
      * @param localName Local name part of QName, required to have been validated
@@ -316,9 +314,8 @@ public final class QName extends AbstractQName implements Comparable<QName> {
     /**
      * Formats {@link Revision} representing revision to format {@code YYYY-mm-dd}
      *
-     * <p>
-     * YANG Specification defines format for {@code revision<} as YYYY-mm-dd. This format for revision is reused across
-     * multiple places such as capabilities URI, YANG modules, etc.
+     * <p>YANG Specification defines format for {@code revision<} as YYYY-mm-dd. This format for revision is reused
+     * across multiple places such as capabilities URI, YANG modules, etc.
      *
      * @param revision Date object to format
      * @return String representation or null if the input was null.
@@ -330,8 +327,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
     /**
      * Compares this QName to other, without comparing revision.
      *
-     * <p>
-     * Compares instance of this to other instance of QName and returns true if both instances have equal
+     * <p>Compares instance of this to other instance of QName and returns true if both instances have equal
      * {@code localName} ({@link #getLocalName()}) and @{code namespace} ({@link #getNamespace()}).
      *
      * @param other Other QName. Must not be null.

@@ -25,9 +25,8 @@ import java.util.Optional;
  * <li><code>method definitions</code> with specified input parameters (with types) and return values</li>
  * </ul>
  *
- * <p>
- * By the definition of the interface constant, enum, enclosed types and method definitions MUST be public, so there is
- * no need to specify the scope of visibility.
+ * <p>By the definition of the interface constant, enum, enclosed types and method definitions MUST be public, so there
+ * is no need to specify the scope of visibility.
  */
 public interface GeneratedType extends Type, DocumentedType {
     /**

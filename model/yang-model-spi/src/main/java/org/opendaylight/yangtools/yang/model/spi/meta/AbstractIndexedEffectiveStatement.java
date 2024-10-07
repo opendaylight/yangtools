@@ -30,8 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * namespace dispatch, but does not actually force any state on its subclasses. This approach adds requirements for an
  * implementation, but it leaves it up to the final class to provide object layout.
  *
- * <p>
- * This finds immense value in catering the common case, for example effective statements which can, but typically
+ * <p>This finds immense value in catering the common case, for example effective statements which can, but typically
  * do not, contain substatements.
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)

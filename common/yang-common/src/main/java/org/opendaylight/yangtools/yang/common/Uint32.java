@@ -297,9 +297,8 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * The inverse operation is {@link #fromIntBits(int)}. In case this value is greater than {@link Integer#MAX_VALUE},
-     * the returned value will be equal to {@code this - 2^32}.
+     * <p>The inverse operation is {@link #fromIntBits(int)}. In case this value is greater than
+     * {@link Integer#MAX_VALUE}, the returned value will be equal to {@code this - 2^32}.
      */
     @Override
     public final int intValue() {

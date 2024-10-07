@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Immutable factory, which provides access to runtime context, create leaf nodes and provides path argument codecs.
  *
- * <p>
- * During lifetime of factory all calls for same arguments to method must return equal result (not necessary same
+ * <p>During lifetime of factory all calls for same arguments to method must return equal result (not necessary same
  * instance of result).
  */
 sealed interface CodecContextFactory permits BindingCodecContext {

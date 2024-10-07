@@ -406,8 +406,7 @@ public final class StmtContextUtils {
      * The context can either be a leaf which is defined directly in the substatements of a keyed list or a uses
      * statement defined in a keyed list (a uses statement may add leaves into the list).
      *
-     * <p>
-     * If one of the list keys contains an if-feature or a when statement in YANG 1.1 model, an exception is thrown.
+     * <p>If one of the list keys contains an if-feature or a when statement in YANG 1.1 model, an exception is thrown.
      *
      * @param ctx statement context to be validated
      */

@@ -28,8 +28,7 @@ import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 /**
  * A {@link SchemaRepository} which allows sharing of {@link SchemaContext} as long as their specification is the same.
  *
- * <p>
- * Note: for current implementation, "same" means the same filter and the same set of {@link SourceIdentifier}s.
+ * <p>Note: for current implementation, "same" means the same filter and the same set of {@link SourceIdentifier}s.
  */
 @Beta
 @MetaInfServices(value = SchemaRepository.class)

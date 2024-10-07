@@ -28,12 +28,10 @@ public interface OnDemandSchemaTreeStorage extends NamespaceStorage {
      * have been registered with local storage, so that it is accessible through
      * {@link #getFromLocalStorage(ParserNamespace, Object)}.
      *
-     * <p>
-     * This method must not change its mind about a child's presence -- once it returns non-present, it has to be
+     * <p>This method must not change its mind about a child's presence -- once it returns non-present, it has to be
      * always returning non-present.
      *
-     * <p>
-     * The results produced by this method are expected to be consistent with
+     * <p>The results produced by this method are expected to be consistent with
      * {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)} and
      * {@link NamespaceBehaviours#SCHEMA_TREE}'s {@code getFrom(NamespaceStorage, QName)}.
      *

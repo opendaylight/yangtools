@@ -129,12 +129,10 @@ final class PotassiumValue {
      * assigns the next linear integer identifier. The sender will memoize it too and further references to this QName
      * will be made via {@link #QNAME_REF_1B}, {@link #QNAME_REF_2B} or {@link #QNAME_REF_4B}.
      *
-     * <p>
-     * Note that QNameModule (and String in this context) encoding works similarly -- it can only occur as part of a
+     * <p>Note that QNameModule (and String in this context) encoding works similarly -- it can only occur as part of a
      * QName (coming from here or {@link PotassiumPathArgument}) and is subject to the same memoization.
      *
-     * <p>
-     * For example, given two QNames {@code foo = QName.create("foo", "abc")} and
+     * <p>For example, given two QNames {@code foo = QName.create("foo", "abc")} and
      * {@code bar = QName.create("foo", "def")}, if they are written in order {@code foo, bar, foo}, then the following
      * events are emitted:
      * <pre>

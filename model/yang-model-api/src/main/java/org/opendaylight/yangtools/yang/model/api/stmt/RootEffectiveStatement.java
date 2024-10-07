@@ -22,11 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * Common interface capturing general layout of a top-level YANG declared statement -- either
  * a {@link ModuleEffectiveStatement} or a {@link SubmoduleEffectiveStatement}.
  *
- * <p>
- * Both these statements have a relationship to lexical and semantic interpretation of a particular YANG (or YIN) file.
- * The core principle is that every XML prefix is bound to a particular {@link ModuleEffectiveStatement}, exposed via
- * {@link #findReachableModule(String)} and {@link #reachableModules()}. The secondary effect of it is that each known
- * {@link QNameModule} is known under a (preferred) prefix, exposed via {@link #findNamespacePrefix(QNameModule)}.
+ * <p>Both these statements have a relationship to lexical and semantic interpretation of a particular YANG (or YIN)
+ * file. The core principle is that every XML prefix is bound to a particular {@link ModuleEffectiveStatement}, exposed
+ * via {@link #findReachableModule(String)} and {@link #reachableModules()}. The secondary effect of it is that each
+ * known {@link QNameModule} is known under a (preferred) prefix, exposed via {@link #findNamespacePrefix(QNameModule)}.
  */
 @Beta
 public sealed interface RootEffectiveStatement<D extends RootDeclaredStatement>

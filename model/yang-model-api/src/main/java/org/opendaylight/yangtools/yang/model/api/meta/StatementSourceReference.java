@@ -15,9 +15,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * Reference of statement source. Statement source reference serves to provide information, why a statement was defined
  * and introduced in model.
  *
- * <p>
- * Reasons for introduction of statement could be various, but most obvious one is explicit declaration in model source
- * text.
+ * <p>Reasons for introduction of statement could be various, but most obvious one is explicit declaration in model
+ * source text.
  */
 public abstract class StatementSourceReference implements Immutable {
     /**
@@ -38,8 +37,7 @@ public abstract class StatementSourceReference implements Immutable {
     /**
      * Returns human readable representation of statement source.
      *
-     * <p>
-     * Implementations of this interface should override {@link #toString()}, since it may be used in error reporting
+     * <p>Implementations of this interface should override {@link #toString()}, since it may be used in error reporting
      * to provide context information for model designer to debug errors in its mode.
      *
      * @return human readable representation of statement source.

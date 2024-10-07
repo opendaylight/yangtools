@@ -15,13 +15,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * Definition / model of YANG {@link DeclaredStatement} and {@link EffectiveStatement}.
  *
- * <p>
- * Statement concept is defined in RFC6020 section 6.3: <blockquote> A YANG
+ * <p>Statement concept is defined in RFC6020 section 6.3: <blockquote>A YANG
  * module contains a sequence of statements. Each statement starts with a
  * keyword, followed by zero or one argument </blockquote>
  *
- * <p>
- * Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3"> </a>
+ * <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3"> </a>
  */
 public interface StatementDefinition extends Immutable {
     /**

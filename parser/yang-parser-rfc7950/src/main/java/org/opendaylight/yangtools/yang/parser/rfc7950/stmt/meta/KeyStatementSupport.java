@@ -40,8 +40,7 @@ public final class KeyStatementSupport
      * This is equivalent to {@link YangStatementLexer#SEP}'s definition. Currently equivalent to the non-repeating
      * part of:
      *
-     * <p>
-     * {@code SEP: [ \n\r\t]+ -> type(SEP);}.
+     * <p>{@code SEP: [ \n\r\t]+ -> type(SEP);}.
      */
     private static final CharMatcher SEP = CharMatcher.anyOf(" \n\r\t").precomputed();
 
@@ -49,11 +48,9 @@ public final class KeyStatementSupport
      * Splitter corresponding to {@code key-arg} ABNF as defined
      * in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-12">RFC6020, section 12</a>:
      *
-     * <p>
-     * {@code key-arg             = node-identifier *(sep node-identifier)}
+     * <p>{@code key-arg             = node-identifier *(sep node-identifier)}
      *
-     * <p>
-     * We also account for {@link #SEP} not handling repetition by ignoring empty strings.
+     * <p>We also account for {@link #SEP} not handling repetition by ignoring empty strings.
      */
     private static final Splitter KEY_ARG_SPLITTER = Splitter.on(SEP).omitEmptyStrings();
 

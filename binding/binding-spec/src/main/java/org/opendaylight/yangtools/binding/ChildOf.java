@@ -10,12 +10,10 @@ package org.opendaylight.yangtools.binding;
 /**
  * Child of parent container. Marker interface uniquely bounding generated Java interfaces to their  parent container.
  *
- * <p>
- * Any nested Java interface generated from YANG must implement this interface, where parameter <code>P</code> points
+ * <p>Any nested Java interface generated from YANG must implement this interface, where parameter {@code P} points
  * to it's defining {@link DataContainer} (interface generated for List, Container, Case).
  *
- * <p>
- * In case of children added by augmentation (which implements {@link Augmentation}) interfaces representing nested
+ * <p>In case of children added by augmentation (which implements {@link Augmentation}) interfaces representing nested
  * container must implements {@link ChildOf} with same argument as Augmentation.
  *
  * @param <P> Parent {@link DataContainer} type

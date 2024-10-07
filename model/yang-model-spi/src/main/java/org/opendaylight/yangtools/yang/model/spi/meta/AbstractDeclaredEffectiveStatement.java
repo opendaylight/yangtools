@@ -33,8 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveState
  * Base stateless superclass for statements which (logically) always have an associated {@link DeclaredStatement}. This
  * is notably not true for all {@code case} statements, some of which may actually be implied.
  *
- * <p>
- * Note implementations are not strictly required to make the declared statement available, they are free to throw
+ * <p>Note implementations are not strictly required to make the declared statement available, they are free to throw
  * {@link UnsupportedOperationException} from {@link #getDeclared()}, rendering any services relying on declared
  * statement to be not available.
  *

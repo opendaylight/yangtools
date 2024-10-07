@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Main class of Yang parser system test.
  *
- * <p>
- * Type yang-system-test -h for usage.
+ * <p>Type yang-system-test -h for usage.
  */
 @SuppressWarnings({"checkstyle:LoggerMustBeSlf4j", "checkstyle:LoggerFactoryClassParameter"})
 public final class Main {

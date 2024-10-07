@@ -14,11 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 
 /**
- * Test ANTLR4 grammar capability to parse unknown node in extension argument
- * declaration.
+ * Test ANTLR4 grammar capability to parse unknown node in extension argument declaration.
  *
- * <p>
- * Note: Everything under unknown node is unknown node.
+ * <p>Note: Everything under unknown node is unknown node.
  */
 class Bug1413Test extends AbstractYangTest {
     @Test

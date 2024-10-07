@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
  * relevant when considering whether or not a particular RuntimeType child is part of the data encoding (according to
  * the Binding Specification) to the {@code schema tree} layout.
  *
- * <p>
- * DataRuntimeTypes are considered part of the {@code data tree} information encoded by the Binding Specification and
+ * <p>DataRuntimeTypes are considered part of the {@code data tree} information encoded by the Binding Specification and
  * thus need to be considered as child nodes when considering other data-bearing construct, such as
  * {@code NormalizedNode}. That relationship may not be straightforward, but notably it excludes constructs like
  * {@link NotificationRuntimeType}, {@link IdentityRuntimeType}, {@link ActionRuntimeType}, {@link GroupingRuntimeType},

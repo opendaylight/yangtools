@@ -135,8 +135,7 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
     *       {@link ListSchemaNode#getKeyDefinition()}</li>
     * </ul>
     *
-    * <p>
-    * This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
+    * <p>This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
     */
     sealed interface PathMixin extends Composite permits AbstractPathMixinContext {
         /**
@@ -156,9 +155,8 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
     *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}</li>
      * </ul>
      *
-     * <p>
-     * This trait interface is exposed for determining that the corresponding {@link TypeDefinition} of the normalized
-     * body.
+     * <p>This trait interface is exposed for determining that the corresponding {@link TypeDefinition} of the
+     * normalized body.
      */
     sealed interface SimpleValue extends DataSchemaContext permits AbstractValueContext {
         /**

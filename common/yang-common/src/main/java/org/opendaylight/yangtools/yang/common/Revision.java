@@ -28,8 +28,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * This class defines the contents of a revision statement, but modules do not require to have a revision (e.g. they
  * have not started to keep track of revisions).
  *
- * <p>
- * APIs which involve this class should always transfer instances via {@code Optional<Revision>}, which is
+ * <p>APIs which involve this class should always transfer instances via {@code Optional<Revision>}, which is
  * the primary bridge data type. Implementations can use nullable fields with explicit conversions to/from
  * {@link Optional}. Both patterns can take advantage of {@link #compare(Optional, Optional)} and
  * {@link #compare(Revision, Revision)} respectively.

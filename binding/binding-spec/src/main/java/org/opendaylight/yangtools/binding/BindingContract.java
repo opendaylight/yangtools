@@ -22,8 +22,7 @@ import org.eclipse.jdt.annotation.NonNull;
  *   <li>structured data and metadata exchanged between two parties, represented by {@link DataContainer}</li>
  * </ul>
  *
- * <p>
- * As can be seen, this contract is more general than {@link BindingObject}.
+ * <p>As can be seen, this contract is more general than {@link BindingObject}.
  *
  * @param <T> Type of the captured contract
  */

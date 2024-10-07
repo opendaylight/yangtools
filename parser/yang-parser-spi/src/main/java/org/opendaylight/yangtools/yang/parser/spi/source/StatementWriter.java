@@ -52,12 +52,10 @@ public interface StatementWriter {
      * Attempt to resume a child statement. If the statement has been previously defined, a {@link ResumedStatement}
      * instance is returned.
      *
-     * <p>
-     * If an empty optional is returned, the caller is expected to follow-up with
+     * <p>If an empty optional is returned, the caller is expected to follow-up with
      * {@link #startStatement(int, QName, String, StatementSourceReference)} to define the statement.
      *
-     * <p>
-     * If the returned resumed statement indicates {@link ResumedStatement#isFullyDefined()}, the caller should take
+     * <p>If the returned resumed statement indicates {@link ResumedStatement#isFullyDefined()}, the caller should take
      * no further action with this or any of the child statements. Otherwise this call is equivalent of issuing
      * {@link #startStatement(int, QName, String, StatementSourceReference)} and the caller is expected to process
      * any child statements. The caller should call {@link #storeStatement(int, boolean)} before finishing processing
@@ -81,13 +79,11 @@ public interface StatementWriter {
     /**
      * Starts statement with supplied name and location in source.
      *
-     * <p>
-     * Each started statement must also be closed by
+     * <p>Each started statement must also be closed by
      * {@link #endStatement(StatementSourceReference)} in order for stream to be
      * correct.
      *
-     * <p>
-     * If statement has substatements, in order to start substatement, call to
+     * <p>If statement has substatements, in order to start substatement, call to
      * {@link #startStatement(int, QName, String, StatementSourceReference)} needs to be done for substatement.
      *
      * @param childId Child identifier, unique among siblings

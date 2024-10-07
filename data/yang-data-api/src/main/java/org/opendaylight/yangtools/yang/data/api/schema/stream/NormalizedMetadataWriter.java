@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * {@link NormalizedNodeWriter}, so that a target {@link NormalizedNodeStreamWriter} sees both data and metadata in
  * the stream. A typical use would like this:
  *
- * <p>
- * <code>
+ * <p><code>
  *   // Data for output
  *   NormalizedNode&lt;?, ?&gt; data;
  *   // Metadata for output
@@ -39,8 +38,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  *   dataWriter.write(data, metadata);
  * </code>
  *
- * <p>
- * This class is NOT thread-safe.
+ * <p>This class is NOT thread-safe.
  */
 @Beta
 public final class NormalizedMetadataWriter implements Closeable, Flushable {

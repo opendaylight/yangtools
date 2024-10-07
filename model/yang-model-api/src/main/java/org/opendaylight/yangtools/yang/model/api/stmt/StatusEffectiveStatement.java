@@ -15,8 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code status} statement.
  *
- * <p>
- * Note that unlike almost all other representations, these statements are only ever a reflection of a declared
+ * <p>Note that unlike almost all other representations, these statements are only ever a reflection of a declared
  * {@code status} statement. The truly effective status of a particular statement within a tree depends on its parent
  * statements. As an example, given this YANG module:
  * <pre>

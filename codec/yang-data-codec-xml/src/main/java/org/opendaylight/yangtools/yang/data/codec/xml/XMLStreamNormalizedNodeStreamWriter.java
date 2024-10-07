@@ -42,8 +42,7 @@ import org.slf4j.LoggerFactory;
  * appropriately according to the YANG schema. The other is schema-less and merely outputs values using toString. The
  * latter is intended for debugging where doesn't have a SchemaContext available and isn't meant for production use.
  *
- * <p>
- * Due to backwards compatibility reasons this writer recognizes RFC7952 metadata include keys QNames with empty URI
+ * <p>Due to backwards compatibility reasons this writer recognizes RFC7952 metadata include keys QNames with empty URI
  * (as exposed via {@link XmlParserStream#LEGACY_ATTRIBUTE_NAMESPACE}) as their QNameModule. These indicate an
  * unqualified XML attribute and their value can be assumed to be a String. Furthermore, this extends to qualified
  * attributes, which uses the proper namespace, but will not bind to a proper module revision. This caveat will be

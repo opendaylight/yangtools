@@ -24,12 +24,10 @@ import tech.pantheon.triemap.TrieMap;
  * their size, and determining the size of a TrieMap is expensive, we make sure
  * to update it as we go.
  *
- * <p>
- * FIXME: this map does not support modification view the keySet()/values()/entrySet() methods.
- *
  * @param <K> Key type
  * @param <V> Value type
  */
+// FIXME: this map does not support modification view the keySet()/values()/entrySet() methods
 final class ReadWriteTrieMap<K, V> extends ForwardingMap<K, V> {
     private static final Logger LOG = LoggerFactory.getLogger(ReadWriteTrieMap.class);
 

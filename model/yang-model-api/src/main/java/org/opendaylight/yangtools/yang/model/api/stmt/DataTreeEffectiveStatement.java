@@ -16,8 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * Common interface grouping all {@link EffectiveStatement}s which are accessible via
  * {@link DataTreeAwareEffectiveStatement#dataTreeNodes()}. This such statement corresponds to a {@code data node}.
  *
- * <p>
- * This interface could be named {@code SchemaNodeEffectiveStatement}, but that could induce a notion that it has
+ * <p>This interface could be named {@code SchemaNodeEffectiveStatement}, but that could induce a notion that it has
  * something to do with {@link DataSchemaNode} -- which it has not. DataSchemaNode semantics are wrong in may aspects
  * and while implementations of this interface may also implement DataSchemaNode, the semantics of this interface should
  * always be preferred and DataSchemaNode is to be treated as deprecated whenever possible.

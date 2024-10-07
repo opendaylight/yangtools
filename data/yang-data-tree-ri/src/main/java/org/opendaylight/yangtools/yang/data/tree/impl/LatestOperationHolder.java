@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
 /**
  * Holder and factory for upgradable root modifications.
  *
- * <p>
- * This class is factory for upgradable root modifications and provides an access to set latest backing implementation.
+ * <p>This class is factory for upgradable root modifications and provides an access to set latest backing
+ * implementation.
  */
 final class LatestOperationHolder {
 
@@ -31,8 +31,7 @@ final class LatestOperationHolder {
     /**
      * Sets latest backing implementation of associated {@link RootApplyStrategy}.
      *
-     * <p>
-     * Note: This does not result in upgrading implementation of already existing
+     * <p>Note: This does not result in upgrading implementation of already existing
      * {@link RootApplyStrategy}. Users, who obtained instances using {@link #newSnapshot()}, deriving
      * {@link RootApplyStrategy} from this modification must explicitly invoke
      * {@link RootApplyStrategy#upgradeIfPossible()} on their instance to be updated to latest backing

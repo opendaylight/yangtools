@@ -17,8 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Thrown when Java Binding class was used in data for which codec does not have schema.
  *
- * <p>
- * By serialization /  deserialization of this exception {@link #getBindingClass()} will return null.
+ * <p>By serialization /  deserialization of this exception {@link #getBindingClass()} will return null.
  */
 @Beta
 public final class MissingSchemaForClassException extends MissingSchemaException {

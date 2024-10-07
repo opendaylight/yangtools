@@ -24,13 +24,11 @@ import org.opendaylight.yangtools.concepts.Delegator;
  * be used with the conjunction with the collections library, for example {@link ConcurrentHashMap}.  All instances are
  * considered equal if they refer to the same delegate object.
  *
- * <p>
- * Note this class forms its own equality domain, and its use may lead to surprising results, especially where
+ * <p>Note this class forms its own equality domain, and its use may lead to surprising results, especially where
  * {@link #toString()} is involved. For example a {@code Map.toString()} may end up emitting two keys which have the
  * same String representation.
  *
  * @param <T> Type of wrapped object
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault

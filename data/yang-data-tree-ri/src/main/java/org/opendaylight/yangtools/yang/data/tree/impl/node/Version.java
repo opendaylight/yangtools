@@ -18,12 +18,10 @@ import org.opendaylight.yangtools.yang.data.tree.api.VersionInfo;
  * The concept of a version, either node version, or a subtree version. The only interface contract this class has is
  * that no two {@link Version} are the same.
  *
- * <p>
- * This class relies on Java Virtual machine's guarantee that the identity of an Object is distinct from any other
+ * <p>This class relies on Java Virtual machine's guarantee that the identity of an Object is distinct from any other
  * Object in the Java heap.
  *
- * <p>
- * From data management perspective, this concept serves as JVM-level MVCC
+ * <p>From data management perspective, this concept serves as JVM-level MVCC
  * <a href="https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation">timestamp (TS)</a>.
  */
 public sealed class Version {

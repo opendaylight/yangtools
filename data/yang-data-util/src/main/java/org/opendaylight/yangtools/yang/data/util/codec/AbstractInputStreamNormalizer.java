@@ -37,10 +37,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * An {@link AbstractCodecFactory} which additionally provides services defined in {@link InputStreamNormalizer}.
  *
- * <p>
- * This class existsonly because both JSON and XML implementations of {@link InputStreamNormalizer} are naturally hosted
- * in their respective {@link AbstractCodecFactory} implementations and therefore it is a convenient place to share
- * common implementation bits.
+ * <p>This class existsonly because both JSON and XML implementations of {@link InputStreamNormalizer} are naturally
+ * hosted in their respective {@link AbstractCodecFactory} implementations and therefore it is a convenient place to
+ * share common implementation bits.
  */
 public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, ?, ?>>
         extends AbstractCodecFactory<T> implements InputStreamNormalizer {

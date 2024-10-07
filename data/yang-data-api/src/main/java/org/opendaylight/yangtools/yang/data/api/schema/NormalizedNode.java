@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * Node which is normalized according to the YANG schema
  * is identifiable by a {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier}.
  *
- * <p>
- * See subinterfaces of this interface for concretization of node.
+ * <p>See subinterfaces of this interface for concretization of node.
  */
 /*
  * FIXME: 8.0.0: NormalizedNode represents the perfectly-compliant view of the data, as evaluated by an implementation,

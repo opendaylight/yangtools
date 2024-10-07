@@ -27,8 +27,7 @@ public sealed interface DistinctContainer<K extends PathArgument, V extends Norm
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * All nodes returned in this iterable, MUST also be accessible via {@link #childByArg(PathArgument)} using their
+     * <p>All nodes returned in this iterable, MUST also be accessible via {@link #childByArg(PathArgument)} using their
      * associated identifier.
      *
      * @return Iteration of all child nodes

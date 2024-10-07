@@ -19,24 +19,21 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 /**
  * DataTree configuration class.
  *
- * <p>
- * TreeConfig supports currently the following options:
+ * <p>TreeConfig supports currently the following options:
  * <ul>
  * <li>treeType</li>
  * <li>enable/disable unique indexes and unique constraint validation</li>
  * <li>enable/disable mandatory nodes validation</li>
  * </ul>
  *
- * <p>
- * TreeConfig can be easily extended in order to support further data tree configuration options, like following:
+ * <p>TreeConfig can be easily extended in order to support further data tree configuration options, like following:
  * <ul>
  * <li>enable/disable case exclusion validation</li>
  * <li>enable/disable other indexes</li>
  * <li>other schema aware validation options</li>
  * </ul>
  *
- * <p>
- * This can be useful when strict validation is not required or useful for some reasons.
+ * <p>This can be useful when strict validation is not required or useful for some reasons.
  */
 @Beta
 public class DataTreeConfiguration implements Immutable {

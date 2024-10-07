@@ -12,8 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 /**
  * A {@link DistinctContainer} containing {@link DataContainerChild} children.
  *
- * <p>
- * <b>NOTE:</b>
+ * <p><b>NOTE:</b>
  * All implementations of this interface are assumed to be {@link OrderingAware.System}, i.e. order-independent.
  */
 public sealed interface DataContainer

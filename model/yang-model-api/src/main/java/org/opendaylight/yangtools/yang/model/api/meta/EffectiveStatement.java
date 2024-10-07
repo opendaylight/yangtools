@@ -28,8 +28,7 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
      * Returns {@link StatementOrigin}, which denotes if statement was explicitly declared in original model or inferred
      * during semantic processing of model.
      *
-     * <p>
-     * Implementations are required to return a {@link StatementOrigin}, consistent with {@link #getDeclared()}
+     * <p>Implementations are required to return a {@link StatementOrigin}, consistent with {@link #getDeclared()}
      * nullness. This is what the default implementation does and hence this method should never be explicitly
      * implemented -- unless there is significant cost to the {@link #getDeclared()} implementation.
      *

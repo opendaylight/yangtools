@@ -14,8 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * Utility marker interface for {@link NormalizedNodeStreamWriter} implementations which can be reused multiple times
  * and can expose a {@link NormalizedNode} result of each complete streaming use.
  *
- * <p>
- * An example of use would be:
+ * <p>An example of use would be:
  * <pre>
  *   ReusableStreamReceiver writer;
  *   final NormalizedNode result;
@@ -31,8 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  *   }
  * </pre>
  *
- * <p>
- * Note the writer should always be {@link #reset()} in a {@code finally} block, so that any streaming state is
+ * <p>Note the writer should always be {@link #reset()} in a {@code finally} block, so that any streaming state is
  * properly discarded.
  */
 public interface ReusableStreamReceiver extends NormalizedNodeStreamWriter {

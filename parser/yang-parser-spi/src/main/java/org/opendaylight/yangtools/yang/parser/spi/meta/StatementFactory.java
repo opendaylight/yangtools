@@ -57,9 +57,8 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      * their operations with regard to their statements being replicated into different contexts -- potentially sharing
      * instantiations.
      *
-     * <p>
-     * Implementations are examine {@code copy} as to whether it would result in the same semantics as {@code current}
-     * does, provided that {@code current}'s {@code substatements} are properly propagated.
+     * <p>Implementations are examine {@code copy} as to whether it would result in the same semantics as
+     * {@code current} does, provided that {@code current}'s {@code substatements} are properly propagated.
      *
      * @param copy Copy of current effective context
      * @param current Current effective context

@@ -17,11 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * {@link SchemaTreeAwareEffectiveStatement#schemaTreeNodes()}. This such statement corresponds to a
  * {@code schema node}.
  *
- * <p>
- * This interface could be named {@code SchemaNodeEffectiveStatement}, but that could induce a notion that it has
- * something to do with {@link SchemaNode} -- which it has not. SchemaNode semantics are wrong in may aspects
- * and while implementations of this interface may also implement SchemaNode, the semantics of this interface should
- * always be preferred and SchemaNode is to be treated as deprecated whenever possible.
+ * <p>This interface could be named {@code SchemaNodeEffectiveStatement}, but that could induce a notion that it has
+ * something to do with {@link SchemaNode} -- which it has not. SchemaNode semantics are wrong in may aspects and while
+ * implementations of this interface may also implement SchemaNode, the semantics of this interface should always be
+ * preferred and SchemaNode is to be treated as deprecated whenever possible.
  *
  * @param <D> Declared statement type
  */

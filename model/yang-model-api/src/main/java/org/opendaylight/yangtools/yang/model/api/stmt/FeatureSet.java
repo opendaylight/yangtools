@@ -26,8 +26,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 /**
  * A set of features.
  *
- * <p>
- * The semantics of {@link #contains(QName)} is a bit funky, depending on implementation:
+ * <p>The semantics of {@link #contains(QName)} is a bit funky, depending on implementation:
  * <ol>
  *   <li>explicit implementation, returned from {@link #of()}, {@link #of(Set)} et al., delegates to the underlying
  *       Set's {@link Set#contains(Object)}, while on the other hand</li>

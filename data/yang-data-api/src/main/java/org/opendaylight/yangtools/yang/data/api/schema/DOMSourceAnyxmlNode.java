@@ -21,8 +21,7 @@ public interface DOMSourceAnyxmlNode extends AnyxmlNode<DOMSource> {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * Returned value is a DOMSource representation. Returned source contains top level element that duplicates the
+     * <p>Returned value is a DOMSource representation. Returned source contains top level element that duplicates the
      * anyxml node.
      */
     @Override

@@ -16,8 +16,7 @@
  *       {@link ImmutableNodes#builderFactory()}</li>
  * </ul>
  *
- * <p>
- * Another bit of convenience are {@link InterningLeafNodeBuilder} and {@link InterningLeafSetNodeBuilder}, which
+ * <p>Another bit of convenience are {@link InterningLeafNodeBuilder} and {@link InterningLeafSetNodeBuilder}, which
  * indirect instantiations through an {@link com.google.common.collect.Interner} -- this is useful when the set of
  * allowed values has been determined to have a sufficiently-low cardinality, in which case these will reuse value
  * nodes.

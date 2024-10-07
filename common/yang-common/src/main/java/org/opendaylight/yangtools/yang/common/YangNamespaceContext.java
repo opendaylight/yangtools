@@ -18,9 +18,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * matches prefix mapping inside a YANG {@code module} as defined through the use of {@code prefix} and {@code import}
  * statements and detailed in <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.1.4">RFC7950 Section 7.1.4</a>.
  *
- * <p>
- * Each namespace context has a set of prefix/namespace mappings. A namespace can be bound to multiple prefixes at the
- * same time.
+ * <p>Each namespace context has a set of prefix/namespace mappings. A namespace can be bound to multiple prefixes at
+ * the same time.
  */
 public interface YangNamespaceContext extends Immutable, Serializable {
     /**

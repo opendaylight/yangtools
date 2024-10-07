@@ -12,8 +12,7 @@ package org.opendaylight.yangtools.yang.common;
  * <a href="https://www.rfc-editor.org/rfc/rfc4741#section-1.1">NETCONF</a>. This enumeration exists because its
  * semantics are implied by RFC6020 references to {@code error-tag} and its XML encoding.
  *
- * <p>
- * This enumeration corresponds to the {@code Layer} in:
+ * <p>This enumeration corresponds to the {@code Layer} in:
  * <pre><code>
  *   NETCONF can be conceptually partitioned into four layers:
  *

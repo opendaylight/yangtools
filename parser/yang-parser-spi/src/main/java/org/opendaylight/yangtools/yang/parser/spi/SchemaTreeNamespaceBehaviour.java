@@ -34,8 +34,7 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * This method is analogous to {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)}.
+     * <p>This method is analogous to {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)}.
      */
     @Override
     public StmtContext<QName, D, E> getFrom(final GlobalStorage global, final NamespaceStorage storage,

@@ -14,8 +14,7 @@ import org.slf4j.LoggerFactory;
  * Indentation handling for {@link PrettyTree}. This class is split out to defer initialization of the string table --
  * it might never be used after all.
  *
- * <p>
- * We want to be formatting strings quickly and a lot of that can very easily be dominated by dealing with indents.
+ * <p>We want to be formatting strings quickly and a lot of that can very easily be dominated by dealing with indents.
  * To deal with that we pre-compute a few indentation strings and then append them directly using a specialized
  * method. We allow tuning the default indentation at runtime, but choose a fixed string table size.
  */

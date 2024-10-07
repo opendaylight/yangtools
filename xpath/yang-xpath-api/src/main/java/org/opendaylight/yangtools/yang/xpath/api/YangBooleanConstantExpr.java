@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Expressions which evaluate to a logical {@code true} or {@code false}. These expressions are equivalent to the result
  * returned by {@code true()} and {@code false()} functions defined in XPath 1.0.
  *
- * <p>
- * They also map these functions' names to the constant pool under their {@link YangFunctionCallExpr#getName()}
+ * <p>They also map these functions' names to the constant pool under their {@link YangFunctionCallExpr#getName()}
  * identity. All users should use these constants in favor of their equivalent function calls.
  */
 public enum YangBooleanConstantExpr implements YangConstantExpr<Boolean> {

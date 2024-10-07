@@ -23,8 +23,7 @@ public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefi
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * For YANG version 1 (RFC6020), this should always return true.
+     * <p>For YANG version 1 (RFC6020), this should always return true.
      */
     @Override
     boolean requireInstance();

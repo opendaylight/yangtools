@@ -74,8 +74,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      *   <li>{@link Current#effectiveConfig()} does not change</li>
      * </ul>
      *
-     * <p>
-     * Typical users include {@code container} and {@code leaf}.
+     * <p>Typical users include {@code container} and {@code leaf}.
      *
      * @param <D> Declared Statement representation
      * @return A StatementPolicy
@@ -93,8 +92,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      *   <li>{@link Current#history()} does not change as far as {@link CopyableNode} is concerned</li>
      * </ul>
      *
-     * <p>
-     * Typical users include {@code action} and {@code notification} (in its YANG 1.1 form).
+     * <p>Typical users include {@code action} and {@code notification} (in its YANG 1.1 form).
      *
      * @param <D> Declared Statement representation
      * @return A StatementPolicy
@@ -107,8 +105,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * This method ensures the statement is added to its parent {@link ParserNamespaces#schemaTree()}.
+     * <p>This method ensures the statement is added to its parent {@link ParserNamespaces#schemaTree()}.
      */
     @Override
     public void onStatementAdded(final Mutable<QName, D, E> stmt) {

@@ -13,9 +13,8 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Statement that defines new data nodes. One of container, leaf, leaf-list, list, choice, case, augment, uses, anyxml
  * and anydata.
  *
- * <p>
- * Defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-3">RFC6020, Section 3</a>, as {@code data-def-stmt}
- * ABNF rule.
+ * <p>Defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-3">RFC6020, Section 3</a>, as
+ * {@code data-def-stmt} ABNF rule.
  */
 public interface DataDefinitionStatement
         extends DocumentedDeclaredStatement.WithStatus<QName>, WhenStatementAwareDeclaredStatement<QName> {

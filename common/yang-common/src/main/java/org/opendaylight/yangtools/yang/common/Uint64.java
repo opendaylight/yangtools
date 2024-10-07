@@ -326,9 +326,8 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * The inverse operation is {@link #fromLongBits(long)}. In case this value is greater than {@link Long#MAX_VALUE},
-     * the returned value will be equal to {@code this - 2^64}.
+     * <p>The inverse operation is {@link #fromLongBits(long)}. In case this value is greater than
+     * {@link Long#MAX_VALUE}, the returned value will be equal to {@code this - 2^64}.
      */
     @Override
     public final long longValue() {

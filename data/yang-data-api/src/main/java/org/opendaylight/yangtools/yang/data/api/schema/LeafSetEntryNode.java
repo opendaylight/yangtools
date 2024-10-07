@@ -26,11 +26,10 @@ public non-sealed interface LeafSetEntryNode<T> extends ValueNode<T> {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * <b>Implementation note</b>
-     * Invocation of {@link NodeWithValue#getValue()} on returned instance of {@link NodeWithValue} must return the
-     * same value as invocation of {@code #body()}, such as following condition is always met:
-     * {@code true == this.getIdentifier().getValue().equals(this.body())}.
+     * @implNote
+     *     Invocation of {@link NodeWithValue#getValue()} on returned instance of {@link NodeWithValue} must return the
+     *     same value as invocation of {@code #body()}, such as following condition is always met:
+     *     {@code true == this.getIdentifier().getValue().equals(this.body())}.
      */
     @Override
     NodeWithValue<T> name();

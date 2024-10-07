@@ -17,8 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * in a YANG model. Note that each subclass of {@link DerivedString} defines its own {@link #hashCode()} and
  * {@link #equals(Object)} contracts based on implementation particulars.
  *
- * <p>
- * Given the following YANG snippet:
+ * <p>Given the following YANG snippet:
  * <pre>
  *     typedef foo {
  *         type string;
@@ -54,8 +53,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * Since {@code baz} is not defining any new restrictions, all instances of FooDerivedString are valid for it and we
  * do not have to define any additional support.
  *
- * <p>
- * It is important for {@link DerivedString} subclasses not to be final because any YANG type can be further extended
+ * <p>It is important for {@link DerivedString} subclasses not to be final because any YANG type can be further extended
  * and adding a final class in that hierarchy would prevent a proper class from being defined.
  *
  * @param <T> derived string representation

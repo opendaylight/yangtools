@@ -13,16 +13,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 /**
  * Node representing data instance of <code>choice</code>.
  *
- * <p>
- * Choice node is instance of one of possible alternatives, from which only one is allowed to exist at one time in
+ * <p>Choice node is instance of one of possible alternatives, from which only one is allowed to exist at one time in
  * particular context of parent node.
  *
- * <p>
- * YANG Model and schema for choice is described by instance of
+ * <p>YANG Model and schema for choice is described by instance of
  * {@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode}.
  *
- * <p>
- * Valid alternatives of subtree are described by instances of
+ * <p>Valid alternatives of subtree are described by instances of
  * {@link org.opendaylight.yangtools.yang.model.api.CaseSchemaNode}, which are retrieved via
  * {@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode#getCases()}.
  */

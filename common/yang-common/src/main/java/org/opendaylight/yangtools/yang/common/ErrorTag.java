@@ -20,8 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * since YANG does not place restriction on possible values in
  * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-3.9">RFC8040</a>.
  *
- * <p>
- * Error tag defines overall error semantics. Additional tag-specific information may be associated with a particular
+ * <p>Error tag defines overall error semantics. Additional tag-specific information may be associated with a particular
  * error tag.
  */
 @NonNullByDefault

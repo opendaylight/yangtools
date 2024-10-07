@@ -17,10 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  * {@link org.opendaylight.yangtools.yang.model.api.EffectiveModelContext} and information resident in
  * {@code schema-mounts} within this hierarchy.
  *
- * <p>
- * This context exposed enough of an API surface to navigate RFC8528 Schema Mount instaces with respect to normalized,
- * so that proper {@link MountPointLabel}ed {@link NormalizedMountPoint}s can be created. This is enough to integrate
- * with other elements of this API.
+ * <p>This context exposed enough of an API surface to navigate RFC8528 Schema Mount instaces with respect to
+ * normalized, so that proper {@link MountPointLabel}ed {@link NormalizedMountPoint}s can be created. This is enough
+ * to integrate with other elements of this API.
  */
 public interface MountPointContext {
     /**

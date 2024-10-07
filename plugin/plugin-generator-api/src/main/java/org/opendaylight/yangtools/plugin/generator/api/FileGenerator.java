@@ -16,8 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Interface implemented by plugins which can generate files from a {@link EffectiveModelContext}.
- *
- * @author Robert Varga
  */
 @NonNullByDefault
 public interface FileGenerator {
@@ -38,10 +36,9 @@ public interface FileGenerator {
      * Generate files from a {@link SchemaContext}, being aware the that specific modules are local to the current
      * project being processed.
      *
-     * <p>
-     * Implementations of this interface must not interact with project directory directly, but rather supply the files
-     * generated as a set of {@link GeneratedFile}s. The caller of this method will use these to integrate with build
-     * management to ensure proper dependency tracking is performed.
+     * <p>Implementations of this interface must not interact with project directory directly, but rather supply the
+     * files generated as a set of {@link GeneratedFile}s. The caller of this method will use these to integrate with
+     * build management to ensure proper dependency tracking is performed.
      *
      * @param context SchemaContext to examine
      * @param localModules Modules local to the project

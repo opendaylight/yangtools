@@ -45,8 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A multi-stage reactor for generating {@link GeneratedType} instances from an {@link EffectiveModelContext}.
  *
- * <p>
- * The reason for multi-stage processing is that the problem ahead of us involves:
+ * <p>The reason for multi-stage processing is that the problem ahead of us involves:
  * <ul>
  *   <li>mapping {@code typedef} and restricted {@code type} statements onto Java classes</li>
  *   <li>mapping a number of schema tree nodes into Java interfaces with properties</li>

@@ -139,19 +139,14 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     }
 
     /**
-     * Returns DataSchemaContextTree associated with SchemaContext for which
-     * serialization / deserialization occurs.
+     * Returns DataSchemaContextTree associated with SchemaContext for which serialization / deserialization occurs.
      *
-     * <p>
-     * Implementations MUST provide non-null Data Tree context, in order
-     * for correct serialization / deserialization of PathArguments,
-     * since XML representation does not have Augmentation arguments
-     * and does not provide path arguments for cases.
+     * <p>Implementations MUST provide non-null Data Tree context, in order for correct serialization / deserialization
+     * of PathArguments, since XML representation does not have Augmentation arguments and does not provide path
+     * arguments for cases.
      *
-     * <p>
-     * This effectively means same input XPath representation of Path Argument
-     * may result in different YangInstanceIdentifiers if models are different
-     * in uses of choices and cases.
+     * <p>This effectively means same input XPath representation of Path Argument may result in different
+     * YangInstanceIdentifiers if models are different in uses of choices and cases.
      *
      * @return DataSchemaContextTree associated with SchemaContext for which
      *         serialization / deserialization occurs.

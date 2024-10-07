@@ -65,14 +65,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * and {@link #declared()}: declared/effective statement views hold an implicit reference and refcount-based
      * sweep is not activated until they are done (or this statement is not {@link #isSupportedToBuildEffective}).
      *
-     * <p>
-     * Reference count is hierarchical in that parent references also pin down their child statements and do not allow
-     * them to be swept.
+     * <p>Reference count is hierarchical in that parent references also pin down their child statements and do not
+     * allow them to be swept.
      *
-     * <p>
-     * The counter's positive values are tracking incoming references via {@link #incRef()}/{@link #decRef()} methods.
-     * Once we transition to sweeping, this value becomes negative counting upwards to {@link #REFCOUNT_NONE} based on
-     * {@link #sweepOnChildDone()}. Once we reach that, we transition to {@link #REFCOUNT_SWEPT}.
+     * <p>The counter's positive values are tracking incoming references via {@link #incRef()}/{@link #decRef()}
+     * methods. Once we transition to sweeping, this value becomes negative counting upwards to {@link #REFCOUNT_NONE}
+     * based on {@link #sweepOnChildDone()}. Once we reach that, we transition to {@link #REFCOUNT_SWEPT}.
      */
     private int refcount = REFCOUNT_NONE;
     /**
@@ -84,8 +82,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * Reference count overflow or some other recoverable logic error. Do not rely on refcounts and do not sweep
      * anything.
      *
-     * <p>
-     * Note on value assignment:
+     * <p>Note on value assignment:
      * This allow our incRef() to naturally progress to being saturated. Others jump there directly.
      * It also makes it  it impossible to observe {@code Interger.MAX_VALUE} children, which we take advantage of for
      * {@link #REFCOUNT_SWEEPING}.
@@ -95,8 +92,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * This statement is being actively swept. This is a transient value set when we are sweeping our children, so that
      * we prevent re-entering this statement.
      *
-     * <p>
-     * Note on value assignment:
+     * <p>Note on value assignment:
      * The value is lower than any legal child refcount due to {@link #REFCOUNT_DEFUNCT} while still being higher than
      * {@link #REFCOUNT_SWEPT}.
      */
@@ -105,8 +101,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * This statement, along with its entire subtree has been swept and we positively know all our children have reached
      * this state. We {@link #sweepNamespaces()} upon reaching this state.
      *
-     * <p>
-     * Note on value assignment:
+     * <p>Note on value assignment:
      * This is the lowest value observable, making it easier on checking others on equality.
      */
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
@@ -508,13 +503,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * every time {@link #effectiveConfig()} is invoked. This is quite expensive because it causes a linear search
      * for the (usually non-existent) config statement.
      *
-     * <p>
-     * This method maintains a resolution cache, so once we have returned a result, we will keep on returning the same
-     * result without performing any lookups, solely to support {@link #effectiveConfig()}.
+     * <p>This method maintains a resolution cache, so once we have returned a result, we will keep on returning the
+     * same result without performing any lookups, solely to support {@link #effectiveConfig()}.
      *
-     * <p>
-     * Note: use of this method implies that {@link #isIgnoringConfig()} is realized with
-     *       {@link #isIgnoringConfig(StatementContextBase)}.
+     * <p>Note: use of this method implies that {@link #isIgnoringConfig()} is realized with
+     * {@link #isIgnoringConfig(StatementContextBase)}.
      */
     final @NonNull EffectiveConfig effectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
         return (flags & HAVE_CONFIG) != 0 ? EFFECTIVE_CONFIGS[flags & MASK_CONFIG] : loadEffectiveConfig(parent);
@@ -554,9 +547,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * keep on returning the same result without performing any lookups. Exists only to support
      * {@link SubstatementContext#isIgnoringConfig()}.
      *
-     * <p>
-     * Note: use of this method implies that {@link #isConfiguration()} is realized with
-     *       {@link #effectiveConfig(StatementContextBase)}.
+     * <p>Note: use of this method implies that {@link #isConfiguration()} is realized with
+     * {@link #effectiveConfig(StatementContextBase)}.
      */
     final boolean isIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
         return EffectiveConfig.IGNORED == effectiveConfig(parent);
@@ -771,8 +763,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * {@link #declaredSubstatements()} and {@link #effectiveSubstatements()} and report the result of the sweep
      * operation.
      *
-     * <p>
-     * {@link #effectiveSubstatements()} as well as namespaces may become inoperable as a result of this operation.
+     * <p>{@link #effectiveSubstatements()} as well as namespaces may become inoperable as a result of this operation.
      *
      * @return True if the entire tree has been completely swept, false otherwise.
      */

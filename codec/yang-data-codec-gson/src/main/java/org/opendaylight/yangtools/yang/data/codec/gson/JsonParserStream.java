@@ -129,8 +129,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      * and {@link JSONCodecFactory}. The stream will be logically rooted at the top of the SchemaContext associated
      * with the specified codec factory.
      *
-     * <p>
-     * Returned parser will treat incoming JSON data leniently:
+     * <p>Returned parser will treat incoming JSON data leniently:
      * <ul>
      *   <li>JSON elements referring to unknown constructs will be silently ignored</li>
      * </ul>
@@ -150,8 +149,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
      * and {@link JSONCodecFactory}. The stream will be logically rooted at the specified parent node.
      *
-     * <p>
-     * Returned parser will treat incoming JSON data leniently:
+     * <p>Returned parser will treat incoming JSON data leniently:
      * <ul>
      *   <li>JSON elements referring to unknown constructs will be silently ignored</li>
      * </ul>

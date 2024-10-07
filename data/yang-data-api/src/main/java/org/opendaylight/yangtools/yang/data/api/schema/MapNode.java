@@ -17,9 +17,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBui
 /**
  * Containment node, which contains {@link MapEntryNode} of the same type, which may be quickly retrieved using a key.
  *
- * <p>
- * This node maps to the list node in YANG schema, schema and semantics of this node, its children and key construction
- * is defined by YANG {@code list} statement and its {@code key} and {@code ordered-by} substatements.
+ * <p>This node maps to the list node in YANG schema, schema and semantics of this node, its children and key
+ * construction is defined by YANG {@code list} statement and its {@code key} and {@code ordered-by} substatements.
  */
 public sealed interface MapNode
         extends DistinctNodeContainer<NodeIdentifierWithPredicates, MapEntryNode>, DataContainerChild, MixinNode

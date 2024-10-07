@@ -20,11 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Pre-computed thread-safe CodecCache. All possible codecs are created upfront at instantiation time, after which they
  * are available for the cost of a constant lookup.
  *
- * <p>
- * Instantiation needs to occur through {@link LazyCodecCache#toPrecomputed()} after the lazy cache has been fully
+ * <p>Instantiation needs to occur through {@link LazyCodecCache#toPrecomputed()} after the lazy cache has been fully
  * populated.
- *
- * @author Robert Varga
  */
 @Beta
 public final class PrecomputedCodecCache<T> extends CodecCache<T> {

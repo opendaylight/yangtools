@@ -105,8 +105,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * Return the {@link EffectiveStatement} for statement context, creating it if required. Implementations of this
      * method are required to memoize the returned object, so that subsequent invocation return the same object.
      *
-     * <p>
-     * If {@link #isSupportedToBuildEffective()} returns {@code false}, this method's behaviour is undefined.
+     * <p>If {@link #isSupportedToBuildEffective()} returns {@code false}, this method's behaviour is undefined.
      *
      * @return Effective statement instance.
      */
@@ -322,8 +321,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * definition and statement argument match with one of the effective substatements' statement definition
          * and argument.
          *
-         * <p>
-         * If the statementArg parameter is null, the statement context is removed based only on its statement
+         * <p>If the statementArg parameter is null, the statement context is removed based only on its statement
          * definition.
          *
          * @param statementDef statement definition of the statement context to remove

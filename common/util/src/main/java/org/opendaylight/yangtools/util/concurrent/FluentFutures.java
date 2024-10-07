@@ -23,8 +23,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * Guava's, for example in {@link Futures}, as the implementations provided by {@link Futures#immediateFuture(Object)}
  * and others already implement {@link FluentFuture} and so getting a FluentFuture is a matter of pure boiler-plate.
  *
- * <p>
- * {@link #immediateBooleanFluentFuture(boolean)}, {@link #immediateBooleanFluentFuture(Boolean)},
+ * <p>{@link #immediateBooleanFluentFuture(boolean)}, {@link #immediateBooleanFluentFuture(Boolean)},
  * {@link #immediateFalseFluentFuture()}, {@link #immediateTrueFluentFuture()} and {@link #immediateNullFluentFuture()}
  * provide low-cardinality constants, which are generally useful to reduce allocations.
  *

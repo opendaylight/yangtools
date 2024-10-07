@@ -25,8 +25,7 @@ public interface KeyEffectiveStatement extends EffectiveStatement<Set<QName>, Ke
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * Iteration order of the returned set is required to match the order in which key components were declared.
+     * <p>Iteration order of the returned set is required to match the order in which key components were declared.
      */
     @Override
     Set<QName> argument();

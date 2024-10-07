@@ -14,8 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code config} statement.
  *
- * <p>
- * Note that unlike almost all other representations, these statements are only ever a reflection of a declared
+ * <p>Note that unlike almost all other representations, these statements are only ever a reflection of a declared
  * {@code config} statement. The truly effective status of a particular statement within a tree depends on its parent
  * statements. As an example, given this YANG module:
  * <pre>
@@ -45,8 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  *   <li>within {@code module foo} it is inherited from default, that is to say {@code true}</li>
  * </ol>
  *
- * <p>
- * Users are advised to use utility classes related to statement inference which consider parent/child relationships
+ * <p>Users are advised to use utility classes related to statement inference which consider parent/child relationships
  * of statements.
  */
 public interface ConfigEffectiveStatement extends EffectiveStatement<Boolean, ConfigStatement> {

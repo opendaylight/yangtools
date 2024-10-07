@@ -23,8 +23,8 @@ public non-sealed interface UserMapNode extends MapNode, OrderedNodeContainer<Ma
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * The implementation is required to define a user-visible iteration order, which must match {@link #childAt(int)}.
+     * <p>The implementation is required to define a user-visible iteration order, which must match
+     * {@link #childAt(int)}.
      */
     @Override
     Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();

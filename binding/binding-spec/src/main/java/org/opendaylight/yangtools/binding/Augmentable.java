@@ -18,12 +18,10 @@ import org.eclipse.jdt.annotation.Nullable;
  * Augmentable (extensible) object which could carry additional data defined by a third-party extension, without
  * introducing conflict between various extension.
  *
- * <p>
- * This interface uses extended version of ExtensibleInterface pattern which also adds marker interface for
+ * <p>This interface uses extended version of ExtensibleInterface pattern which also adds marker interface for
  * augmentations (extensions) - {@link Augmentable}.
  *
  * @param <T> Base class which should implements this interface and is target for augmentation.
- * @author Tony Tkacik
  */
 public interface Augmentable<T> {
     /**

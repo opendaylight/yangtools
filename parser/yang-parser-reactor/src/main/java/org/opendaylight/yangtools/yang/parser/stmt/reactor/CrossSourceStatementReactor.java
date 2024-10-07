@@ -134,8 +134,7 @@ public final class CrossSourceStatementReactor {
          * Add a library source. Only library sources required by main sources are present in resulting SchemaContext.
          * Any other library sources are ignored and this also applies to error reporting.
          *
-         * <p>
-         * Library sources are not supported in semantic version mode currently.
+         * <p>Library sources are not supported in semantic version mode currently.
          *
          * @param libSource source which should be added into library sources
          * @return This build action, for fluent use.
@@ -150,8 +149,7 @@ public final class CrossSourceStatementReactor {
          * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
          * Any other library sources are ignored and this also applies to error reporting.
          *
-         * <p>
-         * Library sources are not supported in semantic version mode currently.
+         * <p>Library sources are not supported in semantic version mode currently.
          *
          * @param libSources sources which should be added into library sources
          * @return This build action, for fluent use.
@@ -166,8 +164,7 @@ public final class CrossSourceStatementReactor {
          * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
          * Any other library sources are ignored and this also applies to error reporting.
          *
-         * <p>
-         * Library sources are not supported in semantic version mode currently.
+         * <p>Library sources are not supported in semantic version mode currently.
          *
          * @param libSources sources which should be added into library sources
          * @return This build action, for fluent use.

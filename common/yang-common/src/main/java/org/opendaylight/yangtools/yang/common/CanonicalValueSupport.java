@@ -17,15 +17,12 @@ import org.opendaylight.yangtools.concepts.Either;
  * Support for a {@link CanonicalValue} subclasses. An implementation of this interface must be registered
  * in the system and be available from each CanonicalValue object.
  *
- * <p>
- * Note: never implement this interface directly, subclass {@link AbstractCanonicalValueSupport} instead.
+ * <p>Note: never implement this interface directly, subclass {@link AbstractCanonicalValueSupport} instead.
  *
- * <p>
- * This interface allows a {@link CanonicalValue} to be instantiated from a String. The implementation is expected
+ * <p>This interface allows a {@link CanonicalValue} to be instantiated from a String. The implementation is expected
  * to perform all checks implied by the corresponding YANG data model.
  *
  * @param <T> canonical value type
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault

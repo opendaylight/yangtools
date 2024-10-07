@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.data.tree.api;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
- * Exception thrown when a proposed change fails validation before being
- * applied into the Data Tree because tree node which child nodes are
- * modified or written did not exist when transaction started
- * and still does not exists when transaction is processed.
+ * Exception thrown when a proposed change fails validation before being applied into the Data Tree because tree node
+ * which child nodes are modified or written did not exist when transaction started and still does not exists when
+ * transaction is processed.
  *
- * <p>
- * Note if node existed in first place and was removed by other transaction,
- * thrown exception should be {@link ConflictingModificationAppliedException}.
+ * <p>Note if node existed in first place and was removed by other transaction, thrown exception should be
+ * {@link ConflictingModificationAppliedException}.
  */
 public class ModifiedNodeDoesNotExistException extends DataValidationFailedException {
     private static final long serialVersionUID = 1L;

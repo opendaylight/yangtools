@@ -141,8 +141,7 @@ class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
      * tested case when case c11A in choice choc11 is augmented (two leaves (augment A) and one leaf (augment B) are
      * added).
      *
-     * <p>
-     * after running this test following exception is raised:
+     * <p>after running this test following exception is raised:
      * java.lang.IllegalArgumentException: Augmentation allowed only in DataNodeContainer
      * [ChoiceNodeImpl[qname=(ns:complex:json?revision=2014-08-11)choc11]]
      */
@@ -172,8 +171,7 @@ class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
      * tested case when case c11A in choice choc11 is augmented (two leaves (augment A) internally and one two leaves
      * with the same names externally (augment B) are added).
      *
-     * <p>
-     * after running this test following exception is raised:
+     * <p>after running this test following exception is raised:
      * java.lang.IllegalArgumentException: Augmentation allowed only in DataNodeContainer
      * [ChoiceNodeImpl[qname=(ns:complex:json?revision=2014-08-11)choc11]]
      */
@@ -205,8 +203,7 @@ class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     /**
      * augmentation of choice - adding new case.
      *
-     * <p>
-     * after running this test following exception is raised:
+     * <p>after running this test following exception is raised:
      * java.lang.IllegalArgumentException: Augmentation allowed only in DataNodeContainer
      * [ChoiceNodeImpl[qname=(ns:complex:json?revision=2014-08-11)choc11]]
      */

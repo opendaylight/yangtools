@@ -42,9 +42,8 @@ public abstract class DataContainerStreamer<T extends DataContainer> {
     /**
      * Writes stream events for supplied data object to provided stream.
      *
-     * <p>
-     * DataObjectSerializerRegistry may be used to lookup serializers for other generated classes  in order to support
-     * writing their events.
+     * <p>DataObjectSerializerRegistry may be used to lookup serializers for other generated classes  in order to
+     * support writing their events.
      */
     protected abstract void serialize(DataContainerSerializerRegistry reg, DataContainer obj,
         BindingStreamEventWriter stream) throws IOException;

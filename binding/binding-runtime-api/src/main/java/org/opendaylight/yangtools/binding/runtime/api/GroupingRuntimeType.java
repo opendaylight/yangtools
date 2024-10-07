@@ -24,8 +24,7 @@ public interface GroupingRuntimeType extends CompositeRuntimeType {
      * Return the set of all concrete data tree instantiations of this {@code grouping}. This is necessary to completely
      * resolve type information for {@code leafref}s.
      *
-     * <p>
-     * As an example, consider {@link GroupingRuntimeType} of {@code grouping baz} and it's instantiations roots
+     * <p>As an example, consider {@link GroupingRuntimeType} of {@code grouping baz} and it's instantiations roots
      * {@code container one} and {@code container two} define in these three models:
      * <pre>{@code
      *   module baz {
@@ -68,13 +67,11 @@ public interface GroupingRuntimeType extends CompositeRuntimeType {
      *   }
      * }</pre>
      *
-     * <p>
-     * Since these are separate modules, each of them can be part of its own compilation unit and therefore
+     * <p>Since these are separate modules, each of them can be part of its own compilation unit and therefore
      * {@code grouping baz} compile-time analysis cannot definitely determine the return type of {@code getBaz()} and
      * must fall back to {@code Object}.
      *
-     * <p>
-     * At run-time, though, we have a closed world, and therefore we can provide accurate information about
+     * <p>At run-time, though, we have a closed world, and therefore we can provide accurate information about
      * instantiation sites: this method will return the {@link CompositeRuntimeType}s for {@code one} and {@code two}.
      * We can then use this information to know that {@code getBaz()} can either be a {@code String} or an
      * {@code Uint32} and which type is appropriate at a particular point in YANG data tree.

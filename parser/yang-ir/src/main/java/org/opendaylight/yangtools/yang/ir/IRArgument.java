@@ -26,13 +26,11 @@ import org.eclipse.jdt.annotation.NonNull;
  *   <li>it can be a concatenation of any number of single- or double-quoted strings</li>
  * </ul>
  *
- * <p>
- * The first three cases as covered by {@link Single} subclass, which exposes appropriate methods to infer how its
+ * <p>The first three cases as covered by {@link Single} subclass, which exposes appropriate methods to infer how its
  * string literal is to be interpreted. The last case is handled by {@link Concatenation} subclass, which exposes
  * the constituent parts as {@link Single} items.
  *
- * <p>
- * Please note that parser implementations producing these argument representations are <b>NOT</b> required to retain
+ * <p>Please note that parser implementations producing these argument representations are <b>NOT</b> required to retain
  * the format of the original definition. They are free to perform quoting and concatenation transformations as long as
  * they maintain semantic equivalence. As a matter of example, these transformations are explicitly allowed:
  * <ul>
@@ -120,8 +118,7 @@ public abstract sealed class IRArgument extends AbstractIRObject {
          * of escaping. This may be true for double-quoted strings, as they <b>may</b> need to be further processed in
          * version-dependent ways to arrive at the correct literal value.
          *
-         * <p>
-         * This method is allowed to err on the false-positive side -- i.e. it may report any double-quoted string as
+         * <p>This method is allowed to err on the false-positive side -- i.e. it may report any double-quoted string as
          * needing further processing, even when the actual content could be determined to not need further processing.
          *
          * @return False if the value of {@link #string} can be used as-is.
@@ -135,12 +132,10 @@ public abstract sealed class IRArgument extends AbstractIRObject {
          * string was explicitly quoted and therefore cannot contain stray single- or double-quotes, or if the content
          * has already been checked to not contain them.
          *
-         * <p>
-         * The content check is needed to ascertain RFC7950 compliance, because RFC6020 allows constructs like
+         * <p>The content check is needed to ascertain RFC7950 compliance, because RFC6020 allows constructs like
          * <pre>abc"def</pre> in unquoted strings, while RFC7950 explicitly forbids them.
          *
-         * <p>
-         * This method is allowed to err on the false-positive side -- i.e. it may report any unquoted string as
+         * <p>This method is allowed to err on the false-positive side -- i.e. it may report any unquoted string as
          * needing this check, even when the actual content could be determined to not contain quotes.
          *
          * @return True if this argument requires a version-specific check for quote content.
@@ -152,8 +147,7 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         /**
          * Imprecise check if this argument complies with the {@code identifier} YANG specification.
          *
-         * <p>
-         * This method is allowed to err on the false-negative side -- i.e. it may report any string as not being
+         * <p>This method is allowed to err on the false-negative side -- i.e. it may report any string as not being
          * compliant with {@code identifier}, even when the actual content could be determined to be compliant.
          *
          * @return True if this argument is known to be directly usable in contexts where YANG requires the use of

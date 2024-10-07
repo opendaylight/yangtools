@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
  * A statement which has not been declared, but exists in the statement hierarchy through being an implicit intermediate
  * statement -- like a {@code case} created by a {@code leaf} inside a {@code choice}.
  *
- * <p>
- * That the contract of this class requires the caller to add child effective statement, if that does not happen, you
+ * <p>That the contract of this class requires the caller to add child effective statement, if that does not happen, you
  * get to keep the pieces.
  *
  * @param <A> Argument type

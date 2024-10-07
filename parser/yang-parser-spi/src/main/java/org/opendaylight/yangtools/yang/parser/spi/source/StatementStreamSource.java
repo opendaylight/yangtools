@@ -14,16 +14,13 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 /**
  * Statement stream source, which is used for inference of effective model.
  *
- * <p>
- * Statement stream source is required to emit its statements using supplied {@link StatementWriter}.
+ * <p>Statement stream source is required to emit its statements using supplied {@link StatementWriter}.
  *
- * <p>
- * Since YANG allows language extensions defined in sources (which defines how source is serialized), instances of
+ * <p>Since YANG allows language extensions defined in sources (which defines how source is serialized), instances of
  * extensions present anywhere and forward references, each source needs to be processed in three steps, where each step
  * uses different set of supported statements.
  *
- * <p>
- * Steps (in order of invocation) are:
+ * <p>Steps (in order of invocation) are:
  * <ol>
  * <li>{@link #writePreLinkage(StatementWriter, QNameToStatementDefinition)} -
  * Source MUST emit only statements related in pre-linkage, which are present in

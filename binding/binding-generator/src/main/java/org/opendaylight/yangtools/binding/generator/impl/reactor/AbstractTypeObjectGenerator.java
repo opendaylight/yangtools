@@ -81,8 +81,7 @@ import org.slf4j.LoggerFactory;
  *       of its parent type.<li>
  * </ul>
  *
- * <p>
- * To throw a bit of confusion into the mix, there are three exceptions to those rules:
+ * <p>To throw a bit of confusion into the mix, there are three exceptions to those rules:
  * <ul>
  *   <li>
  *     {@code identityref} definitions never result in a type definition being emitted. The reason for this has to do
@@ -218,9 +217,8 @@ import org.slf4j.LoggerFactory;
  *   <li>
  * </ul>
  *
- * <p>
- * At the end of the day, the mechanic translation rules are giving way to correctly mapping the semantics -- which in
- * both of the exception cases boil down to tracking type indirection. Intermediate constructs involved in tracking
+ * <p>At the end of the day, the mechanic translation rules are giving way to correctly mapping the semantics -- which
+ * in both of the exception cases boil down to tracking type indirection. Intermediate constructs involved in tracking
  * type indirection in YANG constructs is therefore explicitly excluded from the generated Java code, but the Binding
  * Specification still takes them into account when determining types as outlined above.
  */

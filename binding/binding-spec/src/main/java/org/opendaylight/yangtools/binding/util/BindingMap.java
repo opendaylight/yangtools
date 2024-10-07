@@ -26,8 +26,7 @@ import org.opendaylight.yangtools.binding.Key;
  * utilities, methods in this class index values via their identifier, hence providing a more convenient API, amenable
  * to fluent builders.
  *
- * <p>
- * A typical example of use with generated DataObjects looks like this:
+ * <p>A typical example of use with generated DataObjects looks like this:
  * <pre>
  *   <code>
  *     Foo foo = new FooBuilder()
@@ -38,8 +37,7 @@ import org.opendaylight.yangtools.binding.Key;
  *   </code>
  * </pre>
  *
- * <p>
- * Another alternative is to use builders:
+ * <p>Another alternative is to use builders:
  * <pre>
  *   <code>
  *     Foo foo = new FooBuilder()
@@ -51,8 +49,7 @@ import org.opendaylight.yangtools.binding.Key;
  *   </code>
  * </pre>
  *
- * <p>
- * This class allows for two modes of operation:
+ * <p>This class allows for two modes of operation:
  * <ul>
  *   <li>Unordered, available through {@link #of(EntryObject...)}/{@link #builder()} family of functions. Maps
  *       instantiated through this, preferred, interface will have their iteration order randomized, as explain in

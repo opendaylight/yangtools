@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.yang.common.YangNames;
  * Base class of YANG Schema source identifiers. Source identifiers are designated to be carry only necessary
  * information to look up YANG module (or submodule) source and to be used by various SchemaSourceProviders.
  *
- * <p>
- * For further reference see: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC6020</a>
+ * <p>For further reference see: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC6020</a>
  * and <a href="https://www.rfc-editor.org/rfc/rfc6022#section-3.1">RFC6022</a>.
  */
 public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision revision) implements Identifier {
@@ -111,8 +110,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Returns filename for this YANG module as specified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC 6020</a>.
      *
-     * <p>
-     * Returns filename formatted as {@code moduleName ['@' revision] '.yang'}, where revision-date is in format
+     * <p>Returns filename formatted as {@code moduleName ['@' revision] '.yang'}, where revision-date is in format
      * {@code YYYY-mm-dd}.
      *
      * @return Filename for this source identifier.
@@ -125,8 +123,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Returns filename for this YANG module as specified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC 6020</a>.
      *
-     * <p>
-     * Returns filename formatted as {@code moduleName ['@' revision] '.yin'}, where revision-date is in format
+     * <p>Returns filename formatted as {@code moduleName ['@' revision] '.yin'}, where revision-date is in format
      * {@code YYYY-mm-dd}.
      *
      * @return Filename for this source identifier.
@@ -148,8 +145,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Returns filename for this YANG module as specified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC 6020</a>.
      *
-     * <p>
-     * Returns filename formatted as {@code moduleName ['@' revision] '.yang'}, where revision-date is in format
+     * <p>Returns filename formatted as {@code moduleName ['@' revision] '.yang'}, where revision-date is in format
      * {@code YYYY-mm-dd}.
      *
      * @param moduleName module name
@@ -164,8 +160,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Returns filename for this YANG module as specified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC 6020</a>.
      *
-     * <p>
-     * Returns filename formatted as {@code moduleName ['@' revision] '.yin'}, where Where revision-date is in format
+     * <p>Returns filename formatted as {@code moduleName ['@' revision] '.yin'}, where Where revision-date is in format
      * {@code YYYY-mm-dd}.
      *
      * @param moduleName module name

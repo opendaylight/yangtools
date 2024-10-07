@@ -18,10 +18,9 @@ public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<Dec
     /**
      * Returns integer between 1 and 18 inclusively.
      *
-     * <p>
-     * The "fraction-digits" statement controls the size of the minimum difference between values of a decimal64 type,
-     * by restricting the value space to numbers that are expressible as "i x 10^-n" where n is the fraction-digits
-     * argument.
+     * <p>The "fraction-digits" statement controls the size of the minimum difference between values of a decimal64
+     * type, by restricting the value space to numbers that are expressible as "i x 10^-n" where n is the
+     * fraction-digits argument.
      *
      * @return number of fraction digits
      */

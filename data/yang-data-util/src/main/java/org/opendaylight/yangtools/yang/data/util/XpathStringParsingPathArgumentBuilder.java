@@ -32,11 +32,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Iterator which lazily parses {@link PathArgument} from string representation.
  *
- * <p>
- * Note that invocation of {@link #hasNext()} or {@link #next()} may result in
- * throwing of {@link IllegalArgumentException} if underlying string representation
- * is not correctly serialized or does not represent instance identifier valid
- * for associated schema context.
+ * <p>Note that invocation of {@link #hasNext()} or {@link #next()} may result in throwing of
+ * {@link IllegalArgumentException} if underlying string representation is not correctly serialized or does not
+ * represent instance identifier valid for associated schema context.
  */
 final class XpathStringParsingPathArgumentBuilder implements Mutable {
     /**
@@ -243,9 +241,8 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     /**
      * Fails parsing if a condition is not met.
      *
-     * <p>
-     * In case of error provides pointer to failed instance identifier,
-     * offset on which failure occurred with explanation.
+     * <p>In case of error provides pointer to failed instance identifier, offset on which failure occurred with
+     * explanation.
      *
      * @param condition Fails parsing if {@code condition} is false
      * @param errorMsg Error message which will be provided to user.

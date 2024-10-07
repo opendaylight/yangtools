@@ -280,9 +280,8 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * The inverse operation is {@link #fromByteBits(byte)}. In case this value is greater than {@link Byte#MAX_VALUE},
-     * the returned value will be equal to {@code this - 2^8}.
+     * <p>The inverse operation is {@link #fromByteBits(byte)}. In case this value is greater than
+     * {@link Byte#MAX_VALUE}, the returned value will be equal to {@code this - 2^8}.
      */
     @Override
     public final byte byteValue() {

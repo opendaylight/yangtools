@@ -36,8 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
  * YANG defines 'derived type' as a type created through a 'typedef' statement. These types are exposed in the
  * hierarchical namespace and can be looked up.
  *
- * <p>
- * A derived type can redefine the default value, description, status and reference of a particular type definition.
+ * <p>A derived type can redefine the default value, description, status and reference of a particular type definition.
  * It can only refine the units attribute, as that attribute is tied to the semantics of the value. The default value,
  * and units attributes are inherited from the super (base or restricted) type, others are left undefined if not
  * explicitly set. Status defaults to current.

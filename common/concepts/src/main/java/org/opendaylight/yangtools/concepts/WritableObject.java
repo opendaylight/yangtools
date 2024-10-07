@@ -19,8 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *   {@code public static CLASS readFrom(DataInput in) throws IOException;}
  * </pre>
  *
- * <p>
- * The serialization format provided by this abstraction does not guarantee versioning. Callers are responsible
+ * <p>The serialization format provided by this abstraction does not guarantee versioning. Callers are responsible
  * for ensuring the source stream is correctly positioned. Various utility method for implementing the desired
  * serialization format are available in {@link WritableObjects}.
  */

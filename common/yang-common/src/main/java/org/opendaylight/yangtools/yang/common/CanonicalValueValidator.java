@@ -17,12 +17,10 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * representation state such that it conforms to a YANG type derived from a type with a {@link CanonicalValue}
  * representation.
  *
- * <p>
- * Note: this interface should not be directly implemented. Use {@link AbstractCanonicalValueValidator} instead.
+ * <p>Note: this interface should not be directly implemented. Use {@link AbstractCanonicalValueValidator} instead.
  *
  * @param <T> canonical value type
  * @param <V> validated canonical value type
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault

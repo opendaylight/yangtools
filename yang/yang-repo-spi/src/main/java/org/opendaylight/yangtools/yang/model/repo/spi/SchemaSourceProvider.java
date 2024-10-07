@@ -34,13 +34,11 @@ public interface SchemaSourceProvider<T extends SourceRepresentation> {
      *       or throws {@link MissingSchemaSourceException}</li>
      * </ul>
      *
-     * <p>
-     * In either case the returned representation is required to report a non-null revision in the
+     * <p>In either case the returned representation is required to report a non-null revision in the
      * {@link SourceIdentifier} returned from {@link SourceRepresentation#sourceId()}.
      *
-     * <p>
-     * Implementations are not required to provide constant behavior in time, notably this different invocation of this
-     * method may produce different results.
+     * <p>Implementations are not required to provide constant behavior in time, notably this different invocation of
+     * this method may produce different results.
      *
      * @param sourceId source identifier
      * @return future source representation, if supplied YANG module is available

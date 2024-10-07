@@ -8,17 +8,13 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 /**
- * Implementation of Upgradable {@link RootApplyStrategy}
+ * Implementation of Upgradable {@link RootApplyStrategy}.
  *
- * <p>
- * This implementation is associated with {@link LatestOperationHolder}
- * which holds latest available implementation, which may be used for
- * upgrade.
+ * <p>This implementation is associated with {@link LatestOperationHolder} which holds latest available implementation,
+ * which may be used for upgrade.
  *
- * <p>
- * Upgrading {@link LatestOperationHolder} will not affect any instance,
- * unless client invoked {@link #upgradeIfPossible()} which will result in
- * changing delegate to the latest one.
+ * <p>Upgrading {@link LatestOperationHolder} will not affect any instance, unless client invoked
+ * {@link #upgradeIfPossible()} which will result in changing delegate to the latest one.
  */
 final class UpgradableRootApplyStrategy extends RootApplyStrategy {
     private final LatestOperationHolder holder;

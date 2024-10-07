@@ -23,18 +23,15 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 /**
  * Class tracking state of resolution of an {@code augment} statement's target generator.
  *
- * <p>
- * This is not quite straightforward. 'path' works on top of schema tree, which is instantiated view. Since we
+ * <p>This is not quite straightforward. 'path' works on top of schema tree, which is instantiated view. Since we
  * do not generate duplicate instantiations along 'uses' path, findSchemaTreeGenerator() would satisfy our
  * request by returning a child of the source 'grouping'.
  *
- * <p>
- * When that happens, our subsequent lookups need to adjust the namespace being looked up to the grouping's
+ * <p>When that happens, our subsequent lookups need to adjust the namespace being looked up to the grouping's
  * namespace... except for the case when the step is actually an augmentation, in which case we must not make
  * that adjustment.
  *
- * <p>
- * Hence we deal with this lookup recursively, dropping namespace hints when we cross into groupings. Note we
+ * <p>Hence we deal with this lookup recursively, dropping namespace hints when we cross into groupings. Note we
  * take an initial hint -- which UsesAugmentGenerator provides, but ModuleAugmentGenerator does not -- and that
  * accounts for the difference.
  */

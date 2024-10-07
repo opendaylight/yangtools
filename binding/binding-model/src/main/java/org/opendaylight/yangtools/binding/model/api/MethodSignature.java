@@ -17,15 +17,13 @@ import org.eclipse.jdt.annotation.NonNull;
  * SHOULD rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null}
  * values.
  *
- * <p>
- * The defining Type contains the reference to Generated Type that declares Method Signature.
+ * <p>The defining Type contains the reference to Generated Type that declares Method Signature.
  */
 public interface MethodSignature extends TypeMember {
     /**
      * Returns {@code true} if the method signature is defined as abstract.
      *
-     * <p>
-     * By default in java all method declarations in interface are defined as abstract, but the user does not need
+     * <p>By default in java all method declarations in interface are defined as abstract, but the user does not need
      * necessarily to declare abstract keyword in front of each method. The abstract methods are allowed in Class
      * definitions but only when the class is declared as abstract.
      *
@@ -56,13 +54,11 @@ public interface MethodSignature extends TypeMember {
     @NonNull ValueMechanics getMechanics();
 
     /**
-     * The Parameter interface is designed to hold the information of method
-     * Parameter(s). The parameter is defined by his Name which MUST be unique
-     * as java does not allow multiple parameters with same names for one method
-     * and Type that is associated with parameter.
+     * The Parameter interface is designed to hold the information of method Parameter(s). The parameter is defined by
+     * his Name which MUST be unique as java does not allow multiple parameters with same names for one method and Type
+     * that is associated with parameter.
      */
     interface Parameter {
-
         /**
          * Returns the parameter name.
          *

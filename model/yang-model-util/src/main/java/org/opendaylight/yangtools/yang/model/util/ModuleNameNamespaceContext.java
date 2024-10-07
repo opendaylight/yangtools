@@ -27,8 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  * is useful for implementing namespace resolution according to
  * <a href="https://www.rfc-editor.org/rfc/rfc7951#section-4">RFC7951 Section 4</a>.
  *
- * <p>
- * When multiple revisions of a particular namespace are present in the backing SchemaContext, this ambiguity is
+ * <p>When multiple revisions of a particular namespace are present in the backing SchemaContext, this ambiguity is
  * resolved by using the latest revision available.
  */
 @Beta

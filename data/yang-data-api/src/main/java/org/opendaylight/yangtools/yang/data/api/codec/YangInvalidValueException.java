@@ -34,8 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
  *   (Section 7.5.4.1) associated with the constraint, if any exist.
  * </pre>
  *
- * <p>
- * This error tag also references <a href="https://www.rfc-editor.org/rfc/rfc6241#appendix-A">RFC6241 Appendix A</a>,
+ * <p>This error tag also references <a href="https://www.rfc-editor.org/rfc/rfc6241#appendix-A">RFC6241 Appendix A</a>,
  * which defines the appropriate severity and adds more semantics.
  */
 @Beta

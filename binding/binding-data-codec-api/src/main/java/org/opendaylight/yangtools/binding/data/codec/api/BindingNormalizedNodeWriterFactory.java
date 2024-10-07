@@ -25,12 +25,10 @@ public interface BindingNormalizedNodeWriterFactory {
      * Creates a {@link BindingStreamEventWriter} for data tree path which will translate to NormalizedNode model
      * and invoke proper events on supplied {@link NormalizedNodeStreamWriter}.
      *
-     * <p>
-     * Also provides translation of supplied Instance Identifier to {@link YangInstanceIdentifier} so client code, does
-     * not need to translate that separately.
+     * <p>Also provides translation of supplied Instance Identifier to {@link YangInstanceIdentifier} so client code,
+     * does not need to translate that separately.
      *
-     * <p>
-     * If {@link YangInstanceIdentifier} is not needed, please use
+     * <p>If {@link YangInstanceIdentifier} is not needed, please use
      * {@link #newWriter(DataObjectReference, NormalizedNodeStreamWriter)} method to conserve resources.
      *
      * @param path
@@ -49,8 +47,7 @@ public interface BindingNormalizedNodeWriterFactory {
      * Creates a {@link BindingStreamEventWriter} for data tree path which will translate to NormalizedNode model
      * and invoke proper events on supplied {@link NormalizedNodeStreamWriter}.
      *
-     * <p>
-     * This variant does not provide YANG instance identifier and is useful for use-cases, where
+     * <p>This variant does not provide YANG instance identifier and is useful for use-cases, where
      * {@link DataObjectReference} translation is done in other way, or YANG instance identifier is unnecessary
      * (e.g. notifications, RPCs).
      *

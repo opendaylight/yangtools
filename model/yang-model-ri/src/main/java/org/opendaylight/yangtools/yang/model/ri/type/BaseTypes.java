@@ -29,8 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
  * Utility access methods for creating and accessing YANG base type definitions. YANG types come in two basic variants,
  * depending on whether they fully define their base instance or model input is required to fully-form the type.
  *
- * <p>
- * The following types have their base type fully specified and are exposed as appropriate TypeDefinition
+ * <p>The following types have their base type fully specified and are exposed as appropriate TypeDefinition
  * sub-interfaces:
  * <ul>
  *     <li>boolean</li>
@@ -41,8 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
  *     <li>uint{8,16,32,64}</li>
  * </ul>
  *
- * <p>
- * The following types require additional specification in the model and are exposed by means of a specialized
+ * <p>The following types require additional specification in the model and are exposed by means of a specialized
  * {@link TypeBuilder}s for each type:
  * <ul>
  *    <li>decimal64</li>

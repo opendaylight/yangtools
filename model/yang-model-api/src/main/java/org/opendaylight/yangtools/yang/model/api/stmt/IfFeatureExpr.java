@@ -28,8 +28,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * relying on default predicate methods. Other Predicate methods, like {@link #and(Predicate)} are not optimized in
  * this implementation.
  *
- * <p>
- * The set of features referenced in this expression is available through {@link #getReferencedFeatures()}.
+ * <p>The set of features referenced in this expression is available through {@link #getReferencedFeatures()}.
  */
 public abstract sealed class IfFeatureExpr implements Immutable, Predicate<FeatureSet> {
     private abstract static sealed class Single extends IfFeatureExpr {

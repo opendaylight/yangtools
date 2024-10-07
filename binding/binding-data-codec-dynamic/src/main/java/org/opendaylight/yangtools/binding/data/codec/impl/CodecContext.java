@@ -16,8 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * Location specific context for schema nodes, which contains codec specific information to properly serialize
  * and deserialize from Java YANG Binding data to NormalizedNode data.
  *
- * <p>
- * Two core subtypes of codec context are available:
+ * <p>Two core subtypes of codec context are available:
  * <ul>
  *   <li>{@link ValueNodeCodecContext} for nodes, which do not contain any nested YANG modeled substructures</li>
  *   <li>{@link DataContainerCodecContext} for nodes, which contain nested YANG modeled substructures. These context

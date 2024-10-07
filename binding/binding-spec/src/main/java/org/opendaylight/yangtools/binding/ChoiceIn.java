@@ -12,11 +12,11 @@ package org.opendaylight.yangtools.binding;
  * {@code choice} statements to their defining container, without implying {@link DataObject} and {@link ChildOf}
  * relationship.
  *
- * <p>
- * This marker interface is also inherited by interfaces generated for {@code case} statements, similarly marking those
- * interfaces as usable within scope when the statement which defined the {@code choice} statement. This allows us to
- * bind {@code grouping}s to their {@code uses} references within an (implicit or explicit) {@code case}, effectively
- * forming an addressing path from {@link DataRoot} or a {@link DataContainer}. Given the following generated code:
+ * <p>This marker interface is also inherited by interfaces generated for {@code case} statements, similarly marking
+ * those interfaces as usable within scope when the statement which defined the {@code choice} statement. This allows
+ * us to bind {@code grouping}s to their {@code uses} references within an (implicit or explicit) {@code case},
+ * effectively forming an addressing path from {@link DataRoot} or a {@link DataContainer}. Given the following
+ * generated code:
  * <pre>{@code
  *   interface Grouping extends DataObject;
  *   interface GroupingChild extends ChildOf<Grouping>;
@@ -28,7 +28,6 @@ package org.opendaylight.yangtools.binding;
  * we can safely make the inference of {@code GroupingChild -> childOf -> Case -> choiceIn -> Parent}.
  *
  * @param <P> Parent container
- * @author Robert Varga
  */
 public non-sealed interface ChoiceIn<P> extends DataContainer {
 

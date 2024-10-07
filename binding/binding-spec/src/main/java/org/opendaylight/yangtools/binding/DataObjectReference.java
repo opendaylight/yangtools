@@ -28,14 +28,12 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 /**
  * A reference to a {@link DataObject} with semantics partially overlapping with to YANG {@code instance-identifier}.
  *
- * <p>
- * While this indirection is not something defined in YANG, this class hierarchy arises naturally from the Binding
+ * <p>While this indirection is not something defined in YANG, this class hierarchy arises naturally from the Binding
  * specification's Java footprint, which uses {@link DataObject} as the baseline self-sufficient addressable construct.
  * This means users can use a {@link KeyAware} class without specifying the corresponding key -- resulting in an
  * {@link InexactDataObjectStep}.
  *
- * <p>
- * There are two kinds of a reference based on their treatment of such a {@link InexactDataObjectStep}:
+ * <p>There are two kinds of a reference based on their treatment of such a {@link InexactDataObjectStep}:
  * <ol>
  *   <li>{@link DataObjectIdentifier}, which accepts only {@link ExactDataObjectStep}s and represents
  *       a {@link BindingInstanceIdentifier} pointing to a {@link DataObject}</li>
@@ -45,8 +43,7 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
  * </ol>
  * An explicit conversion to {@link DataObjectIdentifier} can be attempted via {@link #toIdentifier()} method.
  *
- * <p>
- * The legacy {@link InstanceIdentifier} is implements the second kind via its class hierarchy, but indicates its
+ * <p>The legacy {@link InstanceIdentifier} is implements the second kind via its class hierarchy, but indicates its
  * compliance via {@link #isExact()} method. Any {@link DataObjectReference} can be converted into an
  * {@link InstanceIdentifier} via the {@link #toLegacy()} method.
  *

@@ -16,10 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 /**
  * Interface describing YANG 'deviate' statement.
  *
- * <p>
- * The 'deviate' statement defines how the device's implementation of
- * the target node deviates from its original definition.
- * The argument is one of the strings "not-supported", "add", "replace", or "delete".
+ * <p>The 'deviate' statement defines how the device's implementation of the target node deviates from its original
+ * definition. The argument is one of the strings "not-supported", "add", "replace", or "delete".
  */
 @Beta
 public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateEffectiveStatement> {

@@ -29,8 +29,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
  * argument -- i.e. the effective instance is in a different module. This also means that there is some history
  * copy history attached.
  *
- * <p>
- * Since we have to keep the argument already, we perform a different field cut than in the local case and handle
+ * <p>Since we have to keep the argument already, we perform a different field cut than in the local case and handle
  * also substatements here. We do not handle further refines, though, as that requires yet another field, further
  * growing instance size. That case is handled by {@link FullCopiedUsesEffectiveStatement}.
  */

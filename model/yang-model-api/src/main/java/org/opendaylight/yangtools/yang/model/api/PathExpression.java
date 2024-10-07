@@ -27,8 +27,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
  * An expression as defined in <a href="https://www.rfc-editor.org/rfc/rfc7950#section-9.9.2">RFC7950 Section 9.9.2</a>,
  * i.e. the argument of a {@code path} statement.
  *
- * <p>
- * Semantically a {@link PathExpression} is similar to a {@link YangXPathExpression} with guarantees around what
+ * <p>Semantically a {@link PathExpression} is similar to a {@link YangXPathExpression} with guarantees around what
  * subexpressions it can contain:
  * <ul>
  *   <li>the root expression must be a {@link YangLocationPath}</li>

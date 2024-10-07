@@ -15,8 +15,7 @@ import org.antlr.v4.runtime.misc.Pair;
  * Large general token implementation. This cuts {@code channel}, {@code text} fields completely, as we typically
  * we do not use them. All other fields are retained..
  *
- * <p>
- * This class ends up costing 40/56/40/48 bytes instead of 48/64/48/48 bytes, a saving of 12-33%, while still being
+ * <p>This class ends up costing 40/56/40/48 bytes instead of 48/64/48/48 bytes, a saving of 12-33%, while still being
  * applicable in all situations.
  */
 final class Token44444 extends AbstractSourceToken {

@@ -21,8 +21,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * of {@link #prefix()} method's return, as hinted by the ABNF for {@code node-identifier} -- and while a keyword is a
  * semantically different construct, it shares the same value space.
  *
- * <p>
- * Naming in this class prefers the formal ABNF specification and draws value-space and type-safety implications from
+ * <p>Naming in this class prefers the formal ABNF specification and draws value-space and type-safety implications from
  * that connection, rather than following the RFC-assigned names.
  */
 @Beta
@@ -90,8 +89,7 @@ public abstract sealed class IRKeyword extends AbstractIRObject {
      * This keyword's 'identifier' part. This corresponds to what the RFCs refer to as {@code YANG keyword} or as
      * {@code language extension keyword}.
      *
-     * <p>
-     * Note the returned string is guaranteed to conform to rules of {@code identifier} ABNF..
+     * <p>Note the returned string is guaranteed to conform to rules of {@code identifier} ABNF..
      *
      * @return This keyword's identifier part.
      */
@@ -104,8 +102,7 @@ public abstract sealed class IRKeyword extends AbstractIRObject {
      * null. For language extension references this is the non-null prefix which references the YANG module defining
      * the language extension.
      *
-     * <p>
-     * Note the returned string, if non-null, is guaranteed to conform to rules of {@code identifier} ABNF.
+     * <p>Note the returned string, if non-null, is guaranteed to conform to rules of {@code identifier} ABNF.
      *
      * @return This keyword's prefix, or null if this keyword references a YANG keyword.
      */

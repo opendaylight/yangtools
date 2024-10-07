@@ -19,9 +19,8 @@ public interface BindingDataObjectCodecTreeNode<T extends DataObject>
     /**
      * Returns codec which uses caches serialization / deserialization results.
      *
-     * <p>
-     * Caching may introduce performance penalty to serialization / deserialization
-     * but may decrease use of heap for repetitive objects.
+     * <p>Caching may introduce performance penalty to serialization / deserialization but may decrease use of heap for
+     * repetitive objects.
      *
      * @param cacheSpecifier Set of objects, for which cache may be in place
      * @return Codec which uses cache for serialization / deserialization.

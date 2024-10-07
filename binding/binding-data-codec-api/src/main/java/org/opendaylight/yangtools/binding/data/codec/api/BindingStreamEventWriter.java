@@ -62,14 +62,12 @@ import org.opendaylight.yangtools.binding.Key;
  * This interface is not intended to be implemented by users of generated Binding DTOs but to be used by utilities,
  * which needs to emit NormalizedNode model from Binding DTOs.
  *
- * <p>
- * This interface is intended as API definition of facade for real Event / Stream Writer, without explicitly requiring
- * stream writer and related interfaces to be imported by all generated Binding DTOs.
+ * <p>This interface is intended as API definition of facade for real Event / Stream Writer, without explicitly
+ * requiring stream writer and related interfaces to be imported by all generated Binding DTOs.
  *
- * <p>
- * Existence of this interface in base Java Binding package is required to support runtime generation of users of this
- * interface in OSGI and OSGI-like environment, since this package is only package which is imported by all generated
- * Binding DTOs and wired in OSGI.
+ * <p>Existence of this interface in base Java Binding package is required to support runtime generation of users of
+ * this interface in OSGI and OSGI-like environment, since this package is only package which is imported by all
+ * generated Binding DTOs and wired in OSGI.
  */
 @Beta
 public interface BindingStreamEventWriter extends Closeable, Flushable {
@@ -83,8 +81,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * resilient in face of missing and mismatched hints, which is to say the user can specify startLeafSet(..., 1)
      * and then call leafNode() 15 times.
      *
-     * <p>
-     * The acceptable hint values are non-negative integers and this constant, all other values will result, based on
+     * <p>The acceptable hint values are non-negative integers and this constant, all other values will result, based on
      * implementation preference, in the hint being completely ignored or IllegalArgumentException being thrown.
      */
     int UNKNOWN_SIZE = -1;
@@ -132,10 +129,8 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits a start of leaf set (leaf-list).
      *
-     * <p>
-     * Emits start of leaf set, during writing leaf set event, only
-     * {@link #leafSetEntryNode(Object)} calls are valid. Leaf set event is
-     * finished by calling {@link #endNode()}.
+     * <p>Emits start of leaf set, during writing leaf set event, only {@link #leafSetEntryNode(Object)} calls are
+     * valid. Leaf set event is finished by calling {@link #endNode()}.
      *
      * @param localName
      *            name of node as defined in schema, namespace and revision are
@@ -171,8 +166,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits start of new container. End of container event is emitted by invoking {@link #endNode()}.
      *
-     * <p>
-     * Valid sub-events are:
+     * <p>Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode(String, Object)}</li>
      * <li>{@link #startContainerNode(Class, int)}</li>
@@ -204,10 +198,8 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits start of unkeyed list node event.
      *
-     * <p>
-     * End of unkeyed list event is emitted by invoking {@link #endNode()}.
-     * Valid subevents is only {@link #startUnkeyedListItem(int)}. All other
-     * methods will throw {@link IllegalArgumentException}.
+     * <p>End of unkeyed list event is emitted by invoking {@link #endNode()}. Valid subevents is only
+     * {@link #startUnkeyedListItem(int)}. All other methods will throw {@link IllegalArgumentException}.
      *
      * @param localName
      *            name of node as defined in schema, namespace and revision are
@@ -230,9 +222,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits start of new unkeyed list item.
      *
-     * <p>
-     * Unkeyed list item event is finished by invoking {@link #endNode()}. Valid
-     * sub-events are:
+     * <p>Unkeyed list item event is finished by invoking {@link #endNode()}. Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode(String, Object)}</li>
      * <li>{@link #startContainerNode(Class, int)}</li>
@@ -257,10 +247,8 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits start of unordered map node event.
      *
-     * <p>
-     * End of map node event is emitted by invoking {@link #endNode()}. Valid
-     * subevent is only {@link #startMapEntryNode(Identifier, int)}. All other methods will
-     * throw {@link IllegalArgumentException}.
+     * <p>End of map node event is emitted by invoking {@link #endNode()}. Valid subevent is only
+     * {@link #startMapEntryNode(Identifier, int)}. All other methods will throw {@link IllegalArgumentException}.
      *
      * @param mapEntryType
      *            Class of list item, which has defined key.
@@ -282,10 +270,8 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits start of ordered map node event.
      *
-     * <p>
-     * End of map node event is emitted by invoking {@link #endNode()}. Valid
-     * subevent is only {@link #startMapEntryNode(Identifier, int)}. All other methods will
-     * throw {@link IllegalArgumentException}.
+     * <p>End of map node event is emitted by invoking {@link #endNode()}. Valid subevent is only
+     * {@link #startMapEntryNode(Identifier, int)}. All other methods will throw {@link IllegalArgumentException}.
      *
      * @param mapEntryType
      *            Class of list item, which has defined key.
@@ -307,11 +293,9 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits start of map entry.
      *
-     * <p>
-     * End of map entry event is emitted by invoking {@link #endNode()}.
+     * <p>End of map entry event is emitted by invoking {@link #endNode()}.
      *
-     * <p>
-     * Valid sub-events are:
+     * <p>Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode(String, Object)}</li>
      * <li>{@link #startContainerNode(Class, int)}</li>
@@ -340,9 +324,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits start of choice node.
      *
-     * <p>
-     * Valid sub-event in {@link #startCase(Class, int)}, which selects case
-     * which should be written.
+     * <p>Valid sub-event in {@link #startCase(Class, int)}, which selects case which should be written.
      *
      * @param choice
      *            Choice class.
@@ -361,8 +343,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Starts a case node.
      *
-     * <p>
-     * Valid sub-events are:
+     * <p>Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode(String, Object)}</li>
      * <li>{@link #startContainerNode(Class, int)}</li>
@@ -381,12 +362,9 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     /**
      * Emits start of augmentation node.
      *
-     * <p>
-     * End of augmentation event is emitted by invoking {@link #endNode()}.
+     * <p>End of augmentation event is emitted by invoking {@link #endNode()}.
      *
-     * <p>
-     * Valid sub-events are:
-     *
+     * <p>Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode(String, Object)}</li>
      * <li>{@link #startContainerNode(Class, int)}</li>
@@ -396,9 +374,8 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * <li>{@link #startUnkeyedList(Class, int)}</li>
      * </ul>
      *
-     * <p>
-     * Note this is only method, which does not require childSizeHint, since
-     * maximum value is always size of <code>possibleChildren</code>.
+     * <p>Note this is only method, which does not require childSizeHint, since maximum value is always size of
+     * <code>possibleChildren</code>.
      *
      * @param augmentationType augmentation class
      * @throws IllegalArgumentException

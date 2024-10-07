@@ -18,13 +18,11 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * An opinionated superclass for implementing {@link HierarchicalIdentifier}s.
  *
- * <p>
- * It assumes that the identifier is composed of multiple non-null steps available via {@link #itemIterator()} and that
- * {@link #contains(AbstractHierarchicalIdentifier)} semantics can be implemented using simple in-order comparison of
- * these steps.
+ * <p>It assumes that the identifier is composed of multiple non-null steps available via {@link #itemIterator()} and
+ * that {@link #contains(AbstractHierarchicalIdentifier)} semantics can be implemented using simple in-order comparison
+ * of these steps.
  *
- * <p>
- * Furthermore it mandates that serialization occurs via {@link #writeReplace()}, following the Serialization Proxy
+ * <p>Furthermore it mandates that serialization occurs via {@link #writeReplace()}, following the Serialization Proxy
  * pattern.
  */
 public abstract class AbstractHierarchicalIdentifier<T extends AbstractHierarchicalIdentifier<T, I>, I>

@@ -21,8 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
  * between the various (mostly parser-based) representations. Implementations of this interface are usually created
  * from an instance of {@link NormalizableAnydata}.
  *
- * <p>
- * Note this interface does not have an equality contract and implementations are expected to default to identity
+ * <p>Note this interface does not have an equality contract and implementations are expected to default to identity
  * equality (or in Valhalla-speak: be plain data).
  */
 @Beta

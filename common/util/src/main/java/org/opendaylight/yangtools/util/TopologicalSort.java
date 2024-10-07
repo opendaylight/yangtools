@@ -19,8 +19,7 @@ import java.util.Set;
 /**
  * Utility class that provides topological sort.
  *
- * <p>
- * Note this class is non-public to allow for API transition.
+ * <p>Note this class is non-public to allow for API transition.
  */
 @Beta
 public final class TopologicalSort {

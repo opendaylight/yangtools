@@ -124,13 +124,11 @@ public final class BindingRuntimeHelpers {
     /**
      * Loads {@link YangModuleInfo} infos available on supplied classloader.
      *
-     * <p>
-     * {@link YangModuleInfo} are discovered using {@link ServiceLoader} for {@link YangModelBindingProvider}.
+     * <p>{@link YangModuleInfo} are discovered using {@link ServiceLoader} for {@link YangModelBindingProvider}.
      * {@link YangModelBindingProvider} are simple classes which holds only pointers to actual instance
      * {@link YangModuleInfo}.
      *
-     * <p>
-     * When {@link YangModuleInfo} is available, all dependencies are recursively collected into returning set by
+     * <p>When {@link YangModuleInfo} is available, all dependencies are recursively collected into returning set by
      * collecting results of {@link YangModuleInfo#getImportedModules()}.
      *
      * @param classLoader Classloader for which {@link YangModuleInfo} should be retrieved.

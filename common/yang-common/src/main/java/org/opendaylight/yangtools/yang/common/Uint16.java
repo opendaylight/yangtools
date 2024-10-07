@@ -291,8 +291,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * The inverse operation is {@link #fromShortBits(short)}. In case this value is greater than
+     * <p>The inverse operation is {@link #fromShortBits(short)}. In case this value is greater than
      * {@link Short#MAX_VALUE}, the returned value will be equal to {@code this - 2^16}.
      */
     @Override

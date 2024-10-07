@@ -12,8 +12,7 @@ package org.opendaylight.yangtools.binding;
  * of this interface is generated at the definition site and then every instantiation gets a separate
  * {@link InstanceNotification} interface, all inheriting that specialization.
  *
- * <p>
- * The contract is similar to that of {@link Grouping}, which we extend, but we only allow single inheritence of this
+ * <p>The contract is similar to that of {@link Grouping}, which we extend, but we only allow single inheritence of this
  * interface and therefore we capture the concrete instantiation.
  *
  * @param <T> Concrete {@link NotificationBody} type

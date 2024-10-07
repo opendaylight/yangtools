@@ -122,8 +122,7 @@ final class PotassiumNode {
      * encoded as part of a {@link #NODE_MAP_ENTRY} this bit indicates the <strong>value</strong> is not encoded and
      * should be looked up from the map entry's predicates.
      *
-     * <p>
-     * The predicate is encoded as a {@link #ADDR_DEFINE} or {@link #ADDR_LOOKUP_1B}/{@link #ADDR_LOOKUP_4B},
+     * <p>The predicate is encoded as a {@link #ADDR_DEFINE} or {@link #ADDR_LOOKUP_1B}/{@link #ADDR_LOOKUP_4B},
      * followed by an encoded {@link PotassiumValue}.
      */
     static final byte PREDICATE_ONE   = 0x40;

@@ -10,8 +10,7 @@
  * {@link BindingClassLoader}, which allows lookup of compile-time-generated Binding classes for the purpose of
  * referencing them within code generators and which serves as the ClassLoader holding runtime-generated codecs.
  *
- * <p>
- * While the interfaces and classes in this package may be publicly accessible, they are an implementation detail and
+ * <p>While the interfaces and classes in this package may be publicly accessible, they are an implementation detail and
  * may change incompatibly at any time.
  */
 @org.osgi.annotation.bundle.Export

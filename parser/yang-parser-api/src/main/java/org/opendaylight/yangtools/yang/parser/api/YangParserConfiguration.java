@@ -126,8 +126,7 @@ public final class YangParserConfiguration implements Immutable {
          * {@link DeclaredStatement#declarationReference()} available, which is useful in certain scenarios, for example
          * YANG editors.
          *
-         * <p>
-         * This option is disabled by default.
+         * <p>This option is disabled by default.
          *
          * @param newRetainDeclarationReferences {@code true} if declaration references should be retained
          * @return This builder
@@ -143,8 +142,7 @@ public final class YangParserConfiguration implements Immutable {
          * <a href="https://www.rfc-editor.org/rfc/rfc7950.html#section-7.8.2">RFC7950</a>, but are readily supported
          * by OpenDaylight infrastructure.
          *
-         * <p>
-         * This option is enabled by default.
+         * <p>This option is enabled by default.
          *
          * @param newWarnForUnkeyedLists {@code true} if non-compliant {@code list} statements should be reported
          * @return This builder

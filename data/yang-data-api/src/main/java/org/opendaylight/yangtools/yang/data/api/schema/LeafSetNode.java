@@ -13,8 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
 /**
  * Node representing set of simple leaf nodes. Node containing instances of {@link LeafSetEntryNode}.
  *
- * <p>
- * Schema and semantics of this node are described by instance of
+ * <p>Schema and semantics of this node are described by instance of
  * {@link org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode}.
  *
  * @param <T> Type of leaf node values.

@@ -34,8 +34,7 @@ final class RegexUtils {
      * runtime-supported and compile-time supported blocks. We are limited to the latter, i.e. even if we are running
      * on (for example) Java 17, we must rely only on blocks supported by our compilation target (for example) Java 11.
      *
-     * <p>
-     * Furthermore we take a page from
+     * <p>Furthermore we take a page from
      * <a href="https://www.w3.org/TR/xmlschema11-2/#charcter-classes">G.4.2.3 Block escapes</a> and only match properly
      * normalized names, which is different from what Java does.
      */

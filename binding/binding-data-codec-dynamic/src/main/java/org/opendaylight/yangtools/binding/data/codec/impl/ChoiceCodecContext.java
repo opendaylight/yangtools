@@ -60,24 +60,20 @@ import org.slf4j.LoggerFactory;
  * The implicit assumption being made is that {@code Baz} identifies a particular instantiation and hence provides
  * unambiguous reference to an effective schema statement.
  *
- * <p>
- * Unfortunately this does not quite work with groupings, as their generation has changed: we do not have interfaces
+ * <p>Unfortunately this does not quite work with groupings, as their generation has changed: we do not have interfaces
  * that would capture grouping instantiations, hence we do not have a proper addressing point and users need to specify
  * the interfaces generated in the grouping's definition. These can be very much ambiguous, as a {@code grouping} can be
  * used in multiple modules independently within an {@code augment} targeting {@code choice}, as each instantiation is
  * guaranteed to have a unique namespace -- but we do not have the appropriate instantiations of those nodes.
  *
- * <p>
- * To address this issue we have a two-class lookup mechanism, which relies on the interface generated for the
+ * <p>To address this issue we have a two-class lookup mechanism, which relies on the interface generated for the
  * {@code case} statement to act as the namespace anchor bridging the nodes inside the grouping to the namespace in
  * which they are instantiated.
  *
- * <p>
- * Furthermore downstream code relies on historical mechanics, which would guess what the instantiation is, silently
+ * <p>Furthermore downstream code relies on historical mechanics, which would guess what the instantiation is, silently
  * assuming the ambiguity is theoretical and does not occur in practice.
  *
- * <p>
- * This leads to three classes of addressing, in order descending performance requirements.
+ * <p>This leads to three classes of addressing, in order descending performance requirements.
  * <ul>
  *   <li>Direct DataObject, where we name an exact child</li>
  *   <li>Case DataObject + Grouping DataObject</li>

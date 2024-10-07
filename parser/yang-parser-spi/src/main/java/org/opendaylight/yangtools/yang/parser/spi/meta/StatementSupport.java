@@ -30,9 +30,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 /**
  * Support for processing concrete YANG statement.
  *
- * <p>
- * This interface is intended to be implemented by developers, which want to introduce support of statement to parser.
- * Consider subclassing {@link AbstractStatementSupport} for easier implementation of this interface.
+ * <p>This interface is intended to be implemented by developers, which want to introduce support of statement to
+ * parser. Consider subclassing {@link AbstractStatementSupport} for easier implementation of this interface.
  *
  * @param <A> Argument type
  * @param <D> Declared Statement representation
@@ -226,9 +225,8 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     /**
      * Returns public statement definition, which will be present in built statements.
      *
-     * <p>
-     * Public statement definition may be used to provide different implementation of statement definition,
-     * which will not retain any build specific data or context.
+     * <p>Public statement definition may be used to provide different implementation of statement definition, which
+     * will not retain any build specific data or context.
      *
      * @return public statement definition, which will be present in built statements.
      */
@@ -270,8 +268,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      *   </code>
      * </pre>
      *
-     * <p>
-     * In this scenario, it is the reactor's job to figure out what to do (like talking to substatements).
+     * <p>In this scenario, it is the reactor's job to figure out what to do (like talking to substatements).
      *
      * @return This statement's copy policy
      */
@@ -329,8 +326,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * Invoked when statement is closed during {@link ModelProcessingPhase#SOURCE_PRE_LINKAGE} phase, only substatements
      * from this and previous phase are available.
      *
-     * <p>
-     * Implementation may use method to perform actions on this event or register modification action using
+     * <p>Implementation may use method to perform actions on this event or register modification action using
      * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt Context of added statement.
@@ -343,8 +339,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * Invoked when statement is closed during {@link ModelProcessingPhase#SOURCE_LINKAGE} phase, only substatements
      * from this and previous phase are available.
      *
-     * <p>
-     * Implementation may use method to perform actions on this event or register modification action using
+     * <p>Implementation may use method to perform actions on this event or register modification action using
      * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt Context of added statement.
@@ -358,8 +353,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * Invoked when statement is closed during {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase,
      * only substatements from this phase are available.
      *
-     * <p>
-     * Implementation may use method to perform actions on this event or register modification action using
+     * <p>Implementation may use method to perform actions on this event or register modification action using
      * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt Context of added statement. Argument and statement parent is accessible.
@@ -373,8 +367,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * Invoked when statement is closed during {@link ModelProcessingPhase#FULL_DECLARATION} phase,
      * only substatements from this phase are available.
      *
-     * <p>
-     * Implementation may use method to perform actions on this event or register modification action using
+     * <p>Implementation may use method to perform actions on this event or register modification action using
      * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt Context of added statement. Argument and statement parent is accessible.
@@ -474,14 +467,12 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          * implies that the semantics of the effective statement are not affected by any of its substatements. Each
          * of the substatements is free to make its own policy.
          *
-         * <p>
-         * This policy is typically used by static constant statements such as {@code description} or {@code length},
+         * <p>This policy is typically used by static constant statements such as {@code description} or {@code length},
          * where the baseline RFC7950 does not allow any impact. A {@code description} could hold an extension statement
          * in which case this interaction would come into play. Normal YANG will see empty substatements, so the reactor
          * will be free to complete reuse the context.
          *
-         * <p>
-         * In case any substatement is of stronger policy, it is up to the reactor to handle correct handling of
+         * <p>In case any substatement is of stronger policy, it is up to the reactor to handle correct handling of
          * resulting subobjects.
          */
         // TODO: does this mean source must have transitioned to ModelProcessingPhase.EFFECTIVE_MODEL?

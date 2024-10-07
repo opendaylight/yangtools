@@ -29,8 +29,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
  *   <li>It has no substatements</li>
  * </ul>
  *
- * <p>
- * This provides minimum footprint, as we share the argument from the declared instance and just keep the flags and
+ * <p>This provides minimum footprint, as we share the argument from the declared instance and just keep the flags and
  * source grouping pointer.
  */
 class EmptyLocalUsesEffectiveStatement extends DefaultArgument<QName, UsesStatement>

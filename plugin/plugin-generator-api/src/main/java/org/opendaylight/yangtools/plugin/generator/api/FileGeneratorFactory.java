@@ -19,8 +19,7 @@ public interface FileGeneratorFactory extends Identifiable<String> {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * This identifier must be a simple string without any whitespace, such as produced by
+     * <p>This identifier must be a simple string without any whitespace, such as produced by
      * {@link Class#getSimpleName()}.
      */
     @Override

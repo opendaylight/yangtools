@@ -30,11 +30,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 /**
- * Utility class used for tracking parser state as needed by a StAX-like parser.
- * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
+ * Utility class used for tracking parser state as needed by a StAX-like parser. This class is to be used only by
+ * respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
  *
- * <p>
- * Represents a node which is composed of multiple simpler nodes.
+ * <p>Represents a node which is composed of multiple simpler nodes.
  */
 public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends AbstractNodeDataWithSchema<T>
         permits AbstractMountPointDataWithSchema, CaseNodeDataWithSchema, ChoiceNodeDataWithSchema,

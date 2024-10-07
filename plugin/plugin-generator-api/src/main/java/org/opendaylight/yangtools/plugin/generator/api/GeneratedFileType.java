@@ -19,8 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * Type of generated file. Two most common kinds are captured in {@link #RESOURCE}, {@link #SOURCE}, but others may be
  * externally defined.
  *
- * <p>
- * Users of {@link FileGenerator} are expected to provide sensible mapping of {@link GeneratedFileType} to their
+ * <p>Users of {@link FileGenerator} are expected to provide sensible mapping of {@link GeneratedFileType} to their
  * output structures. Notably they must handle pre-defined types, allow end users to specify mapping of custom types.
  * They need to deal with runtime mismatches involving between FileGenerators and user's expectations, for example by
  * issuing warnings when a mismatch is detected.

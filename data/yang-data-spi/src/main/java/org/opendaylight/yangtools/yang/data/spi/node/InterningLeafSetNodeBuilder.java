@@ -21,15 +21,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode.Builder
  * Utility class for sharing instances of {@link LeafSetEntryNode}s which have low cardinality -- e.g. those which hold
  * boolean or enumeration values. Instances containing attributes are not interned.
  *
- * <p>
- * Such objects have cardinality which is capped at the product of QNAMES * TYPE_CARDINALITY, where QNAMES is the total
- * number of different QNames where the type is used and TYPE_CARDINALITY is the number of possible values for the type.
- * Boolean has cardinality of 2, enumerations have cardinality equal to the number of enum statements.
+ * <p>Such objects have cardinality which is capped at the product of QNAMES * TYPE_CARDINALITY, where QNAMES is the
+ * total number of different QNames where the type is used and TYPE_CARDINALITY is the number of possible values for
+ * the type. Boolean has cardinality of 2, enumerations have cardinality equal to the number of enum statements.
  *
- * <p>
- * The theory here is that we tend to have a large number (100K+) of entries in a few places, which could end up hogging
- * the heap retained via the DataTree with duplicate objects (same QName, same value, different object). Using this
- * utility, such objects will end up reusing the same object, preventing this overhead.
+ * <p>The theory here is that we tend to have a large number (100K+) of entries in a few places, which could end up
+ * hogging the heap retained via the DataTree with duplicate objects (same QName, same value, different object). Using
+ * this utility, such objects will end up reusing the same object, preventing this overhead.
  */
 public final class InterningLeafSetNodeBuilder<T> implements Builder<T> {
     private final Interner<LeafSetEntryNode<T>> interner;

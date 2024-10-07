@@ -52,8 +52,7 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
     /**
      * Returns the module contact.
      *
-     * <p>
-     * The contact represents the person or persons to whom technical queries concerning this module should be sent,
+     * <p>The contact represents the person or persons to whom technical queries concerning this module should be sent,
      * such as their name, postal address, telephone number, and electronic mail address.
      *
      * @return string with the contact data specified in the module as the argument of YANG {@code contact} statement
@@ -75,8 +74,7 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      * Returns {@link FeatureDefinition} instances which contain data from {@code feature} statements defined in the
      * module.
      *
-     * <p>
-     * The feature is used to define a mechanism by which portions of the schema are marked as conditional.
+     * <p>The feature is used to define a mechanism by which portions of the schema are marked as conditional.
      *
      * @return feature statements in lexicographical order which are specified in the module as the argument of YANG
      *         {@code feature} statements.

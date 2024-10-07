@@ -29,12 +29,10 @@ public enum ModelProcessingPhase {
     /**
      * Cross-source relationship resolution phase.
      *
-     * <p>
-     * In this phase of processing only statements which affects cross-source relationship (e.g. imports / includes)
+     * <p>In this phase of processing only statements which affects cross-source relationship (e.g. imports / includes)
      * are processed.
      *
-     * <p>
-     * At end of this phase all source related contexts should be bind to their imports and includes to allow
+     * <p>At end of this phase all source related contexts should be bind to their imports and includes to allow
      * visibility of custom defined statements in subsequent phases.
      */
     SOURCE_LINKAGE(SOURCE_PRE_LINKAGE, ExecutionOrder.SOURCE_LINKAGE),

@@ -53,21 +53,18 @@ import org.slf4j.LoggerFactory;
 /**
  * Private support for generating {@link CodecDataObject} and {@link AugmentableCodecDataObject} specializations.
  *
- * <p>
- * Code generation here is probably more involved than usual mainly due to the fact we *really* want to express the
+ * <p>Code generation here is probably more involved than usual mainly due to the fact we *really* want to express the
  * strong connection between a generated class to the extent possible. In most cases (grouping-generated types) this
  * involves one level of indirection, which is a safe approach. If we are dealing with a type generated outside of a
  * grouping statement, though, we are guaranteed instantiation-invariance and hence can hard-wire to a runtime-constant
  * {@link CodecContextSupplier} -- which  provides significant boost to JITs ability to optimize code -- especially with
  * inlining and constant propagation.
  *
- * <p>
- * The accessor mapping performance is critical due to users typically not taking care of storing the results acquired
- * by an invocation, assuming the accessors are backed by a normal field -- which of course is not true, as the results
- * are lazily computed.
+ * <p>The accessor mapping performance is critical due to users typically not taking care of storing the results
+ * acquired by an invocation, assuming the accessors are backed by a normal field -- which of course is not true, as
+ * the results are lazily computed.
  *
- * <p>
- * The design is such that for a particular structure like:
+ * <p>The design is such that for a particular structure like:
  * <pre>
  *     container foo {
  *         leaf bar {
@@ -91,8 +88,7 @@ import org.slf4j.LoggerFactory;
  *     }
  * </pre>
  *
- * <p>
- * This strategy minimizes the bytecode footprint and follows the generally good idea of keeping common logic in a
+ * <p>This strategy minimizes the bytecode footprint and follows the generally good idea of keeping common logic in a
  * single place in a maintainable form. The glue code is extremely light (~6 instructions), which is beneficial on both
  * sides of invocation:
  * <ul>
@@ -100,14 +96,12 @@ import org.slf4j.LoggerFactory;
  *   <li>it forms a call site into which codeMember() can be inlined with VarHandle being constant</li>
  * </ul>
  *
- * <p>
- * The second point is important here, as it allows the invocation logic around VarHandle to completely disappear,
+ * <p>The second point is important here, as it allows the invocation logic around VarHandle to completely disappear,
  * becoming synonymous with operations on a field. Even though the field itself is declared as volatile, it is only ever
  * accessed through helper method using VarHandles -- and those helpers are using relaxed field ordering
  * of {@code getAcquire()}/{@code setRelease()} memory semantics.
  *
- * <p>
- * Furthermore there are distinct {@code codecMember} methods, each of which supports a different invocation style:
+ * <p>Furthermore there are distinct {@code codecMember} methods, each of which supports a different invocation style:
  * <ul>
  *   <li>with {@code String}, which ends up looking up a {@link ValueNodeCodecContext}</li>
  *   <li>with {@code Class}, which ends up looking up a {@link DataContainerCodecContext}</li>
@@ -116,20 +110,17 @@ import org.slf4j.LoggerFactory;
  * The third mode of operation requires that the object being implemented is not defined in a {@code grouping}, because
  * it welds the object to a particular namespace -- hence it trades namespace mobility for access speed.
  *
- * <p>
- * The sticky point here is the NodeContextSupplier, as it is a heap object which cannot normally be looked up from the
- * static context in which the static class initializer operates -- so we need perform some sort of a trick here.
+ * <p>The sticky point here is the NodeContextSupplier, as it is a heap object which cannot normally be looked up from
+ * the static context in which the static class initializer operates -- so we need perform some sort of a trick here.
  * Even though ByteBuddy provides facilities for bridging references to type fields, those facilities operate on
  * volatile fields -- hence they do not quite work for us.
  *
- * <p>
- * Another alternative, which we used in Javassist-generated DataObjectSerializers, is to muck with the static field
+ * <p>Another alternative, which we used in Javassist-generated DataObjectSerializers, is to muck with the static field
  * using reflection -- which works, but requires redefinition of Field.modifiers, which is something Java 9+ complains
  * about quite noisily.
  *
- * <p>
- * We take a different approach here, which takes advantage of the fact we are in control of both code generation (here)
- * and class loading (in {@link BindingClassLoader}). The process is performed in four steps:
+ * <p>We take a different approach here, which takes advantage of the fact we are in control of both code generation
+ * (here) and class loading (in {@link BindingClassLoader}). The process is performed in four steps:
  * <ul>
  * <li>During code generation, the context fields are pointed towards
  *     {@link ClassGeneratorBridge#resolveCodecContextSupplier(String)} and
@@ -145,9 +136,9 @@ import org.slf4j.LoggerFactory;
  *     {@link ClassGeneratorBridge#tearDown(CodecDataObjectGenerator)}.</li>
  * </ul>
  *
- * <p>
- * This strategy works due to close cooperation with the target ClassLoader, as the entire code generation and loading
- * block runs with the class loading lock for this FQCN and the reference is not leaked until the process completes.
+ * <p>This strategy works due to close cooperation with the target ClassLoader, as the entire code generation and
+ * loading block runs with the class loading lock for this FQCN and the reference is not leaked until the process
+ * completes.
  */
 abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T> {
     // Not reusable definition: we can inline NodeContextSuppliers without a problem

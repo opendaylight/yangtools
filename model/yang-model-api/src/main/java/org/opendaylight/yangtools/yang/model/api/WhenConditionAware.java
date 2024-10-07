@@ -13,23 +13,17 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 
 /**
  * Mix-in interface for nodes which can be conditional on a when statement.
- *
- * @author Robert Varga
  */
 @Beta
 public interface WhenConditionAware {
     /**
      * Returns when statement.
      *
-     * <p>
-     * If when condition is present node defined by the parent data definition
-     * statement is only valid when the returned XPath
-     * expression conceptually evaluates to "true"
-     * for a particular instance, then the node defined by the parent data
-     * definition statement is valid; otherwise, it is not.
+     * <p>If when condition is present node defined by the parent data definition statement is only valid when the
+     * returned XPath expression conceptually evaluates to "true" for a particular instance, then the node defined by
+     * the parent data definition statement is valid; otherwise, it is not.
      *
      * @return XPath condition
      */
     Optional<? extends QualifiedBound> getWhenCondition();
-
 }

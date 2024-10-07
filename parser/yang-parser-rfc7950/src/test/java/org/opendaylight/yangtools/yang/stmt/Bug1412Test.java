@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 /**
  * Test ANTLR4 grammar capability to parse description statement in unknown node.
  *
- * <p>
- * Note: Everything under unknown node is unknown node.
+ * <p>Note: Everything under unknown node is unknown node.
  */
 class Bug1412Test extends AbstractYangTest {
     @Test

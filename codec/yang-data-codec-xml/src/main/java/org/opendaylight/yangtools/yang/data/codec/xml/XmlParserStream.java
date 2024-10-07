@@ -92,9 +92,8 @@ import org.w3c.dom.Document;
  * instances of the same element except for leaf-list and list entries. It also expects that the YANG-modeled data in
  * the XML source are wrapped in a root element. This class is NOT thread-safe.
  *
- * <p>
- * Due to backwards compatibility reasons, RFC7952 metadata emitted by this parser may include key QNames with empty URI
- * (as exposed via {@link #LEGACY_ATTRIBUTE_NAMESPACE}) as their QNameModule. These indicate an unqualified XML
+ * <p>Due to backwards compatibility reasons, RFC7952 metadata emitted by this parser may include key QNames with empty
+ * URI (as exposed via {@link #LEGACY_ATTRIBUTE_NAMESPACE}) as their QNameModule. These indicate an unqualified XML
  * attribute and their value can be assumed to be a String. Furthermore, this extends to qualified attributes, which
  * uses the proper namespace, but will not bind to a proper module revision -- these need to be reconciled with a
  * particular SchemaContext and are expected to either be fully decoded, or contain a String value. Handling of such

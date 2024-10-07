@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  * An XPath expression. This interface defines a parsed representation of an XPath defined in a YANG context, as
  * specified in <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.4">RFC7950, Section 6.4</a>.
  *
- * <p>
- * The specification along with rules for {@code path} statement evaluation rules end up defining four incremental
+ * <p>The specification along with rules for {@code path} statement evaluation rules end up defining four incremental
  * levels to which an XPath expression can be bound:
  * <ul>
  * <li>Unbound Expressions, which is a essentially a parse tree. No namespace binding has been performed, i.e. all
@@ -84,13 +83,11 @@ public interface YangXPathExpression extends Immutable {
      * is required to perform late value binding of the expression when the literal needs to be interpreted as
      * a reference to an {@code identity}.
      *
-     * <p>
-     * The syntax of expr is required to conform to
+     * <p>The syntax of expr is required to conform to
      * <a href="https://www.w3.org/TR/REC-xml-names/#NT-QName">XML QName format</a>, as further restricted by
      * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-9.10.3">YANG {@code identityref} Lexical Representation</a>.
      *
-     * <p>
-     * Unfortunately we do not know when a literal will need to be interpreted in this way, as that can only be known
+     * <p>Unfortunately we do not know when a literal will need to be interpreted in this way, as that can only be known
      * at evaluation.
      *
      * @param expr Literal to be reinterpreted

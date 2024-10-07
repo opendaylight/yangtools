@@ -100,8 +100,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractSi
     /**
      * Return the schema in which YANG Library container content should be interpreted.
      *
-     * <p>
-     * Note this schema is not guaranteed to contain any augmentations, hence parsing could fail.
+     * <p>Note this schema is not guaranteed to contain any augmentations, hence parsing could fail.
      *
      * @param containerName Top-level YANG Library container name
      * @return The LibraryContext to use when interpreting the specified YANG Library container, or empty

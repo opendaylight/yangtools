@@ -21,8 +21,7 @@ public sealed interface NormalizedContainer<V extends NormalizedNode> extends No
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * Returns iteration of all child nodes. Order of returned child nodes may be defined by subinterfaces.
+     * <p>Returns iteration of all child nodes. Order of returned child nodes may be defined by subinterfaces.
      */
     @Override
     Collection<@NonNull V> body();

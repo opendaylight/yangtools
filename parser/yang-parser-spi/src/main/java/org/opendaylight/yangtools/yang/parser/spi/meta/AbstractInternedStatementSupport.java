@@ -26,8 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
  * {@code position} and {@code value} statements, which typically do not have substatements and are based on simple
  * types.
  *
- * <p>
- * Note: use of this base class implies context-independence.
+ * <p>Note: use of this base class implies context-independence.
  */
 @Beta
 public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStatement<A>,

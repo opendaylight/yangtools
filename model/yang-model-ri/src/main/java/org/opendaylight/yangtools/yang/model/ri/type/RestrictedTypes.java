@@ -43,8 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
  * Restricted types are a refinement of the restrictions applied to a particular type. YANG defines restrictions only
  * on a subset of the base types, but conceptually any such definition can hold unknown nodes.
  *
- * <p>
- * 1) Restrictable
+ * <p>1) Restrictable
  *    binary (length)
  *    int{8,16,32,64} (range)
  *    string (length, patterns)
@@ -52,8 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
  *    decimal64 (range)
  *    instance-identifier (require-instance)
  *
- * <p>
- * 2) Non-restrictable
+ * <p>2) Non-restrictable
  *    boolean
  *    bits
  *    empty (ignores default on derivation)
@@ -62,15 +60,14 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
  *    leafref
  *    union
  *
- * <p>
- * This class holds methods which allow creation of restricted types using {@link TypeBuilder} and its subclasses. Each
- * restricted type is logically anchored at an {@link EffectiveStatementInference}, but can be substituted by its base
- * type if it does not contribute any additional restrictions. TypeBuilder instances take this into account, and result
- * in the base type being returned from the builder when the base type and restricted type are semantically equal.
+ * <p>This class holds methods which allow creation of restricted types using {@link TypeBuilder} and its subclasses.
+ * Each restricted type is logically anchored at an {@link EffectiveStatementInference}, but can be substituted by its
+ * base type if it does not contribute any additional restrictions. TypeBuilder instances take this into account, and
+ * result in the base type being returned from the builder when the base type and restricted type are semantically
+ * equal.
  *
- * <p>
- * Restricted types inherit the default value, description, reference, status and units from the base type, if that type
- * defines them.
+ * <p>Restricted types inherit the default value, description, reference, status and units from the base type, if that
+ * type defines them.
  */
 @Beta
 public final class RestrictedTypes {

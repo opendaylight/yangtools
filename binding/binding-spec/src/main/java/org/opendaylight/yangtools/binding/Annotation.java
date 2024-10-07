@@ -14,8 +14,7 @@ import com.google.common.annotations.Beta;
  * <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>. This interface is not meant to be directly implemented,
  * but rather serves as a hook for generated code.
  *
- * <p>
- * An Annotation is a cross between a {@link TypeObject}, a {@link DataObject} and an {@link Augmentation}:
+ * <p>An Annotation is a cross between a {@link TypeObject}, a {@link DataObject} and an {@link Augmentation}:
  * <ul>
  * <li>Similar to a {@code TypeObject} it can only hold a single scalar value, which has to be present.</li>
  * <li>Similar to most {@code TypeObject}s, the value is available through {@link #getValue()} method</li>

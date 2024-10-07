@@ -276,8 +276,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
     /**
      * Determines if two augmentation classes or case classes represents same data.
      *
-     * <p>
-     * Two augmentations or cases could be substituted only if and if:
+     * <p>Two augmentations or cases could be substituted only if and if:
      * <ul>
      *   <li>Both implements same interfaces</li>
      *   <li>Both have same children</li>
@@ -286,8 +285,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
      *   <li>If cases: Both are from same choice. Choice class was generated for data node in grouping.</li>
      * </ul>
      *
-     * <p>
-     * <b>Explanation:</b>
+     * <p><b>Explanation:</b>
      * Binding Specification reuses classes generated for groupings as part of normal data tree, this classes from
      * grouping could be used at various locations and user may not be aware of it and may use incorrect case or
      * augmentation in particular subtree (via copy constructors, etc).

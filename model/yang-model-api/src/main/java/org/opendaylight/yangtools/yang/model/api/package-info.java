@@ -9,8 +9,7 @@
 /**
  * Definition of structures and DOM like API of effected YANG schema.
  *
- * <p>
- * This package is structured into following logical units:
+ * <p>This package is structured into following logical units:
  * <dl>
  * <dt>YANG Meta model</dt>
  * <dd>Meta model of YANG, which defines basic concepts and building blocks of YANG models

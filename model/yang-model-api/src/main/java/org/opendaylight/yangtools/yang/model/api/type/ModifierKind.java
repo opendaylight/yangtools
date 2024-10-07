@@ -18,8 +18,7 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * Enum describing the effect of a YANG modifier statement.
  *
- * <p>
- * As of YANG 1.1 (RFC7950) there is only one modifier value available and that is "invert-match". If there are more
+ * <p>As of YANG 1.1 (RFC7950) there is only one modifier value available and that is "invert-match". If there are more
  * possible values added in the future, this enum can be extended with more enum constants.
  */
 public enum ModifierKind {

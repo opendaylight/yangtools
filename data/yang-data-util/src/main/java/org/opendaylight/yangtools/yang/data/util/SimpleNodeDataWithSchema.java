@@ -12,11 +12,10 @@ import static java.util.Objects.requireNonNull;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
- * Utility class used for tracking parser state as needed by a StAX-like parser.
- * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
+ * Utility class used for tracking parser state as needed by a StAX-like parser. This class is to be used only by
+ * respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
  *
- * <p>
- * Represents a simple node with value (anyxml, leaf, leaf-list entry).
+ * <p>Represents a simple node with value (anyxml, leaf, leaf-list entry).
  */
 public abstract sealed class SimpleNodeDataWithSchema<T extends DataSchemaNode> extends AbstractNodeDataWithSchema<T>
         permits AnydataNodeDataWithSchema, AnyXmlNodeDataWithSchema, LeafListEntryNodeDataWithSchema,

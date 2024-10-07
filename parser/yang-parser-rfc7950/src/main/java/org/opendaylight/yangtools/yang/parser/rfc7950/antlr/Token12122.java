@@ -16,9 +16,8 @@ import org.antlr.v4.runtime.misc.Pair;
  * we do not use them. {@code type} and {@code charPositionInLine} are cut down to a single byte, while others are cut
  * down to unsigned shorts.
  *
- * <p>
- * This class ends up costing 24/40/32/32 bytes instead of 48/64/48/48 bytes, a saving of 33-50%, while being sufficient
- * in most scenarios.
+ * <p>This class ends up costing 24/40/32/32 bytes instead of 48/64/48/48 bytes, a saving of 33-50%, while being
+ * sufficient in most scenarios.
  */
 final class Token12122 extends AbstractSourceToken {
     private final byte type;

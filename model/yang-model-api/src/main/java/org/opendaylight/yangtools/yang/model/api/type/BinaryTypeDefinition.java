@@ -17,8 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * The canonical form of a binary value follows the rules defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc4648">[RFC4648]</a>.
  *
- * <p>
- * This interface was modeled according to definition in
+ * <p>This interface was modeled according to definition in
  * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-9.8">[RFC-6020] The binary Built-In Type</a>
  */
 public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<BinaryTypeDefinition> {

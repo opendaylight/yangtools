@@ -25,12 +25,9 @@ import org.eclipse.jdt.annotation.Nullable;
  * Simple integer-to-StatementContextBase map optimized for size and restricted in scope of operations. It does not
  * implement {@link java.util.Map} for simplicity's sake.
  *
- * <p>
- * Unlike other collections, this view does not detect concurrent modification. Iteration is performed in order of
+ * <p>Unlike other collections, this view does not detect concurrent modification. Iteration is performed in order of
  * increasing offset. In face of concurrent modification, number of elements returned through iteration may not match
  * the size reported via {@link Collection#size()}.
- *
- * @author Robert Varga
  */
 abstract class StatementMap extends AbstractCollection<OriginalStmtCtx<?, ?, ?>> {
     private static final class Empty extends StatementMap {

@@ -34,10 +34,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * Each entity is emitted by invoking its corresponding {@code start*} event, optionally followed by interior events and
  * invoking {@link #endNode()}. Some entities supported nested entities, some do not, see below for restrictions.
  *
- * <p>
- * While this interface defines basic events, the event stream may be extended through {@link Extension}s, discoverable
- * through {@link #supportedExtensions()} method. The set of these extensions is immutable during the lifetime of a
- * writer and may be freely cached.
+ * <p>While this interface defines basic events, the event stream may be extended through {@link Extension}s,
+ * discoverable through {@link #supportedExtensions()} method. The set of these extensions is immutable during the
+ * lifetime of a writer and may be freely cached.
  *
  * <ul>
  * <li>{@code container} - Container node representation, start event is emitted using
@@ -71,8 +70,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  *
  * <h3>Implementation notes</h3>
  *
- * <p>
- * Implementations of this interface must not hold user suppled objects and resources needlessly.
+ * <p>Implementations of this interface must not hold user suppled objects and resources needlessly.
  */
 public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
         ExtensibleObject<NormalizedNodeStreamWriter, NormalizedNodeStreamWriter.Extension> {
@@ -82,13 +80,11 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * to improve performance, but clients are not required to provide hints. This constant should be used by clients
      * who either do not have the sizing information, or do not wish to divulge it (for whatever reasons).
      *
-     * <p>
-     * Implementations are free to ignore these hints completely, but if they do use them, they are expected to be
+     * <p>Implementations are free to ignore these hints completely, but if they do use them, they are expected to be
      * resilient in face of missing and mismatched hints, which is to say the user can specify startLeafSet(..., 1) and
      * then call leafNode() 15 times.
      *
-     * <p>
-     * The acceptable hint values are non-negative integers and this constant, all other values will result, based on
+     * <p>The acceptable hint values are non-negative integers and this constant, all other values will result, based on
      * implementation preference, in the hint being completely ignored or IllegalArgumentException being thrown.
      */
     int UNKNOWN_SIZE = -1;
@@ -373,14 +369,12 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * {@link NormalizedNodeStreamWriter} with a new event, {@link #metadata(ImmutableMap)}. This event is valid on any
      * open node. This event may be emitted only once.
      *
-     * <p>
-     * Note that some implementations of this interface, notably those targeting streaming XML, may require metadata to
-     * be emitted before any other events. Such requirement is communicated through {@link #requireMetadataFirst()} and
-     * users must honor it. If such requirement is not set, metadata may be emitted at any time.
+     * <p>Note that some implementations of this interface, notably those targeting streaming XML, may require metadata
+     * to be emitted before any other events. Such requirement is communicated through {@link #requireMetadataFirst()}
+     * and users must honor it. If such requirement is not set, metadata may be emitted at any time.
      *
-     * <p>
-     * Furthermore implementations targeting RFC7952 encoding towards external systems are required to handle metadata
-     * attached to {@code leaf-list} and {@code list} nodes by correctly extending them to each entry.
+     * <p>Furthermore implementations targeting RFC7952 encoding towards external systems are required to handle
+     * metadata attached to {@code leaf-list} and {@code list} nodes by correctly extending them to each entry.
      */
     interface MetadataExtension extends Extension {
         /**

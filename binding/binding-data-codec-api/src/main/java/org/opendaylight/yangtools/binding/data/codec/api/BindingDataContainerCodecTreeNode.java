@@ -38,8 +38,7 @@ public non-sealed interface BindingDataContainerCodecTreeNode<T extends DataCont
      * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case,
      * one must issue getChild(ChoiceClass).getChild(CaseClass).
      *
-     * <p>
-     * This method differs from {@link #getStreamChild(Class)}, that is less strict for interfaces representing
+     * <p>This method differs from {@link #getStreamChild(Class)}, that is less strict for interfaces representing
      * augmentation and cases, that may return {@link BindingCodecTreeNode} even if augmentation interface containing
      * same data was supplied and does not represent augmentation of this node.
      *

@@ -31,8 +31,7 @@ import org.slf4j.LoggerFactory;
  * Lazily-populated List implementation backed by NormalizedNodes. This implementation defers creating Binding objects
  * until they are actually needed, caching them in a pre-allocated array.
  *
- * <p>
- * The cost of this deferred instantiation is two-fold:
+ * <p>The cost of this deferred instantiation is two-fold:
  * <ul>
  *   <li>each access issues a {@link VarHandle#getAcquire(Object...)} load and a class equality check</li>
  *   <li>initial load additionally incurs a {@link VarHandle#compareAndExchangeRelease(Object...)} store</li>

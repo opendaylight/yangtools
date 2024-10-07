@@ -119,8 +119,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      *   </code>
      * </pre>
      *
-     * <p>
-     * The four allocated fields are:
+     * <p>The four allocated fields are:
      * <ul>
      *   <li>{@code lst}, encoding the four states corresponding to {@link CopyHistory#getLastOperation()}</li>
      *   <li>{@code u}, encoding {@link #isAddedByUses()}</li>
@@ -527,8 +526,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      * copy-insensitive. Note that statements which are not {@link StmtContext#isSupportedToBuildEffective()} are all
      * considered copy-insensitive.
      *
-     * <p>
-     * Implementations are expected to call {@link #noSensitiveSubstatements()} to actually traverse substatement sets.
+     * <p>Implementations are expected to call {@link #noSensitiveSubstatements()} to actually traverse substatement
+     * sets.
      *
      * @return True if no substatements require copy-sensitive handling
      */

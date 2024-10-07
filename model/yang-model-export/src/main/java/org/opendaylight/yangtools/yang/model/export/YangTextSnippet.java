@@ -29,11 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * are guaranteed to not contain null nor empty strings. Furthermore, newlines are always emitted at the end
  * on the generated string -- which can be checked with {@link #isEolString(String)} utility method.
  *
- * <p>
- * This allows individual strings to be escaped as needed and external indentation can be accounted for by inserting
+ * <p>This allows individual strings to be escaped as needed and external indentation can be accounted for by inserting
  * outer document indentation after the string which matched {@link #isEolString(String)} is emitted to the stream.
- *
- * @author Robert Varga
  */
 @NonNullByDefault({ PARAMETER, RETURN_TYPE })
 public final class YangTextSnippet implements Immutable, Iterable<@NonNull String> {

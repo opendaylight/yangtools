@@ -24,8 +24,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * to its YANG text. They also contain references to {@link YangModuleInfo} instances as observed at code generation
  * time.
  *
- * <p>
- * The purpose of this class is to ensure package resolution order in OSGi environments, as implementations of this
+ * <p>The purpose of this class is to ensure package resolution order in OSGi environments, as implementations of this
  * interface are required to be co-located with generated code. When this module relies on some imports, that dependency
  * is expressed across jars via an implementation requirement to reference YangModuleInfos.
  */

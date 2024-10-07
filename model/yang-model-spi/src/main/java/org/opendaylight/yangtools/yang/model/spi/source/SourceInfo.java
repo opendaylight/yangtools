@@ -39,9 +39,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
  *       root statement</li>
  * </ol>
  *
- * <p>
- * This interface captures the basic metadata needed for interpretation and linkage of the source, as represented by the
- * following ABNF constructs placed at the start of a YANG file:
+ * <p>This interface captures the basic metadata needed for interpretation and linkage of the source, as represented by
+ * the following ABNF constructs placed at the start of a YANG file:
  * <ul>
  *   <li>{@code module-header-stmts} or {@code submodule-header-stmts}</li>
  *   <li>{@code linkage-stmts}</li>

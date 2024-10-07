@@ -19,8 +19,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName;
  * XPath string representation, because it does not define a prefix/namespace mapping. It represents a strong binding
  * to a particular namespace at a particular revision.
  *
- * <p>
- * Parsers and users of this package are encouraged to use this class in place of {@link YangLiteralExpr} where
+ * <p>Parsers and users of this package are encouraged to use this class in place of {@link YangLiteralExpr} where
  * appropriate, as it retains type safety and more semantic context.
  *
  */

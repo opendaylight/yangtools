@@ -29,13 +29,11 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 /**
  * Node Modification Node and Tree.
  *
- * <p>
- * Tree which structurally resembles data tree and captures client modifications to the data store tree. This tree is
+ * <p>Tree which structurally resembles data tree and captures client modifications to the data store tree. This tree is
  * lazily created and populated via {@link #modifyChild(PathArgument, ModificationApplyOperation, Version)} and
  * {@link TreeNode} which represents original state as tracked by {@link #getOriginal()}.
  *
- * <p>
- * The contract is that the state information exposed here preserves the temporal ordering of whatever modifications
+ * <p>The contract is that the state information exposed here preserves the temporal ordering of whatever modifications
  * were executed. A child's effects pertain to data node as modified by its ancestors. This means that in order to
  * reconstruct the effective data node presentation, it is sufficient to perform a depth-first pre-order traversal of
  * the tree.

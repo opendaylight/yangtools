@@ -16,9 +16,8 @@ import org.eclipse.jdt.annotation.NonNull;
  * A capture of a tree-like construct, which can be formatted into a pretty-printed tree. The string can be acquired
  * via {@link #get()}.
  *
- * <p>
- * This concept is purposefully designed as an abstract class which defers its {@link #toString()} to {@link #get()}, as
- * it allows convenient and light-weight use with logging:
+ * <p>This concept is purposefully designed as an abstract class which defers its {@link #toString()} to {@link #get()},
+ * as it allows convenient and light-weight use with logging:
  *
  * <pre>
  *   <code>

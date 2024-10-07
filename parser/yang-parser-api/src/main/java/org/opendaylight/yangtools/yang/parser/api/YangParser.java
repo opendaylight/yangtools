@@ -74,8 +74,7 @@ public interface YangParser {
      * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
      * Any other library sources are ignored and this also applies to error reporting.
      *
-     * <p>
-     * Note: Library sources are not supported in semantic version mode currently.
+     * <p>Note: Library sources are not supported in semantic version mode currently.
      *
      * @param sources YANG sources which should be added into library sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis

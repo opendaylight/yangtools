@@ -15,15 +15,13 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * An XPath literal expression.
  *
- * <p>
- * Note that a literal may be required to hold a value of {@code instance-identifier} or {@code identityref} type,
+ * <p>Note that a literal may be required to hold a value of {@code instance-identifier} or {@code identityref} type,
  * when the corresponding {@link YangXPathExpression} was parsed from reference String specification defined in RFC7950.
  * When such conversion is required, it should be performed through
  * {@link YangXPathExpression#interpretAsQName(YangLiteralExpr)} or
  * {@link YangXPathExpression#interpretAsInstanceIdentifier(YangLiteralExpr)}.
  *
- * <p>
- * A more type-safe alternative is {@link YangQNameExpr}, which should be preferred and used whenever possible.
+ * <p>A more type-safe alternative is {@link YangQNameExpr}, which should be preferred and used whenever possible.
  */
 public final class YangLiteralExpr implements YangExpr {
     @Serial

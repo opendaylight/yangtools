@@ -14,34 +14,28 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatemen
  */
 public interface ExtensionDefinition extends SchemaNode, EffectiveStatementEquivalent<ExtensionEffectiveStatement> {
     /**
-     * Returns the <code>String</code> that is the name of argument to the
-     * Keyword. If no argument statement is present the method will return
-     * <code>null</code> <br>
+     * Returns the <code>String</code> that is the name of argument to the Keyword. If no argument statement is present
+     * the method will return <code>null</code><br>
      * The argument statement is defined in <a
      * href="https://www.rfc-editor.org/rfc/rfc6020#section-7.17.2">[RFC-6020] The
      * argument Statement</a>
      *
-     * @return the <code>String</code> that is the name of argument to the
-     *         Keyword. If no argument statement is present the method will
-     *         return <code>null</code>
+     * @return the <code>String</code> that is the name of argument to the Keyword. If no argument statement is present
+     *         the method will return <code>null</code>
      */
     String getArgument();
 
     /**
-     * This statement indicates if the argument is mapped to an XML element in
-     * YIN or to an XML attribute.<br>
-     * By contract if implementation of ExtensionDefinition does not specify the
-     * yin-element statement the return value is by default set to
-     * <code>false</code>
+     * This statement indicates if the argument is mapped to an XML element in YIN or to an XML attribute.<br>
+     * By contract if implementation of ExtensionDefinition does not specify the yin-element statement the return value
+     * is by default set to <code>false</code>
      *
-     * <p>
-     * For more specific definition please look into <a
+     * <p>For more specific definition please look into <a
      * href="https://www.rfc-editor.org/rfc/rfc6020#section-7.17.2.2">[RFC-6020]
      * The yin-element Statement</a>
      *
-     * @return <code>true</code> if the argument is mapped to an XML element in
-     *         YIN or returns <code>false</code> if the argument is mapped to an
-     *         XML attribute.
+     * @return <code>true</code> if the argument is mapped to an XML element in YIN or returns <code>false</code> if
+     *         the argument is mapped to an XML attribute.
      */
     boolean isYinElement();
 }

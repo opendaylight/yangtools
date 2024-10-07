@@ -23,9 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 /**
  * Stateless Normalized Node Stream Writer decorator, which performs QName translation.
  *
- * <p>
- * This class serves as base for Normalized Node Stream Writer decorators with option to transform
- * QNames by user-implemented {@link #transform(QName)} function.
+ * <p>This class serves as base for Normalized Node Stream Writer decorators with option to transform QNames by
+ * user-implemented {@link #transform(QName)} function.
  */
 public abstract class QNameTransformingStreamWriter extends ForwardingNormalizedNodeStreamWriter {
 
@@ -150,8 +149,7 @@ public abstract class QNameTransformingStreamWriter extends ForwardingNormalized
     /**
      * Transforms a QName to new mapping.
      *
-     * <p>
-     * NOTE: If QName should be unchanged implementation needs to return original QName.
+     * <p>NOTE: If QName should be unchanged implementation needs to return original QName.
      *
      * @param key QName to transform.
      * @return Returns new value of QName.

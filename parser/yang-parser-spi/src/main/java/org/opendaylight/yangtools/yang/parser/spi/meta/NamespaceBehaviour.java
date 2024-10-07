@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.StorageT
  * Definition / implementation of specific Identifier Namespace behaviour. A namespace behaviour is built on top
  * of a tree of {@link NamespaceStorage} which represents local context of one of types defined in {@link StorageType}.
  *
- * <p>
- * For common behaviour models please use static factories {@link #global(ParserNamespace)},
+ * <p>For common behaviour models please use static factories {@link #global(ParserNamespace)},
  * {@link #sourceLocal(ParserNamespace)} and {@link #treeScoped(ParserNamespace)}.
  *
  * @param <K> Key type

@@ -70,8 +70,7 @@ import org.slf4j.LoggerFactory;
  * A state tracking utility for walking {@link EffectiveModelContext}'s contents along schema/grouping namespaces. This
  * is conceptually a stack, tracking {@link EffectiveStatement}s encountered along traversal.
  *
- * <p>
- * This class is designed for single-threaded uses and does not make any guarantees around concurrent access.
+ * <p>This class is designed for single-threaded uses and does not make any guarantees around concurrent access.
  */
 @Beta
 public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
@@ -260,8 +259,7 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
      * Create a new stack from an {@link DefaultSchemaTreeInference}. The argument is nominally trusted to be an
      * accurate representation of the schema tree.
      *
-     * <p>
-     * Run-time verification of {@code inference} can be enabled by setting the
+     * <p>Run-time verification of {@code inference} can be enabled by setting the
      * {@value #VERIFY_DEFAULT_SCHEMA_TREE_INFERENCE_PROP} system property to {@code true}.
      *
      * @param inference DefaultSchemaTreeInference to use for initialization
@@ -651,8 +649,7 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
     /**
      * Resolve a {@link PathExpression}.
      *
-     * <p>
-     * Note if this method throws, this stack may be in an undefined state.
+     * <p>Note if this method throws, this stack may be in an undefined state.
      *
      * @param path Requested path
      * @return Resolved schema tree child

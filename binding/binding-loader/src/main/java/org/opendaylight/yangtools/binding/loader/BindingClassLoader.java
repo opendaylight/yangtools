@@ -35,8 +35,7 @@ import org.slf4j.LoggerFactory;
  * BindingCodecContext instance, so any generated classes from it can be garbage-collected when the context
  * is destroyed, as well as to prevent two contexts trampling over each other.
  *
- * <p>
- * It semantically combines two class loaders: the class loader in which this class is loaded and the class loader in
+ * <p>It semantically combines two class loaders: the class loader in which this class is loaded and the class loader in
  * which a target Binding interface/class is loaded. This inherently supports multi-classloader environments -- the root
  * instance has visibility only into codec classes and for each classloader we encounter when presented with a binding
  * class we create a leaf instance and cache it in the root instance. Leaf instances are using the root loader as their

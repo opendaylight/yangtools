@@ -22,8 +22,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * using {@link #instantiateWithValues(Object[])} where the argument array has values ordered corresponding to the key
  * order defined by {@link #keySet()}.
  *
- * <p>
- * If the keySet is static known to contain only a single key, consider using {@link SharedSingletonMapTemplate}. If
+ * <p>If the keySet is static known to contain only a single key, consider using {@link SharedSingletonMapTemplate}. If
  * it is statically known to contain multiple keys, consider using {@link ImmutableOffsetMapTemplate}.
  *
  * @param <K> the type of keys maintained by this template

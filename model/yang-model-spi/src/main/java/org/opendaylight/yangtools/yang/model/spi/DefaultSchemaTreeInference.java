@@ -66,9 +66,8 @@ public final class DefaultSchemaTreeInference extends WithPath<SchemaTreeEffecti
      * Create a new instance based on an {@link EffectiveModelContext} and a resolved sequence of statements. Provided
      * statements are expected to have been produced in a validated manner and are normally trusted to be accurate.
      *
-     * <p>
-     * Run-time verification of {@code path} can be enabled by setting the {@value #VERIFY_UNSAFE_PROP} system property
-     * to {@code true}.
+     * <p>Run-time verification of {@code path} can be enabled by setting the {@value #VERIFY_UNSAFE_PROP} system
+     * property to {@code true}.
      *
      * @param modelContext Associated {@link EffectiveModelContext}
      * @param path Resolved statement path

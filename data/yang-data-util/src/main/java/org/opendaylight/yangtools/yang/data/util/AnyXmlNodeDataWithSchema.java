@@ -14,11 +14,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 
 /**
- * Utility class used for tracking parser state as needed by a StAX-like parser.
- * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
+ * Utility class used for tracking parser state as needed by a StAX-like parser. This class is to be used only by
+ * respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
  *
- * <p>
- * Represents a YANG anyxml node.
+ * <p>Represents a YANG anyxml node.
  */
 public final class AnyXmlNodeDataWithSchema extends SimpleNodeDataWithSchema<AnyxmlSchemaNode> {
     AnyXmlNodeDataWithSchema(final AnyxmlSchemaNode dataSchemaNode) {

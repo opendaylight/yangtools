@@ -16,8 +16,7 @@ import javax.xml.stream.XMLStreamWriter;
  * leaf values. While most leaves are simple strings, some (like identityref) need to interact with XML namespaces
  * in order to correctly encode their value.
  *
- * <p>
- * See XMLStreamWriter for description of methods.
+ * <p>See XMLStreamWriter for description of methods.
  */
 abstract class ValueWriter {
     abstract void writeNamespace(String prefix, String namespaceURI) throws XMLStreamException;

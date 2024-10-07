@@ -26,12 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
  * client might require, and it is not limited solely to that use case and should be used wherever its methods provide
  * the required semantics.
  *
- * <p>
- * The core assumption is that the user knows the general context in which a particular document, provided as an
+ * <p>The core assumption is that the user knows the general context in which a particular document, provided as an
  * {@link InputStream}, needs to be interpreted.
  *
- * <p>
- * In RESTCONF that context is provided by the HTTP request method and the HTTP request URI. On the server side these
+ * <p>In RESTCONF that context is provided by the HTTP request method and the HTTP request URI. On the server side these
  * expect to be differentiated between requests to
  * <ul>
  *   <li>invoke an {@code rpc} or an {@code action}, catered to by
@@ -115,12 +113,10 @@ public interface InputStreamNormalizer {
     /**
      * Parse the contents of an {@link InputStream} as the contents of a data store.
      *
-     * <p>
-     * This method's signature is a bit counter-intuitive. {@code rootNamespace} and {@code rootName} collectively
+     * <p>This method's signature is a bit counter-intuitive. {@code rootNamespace} and {@code rootName} collectively
      * encode the expected root element, which may not be expressed in the underlying YANG data model.
      *
-     * <p>
-     * The reason for this is that YANG does not define an explicit {@link NodeIdentifier} of the datastore root
+     * <p>The reason for this is that YANG does not define an explicit {@link NodeIdentifier} of the datastore root
      * resource, but protocol encodings require this conceptual root to be encapsulated in protocol documents and the
      * approaches taken differ from protocol to protocol. NETCONF operates in terms of YANG-modeled RPC operations,
      * where this conceptual root is given an anchor -- {@code get-config} output's {@code anyxml data}. RESTCONF
@@ -128,17 +124,15 @@ public interface InputStreamNormalizer {
      * {@code container data} with description defining its magic properties and it is not feasible for YANG parser
      * to help us with that.
      *
-     * <p>
-     * Therefore this method takes the name of the root element in two arguments, which together define its value in
+     * <p>Therefore this method takes the name of the root element in two arguments, which together define its value in
      * both JSON-based (module + localName} and XML-based (namespace + localName) encodings. Implementations of this
      * method are expected to use this information and treat the root element outside of their usual YANG-informed
      * processing.
      *
-     * <p>
-     * For example, XML parsers will pick {@code containerName.getNodeType().getNamespace()} to match the root element's
-     * namespace and {@code containerName.getNodeType().getLocalName()} to match the element's local name. JSON parsers,
-     * on the other hand, will use {@code moduleName} and {@code rootName.getLocalName()} to match the top-level JSON
-     * object's sole named member.
+     * <p>For example, XML parsers will pick {@code containerName.getNodeType().getNamespace()} to match the root
+     * element's namespace and {@code containerName.getNodeType().getLocalName()} to match the element's local name.
+     * JSON parsers, on the other hand, will use {@code moduleName} and {@code rootName.getLocalName()} to match the
+     * top-level JSON object's sole named member.
      *
      * @param containerName expected root container name
      * @param moduleName module name corresponding to {@code containerName}

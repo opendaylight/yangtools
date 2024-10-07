@@ -21,13 +21,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * Builder for effective model inference action. Model inference action is core principle of transforming
  * declared model into effective model.
  *
- * <p>
- * Since YANG allows forward references, some inference actions need to be taken at a later point, where reference is
+ * <p>Since YANG allows forward references, some inference actions need to be taken at a later point, where reference is
  * actually resolved. Referenced objects are not retrieved directly but are represented as {@link Prerequisite}
  * (prerequisite) for inference action to be taken.
  *
- * <p>
- * Some existing YANG statements are more complex and also object, for which effective model may be inferred is also
+ * <p>Some existing YANG statements are more complex and also object, for which effective model may be inferred is also
  * represented as a {@link Prerequisite} which, when reference is available, will contain target context, which may be
  * used for inference action.
  *
@@ -38,9 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * <li>Execution of inference action</li>
  * </ol>
  *
- * <p>
- * In order to declare inference action following steps needs
- * to be taken:
+ * <p>In order to declare inference action following steps needs to be taken:
  * <ol>
  * <li>Use {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)} to obtain
  * {@link ModelActionBuilder}.
@@ -52,8 +48,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * to register inference action.
  * </ol>
  *
- * <p>
- * An action will be executed when:
+ * <p>An action will be executed when:
  * <ul>
  * <li> {@link InferenceAction#apply(InferenceContext)} - all prerequisites (and declared forward references) are met,
  * action could dereference them and start applying changes.
@@ -63,17 +58,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * </li>
  * </ul>
  *
- * <p>
- * TODO: Insert real word example
+ * <p>TODO: Insert real word example
  *
  * <h2>Design notes</h2>
  * {@link java.util.concurrent.Future} seems as viable and more standard alternative to {@link Prerequisite}, but
  * Futures also carries promise that resolution of it is carried in other thread, which will actually put additional
  * constraints on semantic parser.
  *
- * <p>
- * Also listening on multiple futures is costly, so we opted out of future and designed API, which later may introduce
- * futures.
+ * <p>Also listening on multiple futures is costly, so we opted out of future and designed API, which later may
+ * introduce futures.
  */
 public interface ModelActionBuilder {
     interface InferenceContext {
@@ -109,12 +102,10 @@ public interface ModelActionBuilder {
          * Invoked once one of prerequisites was not met, even after all other satisfiable inference actions were
          * processed.
          *
-         * <p>
-         * Implementors MUST throw {@link InferenceException} if semantic processing of model should be stopped
+         * <p>Implementors MUST throw {@link InferenceException} if semantic processing of model should be stopped
          * and failed.
          *
-         * <p>
-         * List of failed prerequisites should be used to select right message / error type to debug problem in YANG
+         * <p>List of failed prerequisites should be used to select right message / error type to debug problem in YANG
          * sources.
          *
          * @param failed collection of prerequisites which were not met
@@ -128,9 +119,8 @@ public interface ModelActionBuilder {
          * Invoked once the prerequisite is deemed unavailable due to conformance reasons. This typically happens when
          * a feature-dependent prerequisite does not have the appropriate feature activated.
          *
-         * <p>
-         * The default implementation invokes {@link #prerequisiteFailed(Collection)}, implementations should override
-         * this method if they wish, for example, to ignore the missing prerequisite.
+         * <p>The default implementation invokes {@link #prerequisiteFailed(Collection)}, implementations should
+         * override this method if they wish, for example, to ignore the missing prerequisite.
          *
          * @param unavail Unavailable prerequisite
          */

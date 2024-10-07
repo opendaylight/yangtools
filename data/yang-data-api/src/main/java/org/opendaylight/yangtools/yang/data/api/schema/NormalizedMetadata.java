@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * a NormalizedNode instance, hence it does not support iterating over its structure like it is possible with
  * {@link NormalizedNode#body()}. Children may be inquired through {@link #getChildren()}.
  *
- * <p>
- * This model of metadata <em>does not</em> have the RFC7952 restriction on metadata attachment to {@code list}s and
+ * <p>This model of metadata <em>does not</em> have the RFC7952 restriction on metadata attachment to {@code list}s and
  * {@code leaf-list}s because NormalizedNode data model has {@link LeafSetNode}, {@link MapNode} and
  * {@link UnkeyedListNode} to which metadata can be attached.
  */

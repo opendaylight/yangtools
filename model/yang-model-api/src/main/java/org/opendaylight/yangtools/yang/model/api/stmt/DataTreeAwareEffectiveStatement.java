@@ -27,8 +27,7 @@ public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<
      * structure of the tree is different, though, as {@code choice} and {@code case} statements are glossed over and
      * they do not contribute to the tree hierarchy -- only their children do.
      *
-     * <p>
-     * Note that returned statements are not necessarily direct substatements of this statement.
+     * <p>Note that returned statements are not necessarily direct substatements of this statement.
      *
      * @return All substatements participating on the {@code data tree}
      */

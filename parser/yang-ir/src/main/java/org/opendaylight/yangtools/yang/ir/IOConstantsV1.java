@@ -11,24 +11,21 @@ package org.opendaylight.yangtools.yang.ir;
  * Simplistic coding, without any real magic bit reuse. The idea is that each statement is in the form:
  * <pre>{@code HEADER LINE COLUMN KEYWORD [ARGUMENT] [SUBSTATEMENTS]}</pre>
  *
- * <p>
- * The {@code HEADER} is always a single byte, internally composed of four bitfields:
+ * <p>The {@code HEADER} is always a single byte, internally composed of four bitfields:
  * <pre>
  * +---+---+---+---+---+---+---+---+
  * |  KW TYPE  | SIZE  |ARG|  L6N  |
  * +---+---+---+---+---+---+---+---+
  * </pre>
  *
- * <p>
- * The {@code LINE} and {@code COLUMN} are variable size, indicated by the {@code L6N} bits:
+ * <p>The {@code LINE} and {@code COLUMN} are variable size, indicated by the {@code L6N} bits:
  * <ul>
  *   <li>{@link #HDR_LOCATION_22} indicates u16 for LINE and u16 for COLUMN</li>
  *   <li>{@link #HDR_LOCATION_31} indicates u24 for LINE and u8 for COLUMN</li>
  *   <li>{@link #HDR_LOCATION_44} indicates s32 for LINE and s32 for COLUMN</li>
  * </ul>
  *
- * <p>
- * The {@code KEYWORD} is variable-format based on {@code KW TYPE} bits:
+ * <p>The {@code KEYWORD} is variable-format based on {@code KW TYPE} bits:
  * <ul>
  *   <li>{@link #HDR_KEY_DEF_QUAL} indicates a new definition, which is composed of two {@code STRING}s</li>
  *   <li>{@link #HDR_KEY_DEF_UQUAL} indicates a new definition, which is composed of a single {@code STRING}</li>
@@ -39,8 +36,7 @@ package org.opendaylight.yangtools.yang.ir;
  * Once defined, each keyword can be referenced by encoding a reference with a linear counter of definition. I.e.
  * the first definition is {@code 0}, the second is {@code 1}, etc.
  *
- * <p>
- * The {@code ARGUMENT} is present only when indicated by {@link #HDR_ARGUMENT_PRESENT}. If it is present, it has
+ * <p>The {@code ARGUMENT} is present only when indicated by {@link #HDR_ARGUMENT_PRESENT}. If it is present, it has
  * variable encoding in form
  * <pre>{@code ARGHDR [...]}</pre>
  */

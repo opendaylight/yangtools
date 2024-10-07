@@ -46,8 +46,7 @@ import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 /**
  * This instance identifier uniquely identifies a specific DataObject in the data tree modeled by YANG.
  *
- * <p>
- * For Example let's say you were trying to refer to a node in inventory which was modeled in YANG as follows,
+ * <p>For Example let's say you were trying to refer to a node in inventory which was modeled in YANG as follows,
  * <pre>code{
  *   module opendaylight-inventory {
  *     ....
@@ -63,13 +62,11 @@ import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
  *   }
  * }</pre>
  *
- * <p>
- * You can create an instance identifier as follows to get to a node with id "openflow:1": {@code
+ * <p>You can create an instance identifier as follows to get to a node with id "openflow:1": {@code
  * InstanceIdentifier.builder(Nodes.class).child(Node.class, new NodeKey(new NodeId("openflow:1")).build();
  * }
  *
- * <p>
- * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
+ * <p>This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  *
  * @deprecated Use {@link DataObjectIdentifier} for the {@link #isExact()} case and {@link DataObjectReference} for the
  *             {@link #isWildcarded()} case.
@@ -130,15 +127,13 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     /**
      * Return an instance identifier trimmed at the first occurrence of a specific component type.
      *
-     * <p>
-     * For example let's say an instance identifier was built like so,
+     * <p>For example let's say an instance identifier was built like so,
      * <pre>
      *      identifier = InstanceIdentifier.builder(Nodes.class).child(Node.class,
      *                   new NodeKey(new NodeId("openflow:1")).build();
      * </pre>
      *
-     * <p>
-     * And you wanted to obtain the Instance identifier which represented Nodes you would do it like so,
+     * <p>And you wanted to obtain the Instance identifier which represented Nodes you would do it like so,
      * <pre>
      *      identifier.firstIdentifierOf(Nodes.class)
      * </pre>
@@ -187,12 +182,10 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * Check whether an identifier is contained in this identifier. This is a strict subtree check, which requires all
      * PathArguments to match exactly.
      *
-     * <p>
-     * The contains method checks if the other identifier is fully contained within the current identifier. It does this
-     * by looking at only the types of the path arguments and not by comparing the path arguments themselves.
+     * <p>The contains method checks if the other identifier is fully contained within the current identifier. It does
+     * this by looking at only the types of the path arguments and not by comparing the path arguments themselves.
      *
-     * <p>
-     * To illustrate here is an example which explains the working of this API. Let's say you have two instance
+     * <p>To illustrate here is an example which explains the working of this API. Let's say you have two instance
      * identifiers as follows:
      * {@code
      * this = /nodes/node/openflow:1
@@ -522,8 +515,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      * {@link Augmentable} step. Furthermore the compile-time indicated generic type of the returned object does not
      * necessarily match the contained state.
      *
-     * <p>
-     * Failure to observe precautions to validate the list's contents may yield an object which mey be rejected at
+     * <p>Failure to observe precautions to validate the list's contents may yield an object which mey be rejected at
      * run-time or lead to undefined behaviour.
      *
      * @param pathArguments The path to a specific node in the data tree
@@ -541,8 +533,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     /**
      * Create an instance identifier for a very specific object type.
      *
-     * <p>
-     * For example
+     * <p>For example
      * <pre>
      *      new InstanceIdentifier(Nodes.class)
      * </pre>

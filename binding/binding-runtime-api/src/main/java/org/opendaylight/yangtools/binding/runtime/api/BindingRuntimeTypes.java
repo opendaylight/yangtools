@@ -61,8 +61,7 @@ public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
      * Lookup to all {@link CaseRuntimeType}s related to a {@link ChoiceRuntimeType}. This is important when dealing
      * with sharing incurred by Binding Spec's reuse of constructs defined in a {@code grouping}.
      *
-     * <p>
-     * As an example, consider {@link ChoiceRuntimeType} and {@link CaseRuntimeType} relationship to
+     * <p>As an example, consider {@link ChoiceRuntimeType} and {@link CaseRuntimeType} relationship to
      * {@link GeneratedType}s in the following model:
      * <pre>
      *   <code>
@@ -95,9 +94,8 @@ public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
      * builders can propagate them without translating them to the appropriate manifestation -- and they can do nothing
      * about that as they lack the complete view of the effective model.
      *
-     * <p>
-     * This method provides a bridge between a particular instantiation of a {@code choice} to {@link CaseRuntimeType}s
-     * valid in all instantiations.
+     * <p>This method provides a bridge between a particular instantiation of a {@code choice} to
+     * {@link CaseRuntimeType}s valid in all instantiations.
      *
      * @param choiceType A ChoiceRuntimeType
      * @return The set of {@link CaseRuntimeType}s known to this instance

@@ -22,10 +22,9 @@ public interface SchemaTreeInference extends EffectiveStatementInference {
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * The statement path is always composed on {@link SchemaTreeEffectiveStatement}s and contains at least one element.
-     * The path is ordered from conceptual YANG root, i.e. the first element corresponds to the first element in
-     * {@link SchemaNodeIdentifier.Absolute#firstNodeIdentifier()}.
+     * <p>The statement path is always composed on {@link SchemaTreeEffectiveStatement}s and contains at least one
+     * element. The path is ordered from conceptual YANG root, i.e. the first element corresponds to the first element
+     * in {@link SchemaNodeIdentifier.Absolute#firstNodeIdentifier()}.
      */
     @Override
     List<@NonNull SchemaTreeEffectiveStatement<?>> statementPath();

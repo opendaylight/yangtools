@@ -68,8 +68,8 @@ public final class ParserNamespaces {
      * or its submodules share the same grouping identifier namespace. This namespace is scoped to all
      * descendant nodes of the parent node or module.
      *
-     * <p>
-     * This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same name.
+     * <p>This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same
+     * name.
      */
     public static final @NonNull ParserNamespace<QName,
         StmtContext<QName, GroupingStatement, GroupingEffectiveStatement>> GROUPING = new ParserNamespace<>("grouping");
@@ -99,12 +99,10 @@ public final class ParserNamespaces {
      * Derived types namespace. All derived type names defined within a parent node or at the top level of the module
      * (or its submodules) share the same type identifier namespace.
      *
-     * <p>
-     * This namespace is scoped to all descendant nodes of the parent node or module. This means that any descendant
+     * <p>This namespace is scoped to all descendant nodes of the parent node or module. This means that any descendant
      * node may use that typedef, and it MUST NOT define a typedef with the same name.
      *
-     * <p>
-     * This namespace includes all type definitions implied by the language in which the current statement resides
+     * <p>This namespace includes all type definitions implied by the language in which the current statement resides
      * (e.g. RFC6020/RFC7950 for YANG 1.0/1.1).
      */
     public static final @NonNull ParserNamespace<QName,
@@ -238,8 +236,7 @@ public final class ParserNamespaces {
      * Statement local namespace, which holds direct schema node descendants. This corresponds to the contents of the
      * schema tree as exposed through {@link SchemaTreeAwareEffectiveStatement}.
      *
-     * <p>
-     * Unlike all other namespaces this namespaces is polymorphic, hence it is exposed throught this method.
+     * <p>Unlike all other namespaces this namespaces is polymorphic, hence it is exposed throught this method.
      *
      * @return Schema tree namespace
      */
