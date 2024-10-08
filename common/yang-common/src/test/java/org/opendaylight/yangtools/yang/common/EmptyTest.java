@@ -13,35 +13,36 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HexFormat;
 import org.junit.jupiter.api.Test;
 
-public class EmptyTest {
-
+class EmptyTest {
     @Test
-    public void testInstanceNotNull() {
+    void testInstanceNotNull() {
         assertNotNull(Empty.value());
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("empty", Empty.value().toString());
     }
 
     @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+    void testSerialization() throws Exception {
+        final var bos = new ByteArrayOutputStream();
+        try (var oos = new ObjectOutputStream(bos)) {
             oos.writeObject(Empty.value());
         }
 
-        final Object read;
-        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()))) {
-            read = ois.readObject();
-        }
+        final var bytes = bos.toByteArray();
+        assertEquals("""
+            aced00057372002c6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e456d707479000\
+            00000000000010200007870""", HexFormat.of().formatHex(bytes));
 
-        assertSame(Empty.value(), read);
+        try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+            assertSame(Empty.value(), ois.readObject());
+        }
     }
 }

@@ -16,15 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.common.primitives.UnsignedLong;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
+import java.util.HexFormat;
 import org.junit.jupiter.api.Test;
 
-public class Uint64Test {
+class Uint64Test {
     @Test
-    public void testValueOf() {
+    void testValueOf() {
         assertEquals(127, Uint64.valueOf(Byte.MAX_VALUE).byteValue());
         assertEquals(32767, Uint64.valueOf(Short.MAX_VALUE).shortValue());
         assertEquals(2147483647, Uint64.valueOf(Integer.MAX_VALUE).intValue());
@@ -35,7 +35,7 @@ public class Uint64Test {
     }
 
     @Test
-    public void testSaturatedOf() {
+    void testSaturatedOf() {
         assertEquals(127, Uint64.saturatedOf((byte) 127).byteValue());
         assertEquals(127, Uint64.saturatedOf((short) 127).byteValue());
         assertEquals(127, Uint64.saturatedOf(127).byteValue());
@@ -48,10 +48,10 @@ public class Uint64Test {
     }
 
     @Test
-    public void testCompareTo() {
-        final Uint64 five = Uint64.valueOf(5);
-        final Uint64 zero = Uint64.valueOf(0);
-        final Uint64 max = Uint64.valueOf(4294967295L);
+    void testCompareTo() {
+        final var five = Uint64.valueOf(5);
+        final var zero = Uint64.valueOf(0);
+        final var max = Uint64.valueOf(4294967295L);
 
         assertEquals(0, zero.compareTo(zero));
         assertEquals(-1, zero.compareTo(five));
@@ -67,12 +67,12 @@ public class Uint64Test {
     }
 
     @Test
-    public void testEquals() {
-        final Uint64 five = Uint64.valueOf(5);
-        final Uint64 zero = Uint64.valueOf(0);
-        final Uint64 max = Uint64.valueOf(4294967295L);
+    void testEquals() {
+        final var five = Uint64.valueOf(5);
+        final var zero = Uint64.valueOf(0);
+        final var max = Uint64.valueOf(4294967295L);
 
-        final Uint64 test = new Uint64(five);
+        final var test = new Uint64(five);
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));
@@ -82,7 +82,7 @@ public class Uint64Test {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("0", Uint64.valueOf(0).toString());
         assertEquals("2147483647", Uint64.valueOf(2147483647L).toString());
         assertEquals("2147483648", Uint64.valueOf(2147483648L).toString());
@@ -90,22 +90,22 @@ public class Uint64Test {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(Long.hashCode(-63), Uint64.fromLongBits(-63L).hashCode());
     }
 
     @Test
-    public void testFloatValue() {
+    void testFloatValue() {
         assertEquals(0, Uint64.valueOf(0).floatValue(), 0);
     }
 
     @Test
-    public void testDoubleValue() {
+    void testDoubleValue() {
         assertEquals(0, Uint64.valueOf(0).doubleValue(), 0);
     }
 
     @Test
-    public void testConversions() {
+    void testConversions() {
         assertSame(Uint64.valueOf(5), Uint64.valueOf(Uint8.valueOf(5)));
         assertSame(Uint64.valueOf(10), Uint64.valueOf(Uint16.valueOf(10)));
         assertSame(Uint64.valueOf(20), Uint64.valueOf(Uint32.valueOf(20)));
@@ -120,38 +120,41 @@ public class Uint64Test {
     }
 
     @Test
-    public void testToUint8() {
+    void testToUint8() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.MAX_VALUE.toUint8());
     }
 
     @Test
-    public void testToUint16() {
+    void testToUint16() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.MAX_VALUE.toUint16());
     }
 
     @Test
-    public void testToUint32() {
+    void testToUint32() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.MAX_VALUE.toUint32());
     }
 
     @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        final Uint64 source = Uint64.valueOf(255);
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+    void testSerialization() throws Exception {
+        final var source = Uint64.valueOf(255);
+        final var bos = new ByteArrayOutputStream();
+        try (var oos = new ObjectOutputStream(bos)) {
             oos.writeObject(source);
         }
 
-        final Object read;
-        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()))) {
-            read = ois.readObject();
-        }
+        final var bytes = bos.toByteArray();
+        assertEquals("""
+            aced00057372002d6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e55696e7436340\
+            0000000000000010200014a000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b02000078700000\
+            0000000000ff""", HexFormat.of().formatHex(bytes));
 
-        assertSame(source, read);
+        try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+            assertSame(source, ois.readObject());
+        }
     }
 
     @Test
-    public void testNegativeValues() {
+    void testNegativeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf((byte)-1));
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf((short)-1));
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(-1));
@@ -166,7 +169,7 @@ public class Uint64Test {
     }
 
     @Test
-    public void testLargeValues() {
+    void testLargeValues() {
         final BigInteger big = new BigInteger("10000000000000000", 16);
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(big));
 
@@ -174,7 +177,7 @@ public class Uint64Test {
     }
 
     @Test
-    public void testNullValueOf() {
+    void testNullValueOf() {
         assertThrows(NullPointerException.class, () -> Uint64.valueOf((String) null));
         assertThrows(NullPointerException.class, () -> Uint64.valueOf((BigInteger) null));
     }

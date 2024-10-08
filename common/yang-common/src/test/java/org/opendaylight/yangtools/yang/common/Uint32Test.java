@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.common.primitives.UnsignedInteger;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HexFormat;
 import org.junit.jupiter.api.Test;
 
-public class Uint32Test {
+class Uint32Test {
     @Test
-    public void testValueOf() {
+    void testValueOf() {
         assertEquals(127, Uint32.valueOf(Byte.MAX_VALUE).byteValue());
         assertEquals(32767, Uint32.valueOf(Short.MAX_VALUE).shortValue());
         assertEquals(2147483647, Uint32.valueOf(Integer.MAX_VALUE).intValue());
@@ -32,7 +32,7 @@ public class Uint32Test {
     }
 
     @Test
-    public void testSaturatedOf() {
+    void testSaturatedOf() {
         assertEquals(127, Uint32.saturatedOf((byte) 127).byteValue());
         assertEquals(127, Uint32.saturatedOf((short) 127).byteValue());
         assertEquals(127, Uint32.saturatedOf(127).byteValue());
@@ -44,10 +44,10 @@ public class Uint32Test {
     }
 
     @Test
-    public void testCompareTo() {
-        final Uint32 five = Uint32.valueOf(5);
-        final Uint32 zero = Uint32.valueOf(0);
-        final Uint32 max = Uint32.valueOf(4294967295L);
+    void testCompareTo() {
+        final var five = Uint32.valueOf(5);
+        final var zero = Uint32.valueOf(0);
+        final var max = Uint32.valueOf(4294967295L);
 
         assertEquals(0, zero.compareTo(zero));
         assertEquals(-1, zero.compareTo(five));
@@ -63,12 +63,12 @@ public class Uint32Test {
     }
 
     @Test
-    public void testEquals() {
-        final Uint32 five = Uint32.valueOf(5);
-        final Uint32 zero = Uint32.valueOf(0);
-        final Uint32 max = Uint32.valueOf(4294967295L);
+    void testEquals() {
+        final var five = Uint32.valueOf(5);
+        final var zero = Uint32.valueOf(0);
+        final var max = Uint32.valueOf(4294967295L);
 
-        final Uint32 test = new Uint32(five);
+        final var test = new Uint32(five);
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));
@@ -78,7 +78,7 @@ public class Uint32Test {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("0", Uint32.valueOf(0).toString());
         assertEquals("2147483647", Uint32.valueOf(2147483647L).toString());
         assertEquals("2147483648", Uint32.valueOf(2147483648L).toString());
@@ -86,22 +86,22 @@ public class Uint32Test {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(Integer.hashCode(-63), Uint32.fromIntBits(-63).hashCode());
     }
 
     @Test
-    public void testFloatValue() {
+    void testFloatValue() {
         assertEquals(0, Uint32.valueOf(0).floatValue(), 0);
     }
 
     @Test
-    public void testDoubleValue() {
+    void testDoubleValue() {
         assertEquals(0, Uint32.valueOf(0).doubleValue(), 0);
     }
 
     @Test
-    public void testConversions() {
+    void testConversions() {
         assertSame(Uint32.valueOf(5), Uint32.valueOf(Uint8.valueOf(5)));
         assertSame(Uint32.valueOf(10), Uint32.valueOf(Uint16.valueOf(10)));
         assertSame(Uint32.valueOf(20), Uint32.valueOf(Uint64.valueOf(20)));
@@ -115,33 +115,37 @@ public class Uint32Test {
     }
 
     @Test
-    public void testToUint8() {
+    void testToUint8() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.MAX_VALUE.toUint8());
     }
 
     @Test
-    public void testToUint16() {
+    void testToUint16() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.MAX_VALUE.toUint16());
     }
 
     @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        final Uint32 source = Uint32.valueOf(255);
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+    void testSerialization() throws Exception {
+        final var source = Uint32.valueOf(255);
+        final var bos = new ByteArrayOutputStream();
+        try (var oos = new ObjectOutputStream(bos)) {
             oos.writeObject(source);
         }
 
-        final Object read;
-        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()))) {
-            read = ois.readObject();
+        final var bytes = bos.toByteArray();
+        assertEquals("""
+            aced00057372002d6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e55696e7433320\
+            00000000000000102000149000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b02000078700000\
+            00ff""", HexFormat.of().formatHex(bytes));
+
+        try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+            assertSame(source, ois.readObject());
         }
 
-        assertSame(source, read);
     }
 
     @Test
-    public void testNegativeValues() {
+    void testNegativeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf((byte)-1));
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf((short)-1));
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf(-1));
@@ -154,14 +158,14 @@ public class Uint32Test {
     }
 
     @Test
-    public void testLargeValues() {
+    void testLargeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf(4294967296L));
 
         assertEquals(Uint32.MAX_VALUE, Uint32.saturatedOf(4294967296L));
     }
 
     @Test
-    public void testNullValueOfString() {
+    void testNullValueOfString() {
         assertThrows(NullPointerException.class, () -> Uint32.valueOf((String) null));
     }
 }
