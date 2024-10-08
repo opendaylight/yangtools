@@ -18,11 +18,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HexFormat;
 import org.junit.jupiter.api.Test;
 
-public class Uint8Test {
+class Uint8Test {
     @Test
-    public void testValueOf() {
+    void testValueOf() {
         assertEquals(127, Uint8.valueOf(Byte.MAX_VALUE).byteValue());
         assertEquals(255, Uint8.valueOf(255).intValue());
         assertEquals(255L, Uint8.valueOf(255L).longValue());
@@ -30,7 +31,7 @@ public class Uint8Test {
     }
 
     @Test
-    public void testSaturatedOf() {
+    void testSaturatedOf() {
         assertEquals(127, Uint8.saturatedOf((byte) 127).byteValue());
         assertEquals(127, Uint8.saturatedOf((short) 127).byteValue());
         assertEquals(127, Uint8.saturatedOf(127).byteValue());
@@ -42,10 +43,10 @@ public class Uint8Test {
     }
 
     @Test
-    public void testCompareTo() {
-        final Uint8 five = Uint8.valueOf(5);
-        final Uint8 zero = Uint8.valueOf(0);
-        final Uint8 max = Uint8.valueOf(255);
+    void testCompareTo() {
+        final var five = Uint8.valueOf(5);
+        final var zero = Uint8.valueOf(0);
+        final var max = Uint8.valueOf(255);
 
         assertEquals(0, zero.compareTo(zero));
         assertEquals(-5, zero.compareTo(five));
@@ -61,12 +62,12 @@ public class Uint8Test {
     }
 
     @Test
-    public void testEquals() {
-        final Uint8 five = Uint8.valueOf(5);
-        final Uint8 zero = Uint8.valueOf(0);
-        final Uint8 max = Uint8.valueOf(255);
+    void testEquals() {
+        final var five = Uint8.valueOf(5);
+        final var zero = Uint8.valueOf(0);
+        final var max = Uint8.valueOf(255);
 
-        final Uint8 test = new Uint8(five);
+        final var test = new Uint8(five);
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));
@@ -76,7 +77,7 @@ public class Uint8Test {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("0", Uint8.valueOf(0).toString());
         assertEquals("127", Uint8.valueOf(127).toString());
         assertEquals("128", Uint8.valueOf(128).toString());
@@ -84,22 +85,22 @@ public class Uint8Test {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(Byte.hashCode((byte)-63), Uint8.fromByteBits((byte)-63).hashCode());
     }
 
     @Test
-    public void testFloatValue() {
+    void testFloatValue() {
         assertEquals(0, Uint8.valueOf(0).floatValue(), 0);
     }
 
     @Test
-    public void testDoubleValue() {
+    void testDoubleValue() {
         assertEquals(0, Uint8.valueOf(0).doubleValue(), 0);
     }
 
     @Test
-    public void testConversions() {
+    void testConversions() {
         assertSame(Uint8.valueOf(5), Uint8.valueOf(Uint16.valueOf(5)));
         assertSame(Uint8.valueOf(10), Uint8.valueOf(Uint32.valueOf(10)));
         assertSame(Uint8.valueOf(20), Uint8.valueOf(Uint64.valueOf(20)));
@@ -110,23 +111,27 @@ public class Uint8Test {
     }
 
     @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
-        final Uint8 source = Uint8.valueOf(255);
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+    void testSerialization() throws IOException, ClassNotFoundException {
+        final var source = Uint8.valueOf(255);
+        final var bos = new ByteArrayOutputStream();
+        try (var oos = new ObjectOutputStream(bos)) {
             oos.writeObject(source);
         }
 
-        final Object read;
-        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()))) {
-            read = ois.readObject();
+        final var bytes = bos.toByteArray();
+        assertEquals("""
+            aced00057372002c6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e79616e672e636f6d6d6f6e2e55696e7438000\
+            000000000000102000142000576616c7565787200106a6176612e6c616e672e4e756d62657286ac951d0b94e08b0200007870ff""",
+            HexFormat.of().formatHex(bytes));
+
+        try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+            assertSame(source, ois.readObject());
         }
 
-        assertSame(source, read);
     }
 
     @Test
-    public void testNegativeValues() {
+    void testNegativeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf((byte)-1));
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf((short)-1));
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(-1));
@@ -139,7 +144,7 @@ public class Uint8Test {
     }
 
     @Test
-    public void testLargeValues() {
+    void testLargeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf((short)256));
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(256));
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(256L));
@@ -150,7 +155,7 @@ public class Uint8Test {
     }
 
     @Test
-    public void testNullValueOfString() {
+    void testNullValueOfString() {
         assertThrows(NullPointerException.class, () -> Uint8.valueOf((String) null));
     }
 }
