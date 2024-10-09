@@ -88,7 +88,7 @@ abstract class UniqueValidator<T> implements Immutable {
     }
 
     static UniqueValidator<?> of(final List<List<NodeIdentifier>> descendants) {
-        return descendants.size() == 1 ? new One(descendants.get(0)) : new Many(descendants);
+        return descendants.size() == 1 ? new One(descendants.getFirst()) : new Many(descendants);
     }
 
     /**
@@ -121,7 +121,7 @@ abstract class UniqueValidator<T> implements Immutable {
      * @return Encoded path.
      */
     private static Object encodePath(final List<NodeIdentifier> path) {
-        return path.size() == 1 ? path.get(0) : ImmutableList.copyOf(path);
+        return path.size() == 1 ? path.getFirst() : ImmutableList.copyOf(path);
     }
 
     /**

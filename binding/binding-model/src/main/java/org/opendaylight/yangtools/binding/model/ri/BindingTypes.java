@@ -465,7 +465,7 @@ public final class BindingTypes {
     public static @Nullable Type extractYangFeatureDataRoot(final GeneratedTransferObject gto) {
         if (!gto.isAbstract() && gto.getSuperType() == null) {
             final var impls = gto.getImplements();
-            if (impls.size() == 1 && impls.get(0) instanceof ParameterizedType param
+            if (impls.size() == 1 && impls.getFirst() instanceof ParameterizedType param
                 && YANG_FEATURE.equals(param.getRawType())) {
                 final var args = param.getActualTypeArguments();
                 if (args.length == 2) {

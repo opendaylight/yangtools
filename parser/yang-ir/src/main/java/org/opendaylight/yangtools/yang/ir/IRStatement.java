@@ -147,7 +147,7 @@ public abstract sealed class IRStatement extends AbstractIRObject {
                 }
                 yield new Z44(keyword, argument, line, column);
             }
-            case 1 -> new O44(keyword, argument, statements.get(0), line, column);
+            case 1 -> new O44(keyword, argument, statements.getFirst(), line, column);
             default -> new L44(keyword, argument, statements, line, column);
         };
     }

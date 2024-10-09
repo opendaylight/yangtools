@@ -240,7 +240,7 @@ public abstract sealed class IRArgument extends AbstractIRObject {
             // A concatenation of empty strings, fall back to a single unquoted string
             case 0 -> empty();
             // A single string concatenated with empty string(s), use just the significant portion
-            case 1 -> parts.get(0);
+            case 1 -> parts.getFirst();
             // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as nice,
             //       but for single-quoted strings we do not need further validation in in the reactor and can use them
             //       as raw literals. This saves some indirection overhead (on memory side) and can slightly improve

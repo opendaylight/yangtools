@@ -504,7 +504,7 @@ class JavaFileTemplate {
 //        if (!path.isEmpty()) {
 //            // FIXME: this is module name, while when we switch, we end up using QName.toString() -- which is weird
 //            sb.append(module.argument().getLocalName());
-//            XMLNamespace currentNamespace = path.get(0).getNamespace();
+//            XMLNamespace currentNamespace = path.getFirst().getNamespace();
 //
 //            for (QName pathElement : path) {
 //                final XMLNamespace elementNamespace = pathElement.getNamespace();

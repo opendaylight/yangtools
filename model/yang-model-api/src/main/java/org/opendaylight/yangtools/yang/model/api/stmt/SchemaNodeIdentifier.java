@@ -73,7 +73,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          */
         public static @NonNull Absolute of(final Collection<QName> nodeIdentifiers) {
             final var qnames = ImmutableList.copyOf(nodeIdentifiers);
-            return qnames.size() == 1 ? of(qnames.get(0)) : new Absolute(qnames);
+            return qnames.size() == 1 ? of(qnames.getFirst()) : new Absolute(qnames);
         }
 
         /**
@@ -131,7 +131,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          */
         public static @NonNull Descendant of(final Collection<QName> nodeIdentifiers) {
             final var qnames = ImmutableList.copyOf(nodeIdentifiers);
-            return qnames.size() == 1 ? of(qnames.get(0)) : new Descendant(qnames);
+            return qnames.size() == 1 ? of(qnames.getFirst()) : new Descendant(qnames);
         }
     }
 
@@ -161,27 +161,23 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
     }
 
     /**
-     * Return the first node identifier. This method is equivalent to {@code getNodeIdentifiers().get(0)}, but is
+     * Return the first node identifier. This method is equivalent to {@code getNodeIdentifiers().getFirst()}, but is
      * potentially more efficient.
      *
      * @return The first node identifier
      */
     public final @NonNull QName firstNodeIdentifier() {
-        return pathObj instanceof QName qname ? qname : coerceList().get(0);
+        return pathObj instanceof QName qname ? qname : coerceList().getFirst();
     }
 
     /**
-     * Return the last node identifier. This method is equivalent to {@code getNodeIdentifiers().get(size - 1)}, but
+     * Return the last node identifier. This method is equivalent to {@code getNodeIdentifiers().getLast()}, but
      * is potentially more efficient.
      *
      * @return The last node identifier
      */
     public final @NonNull QName lastNodeIdentifier() {
-        if (pathObj instanceof QName qname) {
-            return qname;
-        }
-        final var list = coerceList();
-        return list.get(list.size() - 1);
+        return pathObj instanceof QName qname ? qname : coerceList().getLast();
     }
 
     @Override

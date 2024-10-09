@@ -165,7 +165,7 @@ class UnionTemplate extends ClassTemplate {
         if (!gto.typedef || gto.properties === null || gto.properties.size != 1) {
             return null
         }
-        val prop = gto.properties.get(0)
+        val prop = gto.properties.first
         if (prop.name.equals("value")) {
             return prop.returnType
         }

@@ -100,7 +100,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
                         // The appropriate choice and DataObject at the very least. The choice interface is the first
                         // one mentioned.
                         verify(ifaces.size() >= 2, "Unexpected implemented interfaces %s", ifaces);
-                        choiceToCases.put(ifaces.get(0).getIdentifier(), caseType);
+                        choiceToCases.put(ifaces.getFirst().getIdentifier(), caseType);
                     }
                 }
             }

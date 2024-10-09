@@ -275,7 +275,7 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
     private static @NonNull SchemaInferenceStack ofTrusted(final DefaultSchemaTreeInference inference) {
         final var path = inference.statementPath();
         final var ret = new SchemaInferenceStack(inference.modelContext(), path.size());
-        ret.currentModule = ret.getModule(path.get(0).argument());
+        ret.currentModule = ret.getModule(path.getFirst().argument());
         ret.deque.addAll(path);
         return ret;
     }

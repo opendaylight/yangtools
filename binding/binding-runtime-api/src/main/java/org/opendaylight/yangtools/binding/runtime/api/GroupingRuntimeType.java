@@ -83,7 +83,7 @@ public interface GroupingRuntimeType extends CompositeRuntimeType {
         return switch (users.size()) {
             case 0 -> List.of();
             case 1 -> {
-                final var user = users.get(0);
+                final var user = users.getFirst();
                 yield user instanceof GroupingRuntimeType grouping ? grouping.instantiations() : List.of(user);
             }
             default -> users.stream()

@@ -100,7 +100,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
 
     @Override
     public PathArgument getLastPathArgument() {
-        return path.isEmpty() ? null : path.get(path.size() - 1);
+        return path.isEmpty() ? null : path.getLast();
     }
 
     @Override

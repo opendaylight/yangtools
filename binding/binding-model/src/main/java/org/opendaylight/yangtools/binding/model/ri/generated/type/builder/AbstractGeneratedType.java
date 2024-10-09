@@ -80,7 +80,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     protected static final <T> List<T> makeUnmodifiable(final List<T> list) {
         return switch (list.size()) {
             case 0 -> Collections.emptyList();
-            case 1 -> Collections.singletonList(list.get(0));
+            case 1 -> Collections.singletonList(list.getFirst());
             default -> Collections.unmodifiableList(list);
         };
     }
