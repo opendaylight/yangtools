@@ -65,7 +65,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
             case XMLConstants.XMLNS_ATTRIBUTE_NS_URI -> XMLConstants.XMLNS_ATTRIBUTE;
             default -> {
                 final var prefixes = namespaceToPrefix.get(namespaceURI);
-                yield prefixes.isEmpty() ? null : prefixes.get(0);
+                yield prefixes.isEmpty() ? null : prefixes.getFirst();
             }
         };
     }

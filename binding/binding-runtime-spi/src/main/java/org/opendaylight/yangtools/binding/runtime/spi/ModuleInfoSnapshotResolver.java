@@ -194,7 +194,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
             final var regs = sourceToInfoReg.get(source);
             checkState(!regs.isEmpty(), "No registration for %s", source);
 
-            final var reg = regs.get(0);
+            final var reg = regs.getFirst();
             final var info = reg.info;
             moduleInfos.put(source, info);
             classLoaders.put(Naming.getRootPackageName(info.getName().getModule()), info.getClass().getClassLoader());

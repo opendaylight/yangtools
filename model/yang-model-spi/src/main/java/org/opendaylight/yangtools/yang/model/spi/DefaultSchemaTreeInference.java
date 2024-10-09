@@ -93,7 +93,7 @@ public final class DefaultSchemaTreeInference extends WithPath<SchemaTreeEffecti
 
     private static ImmutableList<SchemaTreeEffectiveStatement<?>> resolveSteps(final EffectiveModelContext modelContext,
             final List<QName> steps) {
-        final var first = steps.get(0);
+        final var first = steps.getFirst();
         final var module = modelContext.findModuleStatement(first.getModule()).orElseThrow(
             () -> new IllegalArgumentException("No module for " + first));
 

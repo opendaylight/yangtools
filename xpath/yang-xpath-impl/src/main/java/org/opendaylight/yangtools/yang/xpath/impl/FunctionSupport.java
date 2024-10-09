@@ -161,7 +161,7 @@ final class FunctionSupport {
 
     private static YangExpr booleanExpr(final List<YangExpr> args) {
         checkArgument(args.size() == 1, "boolean(object) takes one argument");
-        final YangExpr arg = args.get(0);
+        final YangExpr arg = args.getFirst();
         if (arg instanceof YangBooleanConstantExpr) {
             return arg;
         }
@@ -184,7 +184,7 @@ final class FunctionSupport {
 
     private static YangExpr containsExpr(final List<YangExpr> args) {
         checkArgument(args.size() == 2, "contains(string, string) takes two arguments");
-        final YangExpr first = args.get(0);
+        final YangExpr first = args.getFirst();
         if (first instanceof YangLiteralExpr) {
             final YangExpr second = args.get(1);
             if (second instanceof YangLiteralExpr) {
@@ -211,7 +211,7 @@ final class FunctionSupport {
 
     private static YangExpr notExpr(final List<YangExpr> args) {
         checkArgument(args.size() == 1, "not(boolean) takes one argument");
-        final YangExpr arg = args.get(0);
+        final YangExpr arg = args.getFirst();
         if (arg instanceof YangBooleanConstantExpr) {
             return YangBooleanConstantExpr.of(((YangBooleanConstantExpr) arg).getValue());
         }
@@ -224,7 +224,7 @@ final class FunctionSupport {
         if (args.isEmpty()) {
             return NORMALIZE_SPACE;
         }
-        // final YangExpr arg = args.get(0);
+        // final YangExpr arg = args.getFirst();
         // if (arg instanceof YangLiteralExpr) {
         //     // TODO: normalize value
         // }
@@ -238,7 +238,7 @@ final class FunctionSupport {
             return NUMBER;
         }
 
-        final YangExpr arg = args.get(0);
+        final YangExpr arg = args.getFirst();
         if (arg instanceof YangNumberExpr) {
             return arg;
         }
@@ -292,7 +292,7 @@ final class FunctionSupport {
             return STRING;
         }
 
-        final YangExpr arg = args.get(0);
+        final YangExpr arg = args.getFirst();
         if (arg instanceof YangLiteralExpr) {
             return arg;
         }
@@ -310,7 +310,7 @@ final class FunctionSupport {
             return STRING_LENGTH;
         }
 
-        YangExpr first = args.get(0);
+        YangExpr first = args.getFirst();
         if (first instanceof YangBooleanConstantExpr) {
             first = ((YangBooleanConstantExpr) first).asStringLiteral();
         }

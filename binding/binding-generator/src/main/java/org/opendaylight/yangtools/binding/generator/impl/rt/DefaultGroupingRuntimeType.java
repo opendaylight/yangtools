@@ -27,7 +27,7 @@ public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeTy
         super(bindingType, statement, children);
         this.directUsers = switch (directUsers.size()) {
             case 0 -> null;
-            case 1 -> Objects.requireNonNull(directUsers.get(0));
+            case 1 -> Objects.requireNonNull(directUsers.getFirst());
             default -> directUsers.stream().map(Objects::requireNonNull).toArray(CompositeRuntimeType[]::new);
         };
     }

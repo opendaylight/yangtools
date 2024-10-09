@@ -254,7 +254,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
             // We have not found an unambiguous result, try ambiguous ones
             final var inexact = ambiguousByCaseChildClass.get(type);
             if (!inexact.isEmpty()) {
-                result = inexact.get(0);
+                result = inexact.getFirst();
                 // Issue a warning, but only once so as not to flood the logs
                 if (ambiguousByCaseChildWarnings.add(type)) {
                     LOG.warn("""

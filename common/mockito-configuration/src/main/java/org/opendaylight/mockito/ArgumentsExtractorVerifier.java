@@ -32,7 +32,7 @@ public final class ArgumentsExtractorVerifier implements VerificationMode {
         final var size = actualInvocations.size();
         switch (size) {
             case 1 -> {
-                final var invocation = actualInvocations.get(0);
+                final var invocation = actualInvocations.getFirst();
                 arguments = invocation.getArguments();
                 invocation.markVerified();
             }

@@ -424,10 +424,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
         return switch (exceptions.size()) {
             case 0 -> Optional.empty();
-            case 1 -> Optional.of(exceptions.get(0));
+            case 1 -> Optional.of(exceptions.getFirst());
             default -> {
                 final var ex = new InferenceException("Yang model processing phase " + identifier + " failed", root,
-                    exceptions.get(0));
+                    exceptions.getFirst());
                 exceptions.listIterator(1).forEachRemaining(ex::addSuppressed);
                 yield Optional.of(ex);
             }

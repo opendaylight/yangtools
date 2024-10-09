@@ -128,7 +128,7 @@ final class LeafRefContextBuilder implements Mutable {
 
     Module getLeafRefContextModule() {
         final QNameModule qnameModule = currentNodePath.isEmpty() ? currentNodeQName.getModule()
-            : currentNodePath.get(0).getModule();
+            : currentNodePath.getFirst().getModule();
         return modelContext.findModule(qnameModule).orElse(null);
     }
 
