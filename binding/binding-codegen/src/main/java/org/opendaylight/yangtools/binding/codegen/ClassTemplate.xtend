@@ -203,7 +203,7 @@ class ClassTemplate extends BaseTemplate {
         if (properties.empty) {
             return ""
         }
-        isScalarTypeObject ? scalarTypeObjectValue(properties.get(0)) : defaultProperties
+        isScalarTypeObject ? scalarTypeObjectValue(properties.first) : defaultProperties
     }
 
     def private isScalarTypeObject() {
@@ -286,7 +286,7 @@ class ClassTemplate extends BaseTemplate {
     def protected constructors() '''
         «IF genTO.unionType»
             «genUnionConstructor»
-        «ELSEIF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals(TypeConstants.VALUE_PROP)»
+        «ELSEIF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(TypeConstants.VALUE_PROP)»
             «typedefConstructor»
         «ELSE»
             «allValuesConstructor»
@@ -431,7 +431,7 @@ class ClassTemplate extends BaseTemplate {
 
     def protected defaultInstance() '''
         «IF genTO.typedef && !allProperties.empty && !genTO.unionType»
-            «val prop = allProperties.get(0)»
+            «val prop = allProperties.first»
             «val propType = prop.returnType»
             «IF !(INSTANCE_IDENTIFIER.identifier.equals(propType.identifier))»
             public static «genTO.name» getDefaultInstance(final String defaultValue) {
@@ -546,7 +546,7 @@ class ClassTemplate extends BaseTemplate {
                     public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
                     FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
                     «IF cValue.size == 1»
-                        private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef».compile(«TypeConstants.PATTERN_CONSTANT_NAME».get(0));
+                        private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef».compile(«TypeConstants.PATTERN_CONSTANT_NAME».getFirst());
                         private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.iterator.next.escapeJava»";
                     «ELSE»
                         private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST» = «CODEHELPERS.importedName».compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
@@ -604,7 +604,7 @@ class ClassTemplate extends BaseTemplate {
                     «ENDFOR»
                     return result;
                 «ELSE»
-                    «val prop = props.get(0)»
+                    «val prop = props.first»
                     «IF prop.returnType.equals(Types.primitiveBooleanType())»
                         return «BOOLEAN.importedName».hashCode(«prop.fieldName»);
                     «ELSE»

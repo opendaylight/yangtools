@@ -52,7 +52,7 @@ abstract sealed class AbstractModelStatement<A> implements ModelStatement<A>
      */
     protected static final @NonNull Object maskList(final ImmutableList<?> list) {
         // Note: ImmutableList guarantees non-null content
-        return list.size() == 1 ? list.get(0) : list;
+        return list.size() == 1 ? list.getFirst() : list;
     }
 
     /**

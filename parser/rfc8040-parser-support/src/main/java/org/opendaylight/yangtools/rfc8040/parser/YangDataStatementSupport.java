@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -193,12 +192,14 @@ public final class YangDataStatementSupport
         final var child = switch (schemaSub.size()) {
             case 0 -> throw new MissingSubstatementException(stmt, "yang-data requires at least one substatement");
             case 1 -> {
-                final SchemaTreeEffectiveStatement<?> substmt = schemaSub.get(0);
+                final var substmt = schemaSub.getFirst();
                 SourceException.throwIf(
                     !(substmt instanceof ChoiceEffectiveStatement) && !(substmt instanceof DataTreeEffectiveStatement),
                     stmt, "%s is not a recognized container data node definition", substmt);
-                verify(substmt instanceof DataSchemaNode, "Unexpected single child %s", substmt);
-                yield (DataSchemaNode) substmt;
+                if (substmt instanceof DataSchemaNode dataSchema) {
+                    yield dataSchema;
+                }
+                throw new VerifyException("Unexpected single child " + substmt);
             }
             default -> throw new InvalidSubstatementException(stmt,
                 "yang-data requires exactly one container data node definition, found %s", schemaSub);

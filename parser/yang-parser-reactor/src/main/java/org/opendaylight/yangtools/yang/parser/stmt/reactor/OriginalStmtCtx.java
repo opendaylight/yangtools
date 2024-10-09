@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -170,9 +170,13 @@ abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
 
     final OriginalStmtCtx<?, ?, ?> getResumedSubstatement() {
         final var local = verifyNotNull(effective, "Effective substatements no longer available in %s", this);
-        verify(!local.isEmpty(), "Unexpected empty statements");
-        final var ret = local.get(0);
-        verify(ret instanceof OriginalStmtCtx, "Unexpected statement %s", ret);
-        return (OriginalStmtCtx<?, ?, ?>) ret;
+        if (local.isEmpty()) {
+            throw new VerifyException("Unexpected empty statements");
+        }
+        final var ret = local.getFirst();
+        if (ret instanceof OriginalStmtCtx<?, ?, ?> orig) {
+            return orig;
+        }
+        throw new VerifyException("Unexpected statement " + ret);
     }
 }

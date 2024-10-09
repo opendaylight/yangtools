@@ -48,7 +48,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      */
     new(GeneratedType genType, GeneratedType targetType, GeneratedTransferObject keyType) {
         super(genType, targetType, keyType)
-        implTemplate = new BuilderImplTemplate(this, type.enclosedTypes.get(0))
+        implTemplate = new BuilderImplTemplate(this, type.enclosedTypes.first)
     }
 
     override isLocalInnerClass(JavaTypeName name) {
@@ -92,7 +92,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
              *
              * @param base «targetTypeName» from which the builder should be initialized
              */
-            public «generateCopyConstructor(targetType, type.enclosedTypes.get(0))»
+            public «generateCopyConstructor(targetType, type.enclosedTypes.first)»
 
             «generateMethodFieldsFrom()»
 
@@ -114,7 +114,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
              * @return A new {@link «targetTypeName»} instance.
              */
             public «targetType.importedNonNull» build() {
-                return new «type.enclosedTypes.get(0).importedName»(this);
+                return new «type.enclosedTypes.first.importedName»(this);
             }
 
             «implTemplate.body»
@@ -301,7 +301,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             return "this._" + propertyName + " = " + retrieveProperty
         }
         if (ownGetterType instanceof ParameterizedType) {
-            val itemType = ownGetterType.actualTypeArguments.get(0)
+            val itemType = ownGetterType.actualTypeArguments.first
             if (Types.isListType(ownGetterType)) {
                 return printPropertySetter(retrieveProperty, propertyName, "checkListFieldCast", itemType.importedName)
             }
@@ -377,7 +377,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 if (arguments.isEmpty) {
                     return generateListSetter(field, Types.objectType)
                 }
-                return generateListSetter(field, arguments.get(0))
+                return generateListSetter(field, arguments.first)
             } else if (Types.isMapType(returnType)) {
                 return generateMapSetter(field, returnType.actualTypeArguments.get(1))
             }

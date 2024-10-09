@@ -113,12 +113,12 @@ public final class DataTreeCandidates {
             checkArgument(rootPath.equals(root), "Expecting root path %s, encountered %s", rootPath, root);
             roots.add(candidate.getRootNode());
         });
-        return DataTreeCandidates.newDataTreeCandidate(rootPath, fastCompressNode(roots.get(0), roots));
+        return DataTreeCandidates.newDataTreeCandidate(rootPath, fastCompressNode(roots.getFirst(), roots));
     }
 
     private static DataTreeCandidateNode fastCompressNode(final DataTreeCandidateNode first,
             final List<DataTreeCandidateNode> input) {
-        final var last = input.get(input.size() - 1);
+        final var last = input.getLast();
         final var dataBefore = first.dataBefore();
         final var dataAfter = last.dataAfter();
         final var type = last.modificationType();
@@ -147,7 +147,7 @@ public final class DataTreeCandidates {
         // finalNode contains summarized changes
         final var finalNode = new TerminalDataTreeCandidateNode(null, first.dataBefore());
         input.forEach(node -> compressNode(finalNode, node, null));
-        finalNode.setAfter(input.get(input.size() - 1).dataAfter());
+        finalNode.setAfter(input.getLast().dataAfter());
         return cleanUpTree(finalNode);
     }
 

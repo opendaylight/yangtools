@@ -58,7 +58,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
         if (!unresolved.isEmpty()) {
             LOG.debug("Omitting models {} due to unsatisfied imports {}", unresolved, res.unsatisfiedImports());
             return FluentFutures.immediateFailedFluentFuture(
-                new SchemaResolutionException("Failed to resolve required models", unresolved.get(0),
+                new SchemaResolutionException("Failed to resolve required models", unresolved.getFirst(),
                     res.resolvedSources(), res.unsatisfiedImports()));
         }
 

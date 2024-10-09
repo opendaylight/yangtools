@@ -55,7 +55,7 @@ final class StatementInputV1 extends StatementInput {
 
         return switch (statements.size()) {
             case 0 -> new IRStatement.Z44(keyword, argument, startLine, startColumn);
-            case 1 -> new IRStatement.O44(keyword, argument, statements.get(0), startLine, startColumn);
+            case 1 -> new IRStatement.O44(keyword, argument, statements.getFirst(), startLine, startColumn);
             default -> new IRStatement.L44(keyword, argument, statements, startLine, startColumn);
         };
     }

@@ -47,7 +47,7 @@ public class AugmentRelativeXPathTest {
                 assertNotNull("InterfaceKey properties are null", properties);
                 assertEquals(1, properties.size());
 
-                final GeneratedProperty property = properties.get(0);
+                final GeneratedProperty property = properties.getFirst();
                 assertEquals("interfaceId", property.getName());
                 assertNotNull("interfaceId return type is null", property.getReturnType());
                 assertEquals(JavaTypeName.create(String.class), property.getReturnType().getIdentifier());
@@ -99,7 +99,7 @@ public class AugmentRelativeXPathTest {
                 assertNotNull("TunnelKey properties are null", properties);
                 assertEquals(1, properties.size());
 
-                final GeneratedProperty property = properties.get(0);
+                final GeneratedProperty property = properties.getFirst();
                 assertEquals("tunnelId", property.getName());
                 assertNotNull("tunnelId return type is null", property.getReturnType());
                 assertEquals(

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
-import java.util.List;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory;
 final class YangErrorListener extends BaseErrorListener {
     private static final Logger LOG = LoggerFactory.getLogger(YangErrorListener.class);
 
-    private final List<YangSyntaxErrorException> exceptions = new ArrayList<>();
+    private final ArrayList<YangSyntaxErrorException> exceptions = new ArrayList<>();
     private final SourceIdentifier sourceId;
 
     YangErrorListener(final SourceIdentifier sourceId) {
@@ -44,7 +43,7 @@ final class YangErrorListener extends BaseErrorListener {
 
         // Single exception: just throw it
         if (exceptions.size() == 1) {
-            throw exceptions.get(0);
+            throw exceptions.getFirst();
         }
 
         final var sb = new StringBuilder();

@@ -97,7 +97,7 @@ public final class GuavaSchemaSourceCache<T extends SourceRepresentation> extend
     @Override
     public void close() {
         while (!regs.isEmpty()) {
-            final FinalizablePhantomReference<?> ref = regs.get(0);
+            final var ref = regs.getFirst();
             ref.finalizeReferent();
         }
 

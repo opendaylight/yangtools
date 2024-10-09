@@ -37,7 +37,7 @@ public final class DuplicateEntry implements Identifiable<YangInstanceIdentifier
 
     @Override
     public YangInstanceIdentifier getIdentifier() {
-        return hardLinks.get(0);
+        return hardLinks.getFirst();
     }
 
     public List<YangInstanceIdentifier> getHardLinks() {
