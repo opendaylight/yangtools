@@ -20,7 +20,7 @@ public class Mdsal738Test extends BaseCompilationTest {
     private File compiledOutputDir;
 
     @Before
-    public void before() throws Exception {
+    public void before() {
         sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal738");
         compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal738");
     }
