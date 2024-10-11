@@ -13,11 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,7 +36,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.xml.sax.SAXException;
 
 class XmlToNormalizedNodesTest {
     private static final QName PARENT_CONTAINER = QName.create("foo-namespace", "parent-container");
@@ -88,8 +84,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void testComplexXmlParsing() throws IOException, SAXException, URISyntaxException, XMLStreamException,
-            ParserConfigurationException {
+    void testComplexXmlParsing() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/baz.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -109,8 +104,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void testSimpleXmlParsing() throws IOException, URISyntaxException, XMLStreamException,
-            ParserConfigurationException, SAXException {
+    void testSimpleXmlParsing() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/foo.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -123,8 +117,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void shouldFailOnDuplicateLeaf() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    void shouldFailOnDuplicateLeaf() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -137,8 +130,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void shouldFailOnDuplicateAnyXml() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    void shouldFailOnDuplicateAnyXml() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-2.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -151,8 +143,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void shouldFailOnDuplicateContainer() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    void shouldFailOnDuplicateContainer() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-3.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -165,8 +156,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void shouldFailOnUnterminatedLeafElement() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    void shouldFailOnUnterminatedLeafElement() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -177,8 +167,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void shouldFailOnUnterminatedLeafElement2() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    void shouldFailOnUnterminatedLeafElement2() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-2.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -189,8 +178,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void shouldFailOnUnterminatedContainerElement() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    void shouldFailOnUnterminatedContainerElement() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-4.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();
@@ -201,8 +189,7 @@ class XmlToNormalizedNodesTest {
     }
 
     @Test
-    void shouldFailOnUnknownChildNode() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    void shouldFailOnUnknownChildNode() throws Exception {
         final var resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-3.xml");
         final var reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final var result = new NormalizationResultHolder();

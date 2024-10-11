@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.DataObject;
 
 class BindingReflectionsTest {
     @Test
-    void testBindingWithDummyObject() throws Exception {
+    void testBindingWithDummyObject() {
         assertFalse(BindingReflections.isRpcType(DataObject.class));
         assertTrue(BindingReflections.isBindingClass(DataObject.class));
     }

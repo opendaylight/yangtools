@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 class AugmentToExtensionTest extends AbstractYangTest {
     @Test
-    void testIncorrectPath() throws Exception {
+    void testIncorrectPath() {
         assertInferenceExceptionDir("/augment-to-extension-test/incorrect-path",
             startsWith("""
                 Augment target \

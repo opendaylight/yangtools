@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -392,7 +392,7 @@ class Bug4454Test {
     }
 
     @Test
-    void minMaxListDeleteExceptionTest() throws DataValidationFailedException {
+    void minMaxListDeleteExceptionTest() {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         var mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME,
@@ -417,16 +417,12 @@ class Bug4454Test {
         modificationTree.delete(minMaxLeafBar);
         modificationTree.delete(minMaxLeafBaz);
 
-        try {
-            // Unlike minMaxListDeleteTest(), presence container enforces the list to be present
-            modificationTree.ready();
-            fail("Should have failed with IAE");
-        } catch (IllegalArgumentException e) {
-            assertEquals("""
-                Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?revision=2015-02-02)\
-                presence is missing mandatory descendant /(urn:opendaylight:params:xml:ns:yang:list-constraints-\
-                validation-test-model?revision=2015-02-02)min-max-list""", e.getMessage());
-        }
+
+        final var ex = assertThrows(IllegalArgumentException.class, modificationTree::ready);
+        assertEquals("""
+            Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?revision=2015-02-02)\
+            presence is missing mandatory descendant /(urn:opendaylight:params:xml:ns:yang:list-constraints-\
+            validation-test-model?revision=2015-02-02)min-max-list""", ex.getMessage());
     }
 
     @Test

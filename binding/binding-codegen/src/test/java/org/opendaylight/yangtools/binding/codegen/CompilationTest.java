@@ -691,7 +691,7 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testMdsal327() throws Exception {
+    public void testMdsal327() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal327");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal327");
         generateTestSources("/compilation/mdsal327", sourcesOutputDir);

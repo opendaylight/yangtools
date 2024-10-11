@@ -30,14 +30,14 @@ public class StringValueObjectFactoryTest {
     }
 
     @Test
-    void createTestNoConstructor() throws Exception {
+    void createTestNoConstructor() {
         final var iae = assertThrows(IllegalArgumentException.class,
             () -> StringValueObjectFactory.create(Object.class, ""));
         assertEquals("class java.lang.Object does not have a String constructor", iae.getMessage());
     }
 
     @Test
-    void createTestNoField() throws Exception {
+    void createTestNoField() {
         final var iae = assertThrows(IllegalArgumentException.class,
             () -> StringValueObjectFactory.create(String.class, ""));
         assertEquals("class java.lang.String nor its superclasses define required internal field _value",

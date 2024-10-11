@@ -100,7 +100,7 @@ class DeviationResolutionTest extends AbstractYangTest {
     }
 
     @Test
-    void testDeviateReplace() throws Exception {
+    void testDeviateReplace() {
         final var schemaContext = assertEffectiveModel(
             "/deviation-resolution-test/deviation-replace/foo.yang",
             "/deviation-resolution-test/deviation-replace/bar.yang");
@@ -148,7 +148,7 @@ class DeviationResolutionTest extends AbstractYangTest {
     }
 
     @Test
-    void testDeviateDelete() throws Exception {
+    void testDeviateDelete() {
         final var schemaContext = assertEffectiveModel(
             "/deviation-resolution-test/deviation-delete/foo.yang",
             "/deviation-resolution-test/deviation-delete/bar.yang");
