@@ -61,12 +61,12 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithoutAnyPropertyTest() throws Exception {
+    public void builderTemplateGenerateHashCodeWithoutAnyPropertyTest() {
         assertEquals("", genHashCode(mockGenType(TEST)).toString());
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithMorePropertiesTest() throws Exception {
+    public void builderTemplateGenerateHashCodeWithMorePropertiesTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -89,7 +89,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() throws Exception {
+    public void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -112,7 +112,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() throws Exception {
+    public void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -137,7 +137,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() throws Exception {
+    public void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -186,7 +186,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithoutAnyPropertyTest() throws Exception {
+    public void builderTemplateGenerateToStringWithoutAnyPropertyTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -206,7 +206,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithMorePropertiesTest() throws Exception {
+    public void builderTemplateGenerateToStringWithMorePropertiesTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -228,7 +228,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() throws Exception {
+    public void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -249,7 +249,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithPropertyWithAugmentTest() throws Exception {
+    public void builderTemplateGenerateToStringWithPropertyWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -271,7 +271,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() throws Exception {
+    public void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
