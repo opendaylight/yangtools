@@ -24,7 +24,7 @@
     <name>yangtools</name> <!-- Used by Sonar to set project name -->
     <description>
         YANG Tools provides basic libraries for parsing YANG and YIN files, working with the resulting effective model,
-        and handling data complying to this model.
+        handling data complying to this model and projecting it to generated Java DTOs.
     </description>
 
     <scm>
