@@ -163,6 +163,17 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         @Override
         DataObjectIdentifier.WithKey<T, K> toIdentifier();
 
+        /**
+         * Return a legacy {@link KeyedInstanceIdentifier} for this reference.
+         *
+         * @return A {@link KeyedInstanceIdentifier}.
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        default @NonNull KeyedInstanceIdentifier<T, K> toLegacy() {
+            return (KeyedInstanceIdentifier<T, K>) InstanceIdentifier.<T>unsafeOf(ImmutableList.copyOf(steps()));
+        }
+
         @Override
         default K key() {
             return lastStep().key();
