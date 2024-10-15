@@ -44,6 +44,11 @@ public final class KeyedInstanceIdentifier<T extends EntryObject<T, K>, K extend
     }
 
     @Override
+    public KeyedInstanceIdentifier<T, K> toLegacy() {
+        return this;
+    }
+
+    @Override
     public KeyedBuilder<T, K> toBuilder() {
         return new KeyedBuilder<>(this);
     }

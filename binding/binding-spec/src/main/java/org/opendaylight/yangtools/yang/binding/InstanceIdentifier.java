@@ -364,7 +364,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
     }
 
     @Override
-    public final InstanceIdentifier<T> toLegacy() {
+    public InstanceIdentifier<T> toLegacy() {
         return this;
     }
 
