@@ -24,7 +24,7 @@ public final class SubstatementValidator {
     private SubstatementValidator(final Builder builder) {
         cardinalityMap = builder.cardinalityMap.build();
         currentStatement = builder.currentStatement;
-        mandatoryStatements = ImmutableMap.copyOf(Maps.filterValues(cardinalityMap, c -> c.getMin() > 0));
+        mandatoryStatements = ImmutableMap.copyOf(Maps.filterValues(cardinalityMap, Cardinality::isMandatory));
     }
 
     public static Builder builder(final StatementDefinition currentStatement) {
@@ -130,23 +130,23 @@ public final class SubstatementValidator {
             }
 
             final int count = entry.getValue();
-            if (cardinality.getMin() > 0) {
-                if (cardinality.getMin() > count) {
+            if (cardinality.isMandatory()) {
+                if (cardinality.min() > count) {
                     final var root = ctx.getRoot();
                     throw new InvalidSubstatementException(ctx,
                         "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", def, currentStatement,
-                        cardinality.getMin(), count, root.rawArgument(),
+                        cardinality.min(), count, root.rawArgument(),
                         ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
                 }
 
                 // Encountered a mandatory statement, hence we are not missing it
                 missingMandatory.remove(def);
             }
-            if (cardinality.getMax() < count) {
+            if (cardinality.max() < count) {
                 final var root = ctx.getRoot();
                 throw new InvalidSubstatementException(ctx,
                     "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", def, currentStatement,
-                    cardinality.getMax(), count, root.rawArgument(),
+                    cardinality.max(), count, root.rawArgument(),
                     ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
             }
         }
@@ -158,28 +158,19 @@ public final class SubstatementValidator {
 
             throw new MissingSubstatementException(ctx,
                 "%s is missing %s. Minimal count is %s. Error in module %s (%s)", currentStatement, e.getKey(),
-                e.getValue().getMin(), root.rawArgument(),
+                e.getValue().min(), root.rawArgument(),
                 ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
         }
     }
 
-    private static final class Cardinality {
-        private final int min;
-        private final int max;
-
-        Cardinality(final int min, final int max) {
+    private record Cardinality(int min, int max) {
+        Cardinality {
             checkArgument(min >= 0, "Min %s cannot be less than 0!", min);
             checkArgument(min <= max, "Min %s can not be greater than max %s!", min, max);
-            this.min = min;
-            this.max = max;
         }
 
-        int getMax() {
-            return max;
-        }
-
-        int getMin() {
-            return min;
+        boolean isMandatory() {
+            return min > 0;
         }
     }
 }
