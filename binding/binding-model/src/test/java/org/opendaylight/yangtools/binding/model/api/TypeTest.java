@@ -7,21 +7,20 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TypeTest {
+class TypeTest {
     @Test
-    public void testCreateNewReferencedType() {
-        Type refType = Type.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
+    void testCreateNewReferencedType() {
+        final var refType = Type.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
         assertEquals("RefTypeTest", refType.getName());
     }
 
     @Test
-    public void testToStringMethod() {
-        Type refType = Type.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
-        assertTrue(refType.toString().contains("RefTypeTest"));
+    void testToStringMethod() {
+        final var refType = Type.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
+        assertEquals("DefaultType{identifier=org.opendaylight.yangtools.test.RefTypeTest}", refType.toString());
     }
 }
