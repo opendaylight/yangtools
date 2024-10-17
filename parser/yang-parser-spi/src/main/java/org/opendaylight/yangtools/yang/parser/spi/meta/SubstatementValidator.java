@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 
@@ -105,10 +106,8 @@ public final class SubstatementValidator {
      * @throws MissingSubstatementException when a mandatory statement is missing.
      */
     public void validate(final StmtContext<?, ?, ?> ctx) {
-        final var stmtCounts = new HashMap<StatementDefinition, Integer>();
-        for (var stmtCtx : ctx.allSubstatements()) {
-            stmtCounts.merge(stmtCtx.publicDefinition(), 1, Integer::sum);
-        }
+        final var stmtCounts = ctx.allSubstatementsStream()
+            .collect(Collectors.groupingBy(StmtContext::publicDefinition, Collectors.summingInt(x -> 1)));
 
         // Mark all mandatory statements as not present. We are using a Map instead of a Set, as it provides us with
         // explicit value in case of failure (which is not important) and a more efficient instantiation performance
