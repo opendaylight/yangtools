@@ -12,8 +12,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 
@@ -107,59 +105,57 @@ public final class SubstatementValidator {
      * @throws MissingSubstatementException when a mandatory statement is missing.
      */
     public void validate(final StmtContext<?, ?, ?> ctx) {
-
-        final Map<StatementDefinition, Counter> stmtCounts = new HashMap<>();
-        for (StmtContext<?, ?, ?> stmtCtx : ctx.allSubstatements()) {
-            stmtCounts.computeIfAbsent(stmtCtx.publicDefinition(), key -> new Counter()).increment();
+        final var stmtCounts = new HashMap<StatementDefinition, Integer>();
+        for (var stmtCtx : ctx.allSubstatements()) {
+            stmtCounts.merge(stmtCtx.publicDefinition(), 1, Integer::sum);
         }
 
         // Mark all mandatory statements as not present. We are using a Map instead of a Set, as it provides us with
         // explicit value in case of failure (which is not important) and a more efficient instantiation performance
         // (which is important).
-        final Map<StatementDefinition, Cardinality> missingMandatory = new HashMap<>(mandatoryStatements);
+        final var missingMandatory = new HashMap<>(mandatoryStatements);
 
         // Iterate over all statements
-        for (Entry<StatementDefinition, Counter> entry : stmtCounts.entrySet()) {
-            final StatementDefinition key = entry.getKey();
-            final Cardinality cardinality = cardinalityMap.get(key);
-            final int value = entry.getValue().getValue();
+        for (var entry : stmtCounts.entrySet()) {
+            final var def = entry.getKey();
+            final var cardinality = cardinalityMap.get(def);
 
             if (cardinality == null) {
-                if (ctx.namespaceItem(ParserNamespaces.EXTENSION, key.getStatementName()) == null) {
-                    final StmtContext<?, ?, ?> root = ctx.getRoot();
-                    throw new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", key,
+                if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.getStatementName()) == null) {
+                    final var root = ctx.getRoot();
+                    throw new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", def,
                         currentStatement, root.rawArgument(),
                         ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
                 }
-
                 continue;
             }
 
+            final int count = entry.getValue();
             if (cardinality.getMin() > 0) {
-                if (cardinality.getMin() > value) {
-                    final StmtContext<?, ?, ?> root = ctx.getRoot();
+                if (cardinality.getMin() > count) {
+                    final var root = ctx.getRoot();
                     throw new InvalidSubstatementException(ctx,
-                        "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
-                        cardinality.getMin(), value, root.rawArgument(),
+                        "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", def, currentStatement,
+                        cardinality.getMin(), count, root.rawArgument(),
                         ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
                 }
 
                 // Encountered a mandatory statement, hence we are not missing it
-                missingMandatory.remove(key);
+                missingMandatory.remove(def);
             }
-            if (cardinality.getMax() < value) {
-                final StmtContext<?, ?, ?> root = ctx.getRoot();
+            if (cardinality.getMax() < count) {
+                final var root = ctx.getRoot();
                 throw new InvalidSubstatementException(ctx,
-                    "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
-                    cardinality.getMax(), value, root.rawArgument(),
+                    "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", def, currentStatement,
+                    cardinality.getMax(), count, root.rawArgument(),
                     ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
             }
         }
 
         // Check if there are any mandatory statements we have missed
         if (!missingMandatory.isEmpty()) {
-            final Entry<StatementDefinition, Cardinality> e = missingMandatory.entrySet().iterator().next();
-            final StmtContext<?, ?, ?> root = ctx.getRoot();
+            final var e = missingMandatory.entrySet().iterator().next();
+            final var root = ctx.getRoot();
 
             throw new MissingSubstatementException(ctx,
                 "%s is missing %s. Minimal count is %s. Error in module %s (%s)", currentStatement, e.getKey(),
@@ -185,18 +181,6 @@ public final class SubstatementValidator {
 
         int getMin() {
             return min;
-        }
-    }
-
-    private static final class Counter {
-        private int value;
-
-        void increment() {
-            value++;
-        }
-
-        int getValue() {
-            return value;
         }
     }
 }
