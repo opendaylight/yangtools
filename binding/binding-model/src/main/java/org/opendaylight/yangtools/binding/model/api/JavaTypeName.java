@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,14 +27,12 @@ import org.slf4j.LoggerFactory;
  * A type name. This class encloses Java type naming rules laid down in
  * <a href="https://docs.oracle.com/javase/specs/jls/se9/html/index.html">The Java Language Specification</a>, notably
  * sections 4 and 8. It deals with primitive, array and reference types.
- *
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
 public abstract sealed class JavaTypeName implements Identifier, Immutable {
     private static final class Primitive extends JavaTypeName {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Primitive(final String simpleName) {
@@ -91,7 +88,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     }
 
     private abstract static sealed class Reference extends JavaTypeName {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Reference(final String simpleName) {
@@ -123,14 +120,16 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     }
 
     private static final class TopLevel extends Reference {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final String packageName;
 
         TopLevel(final String packageName, final String simpleName) {
             super(simpleName);
-            checkArgument(!packageName.isEmpty());
+            if (packageName.isEmpty()) {
+                throw new IllegalArgumentException("empty package name");
+            }
             this.packageName = packageName;
         }
 
@@ -173,7 +172,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     }
 
     private static final class Nested extends Reference {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final Reference immediatelyEnclosingClass;
@@ -215,7 +214,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
 
         @Override
         public List<String> localNameComponents() {
-            final List<String> ret = immediatelyEnclosingClass.localNameComponents();
+            final var ret = immediatelyEnclosingClass.localNameComponents();
             ret.add(simpleName());
             return ret;
         }
@@ -227,13 +226,15 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaTypeName.class);
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final String simpleName;
 
     JavaTypeName(final String simpleName) {
-        checkArgument(!simpleName.isEmpty());
+        if (simpleName.isEmpty()) {
+            throw new IllegalArgumentException("empty simple name");
+        }
         this.simpleName = simpleName;
     }
 
