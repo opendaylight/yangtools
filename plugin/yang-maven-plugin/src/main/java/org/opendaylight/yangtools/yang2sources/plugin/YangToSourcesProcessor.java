@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +40,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.ir.IOSupport;
+import org.opendaylight.yangtools.yang.ir.YodlConstants;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
@@ -89,10 +93,23 @@ class YangToSourcesProcessor {
 
         final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
         for (var source : modelsInProject) {
-            final File file = new File(withMetaInf, source.sourceId().toYangFilename());
-            stateListBuilder.add(FileState.ofWrittenFile(file,
-                out -> source.asByteSource(StandardCharsets.UTF_8).copyTo(out)));
-            LOG.debug("Created file {} for {}", file, source.sourceId());
+            final var yang = source.yang();
+            final var yangFile = new File(withMetaInf, yang.sourceId().toYangFilename());
+            stateListBuilder.add(FileState.ofWrittenFile(yangFile,
+                out -> yang.asByteSource(StandardCharsets.UTF_8).copyTo(out)));
+            LOG.debug("Created file {} for {}", yangFile, yang.sourceId());
+
+            final var yodl = source.yodl();
+            final var sourceId = yodl.sourceId();
+
+            final var yodlFile = new File(withMetaInf, SourceIdentifier.toFileName(sourceId.name().getLocalName(),
+                sourceId.revision(), YodlConstants.YODL_FILE_EXTENSION));
+            stateListBuilder.add(FileState.ofWrittenFile(yodlFile, out -> {
+                try (var dataout = new DataOutputStream(out)) {
+                    IOSupport.writeStatement(dataout, yodl.statement());
+                }
+            }));
+            LOG.debug("Created file {} for {}", yodlFile, yodl.sourceId());
         }
 
         ProjectFileAccess.addResourceDir(project, generatedYangDir);
@@ -119,7 +136,7 @@ class YangToSourcesProcessor {
         this.yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = ImmutableSet.copyOf(excludedFiles);
         //FIXME multiple FileGeneratorArg entries of same identifier became one here
-        fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
+        this.fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
@@ -260,9 +277,11 @@ class YangToSourcesProcessor {
         LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
 
         final var outputFiles = ImmutableList.<FileState>builder();
-        Collection<YangTextSource> modelsInProject = null;
+        Collection<YangSources> modelsInProject = null;
         for (var parserConfig : codeGenerators.stream().map(GeneratorTask::parserConfig).collect(Collectors.toSet())) {
-            final var moduleReactor = createReactor(yangFilesInProject, parserConfig, dependencies, parsed);
+            final var moduleReactor = createReactor(parserConfig, dependencies, parsed);
+            LOG.debug("Initialized reactor {} with {}", moduleReactor, yangFilesInProject);
+
             final var yangSw = Stopwatch.createStarted();
 
             final ContextHolder holder;
@@ -388,29 +407,28 @@ class YangToSourcesProcessor {
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private @NonNull ProcessorModuleReactor createReactor(final List<File> yangFilesInProject,
-            final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
+    private @NonNull ProcessorModuleReactor createReactor(final YangParserConfiguration parserConfig,
+            final Collection<ScannedDependency> dependencies,
             final List<Entry<FileYangTextSource, YangIRSource>> parsed) throws MojoExecutionException {
-
         try {
-            final var sourcesInProject = new ArrayList<YangTextSource>(yangFilesInProject.size());
+            final var sourcesInProject = new ArrayList<YangSources>(parsed.size());
             final var parser = parserFactory.createParser(parserConfig);
             for (var entry : parsed) {
                 final var textSource = entry.getKey();
                 final var astSource = entry.getValue();
                 parser.addSource(astSource);
 
+                final YangTextSource yangSource;
                 if (!astSource.sourceId().equals(textSource.sourceId())) {
                     // AST indicates a different source identifier, make sure we use that
-                    sourcesInProject.add(new DelegatedYangTextSource(astSource.sourceId(), textSource));
+                    yangSource = new DelegatedYangTextSource(astSource.sourceId(), textSource);
                 } else {
-                    sourcesInProject.add(textSource);
+                    yangSource = textSource;
                 }
+                sourcesInProject.add(new YangSources(yangSource, astSource));
             }
 
-            final var moduleReactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
-            LOG.debug("Initialized reactor {} with {}", moduleReactor, yangFilesInProject);
-            return moduleReactor;
+            return new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
         } catch (IOException | YangSyntaxErrorException | RuntimeException e) {
             // MojoExecutionException is thrown since execution cannot continue
             LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);

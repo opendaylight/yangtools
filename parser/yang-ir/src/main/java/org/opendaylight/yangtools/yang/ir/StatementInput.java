@@ -11,14 +11,15 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.DataInput;
 import java.io.IOException;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
-abstract class StatementInput {
+@NonNullByDefault
+abstract sealed class StatementInput permits StatementInputV1 {
     final DataInput in;
 
     StatementInput(final DataInput in) {
         this.in = requireNonNull(in);
     }
 
-    abstract @NonNull IRStatement readStatement() throws IOException;
+    abstract IRStatement readStatement() throws IOException;
 }

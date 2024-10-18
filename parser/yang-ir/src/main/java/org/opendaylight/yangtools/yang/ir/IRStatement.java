@@ -196,7 +196,7 @@ public abstract sealed class IRStatement extends AbstractIRObject {
     public abstract int startColumn();
 
     @Override
-    final StringBuilder toYangFragment(final StringBuilder sb) {
+    public final StringBuilder toYangFragment(final StringBuilder sb) {
         keyword.toYangFragment(sb);
         if (argument != null) {
             argument.toYangFragment(sb.append(' '));
@@ -208,7 +208,7 @@ public abstract sealed class IRStatement extends AbstractIRObject {
         }
 
         sb.append(" {\n");
-        for (IRStatement stmt : statements) {
+        for (var stmt : statements) {
             stmt.toYangFragment(sb).append('\n');
         }
         return sb.append('}');

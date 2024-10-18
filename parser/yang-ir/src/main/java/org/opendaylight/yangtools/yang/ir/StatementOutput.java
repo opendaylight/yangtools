@@ -11,8 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
-abstract class StatementOutput {
+@NonNullByDefault
+abstract sealed class StatementOutput permits StatementOutputV1 {
     final DataOutput out;
 
     StatementOutput(final DataOutput out) {

@@ -48,6 +48,12 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-ir</artifactId>
+            <!-- just for a string constant -->
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.powermock</groupId>

@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YIN_F
 
 import java.time.format.DateTimeParseException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -145,14 +146,15 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Returns filename for this YANG module as specified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC 6020</a>.
      *
-     * <p>Returns filename formatted as {@code moduleName ['@' revision] '.yang'}, where revision-date is in format
+     * <p>Returns filename formatted as {@code moduleName ['@' revision] '.yang'}, where revision is in format
      * {@code YYYY-mm-dd}.
      *
      * @param moduleName module name
      * @param revision optional revision
      * @return Filename for this source identifier.
      */
-    public static @NonNull String toYangFileName(final @NonNull String moduleName, final @Nullable Revision revision) {
+    @NonNullByDefault
+    public static String toYangFileName(final String moduleName, final @Nullable Revision revision) {
         return toFileName(moduleName, revision, RFC6020_YANG_FILE_EXTENSION);
     }
 
@@ -160,19 +162,32 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * Returns filename for this YANG module as specified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC 6020</a>.
      *
-     * <p>Returns filename formatted as {@code moduleName ['@' revision] '.yin'}, where Where revision-date is in format
+     * <p>Returns filename formatted as {@code moduleName ['@' revision] '.yin'}, where revision is in format
      * {@code YYYY-mm-dd}.
      *
      * @param moduleName module name
      * @param revision optional revision
      * @return Filename for this source identifier.
      */
-    public static @NonNull String toYinFileName(final @NonNull String moduleName, final @Nullable Revision revision) {
+    @NonNullByDefault
+    public static String toYinFileName(final String moduleName, final @Nullable Revision revision) {
         return toFileName(moduleName, revision, RFC6020_YIN_FILE_EXTENSION);
     }
 
-    private static @NonNull String toFileName(final @NonNull String moduleName, final @Nullable Revision revision,
-            final @NonNull String extension) {
+    /**
+     * Returns filename for specified module, revision and specified extension.
+     *
+     * <p>Returns filename formatted as {@code moduleName ['@' revision] extension}, where revision is in format
+     * {@code YYYY-mm-dd}.
+     *
+     * @param moduleName module name
+     * @param revision optional revision
+     * @param extension mandatory extension
+     * @return Filename for this source identifier.
+     */
+    @NonNullByDefault
+    public static String toFileName(final String moduleName, final @Nullable Revision revision,
+            final String extension) {
         final var sb = new StringBuilder(moduleName);
         if (revision != null) {
             sb.append('@').append(revision);
