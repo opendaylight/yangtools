@@ -16,29 +16,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.ir.YodlConstants;
 
 /**
  * Base utility class for providing YANG module info backed by class resources.
- *
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
 public abstract class ResourceYangModuleInfo implements YangModuleInfo {
     @Override
     public final InputStream openYangTextStream() throws IOException {
-        final Class<?> subclass = getClass();
-        final String name = verifyNotNull(resourceName(), "%s provided a null resource name", subclass);
-        final InputStream ret = subclass.getResourceAsStream(name);
-        if (ret == null) {
-            String message = "Failed to open resource " + name + " in context of " + subclass;
-            final ClassLoader loader = subclass.getClassLoader();
-            if (!ResourceYangModuleInfo.class.getClassLoader().equals(loader)) {
-                message = message + " (loaded in " + loader + ")";
-            }
-            throw new IOException(message);
+        return openStream(resourceName());
+    }
+
+    @Override
+    public final InputStream openYodlStream() throws IOException {
+        final var name = resourceName();
+        if (name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
+            return openStream(name.substring(name.length() - YangConstants.RFC6020_YANG_FILE_EXTENSION.length())
+                + YodlConstants.YODL_FILE_EXTENSION);
         }
-        return ret;
+        throw new IOException("Unsupported resource " + name);
     }
 
     @Override
@@ -51,4 +50,19 @@ public abstract class ResourceYangModuleInfo implements YangModuleInfo {
     }
 
     protected abstract String resourceName();
+
+    private InputStream openStream(final String resourceName) throws IOException {
+        final var subclass = getClass();
+        final var name = verifyNotNull(resourceName(), "%s provided a null resource name", subclass);
+        final var ret = subclass.getResourceAsStream(name);
+        if (ret == null) {
+            var message = "Failed to open resource " + name + " in context of " + subclass;
+            final var loader = subclass.getClassLoader();
+            if (!ResourceYangModuleInfo.class.getClassLoader().equals(loader)) {
+                message = message + " (loaded in " + loader + ")";
+            }
+            throw new IOException(message);
+        }
+        return ret;
+    }
 }

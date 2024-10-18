@@ -46,6 +46,8 @@ public interface YangModuleInfo extends Immutable {
      */
     InputStream openYangTextStream() throws IOException;
 
+    InputStream openYodlStream() throws IOException;
+
     /**
      * Return {@link YangModuleInfo} objects for all modules which are imported by this module. Default implementation
      * returns an empty list.

@@ -67,7 +67,7 @@ final class StatementInputV1 extends StatementInput {
             case IOConstantsV1.HDR_KEY_REF_U16 -> lookupKeyword(in.readUnsignedShort());
             case IOConstantsV1.HDR_KEY_REF_S32 -> lookupKeyword(in.readInt());
             case IOConstantsV1.HDR_KEY_DEF_QUAL -> defineKeyword(Qualified.of(readString(), readString()));
-            case IOConstantsV1.HDR_KEY_DEF_UQUAL -> defineKeyword(Unqualified.of(readString()));
+            case IOConstantsV1.HDR_KEY_DEF_UNQUAL -> defineKeyword(Unqualified.of(readString()));
             default -> throw new IllegalStateException("Unhandled key " + Integer.toHexString(keyBits));
         };
     }
