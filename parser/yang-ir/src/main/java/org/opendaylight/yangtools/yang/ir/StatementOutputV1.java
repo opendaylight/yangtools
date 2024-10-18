@@ -11,7 +11,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
@@ -21,13 +20,14 @@ final class StatementOutputV1 extends StatementOutput {
     private final Map<IRKeyword, Integer> keywords = new HashMap<>();
     private final Map<String, Integer> strings = new HashMap<>();
 
-    StatementOutputV1(final DataOutput out) {
+    StatementOutputV1(final DataOutput out) throws IOException {
         super(out);
+        out.writeByte(YodlVersion.V1.versionByte());
     }
 
     @Override
     void writeStatement(final IRStatement stmt) throws IOException {
-        final List<? extends IRStatement> statements = stmt.statements();
+        final var statements = stmt.statements();
         final int size = statements.size();
         final int sizeBits;
         if (size == 0) {
@@ -53,7 +53,7 @@ final class StatementOutputV1 extends StatementOutput {
                 keyBits = IOConstantsV1.HDR_KEY_REF_S32;
             }
         } else {
-            keyBits = keyword instanceof Qualified ? IOConstantsV1.HDR_KEY_DEF_QUAL : IOConstantsV1.HDR_KEY_DEF_UQUAL;
+            keyBits = keyword instanceof Qualified ? IOConstantsV1.HDR_KEY_DEF_QUAL : IOConstantsV1.HDR_KEY_DEF_UNQUAL;
         }
 
         final IRArgument argument = stmt.argument();
@@ -83,7 +83,7 @@ final class StatementOutputV1 extends StatementOutput {
                 writeString(keyword.identifier());
                 keywords.put(keyword, keywords.size());
             }
-            case IOConstantsV1.HDR_KEY_DEF_UQUAL -> {
+            case IOConstantsV1.HDR_KEY_DEF_UNQUAL -> {
                 writeString(keyword.identifier());
                 keywords.put(keyword, keywords.size());
             }
