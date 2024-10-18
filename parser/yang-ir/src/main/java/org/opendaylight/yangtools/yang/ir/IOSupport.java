@@ -18,21 +18,18 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 @Beta
 public final class IOSupport {
-    private static final int MAGICK = 0xAF57BA07;
-
     private IOSupport() {
         // Hidden on purpose
     }
 
     public static void writeStatement(final DataOutput out, final IRStatement statement) throws IOException {
-        out.writeInt(MAGICK);
-        out.writeByte(1);
+        out.writeInt(YodlConstants.YODL_MAGICK);
         new StatementOutputV1(out).writeStatement(statement);
     }
 
     public static @NonNull IRStatement readStatement(final DataInput in) throws IOException {
         final int magic = in.readInt();
-        if (magic != MAGICK) {
+        if (magic != YodlConstants.YODL_MAGICK) {
             throw new IOException("Unexpected magic " + Integer.toHexString(magic));
         }
 

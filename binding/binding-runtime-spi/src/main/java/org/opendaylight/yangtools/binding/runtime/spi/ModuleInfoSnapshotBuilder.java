@@ -95,7 +95,7 @@ public final class ModuleInfoSnapshotBuilder {
         final var namespaces = new HashMap<String, QNameModule>();
 
         for (var info : moduleInfos) {
-            final var source = ModuleInfoSnapshotResolver.toYangTextSource(info);
+            final var source = ModuleInfoSnapshotResolver.toYangSource(info);
             mappedInfos.put(source.sourceId(), info);
 
             final String infoRoot = Naming.getRootPackageName(info.getName().getModule());

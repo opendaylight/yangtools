@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
@@ -97,6 +98,17 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     /**
+     * Register a {@link YangIRSource}.
+     *
+     * @param source YANG text source
+     * @return a {@link Registration}
+     * @throws NullPointerException if {@code source} is {@code null}
+     */
+    public @NonNull Registration registerSource(final @NonNull YangIRSource source) {
+        return registerSource(source.sourceId(), source.toYangText(), source);
+    }
+
+    /**
      * Register a {@link YangTextSource}.
      *
      * @param source YANG text source
@@ -137,30 +149,34 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             text = source;
         }
 
-        synchronized (this) {
-            texts.put(parsedId, text);
-            LOG.debug("Populated {} with text", parsedId);
+        return registerSource(parsedId, text, ast);
+    }
 
-            final var reg = registry.registerSchemaSource(this,
-                PotentialSchemaSource.create(parsedId, YangTextSource.class, Costs.IMMEDIATE.getValue()));
-            requiredSources.add(parsedId);
-            cache.schemaSourceEncountered(ast);
-            LOG.debug("Added source {} to schema context requirements", parsedId);
-            version = new Object();
+    @NonNullByDefault
+    private synchronized Registration registerSource(final SourceIdentifier parsedId, final YangTextSource text,
+            final YangIRSource ast) {
+        texts.put(parsedId, text);
+        LOG.debug("Populated {} with text", parsedId);
 
-            return new AbstractRegistration() {
-                @Override
-                protected void removeRegistration() {
-                    synchronized (YangTextSchemaContextResolver.this) {
-                        requiredSources.remove(parsedId);
-                        LOG.trace("Removed source {} from schema context requirements", parsedId);
-                        version = new Object();
-                        reg.close();
-                        texts.remove(parsedId, text);
-                    }
+        final var reg = registry.registerSchemaSource(this,
+            PotentialSchemaSource.create(parsedId, YangTextSource.class, Costs.IMMEDIATE.getValue()));
+        requiredSources.add(parsedId);
+        cache.schemaSourceEncountered(ast);
+        LOG.debug("Added source {} to schema context requirements", parsedId);
+        version = new Object();
+
+        return new AbstractRegistration() {
+            @Override
+            protected void removeRegistration() {
+                synchronized (YangTextSchemaContextResolver.this) {
+                    requiredSources.remove(parsedId);
+                    LOG.trace("Removed source {} from schema context requirements", parsedId);
+                    version = new Object();
+                    reg.close();
+                    texts.remove(parsedId, text);
                 }
-            };
-        }
+            }
+        };
     }
 
     /**

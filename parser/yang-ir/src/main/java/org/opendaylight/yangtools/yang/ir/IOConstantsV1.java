@@ -28,7 +28,7 @@ package org.opendaylight.yangtools.yang.ir;
  * <p>The {@code KEYWORD} is variable-format based on {@code KW TYPE} bits:
  * <ul>
  *   <li>{@link #HDR_KEY_DEF_QUAL} indicates a new definition, which is composed of two {@code STRING}s</li>
- *   <li>{@link #HDR_KEY_DEF_UQUAL} indicates a new definition, which is composed of a single {@code STRING}</li>
+ *   <li>{@link #HDR_KEY_DEF_UNQUAL} indicates a new definition, which is composed of a single {@code STRING}</li>
  *   <li>{@link #HDR_KEY_REF_U8} indicates a reference identified by a u8 integer</li>
  *   <li>{@link #HDR_KEY_REF_U16} indicates a reference identified by a u16 integer</li>
  *   <li>{@link #HDR_KEY_REF_S32} indicates a reference identified by a s32 integer</li>
@@ -40,7 +40,7 @@ package org.opendaylight.yangtools.yang.ir;
  * variable encoding in form
  * <pre>{@code ARGHDR [...]}</pre>
  */
-final class IOConstantsV1 {
+public final class IOConstantsV1 {
     // Statement indicator: indicates line/column split
     static final int HDR_LOCATION_22       = 0x01;
     static final int HDR_LOCATION_31       = 0x02;
@@ -56,17 +56,21 @@ final class IOConstantsV1 {
     static final int HDR_SIZE_U16          = 0x10;
     static final int HDR_SIZE_S32          = 0x18;
     static final int HDR_SIZE_MASK         = HDR_SIZE_S32;
+
     // Keyword indication
-    static final int HDR_KEY_DEF_UQUAL     = 0x00;
+    static final int HDR_KEY_DEF_UNQUAL    = 0x00;
     static final int HDR_KEY_DEF_QUAL      = 0x20;
     // 0x40 reserved
     // 0x60 reserved
     // 0x80 reserved
+
+    // Keyword references
     static final int HDR_KEY_REF_U8        = 0xA0;
     static final int HDR_KEY_REF_U16       = 0xC0;
     static final int HDR_KEY_REF_S32       = 0xE0;
     static final int HDR_KEY_MASK          = HDR_KEY_REF_S32;
 
+    // Argument types
     static final int ARG_TYPE_IDENTIFIER   = 0x01;
     static final int ARG_TYPE_DQUOT        = 0x02;
     static final int ARG_TYPE_SQUOT        = 0x03;

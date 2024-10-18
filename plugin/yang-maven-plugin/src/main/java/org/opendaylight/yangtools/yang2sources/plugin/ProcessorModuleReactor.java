@@ -34,15 +34,15 @@ import org.slf4j.LoggerFactory;
 final class ProcessorModuleReactor {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorModuleReactor.class);
 
-    private final Map<SourceIdentifier, YangTextSource> modelsInProject;
+    private final Map<SourceIdentifier, YangSources> modelsInProject;
     private final Collection<ScannedDependency> dependencies;
 
     private YangParser parser;
 
-    ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSource> modelsInProject,
+    ProcessorModuleReactor(final YangParser parser, final Collection<YangSources> modelsInProject,
             final Collection<ScannedDependency> dependencies) {
         this.parser = requireNonNull(parser);
-        this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSource::sourceId);
+        this.modelsInProject = Maps.uniqueIndex(modelsInProject, sources -> sources.yang().sourceId());
         this.dependencies = ImmutableList.copyOf(dependencies);
     }
 
@@ -79,7 +79,7 @@ final class ProcessorModuleReactor {
         return new ContextHolder(modelContext, modules, modelsInProject.keySet());
     }
 
-    Collection<YangTextSource> getModelsInProject() {
+    Collection<YangSources> getModelsInProject() {
         return modelsInProject.values();
     }
 

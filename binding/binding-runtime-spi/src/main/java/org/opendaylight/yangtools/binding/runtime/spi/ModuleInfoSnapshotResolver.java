@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.Set;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.YangFeature;
@@ -37,12 +39,16 @@ import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.ir.IOSupport;
+import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
@@ -147,18 +153,26 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         }
 
         // Create an explicit registration
-        final Registration reg;
-        try {
-            reg = ctxResolver.registerSource(toYangTextSource(sourceId, info));
-        } catch (YangSyntaxErrorException | SchemaSourceException | IOException e) {
-            throw new IllegalStateException("Failed to register info " + info, e);
-        }
-
+        final var reg = registerModuleInfo(sourceId, info);
         final var regInfo = new RegisteredModuleInfo(info, reg, info.getClass().getClassLoader());
         LOG.debug("Created new registration {}", regInfo);
 
         sourceToInfoReg.put(sourceId, regInfo);
         return regInfo;
+    }
+
+    @NonNullByDefault
+    private Registration registerModuleInfo(final SourceIdentifier sourceId, final YangModuleInfo info) {
+        final var yodl = tryYodl(sourceId, info);
+        if (yodl != null) {
+            return ctxResolver.registerSource(yodl);
+        }
+
+        try {
+            return ctxResolver.registerSource(toYangTextSource(sourceId, info));
+        } catch (YangSyntaxErrorException | SchemaSourceException | IOException e) {
+            throw new IllegalStateException("Failed to register info " + info, e);
+        }
     }
 
     public synchronized @NonNull ModuleInfoSnapshot takeSnapshot() {
@@ -218,8 +232,30 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         }
     }
 
-    static @NonNull YangTextSource toYangTextSource(final YangModuleInfo moduleInfo) {
-        return new DelegatedYangTextSource(sourceIdentifierFrom(moduleInfo), moduleInfo.getYangTextCharSource());
+    static @NonNull YangSourceRepresentation toYangSource(final YangModuleInfo moduleInfo) {
+        return toYangSource(sourceIdentifierFrom(moduleInfo), moduleInfo);
+    }
+
+    static @NonNull YangSourceRepresentation toYangSource(final SourceIdentifier sourceId,
+            final YangModuleInfo moduleInfo) {
+        final var yodl = tryYodl(sourceId, moduleInfo);
+        if (yodl != null) {
+            return yodl;
+        }
+        return toYangTextSource(sourceId, moduleInfo);
+    }
+
+    private static @Nullable YangIRSource tryYodl(final SourceIdentifier sourceId, final YangModuleInfo moduleInfo) {
+        final IRStatement stmt;
+        try (var in = new DataInputStream(moduleInfo.openYodlStream())) {
+            stmt = IOSupport.readStatement(in);
+        } catch (IOException e) {
+            LOG.info("Failed to open YODL", e);
+            return null;
+        }
+
+        LOG.info("Have YODL for {} from {}", sourceId, moduleInfo);
+        return new YangIRSource(sourceId, stmt, moduleInfo.toString());
     }
 
     private static @NonNull YangTextSource toYangTextSource(final SourceIdentifier identifier,
