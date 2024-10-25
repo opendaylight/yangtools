@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec6df27b_4f750a2b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2024-10-25T16:14:45Z",
+      "side": 1,
+      "message": "we do not have the time to do anything of consequence in yangtools, hence we are not branching them",
+      "revId": "14467f53f577b509ff16dcab6119f2e47a179f93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
