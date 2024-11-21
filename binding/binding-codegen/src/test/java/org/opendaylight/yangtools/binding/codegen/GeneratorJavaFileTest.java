@@ -7,26 +7,26 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 
-public class GeneratorJavaFileTest extends BaseCompilationTest {
+class GeneratorJavaFileTest extends BaseCompilationTest {
     private static final String FS = File.separator;
     private static final String PATH = "target/test/test-dir";
 
     @Test
-    public void test() throws IOException {
+    void test() throws IOException {
         final GeneratedTypeBuilder gtb = new CodegenGeneratedTypeBuilder(JavaTypeName.create(
             "org.opendaylight.controller.gen", "Type4"));
         gtb.addImplementsType(BindingTypes.augmentable(gtb));
