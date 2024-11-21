@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Range;
 import java.io.File;
@@ -20,20 +20,20 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
  * Test correct code generation.
  */
-public class TypedefCompilationTest extends BaseCompilationTest {
+class TypedefCompilationTest extends BaseCompilationTest {
     private static final String VAL = "_value";
     private static final String GET_VAL = "getValue";
     private static final String UNITS = "_UNITS";
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("typedef");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("typedef");
         generateTestSources("/compilation/typedef", sourcesOutputDir);

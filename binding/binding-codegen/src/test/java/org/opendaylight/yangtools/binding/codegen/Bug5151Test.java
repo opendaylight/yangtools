@@ -7,26 +7,25 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.BASE_SVC_PATH;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.FS;
 
 import java.io.File;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Bug5151 involves adding <code>{@literal @}return</code> annotations to accessor methods.
  */
-public class Bug5151Test extends BaseCompilationTest {
-
+class Bug5151Test extends BaseCompilationTest {
     private static final String BUG_ID = "bug5151";
     private static final String SVC_PATH = BASE_SVC_PATH + FS + "urn" + FS + "test" + FS + "foo" + FS + "rev160706";
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         // Xtend code generation uses the "line.separator" system property to generate proper line endings
         // in templates, leading to test failures running on Windows-type OS.
         assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));

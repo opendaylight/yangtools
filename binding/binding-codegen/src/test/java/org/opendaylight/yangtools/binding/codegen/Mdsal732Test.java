@@ -7,31 +7,31 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.nio.file.Files;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class Mdsal732Test extends BaseCompilationTest {
+class Mdsal732Test extends BaseCompilationTest {
     private File sourcesOutputDir;
     private File compiledOutputDir;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal732");
         compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal732");
     }
 
-    @After
-    public void after() {
+    @AfterEach
+    void after() {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    public void testIdentityrefLeafrefSpecialization() throws Exception {
+    void testIdentityrefLeafrefSpecialization() throws Exception {
         generateTestSources("/compilation/mdsal732", sourcesOutputDir);
         final var xyzzyBuilder = FileSearchUtil.getFiles(sourcesOutputDir).get("XyzzyBuilder.java");
         assertNotNull(xyzzyBuilder);
