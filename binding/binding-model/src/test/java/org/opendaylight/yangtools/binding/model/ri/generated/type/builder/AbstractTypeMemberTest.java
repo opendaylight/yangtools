@@ -7,31 +7,29 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-public class AbstractTypeMemberTest {
-
+class AbstractTypeMemberTest {
     @Test
-    public void testMethodsForAbstractTypeMemberBuilder() {
-        final MethodSignatureBuilderImpl methodSignatureBuilderImpl = new MethodSignatureBuilderImpl("TestProperty");
-        final CodegenGeneratedTypeBuilder typeBuilderImpl = new CodegenGeneratedTypeBuilder(
+    void testMethodsForAbstractTypeMemberBuilder() {
+        final var methodSignatureBuilderImpl = new MethodSignatureBuilderImpl("TestProperty");
+        final var typeBuilderImpl = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "TestType"));
-        final CodegenGeneratedTypeBuilder typeBuilderImpl2 = new CodegenGeneratedTypeBuilder(
+        final var typeBuilderImpl2 = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "TestType2"));
         methodSignatureBuilderImpl.setComment(TypeMemberComment.contractOf("test comment"));
         methodSignatureBuilderImpl.setFinal(true);
         methodSignatureBuilderImpl.setStatic(true);
 
-        final MethodSignature genProperty = methodSignatureBuilderImpl.toInstance(typeBuilderImpl);
-        final MethodSignature genProperty2 = methodSignatureBuilderImpl.toInstance(typeBuilderImpl2);
+        final var genProperty = methodSignatureBuilderImpl.toInstance(typeBuilderImpl);
+        final var genProperty2 = methodSignatureBuilderImpl.toInstance(typeBuilderImpl2);
         assertEquals(TypeMemberComment.contractOf("test comment"), genProperty.getComment());
         assertTrue(genProperty.isFinal());
         assertTrue(genProperty.isStatic());

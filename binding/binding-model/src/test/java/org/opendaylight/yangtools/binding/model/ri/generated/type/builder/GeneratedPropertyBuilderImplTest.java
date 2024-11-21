@@ -7,35 +7,35 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
-public class GeneratedPropertyBuilderImplTest {
-
+class GeneratedPropertyBuilderImplTest {
     @Test
-    public void generatedPropertyBuilderImplTest() {
-        GeneratedPropertyBuilderImpl generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName");
-        generatedPropertyBuilderImpl.setValue("myValue");
-        generatedPropertyBuilderImpl.setReadOnly(false);
-        generatedPropertyBuilderImpl.setStatic(true);
-        generatedPropertyBuilderImpl.setComment(null);
-        generatedPropertyBuilderImpl.setFinal(true);
-        generatedPropertyBuilderImpl.setAccessModifier(AccessModifier.PUBLIC);
-        generatedPropertyBuilderImpl.setReturnType(Types.BOOLEAN);
+    void generatedPropertyBuilderImplTest() {
+        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName")
+            .setValue("myValue")
+            .setReadOnly(false)
+            .setStatic(true)
+            .setComment(null)
+            .setFinal(true)
+            .setAccessModifier(AccessModifier.PUBLIC)
+            .setReturnType(Types.BOOLEAN);
 
-        assertEquals("GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=null, "
-            + "returnType=ConcreteTypeImpl{identifier=java.lang.Boolean}, isFinal=true, isReadOnly=false, "
-            + "modifier=PUBLIC]", generatedPropertyBuilderImpl.toString());
+        assertEquals("""
+            GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=null, \
+            returnType=ConcreteTypeImpl{identifier=java.lang.Boolean}, isFinal=true, isReadOnly=false, \
+            modifier=PUBLIC]""", generatedPropertyBuilderImpl.toString());
 
-        GeneratedProperty instance = generatedPropertyBuilderImpl.toInstance();
+        var instance = generatedPropertyBuilderImpl.toInstance();
 
         assertNotNull(instance);
 
@@ -46,19 +46,14 @@ public class GeneratedPropertyBuilderImplTest {
         assertNull(instance.getComment());
         assertEquals(AccessModifier.PUBLIC, instance.getAccessModifier());
         assertEquals(Types.BOOLEAN, instance.getReturnType());
-
     }
 
     @Test
-    public void generatedPropertyBuilderImplEqualsAndHashCodeTest() {
-        final GeneratedPropertyBuilderImpl generatedPropertyBuilderImpl =
-                new GeneratedPropertyBuilderImpl("myPropertyName");
-        final GeneratedPropertyBuilderImpl generatedPropertyBuilderImpl2 =
-                new GeneratedPropertyBuilderImpl("myPropertyName");
-        final GeneratedPropertyBuilderImpl generatedPropertyBuilderImpl3 =
-                new GeneratedPropertyBuilderImpl("myPropertyName3");
-        final GeneratedPropertyBuilderImpl generatedPropertyBuilderImpl4 =
-                new GeneratedPropertyBuilderImpl("myPropertyName");
+    void generatedPropertyBuilderImplEqualsAndHashCodeTest() {
+        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName");
+        final var generatedPropertyBuilderImpl2 = new GeneratedPropertyBuilderImpl("myPropertyName");
+        final var generatedPropertyBuilderImpl3 = new GeneratedPropertyBuilderImpl("myPropertyName3");
+        final var generatedPropertyBuilderImpl4 = new GeneratedPropertyBuilderImpl("myPropertyName");
 
         assertNotNull(generatedPropertyBuilderImpl);
         assertNotNull(generatedPropertyBuilderImpl2);
@@ -77,9 +72,9 @@ public class GeneratedPropertyBuilderImplTest {
         assertFalse(generatedPropertyBuilderImpl.equals(generatedPropertyBuilderImpl3));
         assertFalse(generatedPropertyBuilderImpl.equals(generatedPropertyBuilderImpl4));
 
-        assertTrue(generatedPropertyBuilderImpl.hashCode() == generatedPropertyBuilderImpl.hashCode());
-        assertTrue(generatedPropertyBuilderImpl.hashCode() == generatedPropertyBuilderImpl2.hashCode());
-        assertFalse(generatedPropertyBuilderImpl.hashCode() == generatedPropertyBuilderImpl3.hashCode());
-        assertFalse(generatedPropertyBuilderImpl.hashCode() == generatedPropertyBuilderImpl4.hashCode());
+        assertEquals(generatedPropertyBuilderImpl.hashCode(), generatedPropertyBuilderImpl.hashCode());
+        assertEquals(generatedPropertyBuilderImpl.hashCode(), generatedPropertyBuilderImpl2.hashCode());
+        assertNotEquals(generatedPropertyBuilderImpl.hashCode(), generatedPropertyBuilderImpl3.hashCode());
+        assertNotEquals(generatedPropertyBuilderImpl.hashCode(), generatedPropertyBuilderImpl4.hashCode());
     }
 }

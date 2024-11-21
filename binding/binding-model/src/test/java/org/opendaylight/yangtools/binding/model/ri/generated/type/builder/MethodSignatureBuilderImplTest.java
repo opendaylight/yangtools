@@ -7,50 +7,48 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 
-public class MethodSignatureBuilderImplTest {
-
+class MethodSignatureBuilderImplTest {
     @Test
-    public void testCreateNewInstance() {
-        final MethodSignatureBuilderImpl signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
+    void testCreateNewInstance() {
+        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
         assertNotNull(signatureBuilderImpl);
     }
 
     @Test
-    public void testSetAbstractMethod() {
-        final MethodSignatureBuilderImpl signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
+    void testSetAbstractMethod() {
+        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
         signatureBuilderImpl.setAbstract(true);
-        final MethodSignature methodSignature = signatureBuilderImpl.toInstance(null);
+        final var methodSignature = signatureBuilderImpl.toInstance(null);
         assertTrue(methodSignature.isAbstract());
     }
 
     @Test
-    public void testAddParameterMethod() {
-        final MethodSignatureBuilderImpl signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
-        final CodegenGeneratedTypeBuilder ipAddressType = new CodegenGeneratedTypeBuilder(
+    void testAddParameterMethod() {
+        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
+        final var ipAddressType = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"));
         signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");
-        final MethodSignature methodSignature = signatureBuilderImpl.toInstance(null);
+        final var methodSignature = signatureBuilderImpl.toInstance(null);
         assertEquals("ipAddress", methodSignature.getParameters().get(0).getName());
     }
 
     @Test
-    public void testHashCodeEqualsToStringMethods() {
-        final MethodSignatureBuilderImpl signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
-        final MethodSignatureBuilderImpl signatureBuilderImpl2 = new MethodSignatureBuilderImpl("testMethod");
-        final MethodSignatureBuilderImpl signatureBuilderImpl3 = new MethodSignatureBuilderImpl("testMethod2");
-        final MethodSignatureBuilderImpl signatureBuilderImpl4 = new MethodSignatureBuilderImpl(null);
-        final MethodSignatureBuilderImpl signatureBuilderImpl5 = signatureBuilderImpl;
-        final MethodSignatureBuilderImpl signatureBuilderImpl6 = new MethodSignatureBuilderImpl("testMethod");
-        final CodegenGeneratedTypeBuilder returnType = new CodegenGeneratedTypeBuilder(
+    void testHashCodeEqualsToStringMethods() {
+        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
+        final var signatureBuilderImpl2 = new MethodSignatureBuilderImpl("testMethod");
+        final var signatureBuilderImpl3 = new MethodSignatureBuilderImpl("testMethod2");
+        final var signatureBuilderImpl4 = new MethodSignatureBuilderImpl(null);
+        final var signatureBuilderImpl5 = signatureBuilderImpl;
+        final var signatureBuilderImpl6 = new MethodSignatureBuilderImpl("testMethod");
+        final var returnType = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Address"));
         signatureBuilderImpl6.setReturnType(returnType);
 

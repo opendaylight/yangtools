@@ -7,20 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
-public class MethodSignatureBuilderTest {
-
+class MethodSignatureBuilderTest {
     private MethodSignatureBuilder builder1;
     private MethodSignatureBuilder builder2;
     private MethodSignatureBuilder builder3;
@@ -29,8 +26,8 @@ public class MethodSignatureBuilderTest {
     private int hash2;
     private int hash3;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         builder1 = new MethodSignatureBuilderImpl("methodSignature");
         builder2 = new MethodSignatureBuilderImpl("otherMethodSignature");
         builder2.setReturnType(Types.STRING);
@@ -45,28 +42,25 @@ public class MethodSignatureBuilderTest {
     }
 
     @Test
-    public void testAddParameter() {
-        Type type = Types.STRING;
-        String name = "customParam";
-        builder1.addParameter(type, name);
-        Type methodType = Types.voidType();
-        MethodSignature signature = builder1.toInstance(methodType);
+    void testAddParameter() {
+        builder1.addParameter(Types.STRING, "customParam");
+        var signature = builder1.toInstance(Types.voidType());
         assertNotNull(signature);
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         String toString = builder1.toString();
         assertTrue(toString.contains("MethodSignatureBuilderImpl"));
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(hash1, hash1);
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         assertTrue(builder1.equals(builder1));
         assertFalse(builder1.equals(builder2));
         assertFalse(builder1.equals(null));
