@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
-public class MethodParameterImplTest {
-
+class MethodParameterImplTest {
     private MethodParameterImpl parameter1;
     private MethodParameterImpl parameter2;
     private MethodParameterImpl parameter3;
@@ -28,8 +27,8 @@ public class MethodParameterImplTest {
     private int hash3;
     private int hash4;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         String name = "customParameter";
         Type type = Types.STRING;
         parameter1 = new MethodParameterImpl(name, type);
@@ -44,13 +43,13 @@ public class MethodParameterImplTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         String toString = parameter1.toString();
         assertTrue(toString.contains("MethodParameter"));
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         assertTrue(parameter1.equals(parameter1));
         assertTrue(parameter1.equals(parameter2));
         assertFalse(parameter1.equals("string"));
@@ -62,7 +61,7 @@ public class MethodParameterImplTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(hash1, hash2);
         assertNotEquals(hash1, hash3);
         assertNotEquals(hash1, hash4);

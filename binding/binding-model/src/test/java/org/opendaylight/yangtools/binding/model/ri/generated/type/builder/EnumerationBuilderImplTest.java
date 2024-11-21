@@ -7,26 +7,23 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumPairBuilder;
 
-public class EnumerationBuilderImplTest {
-
-    private final QName qname = QName.create("TestQName", "2014-10-10", "TestLocalQName");
+class EnumerationBuilderImplTest {
     private static final String DESCRIPTION = "Test description of Enum";
     private final String packageName = "org.opendaylight.test";
     private final String name = "TestName";
@@ -35,14 +32,15 @@ public class EnumerationBuilderImplTest {
     private final String valueName = "TestValue";
     private final String valueDescription = "Value used for test";
     private final int value = 12;
+
     private Enumeration enumeration;
     private CodegenEnumerationBuilder enumerationBuilder;
     private CodegenEnumerationBuilder enumerationBuilderSame;
     private CodegenEnumerationBuilder enumerationBuilderOtherName;
     private CodegenEnumerationBuilder enumerationBuilderOtherPackage;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         enumerationBuilder = new CodegenEnumerationBuilder(JavaTypeName.create(packageName, name));
         enumerationBuilder.setDescription(DESCRIPTION);
         enumerationBuilder.setModuleName(moduleName);
@@ -56,23 +54,23 @@ public class EnumerationBuilderImplTest {
         enumeration = enumerationBuilder.toInstance();
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testAddNullAnnotation() {
-        assertNull(enumerationBuilder.addAnnotation(null));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testAddNullAnnotationPackage() {
-        assertNull(enumerationBuilder.addAnnotation(null, "test"));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testAddNullAnnotationName() {
-        assertNull(enumerationBuilder.addAnnotation(packageName, null));
+    @Test
+    void testAddNullAnnotation() {
+        assertThrows(NullPointerException.class, () -> enumerationBuilder.addAnnotation(null));
     }
 
     @Test
-    public void testEnumerationBuilder() {
+    void testAddNullAnnotationPackage() {
+        assertThrows(NullPointerException.class, () -> enumerationBuilder.addAnnotation(null, "test"));
+    }
+
+    @Test
+    void testAddNullAnnotationName() {
+        assertThrows(NullPointerException.class, () -> enumerationBuilder.addAnnotation(packageName, null));
+    }
+
+    @Test
+    void testEnumerationBuilder() {
         assertEquals(packageName + "." + name, enumerationBuilder.getFullyQualifiedName());
         assertEquals(name , enumerationBuilder.getName());
         assertEquals(packageName, enumerationBuilder.getPackageName());
@@ -86,7 +84,7 @@ public class EnumerationBuilderImplTest {
     }
 
     @Test
-    public void testEnumeration() {
+    void testEnumeration() {
         assertEquals(name, enumeration.getName());
         assertEquals(packageName, enumeration.getPackageName());
         assertEquals(null, enumeration.getComment());
@@ -108,26 +106,25 @@ public class EnumerationBuilderImplTest {
         assertEquals(enumeration, enumeration);
         assertNotEquals(enumeration, "string");
 
-        final Enumeration enumerationOtherPackage = enumerationBuilderOtherPackage.toInstance();
+        final var enumerationOtherPackage = enumerationBuilderOtherPackage.toInstance();
         assertNotEquals(enumeration, enumerationOtherPackage);
 
-        final Enumeration enumerationOtherName = enumerationBuilderOtherName.toInstance();
+        final var enumerationOtherName = enumerationBuilderOtherName.toInstance();
         assertNotEquals(enumeration, enumerationOtherName);
 
         enumerationBuilderSame.addValue(valueName, valueName, value, Status.CURRENT, valueDescription, null);
-        final Enumeration enumerationSame = enumerationBuilderSame.toInstance();
+        final var enumerationSame = enumerationBuilderSame.toInstance();
         assertEquals(enumeration, enumerationSame);
 
-        final CodegenEnumerationBuilder enumerationBuilderSame1 = new CodegenEnumerationBuilder(
-            JavaTypeName.create(packageName, name));
-        final Enumeration enumerationSame1 = enumerationBuilderSame1.toInstance();
+        final var enumerationBuilderSame1 = new CodegenEnumerationBuilder(JavaTypeName.create(packageName, name));
+        final var enumerationSame1 = enumerationBuilderSame1.toInstance();
         enumerationBuilderSame1.addValue(valueName, valueName, 14, Status.CURRENT, valueDescription, null);
         // Enums are equal thanks to same package name and local name
         assertEquals(enumeration, enumerationSame1);
     }
 
     @Test
-    public void testEnumerationToString() {
+    void testEnumerationToString() {
         assertEquals("EnumerationImpl{identifier=org.opendaylight.test.TestName, "
             + "values=[EnumPair [name=TestValue, mappedName=TestValue, value=12]]}", enumeration.toString());
         assertEquals("public enum " + name + " {\n"
@@ -139,10 +136,12 @@ public class EnumerationBuilderImplTest {
     }
 
     @Test
-    public void testUpdateEnumPairsFromEnumTypeDef() {
-        final EnumTypeDefinition enumTypeDefinition = BaseTypes.enumerationTypeBuilder(QName.create("test", "test"))
-                .addEnum(EnumPairBuilder.create("SomeName", 42).setDescription("Some Other Description")
-                    .setReference("Some other reference").build()).build();
-        enumerationBuilder.updateEnumPairsFromEnumTypeDef(enumTypeDefinition);
+    void testUpdateEnumPairsFromEnumTypeDef() {
+        enumerationBuilder.updateEnumPairsFromEnumTypeDef(BaseTypes.enumerationTypeBuilder(QName.create("test", "test"))
+            .addEnum(EnumPairBuilder.create("SomeName", 42)
+                .setDescription("Some Other Description")
+                .setReference("Some other reference")
+                .build())
+            .build());
     }
 }

@@ -7,35 +7,32 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-public class GeneratedPropertyTest {
-
+class GeneratedPropertyTest {
     @Test
-    public void testMethodsForGeneratedPropertyBuilderImpl() {
-        final GeneratedPropertyBuilderImpl propertyBuilderImpl = new GeneratedPropertyBuilderImpl("testProperty");
+    void testMethodsForGeneratedPropertyBuilderImpl() {
+        final var propertyBuilderImpl = new GeneratedPropertyBuilderImpl("testProperty");
 
         propertyBuilderImpl.setValue("new value");
         propertyBuilderImpl.setReadOnly(true);
 
-        final GeneratedProperty genProperty = propertyBuilderImpl.toInstance();
+        final var genProperty = propertyBuilderImpl.toInstance();
         assertNotNull(genProperty);
 
         assertNotNull(propertyBuilderImpl.toString());
     }
 
     @Test
-    public void testMethodsForGeneratedPropertyImpl() {
-        final GeneratedPropertyImpl propertyImpl = new GeneratedPropertyImpl("Test", null,
-            TypeMemberComment.contractOf("test property"), AccessModifier.PRIVATE, null, true, true, true,
-            "test value");
+    void testMethodsForGeneratedPropertyImpl() {
+        final var propertyImpl = new GeneratedPropertyImpl("Test", null, TypeMemberComment.contractOf("test property"),
+            AccessModifier.PRIVATE, null, true, true, true, "test value");
 
         assertEquals("test value", propertyImpl.getValue());
         assertTrue(propertyImpl.isReadOnly());
