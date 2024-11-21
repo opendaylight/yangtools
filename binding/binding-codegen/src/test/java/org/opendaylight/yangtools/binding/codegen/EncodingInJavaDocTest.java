@@ -11,15 +11,15 @@ import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.cl
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.testCompilation;
 
 import java.io.File;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test if generated classes from yang file is compilable, generated javadoc comments contains
  * symbols as javadoc comment tag, which caused of compilation problem.
  */
-public class EncodingInJavaDocTest extends BaseCompilationTest {
+class EncodingInJavaDocTest extends BaseCompilationTest {
     @Test
-    public void testAugmentToUsesInAugment() {
+    void testAugmentToUsesInAugment() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("encoding-javadoc");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("encoding-javadoc");
         generateTestSources("/compilation/encoding-javadoc", sourcesOutputDir);

@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -244,7 +243,7 @@ public final class CompilationTestUtils {
     static void assertContainsRestrictionCheck(final Constructor<?> constructor, final String errorMsg,
             final Object... args) {
         final var cause = assertThrows(InvocationTargetException.class, () -> constructor.newInstance(args)).getCause();
-        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertInstanceOf(IllegalArgumentException.class, cause);
         assertEquals(errorMsg, cause.getMessage());
     }
 
@@ -259,7 +258,7 @@ public final class CompilationTestUtils {
     static void assertContainsRestrictionCheck(final Object obj, final Method method, final String errorMsg,
             final Object... args) {
         final var cause = assertThrows(InvocationTargetException.class, () -> method.invoke(obj, args)).getCause();
-        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertInstanceOf(IllegalArgumentException.class, cause);
         assertEquals(errorMsg, cause.getMessage());
     }
 
@@ -270,7 +269,7 @@ public final class CompilationTestUtils {
      * @param ifc expected interface
      */
     static void assertImplementsIfc(final Class<?> clazz, final Class<?> ifc) {
-        List<Class<?>> ifcsList = Arrays.asList(clazz.getInterfaces());
+        final var ifcsList = Arrays.asList(clazz.getInterfaces());
         if (!ifcsList.contains(ifc)) {
             throw new AssertionError(clazz + " should implement " + ifc);
         }
@@ -306,7 +305,7 @@ public final class CompilationTestUtils {
         Type[] typeArg = ifcType.getActualTypeArguments();
         assertEquals(1, typeArg.length);
         Type typeArgument = typeArg[0];
-        assertThat(typeArgument, instanceOf(Class.class));
+        assertInstanceOf(Class.class, typeArgument);
         Class<?> argClass = (Class<?>) typeArgument;
         assertEquals(genericTypeName, argClass.getName());
         assertTrue(argClass.isInterface());
@@ -346,7 +345,7 @@ public final class CompilationTestUtils {
             throw new AssertionError("File " + dir + " doesn't exists or it's not a directory");
         }
 
-        assertEquals("Unexpected count of generated files", count, dirContent.length);
+        assertEquals(count, dirContent.length, "Unexpected count of generated files");
     }
 
     /**

@@ -7,29 +7,26 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class ClassCodeGeneratorTest {
+class ClassCodeGeneratorTest {
     @Test
-    public void compositeKeyClassTest() {
-        final List<GeneratedType> genTypes = new DefaultBindingGenerator().generateTypes(
+    void compositeKeyClassTest() {
+        final var genTypes = new DefaultBindingGenerator().generateTypes(
             YangParserTestUtils.parseYangResource("/list-composite-key.yang"));
 
         assertNotNull(genTypes);
@@ -37,8 +34,8 @@ public class ClassCodeGeneratorTest {
 
         int genTypesCount = 0;
         int genTOsCount = 0;
-        for (final GeneratedType type : genTypes) {
-            if (type instanceof final GeneratedTransferObject genTO) {
+        for (var type : genTypes) {
+            if (type instanceof GeneratedTransferObject genTO) {
                 if (genTO.getName().equals("CompositeKeyListKey")) {
                     final List<GeneratedProperty> properties = genTO
                             .getProperties();
@@ -53,8 +50,8 @@ public class ClassCodeGeneratorTest {
                     final String outputStr = clsGen.generate(genTO);
 
                     assertNotNull(outputStr);
-                    assertThat(outputStr, containsString(
-                        "public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String _key2)"));
+                    Assertions.assertThat(outputStr)
+                        .contains("public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String _key2)");
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;
@@ -78,9 +75,8 @@ public class ClassCodeGeneratorTest {
      * constructor.
      */
     @Test
-    public void defaultConstructorNotPresentInValueTypeTest() {
-        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack",
-            "DefCtor"));
+    void defaultConstructorNotPresentInValueTypeTest() {
+        final var toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack", "DefCtor"));
 
         GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));
@@ -100,9 +96,8 @@ public class ClassCodeGeneratorTest {
     }
 
     @Test
-    public void toStringTest() {
-        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack",
-            "DefCtor"));
+    void toStringTest() {
+        final var toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack", "DefCtor"));
 
         GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));

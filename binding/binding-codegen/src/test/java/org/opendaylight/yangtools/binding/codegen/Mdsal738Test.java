@@ -7,31 +7,31 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.nio.file.Files;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class Mdsal738Test extends BaseCompilationTest {
     private File sourcesOutputDir;
     private File compiledOutputDir;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal738");
         compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal738");
     }
 
-    @After
-    public void after() {
+    @AfterEach
+    void after() {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    public void testUnionOfDecimal64() throws Exception {
+    void testUnionOfDecimal64() throws Exception {
         generateTestSources("/compilation/mdsal738", sourcesOutputDir);
         final var pmDataType = FileSearchUtil.getFiles(sourcesOutputDir).get("PmDataType.java");
         assertNotNull(pmDataType);

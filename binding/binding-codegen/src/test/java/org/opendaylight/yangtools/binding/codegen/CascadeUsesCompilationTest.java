@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.BASE_PKG;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS_BAR;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS_BAZ;
@@ -28,12 +28,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CascadeUsesCompilationTest extends BaseCompilationTest {
-
+class CascadeUsesCompilationTest extends BaseCompilationTest {
     @Test
-    public void testCascadeUsesCompilation() throws Exception {
+    void testCascadeUsesCompilation() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("cascade-uses");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("cascade-uses");
         generateTestSources("/compilation/cascade-uses", sourcesOutputDir);

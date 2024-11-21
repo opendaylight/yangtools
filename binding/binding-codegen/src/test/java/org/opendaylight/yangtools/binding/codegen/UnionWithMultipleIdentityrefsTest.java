@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 
-public class UnionWithMultipleIdentityrefsTest extends BaseCompilationTest {
+class UnionWithMultipleIdentityrefsTest extends BaseCompilationTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-with-multiple-identityrefs");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-with-multiple-identityrefs");
         generateTestSources("/compilation/union-with-multiple-identityrefs", sourcesOutputDir);
