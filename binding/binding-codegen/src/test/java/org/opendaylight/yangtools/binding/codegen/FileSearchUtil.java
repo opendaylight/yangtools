@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import org.assertj.core.api.Assertions;
 
 final class FileSearchUtil {
     private static final String LS = System.lineSeparator();
@@ -31,25 +29,24 @@ final class FileSearchUtil {
     }
 
     static void assertFileContains(final String fileContent, final String searchText) {
-        assertThat(fileContent, containsString(searchText));
+        Assertions.assertThat(fileContent).contains(searchText);
     }
 
     static void assertFileContainsConsecutiveLines(final File file, final String fileContent, final String ... lines) {
-        for (final String line : lines) {
+        for (var line : lines) {
             assertFileContains(fileContent, line);
         }
         assertFileContains(fileContent, String.join(LS, lines));
     }
 
     static Map<String, File> getFiles(final File path) {
-        final Map<String, File> ret = new HashMap<>();
+        final var ret = new HashMap<String, File>();
         getFiles(path, ret);
         return ret;
     }
 
     private static void getFiles(final File path, final Map<String, File> files) {
-        final File [] dirFiles = path.listFiles();
-        for (File file : dirFiles) {
+        for (var file : path.listFiles()) {
             if (file.isDirectory()) {
                 getFiles(file, files);
             }

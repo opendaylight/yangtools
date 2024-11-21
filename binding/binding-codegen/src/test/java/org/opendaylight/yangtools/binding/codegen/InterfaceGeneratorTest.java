@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -23,17 +22,17 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
-public class InterfaceGeneratorTest {
+class InterfaceGeneratorTest {
     private static final String TEST = "test";
     private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
 
     @Test
-    public void basicTest() {
+    void basicTest() {
         assertEquals("", new InterfaceGenerator().generate(mock(Type.class)));
     }
 
     @Test
-    public void builderTemplateListenerMethodTest() {
+    void builderTemplateListenerMethodTest() {
         final MethodSignature methSign = mockMethSign("on" + TEST);
         final GeneratedType genType = mockGenType(methSign);
 
@@ -58,7 +57,7 @@ public class InterfaceGeneratorTest {
     }
 
     @Test
-    public void builderTemplateDeprecatedListenerMethodTest() {
+    void builderTemplateDeprecatedListenerMethodTest() {
         final MethodSignature methSign = mockMethSign("on" + TEST);
         addMethodStatus(methSign, JavaTypeName.create(Deprecated.class));
         final GeneratedType genType = mockGenType(methSign);
@@ -86,7 +85,7 @@ public class InterfaceGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateObsoleteListenerMethodTest() {
+    void builderTemplateGenerateObsoleteListenerMethodTest() {
         final MethodSignature methSign = mockMethSign("on" + TEST);
         addMethodStatus(methSign, JavaTypeName.create(Deprecated.class));
         doReturn(true).when(methSign).isDefault();
@@ -142,6 +141,6 @@ public class InterfaceGeneratorTest {
     private static void addMethodStatus(final MethodSignature methSign, final JavaTypeName annotationJavaType) {
         final AnnotationType annotationType = mock(AnnotationType.class);
         doReturn(annotationJavaType).when(annotationType).getIdentifier();
-        doReturn(ImmutableList.of(annotationType)).when(methSign).getAnnotations();
+        doReturn(List.of(annotationType)).when(methSign).getAnnotations();
     }
 }

@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class PresenceContainerTest {
+@ExtendWith(MockitoExtension.class)
+class PresenceContainerTest {
     private static final QName DIRECTORY_QNAME = QName.create("urn:opendaylight:presence-container",
             "2022-03-17", "directory");
     private static final QName USER_QNAME = QName.create("urn:opendaylight:presence-container",
@@ -40,8 +40,8 @@ public class PresenceContainerTest {
     @Mock
     GeneratedType type;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         final var context = YangParserTestUtils.parseYangResource("/presence-container.yang");
         module = context.findModule(XMLNamespace.of("urn:opendaylight:presence-container"), Revision.of("2022-03-17"))
                 .orElseThrow();
@@ -51,7 +51,7 @@ public class PresenceContainerTest {
      * Test that type which is NOT container is NOT recognized as non-presence container.
      */
     @Test
-    public void nonContainerIsNonPresenceContainerTest() {
+    void nonContainerIsNonPresenceContainerTest() {
         final var userList = module.findDataTreeChild(DIRECTORY_QNAME, USER_QNAME).orElseThrow();
         final var definition = YangSourceDefinition.of(module, userList);
         doReturn(definition).when(type).getYangSourceDefinition();
@@ -62,7 +62,7 @@ public class PresenceContainerTest {
      * Test that presence container is NOT recognized as non-presence container.
      */
     @Test
-    public void presenceContainerIsNonPresenceContainerTest() {
+    void presenceContainerIsNonPresenceContainerTest() {
         final var scpContainer = module.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow();
         final var definition = YangSourceDefinition.of(module, scpContainer);
         doReturn(definition).when(type).getYangSourceDefinition();
@@ -73,7 +73,7 @@ public class PresenceContainerTest {
      * Test that non-presence container IS recognized as non-presence container.
      */
     @Test
-    public void nonPresenceContainerIsNonPresenceContainerTest() {
+    void nonPresenceContainerIsNonPresenceContainerTest() {
         final var dataContainer = module.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow();
         final var definition = YangSourceDefinition.of(module, dataContainer);
         doReturn(definition).when(type).getYangSourceDefinition();

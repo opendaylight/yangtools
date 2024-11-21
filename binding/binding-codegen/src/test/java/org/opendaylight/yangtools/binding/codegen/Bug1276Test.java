@@ -11,7 +11,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for BG-1276. Previous construction of union constructor
@@ -34,10 +34,9 @@ import org.junit.Test;
  * <p><code>this._value = arg1.getValue()</code> or
  * <code>this._value = _arg1.getValue().toString().toCharArray()</code>
  */
-public class Bug1276Test extends BaseCompilationTest {
-
+class Bug1276Test extends BaseCompilationTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1276");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug1276");
         generateTestSources("/compilation/bug1276", sourcesOutputDir);

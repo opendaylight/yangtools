@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.BASE_PKG;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS_SVC_TEST;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS_TEST;
@@ -19,16 +19,15 @@ import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.te
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test correct code generation.
  *
  */
-public class NestedGroupingCompilationTest extends BaseCompilationTest {
-
+class NestedGroupingCompilationTest extends BaseCompilationTest {
     @Test
-    public void testListGeneration() throws Exception {
+    void testListGeneration() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("nested-grouping");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("nested-grouping");
         generateTestSources("/compilation/nested-grouping", sourcesOutputDir);

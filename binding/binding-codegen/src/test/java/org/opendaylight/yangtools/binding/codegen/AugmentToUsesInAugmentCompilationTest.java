@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
+class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
     @Test
-    public void testAugmentToUsesInAugment() throws Exception {
+    void testAugmentToUsesInAugment() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("augment-uses-to-augment");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("augment-uses-to-augment");
         generateTestSources("/compilation/augment-uses-to-augment", sourcesOutputDir);
@@ -91,5 +91,4 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
-
 }
