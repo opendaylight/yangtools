@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.DOUBLE_TAB;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.TAB;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.TRIPLE_TAB;
@@ -25,16 +23,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
-public class SpecializingLeafrefTest extends BaseCompilationTest {
+class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final ParameterizedType SET_STRING_TYPE  = Types.setTypeFor(Types.STRING);
 
     public static final String BAR_CONT = "BarCont";
@@ -77,8 +75,8 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     private List<GeneratedType> types;
     private Map<String, File> files;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void before() {
         sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal426");
         compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal426");
         types = generateTestSources("/compilation/mdsal426", sourcesOutputDir);
@@ -86,42 +84,42 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
         files = getFiles(sourcesOutputDir);
     }
 
-    @After
-    public void after() {
+    @AfterEach
+    void after() {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    public void testGroupingWithUnresolvedLeafRefs() throws Exception {
+    void testGroupingWithUnresolvedLeafRefs() throws Exception {
         verifyReturnType(FOO_GRP, GET_LEAF1_NAME, Types.objectType());
         verifyReturnType(FOO_GRP, GET_LEAFLIST1_NAME, Types.setTypeWildcard());
 
         final String content = getFileContent(FOO_GRP);
 
-        assertThat(content, containsString(GET_LEAF1_TYPE_OBJECT));
-        assertThat(content, containsString(GET_LEAFLIST1_WILDCARD));
+        assertThat(content).contains(GET_LEAF1_TYPE_OBJECT);
+        assertThat(content).contains(GET_LEAFLIST1_WILDCARD);
     }
 
     @Test
-    public void testLeafLeafrefPointsLeaf() throws Exception {
+    void testLeafLeafrefPointsLeaf() throws Exception {
         verifyReturnType(RESOLVED_LEAF_GRP, GET_LEAF1_NAME, Types.STRING);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
 
-        assertThat(content, containsString(GET_LEAF1_TYPE_STRING));
+        assertThat(content).contains(GET_LEAF1_TYPE_STRING);
     }
 
     @Test
-    public void testLeafLeafrefPointsLeafList() throws Exception {
+    void testLeafLeafrefPointsLeafList() throws Exception {
         verifyReturnType(RESOLVED_LEAFLIST_GRP, GET_LEAF1_NAME, Types.STRING);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
 
-        assertThat(content, containsString(GET_LEAF1_TYPE_STRING));
+        assertThat(content).contains(GET_LEAF1_TYPE_STRING);
     }
 
     @Test
-    public void testLeafListLeafrefPointsLeaf() throws Exception {
+    void testLeafListLeafrefPointsLeaf() throws Exception {
         verifyReturnType(RESOLVED_LEAF_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
@@ -130,7 +128,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testLeafListLeafrefPointsLeafList() throws Exception {
+    void testLeafListLeafrefPointsLeafList() throws Exception {
         verifyReturnType(RESOLVED_LEAFLIST_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
 
         final String content = getFileContent(RESOLVED_LEAFLIST_GRP);
@@ -139,18 +137,18 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testGroupingWhichInheritUnresolvedLeafrefAndDoesNotDefineIt() throws Exception {
+    void testGroupingWhichInheritUnresolvedLeafrefAndDoesNotDefineIt() throws Exception {
         verifyMethodAbsence(TRANSITIVE_GROUP, GET_LEAF1_NAME);
         verifyMethodAbsence(TRANSITIVE_GROUP, GET_LEAFLIST1_NAME);
 
         final String content = getFileContent(TRANSITIVE_GROUP);
 
-        assertThat(content, not(containsString(GET_LEAF1_DECLARATION)));
-        assertThat(content, not(containsString(GET_LEAFLIST1_DECLARATION)));
+        assertThat(content).doesNotContain(GET_LEAF1_DECLARATION);
+        assertThat(content).doesNotContain(GET_LEAFLIST1_DECLARATION);
     }
 
     @Test
-    public void testLeafrefWhichPointsBoolean() throws Exception {
+    void testLeafrefWhichPointsBoolean() throws Exception {
         verifyReturnType(UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.objectType());
         verifyReturnType(BOOLEAN_CONT, GET_LEAF1_NAME, Types.BOOLEAN);
 
@@ -158,11 +156,11 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
         final String booleanCont = getFileContent(BOOLEAN_CONT);
 
         assertNotOverriddenGetter(unresolvedGrouping, GET_LEAF1_TYPE_OBJECT);
-        assertThat(booleanCont, containsString(GET_LEAF1_DECLARATION));
+        assertThat(booleanCont).contains(GET_LEAF1_DECLARATION);
     }
 
     @Test
-    public void testGroupingsUsageWhereLeafrefAlreadyResolved() throws Exception {
+    void testGroupingsUsageWhereLeafrefAlreadyResolved() throws Exception {
         leafList1AndLeaf1Absence(BAR_CONT);
         leafList1AndLeaf1Absence(BAR_LST);
         leafList1AndLeaf1Absence(BAZ_GRP);
@@ -174,21 +172,21 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
 
         final String content = getFileContent(typeName);
 
-        assertThat(content, not(containsString(GET_LEAF1_DECLARATION)));
-        assertThat(content, not(containsString(GET_LEAFLIST1_DECLARATION)));
+        assertThat(content).doesNotContain(GET_LEAF1_DECLARATION);
+        assertThat(content).doesNotContain(GET_LEAFLIST1_DECLARATION);
     }
 
     private static void assertNotOverriddenGetter(final String fileContent, final String getterString) {
-        assertThat(fileContent, not(containsString("@Override" + System.lineSeparator() + getterString)));
-        assertThat(fileContent, containsString(getterString));
+        assertThat(fileContent).doesNotContain("@Override" + System.lineSeparator() + getterString);
+        assertThat(fileContent).contains(getterString);
     }
 
     private static void assertOverriddenGetter(final String fileContent, final String getterString) {
-        assertThat(fileContent, containsString("@Override" + System.lineSeparator() + getterString));
+        assertThat(fileContent).contains("@Override" + System.lineSeparator() + getterString);
     }
 
     @Test
-    public void barContBuilderDataObjectTest() throws Exception {
+    void barContBuilderDataObjectTest() throws Exception {
         final File file = files.get(getJavaBuilderFileName(BAR_CONT));
         final String content = Files.readString(file.toPath());
 
@@ -239,7 +237,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @Test
-    public void booleanContBuilderDataObjectTest() throws Exception {
+    void booleanContBuilderDataObjectTest() throws Exception {
         final File file = files.get(getJavaBuilderFileName(BOOLEAN_CONT));
         final String content = Files.readString(file.toPath());
 

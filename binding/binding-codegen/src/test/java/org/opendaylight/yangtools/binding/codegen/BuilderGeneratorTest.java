@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -32,12 +32,12 @@ public class BuilderGeneratorTest {
     private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
 
     @Test
-    public void basicTest() {
+    void basicTest() {
         assertEquals("", new BuilderGenerator().generate(mock(Type.class)));
     }
 
     @Test
-    public void builderTemplateGenerateHashcodeWithPropertyTest() {
+    void builderTemplateGenerateHashcodeWithPropertyTest() {
         final GeneratedType genType = mockGenType("get" + TEST);
 
         assertXtendEquals("""
@@ -61,12 +61,12 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithoutAnyPropertyTest() {
+    void builderTemplateGenerateHashCodeWithoutAnyPropertyTest() {
         assertEquals("", genHashCode(mockGenType(TEST)).toString());
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithMorePropertiesTest() {
+    void builderTemplateGenerateHashCodeWithMorePropertiesTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -89,7 +89,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() {
+    void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -112,7 +112,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() {
+    void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -137,7 +137,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() {
+    void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -163,8 +163,8 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithPropertyTest() {
-        final GeneratedType genType = mockGenType("get" + TEST);
+    void builderTemplateGenerateToStringWithPropertyTest() {
+        final var genType = mockGenType("get" + TEST);
 
         assertXtendEquals("""
             /**
@@ -186,7 +186,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithoutAnyPropertyTest() {
+    void builderTemplateGenerateToStringWithoutAnyPropertyTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -206,7 +206,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithMorePropertiesTest() {
+    void builderTemplateGenerateToStringWithMorePropertiesTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -228,7 +228,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() {
+    void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -249,7 +249,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithPropertyWithAugmentTest() {
+    void builderTemplateGenerateToStringWithPropertyWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -271,7 +271,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() {
+    void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() {
         assertXtendEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
@@ -294,7 +294,7 @@ public class BuilderGeneratorTest {
     }
 
     @Test
-    public void builderTemplateGenerateToEqualsComparingOrderTest() {
+    void builderTemplateGenerateToEqualsComparingOrderTest() {
         final var context = YangParserTestUtils.parseYangResource("/test-types.yang");
         final var types = new DefaultBindingGenerator().generateTypes(context);
         assertEquals(27, types.size());
