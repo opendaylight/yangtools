@@ -7,12 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HexFormat;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class Uint16Test {
@@ -52,15 +50,15 @@ class Uint16Test {
         final var max = Uint16.valueOf(65535);
 
         assertEquals(0, zero.compareTo(zero));
-        assertThat(zero.compareTo(five), lessThan(0));
-        assertThat(zero.compareTo(max), lessThan(0));
+        Assertions.assertThat(zero.compareTo(five)).isLessThan(0);
+        Assertions.assertThat(zero.compareTo(max)).isLessThan(0);
 
-        assertThat(five.compareTo(zero), greaterThan(0));
+        Assertions.assertThat(five.compareTo(zero)).isGreaterThan(0);
         assertEquals(0, five.compareTo(five));
-        assertThat(five.compareTo(max), lessThan(0));
+        Assertions.assertThat(five.compareTo(max)).isLessThan(0);
 
-        assertThat(max.compareTo(zero), greaterThan(0));
-        assertThat(max.compareTo(five), greaterThan(0));
+        Assertions.assertThat(max.compareTo(zero)).isGreaterThan(0);
+        Assertions.assertThat(max.compareTo(five)).isGreaterThan(0);
         assertEquals(0, max.compareTo(max));
     }
 
