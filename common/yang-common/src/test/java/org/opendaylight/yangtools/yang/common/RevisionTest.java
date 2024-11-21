@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,7 +22,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-public class RevisionTest {
+class RevisionTest {
     @Test
     void testOf() {
         assertEquals("2017-12-25", Revision.of("2017-12-25").toString());
