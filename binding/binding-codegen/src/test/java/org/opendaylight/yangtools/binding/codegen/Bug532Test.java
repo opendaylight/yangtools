@@ -7,28 +7,26 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.BASE_PKG;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.testCompilation;
 
-import com.google.common.collect.Lists;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
  * Test correct functionality of copy constructor of generated builder classes.
  */
-public class Bug532Test extends BaseCompilationTest {
-
+class Bug532Test extends BaseCompilationTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug532");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug532");
         generateTestSources("/compilation/list-gen-test", sourcesOutputDir);
@@ -55,7 +53,7 @@ public class Bug532Test extends BaseCompilationTest {
         Object expectedLevel = Mockito.mock(levelClass);
         Integer expectedLinksId = 11;
         Object expectedNode = Mockito.mock(nodeClass);
-        List<?> expectedNodeList = Lists.newArrayList(Mockito.mock(nodeListClass), Mockito.mock(nodeListClass));
+        List<?> expectedNodeList = List.of(Mockito.mock(nodeListClass), Mockito.mock(nodeListClass));
         Constructor<?> keyConstructor = linksKeyClass.getDeclaredConstructor(Byte.class, String.class, Integer.class);
         Object expectedKey = keyConstructor.newInstance(expectedId, expectedName, expectedSize);
 

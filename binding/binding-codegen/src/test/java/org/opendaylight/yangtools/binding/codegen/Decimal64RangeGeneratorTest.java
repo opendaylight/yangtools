@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigInteger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
-public class Decimal64RangeGeneratorTest {
+class Decimal64RangeGeneratorTest {
     @Test
     @Deprecated
-    public void convertTest() {
+    void convertTest() {
         Decimal64RangeGenerator generator = new Decimal64RangeGenerator();
         Decimal64 one = Decimal64.valueOf(1, 1);
         assertEquals(one, generator.convert(1L));

@@ -7,25 +7,24 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 
 /**
  * Union constructor with indentityref. Previously identityref was ignored so that there is no constructor for
  * identityref.
  */
-public class UnionWithIdentityrefTest extends BaseCompilationTest {
-
+class UnionWithIdentityrefTest extends BaseCompilationTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-with-identityref");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-with-identityref");
         generateTestSources("/compilation/union-with-identityref", sourcesOutputDir);

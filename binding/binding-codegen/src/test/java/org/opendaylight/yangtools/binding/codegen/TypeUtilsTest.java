@@ -7,21 +7,21 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
-public class TypeUtilsTest {
+class TypeUtilsTest {
     @Test
-    public void getBaseYangTypeTest() {
+    void getBaseYangTypeTest() {
         final GeneratedTransferObject rootType = mock(GeneratedTransferObject.class);
         final GeneratedTransferObject innerType = mock(GeneratedTransferObject.class);
         final GeneratedProperty property = mock(GeneratedProperty.class);
@@ -36,7 +36,7 @@ public class TypeUtilsTest {
     }
 
     @Test
-    public void getBaseYangTypeWithExceptionTest() {
+    void getBaseYangTypeWithExceptionTest() {
         final GeneratedTransferObject rootType = mock(GeneratedTransferObject.class);
         final GeneratedTransferObject innerType = mock(GeneratedTransferObject.class);
         final GeneratedProperty property = mock(GeneratedProperty.class);
