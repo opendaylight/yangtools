@@ -7,30 +7,25 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Table;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.tools.Diagnostic;
@@ -38,8 +33,9 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
@@ -54,7 +50,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
  */
 // TODO: most of private static methods are copied from
 // binding-java-api-generator project - reorganize compilation tests
-public class YangModuleInfoCompilationTest {
+class YangModuleInfoCompilationTest {
     public static final String FS = File.separator;
     private static final String BASE_PKG = "org.opendaylight.yang.svc.v1";
 
@@ -66,8 +62,8 @@ public class YangModuleInfoCompilationTest {
     private static final String COMPILER_OUTPUT_PATH = TEST_PATH + FS + "bin";
     private static final File COMPILER_OUTPUT_DIR = new File(COMPILER_OUTPUT_PATH);
 
-    @BeforeClass
-    public static void createTestDirs() {
+    @BeforeAll
+    static void createTestDirs() {
         if (TEST_DIR.exists()) {
             deleteTestDir(TEST_DIR);
         }
@@ -76,11 +72,11 @@ public class YangModuleInfoCompilationTest {
     }
 
     @Test
-    public void compilationTest() throws Exception {
+    void compilationTest() throws Exception {
         final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "yang");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdirs());
+        assertTrue(sourcesOutputDir.mkdirs(), "Failed to create test file '" + sourcesOutputDir + "'");
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "yang");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdirs());
+        assertTrue(compiledOutputDir.mkdirs(), "Failed to create test file '" + compiledOutputDir + "'");
 
         generateTestSources("/yang-module-info", sourcesOutputDir);
 
@@ -141,23 +137,22 @@ public class YangModuleInfoCompilationTest {
             }
         }
         assertNotNull(infoImport);
-        assertThat(infoImport.getYangTextCharSource().readFirstLine(), startsWith("module import-module"));
+        Assertions.assertThat(infoImport.getYangTextCharSource().readFirstLine()).startsWith("module import-module");
         assertNotNull(infoSub1);
-        assertThat(infoSub1.getYangTextCharSource().readFirstLine(), startsWith("submodule submodule1"));
+        Assertions.assertThat(infoSub1.getYangTextCharSource().readFirstLine()).startsWith("submodule submodule1");
         assertNotNull(infoSub2);
-        assertThat(infoSub2.getYangTextCharSource().readFirstLine(), startsWith("submodule submodule2"));
+        Assertions.assertThat(infoSub2.getYangTextCharSource().readFirstLine()).startsWith("submodule submodule2");
         assertNotNull(infoSub3);
-        assertThat(infoSub3.getYangTextCharSource().readFirstLine(), startsWith("submodule submodule3"));
+        Assertions.assertThat(infoSub3.getYangTextCharSource().readFirstLine()).startsWith("submodule submodule3");
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     private static void generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
             throws Exception {
-        final List<File> sourceFiles = getSourceFiles(resourceDirPath);
-        final EffectiveModelContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final Table<GeneratedFileType, GeneratedFilePath, GeneratedFile> codegen = new JavaFileGenerator(Map.of())
-            .generateFiles(context, Set.copyOf(context.getModules()),
+        final var sourceFiles = getSourceFiles(resourceDirPath);
+        final var context = YangParserTestUtils.parseYangFiles(sourceFiles);
+        final var codegen = new JavaFileGenerator(Map.of()).generateFiles(context, Set.copyOf(context.getModules()),
                 (module, representation) -> Optional.of(resourceDirPath + File.separator + module.getName()
                     + YangConstants.RFC6020_YANG_FILE_EXTENSION));
 
@@ -165,19 +160,19 @@ public class YangModuleInfoCompilationTest {
         assertEquals(14, codegen.row(GeneratedFileType.SOURCE).size());
         assertEquals(1, codegen.row(GeneratedFileType.RESOURCE).size());
 
-        for (Entry<GeneratedFilePath, GeneratedFile> entry : codegen.row(GeneratedFileType.SOURCE).entrySet()) {
-            final Path path = new File(sourcesOutputDir,
+        for (var entry : codegen.row(GeneratedFileType.SOURCE).entrySet()) {
+            final var path = new File(sourcesOutputDir,
                 entry.getKey().getPath().replace(GeneratedFilePath.SEPARATOR, File.separatorChar)).toPath();
 
             Files.createDirectories(path.getParent());
-            try (OutputStream out = Files.newOutputStream(path)) {
+            try (var out = Files.newOutputStream(path)) {
                 entry.getValue().writeBody(out);
             }
         }
     }
 
     @Test
-    public void generateTestSourcesWithAdditionalConfig() throws Exception {
+    void generateTestSourcesWithAdditionalConfig() throws Exception {
         final List<File> sourceFiles = getSourceFiles("/yang-module-info");
         final EffectiveModelContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         JavaFileGenerator codegen = new JavaFileGenerator(Map.of("test", "test"));
@@ -271,5 +266,4 @@ public class YangModuleInfoCompilationTest {
             }
         }
     }
-
 }

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.nio.file.Files.newOutputStream;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
@@ -19,9 +19,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -29,10 +30,9 @@ import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public abstract class BaseCompilationTest {
-
-    @BeforeClass
-    public static void createTestDirs() {
+abstract class BaseCompilationTest {
+    @BeforeAll
+    static final void createTestDirs() {
         if (CompilationTestUtils.TEST_DIR.exists()) {
             CompilationTestUtils.deleteTestDir(CompilationTestUtils.TEST_DIR);
         }
@@ -40,9 +40,9 @@ public abstract class BaseCompilationTest {
         assertTrue(CompilationTestUtils.COMPILER_OUTPUT_DIR.mkdirs());
     }
 
-    protected static final void generateTestSources(final List<GeneratedType> types, final File sourcesOutputDir)
+    static final void generateTestSources(final List<GeneratedType> types, final File sourcesOutputDir)
             throws IOException {
-        types.sort((o1, o2) -> o2.getName().compareTo(o1.getName()));
+        types.sort(Comparator.comparing(GeneratedType::getName).reversed());
 
         final Table<?, GeneratedFilePath, GeneratedFile> generatedFiles = JavaFileGenerator.generateFiles(types, true);
         for (Cell<?, GeneratedFilePath, GeneratedFile> cell : generatedFiles.cellSet()) {
@@ -55,8 +55,7 @@ public abstract class BaseCompilationTest {
         }
     }
 
-    protected static final List<GeneratedType> generateTestSources(final String resourceDirPath,
-            final File sourcesOutputDir) {
+    static final List<GeneratedType> generateTestSources(final String resourceDirPath, final File sourcesOutputDir) {
         final List<File> sourceFiles;
         try {
             sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);

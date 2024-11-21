@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.testCompilation;
 
 import java.io.File;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
+class UnionTypedefUnusedImportTest extends BaseCompilationTest {
     @Test
-    public void testUnionTypedefUnusedImport() {
+    void testUnionTypedefUnusedImport() {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-typedef");
         final var types = generateTestSources("/compilation/union-typedef", sourcesOutputDir);
         assertEquals(2, types.size());
