@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -17,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -24,11 +23,11 @@ import org.junit.jupiter.api.Test;
  *
  * @author Thomas Pantelis
  */
-public class RpcResultBuilderTest {
+class RpcResultBuilderTest {
     private static final ErrorTag TAG = new ErrorTag("tag");
 
     @Test
-    public void testSuccess() {
+    void testSuccess() {
         RpcResult<String> result = RpcResultBuilder.<String>success().withResult("foo").build();
         verifyRpcResult(result, true, "foo");
         assertEquals(List.of(), result.getErrors());
@@ -38,7 +37,7 @@ public class RpcResultBuilderTest {
     }
 
     @Test
-    public void testFailed() {
+    void testFailed() {
         Throwable cause = new Throwable("mock cause");
         Throwable cause2 = new Throwable("mock cause2");
         RpcResult<String> result = RpcResultBuilder.<String>failed()
@@ -60,7 +59,7 @@ public class RpcResultBuilderTest {
     }
 
     @Test
-    public void testWithWarnings() {
+    void testWithWarnings() {
         Throwable cause = new Throwable("mock cause");
         RpcResult<String> result = RpcResultBuilder.<String>success()
                   .withWarning(ErrorType.APPLICATION, ErrorTag.LOCK_DENIED, "message 1")
@@ -75,7 +74,7 @@ public class RpcResultBuilderTest {
     }
 
     @Test
-    public void testFrom() {
+    void testFrom() {
         Throwable cause = new Throwable("mock cause");
         RpcResult<String> result = RpcResultBuilder.<String>success()
                 .withResult("foo")
@@ -93,7 +92,7 @@ public class RpcResultBuilderTest {
     }
 
     @Test
-    public void testWithRpcErrors() {
+    void testWithRpcErrors() {
         Throwable cause = new Throwable("mock cause");
         RpcResult<String> result = RpcResultBuilder.<String>failed()
                 .withWarning(ErrorType.RPC, ErrorTag.IN_USE, "message", "my-app-tag", "my-info", cause)
@@ -110,7 +109,7 @@ public class RpcResultBuilderTest {
     }
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         final RpcResultBuilder<Object> rpcResultBuilder = RpcResultBuilder.status(true);
         final RpcError rpcErrorShort = RpcResultBuilder.newError(ErrorType.RPC, TAG, "msg");
         final RpcError rpcErrorLong = RpcResultBuilder.newError(ErrorType.RPC, TAG, "msg", "applicationTag", "info",
@@ -128,9 +127,8 @@ public class RpcResultBuilderTest {
                 + "errorType=RPC, tag=tag, applicationTag=null, info=null, cause=null]]]", rpcResult.toString());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testSerialization() throws Exception {
+    void testSerialization() throws Exception {
         RpcResult<String> result = RpcResultBuilder.<String>success().withResult("foo").build();
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -138,6 +136,7 @@ public class RpcResultBuilderTest {
         out.writeObject(result);
 
         ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+        @SuppressWarnings("unchecked")
         RpcResult<String> clone = (RpcResult<String>) in.readObject();
 
         verifyRpcResult(clone, true, "foo");
@@ -164,7 +163,7 @@ public class RpcResultBuilderTest {
             final String expInfo, final Throwable expCause) {
 
         List<RpcError> errors = result.getErrors();
-        assertThat(errors.size(), greaterThanOrEqualTo(errorIndex));
+        Assertions.assertThat(errors.size()).isGreaterThanOrEqualTo(errorIndex);
 
         RpcError error = errors.get(errorIndex);
         assertEquals(expSeverity, error.getSeverity());

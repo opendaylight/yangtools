@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.math.RoundingMode;
 import org.junit.jupiter.api.Test;
 
-public class YT1440Test {
+class YT1440Test {
     @Test
-    public void testScaleSame() {
+    void testScaleSame() {
         final var twenty = Decimal64.valueOf(2, 20);
         assertSame(twenty, twenty.scaleTo(2));
 
@@ -25,7 +25,7 @@ public class YT1440Test {
     }
 
     @Test
-    public void testScaleZero() {
+    void testScaleZero() {
         final var two = Decimal64.valueOf(2, 0);
         final var one = two.scaleTo(1);
         assertEquals(1, one.scale());
@@ -36,7 +36,7 @@ public class YT1440Test {
     }
 
     @Test
-    public void testScaleUpNoRemain() {
+    void testScaleUpNoRemain() {
         // Template, scale=5
         final var two = Decimal64.valueOf(2, 20);
 
@@ -52,7 +52,7 @@ public class YT1440Test {
     }
 
     @Test
-    public void testScaleDownNoRemain() {
+    void testScaleDownNoRemain() {
         // Template, scale=5
         final var five = Decimal64.valueOf(5, 20);
 
@@ -64,7 +64,7 @@ public class YT1440Test {
     }
 
     @Test
-    public void testScaleDownPositive() {
+    void testScaleDownPositive() {
         final var two = Decimal64.valueOf("0.63");
         assertEquals(2, two.scale());
         assertEquals(63, two.unscaledValue());
@@ -128,7 +128,7 @@ public class YT1440Test {
     }
 
     @Test
-    public void testScaleDownNegative() {
+    void testScaleDownNegative() {
         final var two = Decimal64.valueOf("-0.63");
         assertEquals(2, two.scale());
         assertEquals(-63, two.unscaledValue());
@@ -192,7 +192,7 @@ public class YT1440Test {
     }
 
     @Test
-    public void testScaleDownTrim() {
+    void testScaleDownTrim() {
         final var two = Decimal64.valueOf("0.63");
         final var ex = assertThrows(ArithmeticException.class, () -> two.scaleTo(1));
         assertEquals("Decreasing scale of 0.63 to 1 requires rounding", ex.getMessage());

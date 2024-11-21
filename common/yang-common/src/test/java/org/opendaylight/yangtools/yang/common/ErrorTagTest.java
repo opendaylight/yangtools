@@ -15,10 +15,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.junit.jupiter.api.Test;
 
-public class ErrorTagTest {
+class ErrorTagTest {
     @Test
-    public void testSerialization() throws Exception {
-        final ErrorTag expected = new ErrorTag("test");
+    void testSerialization() throws Exception {
+        final var expected = new ErrorTag("test");
 
         final byte[] bytes;
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {

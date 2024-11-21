@@ -16,11 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.concepts.Either;
 
 @NonNullByDefault
-public class DerivedStringTest {
-    public static class EagerDerivedString extends CachingDerivedString<EagerDerivedString> {
+class DerivedStringTest {
+    private static class EagerDerivedString extends CachingDerivedString<EagerDerivedString> {
         private static final long serialVersionUID = 1L;
 
-        protected EagerDerivedString(final String str) {
+        EagerDerivedString(final String str) {
             super(str);
         }
 
@@ -59,12 +59,12 @@ public class DerivedStringTest {
         }
     }
 
-    public static class LazyDerivedString extends CachingDerivedString<LazyDerivedString> {
+    private static class LazyDerivedString extends CachingDerivedString<LazyDerivedString> {
         private static final long serialVersionUID = 1L;
 
         private final String str;
 
-        protected LazyDerivedString(final String str) {
+        LazyDerivedString(final String str) {
             this.str = str;
         }
 
@@ -102,7 +102,7 @@ public class DerivedStringTest {
         }
     }
 
-    public static final class EagerDerivedStringSupport extends AbstractCanonicalValueSupport<EagerDerivedString> {
+    private static final class EagerDerivedStringSupport extends AbstractCanonicalValueSupport<EagerDerivedString> {
         EagerDerivedStringSupport() {
             super(EagerDerivedString.class);
         }
@@ -113,7 +113,7 @@ public class DerivedStringTest {
         }
     }
 
-    public static final class LazyDerivedStringSupport extends AbstractCanonicalValueSupport<LazyDerivedString> {
+    private static final class LazyDerivedStringSupport extends AbstractCanonicalValueSupport<LazyDerivedString> {
         LazyDerivedStringSupport() {
             super(LazyDerivedString.class);
         }
@@ -128,17 +128,16 @@ public class DerivedStringTest {
     private static final CanonicalValueSupport<LazyDerivedString> LAZY_SUPPORT = new LazyDerivedStringSupport();
 
     @Test
-    public void testEager() {
+    void testEager() {
         final DerivedString<?> foo = new EagerDerivedString("foo");
         assertSame("foo", foo.toString());
     }
 
     @Test
-    public void testLazy() {
+    void testLazy() {
         final DerivedString<?> foo = new LazyDerivedString("foo");
         final String first = foo.toString();
         assertEquals("foo", first);
         assertSame(first, foo.toString());
     }
-
 }
