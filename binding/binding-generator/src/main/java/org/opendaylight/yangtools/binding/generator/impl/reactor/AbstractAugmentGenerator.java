@@ -49,8 +49,7 @@ abstract class AbstractAugmentGenerator
      * Comparator comparing target path length. This is useful for quickly determining order the order in which two
      * (or more) {@link AbstractAugmentGenerator}s need to be evaluated. This is necessary when augments are layered on
      * top of each other:
-     *
-     * <p><pre>
+     * <pre>
      *   <code>
      *     container foo;
      *
