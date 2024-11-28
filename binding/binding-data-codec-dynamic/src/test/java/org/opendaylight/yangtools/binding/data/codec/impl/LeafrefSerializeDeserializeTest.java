@@ -28,10 +28,10 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
         final var fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
 
-        final var BA_II_CONT = DataObjectIdentifier.builder(Cont.class).build();
+        final var baII = DataObjectIdentifier.builder(Cont.class).build();
         final var refVal = new Ref("myvalue");
         final var data = new ContBuilder().setRef(refVal).build();
-        final var normalizedNode = codecContext.toNormalizedDataObject(BA_II_CONT, data);
+        final var normalizedNode = codecContext.toNormalizedDataObject(baII, data);
         assertNotNull(normalizedNode);
 
         final var fromNormalizedNode = codecContext.fromNormalizedNode(contYII, normalizedNode.node());
@@ -46,10 +46,10 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
         final var fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
 
-        final var BA_II_CONT = DataObjectIdentifier.builder(ContInt32.class).build();
+        final var baII = DataObjectIdentifier.builder(ContInt32.class).build();
         final var refVal = new RefUnionInt32(Uint32.valueOf(5));
         final var data = new ContInt32Builder().setRefUnionInt32(refVal).build();
-        final var normalizedNode = codecContext.toNormalizedDataObject(BA_II_CONT, data);
+        final var normalizedNode = codecContext.toNormalizedDataObject(baII, data);
         assertNotNull(normalizedNode);
 
         final var fromNormalizedNode = codecContext.fromNormalizedNode(contYII, normalizedNode.node());

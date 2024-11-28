@@ -54,19 +54,19 @@ class AnyXmlSupportTest extends AbstractComplexJsonTest {
         assertNotNull(transformedInput);
 
         // lf12-any check
-        final var Lf12AnyActualValue = getParsedAnyXmlValue(transformedInput, LF12_ANY);
-        final var Lf12AnyExpectedValue = createAnyXmlSimpleValue("ns:complex:json", "lf12-any", "100.5");
-        verifyTransformedAnyXmlNodeValue(Lf12AnyExpectedValue, Lf12AnyActualValue);
+        final var lf12AnyActualValue = getParsedAnyXmlValue(transformedInput, LF12_ANY);
+        final var lf12AnyExpectedValue = createAnyXmlSimpleValue("ns:complex:json", "lf12-any", "100.5");
+        verifyTransformedAnyXmlNodeValue(lf12AnyExpectedValue, lf12AnyActualValue);
 
         // lf13-any check
-        final var Lf13AnyActualValue = getParsedAnyXmlValue(transformedInput, LF13_ANY);
-        final var Lf13AnyExpectedValue = createAnyXmlSimpleValue("ns:complex:json", "lf13-any", "true");
-        verifyTransformedAnyXmlNodeValue(Lf13AnyExpectedValue, Lf13AnyActualValue);
+        final var lf13AnyActualValue = getParsedAnyXmlValue(transformedInput, LF13_ANY);
+        final var lf13AnyExpectedValue = createAnyXmlSimpleValue("ns:complex:json", "lf13-any", "true");
+        verifyTransformedAnyXmlNodeValue(lf13AnyExpectedValue, lf13AnyActualValue);
 
         // lf14-any check
-        final var Lf14AnyActualValue = getParsedAnyXmlValue(transformedInput, LF14_ANY);
-        final var Lf14AnyExpectedValue = createAnyXmlSimpleValue("ns:complex:json", "lf14-any", "null");
-        verifyTransformedAnyXmlNodeValue(Lf14AnyExpectedValue, Lf14AnyActualValue);
+        final var lf14AnyActualValue = getParsedAnyXmlValue(transformedInput, LF14_ANY);
+        final var lf14AnyExpectedValue = createAnyXmlSimpleValue("ns:complex:json", "lf14-any", "null");
+        verifyTransformedAnyXmlNodeValue(lf14AnyExpectedValue, lf14AnyActualValue);
 
         final var serializationResult = normalizedNodesToJsonString(transformedInput, schemaContext);
 
@@ -85,18 +85,18 @@ class AnyXmlSupportTest extends AbstractComplexJsonTest {
         assertNotNull(transformedInput);
 
         // lf12-any check
-        final var Lf12AnyActualValue = getParsedAnyXmlValue(transformedInput, LF12_ANY);
-        final var Lf12AnyExpectedValue = createLf12AnyXmlCompositeValue("ns:complex:json", "lf12-any");
-        verifyTransformedAnyXmlNodeValue(Lf12AnyExpectedValue, Lf12AnyActualValue);
+        final var lf12AnyActualValue = getParsedAnyXmlValue(transformedInput, LF12_ANY);
+        final var lf12AnyExpectedValue = createLf12AnyXmlCompositeValue("ns:complex:json", "lf12-any");
+        verifyTransformedAnyXmlNodeValue(lf12AnyExpectedValue, lf12AnyActualValue);
         // lf13-any check
-        final var Lf13AnyActualValue = getParsedAnyXmlValue(transformedInput, LF13_ANY);
-        final var Lf13AnyExpectedValue = createLf13AnyXmlCompositeValue("ns:complex:json", "lf13-any");
-        verifyTransformedAnyXmlNodeValue(Lf13AnyExpectedValue, Lf13AnyActualValue);
+        final var lf13AnyActualValue = getParsedAnyXmlValue(transformedInput, LF13_ANY);
+        final var lf13AnyExpectedValue = createLf13AnyXmlCompositeValue("ns:complex:json", "lf13-any");
+        verifyTransformedAnyXmlNodeValue(lf13AnyExpectedValue, lf13AnyActualValue);
 
         // lf14-any check
-        final var Lf14AnyActualValue = getParsedAnyXmlValue(transformedInput, LF14_ANY);
-        final var Lf14AnyExpectedValue = createLf14AnyXmlCompositeValue("ns:complex:json", "lf14-any");
-        verifyTransformedAnyXmlNodeValue(Lf14AnyExpectedValue, Lf14AnyActualValue);
+        final var lf14AnyActualValue = getParsedAnyXmlValue(transformedInput, LF14_ANY);
+        final var lf14AnyExpectedValue = createLf14AnyXmlCompositeValue("ns:complex:json", "lf14-any");
+        verifyTransformedAnyXmlNodeValue(lf14AnyExpectedValue, lf14AnyActualValue);
 
         // serialization
         final var serializationResult = normalizedNodesToJsonString(transformedInput, schemaContext);
