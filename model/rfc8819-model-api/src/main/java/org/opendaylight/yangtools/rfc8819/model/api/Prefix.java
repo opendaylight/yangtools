@@ -18,12 +18,9 @@ import org.eclipse.jdt.annotation.NonNull;
  * YANG Module Tag Prefixes Registry, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8819#section-7.1">RFC8819</a>.
  *
- * <p>
- * This registry allocates tag prefixes.  All YANG module tags SHOULD
- * begin with one of the prefixes in this registry.
- * Prefix entries in this registry should be short strings consisting of
- * lowercase ASCII alpha-numeric characters and a final ":" character.
- * </p>
+ * <p>This registry allocates tag prefixes. All YANG module tags SHOULD begin with one of the prefixes in this registry.
+ * Prefix entries in this registry should be short strings consisting of lowercase ASCII alpha-numeric characters and
+ * a final ":" character.
  */
 public record Prefix(@NonNull String value) {
     private static final Interner<@NonNull Prefix> INTERNER = Interners.newWeakInterner();
