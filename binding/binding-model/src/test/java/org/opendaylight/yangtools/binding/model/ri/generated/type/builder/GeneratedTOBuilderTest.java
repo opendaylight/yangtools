@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
@@ -40,7 +40,7 @@ class GeneratedTOBuilderTest {
     void testToString() {
         final var genTypeBuilder = new CodegenGeneratedTOBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
-        Assertions.assertThat(genTypeBuilder.toString())
+        assertThat(genTypeBuilder.toString())
             .startsWith("CodegenGeneratedTOBuilder{identifier=org.opendaylight.controller.AnnotClassCache");
     }
 
@@ -50,7 +50,6 @@ class GeneratedTOBuilderTest {
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
         var genTO = genTypeBuilder1.build();
-        Assertions.assertThat(genTO.toString())
-            .startsWith("GTO{identifier=org.opendaylight.controller.AnnotClassCache");
+        assertThat(genTO.toString()).startsWith("GTO{identifier=org.opendaylight.controller.AnnotClassCache");
     }
 }
