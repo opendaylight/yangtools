@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.xsd;
 
+// FIXME: expand
 public non-sealed interface CharacterClassExpression extends CharacterClass {
 
 }

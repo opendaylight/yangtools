@@ -7,39 +7,41 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.xsd;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 @NonNullByDefault
 public enum MultiCharacterEscape implements CharacterClass {
-    // XSD:  [ \t\n\r]
     // Java: [ \t\n\x0B\f\r]
-    SPACE('s'),
-    NOT_SPACE('S'),
+    SPACE('s', "[ \\t\\n\\r]"),
+    NOT_SPACE('S', "[^ \\t\\n\\r]"),
 
     // XSD:  Letter | '_' | ':'
     // Java translated
-    IDENT('i'),
-    NOT_IDENT('I'),
+    IDENT('i', null),
+    NOT_IDENT('I', null),
 
     // XSD:  NameChar
     // Java translated
-    CHAR('c'),
-    NOT_CHAR('C'),
+    CHAR('c', null),
+    NOT_CHAR('C', null),
 
-    // XSD:  \p{Nd}
     // Java: [0-9]
-    DIGIT('d'),
-    NOT_DIGIT('D'),
+    DIGIT('d', "\\p{Nd}"),
+    NOT_DIGIT('D', "\\P{Nd}"),
 
     // XSD:  [#x0000-#x10FFFF]-[\p{P}\p{Z}\p{C}]
     // Java: [a-zA-Z_0-9]
-    WORD('w'),
-    NOT_WORD('W');
+    WORD('w', null),
+    NOT_WORD('W', null);
 
+    private final String fragment;
     private final char ch;
 
-    MultiCharacterEscape(final char ch) {
+    MultiCharacterEscape(final char ch, final String fragment) {
         this.ch = ch;
+        this.fragment = requireNonNull(fragment);
     }
 
     // Note: does not handle "dot"
@@ -61,10 +63,8 @@ public enum MultiCharacterEscape implements CharacterClass {
         return "\\" + ch;
     }
 
-
     @Override
     public void appendPatternFragment(final StringBuilder sb) {
-        // FIXME: implement this
-        throw new UnsupportedOperationException();
+        sb.append(fragment);
     }
 }

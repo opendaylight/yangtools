@@ -11,182 +11,94 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
-// FIXME:
 @NonNullByDefault
-public sealed interface IsCategory extends CharacterProperty {
+public enum IsCategory implements CharacterProperty {
+    LETTERS("L"),
+    LETTERS_U("Lu"),
+    LETTERS_L("Ll"),
+    LETTERS_T("Lt"),
+    LETTERS_M("Lm"),
+    LETTERS_O("Lo"),
+    MARKS("M"),
+    MARKS_N("Mn"),
+    MARKS_C("Mc"),
+    MARKS_E("Me"),
+    NUMBERS("N"),
+    NUMBERS_D("Nd"),
+    NUMBERS_L("Nl"),
+    NUMBERS_O("No"),
+    PUNCTUATION("P"),
+    PUNCTUATION_C("Pc"),
+    PUNCTUATION_D("Pd"),
+    PUNCTUATION_S("Ps"),
+    PUNCTUATION_E("Pe"),
+    PUNCTUATION_I("Pi"),
+    PUNCTUATION_F("Pf"),
+    PUNCTUATION_O("Po"),
+    SEPARATORS("Z"),
+    SEPARATORS_S("Zs"),
+    SEPARATORS_L("Zl"),
+    SEPARATORS_P("Zp"),
+    SYMBOLS("S"),
+    SYMBOLS_M("Sm"),
+    SYMBOLS_C("Sc"),
+    SYMBOLS_K("Sk"),
+    SYMBOLS_O("So"),
+    OTHERS("C"),
+    OTHERS_C("Cc"),
+    OTHERS_F("Cf"),
+    OTHERS_O("Co"),
+    OTHERS_N("Cn");
 
-    enum Letters implements IsCategory {
-        DEFAULT("L"),
-        U("Lu"),
-        L("Ll"),
-        T("Lt"),
-        M("Lm"),
-        O("Lo");
+    private final String str;
 
-        private final String str;
-
-        Letters(final String str) {
-            this.str = requireNonNull(str);
-        }
-
-        @Override
-        public void appendPatternFragment(final StringBuilder sb) {
-            sb.append(str);
-        }
+    IsCategory(final String str) {
+        this.str = requireNonNull(str);
     }
 
-    enum Marks implements IsCategory {
-        DEFAULT("M"),
-        N("Mn"),
-        C("Mc"),
-        E("Me");
-
-        private final String str;
-
-        Marks(final String str) {
-            this.str = requireNonNull(str);
-        }
-
-        @Override
-        public void appendPatternFragment(final StringBuilder sb) {
-            sb.append(str);
-        }
-    }
-
-    enum Numbers implements IsCategory {
-        DEFAULT("N"),
-        D("Nd"),
-        L("Nl"),
-        O("No");
-
-        private final String str;
-
-        Numbers(final String str) {
-            this.str = requireNonNull(str);
-        }
-
-        @Override
-        public void appendPatternFragment(final StringBuilder sb) {
-            sb.append(str);
-        }
-    }
-
-    enum Punctuation implements IsCategory {
-        DEFAULT("P"),
-        C("Pc"),
-        D("Pd"),
-        S("Ps"),
-        E("Pe"),
-        I("Pi"),
-        F("Pf"),
-        O("Po");
-
-        private final String str;
-
-        Punctuation(final String str) {
-            this.str = requireNonNull(str);
-        }
-
-        @Override
-        public void appendPatternFragment(final StringBuilder sb) {
-            sb.append(str);
-        }
-    }
-
-    enum Separators implements IsCategory {
-        DEFAULT("Z"),
-        S("Zs"),
-        L("Zl"),
-        P("Zp");
-
-        private final String str;
-
-        Separators(final String str) {
-            this.str = requireNonNull(str);
-        }
-
-        @Override
-        public void appendPatternFragment(final StringBuilder sb) {
-            sb.append(str);
-        }
-    }
-
-    enum Symbols implements IsCategory {
-        DEFAULT("S"),
-        M("Sm"),
-        C("Sc"),
-        K("Sk"),
-        O("So");
-
-        private final String str;
-
-        Symbols(final String str) {
-            this.str = requireNonNull(str);
-        }
-
-        @Override
-        public void appendPatternFragment(final StringBuilder sb) {
-            sb.append(str);
-        }
-    }
-
-    enum Others implements IsCategory {
-        DEFAULT("C"),
-        C("Cc"),
-        F("Cf"),
-        O("Co"),
-        N("Cn");
-
-        private final String str;
-
-        Others(final String str) {
-            this.str = requireNonNull(str);
-        }
-
-        @Override
-        public void appendPatternFragment(final StringBuilder sb) {
-            sb.append(str);
-        }
+    @Override
+    public void appendPatternFragment(final StringBuilder sb) {
+        sb.append(str);
     }
 
     static IsCategory ofLiteral(final String str) {
         return switch (str) {
-            case "L" -> Letters.DEFAULT;
-            case "Lu" -> Letters.U;
-            case "Ll" -> Letters.L;
-            case "Lt" -> Letters.T;
-            case "Lm" -> Letters.M;
-            case "Lo" -> Letters.O;
-            case "M" -> Marks.DEFAULT;
-            case "Mn" -> Marks.N;
-            case "Mc" -> Marks.C;
-            case "Me" -> Marks.E;
-            case "N" -> Numbers.DEFAULT;
-            case "Nd" -> Numbers.D;
-            case "Nl" -> Numbers.L;
-            case "No" -> Numbers.O;
-            case "P" -> Punctuation.DEFAULT;
-            case "Pc" -> Punctuation.D;
-            case "Pd" -> Punctuation.D;
-            case "Ps" -> Punctuation.S;
-            case "Pe" -> Punctuation.E;
-            case "Pi" -> Punctuation.I;
-            case "Pf" -> Punctuation.F;
-            case "Po" -> Punctuation.O;
-            case "Z" -> Separators.DEFAULT;
-            case "Zs" -> Separators.S;
-            case "Zl" -> Separators.L;
-            case "Zp" -> Separators.P;
-            case "S" -> Symbols.DEFAULT;
-            case "Sm" -> Symbols.M;
-            case "Sc" -> Symbols.C;
-            case "Sk" -> Symbols.K;
-            case "So" -> Symbols.O;
-            case "C" -> Others.DEFAULT;
-            case "Cc" -> Others.C;
-            case "Cf" -> Others.F;
-            case "Co" -> Others.O;
-            case "Cn" -> Others.N;
+            case "L" -> LETTERS;
+            case "Lu" -> LETTERS_U;
+            case "Ll" -> LETTERS_L;
+            case "Lt" -> LETTERS_T;
+            case "Lm" -> LETTERS_M;
+            case "Lo" -> LETTERS_O;
+            case "M" -> MARKS;
+            case "Mn" -> MARKS_N;
+            case "Mc" -> MARKS_C;
+            case "Me" -> MARKS_E;
+            case "N" -> NUMBERS;
+            case "Nd" -> NUMBERS_D;
+            case "Nl" -> NUMBERS_L;
+            case "No" -> NUMBERS_O;
+            case "P" -> PUNCTUATION;
+            case "Pc" -> PUNCTUATION_C;
+            case "Pd" -> PUNCTUATION_D;
+            case "Ps" -> PUNCTUATION_S;
+            case "Pe" -> PUNCTUATION_E;
+            case "Pi" -> PUNCTUATION_I;
+            case "Pf" -> PUNCTUATION_F;
+            case "Po" -> PUNCTUATION_O;
+            case "Z" -> SEPARATORS;
+            case "Zs" -> SEPARATORS_S;
+            case "Zl" -> SEPARATORS_L;
+            case "Zp" -> SEPARATORS_P;
+            case "S" -> SYMBOLS;
+            case "Sm" -> SYMBOLS_M;
+            case "Sc" -> SYMBOLS_C;
+            case "Sk" -> SYMBOLS_K;
+            case "So" -> SYMBOLS_O;
+            case "C" -> OTHERS;
+            case "Cc" -> OTHERS_C;
+            case "Cf" -> OTHERS_F;
+            case "Co" -> OTHERS_O;
+            case "Cn" -> OTHERS_N;
             default -> throw new IllegalArgumentException("Unhandled value " + str);
         };
     }

@@ -17,7 +17,6 @@ public record ComplementEscape(CharacterProperty charProp) implements CharacterC
         requireNonNull(charProp);
     }
 
-
     @Override
     public void appendPatternFragment(final StringBuilder sb) {
         charProp.appendPatternFragment(sb.append("\\P{"));

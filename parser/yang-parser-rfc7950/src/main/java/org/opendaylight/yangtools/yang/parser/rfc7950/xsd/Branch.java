@@ -20,6 +20,8 @@ public record Branch(List<Piece> pieces) implements PatternFragment {
 
     @Override
     public void appendPatternFragment(final StringBuilder sb) {
-        pieces.forEach(piece -> piece.appendPatternFragment(sb));
+        for (var piece : pieces) {
+            piece.appendPatternFragment(sb);
+        }
     }
 }
