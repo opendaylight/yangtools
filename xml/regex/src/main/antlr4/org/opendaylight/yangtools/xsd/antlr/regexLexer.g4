@@ -77,15 +77,8 @@ COMMA       : ',';
 mode CATEGORY;
 EndCategory: '}' -> popMode;
 
-// Categories
-IsCategory  : Letters | Marks | Numbers | Punctuation | Separators | Symbols | Others;
-Letters     : 'L' [ultmo]?;
-Marks       : 'M' [nce]?;
-Numbers     : 'N' [dlo]?;
-Punctuation : 'P' [cdseifo]?;
-Separators  : 'Z' [slp]?;
-Symbols     : 'S' [mcko]?;
-Others      : 'C' [cfon]?;
+// Categories: Letters, Marks, Numbers, Punctuation, Separators, Symbols and Others
+IsCategory : 'L' [ultmo]? | 'M' [nce]? | 'N' [dlo]? | 'P' [cdseifo]? | 'Z' [slp]? | 'S' [mcko]? | 'C' [cfon]?;
 
 // Block Escape
 IsBlock: 'Is' ([a-z0-9A-Z] | '-')+;
