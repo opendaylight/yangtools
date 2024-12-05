@@ -88,15 +88,8 @@ charGroup : posCharGroup? DASH DASH charClassExpr
     ;
 
 // Positive Character Group
-posCharGroup : DASH? (charRange | charClassEsc)+
-    ;
-
-// Character Range, sans the DASH possibility
-charRange : seRange | XmlChar
-    ;
-seRange : charOrEsc DASH charOrEsc
-    ;
-charOrEsc : XmlChar | SingleCharEsc
+// We have inlined charRange to split XmlCharIncDash into DASH and XmlChar
+posCharGroup : DASH? (XmlChar | ((XmlChar | SingleCharEsc) DASH (XmlChar | SingleCharEsc)) | charClassEsc)+
     ;
 
 // Character Class Escape
