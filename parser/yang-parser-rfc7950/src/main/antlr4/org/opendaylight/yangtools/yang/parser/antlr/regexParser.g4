@@ -70,21 +70,7 @@ quantifier
     : QUESTION
     | STAR
     | PLUS
-    | StartQuantity quantity EndQuantity
-    ;
-
-quantity
-    : quantRange
-    | quantMin
-    | QuantExact
-    ;
-
-quantRange
-    : QuantExact COMMA QuantExact
-    ;
-
-quantMin
-    : QuantExact COMMA
+    | StartQuantity QuantExact (COMMA QuantExact?)? EndQuantity
     ;
 
 // Atom
