@@ -55,7 +55,7 @@ piece : atom quantifier?
     ;
 
 // Quantifier
-quantifier : QUESTION | STAR | PLUS | StartQuantity quantity EndQuantity
+quantifier : QUESTION | STAR | PLUS | (StartQuantity quantity EndQuantity)
     ;
 quantity : quantRange | quantMin | QuantExact
     ;
