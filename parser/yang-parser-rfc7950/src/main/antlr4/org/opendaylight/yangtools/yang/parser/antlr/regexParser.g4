@@ -76,15 +76,10 @@ quantifier
 // Atom
 atom
     : Char
-    | charClass
-    | LPAREN regExp RPAREN
-    ;
-
-// Character Class
-charClass
-    : charClassEsc
+    | charClassEsc
     | charClassExpr
     | WildcardEsc
+    | LPAREN regExp RPAREN
     ;
 
 // Character Class Expression
