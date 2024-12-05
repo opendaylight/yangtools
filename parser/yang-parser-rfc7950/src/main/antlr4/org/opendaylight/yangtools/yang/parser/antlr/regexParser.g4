@@ -28,7 +28,7 @@
  */
 
 /*
- * Parser grammar for https://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#regexs.
+ * Parser grammar for https://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#regexs
  *
  * This grammar is modified in following ways:
  * - charGroup definition inlines the charClassSub case
@@ -68,21 +68,18 @@ piece
       (QUESTION | STAR | PLUS | StartQuantity QuantExact (COMMA QuantExact?)? EndQuantity)?
     ;
 
-// Character Class Expression
+/*
+ * Character Class Expression and Character Group
+ *
+ * In order to disambiguate DASH's roles in Character Class Subtraction and in posCharGroup tail, we explicitly
+ * handle it here. ANTLR will consider the subrules in order and they completely disambiguate uses of
+ * [a--[f]], [a-[f]], [a-], [a]. We have borrowed some of the clarification from
+ * https://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/ to make this work
+ */
 charClassExpr
-    : (NegCharGroup | NestedNegCharGroup | PosCharGroup | NestedPosCharGroup) charGroup EndCharGroup
-    ;
-
-// Character Group
-// In order to disambiguate the use of DASH's roles in Character Class Subtraction and in posCharGroup
-// tail, we explicitly handle it here. ANTLR will consider the subrules in order and they completely
-// disambiguate use [a--[f]], [a-[f]], [a-], [a]. We have borrowed some of the clarification from
-// https://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/ to make this work
-charGroup
-    : posCharGroup? DASH DASH charClassExpr
-    | posCharGroup DASH charClassExpr
-    | posCharGroup DASH?
-    | DASH
+    : (NegCharGroup | NestedNegCharGroup | PosCharGroup | NestedPosCharGroup)
+      (posCharGroup? DASH DASH charClassExpr | posCharGroup DASH charClassExpr | posCharGroup DASH? | DASH)
+      EndCharGroup
     ;
 
 // Positive Character Group, with inlined charRange to split XmlCharIncDash into DASH and XmlChar
