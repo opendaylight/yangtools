@@ -144,20 +144,6 @@ charClassEsc
     | NestedSingleCharEsc
     | MultiCharEsc
     | NestedMultiCharEsc
-    | catEsc
-    | complEsc
-    ;
-
-// Category Escape
-catEsc
-    : (CatEsc | NestedCatEsc) charProp EndCategory
-    ;
-
-complEsc
-    : (ComplEsc | NestedComplEsc) charProp EndCategory
-    ;
-
-charProp
-    : IsCategory
-    | IsBlock
+    // Category Escape
+    | (CatEsc | NestedCatEsc | ComplEsc | NestedComplEsc) (IsCategory | IsBlock) EndCategory
     ;
