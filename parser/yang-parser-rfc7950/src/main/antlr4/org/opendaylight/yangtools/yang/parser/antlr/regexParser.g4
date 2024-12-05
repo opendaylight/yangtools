@@ -77,9 +77,9 @@ charClassExpr : (NegCharGroup | NestedNegCharGroup | PosCharGroup | NestedPosCha
     ;
 
 // Character Group
-// In order to disambiguate the use of DASH's roles in Character Class Subtraction and in posCharGroup
-// tail, we explicitly handle it here. ANTLR will consider the subrules in order and they completely
-// disambiguate use [a--[f]], [a-[f]], [a-], [a]. We have borrowed some of the clarification from
+// In order to disambiguate DASH's roles in Character Class Subtraction and in posCharGroup tail, we explicitly
+// handle it here. ANTLR will consider the subrules in order and they completely disambiguate uses of
+// [a--[f]], [a-[f]], [a-], [a]. We have borrowed some of the clarification from
 // https://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/ to make this work
 charGroup : posCharGroup? DASH DASH charClassExpr
     | posCharGroup DASH charClassExpr
