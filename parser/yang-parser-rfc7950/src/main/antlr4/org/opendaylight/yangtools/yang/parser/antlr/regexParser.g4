@@ -59,11 +59,7 @@ quantifier : QUESTION | STAR | PLUS | StartQuantity QuantExact (COMMA QuantExact
     ;
 
 // Atom
-atom : Char | charClass | LPAREN regExp RPAREN
-    ;
-
-// Character Class
-charClass : charClassEsc | charClassExpr | WildcardEsc
+atom : Char | charClassEsc | charClassExpr | WildcardEsc | LPAREN regExp RPAREN
     ;
 
 // Character Class Expression
