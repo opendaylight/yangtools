@@ -100,14 +100,7 @@ charOrEsc : XmlChar | SingleCharEsc
     ;
 
 // Character Class Escape
-charClassEsc : SingleCharEsc | NestedSingleCharEsc | MultiCharEsc | NestedMultiCharEsc | catEsc | complEsc
+charClassEsc : SingleCharEsc | NestedSingleCharEsc | MultiCharEsc | NestedMultiCharEsc
+    // Category Escape
+    | (CatEsc | NestedCatEsc | ComplEsc | NestedComplEsc) (IsCategory | IsBlock) EndCategory
     ;
-
-// Category Escape
-catEsc : (CatEsc | NestedCatEsc) charProp EndCategory
-    ;
-complEsc : (ComplEsc | NestedComplEsc) charProp EndCategory
-    ;
-charProp : IsCategory | IsBlock
-    ;
-
