@@ -91,7 +91,7 @@ quantMin
 atom
     : Char
     | charClass
-    | (LPAREN regExp RPAREN)
+    | LPAREN regExp RPAREN
     ;
 
 // Character Class
