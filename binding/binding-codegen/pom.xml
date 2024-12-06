@@ -113,11 +113,25 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <javaSourceVersion>17</javaSourceVersion>
+                            <javaSourceVersion>${maven.compiler.release}</javaSourceVersion>
                             <outputDirectory>${project.build.directory}/generated-sources/xtend</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
+
+                <!-- Overrides according to https://eclipse.dev/Xtext/releasenotes.html#/releasenotes/2024/05/28/version-2-35-0 -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.jdt</groupId>
+                        <artifactId>ecj</artifactId>
+                        <version>3.37.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.eclipse.jdt</groupId>
+                        <artifactId>org.eclipse.jdt.core</artifactId>
+                        <version>3.37.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
