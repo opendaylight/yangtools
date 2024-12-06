@@ -56,7 +56,6 @@ import org.opendaylight.yangtools.yang.parser.antlr.regexParser;
 import org.opendaylight.yangtools.yang.parser.antlr.regexParser.BranchContext;
 import org.opendaylight.yangtools.yang.parser.antlr.regexParser.CharClassEscContext;
 import org.opendaylight.yangtools.yang.parser.antlr.regexParser.CharClassExprContext;
-import org.opendaylight.yangtools.yang.parser.antlr.regexParser.CharGroupContext;
 import org.opendaylight.yangtools.yang.parser.antlr.regexParser.PieceContext;
 import org.opendaylight.yangtools.yang.parser.antlr.regexParser.PosCharGroupContext;
 import org.opendaylight.yangtools.yang.parser.antlr.regexParser.RegExpContext;
@@ -144,7 +143,7 @@ public record RegularExpression(List<Branch> branches) implements PatternFragmen
         if (size == offset) {
             return new Piece(atom, null);
         }
-        final var first = verifyChildTerminal(ctx.getChild(offset));
+        final var first = verifyChildTerminal(ctx.children.get(offset));
         return new Piece(atom, switch (first.getType()) {
                 case PLUS -> Plus.INSTANCE;
                 case QUESTION -> Question.INSTANCE;
@@ -191,49 +190,50 @@ public record RegularExpression(List<Branch> branches) implements PatternFragmen
     }
 
     private static CharacterClassExpression parseCharClassExpr(final CharClassExprContext ctx) {
-        final var header = childToken(verifyChildCount(ctx, 3), 0);
-        childToken(ctx, 2, EndCharGroup);
-        final var charGroup = parseCharGroup(child(ctx, 1, CharGroupContext.class));
-        return switch (header.getType()) {
+        final var first = verifyChildTerminal(ctx.children.getFirst());
+        final int size = ctx.getChildCount();
+        childToken(ctx, size - 1, EndCharGroup);
+        final var charGroup = parseCharGroup(ctx, size);
+        return switch (first.getType()) {
             case NegCharGroup, NestedNegCharGroup -> new CharacterClassExpression.Negative(charGroup);
             case PosCharGroup, NestedPosCharGroup -> new CharacterClassExpression.Positive(charGroup);
-            default -> throw unexpectedToken(header);
+            default -> throw unexpectedToken(first);
         };
     }
 
-    private static CharacterGroup parseCharGroup(final CharGroupContext ctx) {
-        final var first = ctx.children.getFirst();
+    private static CharacterGroup parseCharGroup(final CharClassExprContext ctx, final int size) {
+        final var first = ctx.children.get(1);
         return switch (first) {
             case PosCharGroupContext posCharGroup -> {
                 final var firstGroup = parsePosCharGroup(posCharGroup);
-                yield switch (ctx.getChildCount()) {
-                        case 1 -> firstGroup;
-                        case 2 -> {
-                            childToken(ctx, 1, DASH);
+                yield switch (size) {
+                        case 3 -> firstGroup;
+                        case 4 -> {
+                            childToken(ctx, 2, DASH);
                             yield union(firstGroup, SimpleCharacterGroup.DASH);
                         }
-                        case 3 -> {
-                            childToken(ctx, 1, DASH);
-                            yield new DifferenceCharacterGroup(firstGroup,
-                                parseCharClassExpr(child(ctx, 2, CharClassExprContext.class)));
-                        }
-                        case 4 -> {
-                            childToken(ctx, 1, DASH);
+                        case 5 -> {
                             childToken(ctx, 2, DASH);
-                            yield new DifferenceCharacterGroup(union(firstGroup, SimpleCharacterGroup.DASH),
+                            yield new DifferenceCharacterGroup(firstGroup,
                                 parseCharClassExpr(child(ctx, 3, CharClassExprContext.class)));
+                        }
+                        case 6 -> {
+                            childToken(ctx, 2, DASH);
+                            childToken(ctx, 3, DASH);
+                            yield new DifferenceCharacterGroup(union(firstGroup, SimpleCharacterGroup.DASH),
+                                parseCharClassExpr(child(ctx, 4, CharClassExprContext.class)));
                         }
                         default -> throw unexpectedShape(ctx);
                     };
             }
             case TerminalNode terminal -> {
                 verifyToken(terminal, DASH);
-                yield switch(ctx.getChildCount()) {
-                        case 1 -> SimpleCharacterGroup.DASH;
-                        case 3 -> {
-                            childToken(ctx, 1, DASH);
+                yield switch(size) {
+                        case 3 -> SimpleCharacterGroup.DASH;
+                        case 5 -> {
+                            childToken(ctx, 2, DASH);
                             yield new DifferenceCharacterGroup(SimpleCharacterGroup.DASH,
-                                parseCharClassExpr(child(ctx, 2, CharClassExprContext.class)));
+                                parseCharClassExpr(child(ctx, 3, CharClassExprContext.class)));
                         }
                         default -> throw unexpectedShape(ctx);
                     };
