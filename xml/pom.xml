@@ -28,6 +28,8 @@
     </properties>
 
     <modules>
+        <!-- XSD Regular Expressions as applicable to YANG -->
+        <module>regex</module>
         <!-- YANG XPath API and implementation -->
         <!-- FIXME; rename to xpath-api -->
         <module>yang-xpath-api</module>
