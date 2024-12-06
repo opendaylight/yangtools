@@ -51,15 +51,11 @@ branch : piece*
     ;
 
 // Piece
-piece : atom quantifier?
-    ;
-
-// Quantifier
-quantifier : QUESTION | STAR | PLUS | (StartQuantity QuantExact (COMMA QuantExact?)? EndQuantity)
-    ;
-
-// Atom
-atom : Char | charClassEsc | charClassExpr | WildcardEsc | (LPAREN regExp RPAREN)
+piece :
+    // Atom
+    (Char | charClassEsc | charClassExpr | WildcardEsc | (LPAREN regExp RPAREN))
+    // Quantifier
+    (QUESTION | STAR | PLUS | (StartQuantity QuantExact (COMMA QuantExact?)? EndQuantity))?
     ;
 
 // Character Class Expression
