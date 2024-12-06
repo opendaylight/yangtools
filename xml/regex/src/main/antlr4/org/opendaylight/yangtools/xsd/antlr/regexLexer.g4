@@ -49,10 +49,11 @@ PLUS        : '+';
 QUESTION    : '?';
 STAR        : '*';
 WildcardEsc : '.';
-Char        : ~('.' | '\\' | '?' | '*' | '+' | '(' | ')' | '|' | '[' | ']');
 
 // Quantifier's quantity rule support
 StartQuantity: '{' -> pushMode(QUANTITY);
+
+Char : ~('.' | '\\' | '?' | '*' | '+' | '(' | ')' | '|' | '[' | ']');
 
 // Single Character Escape
 SingleCharEsc: SINGLE_ESC;
