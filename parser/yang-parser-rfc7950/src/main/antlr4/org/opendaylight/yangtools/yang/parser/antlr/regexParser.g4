@@ -65,7 +65,7 @@ quantMin : QuantExact COMMA
     ;
 
 // Atom
-atom : Char | charClass | (LPAREN regExp RPAREN)
+atom : Char | charClass | LPAREN regExp RPAREN
     ;
 
 // Character Class
