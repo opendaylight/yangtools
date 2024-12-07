@@ -42,12 +42,8 @@ options { tokenVocab = regexLexer; }
 root: regExp EOF
     ;
 
-// Regular Expression
-regExp : branch (PIPE branch)*
-    ;
-
-// Branch
-branch : piece*
+// Regular Expression, with Branch inlined
+regExp : piece* (PIPE piece*)*
     ;
 
 // Piece
