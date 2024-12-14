@@ -7,64 +7,103 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.xsd;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.COMMA;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.CatEsc;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.Char;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.ComplEsc;
 import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.DASH;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.EndCategory;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.EndCharGroup;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.EndQuantity;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.IsBlock;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.IsCategory;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.LPAREN;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.MultiCharEsc;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.NegCharGroup;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.NestedCatEsc;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.NestedComplEsc;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.NestedMultiCharEsc;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.NestedNegCharGroup;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.NestedPosCharGroup;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.NestedSingleCharEsc;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.PIPE;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.PLUS;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.PosCharGroup;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.QUESTION;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.QuantExact;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.RPAREN;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.STAR;
 import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.SingleCharEsc;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.StartQuantity;
-import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.WildcardEsc;
 import static org.opendaylight.yangtools.yang.parser.antlr.regexLexer.XmlChar;
+import static org.opendaylight.yangtools.yang.parser.rfc7950.xsd.AbstractRegularExpressionVisitor.childToken;
+import static org.opendaylight.yangtools.yang.parser.rfc7950.xsd.AbstractRegularExpressionVisitor.parseCharClassEscape;
+import static org.opendaylight.yangtools.yang.parser.rfc7950.xsd.AbstractRegularExpressionVisitor.verifyChildTerminal;
 
-import com.google.common.base.VerifyException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.antlr.regexParser.BranchContext;
 import org.opendaylight.yangtools.yang.parser.antlr.regexParser.CharClassEscContext;
-import org.opendaylight.yangtools.yang.parser.antlr.regexParser.CharClassExprContext;
-import org.opendaylight.yangtools.yang.parser.antlr.regexParser.PieceContext;
-import org.opendaylight.yangtools.yang.parser.antlr.regexParser.PosCharGroupContext;
-import org.opendaylight.yangtools.yang.parser.antlr.regexParser.RegExpContext;
 
-@NonNullByDefault
-public final class RegularExpressionParser {
+public final class RegularExpressionParser extends AbstractRegularExpressionVisitor {
+    private final ArrayDeque<Object> stack = new ArrayDeque<>();
+
+    private RegularExpression expr;
+
     private RegularExpressionParser() {
         // Hidden on purpose
     }
 
+    @NonNullByDefault
     public static RegularExpression parse(final StatementSourceReference ref, final String str) {
-        return parseRegExp(child(AntlrSupport.parseRegularExpression(ref, str), 0, RegExpContext.class));
+        final var parser = new RegularExpressionParser();
+        parser.visitRoot(AntlrSupport.parseRegularExpression(ref, str));
+        return verifyNotNull(parser.expr);
+    }
+
+    @Override
+    void startExpression(final int expectedBranchCount) {
+        final var branches = new ArrayList<Branch>();
+
+    }
+
+    @Override
+    void endExpression() {
+        // expr = new RegularExpression(branches);
+
+    }
+
+    @Override
+    void emptyBranch() {
+        // branches.add(Branch.EMPTY)
+    }
+
+    @Override
+    void startBranch(final int size) {
+        // FIXME: push branch builder
+        final var pieces = new ArrayList<Piece>(size);
+
+    }
+
+    @Override
+    void endBranch() {
+        // branches.pop() + build + branches.add()
+        //      return new Branch(pieces);
+    }
+
+    @Override
+    void startPiece(final SingleCharacterEscape escape) {
+
+    }
+
+    @Override
+    void startPiece(final MultiCharacterEscape escape) {
+
+    }
+
+    @Override
+    void startPiece(final Dot wildcard) {
+
+    }
+
+    @Override
+    void startPiece(final CategoryEscape escape) {
+
+    }
+
+    @Override
+    void startPiece(final ComplementEscape escape) {
+
+    }
+
+    @Override
+    void endPiece() {
+//        new Piece(atom, null);
+    }
+
+    @Override
+    void endPiece(final Quantifier quantifier) {
+//      new Piece(atom, quantifier);
     }
 
     // TODO: Re-formulate this logic in terms of events ands Builders. A superclass should contain the traversal logic,
@@ -72,186 +111,6 @@ public final class RegularExpressionParser {
     //       the topmost being RegularExpression.Builder and its callouts should manipulate the stack/builders. Once we
     //       have traversed RegExpComplete, we should end up with a stack containing the initial builder, and we should
     //       return its product.
-    private static RegularExpression parseRegExp(final RegExpContext ctx) {
-        final var size = ctx.children.size();
-        if (size == 0) {
-            throw unexpectedShape(ctx);
-        }
-
-        final var branches = new ArrayList<Branch>((size + 1) / 2);
-        final var it = ctx.children.iterator();
-        branches.add(parseBranch(next(it, BranchContext.class)));
-        while (it.hasNext()) {
-            verifyToken(next(it, TerminalNode.class), PIPE);
-            branches.add(parseBranch(next(it, BranchContext.class)));
-        }
-
-        return new RegularExpression(branches);
-    }
-
-    private static Branch parseBranch(final BranchContext ctx) {
-        final var size = ctx.getChildCount();
-        if (size == 0) {
-            return Branch.EMPTY;
-        }
-
-        final var pieces = new ArrayList<Piece>(size);
-        for (var child : ctx.children) {
-            if (child instanceof PieceContext piece) {
-                pieces.add(parsePiece(piece));
-            } else {
-                throw unexpectedChild(child);
-            }
-        }
-        return new Branch(pieces);
-    }
-
-    private static Piece parsePiece(final PieceContext ctx) {
-        final var first = ctx.children.getFirst();
-        return switch (first) {
-            case CharClassEscContext esc -> parseQuantifier(ctx, parseCharClassEscape(esc), 1);
-            case CharClassExprContext expr -> parseQuantifier(ctx, parseCharClassExpr(expr), 1);
-            case TerminalNode terminal -> switch (terminal.getSymbol().getType()) {
-                case Char -> parseQuantifier(ctx, new NormalCharacter(terminal.getText()), 1);
-                case WildcardEsc -> parseQuantifier(ctx, Dot.INSTANCE, 1);
-                case LPAREN -> {
-                    childToken(ctx, 2, RPAREN);
-                    yield parseQuantifier(ctx,
-                        new ParenRegularExpression(parseRegExp(child(ctx, 1, RegExpContext.class))), 3);
-                }
-                default -> throw unexpectedToken(terminal);
-            };
-            default -> throw unexpectedChild(first);
-        };
-    }
-
-    private static Piece parseQuantifier(final PieceContext ctx, final Atom atom, final int offset) {
-        final var size = ctx.getChildCount();
-        if (size == offset) {
-            return new Piece(atom, null);
-        }
-        final var first = verifyChildTerminal(ctx.children.get(offset));
-        return new Piece(atom, switch (first.getType()) {
-                case PLUS -> Plus.INSTANCE;
-                case QUESTION -> Question.INSTANCE;
-                case STAR -> Star.INSTANCE;
-                case StartQuantity -> parseQuantity(ctx, offset + 1, size);
-                default -> throw unexpectedToken(first);
-            });
-    }
-
-    private static Quantifier parseQuantity(final PieceContext ctx, final int offset, final int size) {
-        childToken(ctx, size - 1, EndQuantity);
-        final var first = childQuantExact(ctx, offset);
-        final var remaining = size - offset;
-        if (remaining == 2) {
-            return new QuantExact(first);
-        }
-        childToken(ctx, offset + 1, COMMA);
-        return switch (remaining) {
-            case 3 -> new QuantMin(first);
-            case 4 -> new QuantRange(first, childQuantExact(ctx, offset + 2));
-            default -> throw unexpectedShape(ctx);
-        };
-    }
-
-    private static CharacterClass parseCharClassEscape(final CharClassEscContext ctx) {
-        final var terminal = verifySingleToken(ctx);
-        return switch (terminal.getType()) {
-            case SingleCharEsc, NestedSingleCharEsc -> SingleCharacterEscape.ofLiteral(terminal.getText());
-            case MultiCharEsc, NestedMultiCharEsc -> MultiCharacterEscape.ofLiteral(terminal.getText());
-            case CatEsc, NestedCatEsc -> new CategoryEscape(parseCharacterProperty(ctx));
-            case ComplEsc, NestedComplEsc -> new ComplementEscape(parseCharacterProperty(ctx));
-            default -> throw unexpectedToken(terminal);
-        };
-    }
-
-    private static CharacterProperty parseCharacterProperty(final CharClassEscContext ctx) {
-        final var terminal = childToken(verifyChildCount(ctx, 3), 1);
-        childToken(ctx, 2, EndCategory);
-        return switch (terminal.getType()) {
-            case IsBlock -> new CharacterProperty.IsBlock(terminal.getText().substring(2));
-            case IsCategory -> CharacterProperty.IsCategory.ofLiteral(terminal.getText());
-            default -> throw unexpectedToken(terminal);
-        };
-    }
-
-    private static CharacterClassExpression parseCharClassExpr(final CharClassExprContext ctx) {
-        final var first = verifyChildTerminal(ctx.children.getFirst());
-        final int size = ctx.getChildCount();
-        childToken(ctx, size - 1, EndCharGroup);
-        final var charGroup = parseCharGroup(ctx, size);
-        return switch (first.getType()) {
-            case NegCharGroup, NestedNegCharGroup -> new NegativeCharacterClassExpression(charGroup);
-            case PosCharGroup, NestedPosCharGroup -> new PositiveCharacterClassExpression(charGroup);
-            default -> throw unexpectedToken(first);
-        };
-    }
-
-    private static CharacterGroup parseCharGroup(final CharClassExprContext ctx, final int size) {
-        final var first = ctx.children.get(1);
-        return switch (first) {
-            case PosCharGroupContext posCharGroup -> {
-                final var firstGroup = parsePosCharGroup(posCharGroup);
-                yield switch (size) {
-                        case 3 -> firstGroup;
-                        case 4 -> {
-                            childToken(ctx, 2, DASH);
-                            yield union(firstGroup, SimpleCharacterGroup.DASH);
-                        }
-                        case 5 -> {
-                            childToken(ctx, 2, DASH);
-                            yield new DifferenceCharacterGroup(firstGroup,
-                                parseCharClassExpr(child(ctx, 3, CharClassExprContext.class)));
-                        }
-                        case 6 -> {
-                            childToken(ctx, 2, DASH);
-                            childToken(ctx, 3, DASH);
-                            yield new DifferenceCharacterGroup(union(firstGroup, SimpleCharacterGroup.DASH),
-                                parseCharClassExpr(child(ctx, 4, CharClassExprContext.class)));
-                        }
-                        default -> throw unexpectedShape(ctx);
-                    };
-            }
-            case TerminalNode terminal -> {
-                verifyToken(terminal, DASH);
-                yield switch(size) {
-                        case 3 -> SimpleCharacterGroup.DASH;
-                        case 5 -> {
-                            childToken(ctx, 2, DASH);
-                            yield new DifferenceCharacterGroup(SimpleCharacterGroup.DASH,
-                                parseCharClassExpr(child(ctx, 3, CharClassExprContext.class)));
-                        }
-                        default -> throw unexpectedShape(ctx);
-                    };
-            }
-            default -> throw unexpectedChild(first);
-        };
-    }
-
-    private static CharacterGroup parsePosCharGroup(final PosCharGroupContext ctx) {
-        final var size = ctx.getChildCount();
-        if (size == 0) {
-            throw unexpectedShape(ctx);
-        }
-
-        final var components = new ArrayList<CharacterGroup>(size);
-        final var children = ctx.children;
-
-        // first child could be a DASH
-        int offset;
-        if (children.getFirst() instanceof TerminalNode terminal && terminal.getSymbol().getType() == DASH) {
-            components.add(SimpleCharacterGroup.DASH);
-            offset = 1;
-        } else {
-            offset = 0;
-        }
-
-        fillPosCharGroup(components, children, offset, size);
-
-        // TODO: merge spans of SimpleCharacterGroups
-        return components.size() == 1 ? components.getFirst() : new UnionCharacterGroup(components);
-    }
 
     private static void fillPosCharGroup(final ArrayList<CharacterGroup> components, final List<ParseTree> children,
             final int start, final int size) {
@@ -319,74 +178,5 @@ public final class RegularExpressionParser {
         tmp.add(group);
         tmp.addAll(components);
         return new UnionCharacterGroup(tmp);
-    }
-
-    private static <T extends ParseTree> T child(final ParserRuleContext ctx, final int index,
-            final Class<T> expected) {
-        return expected.cast(verifyNotNull(ctx.children).get(index));
-    }
-
-    private static String childQuantExact(final ParserRuleContext ctx, final int index) {
-        return childToken(ctx, index, QuantExact).getText();
-    }
-
-    private static Token childToken(final ParserRuleContext ctx, final int index, final int token) {
-        return verifyToken(childToken(verifyNotNull(ctx.children), index), token);
-    }
-
-    private static Token childToken(final List<ParseTree> children, final int index) {
-        return verifyChildTerminal(children.get(index));
-    }
-
-    private static <T extends ParseTree> T next(final Iterator<ParseTree> it, final Class<T> expected) {
-        return expected.cast(it.next());
-    }
-
-    private static ParseTree verifySingleChild(final ParserRuleContext ctx) {
-        return verifyChildCount(ctx, 1).getFirst();
-    }
-
-    private static Token verifySingleToken(final ParserRuleContext ctx) {
-        return verifyChildTerminal(verifySingleChild(ctx));
-    }
-
-    private static List<ParseTree> verifyChildCount(final ParserRuleContext ctx, final int expected) {
-        if (ctx.getChildCount() != expected) {
-            throw unexpectedShape(ctx);
-        }
-        return ctx.children;
-    }
-
-    private static Token verifyChildTerminal(final ParseTree ctx) {
-        if (ctx instanceof TerminalNode terminal) {
-            return terminal.getSymbol();
-        }
-        throw unexpectedChild(ctx);
-    }
-
-    private static Token verifyToken(final TerminalNode node, final int type) {
-        return verifyToken(node.getSymbol(), type);
-    }
-
-    private static Token verifyToken(final Token token, final int expected) {
-        final int type = token.getType();
-        verify(type == expected, "Unexpected token %s when expecting %s", type, expected);
-        return token;
-    }
-
-    private static VerifyException unexpectedChild(final ParseTree ctx) {
-        return new VerifyException("Unexpected child " + ctx);
-    }
-
-    private static VerifyException unexpectedShape(final ParserRuleContext ctx) {
-        return new VerifyException("Unexpected shape of " + ctx);
-    }
-
-    private static VerifyException unexpectedToken(final TerminalNode ctx) {
-        return unexpectedToken(ctx.getSymbol());
-    }
-
-    private static VerifyException unexpectedToken(final Token ctx) {
-        return new VerifyException("Unexpected token " + ctx);
     }
 }
