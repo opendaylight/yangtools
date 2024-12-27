@@ -89,7 +89,9 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
         delegate.checkApplicable(path, modification, currentMeta, version);
         if (!(modification instanceof ModifiedNode modified)) {
             // FIXME: 7.0.0: turn this into a verify?
-            LOG.debug("Could not validate {}, does not implement expected class {}", modification, ModifiedNode.class);
+            LOG.warn("""
+                Could not validate {}, does not implement expected class {}. Assuming validation passed. This code path
+                will be failing soon""", modification, ModifiedNode.class, new Throwable());
             return;
         }
 
