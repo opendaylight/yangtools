@@ -37,7 +37,7 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
     }
 
     @Override
-    protected TreeNode getTipRoot() {
+    TreeNode getTipRoot() {
         return root.getNewMeta();
     }
 

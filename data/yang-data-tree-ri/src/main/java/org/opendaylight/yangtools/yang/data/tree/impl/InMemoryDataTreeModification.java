@@ -15,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -22,7 +23,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.CursorAwareDataTreeModification;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateTip;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
+import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
@@ -49,16 +54,20 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     private final RootApplyStrategy strategyTree;
     private final InMemoryDataTreeSnapshot snapshot;
-    private final ModifiedNode rootNode;
     private final Version version;
 
+    // NOTE: This is mutable state accessed from multiple threads concurrently when we are in STATE_SEALED. The owner
+    //       is the thread which is performing three-step commit sequence (validate/prepare/commit). User threads may
+    //       invoke newModification() to create a modification predicated on this one.
+    // TODO: We want to unify state management here: a newModification() on a transaction which has been validate()d
+    //       should result in the three we inspect as part of validate()
+    private final ModifiedNode rootNode;
     // All access needs to go through STATE
     @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile byte state;
 
-    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot,
-            final RootApplyStrategy resolver) {
+    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootApplyStrategy resolver) {
         this.snapshot = requireNonNull(snapshot);
         strategyTree = requireNonNull(resolver).snapshot();
         rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy());
@@ -73,10 +82,6 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * committed) will be same and will not change.
          */
         version = snapshot.getRootNode().getSubtreeVersion().next();
-    }
-
-    ModifiedNode getRootModification() {
-        return rootNode;
     }
 
     ModificationApplyOperation getStrategy() {
@@ -219,7 +224,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return version;
     }
 
-    boolean isSealed() {
+    private boolean isSealed() {
         // a quick check, synchronizes *only* on the sealed field
         return (byte) STATE.getAcquire(this) == STATE_SEALED;
     }
@@ -312,5 +317,52 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         // needs to see any HashMap.modCount mutations completed. This is needed because isSealed() is now performing
         // only the equivalent of an acquireFence()
         STATE.setRelease(this, STATE_SEALED);
+    }
+
+    /**
+     * Validate against the current root node in accordance to {@link DataTree#validate(DataTreeModification)} contract.
+     *
+     * @param path data tree path prefix
+     * @param current root node to validate against
+     * @throws NullPointerException if any argument is {@code null}
+     * @throws IllegalArgumentException if this modification is not sealed
+     * @throws DataValidationFailedException if modification would result in an inconsistent data tree
+     */
+    @NonNullByDefault
+    void validate(final YangInstanceIdentifier path, final TreeNode current) throws DataValidationFailedException {
+        if (!isSealed()) {
+            // FIXME: this should be an IllegalStateException
+            throw new IllegalArgumentException("Attempted to validate unsealed modification " + this);
+        }
+        getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
+    }
+
+    /**
+     * Prepare against the current root node in accordance to {@link DataTree#prepare(DataTreeModification)} contract.
+     *
+     * @param path data tree path prefix
+     * @param current root node to prepare against
+     * @return a {@link DataTreeCandidateTip}
+     * @throws NullPointerException if any argument is {@code null}
+     * @throws IllegalArgumentException if this modification is not sealed
+     * @throws DataValidationFailedException if modification would result in inconsistent data tree
+     */
+    @NonNullByDefault
+    DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
+        if (!isSealed()) {
+            // FIXME: this should be an IllegalStateException
+            throw new IllegalArgumentException("Attempted to prepare unsealed modification " + this);
+        }
+
+        if (rootNode.getOperation() == LogicalOperation.NONE) {
+            return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current);
+        }
+
+        final var newRoot = getStrategy().apply(rootNode, current, version);
+        if (newRoot == null) {
+            // FIXME: this should be a VerifyException
+            throw new IllegalStateException("Apply strategy failed to produce root node for modification " + this);
+        }
+        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, newRoot);
     }
 }
