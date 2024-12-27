@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
  * of this class are explicitly recognized and processing of them is skipped.
  */
 final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
-    private static final DataTreeCandidateNode ROOT = new DataTreeCandidateNode() {
+    private static final @NonNull DataTreeCandidateNode ROOT = new DataTreeCandidateNode() {
         @Override
         public ModificationType modificationType() {
             return ModificationType.UNMODIFIED;
@@ -73,7 +73,7 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
     }
 
     @Override
-    protected TreeNode getTipRoot() {
+    TreeNode getTipRoot() {
         return afterRoot;
     }
 }
