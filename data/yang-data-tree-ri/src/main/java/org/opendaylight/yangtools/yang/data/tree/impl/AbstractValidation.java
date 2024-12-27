@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -18,8 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A forwarding {@link ModificationApplyOperation}. Useful for strategies which do not deal with data layout, but rather
@@ -27,8 +26,6 @@ import org.slf4j.LoggerFactory;
  */
 abstract sealed class AbstractValidation extends ModificationApplyOperation
         permits MinMaxElementsValidation, UniqueValidation {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractValidation.class);
-
     private final @NonNull ModificationApplyOperation delegate;
 
     AbstractValidation(final ModificationApplyOperation delegate) {
@@ -91,13 +88,10 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
         // TODO: this means we must be calling this method with the lock held to preclude concurrent modification of
         //       cached state
         if (!(modification instanceof ModifiedNode modified)) {
-            // FIXME: 7.0.0: turn this into a verify?
-            LOG.warn("""
-                Could not validate {}, does not implement expected class {}. Assuming validation passed. This code path
-                will be failing soon""", modification, ModifiedNode.class, new Throwable());
-            return;
+            throw new VerifyException("Unsupported modification " + modification);
         }
 
+        delegate.checkApplicable(path, modification, currentMeta, version);
         if (delegate instanceof AbstractValidation) {
             checkApplicable(path, verifyNotNull(modified.validatedNode(delegate, currentMeta)).treeNode());
             return;
