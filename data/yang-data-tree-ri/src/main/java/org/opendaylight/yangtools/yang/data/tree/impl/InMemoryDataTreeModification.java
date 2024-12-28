@@ -8,14 +8,16 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Map.Entry;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -38,17 +40,78 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification {
-    private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
+    /**
+     * Internal state.
+     */
+    private sealed interface State {
+        // Nothing else
+    }
 
-    private static final byte STATE_OPEN    = 0;
-    private static final byte STATE_SEALING = 1;
-    private static final byte STATE_SEALED  = 2;
+    /**
+     * Internal state with an attached {@link #rootNode()}.
+     */
+    @NonNullByDefault
+    private sealed interface WithRootNode extends State {
+
+        ModifiedNode rootNode();
+    }
+
+    /**
+     * Initial state: the modification is open to data operations.
+     */
+    @NonNullByDefault
+    private record Open(ModifiedNode rootNode) implements WithRootNode {
+        Open {
+            requireNonNull(rootNode);
+        }
+
+        @Override
+        public String toString() {
+            return "Open";
+        }
+    }
+
+    /**
+     * Intermediate state between {@link Open} and {@link Sealed}. It does not retain the modification on purpose, as
+     * a failure to completely seal the modification results in inconsistent state, rendering the modification
+     * inoperable. We want to minimize our footprint in that case.
+     */
+    @NonNullByDefault
+    private static final class Sealing implements State {
+        static final Sealing INSTANCE = new Sealing();
+
+        @Override
+        public String toString() {
+            return "Sealing";
+        }
+    }
+
+    // NOTE: This is mutable state accessed from multiple threads concurrently. Rules of access:
+    //       - threads performing data tree commit sequence (validate/prepare/commit) are considered to be the 'write'
+    //         threads providing forward progress on data tree ingress
+    //       - threads performing newModification() are considered to be the 'read' threads piling up new work from
+    //         the user
+    //       Since all of our state is kept on heap, we prioritize forward progress, so as to detach user state as soon
+    //       as possible.
+    @NonNullByDefault
+    private record Sealed(ModifiedNode rootNode) implements WithRootNode {
+        Sealed {
+            requireNonNull(rootNode);
+        }
+
+        @Override
+        public String toString() {
+            return "Sealed";
+        }
+    }
+
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
     private static final VarHandle STATE;
 
     static {
         try {
-            STATE = MethodHandles.lookup().findVarHandle(InMemoryDataTreeModification.class, "state", byte.class);
+            STATE = MethodHandles.lookup().findVarHandle(InMemoryDataTreeModification.class, "state", State.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -58,21 +121,14 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     private final InMemoryDataTreeSnapshot snapshot;
     private final Version version;
 
-    // NOTE: This is mutable state accessed from multiple threads concurrently when we are in STATE_SEALED. The owner
-    //       is the thread which is performing three-step commit sequence (validate/prepare/commit). User threads may
-    //       invoke newModification() to create a modification predicated on this one.
-    // TODO: We want to unify state management here: a newModification() on a transaction which has been validate()d
-    //       should result in the three we inspect as part of validate()
-    private final ModifiedNode rootNode;
-    // All access needs to go through STATE
-    @SuppressWarnings("unused")
-    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
-    private volatile byte state;
+    // All access needs to go through STATE variable handle
+    @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
+    private volatile State state;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootApplyStrategy resolver) {
         this.snapshot = requireNonNull(snapshot);
         strategyTree = requireNonNull(resolver).snapshot();
-        rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy());
+        state = new Open(ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy()));
 
         /*
          * We could allocate version beforehand, since Version contract
@@ -101,22 +157,21 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public void write(final YangInstanceIdentifier path, final NormalizedNode data) {
-        checkOpen();
-        checkIdentifierReferencesData(path, data);
-        resolveModificationFor(path).write(data);
+        final var rootNode = checkOpen();
+        checkIdentifierReferencesData(rootNode, path, data);
+        resolveModificationFor(rootNode, path).write(data);
     }
 
     @Override
     public void merge(final YangInstanceIdentifier path, final NormalizedNode data) {
-        checkOpen();
-        checkIdentifierReferencesData(path, data);
-        resolveModificationFor(path).merge(data, version);
+        final var rootNode = checkOpen();
+        checkIdentifierReferencesData(rootNode, path, data);
+        resolveModificationFor(rootNode, path).merge(data, version);
     }
 
     @Override
     public void delete(final YangInstanceIdentifier path) {
-        checkOpen();
-        resolveModificationFor(path).delete();
+        resolveModificationFor(checkOpen(), path).delete();
     }
 
     @Override
@@ -140,11 +195,16 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     private Entry<YangInstanceIdentifier, ModifiedNode> resolveTerminal(final YangInstanceIdentifier path) {
+        final var local = acquireState();
+        if (!(local instanceof WithRootNode withRootNode)) {
+            throw new IllegalStateException("Cannot access data in state " + local);
+        }
+
         /*
          * Walk the tree from the top, looking for the first node between root and the requested path which has been
          * modified. If no such node exists, we use the node itself.
          */
-        return StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path,
+        return StoreTreeNodes.findClosestsOrFirstMatch(withRootNode.rootNode(), path,
             input -> switch (input.getOperation()) {
                 case DELETE, MERGE, WRITE -> true;
                 case TOUCH, NONE -> false;
@@ -167,6 +227,12 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     void upgradeIfPossible() {
+        if (acquireState() instanceof Open(var rootNode)) {
+            upgradeIfPossible(rootNode);
+        }
+    }
+
+    private void upgradeIfPossible(final ModifiedNode rootNode) {
         if (rootNode.getOperation() == LogicalOperation.NONE) {
             strategyTree.upgradeIfPossible();
         }
@@ -179,8 +245,9 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return StoreTreeNodes.findNodeChecked(getStrategy(), path);
     }
 
-    private OperationWithModification resolveModificationFor(final YangInstanceIdentifier path) {
-        upgradeIfPossible();
+    private OperationWithModification resolveModificationFor(final ModifiedNode rootNode,
+            final YangInstanceIdentifier path) {
+        upgradeIfPossible(rootNode);
 
         /*
          * Walk the strategy and modification trees in-sync, creating modification nodes as needed.
@@ -212,12 +279,15 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public String toString() {
-        return "MutableDataTree [modification=" + rootNode + "]";
+        return MoreObjects.toStringHelper(this).add("state", acquireState()).toString();
     }
 
     @Override
     public synchronized InMemoryDataTreeModification newModification() {
-        checkState(isSealed(), "Attempted to chain on an unsealed modification");
+        final var local = acquireState();
+        if (!(local instanceof Sealed(var rootNode))) {
+            throw new IllegalStateException("Attempted to chain on modification in state " + local);
+        }
 
         if (rootNode.getOperation() == LogicalOperation.NONE) {
             // Simple fast case: just use the underlying modification
@@ -240,16 +310,12 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return version;
     }
 
-    private boolean isSealed() {
-        // a quick check, synchronizes *only* on the sealed field
-        return (byte) STATE.getAcquire(this) == STATE_SEALED;
-    }
-
-    private void checkOpen() {
-        final var local = (byte) STATE.getAcquire(this);
-        if (local != STATE_OPEN) {
-            throw new IllegalStateException("Data Tree is sealed. No further modifications allowed in state " + local);
+    private ModifiedNode checkOpen() {
+        final var local = acquireState();
+        if (local instanceof Open(var rootNode)) {
+            return rootNode;
         }
+        throw new IllegalStateException("Data Tree is sealed. No further modifications allowed in state " + local);
     }
 
     private static void applyChildren(final DataTreeModificationCursor cursor, final ModifiedNode node) {
@@ -289,8 +355,13 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public void applyToCursor(final DataTreeModificationCursor cursor) {
-        for (var child : rootNode.getChildren()) {
-            applyNode(cursor, child);
+        final var local = acquireState();
+        if (local instanceof WithRootNode withRootNode) {
+            for (var child : withRootNode.rootNode().getChildren()) {
+                applyNode(cursor, child);
+            }
+        } else {
+            throw new IllegalStateException("Cannot apply in state " + local);
         }
     }
 
@@ -300,7 +371,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             "Instance identifier references %s but data identifier is %s", arg, dataName);
     }
 
-    private void checkIdentifierReferencesData(final YangInstanceIdentifier path,
+    private static void checkIdentifierReferencesData(final ModifiedNode rootNode, final YangInstanceIdentifier path,
             final NormalizedNode data) {
         final PathArgument arg;
         if (!path.isEmpty()) {
@@ -315,27 +386,33 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public Optional<DataTreeModificationCursor> openCursor(final YangInstanceIdentifier path) {
-        final var op = resolveModificationFor(path);
+        final var op = resolveModificationFor(checkOpen(), path);
         return Optional.of(openCursor(new InMemoryDataTreeModificationCursor(this, path, op)));
     }
 
     @Override
     public void ready() {
-        // We want a full CAS with setVolatile() memory semantics, as we want to force happen-before for everything,
-        // including whatever user code works.
-        if (!STATE.compareAndSet(this, STATE_OPEN, STATE_SEALING)) {
-            throw new IllegalStateException("Attempted to seal an already-sealed Data Tree.");
+        final var local = acquireState();
+        if (!(local instanceof Open open)) {
+            throw new IllegalStateException("Attempted to ready " + this + " in state " + local);
         }
 
-        var current = AbstractReadyIterator.create(rootNode, getStrategy());
+        // We want a full CAS with setVolatile() memory semantics, as we want to force happen-before for everything,
+        // including whatever user code works.
+        final var witness = (State) STATE.compareAndExchange(this, open, Sealing.INSTANCE);
+        if (witness != open) {
+            throw new IllegalStateException(
+                "Concurrent ready of " + this + ", state changed from " + open + " to " + witness);
+        }
+
+        var current = AbstractReadyIterator.create(open.rootNode, getStrategy());
         do {
             current = current.process(version);
         } while (current != null);
 
         // Make sure all affects are visible before returning, as this object may be handed off to another thread, which
-        // needs to see any HashMap.modCount mutations completed. This is needed because isSealed() is now performing
-        // only the equivalent of an acquireFence()
-        STATE.setRelease(this, STATE_SEALED);
+        // needs to see any HashMap.modCount mutations completed.
+        STATE.setRelease(this, new Sealed(open.rootNode));
     }
 
     /**
@@ -350,9 +427,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @NonNullByDefault
     synchronized void validate(final YangInstanceIdentifier path, final TreeNode current)
             throws DataValidationFailedException {
-        if (!isSealed()) {
+        final var local = acquireState();
+        if (!(local instanceof Sealed(var rootNode))) {
             // FIXME: this should be an IllegalStateException
-            throw new IllegalArgumentException("Attempted to validate unsealed modification " + this);
+            throw new IllegalArgumentException("Attempted to validate modification in state " + local);
         }
         getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
     }
@@ -369,7 +447,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      */
     @NonNullByDefault
     synchronized DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
-        if (!isSealed()) {
+        final var local = acquireState();
+        if (!(local instanceof Sealed(var rootNode))) {
             // FIXME: this should be an IllegalStateException
             throw new IllegalArgumentException("Attempted to prepare unsealed modification " + this);
         }
@@ -384,5 +463,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             throw new IllegalStateException("Apply strategy failed to produce root node for modification " + this);
         }
         return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, newRoot);
+    }
+
+    // getAcquire() of State
+    private @NonNull State acquireState() {
+        return verifyNotNull((State) STATE.getAcquire(this));
     }
 }
