@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -102,6 +103,28 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         @Override
         public String toString() {
             return "Sealed";
+        }
+    }
+
+    @NonNullByDefault
+    private record WithDescendant(ModifiedNode rootNode, TreeNode root) implements WithRootNode {
+        WithDescendant {
+            requireNonNull(rootNode);
+            requireNonNull(root);
+        }
+    }
+
+    @NonNullByDefault
+    private record Validated(ModifiedNode rootNode) implements WithRootNode {
+        Validated {
+            requireNonNull(rootNode);
+        }
+    }
+
+    @NonNullByDefault
+    private record Prepared(ModifiedNode rootNode) implements WithRootNode {
+        Prepared {
+            requireNonNull(rootNode);
         }
     }
 
@@ -283,27 +306,58 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public synchronized InMemoryDataTreeModification newModification() {
+    public InMemoryDataTreeModification newModification() {
+        // Optimistic peek: we may end up having all we need already available
         final var local = acquireState();
-        if (!(local instanceof Sealed(var rootNode))) {
-            throw new IllegalStateException("Attempted to chain on modification in state " + local);
-        }
+        final var root = switch (local) {
+            case Sealed unused -> computeEffectiveTree();
+            case Validated validated -> {
+                // FIXME: pick up the validated state;
+                yield null;
+            }
+            case Prepared prepared -> {
+                // FIXME: pick up the validated state;
+                yield null;
+            }
+            case WithDescendant withDescendant -> {
+                // FIXME: pick up the validated state;
+                yield null;
+            }
+            default -> throw new IllegalStateException("Attempted to chain on modification in state " + local);
+        };
 
-        if (rootNode.getOperation() == LogicalOperation.NONE) {
-            // Simple fast case: just use the underlying modification
-            return snapshot.newModification();
-        }
+        return root == null ? snapshot.newModification()
+            : new InMemoryDataTreeSnapshot(snapshot.modelContext(), root, strategyTree).newModification();
+    }
 
-        /*
-         * We will use preallocated version, this means returned snapshot will
-         * have same version each time this method is called.
-         */
-        final var originalSnapshotRoot = snapshot.getRootNode();
-        final var newRoot = getStrategy().apply(rootNode, originalSnapshotRoot, version);
-        if (newRoot == null) {
-            throw new IllegalStateException("Data tree root is not present, possibly removed by previous modification");
-        }
-        return new InMemoryDataTreeSnapshot(snapshot.modelContext(), newRoot, strategyTree).newModification();
+    /**
+     * Compute the TreeNode reflecting the effects of this modification for the purposes of creating a snapshot based
+     * on it. We need to take the lock to serialize with concurrent validate/prepare invocations, which may have
+     * computed a more authoritative version of the state as part of the commit process.
+     *
+     * @return a {@link TreeNode}, or {@code null} if this modification is a no-op
+     */
+    private synchronized @Nullable TreeNode computeEffectiveTree() {
+        final var local = acquireState();
+        return switch (local) {
+            case Sealed(var rootNode) -> {
+                // We will use preallocated version, which means returned snapshot will have same version each time this
+                // method is called.
+                final var originalSnapshotRoot = snapshot.getRootNode();
+                final var root = getStrategy().apply(rootNode, originalSnapshotRoot, version);
+                if (root == null) {
+                    throw new IllegalStateException(
+                        "Data tree root is not present, possibly removed by previous modification");
+                }
+
+                // Make sure we cache our result, as we can neatly reuse them from multiple invocations, making the
+                // Sealed -> WithDescendant transition. Since we are inside a synchronized block, we can get away with
+                // a plain store here.
+                STATE.set(this, new WithDescendant(rootNode, root));
+                yield root;
+            }
+            default -> throw new VerifyException("Unexpected post-sealed state " + local);
+        };
     }
 
     Version getVersion() {
