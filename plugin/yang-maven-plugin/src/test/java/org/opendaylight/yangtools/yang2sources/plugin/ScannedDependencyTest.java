@@ -16,9 +16,8 @@ import static org.mockito.Mockito.mock;
 import com.google.common.collect.ImmutableSet;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -77,7 +76,7 @@ class ScannedDependencyTest {
         final var manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
         final var testFile2 = new File(ScannedDependencyTest.class.getResource("/").getPath(), "test.jar");
-        try (var target = new JarOutputStream(new FileOutputStream(testFile2), manifest)) {
+        try (var target = new JarOutputStream(Files.newOutputStream(testFile2.toPath()), manifest)) {
             addSourceFileToTargetJar(new File(ScannedDependencyTest.class.getResource("/tests/META-INF").getPath()),
                 target);
         }
@@ -112,7 +111,7 @@ class ScannedDependencyTest {
         entry.setTime(source.lastModified());
         target.putNextEntry(entry);
 
-        try (var in = new BufferedInputStream(new FileInputStream(source))) {
+        try (var in = new BufferedInputStream(Files.newInputStream(source.toPath()))) {
             final byte[] buffer = new byte[1024];
             while (true) {
                 final int count = in.read(buffer);
