@@ -14,7 +14,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.base.VerifyException;
 import com.google.common.cache.CacheBuilder;
@@ -24,12 +23,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,11 +136,15 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                    BindingDOMCodecServices {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
     private static final @NonNull NodeIdentifier FAKE_NODEID = new NodeIdentifier(QName.create("fake", "fake"));
-    private static final File BYTECODE_DIRECTORY;
+    private static final BindingClassLoader.@NonNull Builder BCL_BUILDER;
 
     static {
-        final String dir = System.getProperty("org.opendaylight.mdsal.binding.dom.codec.loader.bytecodeDumpDirectory");
-        BYTECODE_DIRECTORY = Strings.isNullOrEmpty(dir) ? null : new File(dir);
+        final var builder = BindingClassLoader.builder(BindingCodecContext.class);
+        final var dir = System.getProperty("org.opendaylight.mdsal.binding.dom.codec.loader.bytecodeDumpDirectory");
+        if (dir != null && !dir.isEmpty()) {
+            builder.dumpBytecode(Path.of(dir));
+        }
+        BCL_BUILDER = builder;
     }
 
     /**
@@ -361,8 +364,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
         });
 
-    private final @NonNull BindingClassLoader loader =
-        BindingClassLoader.create(BindingCodecContext.class, BYTECODE_DIRECTORY);
+    private final @NonNull BindingClassLoader loader = BCL_BUILDER.build();
     private final @NonNull InstanceIdentifierCodec instanceIdentifierCodec;
     private final @NonNull IdentityCodec identityCodec;
     private final @NonNull BindingRuntimeContext context;
