@@ -11,11 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.ArgumentContextUtils.unescapeBackslash;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 class ArgumentContextUtilsTest {
@@ -81,17 +79,17 @@ class ArgumentContextUtilsTest {
 
     @Test
     void stringTestUnescape() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass()
-            .getResource("/unescape/string-test.yang").toURI()));
+        final var schemaContext = StmtTestUtils.parseYangSources(Path.of(ArgumentContextUtilsTest.class
+            .getResource("/unescape/string-test.yang").toURI()).toFile());
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
-        final Module module = schemaContext.getModules().iterator().next();
+        final var module = schemaContext.getModules().iterator().next();
         assertEquals(Optional.of("  Unescaping examples: \\,\n,\t  \"string enclosed in double quotes\" end\n"
             + "abc \\\\\\ \\t \\\nnn"), module.getDescription());
     }
 
     private static String unescape(final String str, final int backslash) {
-        StringBuilder sb = new StringBuilder(str.length());
+        final var sb = new StringBuilder(str.length());
         unescapeBackslash(sb, str, backslash);
         return sb.toString();
     }

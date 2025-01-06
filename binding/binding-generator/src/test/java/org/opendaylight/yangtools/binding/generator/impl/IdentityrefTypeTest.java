@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
@@ -19,19 +19,17 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class IdentityrefTypeTest {
-
-    private static List<File> testModels = null;
+    private static List<File> testModels;
 
     @Before
     public void loadTestResources() throws URISyntaxException {
-        URI folderPath = IdentityrefTypeTest.class.getResource("/identityref.yang").toURI();
-        File folderFile = new File(folderPath);
+        final var folderFile = Path.of(IdentityrefTypeTest.class.getResource("/identityref.yang").toURI()).toFile();
         testModels = new ArrayList<>();
 
         if (folderFile.isFile()) {
             testModels.add(folderFile);
         } else {
-            for (File file : folderFile.listFiles()) {
+            for (var file : folderFile.listFiles()) {
                 if (file.isFile()) {
                     testModels.add(file);
                 }

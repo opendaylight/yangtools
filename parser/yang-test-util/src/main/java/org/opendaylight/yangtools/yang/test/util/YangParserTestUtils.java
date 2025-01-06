@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.test.util;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -258,13 +258,13 @@ public final class YangParserTestUtils {
      */
     public static @NonNull EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final Set<QName> supportedFeatures, final YangParserConfiguration config) {
-        final URI directoryPath;
+        final Path directoryPath;
         try {
-            directoryPath = YangParserTestUtils.class.getResource(resourcePath).toURI();
+            directoryPath = Path.of(YangParserTestUtils.class.getResource(resourcePath).toURI());
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Failed to open resource " + resourcePath, e);
         }
-        return parseYangFiles(supportedFeatures, config, new File(directoryPath).listFiles(YANG_FILE_FILTER));
+        return parseYangFiles(supportedFeatures, config, directoryPath.toFile().listFiles(YANG_FILE_FILTER));
     }
 
     /**
@@ -327,14 +327,14 @@ public final class YangParserTestUtils {
     public static @NonNull EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
             final List<String> yangResources, final Set<QName> supportedFeatures,
             final YangParserConfiguration config) {
-        final List<File> allYangFiles = new ArrayList<>();
-        for (final String yangDir : yangResourceDirs) {
+        final var allYangFiles = new ArrayList<File>();
+        for (var yangDir : yangResourceDirs) {
             allYangFiles.addAll(getYangFiles(yangDir));
         }
 
-        for (final String yangFile : yangResources) {
+        for (var yangFile : yangResources) {
             try {
-                allYangFiles.add(new File(YangParserTestUtils.class.getResource(yangFile).toURI()));
+                allYangFiles.add(Path.of(YangParserTestUtils.class.getResource(yangFile).toURI()).toFile());
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Invalid resource " + yangFile, e);
             }
@@ -382,13 +382,13 @@ public final class YangParserTestUtils {
     }
 
     private static Collection<File> getYangFiles(final String resourcePath) {
-        final URI directoryPath;
+        final Path directoryPath;
         try {
-            directoryPath = YangParserTestUtils.class.getResource(resourcePath).toURI();
+            directoryPath = Path.of(YangParserTestUtils.class.getResource(resourcePath).toURI());
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Failed to open resource directory " + resourcePath, e);
         }
-        return Arrays.asList(new File(directoryPath).listFiles(YANG_FILE_FILTER));
+        return Arrays.asList(directoryPath.toFile().listFiles(YANG_FILE_FILTER));
     }
 
     /**

@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -81,7 +81,7 @@ public final class StmtTestUtils {
             final YangParserConfiguration config, final Set<QName> supportedFeatures)
                     throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSources(config, supportedFeatures,
-            new File(StmtTestUtils.class.getResource(yangSourcePath).toURI()));
+            Path.of(StmtTestUtils.class.getResource(yangSourcePath).toURI()).toFile());
     }
 
     public static EffectiveModelContext parseYangSources(final StatementStreamSource... sources)
@@ -129,8 +129,7 @@ public final class StmtTestUtils {
             final Set<QName> supportedFeatures, final YangParserConfiguration config) throws ReactorException,
             URISyntaxException, IOException, YangSyntaxErrorException {
 
-        final URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
-        final File testSourcesDir = new File(resourceDir.toURI());
+        final var testSourcesDir = Path.of(StmtTestUtils.class.getResource(yangSourcesDirectoryPath).toURI()).toFile();
 
         return parseYangSources(config, supportedFeatures, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
@@ -143,8 +142,8 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
             final YangParserConfiguration config)
                 throws URISyntaxException, SAXException, IOException, ReactorException {
-        final var resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
-        final var files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
+        final var files = Path.of(StmtTestUtils.class.getResource(yinSourcesDirectoryPath).toURI()).toFile()
+            .listFiles(YIN_FILE_FILTER);
         final var sources = new StatementStreamSource[files.length];
         for (int i = 0; i < files.length; i++) {
             sources[i] = YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(

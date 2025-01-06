@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSou
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.xml.sax.SAXException;
 
 public final class TestUtils {
@@ -48,9 +47,10 @@ public final class TestUtils {
 
     public static @NonNull List<StatementStreamSource> loadSources(final Class<?> cls, final String resourceDirectory)
             throws Exception {
-        // FIXME: use Path instead
-        final var files = new File(cls.getResource(resourceDirectory).toURI())
-            .listFiles(StmtTestUtils.YANG_FILE_FILTER);
+        final var files = Path.of(cls.getResource(resourceDirectory).toURI())
+            // FIXME: use Files instead
+            .toFile().listFiles(StmtTestUtils.YANG_FILE_FILTER);
+
         final var sources = new ArrayList<StatementStreamSource>(files.length);
         for (var file : files) {
             sources.add(YangStatementStreamSource.create(new FileYangTextSource(file.toPath())));
@@ -106,9 +106,10 @@ public final class TestUtils {
 
     public static EffectiveModelContext loadYinModules(final URI resourceDirectory)
             throws ReactorException, SAXException, IOException {
-        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild();
 
-        for (File file : new File(resourceDirectory).listFiles()) {
+        // FIXME: use Files to list files
+        for (var file : Path.of(resourceDirectory).toFile().listFiles()) {
             reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
                 new FileYinTextSource(file.toPath()))));
         }
