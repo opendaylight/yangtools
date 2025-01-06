@@ -14,8 +14,8 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,7 +67,7 @@ abstract class UniqueValidator<T> implements Immutable {
 
         @Override
         Map<Descendant, @Nullable Object> indexValues(final Object values) {
-            final var index = Maps.<Descendant, @Nullable Object>newHashMapWithExpectedSize(descendants.size());
+            final var index = HashMap.<Descendant, @Nullable Object>newHashMap(descendants.size());
             final var it = ((UniqueValues) values).iterator();
             for (var obj : descendants) {
                 final var prev = index.put(decodeDescendant(obj), it.next());

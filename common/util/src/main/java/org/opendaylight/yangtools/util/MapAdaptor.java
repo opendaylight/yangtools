@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,7 +94,7 @@ public final class MapAdaptor {
         if (expectedSize == 2) {
             return new HashMap<>(2);
         }
-        return Maps.newHashMapWithExpectedSize(expectedSize);
+        return HashMap.newHashMap(expectedSize);
     }
 
     /**

@@ -13,12 +13,10 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -883,12 +881,12 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return ImmutableMap.of();
         }
 
-        final Map<String, String> regExps = Maps.newHashMapWithExpectedSize(patternConstraints.size());
+        final var regExps = HashMap.<String, String>newHashMap(patternConstraints.size());
         for (PatternConstraint patternConstraint : patternConstraints) {
             String regEx = patternConstraint.getJavaPatternString();
 
             // The pattern can be inverted
-            final Optional<ModifierKind> optModifier = patternConstraint.getModifier();
+            final var optModifier = patternConstraint.getModifier();
             if (optModifier.isPresent()) {
                 regEx = applyModifier(optModifier.orElseThrow(), regEx);
             }

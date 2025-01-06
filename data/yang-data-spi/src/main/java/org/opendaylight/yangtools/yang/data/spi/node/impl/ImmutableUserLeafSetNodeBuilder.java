@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.spi.node.impl;
 
-import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -30,7 +29,7 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
     }
 
     public ImmutableUserLeafSetNodeBuilder(final int sizeHint) {
-        value = Maps.newLinkedHashMapWithExpectedSize(sizeHint);
+        value = LinkedHashMap.newLinkedHashMap(sizeHint);
         dirty = false;
     }
 
@@ -41,8 +40,8 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
     }
 
     public static <T> UserLeafSetNode.@NonNull Builder<T> create(final UserLeafSetNode<T> node) {
-        if (node instanceof ImmutableUserLeafSetNode<?>) {
-            return new ImmutableUserLeafSetNodeBuilder<>((ImmutableUserLeafSetNode<T>) node);
+        if (node instanceof ImmutableUserLeafSetNode<T> immutable) {
+            return new ImmutableUserLeafSetNodeBuilder<>(immutable);
         }
         throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
@@ -83,7 +82,7 @@ public final class ImmutableUserLeafSetNodeBuilder<T> implements UserLeafSetNode
     @Override
     public ImmutableUserLeafSetNodeBuilder<T> withValue(final Collection<LeafSetEntryNode<T>> withValue) {
         checkDirty();
-        for (final LeafSetEntryNode<T> leafSetEntry : withValue) {
+        for (var leafSetEntry : withValue) {
             withChild(leafSetEntry);
         }
         return this;

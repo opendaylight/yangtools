@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Maps;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -71,7 +70,7 @@ public final class FileGeneratorArg implements Identifiable<String>, WritableObj
     public static @NonNull FileGeneratorArg readFrom(final DataInput in) throws IOException {
         final var identifier = in.readUTF();
         final var size = in.readInt();
-        final var configuration = Maps.<String, String>newHashMapWithExpectedSize(size);
+        final var configuration = HashMap.<String, String>newHashMap(size);
         for (int i = 0; i < size; ++i) {
             configuration.put(in.readUTF(), in.readUTF());
         }
@@ -82,7 +81,7 @@ public final class FileGeneratorArg implements Identifiable<String>, WritableObj
     public void writeTo(final DataOutput out) throws IOException {
         out.writeUTF(identifier);
         out.writeInt(configuration.size());
-        for (String key : configuration.keySet().stream().sorted().toList()) {
+        for (var key : configuration.keySet().stream().sorted().toList()) {
             out.writeUTF(key);
             out.writeUTF(configuration.getOrDefault(key, ""));
         }

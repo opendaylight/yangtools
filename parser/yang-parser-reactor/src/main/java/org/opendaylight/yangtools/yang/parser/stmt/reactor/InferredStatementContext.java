@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -551,7 +550,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final int expectedSize = declared.size() + effective.size();
         var materializedSchemaTree = castMaterialized(substatements);
         if (materializedSchemaTree == null) {
-            substatements = materializedSchemaTree = Maps.newHashMapWithExpectedSize(expectedSize);
+            substatements = materializedSchemaTree = HashMap.newHashMap(expectedSize);
         }
 
         final var buffer = new ArrayList<ReactorStmtCtx<?, ?, ?>>(expectedSize);
