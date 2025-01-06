@@ -16,8 +16,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.IOException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.HexFormat;
@@ -31,9 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A ClassLoader hosting types generated for a particular type. A root instance is attached to a
- * BindingCodecContext instance, so any generated classes from it can be garbage-collected when the context
- * is destroyed, as well as to prevent two contexts trampling over each other.
+ * A {@link ClassLoader} hosting types generated for a particular type. A root instance is attached to a particular user
+ * a root class loader and should be used to load classes, which are used by a particular user instance. When used
+ * correctly, the classes loaded through this instance become eligible for GC when the user instance becomes
+ * unreachable.
  *
  * <p>It semantically combines two class loaders: the class loader in which this class is loaded and the class loader in
  * which a target Binding interface/class is loaded. This inherently supports multi-classloader environments -- the root
@@ -46,6 +46,28 @@ import org.slf4j.LoggerFactory;
  */
 public abstract sealed class BindingClassLoader extends ClassLoader
         permits LeafBindingClassLoader, RootBindingClassLoader {
+    /**
+     * A builder of {@link BindingClassLoader} instances.
+     */
+    public static final class Builder {
+        private final @NonNull ClassLoader parentLoader;
+
+        private @Nullable Path dumpDirectory;
+
+        Builder(final ClassLoader parentLoader) {
+            this.parentLoader = requireNonNull(parentLoader);
+        }
+
+        public Builder dumpBytecode(final Path toDirectory) {
+            this.dumpDirectory = requireNonNull(toDirectory);
+            return this;
+        }
+
+        public @NonNull BindingClassLoader build() {
+            return SecuritySupport.get(() -> new RootBindingClassLoader(parentLoader, dumpDirectory));
+        }
+    }
+
     /**
      * A class generator, generating a class of a particular type.
      *
@@ -120,9 +142,13 @@ public abstract sealed class BindingClassLoader extends ClassLoader
 
     private final @Nullable File dumpDir;
 
-    BindingClassLoader(final ClassLoader parentLoader, final @Nullable File dumpDir) {
+    private BindingClassLoader(final ClassLoader parentLoader, final @Nullable File dumpDir) {
         super(parentLoader);
         this.dumpDir = dumpDir;
+    }
+
+    BindingClassLoader(final ClassLoader parentLoader, final @Nullable Path dumpDir) {
+        this(parentLoader, dumpDir != null ? dumpDir.toFile() : null);
     }
 
     BindingClassLoader(final BindingClassLoader parentLoader) {
@@ -136,11 +162,30 @@ public abstract sealed class BindingClassLoader extends ClassLoader
      * @param dumpDir Directory in which to dump loaded bytecode
      * @return A new BindingClassLoader.
      * @throws NullPointerException if {@code parentLoader} is {@code null}
+     * @deprecated Use {@link #builder(Class)} instead
      */
+    @Deprecated(since = "14.0.7")
     public static @NonNull BindingClassLoader create(final Class<?> rootClass, final @Nullable File dumpDir) {
-        final var parentLoader = rootClass.getClassLoader();
-        return AccessController.doPrivileged(
-            (PrivilegedAction<BindingClassLoader>)() -> new RootBindingClassLoader(parentLoader, dumpDir));
+        final var builder = builder(rootClass);
+        if (dumpDir != null) {
+            builder.dumpBytecode(dumpDir.toPath());
+        }
+        return builder.build();
+    }
+
+    public static @NonNull Builder builder(final Class<?> rootClass) {
+        return new Builder(rootClass.getClassLoader());
+    }
+
+    /**
+     * Instantiate a new BindingClassLoader, which serves as the root of generated code loading.
+     *
+     * @param rootClass Class from which to derive the class loader
+     * @return A new BindingClassLoader.
+     * @throws NullPointerException if {@code parentLoader} is {@code null}
+     */
+    public static @NonNull BindingClassLoader ofRootClass(final Class<?> rootClass) {
+        return builder(rootClass).build();
     }
 
     /**
