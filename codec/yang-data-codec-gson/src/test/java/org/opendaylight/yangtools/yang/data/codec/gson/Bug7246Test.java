@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.gson.JsonParser;
-import java.io.File;
-import java.io.FileReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -72,8 +71,8 @@ class Bug7246Test {
         final var jsonOutput = normalizedNodeToJsonStreamTransformation(schemaContext, inputStructure,
             qN("my-name"), qN("input"));
 
-        assertEquals(JsonParser.parseReader(new FileReader(
-            new File(getClass().getResource("/bug7246/json/expected-output.json").toURI()), StandardCharsets.UTF_8)),
+        assertEquals(JsonParser.parseReader(
+            Files.newBufferedReader(Path.of(getClass().getResource("/bug7246/json/expected-output.json").toURI()))),
             JsonParser.parseString(jsonOutput));
     }
 

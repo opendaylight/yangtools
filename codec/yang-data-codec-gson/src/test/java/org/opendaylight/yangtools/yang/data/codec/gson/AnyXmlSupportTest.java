@@ -17,12 +17,11 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.normaliz
 
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -155,9 +154,9 @@ class AnyXmlSupportTest extends AbstractComplexJsonTest {
                 .childByArg(new NodeIdentifier(QName.create(namespace, revision, localName)));
         assertNotNull(data);
         final var jsonOutput = normalizedNodesToJsonString(data, schemaContext);
-        assertEquals(JsonParser.parseReader(new FileReader(
-                        new File(getClass().getResource(expectedJsonFile).toURI()), StandardCharsets.UTF_8)),
-                JsonParser.parseString(jsonOutput));
+        assertEquals(JsonParser.parseReader(
+            Files.newBufferedReader(Path.of(getClass().getResource(expectedJsonFile).toURI()))),
+            JsonParser.parseString(jsonOutput));
     }
 
     private static DOMSource getParsedAnyXmlValue(final NormalizedNode transformedInput, final QName anyxmlName) {
