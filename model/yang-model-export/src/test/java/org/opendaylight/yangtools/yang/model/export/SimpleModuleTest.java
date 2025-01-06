@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,15 +22,15 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-public class SimpleModuleTest {
+class SimpleModuleTest {
     private SharedSchemaRepository schemaRegistry;
     private EffectiveModelContextFactory schemaContextFactory;
     private Set<SourceIdentifier> allTestSources;
 
     @BeforeEach
-    public void init() {
+    void init() {
         schemaRegistry = new SharedSchemaRepository("test");
-        final TextToIRTransformer astTransformer = TextToIRTransformer.create(schemaRegistry, schemaRegistry);
+        final var astTransformer = TextToIRTransformer.create(schemaRegistry, schemaRegistry);
         schemaRegistry.registerSchemaSourceListener(astTransformer);
 
         schemaContextFactory = schemaRegistry.createEffectiveModelContextFactory();
@@ -44,7 +44,7 @@ public class SimpleModuleTest {
 
                 @Override
                 public void schemaSourceRegistered(final Iterable<PotentialSchemaSource<?>> sources) {
-                    for (final PotentialSchemaSource<?> source : sources) {
+                    for (var source : sources) {
                         allTestSources.add(source.getSourceIdentifier());
                     }
                 }
@@ -59,25 +59,23 @@ public class SimpleModuleTest {
     }
 
     @Test
-    public void testGenerateAll() throws Exception {
+    void testGenerateAll() throws Exception {
         testSetOfModules(allTestSources);
     }
 
     private void testSetOfModules(final Set<SourceIdentifier> source) throws Exception {
         final var schemaContext = schemaContextFactory.createEffectiveModelContext(source).get();
-        final var outDir = new File("target/collection");
-        outDir.mkdirs();
-        for (final Module module : schemaContext.getModules()) {
+        final var outDir = Path.of("target", "collection");
+        Files.createDirectories(outDir);
+        for (var module : schemaContext.getModules()) {
             exportModule(module, outDir);
         }
     }
 
-    private static File exportModule(final Module module, final File outDir)
-            throws Exception {
-        final var outFile = new File(outDir, YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
-        try (var output = new FileOutputStream(outFile)) {
+    private static void exportModule(final Module module, final Path outDir) throws Exception {
+        final var outFile = outDir.resolve(YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
+        try (var output = Files.newOutputStream(outFile)) {
             YinExportUtils.writeModuleAsYinText(module.asEffectiveStatement(), output);
         }
-        return outFile;
     }
 }
