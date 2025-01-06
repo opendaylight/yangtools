@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 
-public class TagTest {
+class TagTest {
     @Test
-    public void testIetfTag() {
+    void testIetfTag() {
         final var tag = new Tag("ietf:first-tag");
         assertTrue(tag.hasPrefix(Prefix.IETF));
         assertFalse(tag.hasPrefix(Prefix.USER));
@@ -25,7 +25,7 @@ public class TagTest {
     }
 
     @Test
-    public void testUserTag() {
+    void testUserTag() {
         final var tag = new Tag("user:first-tag");
         assertFalse(tag.hasPrefix(Prefix.IETF));
         assertTrue(tag.hasPrefix(Prefix.USER));
@@ -33,7 +33,7 @@ public class TagTest {
     }
 
     @Test
-    public void testVendorTag() {
+    void testVendorTag() {
         final var tag = new Tag("vendor:first-tag");
         assertFalse(tag.hasPrefix(Prefix.IETF));
         assertFalse(tag.hasPrefix(Prefix.USER));
@@ -41,7 +41,7 @@ public class TagTest {
     }
 
     @Test
-    public void testIfIsTagInvalid() {
+    void testIfIsTagInvalid() {
         assertIllegalArgumentException("");
         assertIllegalArgumentException("\n");
         assertIllegalArgumentException("\t");
