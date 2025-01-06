@@ -14,20 +14,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
@@ -38,9 +33,9 @@ import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-public class FilesystemSchemaSourceCacheIntegrationTest {
+class FilesystemSchemaSourceCacheIntegrationTest {
     @Test
-    public void testWithCacheStartup() throws IOException {
+    void testWithCacheStartup() throws IOException {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
         class CountingSchemaListener implements SchemaSourceListener {
@@ -59,63 +54,53 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
 
             @Override
             public void schemaSourceUnregistered(final PotentialSchemaSource<?> source) {
+                // no-op
             }
         }
 
-        final File tempDir = Files.createTempDir();
+        final var tempDir = Files.createTempDirectory("with-cache-startup");
 
-        final CountingSchemaListener listener = new CountingSchemaListener();
+        final var listener = new CountingSchemaListener();
         sharedSchemaRepository.registerSchemaSourceListener(listener);
 
-        final File test = new File(tempDir, "test.yang");
-        Files.asCharSink(test, StandardCharsets.UTF_8).write("content-test");
+        Files.writeString(tempDir.resolve("test.yang"), "content-test");
+        Files.writeString(tempDir.resolve("test@2012-12-12.yang"), "content-test-2012");
+        Files.writeString(tempDir.resolve("test@2013-12-12.yang"), "content-test-2013");
+        Files.writeString(tempDir.resolve("module@2010-12-12.yang"), "content-module-2010");
 
-        final File test2 = new File(tempDir, "test@2012-12-12.yang");
-        Files.asCharSink(test2, StandardCharsets.UTF_8).write("content-test-2012");
-
-        final File test3 = new File(tempDir, "test@2013-12-12.yang");
-        Files.asCharSink(test3, StandardCharsets.UTF_8).write("content-test-2013");
-
-        final File test4 = new File(tempDir, "module@2010-12-12.yang");
-        Files.asCharSink(test4, StandardCharsets.UTF_8).write("content-module-2010");
-
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(
-                sharedSchemaRepository, YangTextSource.class, tempDir);
+        final var cache = new FilesystemSchemaSourceCache<>(sharedSchemaRepository, YangTextSource.class, tempDir);
         sharedSchemaRepository.registerSchemaSourceListener(cache);
 
         assertEquals(4, listener.registeredSources.size());
 
-        assertThat(Lists.transform(listener.registeredSources, PotentialSchemaSource::getSourceIdentifier),
-                both(hasItem(new SourceIdentifier("test")))
-                        .and(hasItem(new SourceIdentifier("test", "2012-12-12")))
-                        .and(hasItem(new SourceIdentifier("test", "2013-12-12")))
-                        .and(hasItem(new SourceIdentifier("module", "2010-12-12")))
-        );
+        assertThat(listener.registeredSources.stream().map(PotentialSchemaSource::getSourceIdentifier).toList(),
+            both(hasItem(new SourceIdentifier("test")))
+                .and(hasItem(new SourceIdentifier("test", "2012-12-12")))
+                .and(hasItem(new SourceIdentifier("test", "2013-12-12")))
+                .and(hasItem(new SourceIdentifier("module", "2010-12-12"))));
     }
 
     @Test
-    public void testWithCacheRunning() {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+    void testWithCacheRunning() throws Exception {
+        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
-        final File storageDir = Files.createTempDir();
+        final var storageDir = Files.createTempDirectory("with-cache-running");
 
-        final FilesystemSchemaSourceCache<YangTextSource> cache = new FilesystemSchemaSourceCache<>(
-                sharedSchemaRepository, YangTextSource.class, storageDir);
+        final var cache = new FilesystemSchemaSourceCache<>(sharedSchemaRepository, YangTextSource.class, storageDir);
         sharedSchemaRepository.registerSchemaSourceListener(cache);
 
-        final SourceIdentifier runningId = new SourceIdentifier("running", "2012-12-12");
+        final var runningId = new SourceIdentifier("running", "2012-12-12");
 
         sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> FluentFutures.immediateFluentFuture(
             new StringYangTextSource(runningId, "running", null)),
             PotentialSchemaSource.create(runningId, YangTextSource.class,
                 PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
 
-        final TextToIRTransformer transformer = TextToIRTransformer.create(sharedSchemaRepository,
-            sharedSchemaRepository);
+        final var transformer = TextToIRTransformer.create(sharedSchemaRepository, sharedSchemaRepository);
         sharedSchemaRepository.registerSchemaSourceListener(transformer);
 
         // Request schema to make repository notify the cache
-        final ListenableFuture<EffectiveModelContext> schemaFuture = sharedSchemaRepository
+        final var schemaFuture = sharedSchemaRepository
                 .createEffectiveModelContextFactory()
                 .createEffectiveModelContext(runningId);
 
@@ -124,8 +109,8 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
 
         // Creation of schema context fails, since we do not provide regular sources, but we just want
         // to check cache
-        final List<File> cachedSchemas = Arrays.asList(storageDir.listFiles());
+        final var cachedSchemas = Arrays.asList(storageDir.toFile().listFiles());
         assertEquals(1, cachedSchemas.size());
-        assertEquals(Files.getNameWithoutExtension(cachedSchemas.get(0).getName()), "running@2012-12-12");
+        assertEquals("running@2012-12-12.yang", cachedSchemas.getFirst().getName());
     }
 }

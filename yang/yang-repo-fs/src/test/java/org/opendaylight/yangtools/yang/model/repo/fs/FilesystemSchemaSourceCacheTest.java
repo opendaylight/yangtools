@@ -25,6 +25,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.util.concurrent.Futures;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -53,11 +54,11 @@ class FilesystemSchemaSourceCacheTest {
     @Mock
     private Registration registration;
 
-    private File storageDir;
+    private Path storageDir;
 
     @BeforeEach
     void setUp() throws Exception {
-        storageDir = Files.createTempDirectory(null).toFile();
+        storageDir = Files.createTempDirectory(null);
         doReturn(registration).when(registry).registerSchemaSource(any(SchemaSourceProvider.class),
             any(PotentialSchemaSource.class));
     }
@@ -149,7 +150,7 @@ class FilesystemSchemaSourceCacheTest {
         final var sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceId, storageDir);
         final var cache = new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, sourceIdToFile);
         assertNotNull(cache);
-        final var storedFiles = Arrays.asList(sourceIdToFile.listFiles());
+        final var storedFiles = Arrays.asList(sourceIdToFile.toFile().listFiles());
         assertEquals(0, storedFiles.size());
     }
 
@@ -162,7 +163,7 @@ class FilesystemSchemaSourceCacheTest {
         final var sourceId = new SourceIdentifier("test");
         final var sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceId, storageDir);
         assertNotNull(sourceIdToFile);
-        final var storedFiles = Arrays.asList(storageDir.listFiles());
+        final var storedFiles = Arrays.asList(storageDir.toFile().listFiles());
         assertEquals(1, storedFiles.size());
     }
 
@@ -177,7 +178,7 @@ class FilesystemSchemaSourceCacheTest {
         final var sourceId = new SourceIdentifier("test");
         final var sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceId, storageDir);
         assertNotNull(sourceIdToFile);
-        final var storedFiles = Arrays.asList(storageDir.listFiles());
+        final var storedFiles = Arrays.asList(storageDir.toFile().listFiles());
         assertEquals(2, storedFiles.size());
     }
 
@@ -204,6 +205,6 @@ class FilesystemSchemaSourceCacheTest {
     }
 
     private List<File> getFilesFromCache() {
-        return Arrays.asList(storageDir.listFiles());
+        return Arrays.asList(storageDir.toFile().listFiles());
     }
 }

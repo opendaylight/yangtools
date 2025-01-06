@@ -25,6 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -58,21 +59,28 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
             Pattern.compile("(?<moduleName>[^@]+)" + "(@(?<revision>" + Revision.STRING_FORMAT_PATTERN + "))?");
 
     private final Class<T> representation;
-    private final File storageDirectory;
+    private final Path storageDirectory;
 
+    @Deprecated(since = "14.0.7")
     public FilesystemSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
             final File storageDirectory) {
+        this(consumer, representation, storageDirectory.toPath());
+    }
+
+    public FilesystemSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
+            final Path storageDirectory) {
         super(consumer, representation, Costs.LOCAL_IO);
         this.representation = representation;
         this.storageDirectory = requireNonNull(storageDirectory);
 
         checkSupportedRepresentation(representation);
-
-        checkArgument(storageDirectory.mkdirs() || storageDirectory.isDirectory(),
-                "Unable to create cache directory at %s", storageDirectory);
-        checkArgument(storageDirectory.canWrite());
-        checkArgument(storageDirectory.canRead());
-
+        try {
+            Files.createDirectories(storageDirectory);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Cannot establist storage at " + storageDirectory, e);
+        }
+        checkArgument(Files.isReadable(storageDirectory));
+        checkArgument(Files.isWritable(storageDirectory));
         init();
     }
 
@@ -95,7 +103,7 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
 
         final CachedModulesFileVisitor fileVisitor = new CachedModulesFileVisitor();
         try {
-            Files.walkFileTree(storageDirectory.toPath(), fileVisitor);
+            Files.walkFileTree(storageDirectory, fileVisitor);
         } catch (final IOException e) {
             LOG.warn("Unable to restore cache from {}. Starting with an empty cache", storageDirectory, e);
             return;
@@ -106,8 +114,8 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
 
     @Override
     public synchronized FluentFuture<? extends T> getSource(final SourceIdentifier sourceIdentifier) {
-        final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
-        if (file.exists() && file.canRead()) {
+        final var file = sourceIdToFile(sourceIdentifier, storageDirectory);
+        if (Files.exists(file) && Files.isReadable(file)) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);
             final var restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier, file);
             return immediateFluentFuture(representation.cast(restored));
@@ -120,8 +128,8 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
     @Override
     protected synchronized void offer(final T source) {
         LOG.trace("Source {} offered to cache", source.sourceId());
-        final File file = sourceIdToFile(source);
-        if (file.exists()) {
+        final var file = sourceIdToFile(source);
+        if (Files.exists(file)) {
             LOG.debug("Source {} already in cache as {}", source.sourceId(), file);
             return;
         }
@@ -131,47 +139,44 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
         LOG.trace("Source {} stored in cache as {}", source.sourceId(), file);
     }
 
-    private File sourceIdToFile(final T source) {
+    private Path sourceIdToFile(final T source) {
         return sourceIdToFile(source.sourceId(), storageDirectory);
     }
 
-    static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
-        final Revision rev = identifier.revision();
-        final File file;
-        if (rev == null) {
+    static Path sourceIdToFile(final SourceIdentifier identifier, final Path storageDirectory) {
+        final var rev = identifier.revision();
+        return rev != null ? storageDirectory.resolve(identifier.toYangFilename())
             // FIXME: this does not look right
-            file = findFileWithNewestRev(identifier, storageDirectory);
-        } else {
-            file = new File(storageDirectory, identifier.toYangFilename());
-        }
-        return file;
+            : findFileWithNewestRev(identifier, storageDirectory);
     }
 
-    private static File findFileWithNewestRev(final SourceIdentifier identifier, final File storageDirectory) {
-        File[] files = storageDirectory.listFiles(new FilenameFilter() {
-            final Pattern pat = Pattern.compile(Pattern.quote(identifier.name().getLocalName())
+    private static Path findFileWithNewestRev(final SourceIdentifier identifier, final Path storageDirectory) {
+        final var files = Arrays.stream(storageDirectory.toFile()
+            .listFiles(new FilenameFilter() {
+                final Pattern pat = Pattern.compile(Pattern.quote(identifier.name().getLocalName())
                     + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)");
 
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return pat.matcher(name).matches();
-            }
-        });
-
+                @Override
+                public boolean accept(final File dir, final String name) {
+                    return pat.matcher(name).matches();
+                }
+            }))
+            .map(File::toPath)
+            .toArray(Path[]::new);
         if (files.length == 0) {
-            return new File(storageDirectory, identifier.toYangFilename());
+            return storageDirectory.resolve(identifier.toYangFilename());
         }
         if (files.length == 1) {
             return files[0];
         }
 
-        File file = null;
-        TreeMap<Optional<Revision>, File> map = new TreeMap<>(Revision::compare);
-        for (File sorted : files) {
-            String fileName = sorted.getName();
-            Matcher match = Revision.STRING_FORMAT_PATTERN.matcher(fileName);
+        Path file = null;
+        final var map = new TreeMap<Optional<Revision>, Path>(Revision::compare);
+        for (var sorted : files) {
+            final var fileName = sorted.getFileName().toString();
+            final var match = Revision.STRING_FORMAT_PATTERN.matcher(fileName);
             if (match.find()) {
-                String revStr = match.group();
+                final var revStr = match.group();
                 Revision rev;
                 try {
                     rev = Revision.of(revStr);
@@ -181,7 +186,6 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
                 }
 
                 map.put(Optional.ofNullable(rev), sorted);
-
             } else {
                 map.put(Optional.empty(), sorted);
             }
@@ -191,7 +195,7 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
         return file;
     }
 
-    private void storeSource(final File file, final T schemaRepresentation) {
+    private void storeSource(final Path file, final T schemaRepresentation) {
         STORAGE_ADAPTERS.get(representation).store(file, schemaRepresentation);
     }
 
@@ -202,7 +206,7 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
             this.supportedType = supportedType;
         }
 
-        void store(final File file, final SourceRepresentation schemaSourceRepresentation) {
+        void store(final Path file, final SourceRepresentation schemaSourceRepresentation) {
             checkArgument(supportedType.isAssignableFrom(schemaSourceRepresentation.getClass()),
                     "Cannot store schema source %s, this adapter only supports %s", schemaSourceRepresentation,
                     supportedType);
@@ -211,16 +215,15 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
         }
 
         // FIXME: use java.nio.filePath
-        protected abstract void storeAsType(File file, T cast);
+        protected abstract void storeAsType(Path file, T cast);
 
-        T restore(final SourceIdentifier sourceIdentifier, final File cachedSource) {
-            checkArgument(cachedSource.isFile());
-            checkArgument(cachedSource.exists());
-            checkArgument(cachedSource.canRead());
+        T restore(final SourceIdentifier sourceIdentifier, final Path cachedSource) {
+            checkArgument(Files.isRegularFile(cachedSource));
+            checkArgument(Files.isReadable(cachedSource));
             return restoreAsType(sourceIdentifier, cachedSource);
         }
 
-        abstract T restoreAsType(SourceIdentifier sourceIdentifier, File cachedSource);
+        abstract T restoreAsType(SourceIdentifier sourceIdentifier, Path cachedSource);
     }
 
     private static final class YangTextStorageAdapter extends StorageAdapter<YangTextSource> {
@@ -229,26 +232,26 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
         }
 
         @Override
-        protected void storeAsType(final File file, final YangTextSource cast) {
+        protected void storeAsType(final Path file, final YangTextSource cast) {
             try (var castStream = cast.asByteSource(StandardCharsets.UTF_8).openStream()) {
-                Files.copy(castStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(castStream, file, StandardCopyOption.REPLACE_EXISTING);
             } catch (final IOException e) {
                 throw new IllegalStateException("Cannot store schema source " + cast.sourceId() + " to " + file, e);
             }
         }
 
         @Override
-        YangTextSource restoreAsType(final SourceIdentifier sourceIdentifier, final File cachedSource) {
-            return new FileYangTextSource(sourceIdentifier, cachedSource.toPath(), StandardCharsets.UTF_8);
+        YangTextSource restoreAsType(final SourceIdentifier sourceIdentifier, final Path cachedSource) {
+            return new FileYangTextSource(sourceIdentifier, cachedSource, StandardCharsets.UTF_8);
         }
     }
 
     private static final class CachedModulesFileVisitor extends SimpleFileVisitor<Path> {
-        private final List<SourceIdentifier> cachedSchemas = new ArrayList<>();
+        private final ArrayList<SourceIdentifier> cachedSchemas = new ArrayList<>();
 
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-            final FileVisitResult fileVisitResult = super.visitFile(file, attrs);
+            final var fileVisitResult = super.visitFile(file, attrs);
             String fileName = file.toFile().getName();
             fileName = com.google.common.io.Files.getNameWithoutExtension(fileName);
 
