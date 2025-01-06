@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.gson.stream.JsonReader;
-import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
 
     @BeforeAll
     static void initialization() throws Exception {
-        streamAsString = loadTextFile(new File(StreamToNormalizedNodeTest.class.getResource(
+        streamAsString = loadTextFile(Path.of(StreamToNormalizedNodeTest.class.getResource(
                 "/complexjson/complex-json.json").toURI()));
     }
 

@@ -13,14 +13,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -34,10 +32,10 @@ final class TestUtils {
         // Hidden on purpose
     }
 
-    static String loadTextFile(final File file) throws IOException {
+    static String loadTextFile(final Path file) throws IOException {
         final var result = new StringBuilder();
-        try (var bufReader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            String line = null;
+        try (var bufReader = Files.newBufferedReader(file)) {
+            String line;
             while ((line = bufReader.readLine()) != null) {
                 result.append(line);
             }
@@ -46,7 +44,7 @@ final class TestUtils {
     }
 
     static String loadTextFile(final String relativePath) throws IOException, URISyntaxException {
-        return loadTextFile(new File(TestUtils.class.getResource(relativePath).toURI()));
+        return loadTextFile(Path.of(TestUtils.class.getResource(relativePath).toURI()));
     }
 
     static void loadXmlToNormalizedNodes(final InputStream xmlInputStream, final NormalizationResultHolder result,
