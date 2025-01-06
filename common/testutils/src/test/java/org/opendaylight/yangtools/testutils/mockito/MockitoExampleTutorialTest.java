@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opendaylight.yangtools.testutils.mockito.MoreAnswers.exception;
 
-import java.io.File;
+import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,57 +36,57 @@ class MockitoExampleTutorialTest {
         String bar(String arg);
 
         // Most methods on real world services have complex input (and output objects), not just int or String
-        int foobar(File file);
+        int foobar(Path file);
     }
 
     @Test
     void usingMockitoWithoutStubbing() {
-        SomeService service = mock(SomeService.class);
+        final var service = mock(SomeService.class);
         assertNull(service.bar("hulo"));
     }
 
     @Test
     void usingMockitoToStubSimpleCase() {
-        SomeService service = mock(SomeService.class);
+        final var service = mock(SomeService.class);
         when(service.foobar(any())).thenReturn(123);
-        assertEquals(123, service.foobar(new File("hello.txt")));
+        assertEquals(123, service.foobar(Path.of("hello.txt")));
     }
 
     @Test
     void usingMockitoToStubComplexCase() {
         SomeService service = mock(SomeService.class);
         when(service.foobar(any())).thenAnswer(invocation -> {
-            File file = invocation.getArgument(0);
-            return "hello.txt".equals(file.getName()) ? 123 : 0;
+            final Path file = invocation.getArgument(0);
+            return Path.of("hello.txt").equals(file) ? 123 : 0;
         });
-        assertEquals(0, service.foobar(new File("belo.txt")));
+        assertEquals(0, service.foobar(Path.of("belo.txt")));
     }
 
     @Test
     void usingMockitoExceptionException() {
         assertThrows(UnstubbedMethodException.class, () -> {
-            SomeService service = mock(SomeService.class, exception());
+            final var service = mock(SomeService.class, exception());
             service.foo();
         });
     }
 
     @Test
     void usingMockitoNoExceptionIfStubbed() {
-        SomeService service = mock(SomeService.class, exception());
+        final var service = mock(SomeService.class, exception());
         // NOT when(s.foobar(any())).thenReturn(123) BUT must be like this:
         doReturn(123).when(service).foobar(any());
-        assertEquals(123, service.foobar(new File("hello.txt")));
+        assertEquals(123, service.foobar(Path.of("hello.txt")));
         assertThrows(UnstubbedMethodException.class, service::foo);
     }
 
     @Test
     void usingMockitoToStubComplexCaseAndExceptionIfNotStubbed() {
-        SomeService service = mock(SomeService.class, exception());
+        final var service = mock(SomeService.class, exception());
         doAnswer(invocation -> {
-            File file = invocation.getArgument(0);
-            return "hello.txt".equals(file.getName()) ? 123 : 0;
+            final Path file = invocation.getArgument(0);
+            return Path.of("hello.txt").equals(file) ? 123 : 0;
         }).when(service).foobar(any());
-        assertEquals(123, service.foobar(new File("hello.txt")));
-        assertEquals(0, service.foobar(new File("belo.txt")));
+        assertEquals(123, service.foobar(Path.of("hello.txt")));
+        assertEquals(0, service.foobar(Path.of("belo.txt")));
     }
 }
