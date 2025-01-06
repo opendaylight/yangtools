@@ -15,18 +15,15 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -56,10 +53,8 @@ final class SystemTestUtils {
         // Hidden on purpose
     }
 
-    static final FileFilter YANG_FILE_FILTER = file -> {
-        final String name = file.getName().toLowerCase(Locale.ENGLISH);
-        return name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
-    };
+    static final FileFilter YANG_FILE_FILTER = file ->
+        file.getName().toLowerCase(Locale.ROOT).endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
 
     static EffectiveModelContext parseYangSources(final List<String> yangLibDirs, final List<String> yangTestFiles,
             final Set<QName> supportedFeatures, final boolean recursiveSearch,
@@ -72,25 +67,25 @@ final class SystemTestUtils {
             yangLibDirs.add(".");
         }
 
-        final List<File> libFiles = new ArrayList<>();
-        for (final String yangLibDir : yangLibDirs) {
+        final var libFiles = new ArrayList<Path>();
+        for (var yangLibDir : yangLibDirs) {
             libFiles.addAll(getYangFiles(yangLibDir, recursiveSearch));
         }
 
-        final List<File> testFiles = new ArrayList<>();
-        for (final String yangTestFile : yangTestFiles) {
+        final var testFiles = new ArrayList<Path>();
+        for (var yangTestFile : yangTestFiles) {
             if (!yangTestFile.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
                 testFiles.add(findInFiles(libFiles, yangTestFile));
             } else {
-                testFiles.add(new File(yangTestFile));
+                testFiles.add(Path.of(yangTestFile));
             }
         }
 
         return parseYangSources(supportedFeatures, testFiles, libFiles, warnForUnkeyedLists);
     }
 
-    static EffectiveModelContext parseYangSources(final Set<QName> supportedFeatures, final List<File> testFiles,
-            final List<File> libFiles,  final boolean warnForUnkeyedLists) throws IOException, YangParserException {
+    static EffectiveModelContext parseYangSources(final Set<QName> supportedFeatures, final List<Path> testFiles,
+            final List<Path> libFiles,  final boolean warnForUnkeyedLists) throws IOException, YangParserException {
         checkArgument(!testFiles.isEmpty(), "No yang sources");
 
         final var configuration = YangParserConfiguration.builder().warnForUnkeyedLists(warnForUnkeyedLists).build();
@@ -100,17 +95,17 @@ final class SystemTestUtils {
         }
 
         for (var file : testFiles) {
-            parser.addSource(new FileYangTextSource(file.toPath()));
+            parser.addSource(new FileYangTextSource(file));
         }
         for (var file : libFiles) {
-            parser.addLibSource(new FileYangTextSource(file.toPath()));
+            parser.addLibSource(new FileYangTextSource(file));
         }
 
         return parser.buildEffectiveModel();
     }
 
-    private static File findInFiles(final List<File> libFiles, final String yangTestFile) throws IOException {
-        for (final File file : libFiles) {
+    private static Path findInFiles(final List<Path> libFiles, final String yangTestFile) throws IOException {
+        for (var file : libFiles) {
             if (WHITESPACES.matcher(getModelNameFromFile(file)).replaceAll("").equals(yangTestFile)) {
                 return file;
             }
@@ -118,40 +113,36 @@ final class SystemTestUtils {
         throw new FileNotFoundException("Model with specific module-name does not exist : " + yangTestFile);
     }
 
-    private static String getModelNameFromFile(final File file) throws IOException {
-        final String fileAsString = readFile(file.getAbsolutePath());
-        final Matcher matcher = MODULE_PATTERN.matcher(fileAsString);
+    private static String getModelNameFromFile(final Path file) throws IOException {
+        final var matcher = MODULE_PATTERN.matcher(Files.readString(file));
         return matcher.find() ? matcher.group(1) : "";
     }
 
-    private static String readFile(final String path) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
-    }
-
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
-    private static Collection<File> getYangFiles(final String yangSourcesDirectoryPath, final boolean recursiveSearch)
+    private static List<Path> getYangFiles(final String yangSourcesDirectoryPath, final boolean recursiveSearch)
             throws FileNotFoundException {
-        final File testSourcesDir = new File(yangSourcesDirectoryPath);
-        if (!testSourcesDir.isDirectory()) {
-            throw new FileNotFoundException(String.format("%s no such directory", yangSourcesDirectoryPath));
+        final var testSourcesDir = Path.of(yangSourcesDirectoryPath);
+        if (!Files.isDirectory(testSourcesDir)) {
+            throw new FileNotFoundException(yangSourcesDirectoryPath + " no such directory");
         }
 
         return recursiveSearch ? searchYangFiles(testSourcesDir)
-            : Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
+            : Arrays.stream(testSourcesDir.toFile().listFiles(YANG_FILE_FILTER)).map(File::toPath).toList();
     }
 
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
-    private static List<File> searchYangFiles(final File dir) {
+    private static List<Path> searchYangFiles(final Path dir) {
         requireNonNull(dir);
-        checkArgument(dir.isDirectory(), "File %s is not a directory", dir.getPath());
+        checkArgument(Files.isDirectory(dir), "File %s is not a directory", dir);
 
-        final List<File> yangFiles = new ArrayList<>();
-        for (final File file : dir.listFiles()) {
+        final var yangFiles = new ArrayList<Path>();
+        for (var file : dir.toFile().listFiles()) {
+            final var path = file.toPath();
             if (file.isDirectory()) {
-                yangFiles.addAll(searchYangFiles(file));
+                yangFiles.addAll(searchYangFiles(path));
             } else if (file.isFile()
-                    && file.getName().toLowerCase(Locale.ENGLISH).endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
-                yangFiles.add(file);
+                    && file.getName().toLowerCase(Locale.ROOT).endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
+                yangFiles.add(path);
             }
         }
 
