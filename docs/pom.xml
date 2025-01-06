@@ -450,11 +450,11 @@
                 <configuration combine.children="append">
                     <links>
                         <link>https://junit.org/junit5/docs/current/api/</link>
-                        <link>https://hamcrest.org/JavaHamcrest/javadoc/2.2/</link>
+                        <link>https://hamcrest.org/JavaHamcrest/javadoc/3.0/</link>
                         <link>https://www.slf4j.org/apidocs/</link>
-                        <link>https://guava.dev/releases/33.2.1-jre/api/docs/</link>
+                        <link>https://guava.dev/releases/33.4.0-jre/api/docs/</link>
 
-                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.0.1/</link>
+                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.0.6/</link>
                     </links>
                     <groups>
                         <group>

@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>14.0.5</version>
+        <version>14.0.6</version>
         <relativePath/>
     </parent>
 
@@ -37,6 +37,7 @@
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
+        <odlparent.modernizer.enforce>false</odlparent.modernizer.enforce>
     </properties>
 
     <dependencyManagement>
