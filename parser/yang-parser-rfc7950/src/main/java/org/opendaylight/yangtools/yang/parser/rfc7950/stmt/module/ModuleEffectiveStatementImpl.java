@@ -11,10 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
 import java.util.Collection;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
@@ -34,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
         implements Module, ModuleEffectiveStatement {
@@ -55,19 +53,19 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         this.submodules = ImmutableList.copyOf(submodules);
 
         final String localPrefix = prefix().argument();
-        final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
+        final var prefixToModuleBuilder = ImmutableMap.<String, ModuleEffectiveStatement>builder();
         prefixToModuleBuilder.put(localPrefix, this);
         appendPrefixes(stmt, prefixToModuleBuilder);
         prefixToModule = prefixToModuleBuilder.build();
 
-        final Map<QNameModule, String> tmp = Maps.newLinkedHashMapWithExpectedSize(prefixToModule.size() + 1);
+        final var tmp = LinkedHashMap.<QNameModule, String>newLinkedHashMap(prefixToModule.size() + 1);
         tmp.put(qnameModule, localPrefix);
-        for (Entry<String, ModuleEffectiveStatement> e : prefixToModule.entrySet()) {
+        for (var e : prefixToModule.entrySet()) {
             tmp.putIfAbsent(e.getValue().localQNameModule(), e.getKey());
         }
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
-        final Map<Unqualified, StmtContext<?, ?, ?>> includedSubmodules =
+        final var includedSubmodules =
                 stmt.localNamespacePortion(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
         nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,

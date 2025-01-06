@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.spi.node.impl;
 
-import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,11 +31,7 @@ public final class ImmutableSystemMapNodeBuilder implements SystemMapNode.Builde
     }
 
     public ImmutableSystemMapNodeBuilder(final int sizeHint) {
-        if (sizeHint >= 0) {
-            value = Maps.newHashMapWithExpectedSize(sizeHint);
-        } else {
-            value = new HashMap<>(DEFAULT_CAPACITY);
-        }
+        value = sizeHint >= 0 ? HashMap.newHashMap(sizeHint) : new HashMap<>(DEFAULT_CAPACITY);
     }
 
     private ImmutableSystemMapNodeBuilder(final SystemMapNode node) {

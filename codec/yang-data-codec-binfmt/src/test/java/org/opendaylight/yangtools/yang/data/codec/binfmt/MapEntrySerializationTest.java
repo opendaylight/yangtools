@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import com.google.common.collect.Maps;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -60,7 +60,7 @@ class MapEntrySerializationTest extends AbstractSerializationTest {
 
     private static MapEntryNode createEntry(final int size) {
         final var builder = ImmutableNodes.newMapEntryBuilder();
-        final var predicates = Maps.<QName, Object>newHashMapWithExpectedSize(size);
+        final var predicates = HashMap.<QName, Object>newHashMap(size);
         for (var qname : generateQNames(size)) {
             builder.withChild(ImmutableNodes.leafNode(qname, "a"));
             predicates.put(qname, "a");

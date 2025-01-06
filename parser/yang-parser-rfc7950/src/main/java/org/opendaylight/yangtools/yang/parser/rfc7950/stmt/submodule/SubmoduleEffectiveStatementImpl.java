@@ -11,19 +11,15 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -47,7 +43,7 @@ final class SubmoduleEffectiveStatementImpl
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
     private final QNameModule qnameModule;
 
-    private Set<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContexts;
+    private ImmutableSet<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContexts;
     private ImmutableSet<Submodule> submodules;
     private boolean sealed;
 
@@ -58,18 +54,17 @@ final class SubmoduleEffectiveStatementImpl
         final QNameModule belongsToModuleQName = stmt.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
             findBelongsTo(stmt, substatements).argument());
 
-        final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
+        final var prefixToModuleBuilder = ImmutableMap.<String, ModuleEffectiveStatement>builder();
         appendPrefixes(stmt, prefixToModuleBuilder);
         prefixToModule = prefixToModuleBuilder.build();
 
-        final Map<QNameModule, String> tmp = Maps.newLinkedHashMapWithExpectedSize(prefixToModule.size());
-        for (Entry<String, ModuleEffectiveStatement> e : prefixToModule.entrySet()) {
+        final var tmp = LinkedHashMap.<QNameModule, String>newLinkedHashMap(prefixToModule.size());
+        for (var e : prefixToModule.entrySet()) {
             tmp.putIfAbsent(e.getValue().localQNameModule(), e.getKey());
         }
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
-        final Optional<Revision> submoduleRevision = findFirstEffectiveSubstatementArgument(
-            RevisionEffectiveStatement.class);
+        final var submoduleRevision = findFirstEffectiveSubstatementArgument(RevisionEffectiveStatement.class);
         qnameModule = QNameModule.ofRevision(belongsToModuleQName.namespace(), submoduleRevision.orElse(null))
             .intern();
 
@@ -78,11 +73,11 @@ final class SubmoduleEffectiveStatementImpl
          * collect only submodule contexts here and then build them during
          * sealing of this statement.
          */
-        final Map<Unqualified, StmtContext<?, ?, ?>> includedSubmodulesMap = stmt.localNamespacePortion(
+        final var includedSubmodulesMap = stmt.localNamespacePortion(
             ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
         if (includedSubmodulesMap != null) {
-            final Set<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContextsInit =
-                new HashSet<>();
+            final var submoduleContextsInit =
+                new HashSet<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>>();
             for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
                 submoduleContextsInit.add(
                     (StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>)submoduleCtx);

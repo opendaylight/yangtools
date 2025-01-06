@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.spi.node.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -159,7 +158,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     }
 
     private static <K, V> HashMap<K, V> newHashMap(final int size) {
-        return USE_LINKEDHASHMAP ? Maps.newLinkedHashMapWithExpectedSize(size) : Maps.newHashMapWithExpectedSize(size);
+        return USE_LINKEDHASHMAP ? LinkedHashMap.newLinkedHashMap(size) : HashMap.newHashMap(size);
     }
 
     private static <K, V> HashMap<K, V> newHashMap(final Map<K, V> map) {

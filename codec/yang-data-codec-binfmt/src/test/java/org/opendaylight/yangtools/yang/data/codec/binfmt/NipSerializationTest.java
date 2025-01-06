@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -111,7 +111,7 @@ class NipSerializationTest extends AbstractSerializationTest {
     }
 
     private static NodeIdentifierWithPredicates createIdentifier(final int size) {
-        final var predicates = Maps.<QName, Object>newHashMapWithExpectedSize(size);
+        final var predicates = HashMap.<QName, Object>newHashMap(size);
         for (var qname : generateQNames(size)) {
             predicates.put(qname, "a");
         }
