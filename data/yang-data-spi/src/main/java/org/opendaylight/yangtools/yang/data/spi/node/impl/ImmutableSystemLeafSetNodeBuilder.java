@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.spi.node.impl;
 
-import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +30,7 @@ public final class ImmutableSystemLeafSetNodeBuilder<T> implements SystemLeafSet
     }
 
     public ImmutableSystemLeafSetNodeBuilder(final int sizeHint) {
-        if (sizeHint >= 0) {
-            value = Maps.newHashMapWithExpectedSize(sizeHint);
-        } else {
-            value = new HashMap<>(DEFAULT_CAPACITY);
-        }
+        value = sizeHint >= 0 ? HashMap.newHashMap(sizeHint) : new HashMap<>(DEFAULT_CAPACITY);
     }
 
     private ImmutableSystemLeafSetNodeBuilder(final ImmutableSystemLeafSetNode<T> node) {
@@ -44,8 +39,8 @@ public final class ImmutableSystemLeafSetNodeBuilder<T> implements SystemLeafSet
     }
 
     public static <T> SystemLeafSetNode.@NonNull Builder<T> create(final SystemLeafSetNode<T> node) {
-        if (node instanceof ImmutableSystemLeafSetNode) {
-            return new ImmutableSystemLeafSetNodeBuilder<>((ImmutableSystemLeafSetNode<T>) node);
+        if (node instanceof ImmutableSystemLeafSetNode<T> immutable) {
+            return new ImmutableSystemLeafSetNodeBuilder<>(immutable);
         }
         throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }

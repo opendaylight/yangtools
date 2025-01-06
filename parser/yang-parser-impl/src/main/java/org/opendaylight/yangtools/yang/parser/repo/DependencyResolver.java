@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -38,7 +38,7 @@ abstract class DependencyResolver {
     private final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports;
 
     DependencyResolver(final Map<SourceIdentifier, SourceInfo> depInfo) {
-        final var resolved = Sets.<SourceIdentifier>newHashSetWithExpectedSize(depInfo.size());
+        final var resolved = HashSet.<SourceIdentifier>newHashSet(depInfo.size());
         final var pending = new HashMap<>(depInfo);
         final var submodules = new ArrayList<Submodule>();
 
