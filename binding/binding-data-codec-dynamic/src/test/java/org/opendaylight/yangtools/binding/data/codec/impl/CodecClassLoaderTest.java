@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
 
 public class CodecClassLoaderTest {
-    private final BindingClassLoader codecClassLoader = BindingClassLoader.create(CodecClassLoaderTest.class, null);
+    private final BindingClassLoader codecClassLoader = BindingClassLoader.ofRootClass(CodecClassLoaderTest.class);
 
     @ParameterizedTest(name = "Generate class within namespace: {0}")
     @MethodSource("generateClassWithinNamespaceArgs")
