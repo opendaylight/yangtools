@@ -10,11 +10,9 @@ package org.opendaylight.yangtools.binding.loader;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableMap;
-import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import java.nio.file.Path;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -39,7 +37,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
 
     private volatile ImmutableMap<ClassLoader, BindingClassLoader> loaders = ImmutableMap.of();
 
-    RootBindingClassLoader(final ClassLoader parentLoader, final @Nullable File dumpDir) {
+    RootBindingClassLoader(final ClassLoader parentLoader, final @Nullable Path dumpDir) {
         super(parentLoader, dumpDir);
     }
 
@@ -65,8 +63,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
         final @NonNull BindingClassLoader found;
         if (!isOurClass(bindingClass)) {
             verifyStaticLinkage(target);
-            found = AccessController.doPrivileged(
-                (PrivilegedAction<BindingClassLoader>)() -> new LeafBindingClassLoader(this, target));
+            found = SecuritySupport.get(() -> new LeafBindingClassLoader(this, target));
             LOG.debug("Allocated {} for {}", found, target);
         } else {
             found = this;
