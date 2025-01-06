@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.testutils.mockito.MoreAnswers.realOrException;
 
-import java.io.File;
+import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -31,14 +31,14 @@ class MikitoTest {
         String bar(String arg);
 
         // Most methods on real world services have complex input (and output objects), not just int or String
-        int foobar(File file);
+        int foobar(Path file);
     }
 
     @Test
     void usingMikitoToCallStubbedMethod() {
-        SomeService service = mock(MockSomeService.class, realOrException());
-        assertEquals(123, service.foobar(new File("hello.txt")));
-        assertEquals(0, service.foobar(new File("belo.txt")));
+        final var service = mock(MockSomeService.class, realOrException());
+        assertEquals(123, service.foobar(Path.of("hello.txt")));
+        assertEquals(0, service.foobar(Path.of("belo.txt")));
     }
 
     @Test
@@ -50,8 +50,8 @@ class MikitoTest {
 
     abstract static class MockSomeService implements SomeService {
         @Override
-        public int foobar(final File file) {
-            return "hello.txt".equals(file.getName()) ? 123 : 0;
+        public int foobar(final Path file) {
+            return Path.of("hello.txt").equals(file) ? 123 : 0;
         }
     }
 }
