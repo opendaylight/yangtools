@@ -26,6 +26,7 @@ import net.bytebuddy.dynamic.DynamicType.Unloaded;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.AccessControllerCompat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +60,12 @@ public abstract sealed class BindingClassLoader extends ClassLoader
         }
 
         public Builder dumpBytecode(final Path toDirectory) {
-            this.dumpDirectory = requireNonNull(toDirectory);
+            dumpDirectory = requireNonNull(toDirectory);
             return this;
         }
 
         public @NonNull BindingClassLoader build() {
-            return SecuritySupport.get(() -> new RootBindingClassLoader(parentLoader, dumpDirectory));
+            return AccessControllerCompat.get(() -> new RootBindingClassLoader(parentLoader, dumpDirectory));
         }
     }
 

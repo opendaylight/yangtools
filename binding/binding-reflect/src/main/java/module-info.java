@@ -10,6 +10,7 @@ module org.opendaylight.yangtools.binding.reflect {
 
     uses org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 
+    requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.binding.spec;
     requires transitive org.opendaylight.yangtools.yang.common;
     requires org.slf4j;

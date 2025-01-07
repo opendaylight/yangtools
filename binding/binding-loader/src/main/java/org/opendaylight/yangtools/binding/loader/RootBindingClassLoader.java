@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.concepts.AccessControllerCompat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ final class RootBindingClassLoader extends BindingClassLoader {
         final @NonNull BindingClassLoader found;
         if (!isOurClass(bindingClass)) {
             verifyStaticLinkage(target);
-            found = SecuritySupport.get(() -> new LeafBindingClassLoader(this, target));
+            found = AccessControllerCompat.get(() -> new LeafBindingClassLoader(this, target));
             LOG.debug("Allocated {} for {}", found, target);
         } else {
             found = this;

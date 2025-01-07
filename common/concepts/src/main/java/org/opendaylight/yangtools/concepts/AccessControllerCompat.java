@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.loader;
+package org.opendaylight.yangtools.concepts;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -19,13 +19,13 @@ import org.slf4j.LoggerFactory;
  */
 // TODO: can we simplify this with a multi-release jar?
 @NonNullByDefault
-abstract sealed class SecuritySupport {
+public abstract sealed class AccessControllerCompat {
     /**
      * Java >=24: {@link AccessController#doPrivileged(PrivilegedAction)} is a no-op wrapper. Inline its behaviour
      * without touching it, as it may disappear in later versions of Java.
      */
     // FIXME: assume this behaviour and eliminate this entire abstract once we require Java 24+
-    private static final class NoAccessController extends SecuritySupport {
+    private static final class NoAccessController extends AccessControllerCompat {
         @Override
         <T> T privilegedGet(final Supplier<T> supplier) {
             return supplier.get();
@@ -35,7 +35,7 @@ abstract sealed class SecuritySupport {
     /**
      * Java <24: defer to {@link AccessController#doPrivileged(PrivilegedAction)}.
      */
-    private static final class WithAccessController extends SecuritySupport {
+    private static final class WithAccessController extends AccessControllerCompat {
         @Override
         @SuppressWarnings({ "deprecation", "removal" })
         <T> T privilegedGet(final Supplier<T> supplier) {
@@ -43,7 +43,7 @@ abstract sealed class SecuritySupport {
         }
     }
 
-    private static final SecuritySupport INSTANCE;
+    private static final AccessControllerCompat INSTANCE;
 
     static {
         final String str;
@@ -54,10 +54,10 @@ abstract sealed class SecuritySupport {
             str = "<24";
             INSTANCE = new WithAccessController();
         }
-        LoggerFactory.getLogger(SecuritySupport.class).debug("Assuming Java {} AccessController semantics", str);
+        LoggerFactory.getLogger(AccessControllerCompat.class).debug("Assuming Java {} AccessController semantics", str);
     }
 
-    static final <T> T get(final Supplier<T> supplier) {
+    public static final <T> T get(final Supplier<T> supplier) {
         return INSTANCE.privilegedGet(supplier);
     }
 
