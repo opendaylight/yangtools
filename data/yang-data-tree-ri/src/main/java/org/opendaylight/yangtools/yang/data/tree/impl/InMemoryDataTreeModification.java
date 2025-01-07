@@ -200,7 +200,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public InMemoryDataTreeModification newModification() {
+    public synchronized InMemoryDataTreeModification newModification() {
         checkState(isSealed(), "Attempted to chain on an unsealed modification");
 
         if (rootNode.getOperation() == LogicalOperation.NONE) {
@@ -329,7 +329,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      * @throws DataValidationFailedException if modification would result in an inconsistent data tree
      */
     @NonNullByDefault
-    void validate(final YangInstanceIdentifier path, final TreeNode current) throws DataValidationFailedException {
+    synchronized void validate(final YangInstanceIdentifier path, final TreeNode current)
+            throws DataValidationFailedException {
         if (!isSealed()) {
             // FIXME: this should be an IllegalStateException
             throw new IllegalArgumentException("Attempted to validate unsealed modification " + this);
@@ -348,7 +349,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      * @throws DataValidationFailedException if modification would result in inconsistent data tree
      */
     @NonNullByDefault
-    DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
+    synchronized DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
         if (!isSealed()) {
             // FIXME: this should be an IllegalStateException
             throw new IllegalArgumentException("Attempted to prepare unsealed modification " + this);

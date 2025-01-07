@@ -41,17 +41,57 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  * the tree.
  */
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
-    private final Map<PathArgument, ModifiedNode> children;
+    // This class has rather funky state management and thread safety rules, closely aligned with
+    // InMemoryDataTreeModification's lifecycle, which holds the pointer to the root of a tree of ModifiedNodes. Here
+    // we document our fields, but all inter-thread synchronization needs to be done in InMemoryDataTreeModification.
+    //
+    // Every ModifiedNode has two invariants, guaranteed to be immutable throughout its existence:
+    // - 'identifier', which is the PathArgument identifying the underlying NormalizedNode data
+    // - 'original', which is the TreeNode which is being modified -- or null if this is a modification of previously
+    //   non-existent data
     private final @Nullable TreeNode original;
     private final @NonNull PathArgument identifier;
 
+    // Two other bits start off as potentially-mutable state:
+    // - 'operation', which is the LogicalOperation this ModifiedNode performs on the corresponding data
+    // - 'children', which tracks any nested modifications
+    //
+    // Both start as being mutable and assuming non-concurrent access, as is the case when a DataTreeModification is
+    // being built up from its constituent logical operations.
+    //
+    // Once DataTreeModification.ready() is invoked by the user we process the subtree, perform initial logical
+    // operation algebra and prune the tree so it records the effective logical operations the user intends to perform
+    // on top of 'original' -- see the seal() method below.
+    //
+    // After that transition the two fields are mostly stable, but can undergo further evolution as part of modification
+    // lifecycle: each of validate(), prepare() and newModification() can end up calling
+    // SchemaAwareApplyOperation.apply(), at which both of these can be updated.
+    //
+    // 'children' also serves a secondary view, as it is used by AbstractModifiedNodeBasedCandidateNode along with
+    // 'modType' below to provide DataTreeCandidateNode interface.
+    //
+    // NOTE: Original design called for 'children' to be effectively immutable after seal(), we can end up expanding
+    //       them when a MERGE encounters pre-existing data: see how
+    //       AbstractNodeContainerModificationStrategy.applyMerge() ends up calling to modifyChild() to turn the MERGE
+    //       into effectively a TOUCH and with a series of child MERGE operations.
+    //
+    //       If we ever want to restore this design, we need to replace AbstractModifiedNodeBasedCandidateNode with a
+    //       tree of ImmutableCandidateNodes. That is a tough cookie, as we currently populate the effective state as
+    //       a side-effect of apply(), but the DataTreeCandidateNode view is only needed in after the prepare() stage.
+    private final Map<PathArgument, ModifiedNode> children;
     private LogicalOperation operation = LogicalOperation.NONE;
-    private Optional<TreeNode> snapshotCache;
-    private NormalizedNode value;
-    private ModificationType modType;
 
+    // The argument to LogicalOperation.{MERGE,WRITE}, invalid otherwise
+    private NormalizedNode value;
     // Alternative history introduced in WRITE nodes. Instantiated when we touch any child underneath such a node.
     private TreeNode writtenOriginal;
+
+    // Cached result of the last SchemaAwareApplyOperation.apply() operation, for example if the user calls
+    // DataTreeSnapshot.readNode() multiple times on the same node.
+    private Optional<TreeNode> snapshotCache;
+
+    // Effective ModificationType, as resolved by the last executed SchemaAwareApplyOperation.apply()
+    private ModificationType modType;
 
     // Internal cache for TreeNodes created as part of validation
     private ModificationApplyOperation validatedOp;
