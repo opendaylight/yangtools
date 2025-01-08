@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  * <p>
  * Tree which structurally resembles data tree and captures client modifications to the data store tree. This tree is
  * lazily created and populated via {@link #modifyChild(PathArgument, ModificationApplyOperation, Version)} and
- * {@link TreeNode} which represents original state as tracked by {@link #getOriginal()}.
+ * {@link TreeNode} which represents original state as tracked by {@link #original()}.
  *
  * <p>
  * The contract is that the state information exposed here preserves the temporal ordering of whatever modifications
@@ -147,8 +147,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param child child identifier, may not be null
      * @param childOper Child operation
      * @param modVersion Version allocated by the calling {@link InMemoryDataTreeModification}
-     * @return {@link ModifiedNode} for specified child, with {@link #getOriginal()}
-     *         containing child metadata if child was present in original data.
+     * @return {@link ModifiedNode} for specified child, with {@link #original()} containing child metadata if child was
+     *         present in original data.
      */
     ModifiedNode modifyChild(final @NonNull PathArgument child, final @NonNull ModificationApplyOperation childOper,
             final @NonNull Version modVersion) {
