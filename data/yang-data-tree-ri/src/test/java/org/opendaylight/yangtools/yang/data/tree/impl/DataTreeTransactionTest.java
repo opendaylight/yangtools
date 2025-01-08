@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,39 +21,35 @@ import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory
 
 class DataTreeTransactionTest extends AbstractTestModelTest {
     private DataTree tree;
+    private DataTreeModification mod;
 
     @BeforeEach
     void setUp() {
         tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
+        mod = tree.takeSnapshot().newModification();
     }
 
     @Test
     void testSealedValidate() throws DataValidationFailedException {
-        final var mod = tree.takeSnapshot().newModification();
         mod.ready();
         tree.validate(mod);
     }
 
     @Test
     void testSealedPrepare() throws DataValidationFailedException {
-        final var mod = tree.takeSnapshot().newModification();
         mod.ready();
-        tree.prepare(mod);
+        assertInstanceOf(NoopDataTreeCandidate.class, tree.prepare(mod));
     }
 
     @Test
     void testUnsealedValidate() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            final DataTreeModification mod = tree.takeSnapshot().newModification();
-            tree.validate(mod);
-        });
+        final var ex = assertThrows(IllegalArgumentException.class, () -> tree.validate(mod));
+        assertEquals("Attempted to validate modification in state Open", ex.getMessage());
     }
 
     @Test
     void testUnsealedPrepare() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            final DataTreeModification mod = tree.takeSnapshot().newModification();
-            tree.prepare(mod);
-        });
+        final var ex = assertThrows(IllegalArgumentException.class, () -> tree.prepare(mod));
+        assertEquals("Attempted to prepare modification in state Open", ex.getMessage());
     }
 }
