@@ -44,6 +44,12 @@ class YT1655Test extends AbstractTestModelTest {
         tree.validate(mod);
         tree.commit(tree.prepare(mod), version);
 
-        assertEquals(Optional.of(version), tree.takeSnapshot().readVersionInfo(YangInstanceIdentifier.of()));
+        final var snap2 = tree.takeSnapshot();
+        assertEquals(Optional.of(version), snap2.readVersionInfo(YangInstanceIdentifier.of()));
+
+        // noop
+        final var mod2 = snap2.newModification();
+        mod2.ready();
+        assertEquals(Optional.of(version), mod2.readVersionInfo(YangInstanceIdentifier.of()));
     }
 }

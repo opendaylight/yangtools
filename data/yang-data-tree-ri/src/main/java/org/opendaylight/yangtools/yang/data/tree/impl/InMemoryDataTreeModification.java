@@ -19,6 +19,7 @@ import java.lang.invoke.VarHandle;
 import java.util.ConcurrentModificationException;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -50,6 +51,16 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     /**
+     * Common superclass for singleton states.
+     */
+    private abstract static sealed class SingletonState implements State {
+        @Override
+        public final String toString() {
+            return getClass().getSimpleName();
+        }
+    }
+
+    /**
      * Initial state: the modification is open to data operations. We do not care about concurrent access: initial build
      * up is supposed to happen in a single thread. If that is not the case, it is up to the user to provide necessary
      * coordination between her threads.
@@ -67,18 +78,21 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     /**
-     * A transient state between {@link Open} and {@link Ready}. It does not retain the modification on purpose, as
-     * a failure to completely seal the modification results in inconsistent state, rendering the modification
-     * inoperable.
+     * A transient state between {@link Open} and either {@link Noop} or {@link Ready}. It does not retain the
+     * modification on purpose, as a failure to completely seal the modification results in inconsistent state,
+     * rendering the modification inoperable.
      */
     @NonNullByDefault
-    private static final class Sealing implements State {
+    private static final class Sealing extends SingletonState {
         static final Sealing INSTANCE = new Sealing();
+    }
 
-        @Override
-        public String toString() {
-            return "Sealing";
-        }
+    /**
+     * The call to {@code ready()} has completed successfully and there is nothing to do. This is a terminal state.
+     */
+    @NonNullByDefault
+    private static final class Noop extends SingletonState {
+        static final Noop INSTANCE = new Noop();
     }
 
     /**
@@ -181,7 +195,16 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public Optional<NormalizedNode> readNode(final YangInstanceIdentifier path) {
-        final var terminal = resolveTerminal(path);
+        return accessData(path, this::readNode);
+    }
+
+    private Optional<NormalizedNode> readNode(final YangInstanceIdentifier path,
+            final @Nullable ModifiedNode rootNode) {
+        if (rootNode == null) {
+            return snapshot.readNode(path);
+        }
+
+        final var terminal = resolveTerminal(rootNode, path);
         final var terminalPath = terminal.getKey();
 
         final var result = resolveSnapshot(terminalPath, terminal.getValue());
@@ -190,7 +213,16 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public Optional<VersionInfo> readVersionInfo(final YangInstanceIdentifier path) {
-        final var terminal = resolveTerminal(path);
+        return accessData(path, this::readVersionInfo);
+    }
+
+    private Optional<VersionInfo> readVersionInfo(final YangInstanceIdentifier path,
+            final @Nullable ModifiedNode rootNode) {
+        if (rootNode == null) {
+            return snapshot.readVersionInfo(path);
+        }
+
+        final var terminal = resolveTerminal(rootNode, path);
         final var terminalPath = terminal.getKey();
 
         final var result = resolveSnapshot(terminalPath, terminal.getValue());
@@ -199,18 +231,21 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
                 .flatMap(treeNode -> Optional.ofNullable(treeNode.subtreeVersion().readInfo()));
     }
 
-    private Entry<YangInstanceIdentifier, ModifiedNode> resolveTerminal(final YangInstanceIdentifier path) {
+    private <T> T accessData(final YangInstanceIdentifier path,
+            final BiFunction<YangInstanceIdentifier, @Nullable ModifiedNode, T> function) {
         final var local = acquireState();
-        final var rootNode = switch (local) {
-            case Open(var root) -> root;
-            case Ready(var root) -> root;
+        return switch (local) {
+            case Open(var root) -> function.apply(path, root);
+            case Ready(var root) -> function.apply(path, root);
+            case Noop noop -> function.apply(path, null);
             default -> throw new IllegalStateException("Cannot access data in state " + local);
         };
+    }
 
-        /*
-         * Walk the tree from the top, looking for the first node between root and the requested path which has been
-         * modified. If no such node exists, we use the node itself.
-         */
+    private static Entry<YangInstanceIdentifier, ModifiedNode> resolveTerminal(final ModifiedNode rootNode,
+            final YangInstanceIdentifier path) {
+        // Walk the tree from the top, looking for the first node between root and the requested path which has been
+        // modified. If no such node exists, we use the node itself.
         return StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path, input -> switch (input.getOperation()) {
             case DELETE, MERGE, WRITE -> true;
             case TOUCH, NONE -> false;
@@ -289,18 +324,20 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public synchronized InMemoryDataTreeModification newModification() {
+    public InMemoryDataTreeModification newModification() {
         final var local = acquireState();
-        if (!(local instanceof Ready(var rootNode))) {
-            throw new IllegalStateException("Attempted to chain on modification in state " + local);
-        }
-
-        if (rootNode.getOperation() == LogicalOperation.NONE) {
+        return switch (local) {
             // Simple fast case: just use the underlying modification
-            return snapshot.newModification();
-        }
+            case Noop noop -> snapshot.newModification();
+            case Ready(var root) -> newModification(root);
+            default -> throw new IllegalStateException("Attempted to chain on modification in state " + local);
+        };
+    }
 
-        // We will use preallocated version, this means returned snapshot will have same version each time this method
+    // synchronizes with validate() and prepare() to protect rootNode internals
+    @NonNullByDefault
+    private synchronized InMemoryDataTreeModification newModification(final ModifiedNode rootNode) {
+        // We will use preallocated version, this means returned snapshot will  have same version each time this method
         // is called.
         final var newRoot = getStrategy().apply(rootNode, snapshotRoot(), version);
         if (newRoot == null) {
@@ -363,12 +400,14 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @Override
     public void applyToCursor(final DataTreeModificationCursor cursor) {
         final var local = acquireState();
-        final var rootNode = switch (local) {
-            case Open(var root) -> root;
-            case Ready(var root) -> root;
+        switch (local) {
+            case Noop noop -> {
+                // Nothing to apply
+            }
+            case Open(var root) -> applyChildren(cursor, root);
+            case Ready(var root) -> applyChildren(cursor, root);
             default -> throw new IllegalStateException("Cannot apply in state " + local);
-        };
-        applyChildren(cursor, rootNode);
+        }
     }
 
     static void checkIdentifierReferencesData(final PathArgument arg, final NormalizedNode data) {
@@ -418,11 +457,16 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             current = current.process(version);
         } while (current != null);
 
+        // check root to determine if this is a no-op modification
+        final var nextState = rootNode.getOperation() == LogicalOperation.NONE ? Noop.INSTANCE : new Ready(rootNode);
+
         // Make sure all affects are visible before returning, as this object may be handed off to another thread, which
         // needs to see any HashMap.modCount mutations completed.
-        // Note: 'Ready' has a final field, which implies a StoreStoreFence as per
-        //       https://gee.cs.oswego.edu/dl/html/j9mm.html
-        STATE.setRelease(this, new Ready(rootNode));
+        // NOTE:
+        //      - 'Ready' has a final field, which implies a StoreStoreFence as per
+        //        https://gee.cs.oswego.edu/dl/html/j9mm.html
+        //      - 'Noop' does not, but it logically throws away rootNode, so we should not care
+        STATE.setRelease(this, nextState);
     }
 
     /**
@@ -435,13 +479,22 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      * @throws DataValidationFailedException if modification would result in an inconsistent data tree
      */
     @NonNullByDefault
-    synchronized void validate(final YangInstanceIdentifier path, final TreeNode current)
-            throws DataValidationFailedException {
+    void validate(final YangInstanceIdentifier path, final TreeNode current) throws DataValidationFailedException {
         final var local = acquireState();
-        if (!(local instanceof Ready(var rootNode))) {
+        switch (local) {
+            case Noop noop -> {
+                // no-op
+            }
+            case Ready(var root) -> validate(root, path, current);
             // FIXME: this should be an IllegalStateException
-            throw new IllegalArgumentException("Attempted to validate modification in state " + local);
+            default -> throw new IllegalArgumentException("Attempted to validate modification in state " + local);
         }
+    }
+
+    // synchronizes with prepare() and newModification() to protect rootNode internals
+    @NonNullByDefault
+    private synchronized void validate(final ModifiedNode rootNode, final YangInstanceIdentifier path,
+            final TreeNode current) throws DataValidationFailedException {
         getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
     }
 
@@ -456,17 +509,20 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      * @throws DataValidationFailedException if modification would result in inconsistent data tree
      */
     @NonNullByDefault
-    synchronized DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
+    DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
         final var local = acquireState();
-        if (!(local instanceof Ready(var rootNode))) {
+        return switch (local) {
+            case Noop noop -> new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
+            case Ready(var root) -> prepare(root, path, current);
             // FIXME: this should be an IllegalStateException
-            throw new IllegalArgumentException("Attempted to prepare unsealed modification " + this);
-        }
+            default -> throw new IllegalArgumentException("Attempted to prepare modification in state " + local);
+        };
+    }
 
-        if (rootNode.getOperation() == LogicalOperation.NONE) {
-            return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current);
-        }
-
+    // synchronizes with validate() and newModification() to protect rootNode internals
+    @NonNullByDefault
+    private synchronized InMemoryDataTreeCandidate prepare(final ModifiedNode rootNode,
+            final YangInstanceIdentifier path, final TreeNode current) {
         final var newRoot = getStrategy().apply(rootNode, current, version);
         if (newRoot == null) {
             // FIXME: this should be a VerifyException
