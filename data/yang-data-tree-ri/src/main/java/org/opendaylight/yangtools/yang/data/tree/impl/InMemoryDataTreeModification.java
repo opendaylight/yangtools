@@ -209,7 +209,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             // Defer to snapshot
             return Map.entry(YangInstanceIdentifier.of(), snapshot.getRootNode().getData());
         } else {
-            throw new IllegalStateException("Cannot access data in state " + local);
+            throw illegalState(local, "access data of");
         }
 
         // Walk the tree from the top, looking for the first node between root and the requested path which has been
@@ -304,7 +304,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             // Simple fast case: just use the underlying modification
             return snapshot.newModification();
         } else {
-            throw new IllegalStateException("Attempted to chain on modification in state " + local);
+            throw illegalState(local, "chain on");
         }
     }
 
@@ -383,7 +383,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             // Nothing to apply
             return;
         } else {
-            throw new IllegalStateException("Cannot apply in state " + local);
+            throw illegalState(local, "access contents of");
         }
         applyChildren(cursor, rootNode);
     }
@@ -414,7 +414,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     public void ready() {
         final var local = acquireState();
         if (!(local instanceof Open open)) {
-            throw new IllegalStateException("Attempted to ready " + this + " in state " + local);
+            throw illegalState(local, "ready");
         }
 
         // We want a full CAS with setVolatile() memory semantics, as we want to force happen-before for everything,
@@ -466,8 +466,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             // Nothing to validate
             return;
         } else {
-            // FIXME: this should be an IllegalStateException
-            throw new IllegalArgumentException("Attempted to validate modification in state " + local);
+            throw illegalState(local, "validate");
         }
 
         // synchronizes with newModification() and prepare() to protect rootNode internals
@@ -495,8 +494,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             // Nothing to prepare
             return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
         } else {
-            // FIXME: this should be an IllegalStateException
-            throw new IllegalArgumentException("Attempted to prepare modification in state " + local);
+            throw illegalState(local, "prepare");
         }
     }
 
@@ -527,5 +525,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @NonNullByDefault
     State acquireState() {
         return verifyNotNull((State) STATE.getAcquire(this));
+    }
+
+    @NonNullByDefault
+    private static IllegalStateException illegalState(final State state, final String operation) {
+        throw new IllegalStateException("Attempted to " + operation + " modification in state " + state);
     }
 }
