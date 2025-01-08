@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -65,7 +66,6 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
 
     private DataTree inMemoryDataTree;
 
-
     @BeforeEach
     void prepare() {
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
@@ -95,8 +95,7 @@ class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     private static <T> T assertPresentAndType(final Optional<?> potential, final Class<T> type) {
         assertNotNull(potential);
         assertTrue(potential.isPresent());
-        assertTrue(type.isInstance(potential.orElseThrow()));
-        return type.cast(potential.orElseThrow());
+        return assertInstanceOf(type, potential.orElseThrow());
     }
 
     @Test
