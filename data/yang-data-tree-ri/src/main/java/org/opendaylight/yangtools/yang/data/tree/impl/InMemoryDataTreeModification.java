@@ -78,13 +78,30 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     /**
-     * A transient state between {@link Open} and either {@link Noop} or {@link Ready}. It does not retain the
-     * modification on purpose, as a failure to completely seal the modification results in inconsistent state,
-     * rendering the modification inoperable.
+     * A transient state between {@link Open} and either one of {@link Defunct}, {@link Noop} or {@link Ready}. This is
+     * a singleton on purpose, so the rootNode is not reachable from the modification until the process resolves.
      */
     @NonNullByDefault
     private static final class Sealing extends SingletonState {
         static final Sealing INSTANCE = new Sealing();
+    }
+
+    /**
+     * The call to {@code ready()} has failed to complete. No further operations are allowed.
+     */
+    private record Defunct(String threadName, @NonNull Throwable cause) implements State {
+        Defunct {
+            requireNonNull(cause);
+        }
+
+        @Override
+        public String toString() {
+            // TODO: find proof that Thread.getName() does not report and remove this method
+            return MoreObjects.toStringHelper(this).omitNullValues()
+                .add("threadName", threadName)
+                .add("cause", cause)
+                .toString();
+        }
     }
 
     /**
@@ -428,20 +445,38 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @NonNullByDefault
+    @SuppressWarnings("checkstyle:illegalCatch")
     private void ready(final ModifiedNode rootNode) {
+        final LogicalOperation rootOperation;
+        try {
+            rootOperation = runReady(rootNode);
+        } catch (Throwable t) {
+            // failure: transition to Defunct
+            finishReady(new Defunct(Thread.currentThread().getName(), t));
+            throw t;
+        }
+
+        // success, check root operation to determine if this is a no-op
+        finishReady(rootOperation == LogicalOperation.NONE ? Noop.INSTANCE : new Ready(rootNode));
+    }
+
+    private LogicalOperation runReady(final ModifiedNode rootNode) {
         var current = AbstractReadyIterator.create(rootNode, getStrategy());
         do {
             current = current.process(version);
         } while (current != null);
 
-        // check root to determine if this is a no-op modification
-        final var nextState = rootNode.getOperation() == LogicalOperation.NONE ? Noop.INSTANCE : new Ready(rootNode);
+        return rootNode.getOperation();
+    }
 
+    @NonNullByDefault
+    private void finishReady(final State nextState) {
         // Make sure all affects are visible before returning, as this object may be handed off to another thread, which
         // needs to see any HashMap.modCount mutations completed.
         // NOTE:
         //      - 'Ready' has a final field, which implies a StoreStoreFence as per
         //        https://gee.cs.oswego.edu/dl/html/j9mm.html
+        //      - 'Defunct' has a final field as well
         //      - 'Noop' does not, but it logically throws away rootNode, so we should not care
         STATE.setRelease(this, nextState);
     }
@@ -515,6 +550,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @NonNullByDefault
     private static IllegalStateException illegalState(final State state, final String operation) {
-        throw new IllegalStateException("Attempted to " + operation + " modification in state " + state);
+        throw new IllegalStateException("Attempted to " + operation + " modification in state " + state,
+            state instanceof Defunct defunct ? defunct.cause : null);
     }
 }
