@@ -238,7 +238,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             case Open(var root) -> function.apply(path, root);
             case Noop noop -> function.apply(path, null);
             case Ready(var root) -> function.apply(path, root);
-            default -> throw new IllegalStateException("Cannot access data in state " + local);
+            default -> throw illegalState(local, "access data of");
         };
     }
 
@@ -330,7 +330,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             // Simple fast case: just use the underlying modification
             case Noop noop -> snapshot.newModification();
             case Ready(var root) -> newModification(root);
-            default -> throw new IllegalStateException("Attempted to chain on modification in state " + local);
+            default -> throw illegalState(local, "chain on");
         };
     }
 
@@ -406,7 +406,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             }
             case Open(var root) -> applyChildren(cursor, root);
             case Ready(var root) -> applyChildren(cursor, root);
-            default -> throw new IllegalStateException("Cannot apply in state " + local);
+            default -> throw illegalState(local, "access contents of");
         }
     }
 
@@ -436,7 +436,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     public void ready() {
         final var local = acquireState();
         if (!(local instanceof Open open)) {
-            throw new IllegalStateException("Attempted to ready " + this + " in state " + local);
+            throw illegalState(local, "ready");
         }
 
         // We want a full CAS with setVolatile() memory semantics, as we want to force happen-before for everything,
@@ -486,8 +486,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
                 // no-op
             }
             case Ready(var root) -> getStrategy().checkApplicable(new ModificationPath(path), root, current, version);
-            // FIXME: this should be an IllegalStateException
-            default -> throw new IllegalArgumentException("Attempted to validate modification in state " + local);
+            default -> throw illegalState(local, "validate");
         }
     }
 
@@ -507,8 +506,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return switch (local) {
             case Noop noop -> new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
             case Ready(var root) -> prepare(root, path, current);
-            // FIXME: this should be an IllegalStateException
-            default -> throw new IllegalArgumentException("Attempted to prepare modification in state " + local);
+            default -> throw illegalState(local, "prepare");
         };
     }
 
@@ -539,5 +537,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @NonNullByDefault
     State acquireState() {
         return verifyNotNull((State) STATE.getAcquire(this));
+    }
+
+    @NonNullByDefault
+    private static IllegalStateException illegalState(final State state, final String operation) {
+        throw new IllegalStateException("Attempted to " + operation + " modification in state " + state);
     }
 }
