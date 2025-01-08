@@ -12,9 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -35,20 +33,18 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
     private OperationWithModification resolveChildModification(final PathArgument child) {
         getParent().upgradeIfPossible();
 
-        final OperationWithModification op = stack.peek();
-        final ModificationApplyOperation operation = op.getApplyOperation().childByArg(child);
+        final var op = stack.peek();
+        final var operation = op.getApplyOperation().childByArg(child);
         if (operation != null) {
-            final ModifiedNode modification = op.getModification().modifyChild(child, operation,
-                getParent().getVersion());
-
-            return OperationWithModification.from(operation, modification);
+            return OperationWithModification.from(operation,
+                op.getModification().modifyChild(child, operation, getParent().getVersion()));
         }
 
         // Node not found, construct its path
-        final Collection<PathArgument> path = new ArrayList<>();
+        final var path = new ArrayList<PathArgument>();
         path.addAll(getRootPath().getPathArguments());
 
-        final Iterator<OperationWithModification> it = stack.descendingIterator();
+        final var it = stack.descendingIterator();
         // Skip the first entry, as it's already accounted for in rootPath
         it.next();
 
