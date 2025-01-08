@@ -99,7 +99,7 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
     @Test
     void testNoopApplyToCursor() {
         mod.ready();
-        final var state = assertState("Ready");
+        final var state = assertState("Noop");
         mod.applyToCursor(cursor);
         assertState(state);
     }
@@ -138,7 +138,7 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
     @Test
     void testNoopNewModification() {
         mod.ready();
-        final var state = assertState("Ready");
+        final var state = assertState("Noop");
 
         final var next = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
         assertState(state);
