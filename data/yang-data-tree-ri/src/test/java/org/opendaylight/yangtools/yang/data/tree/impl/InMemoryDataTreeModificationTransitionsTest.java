@@ -9,10 +9,15 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 
 import java.util.UUID;
@@ -23,6 +28,8 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
@@ -88,5 +95,98 @@ class InMemoryDataTreeModificationTransitionsTest extends AbstractTestModelTest 
     private void assertDefunct(final State defunct, final String op, final IllegalStateException ex) {
         assertEquals("Attempted to " + op + " modification in state " + defunct, ex.getMessage());
         assertSame(defunct, mod.acquireState());
+    }
+
+    @Test
+    void testReadyNewModicationValidatePrepare() throws Exception {
+        mod.write(TestModel.TEST_PATH, ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .build());
+        mod.ready();
+        assertEquals("Ready", mod.acquireState().toString());
+
+        // transitions state
+        final var firstMod = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
+        assertNotSame(mod, firstMod);
+        assertNotSame(mod.snapshotRoot(), firstMod.snapshotRoot());
+        final var applied = mod.acquireState();
+        assertEquals("AppliedToSnapshot", applied.toString());
+
+        // does not transition state, but reuses underlying snapshot root node
+        final var secondMod = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
+        assertSame(applied, mod.acquireState());
+        assertNotSame(mod, secondMod);
+        assertNotSame(mod.snapshotRoot(), secondMod.snapshotRoot());
+        assertNotSame(firstMod, secondMod);
+        assertSame(firstMod.snapshotRoot(), secondMod.snapshotRoot());
+
+        // validate is a no-op as we have already
+        tree.validate(mod);
+        assertSame(applied, mod.acquireState());
+
+        final var candidate = tree.prepare(mod);
+        assertNotNull(candidate);
+        // FIXME: candidate does not transition for now: extend checks once it does, including a subsequent
+        //        newModification()
+        assertSame(applied, mod.acquireState());
+    }
+
+    @Test
+    void testOpenEmptyApplyToCursor() {
+        mod.applyToCursor(cursor);
+        assertEquals("Open", mod.acquireState().toString());
+    }
+
+    @Test
+    void testNoopApplyToCursor() {
+        mod.ready();
+        final var state = mod.acquireState();
+        assertEquals("Noop", state.toString());
+        mod.applyToCursor(cursor);
+        assertSame(state, mod.acquireState());
+    }
+
+    @Test
+    void testReadyApplyCursor() {
+        final var data = ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .build();
+        mod.write(TestModel.TEST_PATH, data);
+        mod.ready();
+        final var ready = mod.acquireState();
+        assertEquals("Ready", ready.toString());
+
+        doNothing().when(cursor).write(eq(data.name()), same(data));
+        mod.applyToCursor(cursor);
+        assertSame(ready, mod.acquireState());
+    }
+
+    @Test
+    void testNewModificationApplyCursor() {
+        final var data = ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .build();
+        mod.write(TestModel.TEST_PATH, data);
+        mod.ready();
+        assertEquals("Ready", mod.acquireState().toString());
+
+        assertNotNull(mod.newModification());
+        final var applied = mod.acquireState();
+        assertEquals("AppliedToSnapshot", applied.toString());
+
+        doNothing().when(cursor).write(eq(data.name()), same(data));
+        mod.applyToCursor(cursor);
+        assertSame(applied, mod.acquireState());
+    }
+
+    @Test
+    void testNoopNewModification() {
+        mod.ready();
+        final var state = mod.acquireState();
+        assertEquals("Noop", state.toString());
+
+        final var next = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
+        assertSame(state, mod.acquireState());
+        assertSame(mod.snapshotRoot(), next.snapshotRoot());
     }
 }
