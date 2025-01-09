@@ -89,17 +89,31 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
         tree.validate(mod);
         assertState(applied);
 
-        final var candidate = tree.prepare(mod);
-        assertNotNull(candidate);
-        // FIXME: candidate does not transition for now: extend checks once it does, including a subsequent
-        //        newModification()
-        assertState(applied);
+        // transitions state
+        final var candidate = assertInstanceOf(InMemoryDataTreeCandidate.class, tree.prepare(mod));
+        final var prepared = assertState("Prepared");
 
         tree.commit(candidate, versionInfo);
         // TODO: we really would like to have a dedicated state which routes to the data tree for 'newModification'
         //       et al.
-        assertState(applied);
+        assertState(prepared);
+
         assertEquals(Optional.of(versionInfo), tree.takeSnapshot().readVersionInfo(YangInstanceIdentifier.of()));
+
+        // does not transition state and reports same root as candidate's dataAfter
+        final var thirdMod = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
+        assertState(prepared);
+        assertNotSame(mod, thirdMod);
+        assertNotSame(firstMod, thirdMod);
+        assertNotSame(secondMod, thirdMod);
+
+        assertNotSame(mod.snapshotRoot(), thirdMod.snapshotRoot());
+        assertNotSame(firstMod.snapshotRoot(), thirdMod.snapshotRoot());
+        assertSame(candidate.getTipRoot(), thirdMod.snapshotRoot());
+
+        // a further validate() is a no-op
+        tree.validate(mod);
+        assertState(prepared);
     }
 
     @Test
