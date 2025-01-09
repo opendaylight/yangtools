@@ -281,14 +281,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     private void checkIdentifierReferencesData(final YangInstanceIdentifier path,
             final NormalizedNode data) {
-        final PathArgument arg;
-        if (!path.isEmpty()) {
-            arg = path.getLastPathArgument();
-            checkArgument(arg != null, "Instance identifier %s has invalid null path argument", path);
-        } else {
+        var arg = path.getLastPathArgument();
+        if (arg == null) {
+            // no last argument is possible only for root
             arg = rootNode.getIdentifier();
         }
-
         checkIdentifierReferencesData(arg, data);
     }
 
