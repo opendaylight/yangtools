@@ -234,6 +234,11 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
             throw new VerifyException("Attempted to merge non-container " + value);
         }
 
+        // FIXME: Do not call want to modify modification.children here. What we really mean to do is create a temporary
+        //        copy of modification, call modifyChild() on that instance and pass it to applyTouch() instead. Then
+        //        examine the result and propagate its state back to modification.
+        //        Any modifications created from here should be accessed only when we access 'children' for the purposes
+        //        of AbstractModifiedNodeBasedCandidateNode
         for (var c : containerValue.body()) {
             final var id = c.name();
             modification.modifyChild(id, resolveChildOperation(id), version);
