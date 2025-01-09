@@ -162,6 +162,22 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         }
     }
 
+    /**
+     * A ready modification has been completed {@code prepare()} step. This is a terminal state.
+     */
+    @NonNullByDefault
+    private record Prepared(ModifiedNode root, TreeNode prepared) implements State {
+        Prepared {
+            requireNonNull(root);
+            requireNonNull(prepared);
+        }
+
+        @Override
+        public String toString() {
+            return "Prepared";
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
     private static final VarHandle STATE;
