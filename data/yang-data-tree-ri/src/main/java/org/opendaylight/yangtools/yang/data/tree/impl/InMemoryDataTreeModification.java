@@ -538,7 +538,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         finishReady(rootOperation == LogicalOperation.NONE ? Noop.INSTANCE : new Ready(rootNode));
     }
 
-    private LogicalOperation runReady(final ModifiedNode rootNode) {
+    @VisibleForTesting
+    LogicalOperation runReady(final ModifiedNode rootNode) {
         var current = AbstractReadyIterator.create(rootNode, getStrategy());
         do {
             current = current.process(version);
