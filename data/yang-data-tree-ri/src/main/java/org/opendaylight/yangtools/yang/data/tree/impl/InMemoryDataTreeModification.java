@@ -124,8 +124,12 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      *
      * <p>Since all of our state is kept on heap, we prioritize forward progress, so as to detach user state as soon
      * as possible, making it eligible for garbage collection.
+     *
+     * <p>We can transition from this state to
+     * <ul>
+     *   <li>{@link AppliedToSnapshot} via {@code newModification()}</li>
+     * </ul>
      */
-    // TODO: this is a terminal state for now, it needs to be further fleshed out
     @NonNullByDefault
     private record Ready(ModifiedNode root) implements State {
         Ready {
@@ -135,6 +139,28 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         @Override
         public String toString() {
             return "Ready";
+        }
+    }
+
+    /**
+     * The same thing as {@link Ready}, but we have also seen a call to {@code newModification()} and will never touch
+     * modification from that code path.
+     */
+    // TODO: This is a terminal state for now, it needs to be further fleshed out. Most notably root holds the side
+    //       effects of SchemaAwareOperation.apply(), but we do not use those results at all.
+    //       It feels like we should have a specialized transition when we observe this state in validate(), but doing
+    //       so requires a figuring out the relationship between 'applied' and the result of 'prepare': can we just
+    //       reuse the 'applied' when 'snapshot.getRootNode() == current'?
+    @NonNullByDefault
+    private record AppliedToSnapshot(ModifiedNode root, TreeNode applied) implements State {
+        AppliedToSnapshot {
+            requireNonNull(root);
+            requireNonNull(applied);
+        }
+
+        @Override
+        public String toString() {
+            return "AppliedToSnapshot";
         }
     }
 
@@ -223,6 +249,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             rootNode = open.root;
         } else if (local instanceof Ready ready) {
             rootNode = ready.root;
+        } else if (local instanceof AppliedToSnapshot applied) {
+            rootNode = applied.root;
         } else if (local instanceof Noop) {
             // Defer to snapshot
             return Map.entry(YangInstanceIdentifier.of(), snapshot.getRootNode().getData());
@@ -317,25 +345,41 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     public InMemoryDataTreeModification newModification() {
         final var local = acquireState();
         if (local instanceof Ready ready) {
-            return newModification(ready.root);
+            // Hard: we are the first ones to run apply(), perhaps racing with concurrent validate/prepare/commit
+            return newModification(ready);
+        } else if (local instanceof AppliedToSnapshot ready) {
+            // Simple: reuse already computed
+            return newModification(ready.applied);
         } else if (local instanceof Noop) {
-            // Simple fast case: just use the underlying modification
+            // Trivial: just use the underlying modification
             return snapshot.newModification();
         } else {
             throw illegalState(local, "chain on");
         }
     }
 
+    @NonNullByDefault
+    private InMemoryDataTreeModification newModification(final TreeNode rootNode) {
+        return new InMemoryDataTreeSnapshot(snapshot.modelContext(), rootNode, strategyTree).newModification();
+    }
+
     // synchronizes with prepare() and validate() to protect rootNode internals
     @NonNullByDefault
-    private synchronized InMemoryDataTreeModification newModification(final ModifiedNode rootNode) {
+    private synchronized InMemoryDataTreeModification newModification(final Ready ready) {
         // We will use preallocated version, this means returned snapshot will  have same version each time this method
         // is called.
-        final var newRoot = getStrategy().apply(rootNode, snapshotRoot(), version);
-        if (newRoot == null) {
+        final var after = getStrategy().apply(ready.root, snapshotRoot(), version);
+        if (after == null) {
+            // TODO: This precludes non-presence container as a root which completely disappears. I think we need to
+            //       supported a state when we have a non-existent root. IIRC there are other parts of code are not
+            //       ready for that happening just yet.
             throw new IllegalStateException("Data tree root is not present, possibly removed by previous modification");
         }
-        return new InMemoryDataTreeSnapshot(snapshot.modelContext(), newRoot, strategyTree).newModification();
+
+        // We are about to release exit a synchronized method, which implies a release fence. We therefore use only
+        // a plain set() here.
+        STATE.set(this, new AppliedToSnapshot(ready.root, after));
+        return newModification(after);
     }
 
     Version getVersion() {
@@ -397,6 +441,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             rootNode = open.root;
         } else if (local instanceof Ready ready) {
             rootNode = ready.root;
+        } else if (local instanceof AppliedToSnapshot applied) {
+            rootNode = applied.root;
         } else if (local instanceof Noop) {
             // Nothing to apply
             return;
@@ -502,6 +548,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final var local = acquireState();
         if (local instanceof Ready ready) {
             rootNode = ready.root;
+        } else if (local instanceof AppliedToSnapshot applied) {
+            rootNode = applied.root;
         } else if (local instanceof Noop) {
             // Nothing to validate
             return;
@@ -530,6 +578,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final var local = acquireState();
         if (local instanceof Ready ready) {
             return prepare(ready.root, path, current);
+        } else if (local instanceof AppliedToSnapshot applied) {
+            return prepare(applied.root, path, current);
         } else if (local instanceof Noop) {
             // Nothing to prepare
             return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);

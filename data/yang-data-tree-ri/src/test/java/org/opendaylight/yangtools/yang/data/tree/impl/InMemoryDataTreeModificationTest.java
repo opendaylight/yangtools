@@ -63,37 +63,36 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
             .build());
         mod.ready();
-        final var ready = assertState("Ready");
+        assertState("Ready");
 
         // transitions state
         final var firstMod = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
+        final var applied = assertState("AppliedToSnapshot");
         assertNotSame(mod, firstMod);
         assertNotSame(mod.snapshotRoot(), firstMod.snapshotRoot());
-        assertState(ready);
 
         // does not transition state, but reuses underlying snapshot root node
         final var secondMod = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
-        assertState(ready);
+        assertState(applied);
         assertNotSame(mod, secondMod);
         assertNotSame(mod.snapshotRoot(), secondMod.snapshotRoot());
         assertNotSame(firstMod, secondMod);
-        // FIXME: we should return the same snapshot
-        assertNotSame(firstMod.snapshotRoot(), secondMod.snapshotRoot());
+        assertSame(firstMod.snapshotRoot(), secondMod.snapshotRoot());
 
         // validate is a no-op as we have already
         tree.validate(mod);
-        assertState(ready);
+        assertState(applied);
 
         final var candidate = tree.prepare(mod);
         assertNotNull(candidate);
         // FIXME: candidate does not transition for now: extend checks once it does, including a subsequent
         //        newModification()
-        assertState(ready);
+        assertState(applied);
 
         tree.commit(candidate);
         // TODO: we really would like to have a dedicated state which routes to the data tree for 'newModification'
         //       et al.
-        assertState(ready);
+        assertState(applied);
     }
 
     @Test
@@ -134,7 +133,7 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
         assertState("Ready");
 
         assertNotNull(mod.newModification());
-        final var applied = assertState("Ready");
+        final var applied = assertState("AppliedToSnapshot");
 
         doNothing().when(cursor).write(eq(data.name()), same(data));
         mod.applyToCursor(cursor);
