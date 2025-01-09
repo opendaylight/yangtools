@@ -234,6 +234,22 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
             throw new VerifyException("Attempted to merge non-container " + value);
         }
 
+        // FIXME: We are modifying modification.children here, which means readers must not run parallel to this method.
+        //        Those are not interested in the nodes we create here anyway, as these are needed only for
+        //        AbstractModifiedNodeBasedCandidateNode consumption, for whose purposes we pretend to be a
+        //        SUBTREE_MODIFIED.
+        //
+        //        What we really mean to do is create a temporary copy of modification, call modifyChild() on that
+        //        instance and pass it to applyTouch() instead. Then examine the result and propagate its state back to
+        //        modification.
+        //
+        //        At the end of the day what is happening here is we are resolving how this LogicalOperation.MERGE would
+        //        look like in terms of TOUCH with child operations. There are three possible outcomes:
+        //
+        //        1) UNMODIFIED, i.e. it does not matter what the modification did, or
+        //        2) SUBTREE_MODIFIED with some child nodes coming from modification.children and
+        //           a: nothing else, or
+        //           b: the nodes we create here
         for (var c : containerValue.body()) {
             final var id = c.name();
             modification.modifyChild(id, resolveChildOperation(id), version);
