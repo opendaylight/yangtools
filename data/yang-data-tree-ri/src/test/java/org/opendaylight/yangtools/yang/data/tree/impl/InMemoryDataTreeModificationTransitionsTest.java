@@ -1,0 +1,92 @@
+/*
+ * Copyright (c) 2025 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.tree.impl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.spy;
+
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
+import org.opendaylight.yangtools.yang.data.tree.impl.InMemoryDataTreeModification.State;
+import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
+
+/**
+ * {@link InMemoryDataTreeModification} state transitions. Relies on Mockito's mocking of final classes to control code
+ * flow and inject unexpected errors;
+ */
+@ExtendWith(MockitoExtension.class)
+class InMemoryDataTreeModificationTransitionsTest extends AbstractTestModelTest {
+    @Mock
+    private DataTreeModificationCursor cursor;
+    private DataTree tree;
+    private InMemoryDataTreeModification mod;
+
+    @BeforeEach
+    void beforeEach() {
+        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
+        final var real = assertInstanceOf(InMemoryDataTreeModification.class, tree.takeSnapshot().newModification());
+        mod = spy(real);
+    }
+
+    @Test
+    void testReadyDefunct() {
+        final var threadName = UUID.randomUUID().toString();
+        final var cause = new Throwable("some text");
+        doAnswer(inv -> {
+            // propagate thread name and perform the equivalent of a sneaky throws
+            Thread.currentThread().setName(threadName);
+            throw cause;
+        }).when(mod).runReady(any());
+
+        mod.delete(TestModel.TEST_PATH);
+        assertSame(cause, assertThrowsExactly(Throwable.class, mod::ready));
+
+        final var defunct = mod.acquireState();
+        assertEquals("Defunct{threadName=" + threadName + ", cause=" + cause + "}", defunct.toString());
+
+        assertISE(defunct, cause, "ready", mod::ready);
+        assertISE(defunct, cause, "chain on", mod::newModification);
+        assertISE(defunct, cause, "access data of", () -> mod.readNode(YangInstanceIdentifier.of()));
+        assertISE(defunct, cause, "access contents of", () -> mod.applyToCursor(cursor));
+
+        assertIAE(defunct, cause, "validate", () -> tree.validate(mod));
+        assertIAE(defunct, cause, "prepare", () -> tree.prepare(mod));
+    }
+
+    private void assertIAE(final State defunct, final Throwable cause, final String op, final Executable executable) {
+        final var ex = assertThrowsExactly(IllegalArgumentException.class, executable);
+        final var ise = assertInstanceOf(IllegalStateException.class, ex.getCause());
+        assertSame(cause, ise.getCause());
+        assertDefunct(defunct, op, ise);
+    }
+
+    private void assertISE(final State defunct, final Throwable cause, final String op, final Executable executable) {
+        final var ex = assertThrowsExactly(IllegalStateException.class, executable);
+        assertSame(cause, ex.getCause());
+        assertDefunct(defunct, op, ex);
+    }
+
+    private void assertDefunct(final State defunct, final String op, final IllegalStateException ex) {
+        assertEquals("Attempted to " + op + " modification in state " + defunct, ex.getMessage());
+        assertSame(defunct, mod.acquireState());
+    }
+}
