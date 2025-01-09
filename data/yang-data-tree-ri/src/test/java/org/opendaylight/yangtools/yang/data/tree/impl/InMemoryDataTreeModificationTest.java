@@ -113,11 +113,21 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
         tree.validate(mod);
         assertSame(applied, mod.acquireState());
 
-        final var candidate = tree.prepare(mod);
-        assertNotNull(candidate);
-        // FIXME: candidate does not transition for now: extend checks once it does, including a subsequent
-        //        newModification()
-        assertSame(applied, mod.acquireState());
+        // transitions state
+        final var candidate = assertInstanceOf(InMemoryDataTreeCandidate.class, tree.prepare(mod));
+        final var prepared = mod.acquireState();
+        assertEquals("Prepared", prepared.toString());
+
+        // does not transition state and reports same root as candidate's dataAfter
+        final var thirdMod = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
+        assertSame(prepared, mod.acquireState());
+        assertNotSame(mod, thirdMod);
+        assertNotSame(firstMod, thirdMod);
+        assertNotSame(secondMod, thirdMod);
+
+        assertNotSame(mod.snapshotRoot(), thirdMod.snapshotRoot());
+        assertNotSame(firstMod.snapshotRoot(), thirdMod.snapshotRoot());
+        assertSame(candidate.getTipRoot(), thirdMod.snapshotRoot());
     }
 
     @Test
