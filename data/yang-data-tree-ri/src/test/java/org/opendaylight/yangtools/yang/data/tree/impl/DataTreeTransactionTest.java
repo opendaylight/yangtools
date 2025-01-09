@@ -43,13 +43,13 @@ class DataTreeTransactionTest extends AbstractTestModelTest {
 
     @Test
     void testUnsealedValidate() {
-        final var ex = assertThrows(IllegalArgumentException.class, () -> tree.validate(mod));
+        final var ex = assertThrows(IllegalStateException.class, () -> tree.validate(mod));
         assertEquals("Attempted to validate modification in state Open", ex.getMessage());
     }
 
     @Test
     void testUnsealedPrepare() {
-        final var ex = assertThrows(IllegalArgumentException.class, () -> tree.prepare(mod));
+        final var ex = assertThrows(IllegalStateException.class, () -> tree.prepare(mod));
         assertEquals("Attempted to prepare modification in state Open", ex.getMessage());
     }
 }
