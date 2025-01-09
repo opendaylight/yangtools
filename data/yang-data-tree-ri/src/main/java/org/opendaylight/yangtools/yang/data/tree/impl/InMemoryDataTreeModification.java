@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
@@ -126,9 +127,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      * <p>Since all of our state is kept on heap, we prioritize forward progress, so as to detach user state as soon
      * as possible, making it eligible for garbage collection.
      *
-     * <p>We can transition from this state to
+     * <p>A transition from this state requires holding a lock to establish either one of
      * <ul>
      *   <li>{@link AppliedToSnapshot} via {@code newModification()}</li>
+     *   <li>{@link Prepared} via {@code prepare()}</li>
      * </ul>
      */
     @NonNullByDefault
@@ -145,10 +147,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     /**
      * The same thing as {@link Ready}, but we have also seen a call to {@code newModification()} and will never touch
-     * modification from that code path.
+     * modification from that code path. We can transition from this state to {@link Prepared} via a locked operation.
      */
-    // TODO: This is a terminal state for now, it needs to be further fleshed out. Most notably root holds the side
-    //       effects of SchemaAwareOperation.apply(), but we do not use those results at all.
+    // TODO: Transition to Prepared needs to be further fleshed out. Most notably root holds the side effects of
+    //       SchemaAwareOperation.apply(), but we do not use those results at all.
     //       It feels like we should have a specialized transition when we observe this state in validate(), but doing
     //       so requires a figuring out the relationship between 'applied' and the result of 'prepare': can we just
     //       reuse the 'applied' when 'snapshot.getRootNode() == current'?
@@ -162,6 +164,22 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         @Override
         public String toString() {
             return "AppliedToSnapshot";
+        }
+    }
+
+    /**
+     * A ready modification has been completed {@code prepare()} step. This is a terminal state.
+     */
+    @NonNullByDefault
+    private record Prepared(ModifiedNode root, TreeNode applied) implements State {
+        Prepared {
+            requireNonNull(root);
+            requireNonNull(applied);
+        }
+
+        @Override
+        public String toString() {
+            return "Prepared";
         }
     }
 
@@ -263,6 +281,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             case Open(var root) -> rootNode = root;
             case Ready(var root) -> rootNode = root;
             case AppliedToSnapshot ready -> rootNode = ready.root;
+            case Prepared prepared -> rootNode = prepared.root;
             default -> throw illegalState(local, "access data of");
         }
 
@@ -360,40 +379,51 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
                 LOG.trace("No-op newModification()");
                 yield snapshot.newModification();
             }
-            case AppliedToSnapshot ready -> {
-                // Simple: reuse already computed
-                LOG.trace("Concurrent newModification() in state {}", ready);
-                yield newModification(ready.applied);
-            }
-            case Ready ready -> newModification(ready);
+            case AppliedToSnapshot ready -> concurrentNewModification(ready, ready.applied);
+            case Prepared prepared -> concurrentNewModification(prepared, prepared.applied);
+            case Ready ready -> lockedNewModification(ready);
             default -> throw illegalState(local, "chain on");
         };
-    }
-
-    // synchronizes with prepare() and validate() to protect rootNode internals
-    @NonNullByDefault
-    private synchronized InMemoryDataTreeModification newModification(final Ready ready) {
-        LOG.trace("Locked newModification() in state {}", ready);
-
-        // We will use preallocated version, this means returned snapshot will  have same version each time this method
-        // is called.
-        final var after = getStrategy().apply(ready.root, snapshotRoot(), version);
-        if (after == null) {
-            // TODO: This precludes non-presence container as a root which completely disappears. I think we need to
-            //       supported a state when we have a non-existent root. IIRC there are other parts of code are not
-            //       ready for that happening just yet.
-            throw new IllegalStateException("Data tree root is not present, possibly removed by previous modification");
-        }
-
-        // We are about to release exit a synchronized method, which implies a release fence. We therefore use only
-        // a plain set() here.
-        STATE.set(this, new AppliedToSnapshot(ready.root, after));
-        return newModification(after);
     }
 
     @NonNullByDefault
     private InMemoryDataTreeModification newModification(final TreeNode rootNode) {
         return new InMemoryDataTreeSnapshot(snapshot.modelContext(), rootNode, strategyTree).newModification();
+    }
+
+    @NonNullByDefault
+    private InMemoryDataTreeModification concurrentNewModification(final State observed, final TreeNode rootNode) {
+        // Simple: reuse already computed
+        LOG.trace("Concurrent newModification() in state {}", observed);
+        return newModification(rootNode);
+    }
+
+    // We have observed the need to transition from Ready to AppliedToSnapshot. The lock held here protects rootNode
+    // internals and precludes concurrent validate() and newModification().
+    @NonNullByDefault
+    private synchronized InMemoryDataTreeModification lockedNewModification(final Ready prev) {
+        // state may have changed while we were waiting to acquire the lock, so re-check to see whar are we to do
+        final var local = plainState();
+        LOG.trace("Locked newModification() in state {}", local);
+
+        return switch (local) {
+            case AppliedToSnapshot ready -> newModification(ready.applied);
+            case Prepared prepared -> newModification(prepared.applied);
+            case Ready ready -> {
+                final var after = getStrategy().apply(ready.root, snapshotRoot(), version);
+                if (after == null) {
+                    // TODO: This precludes non-presence container as a root which completely disappears. I think we
+                    //       need to supported a state when we have a non-existent root. IIRC there are other parts of
+                    //       code are not ready for that happening just yet.
+                    throw new IllegalStateException(
+                        "Data tree root is not present, possibly removed by previous modification");
+                }
+
+                STATE.set(this, new AppliedToSnapshot(ready.root, after));
+                yield newModification(after);
+            }
+            default -> throw new VerifyException("Unexpected transition from " + prev + " to " + local);
+        };
     }
 
     Version getVersion() {
@@ -459,6 +489,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             case Open(var root) -> rootNode = root;
             case Ready(var root) -> rootNode = root;
             case AppliedToSnapshot ready -> rootNode = ready.root;
+            case Prepared prepared -> rootNode = prepared.root;
             default -> throw illegalState(local, "access contents of");
         }
 
@@ -572,6 +603,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             }
             case Ready(var root) -> rootNode = root;
             case AppliedToSnapshot ready -> rootNode = ready.root;
+            case Prepared prepared -> {
+                LOG.trace("Skipping validate() in state {}", prepared);
+                return;
+            }
             default -> throw illegalState(local, "validate");
         }
 
@@ -600,24 +635,40 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
                 LOG.trace("No-op prepare()");
                 yield new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
             }
-            case Ready ready -> prepare(ready, ready.root, path, current);
-            case AppliedToSnapshot ready -> prepare(ready, ready.root, path, current);
+            case Ready ready -> prepare(ready, path, current);
+            case AppliedToSnapshot ready -> prepare(ready, path, current);
+            case Prepared prepared -> prepare(prepared, path, current);
             default -> throw illegalState(local, "prepare");
         };
     }
 
     // synchronizes with newModification() and validate() to protect rootNode internals
     @NonNullByDefault
-    private synchronized InMemoryDataTreeCandidate prepare(final State observed, final ModifiedNode rootNode,
-            final YangInstanceIdentifier path, final TreeNode current) {
-        LOG.trace("Locked prepare() in state {}", observed);
+    private synchronized DataTreeCandidateTip prepare(final State prev, final YangInstanceIdentifier path,
+            final TreeNode current) {
+        final var local = plainState();
+        LOG.trace("Locked prepare() in state {}", local);
+
+        final ModifiedNode rootNode;
+        switch (local) {
+            case Noop noop -> {
+                return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
+            }
+            case Ready(var root) -> rootNode = root;
+            case AppliedToSnapshot ready -> rootNode = ready.root;
+            case Prepared prepared -> rootNode = prepared.root;
+            default -> throw new VerifyException("Unexpected transition from " + prev + " to " + local);
+        }
 
         final var newRoot = getStrategy().apply(rootNode, current, version);
         if (newRoot == null) {
             // FIXME: this should be a VerifyException
             throw new IllegalStateException("Apply strategy failed to produce root node for modification " + this);
         }
-        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, newRoot);
+
+        final var candidate = new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, newRoot);
+        STATE.set(this, new Prepared(rootNode, newRoot));
+        return candidate;
     }
 
     /**
@@ -635,6 +686,12 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @NonNullByDefault
     State acquireState() {
         return verifyNotNull((State) STATE.getAcquire(this));
+    }
+
+    // Note: must only be called as the first action after acquiring the the lock on this object
+    @NonNullByDefault
+    private State plainState() {
+        return verifyNotNull((State) STATE.get(this));
     }
 
     @NonNullByDefault
