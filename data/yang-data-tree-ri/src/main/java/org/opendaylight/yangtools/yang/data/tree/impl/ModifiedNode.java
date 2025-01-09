@@ -65,17 +65,17 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     // lifecycle: each of validate(), prepare() and newModification() can end up calling
     // SchemaAwareApplyOperation.apply(), at which both of these can be updated.
     //
-    // 'children' also serves a secondary view, as it is used by AbstractModifiedNodeBasedCandidateNode along with
-    // 'modType' below to provide DataTreeCandidateNode interface.
+    // FIXME: 'children' also serves a secondary view, as it is used by AbstractModifiedNodeBasedCandidateNode along
+    //        with 'modType' below to provide DataTreeCandidateNode interface.
     //
-    // NOTE: Original design called for 'children' to be effectively immutable after seal(), we can end up expanding
-    //       them when a MERGE encounters pre-existing data: see how
-    //       AbstractNodeContainerModificationStrategy.applyMerge() ends up calling to modifyChild() to turn the MERGE
-    //       into effectively a TOUCH and with a series of child MERGE operations.
+    //        Original design called for 'children' to be effectively immutable after seal(), but we can end up
+    //        expanding them when a MERGE encounters pre-existing data via
+    //        AbstractNodeContainerModificationStrategy.applyMerge().
     //
-    //       If we ever want to restore this design, we need to replace AbstractModifiedNodeBasedCandidateNode with a
-    //       tree of ImmutableCandidateNodes. That is a tough cookie, as we currently populate the effective state as
-    //       a side-effect of apply(), but the DataTreeCandidateNode view is only needed in after the prepare() stage.
+    //        There we call modifyChild() to turn the MERGE into effectively a TOUCH and with a series of child MERGE
+    //        operations. ModifiedNodes created therein are only needed when we use this ModifiedNode as the backing
+    //        store for AbstractModifiedNodeBasedCandidateNode -- which should only happen after we run prepare(). They
+    //        should not be considered when we access children as the source for DataTreeModification.applyToCursor().
     private final Map<PathArgument, ModifiedNode> children;
     private LogicalOperation operation = LogicalOperation.NONE;
 
@@ -324,6 +324,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return snapshot;
     }
 
+    // FIXME: This method should only be executed when the corresponding DataTreeModification is Open. The idea is that
+    //        'operation' and 'children' are consistent immutable view of when observed from DataTreeModification.Ready
+    //        onwards.
     void updateOperationType(final LogicalOperation type) {
         operation = type;
         modType = null;
