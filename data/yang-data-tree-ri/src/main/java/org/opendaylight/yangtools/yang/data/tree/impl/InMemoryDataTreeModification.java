@@ -363,6 +363,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     // synchronizes with validate() and prepare() to protect rootNode internals
     @NonNullByDefault
     private synchronized InMemoryDataTreeModification newModification(final Ready ready) {
+        beforeNewModification();
         // We will use preallocated version, this means returned snapshot will  have same version each time this method
         // is called.
         final var after = getStrategy().apply(ready.root, snapshot.getRootNode(), version);
@@ -375,6 +376,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
         STATE.setRelease(this, new AppliedToSnapshot(ready.root, after));
         return newModification(after);
+    }
+
+    @VisibleForTesting
+    void beforeNewModification() {
+        // production no-op implementation
     }
 
     Version getVersion() {
@@ -556,7 +562,13 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @NonNullByDefault
     private synchronized void validate(final ModifiedNode rootNode, final YangInstanceIdentifier path,
             final TreeNode current) throws DataValidationFailedException {
+        beforeValidate();
         getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
+    }
+
+    @VisibleForTesting
+    void beforeValidate() {
+        // production no-op implementation
     }
 
     /**
@@ -584,12 +596,18 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @NonNullByDefault
     private synchronized InMemoryDataTreeCandidate prepare(final ModifiedNode rootNode,
             final YangInstanceIdentifier path, final TreeNode current) {
+        beforePrepare();
         final var newRoot = getStrategy().apply(rootNode, current, version);
         if (newRoot == null) {
             // FIXME: this should be a VerifyException
             throw new IllegalStateException("Apply strategy failed to produce root node for modification " + this);
         }
         return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, newRoot);
+    }
+
+    @VisibleForTesting
+    void beforePrepare() {
+        // production no-op implementation
     }
 
     // getAcquire() of State
