@@ -49,7 +49,9 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     /**
-     * Initial state: the modification is open to data operations.
+     * Initial state: the modification is open to data operations. We do not care about concurrent access: initial build
+     * up is supposed to happen in a single thread. If that is not the case, it is up to the user to provide necessary
+     * coordination between her threads.
      */
     @NonNullByDefault
     private record Open(ModifiedNode root) implements State {
