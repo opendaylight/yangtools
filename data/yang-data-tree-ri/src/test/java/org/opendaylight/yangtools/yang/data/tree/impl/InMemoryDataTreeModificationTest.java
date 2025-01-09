@@ -178,15 +178,8 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
         assertISE(defunct, cause, "access data of", () -> mod.readNode(YangInstanceIdentifier.of()));
         assertISE(defunct, cause, "access contents of", () -> mod.applyToCursor(cursor));
 
-        assertIAE(defunct, cause, "validate", () -> tree.validate(mod));
-        assertIAE(defunct, cause, "prepare", () -> tree.prepare(mod));
-    }
-
-    private void assertIAE(final State defunct, final Throwable cause, final String op, final Executable executable) {
-        final var ex = assertThrowsExactly(IllegalArgumentException.class, executable);
-        final var ise = assertInstanceOf(IllegalStateException.class, ex.getCause());
-        assertSame(cause, ise.getCause());
-        assertDefunct(defunct, op, ise);
+        assertISE(defunct, cause, "validate", () -> tree.validate(mod));
+        assertISE(defunct, cause, "prepare", () -> tree.prepare(mod));
     }
 
     private void assertISE(final State defunct, final Throwable cause, final String op, final Executable executable) {

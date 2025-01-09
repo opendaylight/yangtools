@@ -28,24 +28,12 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
 
     @Override
     public final void validate(final DataTreeModification modification) throws DataValidationFailedException {
-        final var mod = accessMod(modification);
-        try {
-            mod.validate(getRootPath(), getTipRoot());
-        } catch (IllegalStateException e) {
-            // API-compat conversion
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        accessMod(modification).validate(getRootPath(), getTipRoot());
     }
 
     @Override
     public final DataTreeCandidateTip prepare(final DataTreeModification modification) {
-        final var mod = accessMod(modification);
-        try {
-            return mod.prepare(getRootPath(), getTipRoot());
-        } catch (IllegalStateException e) {
-            // API-compat conversion
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        return accessMod(modification).prepare(getRootPath(), getTipRoot());
     }
 
     private static InMemoryDataTreeModification accessMod(final DataTreeModification mod) {
