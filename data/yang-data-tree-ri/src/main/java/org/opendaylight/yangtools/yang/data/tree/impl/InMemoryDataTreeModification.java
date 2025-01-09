@@ -252,11 +252,13 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         } else if (local instanceof AppliedToSnapshot applied) {
             rootNode = applied.root;
         } else if (local instanceof Noop) {
-            // Defer to snapshot
+            LOG.trace("No-op resolveSnapshot()");
             return Map.entry(YangInstanceIdentifier.of(), snapshot.getRootNode().getData());
         } else {
             throw illegalState(local, "access data of");
         }
+
+        LOG.trace("Concurrent resolveSnapshot() in state {}", local);
 
         // Walk the tree from the top, looking for the first node between root and the requested path which has been
         // modified. If no such node exists, we use the node itself.
@@ -349,23 +351,22 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             return newModification(ready);
         } else if (local instanceof AppliedToSnapshot ready) {
             // Simple: reuse already computed
+            LOG.trace("Concurrent newModification() in state {}", ready);
             return newModification(ready.applied);
         } else if (local instanceof Noop) {
             // Trivial: just use the underlying modification
+            LOG.trace("No-op newModification()");
             return snapshot.newModification();
         } else {
             throw illegalState(local, "chain on");
         }
     }
 
-    @NonNullByDefault
-    private InMemoryDataTreeModification newModification(final TreeNode rootNode) {
-        return new InMemoryDataTreeSnapshot(snapshot.modelContext(), rootNode, strategyTree).newModification();
-    }
-
     // synchronizes with prepare() and validate() to protect rootNode internals
     @NonNullByDefault
     private synchronized InMemoryDataTreeModification newModification(final Ready ready) {
+        LOG.trace("Locked newModification() in state {}", ready);
+
         // We will use preallocated version, this means returned snapshot will  have same version each time this method
         // is called.
         final var after = getStrategy().apply(ready.root, snapshotRoot(), version);
@@ -380,6 +381,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         // a plain set() here.
         STATE.set(this, new AppliedToSnapshot(ready.root, after));
         return newModification(after);
+    }
+
+    @NonNullByDefault
+    private InMemoryDataTreeModification newModification(final TreeNode rootNode) {
+        return new InMemoryDataTreeSnapshot(snapshot.modelContext(), rootNode, strategyTree).newModification();
     }
 
     Version getVersion() {
@@ -444,11 +450,13 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         } else if (local instanceof AppliedToSnapshot applied) {
             rootNode = applied.root;
         } else if (local instanceof Noop) {
-            // Nothing to apply
+            LOG.trace("No-op applyToCursor()");
             return;
         } else {
             throw illegalState(local, "access contents of");
         }
+
+        LOG.trace("Concurrent applyToCursor() in state {}", local);
         applyChildren(cursor, rootNode);
     }
 
@@ -489,6 +497,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
                 "Concurrent ready of " + this + ", state changed from " + open + " to " + witness);
         }
 
+        LOG.trace("Ready operation started");
         ready(open.root);
     }
 
@@ -531,6 +540,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         //
         // Now we just publish that state to acquireState()
         STATE.setRelease(this, nextState);
+
+        // Log only afterwards because we may be executing as part of catching an OutOfMemoryError and LOG.trace() may
+        // invoke nextState().toString(), which might want to allocate memory.
+        LOG.trace("Ready operation completed in state {}", nextState);
     }
 
     /**
@@ -551,7 +564,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         } else if (local instanceof AppliedToSnapshot applied) {
             rootNode = applied.root;
         } else if (local instanceof Noop) {
-            // Nothing to validate
+            LOG.trace("No-op validate()");
             return;
         } else {
             throw illegalState(local, "validate");
@@ -559,6 +572,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
         // synchronizes with newModification() and prepare() to protect rootNode internals
         synchronized (this) {
+            LOG.trace("Locked validate() in state {}", local);
             getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
         }
     }
@@ -577,11 +591,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
         final var local = acquireState();
         if (local instanceof Ready ready) {
-            return prepare(ready.root, path, current);
+            return prepare(ready, ready.root, path, current);
         } else if (local instanceof AppliedToSnapshot applied) {
-            return prepare(applied.root, path, current);
+            return prepare(applied, applied.root, path, current);
         } else if (local instanceof Noop) {
-            // Nothing to prepare
+            LOG.trace("No-op prepare()");
             return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
         } else {
             throw illegalState(local, "prepare");
@@ -590,8 +604,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     // synchronizes with newModification() and validate() to protect rootNode internals
     @NonNullByDefault
-    private synchronized InMemoryDataTreeCandidate prepare(final ModifiedNode rootNode,
+    private synchronized InMemoryDataTreeCandidate prepare(final State observed, final ModifiedNode rootNode,
             final YangInstanceIdentifier path, final TreeNode current) {
+        LOG.trace("Locked prepare() in state {}", observed);
+
         final var newRoot = getStrategy().apply(rootNode, current, version);
         if (newRoot == null) {
             // FIXME: this should be a VerifyException
