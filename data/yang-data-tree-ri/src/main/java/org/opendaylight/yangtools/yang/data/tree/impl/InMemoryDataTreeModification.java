@@ -201,6 +201,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         version = snapshot.getRootNode().subtreeVersion().next();
     }
 
+    @VisibleForTesting
+    @NonNull TreeNode snapshotRoot() {
+        return snapshot.getRootNode();
+    }
+
     ModificationApplyOperation getStrategy() {
         final var ret = strategyTree.delegate();
         if (ret == null) {
@@ -382,7 +387,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
         // We will use preallocated version, this means returned snapshot will  have same version each time this method
         // is called.
-        final var after = getStrategy().apply(ready.root, snapshot.getRootNode(), version);
+        final var after = getStrategy().apply(ready.root, snapshotRoot(), version);
         if (after == null) {
             // TODO: This precludes non-presence container as a root which completely disappears. I think we need to
             //       supported a state when we have a non-existent root. IIRC there are other parts of code are not
