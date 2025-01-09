@@ -14,7 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 
 import java.util.UUID;
@@ -126,5 +129,64 @@ class InMemoryDataTreeModificationTransitionsTest extends AbstractTestModelTest 
         // FIXME: candidate does not transition for now: extend checks once it does, including a subsequent
         //        newModification()
         assertSame(applied, mod.acquireState());
+    }
+
+    @Test
+    void testOpenEmptyApplyToCursor() {
+        mod.applyToCursor(cursor);
+        assertEquals("Open", mod.acquireState().toString());
+    }
+
+    @Test
+    void testNoopApplyToCursor() {
+        mod.ready();
+        final var state = mod.acquireState();
+        assertEquals("Noop", state.toString());
+        mod.applyToCursor(cursor);
+        assertSame(state, mod.acquireState());
+    }
+
+    @Test
+    void testReadyApplyCursor() {
+        final var data = ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .build();
+        mod.write(TestModel.TEST_PATH, data);
+        mod.ready();
+        final var ready = mod.acquireState();
+        assertEquals("Ready", ready.toString());
+
+        doNothing().when(cursor).write(eq(data.name()), same(data));
+        mod.applyToCursor(cursor);
+        assertSame(ready, mod.acquireState());
+    }
+
+    @Test
+    void testNewModificationApplyCursor() {
+        final var data = ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+            .build();
+        mod.write(TestModel.TEST_PATH, data);
+        mod.ready();
+        assertEquals("Ready", mod.acquireState().toString());
+
+        assertNotNull(mod.newModification());
+        final var applied = mod.acquireState();
+        assertEquals("AppliedToSnapshot", applied.toString());
+
+        doNothing().when(cursor).write(eq(data.name()), same(data));
+        mod.applyToCursor(cursor);
+        assertSame(applied, mod.acquireState());
+    }
+
+    @Test
+    void testNoopNewModification() {
+        mod.ready();
+        final var state = mod.acquireState();
+        assertEquals("Noop", state.toString());
+
+        final var next = assertInstanceOf(InMemoryDataTreeModification.class, mod.newModification());
+        assertSame(state, mod.acquireState());
+        assertSame(mod.snapshotRoot(), next.snapshotRoot());
     }
 }
