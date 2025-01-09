@@ -21,9 +21,9 @@ public interface DataTreeTip {
      * Validate whether a particular modification can be applied to the data tree.
      *
      * @param modification Data tree modification.
-     * @throws DataValidationFailedException If modification data is not valid.
      * @throws NullPointerException if modification is null
      * @throws IllegalArgumentException if modification is unrecognized
+     * @throws IllegalStateException if modification is in wrong state
      * @throws DataValidationFailedException if modification would result in inconsistent data tree
      */
     void validate(DataTreeModification modification) throws DataValidationFailedException;
@@ -35,6 +35,7 @@ public interface DataTreeTip {
      * @return candidate data tree
      * @throws NullPointerException if modification is null
      * @throws IllegalArgumentException if modification is unrecognized
+     * @throws IllegalStateException if modification is in wrong state
      * @throws DataValidationFailedException if modification would result in inconsistent data tree
      */
     DataTreeCandidateTip prepare(DataTreeModification modification) throws DataValidationFailedException;
