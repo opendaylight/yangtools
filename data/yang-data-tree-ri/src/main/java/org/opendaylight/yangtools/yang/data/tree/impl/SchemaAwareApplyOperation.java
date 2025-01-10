@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -205,7 +204,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
                     // structure is usually verified when the transaction is sealed. To preserve correctness, we have
                     // to run that validation here.
                     modification.resolveModificationType(ModificationType.WRITE);
-                    result = applyWrite(modification, modification.getWrittenValue(), null, version);
+                    result = applyWrite(modification, modification.getValue(), null, version);
                     fullVerifyStructure(result.data());
                 } else {
                     result = applyMerge(modification, currentMeta, version);
@@ -215,8 +214,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
             }
             case WRITE -> {
                 modification.resolveModificationType(ModificationType.WRITE);
-                yield modification.setSnapshot(applyWrite(modification, verifyNotNull(modification.getWrittenValue()),
-                    currentMeta, version));
+                yield modification.setSnapshot(applyWrite(modification, modification.getValue(), currentMeta, version));
             }
             case NONE -> {
                 modification.resolveModificationType(ModificationType.UNMODIFIED);

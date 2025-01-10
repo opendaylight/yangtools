@@ -8,9 +8,12 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 
 /**
@@ -24,6 +27,16 @@ abstract sealed class NodeModification implements Identifiable<PathArgument> per
      * @return Operation type.
      */
     abstract LogicalOperation getOperation();
+
+    /**
+     * Return the value which was written to this node. The returned object is only valid for
+     * {@link LogicalOperation#MERGE} and {@link LogicalOperation#WRITE}.
+     * operations. It should only be consulted when this modification is going to end up being
+     * {@link ModificationType#WRITE}.
+     *
+     * @return Currently-written value
+     */
+    abstract @NonNull NormalizedNode getValue();
 
     /**
      * Get the original tree node to which the modification is to be applied.
