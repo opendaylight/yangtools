@@ -259,33 +259,23 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     private Entry<YangInstanceIdentifier, ModifiedNode> resolveTerminal(final YangInstanceIdentifier path) {
         final var local = acquireState();
         return switch (local) {
-            case Open open -> {
-                LOG.trace("Concurrent resolveTerminal() in state {}", open);
-                yield resolveTerminal(open.root, path);
-            }
-            case Ready ready -> lockedResolveTerminal(ready, ready.root, path);
-            case AppliedToSnapshot ready -> lockedResolveTerminal(ready, ready.root, path);
+            case Open open -> resolveTerminal(open, open.root, path);
+            case Ready ready -> resolveTerminal(ready, ready.root, path);
+            case AppliedToSnapshot ready -> resolveTerminal(ready, ready.root, path);
             default -> throw illegalState(local, "access data of");
         };
     }
 
-    private static Entry<YangInstanceIdentifier, ModifiedNode> resolveTerminal(final ModifiedNode rootNode,
-            final YangInstanceIdentifier path) {
+    private static Entry<YangInstanceIdentifier, ModifiedNode> resolveTerminal(final State observed,
+            final ModifiedNode rootNode, final YangInstanceIdentifier path) {
+        LOG.trace("Concurrent resolveTerminal() in state {}", observed);
+
         // Walk the tree from the top, looking for the first node between root and the requested path which has been
         // modified. If no such node exists, we use the node itself.
         return StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path, input -> switch (input.getOperation()) {
             case DELETE, MERGE, WRITE -> true;
             case TOUCH, NONE -> false;
         });
-    }
-
-    // FIXME: this should be fine to run concurrently, provided that getOperation() and rootNode.childByArg() are
-    //        effectively immutable
-    @SuppressWarnings("static-method")
-    private synchronized Entry<YangInstanceIdentifier, ModifiedNode> lockedResolveTerminal(final State observed,
-            final ModifiedNode rootNode, final YangInstanceIdentifier path) {
-        LOG.trace("Locked resolveTerminal() in state {}", observed);
-        return resolveTerminal(rootNode, path);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -460,29 +450,17 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final var local = acquireState();
         switch (local) {
             case Noop noop -> LOG.trace("No-op applyToCursor()");
-            case Open open -> concurrentApplyToCursor(open, cursor, open.root);
-            case Ready ready -> lockedApplyToCursor(ready, cursor, ready.root);
-            case AppliedToSnapshot ready -> lockedApplyToCursor(ready, cursor, ready.root);
+            case Open open -> applyToCursor(open, cursor, open.root);
+            case Ready ready -> applyToCursor(ready, cursor, ready.root);
+            case AppliedToSnapshot ready -> applyToCursor(ready, cursor, ready.root);
             default -> throw illegalState(local, "access contents of");
         }
     }
 
     @NonNullByDefault
-    private static void concurrentApplyToCursor(final State observed, final DataTreeModificationCursor cursor,
+    private static void applyToCursor(final State observed, final DataTreeModificationCursor cursor,
             final ModifiedNode rootNode) {
         LOG.trace("Concurrent applyToCursor() in state {}", observed);
-        applyChildren(cursor, rootNode);
-    }
-
-    // FIXME: We may be racing with with validate()/prepare()/commit(). What we mean to say is that we want to
-    //        traverse only children as they were observed at the end of ready() -- we do not care about children
-    //        created during AbstractNodeContainerModificationStrategy.applyMerge(). If we can do that, plus have a
-    //        stable node.getOperation(), we do not need this method and can use concurrentApplyToCursor() instead.
-    @NonNullByDefault
-    @SuppressWarnings("static-method")
-    private synchronized void lockedApplyToCursor(final State observed, final DataTreeModificationCursor cursor,
-            final ModifiedNode rootNode) {
-        LOG.trace("Locked applyToCursor() in state {}", observed);
         applyChildren(cursor, rootNode);
     }
 
