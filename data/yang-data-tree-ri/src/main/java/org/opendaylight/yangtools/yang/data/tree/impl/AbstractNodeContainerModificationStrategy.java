@@ -12,8 +12,11 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -224,37 +227,57 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        /*
-         * The node which we are merging exists. We now need to expand any child operations implied by the value. Once
-         * we do that, ModifiedNode children will look like this node were a TOUCH and we will let applyTouch() do the
-         * heavy lifting of applying the children recursively (either through here or through applyWrite().
-         */
+        // The node which we are merging exists. We now need to expand any child operations implied by the value. Once
+        // we do that, ModifiedNode children will look like this node were a TOUCH and we will let applyTouch() do the
+        // heavy lifting of applying the children recursively (either through here or through applyWrite().
         final var value = modification.getWrittenValue();
         if (!(value instanceof DistinctNodeContainer<?, ?> containerValue)) {
             throw new VerifyException("Attempted to merge non-container " + value);
         }
 
-        // FIXME: We are modifying modification.children here, which means readers must not run parallel to this method.
-        //        Those are not interested in the nodes we create here anyway, as these are needed only for
-        //        AbstractModifiedNodeBasedCandidateNode consumption, for whose purposes we pretend to be a
-        //        SUBTREE_MODIFIED.
+        // At the end of the day what is happening here is we are resolving how this LogicalOperation.MERGE would look
+        // like in terms of TOUCH with child operations. There are three possible outcomes:
         //
-        //        What we really mean to do is create a temporary copy of modification, call modifyChild() on that
-        //        instance and pass it to applyTouch() instead. Then examine the result and propagate its state back to
-        //        modification.
-        //
-        //        At the end of the day what is happening here is we are resolving how this LogicalOperation.MERGE would
-        //        look like in terms of TOUCH with child operations. There are three possible outcomes:
-        //
-        //        1) UNMODIFIED, i.e. it does not matter what the modification did, or
-        //        2) SUBTREE_MODIFIED with some child nodes coming from modification.children and
-        //           a: nothing else, or
-        //           b: the nodes we create here
-        for (var c : containerValue.body()) {
-            final var id = c.name();
-            modification.modifyChild(id, resolveChildOperation(id), version);
+        // 1) UNMODIFIED, i.e. it does not matter what the modification did, or
+        // 2) SUBTREE_MODIFIED with some child nodes coming from modification.children and
+        //    a: nothing else, or
+        //    b: the nodes we create here
+        final var it = containerValue.body().iterator();
+        final var first = nextToExpand(modification, it);
+        return first == null ? applyTouch(modification, currentMeta, version)
+            : applyMerge(modification, currentMeta, version, first, it);
+    }
+
+    @NonNullByDefault
+    private TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version,
+            final NormalizedNode first, final Iterator<? extends NormalizedNode> it) {
+        // We need to create at least one child to hold the expansion of this MERGE. Such children exist only for
+        // AbstractModifiedNodeBasedCandidateNode's consumption.
+        final var expanded = new ArrayList<ModifiedNode>();
+        final var copy = new ModifiedNode(modification, getChildPolicy());
+
+        // Add first and any remaining entries
+        NormalizedNode child = first;
+        do {
+            expanded.add(copy.createMergeChild(child, resolveChildOperation(child.name()), version));
+            child = nextToExpand(copy, it);
+        } while (child != null);
+
+        final var ret = applyTouch(copy, currentMeta, version);
+        modification.resolveModificationType(copy, expanded);
+        return ret;
+    }
+
+    @NonNullByDefault
+    private static @Nullable NormalizedNode nextToExpand(final ModifiedNode parent,
+            final Iterator<? extends NormalizedNode> it) {
+        while (it.hasNext()) {
+            final var child = it.next();
+            if (parent.childByArg(child.name()) == null) {
+                return child;
+            }
         }
-        return applyTouch(modification, currentMeta, version);
+        return null;
     }
 
     private void mergeChildrenIntoModification(final ModifiedNode modification,
