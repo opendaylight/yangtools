@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f4b61c4_9b8d457a",
+        "filename": "data/yang-data-tree-ri/src/main/java/org/opendaylight/yangtools/yang/data/tree/impl/InMemoryDataTreeModification.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-01-10T11:02:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64bda3eb_675688c0",
+      "range": {
+        "startLine": 56,
+        "startChar": 28,
+        "endLine": 56,
+        "endChar": 55
+      },
+      "revId": "8b74e46ea3242ecb2304ab28ec6d136582848765",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "11dfd8f7_36a85f56",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-01-10T10:17:51Z",
       "side": 1,
       "message": "the",
+      "range": {
+        "startLine": 82,
+        "startChar": 34,
+        "endLine": 82,
+        "endChar": 36
+      },
+      "revId": "8b74e46ea3242ecb2304ab28ec6d136582848765",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "43c143d1_f37609af",
+        "filename": "data/yang-data-tree-ri/src/main/java/org/opendaylight/yangtools/yang/data/tree/impl/InMemoryDataTreeModification.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-01-10T11:02:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "11dfd8f7_36a85f56",
       "range": {
         "startLine": 82,
         "startChar": 34,
