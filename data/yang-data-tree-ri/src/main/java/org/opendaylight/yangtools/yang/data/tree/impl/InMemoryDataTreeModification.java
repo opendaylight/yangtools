@@ -184,25 +184,28 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile State state;
 
-    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootApplyStrategy resolver) {
+    private InMemoryDataTreeModification(final RootApplyStrategy strategyTree,
+            final InMemoryDataTreeSnapshot snapshot) {
+        this.strategyTree = requireNonNull(strategyTree);
         this.snapshot = requireNonNull(snapshot);
-        strategyTree = requireNonNull(resolver).snapshot();
-        state = new Open(new ModifiedNode(snapshot.getRootNode(), getStrategy().getChildPolicy()));
 
-        /*
-         * We could allocate version beforehand, since Version contract
-         * states two allocated version must be always different.
-         *
-         * Preallocating version simplifies scenarios such as
-         * chaining of modifications, since version for particular
-         * node in modification and in data tree (if successfully
-         * committed) will be same and will not change.
-         */
-        version = snapshot.getRootNode().subtreeVersion().next();
+        // Acquire a version for what ever comes out of this modification. Since the contract of Version states two
+        // allocated version must be always different.
+        // This allows us to use this version as a predicate on which other modifications are dependent on via
+        // newModification(), as chained modifications can predicate that this is the version this data is going to be
+        // known once committed.
+        final var snapshotRoot = snapshotRoot();
+        version = snapshotRoot.subtreeVersion().next();
+        state = new Open(new ModifiedNode(snapshotRoot, getStrategy().getChildPolicy()));
+    }
+
+    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootApplyStrategy resolver) {
+        this(resolver.snapshot(), snapshot);
     }
 
     @VisibleForTesting
-    @NonNull TreeNode snapshotRoot() {
+    @NonNullByDefault
+    TreeNode snapshotRoot() {
         return snapshot.getRootNode();
     }
 
