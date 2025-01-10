@@ -12,11 +12,19 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterators;
+import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -61,23 +69,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     // operation algebra and prune the tree so it records the effective logical operations the user intends to perform
     // on top of 'original' -- see the seal() method below.
     //
-    // After that transition the two fields are mostly stable, but can undergo further evolution as part of modification
-    // lifecycle: each of validate(), prepare() and newModification() can end up calling
-    // SchemaAwareApplyOperation.apply(), at which both of these can be updated.
-    //
-    // 'children' also serves a secondary view, as it is used by AbstractModifiedNodeBasedCandidateNode along with
-    // 'modType' below to provide DataTreeCandidateNode interface.
-    //
-    // NOTE: Original design called for 'children' to be effectively immutable after seal(), we can end up expanding
-    //       them when a MERGE encounters pre-existing data: see how
-    //       AbstractNodeContainerModificationStrategy.applyMerge() ends up calling to modifyChild() to turn the MERGE
-    //       into effectively a TOUCH and with a series of child MERGE operations.
-    //
-    //       If we ever want to restore this design, we need to replace AbstractModifiedNodeBasedCandidateNode with a
-    //       tree of ImmutableCandidateNodes. That is a tough cookie, as we currently populate the effective state as
-    //       a side-effect of apply(), but the DataTreeCandidateNode view is only needed in after the prepare() stage.
+    // After this process completes, the following four fields are guaranteed to remain stable.
     private final Map<PathArgument, ModifiedNode> children;
-    private LogicalOperation operation = LogicalOperation.NONE;
+    private LogicalOperation operation;
 
     // The argument to LogicalOperation.{MERGE,WRITE}, invalid otherwise
     private NormalizedNode value;
@@ -90,6 +84,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     // Effective ModificationType, as resolved by the last executed SchemaAwareApplyOperation.apply()
     private ModificationType modType;
+    private Map<PathArgument, ModifiedNode> applyChildren;
 
     // Internal cache for TreeNodes created as part of validation
     private ModificationApplyOperation validatedOp;
@@ -101,6 +96,18 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         this.identifier = requireNonNull(identifier);
         this.original = original;
         children = childPolicy.createMap();
+        operation = LogicalOperation.NONE;
+    }
+
+    ModifiedNode(final ModifiedNode prev, final ChildTrackingPolicy childPolicy) {
+        identifier = prev.identifier;
+        original = prev.original;
+        children = childPolicy.createMap();
+        operation = prev.operation;
+
+        value = prev.value;
+        writtenOriginal = prev.writtenOriginal;
+        children.putAll(prev.children);
     }
 
     ModifiedNode(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {
@@ -130,7 +137,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      *
      * @return Currently-written value
      */
-    @NonNull NormalizedNode getWrittenValue() {
+    @Override
+    NormalizedNode getValue() {
         return verifyNotNull(value);
     }
 
@@ -192,8 +200,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return {@link ModifiedNode} for specified child, with {@link #original()} containing child metadata if child was
      *         present in original data.
      */
-    ModifiedNode modifyChild(final @NonNull PathArgument child, final @NonNull ModificationApplyOperation childOper,
-            final @NonNull Version modVersion) {
+    @NonNullByDefault
+    ModifiedNode modifyChild(final PathArgument child, final ModificationApplyOperation childOper,
+            final Version modVersion) {
         clearSnapshot();
         if (operation == LogicalOperation.NONE) {
             updateOperationType(LogicalOperation.TOUCH);
@@ -206,10 +215,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         final var newlyCreated = new ModifiedNode(child, originalMetadata(child, modVersion),
             childOper.getChildPolicy());
         if (operation == LogicalOperation.MERGE && value != null) {
-            /*
-             * We are attempting to modify a previously-unmodified part of a MERGE node. If the
-             * value contains this component, we need to materialize it as a MERGE modification.
-             */
+            // We are attempting to modify a previously-unmodified part of a MERGE node. If the value contains this
+            // component, we need to materialize it as a MERGE modification.
             @SuppressWarnings({ "rawtypes", "unchecked" })
             final var childData = ((DistinctNodeContainer) value).childByArg(child);
             if (childData != null) {
@@ -219,6 +226,20 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
         children.put(child, newlyCreated);
         return newlyCreated;
+    }
+
+    @NonNullByDefault
+    ModifiedNode createMergeChild(final NormalizedNode child, final ModificationApplyOperation childOper,
+            final Version modVersion) {
+        final var name = child.name();
+        final var node = new ModifiedNode(name, originalMetadata(name, modVersion), childOper.getChildPolicy());
+        childOper.mergeIntoModifiedNode(node, child, modVersion);
+
+        final var existing = children.putIfAbsent(name, node);
+        if (existing != null) {
+            throw new VerifyException("Attempted to replace " + existing + " with " + node);
+        }
+        return node;
     }
 
     /**
@@ -240,7 +261,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * Records a delete for associated node.
      */
     void delete() {
-        final LogicalOperation newType = switch (operation) {
+        final var newType = switch (operation) {
             case DELETE, NONE ->
                 // We need to record this delete.
                 LogicalOperation.DELETE;
@@ -327,6 +348,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     void updateOperationType(final LogicalOperation type) {
         operation = type;
         modType = null;
+        applyChildren = null;
 
         // Make sure we do not reuse previously-instantiated data-derived metadata
         writtenOriginal = null;
@@ -344,7 +366,21 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     void resolveModificationType(final @NonNull ModificationType type) {
-        modType = type;
+        modType = requireNonNull(type);
+        applyChildren = ImmutableMap.of();
+    }
+
+    @NonNullByDefault
+    void resolveModificationType(final ModifiedNode source, final List<ModifiedNode> extraChildren) {
+        modType = source.modType;
+        snapshotCache = source.snapshotCache;
+        validatedOp = source.validatedOp;
+        validatedCurrent = source.validatedCurrent;
+        validatedNode = source.validatedNode;
+
+        applyChildren = extraChildren.stream()
+            .filter(node -> node.getModificationType() != ModificationType.UNMODIFIED)
+            .collect(ImmutableMap.toImmutableMap(ModifiedNode::getIdentifier, Function.identity()));
     }
 
     /**
@@ -368,6 +404,31 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     ModificationType getModificationType() {
         return modType;
+    }
+
+    @Nullable ModifiedNode modifiedChild(final PathArgument childName) {
+        final var child = children.get(childName);
+        return child != null ? child : applyChildren.get(childName);
+    }
+
+    Collection<ModifiedNode> modifiedChildren() {
+        final var normal = getChildren();
+        if (applyChildren.isEmpty()) {
+            return normal;
+        }
+
+        final var apply = applyChildren.values();
+        return normal.isEmpty() ? apply : new AbstractCollection<>() {
+            @Override
+            public Iterator<ModifiedNode> iterator() {
+                return Iterators.concat(normal.iterator(), apply.iterator());
+            }
+
+            @Override
+            public int size() {
+                return normal.size() + apply.size();
+            }
+        };
     }
 
     void setValidatedNode(final ModificationApplyOperation op, final @Nullable TreeNode currentMeta,
