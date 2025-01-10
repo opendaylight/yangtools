@@ -278,29 +278,15 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     private <T> T accessData(final BiFunction<YangInstanceIdentifier, @Nullable ModifiedNode, T> function,
             final YangInstanceIdentifier path) {
         final var local = acquireState();
-        return switch (local) {
-            case Open open -> concurrentAccessData(open, function, path, open.root);
-            case Noop noop -> concurrentAccessData(noop, function, path, null);
-            case Ready ready -> lockedAccessData(ready, function, path, ready.root);
-            case AppliedToSnapshot ready -> lockedAccessData(ready, function, path, ready.root);
+        final var rootNode = switch (local) {
+            case Open(var root) -> root;
+            case Noop noop -> null;
+            case Ready(var root) -> root;
+            case AppliedToSnapshot ready -> ready.root;
             default -> throw illegalState(local, "access data of");
         };
-    }
 
-    private static <T> T concurrentAccessData(final State observed,
-            final BiFunction<YangInstanceIdentifier, @Nullable ModifiedNode, T> function,
-            final YangInstanceIdentifier path, final @Nullable ModifiedNode rootNode) {
-        LOG.trace("Concurrent accessData() in state {}", observed);
-        return function.apply(path, rootNode);
-    }
-
-    // FIXME: this should be fine to run concurrently, provided that getOperation() and rootNode.childByArg() are
-    //        effectively immutable
-    @SuppressWarnings("static-method")
-    private synchronized <T> T lockedAccessData(final State observed,
-            final BiFunction<YangInstanceIdentifier, @Nullable ModifiedNode, T> function,
-            final YangInstanceIdentifier path, final @Nullable ModifiedNode rootNode) {
-        LOG.trace("Locked accessData() in state {}", observed);
+        LOG.trace("Concurrent accessData() in state {}", local);
         return function.apply(path, rootNode);
     }
 
@@ -486,29 +472,17 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final var local = acquireState();
         switch (local) {
             case Noop noop -> LOG.trace("No-op applyToCursor()");
-            case Open open -> concurrentApplyToCursor(open, cursor, open.root);
-            case Ready ready -> lockedApplyToCursor(ready, cursor, ready.root);
-            case AppliedToSnapshot ready -> lockedApplyToCursor(ready, cursor, ready.root);
+            case Open open -> applyToCursor(open, cursor, open.root);
+            case Ready ready -> applyToCursor(ready, cursor, ready.root);
+            case AppliedToSnapshot ready -> applyToCursor(ready, cursor, ready.root);
             default -> throw illegalState(local, "access contents of");
         }
     }
 
     @NonNullByDefault
-    private static void concurrentApplyToCursor(final State observed, final DataTreeModificationCursor cursor,
+    private static void applyToCursor(final State observed, final DataTreeModificationCursor cursor,
             final ModifiedNode rootNode) {
         LOG.trace("Concurrent applyToCursor() in state {}", observed);
-        applyChildren(cursor, rootNode);
-    }
-
-    // FIXME: We may be racing with with validate()/prepare()/commit(). What we mean to say is that we want to
-    //        traverse only children as they were observed at the end of ready() -- we do not care about children
-    //        created during AbstractNodeContainerModificationStrategy.applyMerge(). If we can do that, plus have a
-    //        stable node.getOperation(), we do not need this method and can use concurrentApplyToCursor() instead.
-    @NonNullByDefault
-    @SuppressWarnings("static-method")
-    private synchronized void lockedApplyToCursor(final State observed, final DataTreeModificationCursor cursor,
-            final ModifiedNode rootNode) {
-        LOG.trace("Locked applyToCursor() in state {}", observed);
         applyChildren(cursor, rootNode);
     }
 
