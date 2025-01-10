@@ -56,7 +56,7 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         // Just overwrite whatever was there, but be sure to run validation
-        final NormalizedNode newValue = modification.getWrittenValue();
+        final var newValue = modification.getValue();
         verifyWrittenValue(newValue);
         modification.resolveModificationType(ModificationType.WRITE);
         return applyWrite(modification, newValue, null, version);
