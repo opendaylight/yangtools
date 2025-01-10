@@ -69,21 +69,24 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile byte state;
 
-    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootApplyStrategy resolver) {
+    private InMemoryDataTreeModification(final RootApplyStrategy strategyTree,
+            final InMemoryDataTreeSnapshot snapshot) {
+        this.strategyTree = requireNonNull(strategyTree);
         this.snapshot = requireNonNull(snapshot);
-        strategyTree = requireNonNull(resolver).snapshot();
-        rootNode = new ModifiedNode(snapshot.getRootNode(), getStrategy().getChildPolicy());
 
-        /*
-         * We could allocate version beforehand, since Version contract
-         * states two allocated version must be always different.
-         *
-         * Preallocating version simplifies scenarios such as
-         * chaining of modifications, since version for particular
-         * node in modification and in data tree (if successfully
-         * committed) will be same and will not change.
-         */
-        version = snapshot.getRootNode().subtreeVersion().next();
+        // Acquire a version for what ever comes out of this modification. Since the contract of Version states two
+        // allocated version must be always different.
+        // This allows us to use this version as a predicate on which other modifications are dependent on via
+        // newModification(), as chained modifications can predicate that this is the version this data is going to be
+        // known once committed.
+        final var snapshotRoot = snapshotRoot();
+        version = snapshotRoot.subtreeVersion().next();
+        rootNode = new ModifiedNode(snapshot.getRootNode(), getStrategy().getChildPolicy());
+    }
+
+    @NonNullByDefault
+    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootApplyStrategy resolver) {
+        this(resolver.snapshot(), snapshot);
     }
 
     ModificationApplyOperation getStrategy() {
@@ -381,5 +384,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             throw new IllegalStateException("Apply strategy failed to produce root node for modification " + this);
         }
         return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, newRoot);
+    }
+
+    @NonNullByDefault
+    private TreeNode snapshotRoot() {
+        return snapshot.getRootNode();
     }
 }
