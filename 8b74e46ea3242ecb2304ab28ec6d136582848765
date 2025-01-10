@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "64bda3eb_675688c0",
+        "filename": "data/yang-data-tree-ri/src/main/java/org/opendaylight/yangtools/yang/data/tree/impl/InMemoryDataTreeModification.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-01-10T10:33:12Z",
+      "side": 1,
+      "message": "move to previous patch",
+      "range": {
+        "startLine": 56,
+        "startChar": 28,
+        "endLine": 56,
+        "endChar": 55
+      },
+      "revId": "8b74e46ea3242ecb2304ab28ec6d136582848765",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "11dfd8f7_36a85f56",
         "filename": "data/yang-data-tree-ri/src/main/java/org/opendaylight/yangtools/yang/data/tree/impl/InMemoryDataTreeModification.java",
         "patchSetId": 10
