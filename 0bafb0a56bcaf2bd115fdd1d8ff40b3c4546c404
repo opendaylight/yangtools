@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "484c662d_acd07826",
+        "filename": "data/yang-data-tree-ri/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2025-01-10T07:40:05Z",
+      "side": 1,
+      "message": "should not this be scope\u003dtest?",
+      "revId": "0bafb0a56bcaf2bd115fdd1d8ff40b3c4546c404",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
