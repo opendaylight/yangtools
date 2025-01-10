@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "16eeff95_90871b66",
+        "filename": "data/yang-data-tree-ri/src/main/java/org/opendaylight/yangtools/yang/data/tree/impl/InMemoryDataTreeModification.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-01-10T10:24:55Z",
+      "side": 1,
+      "message": "inside synchronized, so a plain .set() should be enough",
+      "range": {
+        "startLine": 378,
+        "startChar": 14,
+        "endLine": 378,
+        "endChar": 24
+      },
+      "revId": "047662aae81c8c6fbba9bf10b9f89df084a61f74",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
