@@ -87,6 +87,9 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
     final void checkApplicable(final ModificationPath path, final NodeModification modification,
             final TreeNode currentMeta, final Version version) throws DataValidationFailedException {
         delegate.checkApplicable(path, modification, currentMeta, version);
+
+        // TODO: this means we must be calling this method with the lock held to preclude concurrent modification of
+        //       cached state
         if (!(modification instanceof ModifiedNode modified)) {
             // FIXME: 7.0.0: turn this into a verify?
             LOG.warn("""

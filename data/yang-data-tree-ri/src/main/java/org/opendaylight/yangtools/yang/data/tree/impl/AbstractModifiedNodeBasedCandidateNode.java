@@ -76,7 +76,8 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     @Override
     public Collection<DataTreeCandidateNode> childNodes() {
         return switch (mod.getModificationType()) {
-            case APPEARED, DISAPPEARED, SUBTREE_MODIFIED -> Collections2.transform(mod.getChildren(), this::childNode);
+            case APPEARED, DISAPPEARED, SUBTREE_MODIFIED ->
+                Collections2.transform(mod.modifiedChildren(), this::childNode);
             case UNMODIFIED -> {
                 // Unmodified node, but we still need to resolve potential children. canHaveChildren returns
                 // false if both arguments are null.
@@ -122,7 +123,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         final var identifier = requireNonNull(childName);
         return switch (mod.getModificationType()) {
             case APPEARED, DISAPPEARED, SUBTREE_MODIFIED -> {
-                final var child = mod.childByArg(identifier);
+                final var child = mod.modifiedChild(identifier);
                 yield child == null ? null : childNode(child);
             }
             case UNMODIFIED -> {

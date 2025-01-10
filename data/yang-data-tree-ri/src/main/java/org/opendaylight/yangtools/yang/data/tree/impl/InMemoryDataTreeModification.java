@@ -313,7 +313,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         throw new IllegalStateException("Data Tree is sealed. No further modifications allowed in state " + local);
     }
 
-    private static void applyNode(final DataTreeModificationCursor cursor, final ModifiedNode node) {
+    private static void applyNode(final DataTreeModificationCursor cursor, final NodeModification node) {
         final var operation = node.getOperation();
         switch (operation) {
             case NONE -> {
@@ -321,7 +321,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             }
             case DELETE -> cursor.delete(node.getIdentifier());
             case MERGE -> {
-                cursor.merge(node.getIdentifier(), node.getWrittenValue());
+                cursor.merge(node.getIdentifier(), node.getValue());
                 applyNodeChildren(cursor, node);
             }
             case TOUCH -> {
@@ -331,14 +331,14 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
                 applyNodeChildren(cursor, node);
             }
             case WRITE -> {
-                cursor.write(node.getIdentifier(), node.getWrittenValue());
+                cursor.write(node.getIdentifier(), node.getValue());
                 applyNodeChildren(cursor, node);
             }
             default -> throw new IllegalArgumentException("Unhandled node operation " + operation);
         }
     }
 
-    private static void applyNodeChildren(final DataTreeModificationCursor cursor, final ModifiedNode node) {
+    private static void applyNodeChildren(final DataTreeModificationCursor cursor, final NodeModification node) {
         if (!node.isEmpty()) {
             cursor.enter(node.getIdentifier());
             applyChildren(cursor, node);
@@ -346,7 +346,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         }
     }
 
-    private static void applyChildren(final DataTreeModificationCursor cursor, final ModifiedNode node) {
+    private static void applyChildren(final DataTreeModificationCursor cursor, final NodeModification node) {
         for (var child : node.getChildren()) {
             applyNode(cursor, child);
         }
