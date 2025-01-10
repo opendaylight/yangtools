@@ -16,6 +16,24 @@
       "message": "should not this be scope\u003dtest?",
       "revId": "0bafb0a56bcaf2bd115fdd1d8ff40b3c4546c404",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b76f085b_fb02f6e2",
+        "filename": "data/yang-data-tree-ri/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-01-10T09:18:07Z",
+      "side": 1,
+      "message": "that is the default: https://github.com/opendaylight/yangtools/blob/master/artifacts/pom.xml#L396",
+      "parentUuid": "484c662d_acd07826",
+      "revId": "0bafb0a56bcaf2bd115fdd1d8ff40b3c4546c404",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
