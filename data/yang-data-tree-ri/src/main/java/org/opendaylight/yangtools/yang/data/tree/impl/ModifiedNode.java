@@ -105,6 +105,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         children = childPolicy.createMap();
     }
 
+    ModifiedNode(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {
+        this(metadataTree.getIdentifier(), metadataTree, childPolicy);
+    }
+
     @Override
     public PathArgument getIdentifier() {
         return identifier;
@@ -366,10 +370,6 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     ModificationType getModificationType() {
         return modType;
-    }
-
-    public static ModifiedNode createUnmodified(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {
-        return new ModifiedNode(metadataTree.getIdentifier(), requireNonNull(metadataTree), childPolicy);
     }
 
     void setValidatedNode(final ModificationApplyOperation op, final @Nullable TreeNode currentMeta,
