@@ -187,7 +187,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootApplyStrategy resolver) {
         this.snapshot = requireNonNull(snapshot);
         strategyTree = requireNonNull(resolver).snapshot();
-        state = new Open(ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy()));
+        state = new Open(new ModifiedNode(snapshot.getRootNode(), getStrategy().getChildPolicy()));
 
         /*
          * We could allocate version beforehand, since Version contract
