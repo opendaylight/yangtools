@@ -173,7 +173,7 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
 
         // Attach commit info.
         // TODO: this should never fail, but should we check? report?
-        newRoot.version().writeInfo(info);
+        newRoot.subtreeVersion().writeInfo(info);
     }
 
     private static String simpleToString(final Object obj) {
