@@ -8,12 +8,15 @@
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * A container node which has not seen a modification. All nodes underneath it share the same subtree version.
  */
+@NonNullByDefault
 final class SimpleContainerNode extends AbstractContainerNode {
     SimpleContainerNode(final NormalizedNode data, final Version version) {
         super(data, version);
@@ -21,11 +24,11 @@ final class SimpleContainerNode extends AbstractContainerNode {
 
     @Override
     public Version subtreeVersion() {
-        return version();
+        return incarnation();
     }
 
     @Override
-    public TreeNode childByArg(final PathArgument arg) {
+    public @Nullable TreeNode childByArg(final PathArgument arg) {
         return getChildFromData(arg);
     }
 

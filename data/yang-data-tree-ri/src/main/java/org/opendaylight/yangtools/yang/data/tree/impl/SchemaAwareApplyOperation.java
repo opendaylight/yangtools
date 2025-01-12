@@ -82,7 +82,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
 
     protected static final void checkNotConflicting(final ModificationPath path, final @NonNull TreeNode original,
             final @NonNull TreeNode current) throws ConflictingModificationAppliedException {
-        checkConflicting(path, original.version().equals(current.version()),
+        checkConflicting(path, original.incarnation().equals(current.incarnation()),
                 "Node was replaced by other transaction.");
         checkConflicting(path, original.subtreeVersion().equals(current.subtreeVersion()),
                 "Node children was modified by other transaction");

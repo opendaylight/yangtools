@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -16,9 +17,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * A TreeNode capable of holding child nodes. The fact that any of the children
  * changed is tracked by the subtree version.
  */
+@NonNullByDefault
 abstract class AbstractContainerNode extends TreeNode {
-    AbstractContainerNode(final NormalizedNode data, final Version version) {
-        super(data, version);
+    AbstractContainerNode(final NormalizedNode data, final Version incarnation) {
+        super(data, incarnation);
     }
 
     @SuppressWarnings("unchecked")
@@ -28,12 +30,12 @@ abstract class AbstractContainerNode extends TreeNode {
 
     final @Nullable TreeNode getChildFromData(final PathArgument childId) {
         // We do not cache the instantiated node as it is dirt cheap
-        return getChildFromData(castData(), childId, version());
+        return getChildFromData(castData(), childId, incarnation());
     }
 
-    static TreeNode getChildFromData(final DistinctNodeContainer<PathArgument, NormalizedNode> data,
-            final PathArgument childId, final Version version) {
-        final NormalizedNode child = data.childByArg(childId);
-        return child != null ? TreeNode.of(child, version) : null;
+    static final @Nullable TreeNode getChildFromData(final DistinctNodeContainer<PathArgument, NormalizedNode> data,
+            final PathArgument childId, final Version incarnation) {
+        final var child = data.childByArg(childId);
+        return child != null ? TreeNode.of(child, incarnation) : null;
     }
 }

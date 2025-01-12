@@ -175,7 +175,7 @@ class StoreTreeNodesTest extends AbstractTestModelTest {
     }
 
     private static void assertTreeNodeEquals(final TreeNode expected, final TreeNode actual) {
-        assertEquals(expected.version(), actual.version());
+        assertEquals(expected.incarnation(), actual.incarnation());
         assertEquals(expected.subtreeVersion(), actual.subtreeVersion());
         assertEquals(expected.data(), actual.data());
         assertEquals(expected.toString(), actual.toString());
