@@ -39,7 +39,7 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
     @Override
     public TreeNode childByArg(final PathArgument arg) {
         final TreeNode modified;
-        return (modified = getModifiedChild(arg)) == null ? getChildFromData(arg) : modified;
+        return (modified = getModifiedChild(arg)) == null ? childFromData(arg) : modified;
     }
 
     @Override

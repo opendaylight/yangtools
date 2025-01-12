@@ -28,12 +28,12 @@ abstract class AbstractContainerNode extends TreeNode {
         return (DistinctNodeContainer<PathArgument, NormalizedNode>) data();
     }
 
-    final @Nullable TreeNode getChildFromData(final PathArgument childId) {
+    final @Nullable TreeNode childFromData(final PathArgument childId) {
         // We do not cache the instantiated node as it is dirt cheap
-        return getChildFromData(castData(), childId, incarnation());
+        return childFromData(castData(), childId, incarnation());
     }
 
-    static final @Nullable TreeNode getChildFromData(final DistinctNodeContainer<PathArgument, NormalizedNode> data,
+    static final @Nullable TreeNode childFromData(final DistinctNodeContainer<PathArgument, NormalizedNode> data,
             final PathArgument childId, final Version incarnation) {
         final var child = data.childByArg(childId);
         return child != null ? TreeNode.of(child, incarnation) : null;
