@@ -29,7 +29,7 @@ final class SimpleContainerNode extends AbstractContainerNode {
 
     @Override
     public @Nullable TreeNode childByArg(final PathArgument arg) {
-        return getChildFromData(arg);
+        return childFromData(arg);
     }
 
     @Override
