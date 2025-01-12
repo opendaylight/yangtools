@@ -28,6 +28,6 @@ final class LazyMutableContainerNode extends AbstractMutableContainerNode {
     @Override
     public TreeNode childByArg(final PathArgument arg) {
         final TreeNode modified = getModifiedChild(arg);
-        return modified != null ? modified : AbstractContainerNode.getChildFromData(getData(), arg, incarnation());
+        return modified != null ? modified : AbstractContainerNode.childFromData(getData(), arg, incarnation());
     }
 }
