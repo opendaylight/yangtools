@@ -51,6 +51,6 @@ class TreeNodeFactoryTest {
     private static void assertTreeNode(final TreeNode node, final NormalizedNode data, final Version version) {
         assertSame(data, node.data());
         assertSame(version, node.subtreeVersion());
-        assertSame(version, node.version());
+        assertSame(version, node.incarnation());
     }
 }

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
- * A very basic data tree node. It has a {@link #version()} (when it was last modified),
+ * A very basic data tree node. It has a {@link #incarnation()} (when it was last modified),
  * a {@link #subtreeVersion()} (when any of its children were modified) and some read-only data. In terms of
  * <a href="https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation">MVCC</a>, the former
  * corresponds to the this node's current Read Timestamp (RTS(P), where P is this node). The latter is the most recent
@@ -37,29 +37,29 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 @NonNullByDefault
 public abstract class TreeNode implements StoreTreeNode<TreeNode> {
     private final NormalizedNode data;
-    private final Version version;
+    private final Version incarnation;
 
-    TreeNode(final NormalizedNode data, final Version version) {
+    TreeNode(final NormalizedNode data, final Version incarnation) {
         this.data = requireNonNull(data);
-        this.version = requireNonNull(version);
+        this.incarnation = requireNonNull(incarnation);
     }
 
     /**
      * Create a new AbstractTreeNode from a data node.
      *
      * @param data data node
-     * @param version data node version
+     * @param incarnation data node version
      * @return new AbstractTreeNode instance, covering the data tree provided
      */
-    public static final TreeNode of(final NormalizedNode data, final Version version) {
+    public static final TreeNode of(final NormalizedNode data, final Version incarnation) {
         return switch (data) {
             case DistinctNodeContainer<?, ?> distinct -> {
                 @SuppressWarnings("unchecked")
                 final var container = (DistinctNodeContainer<?, NormalizedNode>) data;
-                yield new SimpleContainerNode(container, version);
+                yield new SimpleContainerNode(container, incarnation);
             }
-            case OrderedNodeContainer<?> ordered -> new SimpleContainerNode(ordered, version);
-            default -> new ValueNode(data, version);
+            case OrderedNodeContainer<?> ordered -> new SimpleContainerNode(ordered, incarnation);
+            default -> new ValueNode(data, incarnation);
         };
     }
 
@@ -73,14 +73,14 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
     }
 
     /**
-     * Get the data node version. This version is updated whenever the data representation of this particular node
+     * Get the data node incarnation. This version is updated whenever the data representation of this particular node
      * changes as a result of a direct write to this node or to its parent nodes -- thus indicating that this node
      * was logically replaced.
      *
-     * @return Current data node version.
+     * @return data node incarnation
      */
-    public final Version version() {
-        return version;
+    public final Version incarnation() {
+        return incarnation;
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("version", version)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).add("version", incarnation)).toString();
     }
 
     abstract ToStringHelper addToStringAttributes(ToStringHelper helper);

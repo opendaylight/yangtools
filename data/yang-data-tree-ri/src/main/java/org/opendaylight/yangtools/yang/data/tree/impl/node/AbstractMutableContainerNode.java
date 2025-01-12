@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -21,22 +22,22 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * correctly implementing {@link #seal()}.
  */
 abstract class AbstractMutableContainerNode extends MutableTreeNode {
-    private final Version version;
-    private final Version subtreeVersion;
+    private final @NonNull Version incarnation;
+    private final @NonNull Version subtreeVersion;
 
     private Map<PathArgument, TreeNode> children;
-    private NormalizedNode data;
+    private @NonNull NormalizedNode data;
 
     AbstractMutableContainerNode(final AbstractContainerNode parent, final Version subtreeVersion,
             final Map<PathArgument, TreeNode> children) {
         data = parent.data();
-        version = parent.version();
+        incarnation = parent.incarnation();
         this.subtreeVersion = requireNonNull(subtreeVersion);
         this.children = requireNonNull(children);
     }
 
-    final Version getVersion() {
-        return version;
+    final @NonNull Version incarnation() {
+        return incarnation;
     }
 
     final TreeNode getModifiedChild(final PathArgument child) {
@@ -75,19 +76,19 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
          *    into data will not happen,
          * => more materialization can happen
          */
-        if (!version.equals(subtreeVersion)) {
+        if (!incarnation.equals(subtreeVersion)) {
             final var newChildren = MapAdaptor.getDefaultInstance().optimize(children);
             final int dataSize = getData().size();
             final int childrenSize = newChildren.size();
             if (dataSize != childrenSize) {
                 verify(dataSize > childrenSize, "Detected %s modified children, data has only %s",
                     childrenSize, dataSize);
-                ret = new LazyContainerNode(data, version, newChildren, subtreeVersion);
+                ret = new LazyContainerNode(data, incarnation, newChildren, subtreeVersion);
             } else {
-                ret = new MaterializedContainerNode(data, version, newChildren, subtreeVersion);
+                ret = new MaterializedContainerNode(data, incarnation, newChildren, subtreeVersion);
             }
         } else {
-            ret = new SimpleContainerNode(data, version);
+            ret = new SimpleContainerNode(data, incarnation);
         }
 
         // This forces a NPE if this class is accessed again. Better than corruption.
