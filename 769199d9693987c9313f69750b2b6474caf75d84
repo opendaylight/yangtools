@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18cc3f7c_7f84fdb7",
+        "filename": "data/yang-data-tree-ri/src/main/java/org/opendaylight/yangtools/yang/data/tree/impl/InMemoryDataTreeModification.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2025-01-13T16:06:29Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it be here \"state\" instead of null?",
+      "revId": "769199d9693987c9313f69750b2b6474caf75d84",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
