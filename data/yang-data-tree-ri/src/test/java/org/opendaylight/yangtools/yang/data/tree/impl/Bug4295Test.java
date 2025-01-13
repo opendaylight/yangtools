@@ -7,93 +7,81 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Iterator;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Bug4295Test {
+    private static final QName ROOT = QName.create("foo", "root");
+    private static final QName SUB_ROOT = QName.create(ROOT, "sub-root");
+    private static final QName OUTER_LIST = QName.create(ROOT, "outer-list");
+    private static final QName INNER_LIST = QName.create(ROOT, "inner-list");
+    private static final QName O_ID = QName.create(ROOT, "o-id");
+    private static final QName I_ID = QName.create(ROOT, "i-id");
+    private static final QName O = QName.create(ROOT, "o");
+    private static final QName I = QName.create(ROOT, "i");
 
-    private DataTree inMemoryDataTree;
-    private QName root;
-    private QName subRoot;
-    private QName outerList;
-    private QName innerList;
-    private QName oid;
-    private QName iid;
-    private QName oleaf;
-    private QName ileaf;
-    private QNameModule foo;
+    private final DataTree tree = new InMemoryDataTreeFactory().create(
+        DataTreeConfiguration.DEFAULT_OPERATIONAL, YangParserTestUtils.parseYang("""
+            module foo {
+              namespace "foo";
+              prefix foo;
 
-    @Test
-    void test() throws DataValidationFailedException {
-        foo = QNameModule.of("foo");
-        root = QName.create(foo, "root");
-        subRoot = QName.create(foo, "sub-root");
-        outerList = QName.create(foo, "outer-list");
-        innerList = QName.create(foo, "inner-list");
-        oid = QName.create(foo, "o-id");
-        iid = QName.create(foo, "i-id");
-        oleaf = QName.create(foo, "o");
-        ileaf = QName.create(foo, "i");
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-                YangParserTestUtils.parseYang("""
-                module foo {
-                  namespace "foo";
-                  prefix foo;
-
-                  container root {
-                    container sub-root {
-                      list outer-list {
-                        key "o-id";
-                        leaf o-id {
-                          type string;
-                        }
-                        list inner-list {
-                          key "i-id";
-                          leaf i-id {
-                            type string;
-                          }
-                          leaf i {
-                            type string;
-                          }
-                        }
-                        leaf o {
-                          type string;
-                        }
+              container root {
+                container sub-root {
+                  list outer-list {
+                    ordered-by user;
+                    key "o-id";
+                    leaf o-id {
+                      type string;
+                    }
+                    list inner-list {
+                      ordered-by user;
+                      key "i-id";
+                      leaf i-id {
+                        type string;
+                      }
+                      leaf i {
+                        type string;
                       }
                     }
+                    leaf o {
+                      type string;
+                    }
                   }
-                }"""));
+                }
+              }
+            }"""));
 
-        firstModification();
-        secondModification(1);
-        secondModification(2);
-        secondModification(3);
-    }
-
-    private void firstModification() throws DataValidationFailedException {
-        /*  MERGE */
-        YangInstanceIdentifier path = YangInstanceIdentifier.of(root);
-        DataTreeModification modification = inMemoryDataTree.takeSnapshot().newModification();
-        modification.merge(path, createRootContainerBuilder()
+    @Test
+    void test() throws Exception {
+        // MERGE
+        final var mod = tree.takeSnapshot().newModification();
+        mod.merge(YangInstanceIdentifier.of(ROOT), createRootContainerBuilder()
             .withChild(createSubRootContainerBuilder()
-                .withChild(ImmutableNodes.newSystemMapBuilder()
-                    .withNodeIdentifier(NodeIdentifier.create(outerList))
+                .withChild(ImmutableNodes.newUserMapBuilder()
+                    .withNodeIdentifier(NodeIdentifier.create(OUTER_LIST))
                     .withChild(createOuterListEntry("1", "o-1"))
                     .withChild(createOuterListEntry("2", "o-2"))
                     .withChild(createOuterListEntry("3", "o-3"))
@@ -101,26 +89,150 @@ class Bug4295Test {
                 .build())
             .build());
 
-        /*  WRITE INNER LIST WITH ENTRIES*/
-        path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList).node(createOuterListEntryPath("2"))
-                .node(innerList);
-        modification.write(path, createInnerListBuilder()
+        // WRITE INNER LIST WITH ENTRIES
+        mod.write(YangInstanceIdentifier.of(ROOT).node(SUB_ROOT).node(OUTER_LIST).node(createOuterListEntryPath("2"))
+            .node(INNER_LIST), createInnerListBuilder()
             .withChild(createInnerListEntry("a", "i-a"))
             .withChild(createInnerListEntry("b", "i-b"))
             .build());
 
-        /*  COMMIT */
-        modification.ready();
-        inMemoryDataTree.validate(modification);
-        inMemoryDataTree.commit(inMemoryDataTree.prepare(modification));
+        // COMMIT
+        mod.ready();
+        tree.validate(mod);
+        final var candidate = tree.prepare(mod);
+        tree.commit(candidate);
+
+        final var root = candidate.getRootNode();
+        assertEquals(ModificationType.SUBTREE_MODIFIED, root.modificationType());
+
+        final var rootIt = root.childNodes().iterator();
+        assertWrite(rootIt.next(), new NodeIdentifier(ROOT));
+        assertFalse(rootIt.hasNext());
+
+        assertCandidateOne(secondModification(1));
+        assertCandidateTwo(secondModification(2));
+        assertCandidateThree(secondModification(3));
     }
 
-    private void secondModification(final int testScenarioNumber) throws DataValidationFailedException {
-        /*  MERGE */
+    private static void assertCandidateOne(final DataTreeCandidateNode top) {
+        assertEquals(ModificationType.SUBTREE_MODIFIED, top.modificationType());
+        final var topIt = top.childNodes().iterator();
+        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT));
+        assertFalse(topIt.hasNext());
+
+        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT));
+        assertFalse(rootIt.hasNext());
+
+        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST));
+        assertFalse(subRootIt.hasNext());
+        final var outerListFirstIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"));
+        assertDelete(outerListFirstIt.next(), new NodeIdentifier(INNER_LIST));
+        assertFalse(outerListFirstIt.hasNext());
+
+        assertWrite(outerListIt.next(), NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "5"));
+        assertWrite(outerListIt.next(), NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "4"));
+
+        final var outerListFourthIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"));
+        assertFalse(outerListIt.hasNext());
+
+        // O and O_ID, in some order
+        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        assertFalse(outerListFourthIt.hasNext());
+    }
+
+    private static void assertCandidateTwo(final DataTreeCandidateNode top) {
+        assertEquals(ModificationType.SUBTREE_MODIFIED, top.modificationType());
+        final var topIt = top.childNodes().iterator();
+        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT));
+        assertFalse(topIt.hasNext());
+
+        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT));
+        assertFalse(rootIt.hasNext());
+
+        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST));
+        assertFalse(subRootIt.hasNext());
+
+        final var outerListFirstIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"));
+
+        final var outerListFirstFirstIt = assertAppeared(outerListFirstIt.next(), new NodeIdentifier(INNER_LIST));
+        assertFalse(outerListFirstIt.hasNext());
+        assertWrite(outerListFirstFirstIt.next(), NodeIdentifierWithPredicates.of(INNER_LIST, I_ID, "a"));
+        assertFalse(outerListFirstFirstIt.hasNext());
+
+        final var outerListSecondIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "5"));
+        // O and O_ID, in some order
+        assertEquals(ModificationType.WRITE, outerListSecondIt.next().modificationType());
+        assertEquals(ModificationType.WRITE, outerListSecondIt.next().modificationType());
+        assertFalse(outerListSecondIt.hasNext());
+
+        final var outerListThirdIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "4"));
+        // O and O_ID, in some order
+        assertEquals(ModificationType.WRITE, outerListThirdIt.next().modificationType());
+        assertEquals(ModificationType.WRITE, outerListThirdIt.next().modificationType());
+        assertFalse(outerListThirdIt.hasNext());
+
+        final var outerListFourthIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"));
+        assertFalse(outerListIt.hasNext());
+        // O and O_ID, in some order
+        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        assertFalse(outerListFourthIt.hasNext());
+    }
+
+    private static void assertCandidateThree(final DataTreeCandidateNode top) {
+        assertEquals(ModificationType.SUBTREE_MODIFIED, top.modificationType());
+        final var topIt = top.childNodes().iterator();
+        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT));
+        assertFalse(topIt.hasNext());
+
+        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT));
+        assertFalse(rootIt.hasNext());
+
+        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST));
+        assertFalse(subRootIt.hasNext());
+
+        final var outerListFirstIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"));
+        assertWrite(outerListFirstIt.next(), new NodeIdentifier(INNER_LIST));
+        assertFalse(outerListFirstIt.hasNext());
+
+        final var outerListSecondIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "5"));
+        // O and O_ID, in some order
+        assertEquals(ModificationType.WRITE, outerListSecondIt.next().modificationType());
+        assertEquals(ModificationType.WRITE, outerListSecondIt.next().modificationType());
+        assertFalse(outerListSecondIt.hasNext());
+
+        final var outerListThirdIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "4"));
+        // O and O_ID, in some order
+        assertEquals(ModificationType.WRITE, outerListThirdIt.next().modificationType());
+        assertEquals(ModificationType.WRITE, outerListThirdIt.next().modificationType());
+        assertFalse(outerListThirdIt.hasNext());
+
+        final var outerListFourthIt = assertSubtreeModified(outerListIt.next(),
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"));
+        // O and O_ID, in some order
+        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        assertFalse(outerListFourthIt.hasNext());
+
+        assertFalse(outerListIt.hasNext());
+    }
+
+    private DataTreeCandidateNode secondModification(final int testScenarioNumber) throws Exception {
+        // MERGE
         ContainerNode rootContainerNode = createRootContainerBuilder()
             .withChild(createSubRootContainerBuilder()
                 .withChild(ImmutableNodes.newSystemMapBuilder()
-                    .withNodeIdentifier(NodeIdentifier.create(outerList))
+                    .withNodeIdentifier(NodeIdentifier.create(OUTER_LIST))
                     .withChild(createOuterListEntry("3", "o-3"))
                     .withChild(createOuterListEntry("4", "o-4"))
                     .withChild(createOuterListEntry("5", "o-5"))
@@ -128,8 +240,8 @@ class Bug4295Test {
                 .build())
             .build();
 
-        YangInstanceIdentifier path = YangInstanceIdentifier.of(root);
-        DataTreeModification modification = inMemoryDataTree.takeSnapshot().newModification();
+        YangInstanceIdentifier path = YangInstanceIdentifier.of(ROOT);
+        DataTreeModification modification = tree.takeSnapshot().newModification();
         modification.merge(path, rootContainerNode);
 
         switch (testScenarioNumber) {
@@ -140,15 +252,15 @@ class Bug4295Test {
             case 2: {
                 /* WRITE INNER LIST ENTRY */
                 MapEntryNode innerListEntryA = createInnerListEntry("a", "i-a-2");
-                path = YangInstanceIdentifier.of(root, subRoot, outerList).node(createOuterListEntryPath("2"))
-                    .node(innerList).node(createInnerListEntryPath("a"));
+                path = YangInstanceIdentifier.of(ROOT, SUB_ROOT, OUTER_LIST).node(createOuterListEntryPath("2"))
+                    .node(INNER_LIST).node(createInnerListEntryPath("a"));
                 modification.write(path, innerListEntryA);
                 break;
             }
             case 3: {
                 /* WRITE INNER LIST WITH ENTRIES */
-                path = YangInstanceIdentifier.of(root, subRoot, outerList).node(createOuterListEntryPath("2"))
-                    .node(innerList);
+                path = YangInstanceIdentifier.of(ROOT, SUB_ROOT, OUTER_LIST).node(createOuterListEntryPath("2"))
+                    .node(INNER_LIST);
                 modification.write(path, createInnerListBuilder()
                     .withChild(createInnerListEntry("a", "i-a-3"))
                     .withChild(createInnerListEntry("c", "i-c"))
@@ -159,51 +271,81 @@ class Bug4295Test {
                 break;
         }
 
-        /*  COMMIT */
+        // COMMIT
         modification.ready();
-        inMemoryDataTree.validate(modification);
-        inMemoryDataTree.commit(inMemoryDataTree.prepare(modification));
+        tree.validate(modification);
+        final var candidate = tree.prepare(modification);
+        tree.commit(candidate);
+        return candidate.getRootNode();
     }
 
-    private void writeEmptyInnerList(final DataTreeModification modification, final String outerListEntryKey) {
-        YangInstanceIdentifier path = YangInstanceIdentifier.of(root, subRoot, outerList)
-                .node(createOuterListEntryPath(outerListEntryKey)).node(innerList);
+    private static void writeEmptyInnerList(final DataTreeModification modification, final String outerListEntryKey) {
+        YangInstanceIdentifier path = YangInstanceIdentifier.of(ROOT, SUB_ROOT, OUTER_LIST)
+                .node(createOuterListEntryPath(outerListEntryKey)).node(INNER_LIST);
         modification.write(path, createInnerListBuilder().build());
     }
 
-    private DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createRootContainerBuilder() {
-        return ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(root));
+    private static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createRootContainerBuilder() {
+        return ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(ROOT));
     }
 
-    private DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createSubRootContainerBuilder() {
-        return  ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(subRoot));
+    private static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createSubRootContainerBuilder() {
+        return ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(SUB_ROOT));
     }
 
-    private CollectionNodeBuilder<MapEntryNode, SystemMapNode> createInnerListBuilder() {
-        return ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(NodeIdentifier.create(innerList));
+    private static CollectionNodeBuilder<MapEntryNode, UserMapNode> createInnerListBuilder() {
+        return ImmutableNodes.newUserMapBuilder().withNodeIdentifier(NodeIdentifier.create(INNER_LIST));
     }
 
-    private NodeIdentifierWithPredicates createInnerListEntryPath(final String keyValue) {
-        return NodeIdentifierWithPredicates.of(innerList, iid, keyValue);
+    private static NodeIdentifierWithPredicates createInnerListEntryPath(final String keyValue) {
+        return NodeIdentifierWithPredicates.of(INNER_LIST, I_ID, keyValue);
     }
 
-    private NodeIdentifierWithPredicates createOuterListEntryPath(final String keyValue) {
-        return NodeIdentifierWithPredicates.of(outerList, oid, keyValue);
+    private static NodeIdentifierWithPredicates createOuterListEntryPath(final String keyValue) {
+        return NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, keyValue);
     }
 
-    private MapEntryNode createOuterListEntry(final String keyValue, final String leafValue) {
+    private static MapEntryNode createOuterListEntry(final String keyValue, final String leafValue) {
         return ImmutableNodes.newMapEntryBuilder()
-            .withNodeIdentifier(NodeIdentifierWithPredicates.of(outerList, oid, keyValue))
-            .withChild(ImmutableNodes.leafNode(oid, keyValue))
-            .withChild(ImmutableNodes.leafNode(oleaf, leafValue))
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, keyValue))
+            .withChild(ImmutableNodes.leafNode(O_ID, keyValue))
+            .withChild(ImmutableNodes.leafNode(O, leafValue))
             .build();
     }
 
-    private MapEntryNode createInnerListEntry(final String keyValue, final String leafValue) {
+    private static MapEntryNode createInnerListEntry(final String keyValue, final String leafValue) {
         return ImmutableNodes.newMapEntryBuilder()
-            .withNodeIdentifier(NodeIdentifierWithPredicates.of(innerList, iid, keyValue))
-            .withChild(ImmutableNodes.leafNode(iid, keyValue))
-            .withChild(ImmutableNodes.leafNode(ileaf, leafValue))
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(INNER_LIST, I_ID, keyValue))
+            .withChild(ImmutableNodes.leafNode(I_ID, keyValue))
+            .withChild(ImmutableNodes.leafNode(I, leafValue))
             .build();
+    }
+
+    private static Iterator<DataTreeCandidateNode> assertSubtreeModified(final DataTreeCandidateNode node,
+            final PathArgument name) {
+        assertEquals(name, node.name());
+        assertEquals(ModificationType.SUBTREE_MODIFIED, node.modificationType());
+        final var it = node.childNodes().iterator();
+        assertTrue(it.hasNext());
+        return it;
+    }
+
+    private static Iterator<DataTreeCandidateNode> assertAppeared(final DataTreeCandidateNode node,
+            final PathArgument name) {
+        assertEquals(name, node.name());
+        assertEquals(ModificationType.APPEARED, node.modificationType());
+        final var it = node.childNodes().iterator();
+        assertTrue(it.hasNext());
+        return it;
+    }
+
+    private static void assertDelete(final DataTreeCandidateNode node, final PathArgument name) {
+        assertEquals(name, node.name());
+        assertEquals(ModificationType.DELETE, node.modificationType());
+    }
+
+    private static void assertWrite(final DataTreeCandidateNode node, final PathArgument name) {
+        assertEquals(name, node.name());
+        assertEquals(ModificationType.WRITE, node.modificationType());
     }
 }
