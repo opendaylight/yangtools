@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -66,33 +67,34 @@ abstract class AbstractMutableContainerNode extends MutableTreeNode {
 
     @Override
     public final AbstractContainerNode seal() {
-        final AbstractContainerNode ret;
-
-        /*
-         * Decide which implementation:
-         *
-         * => version equals subtree version, this node has not been updated since its creation
-         * => children.size() equals data child size, this node has been completely materialized and further lookups
-         *    into data will not happen,
-         * => more materialization can happen
-         */
-        if (!incarnation.equals(subtreeVersion)) {
-            final var newChildren = MapAdaptor.getDefaultInstance().optimize(children);
-            final int dataSize = getData().size();
-            final int childrenSize = newChildren.size();
-            if (dataSize != childrenSize) {
-                verify(dataSize > childrenSize, "Detected %s modified children, data has only %s",
-                    childrenSize, dataSize);
-                ret = new LazyContainerNode(data, incarnation, newChildren, subtreeVersion);
-            } else {
-                ret = new MaterializedContainerNode(data, incarnation, newChildren, subtreeVersion);
-            }
-        } else {
-            ret = new SimpleContainerNode(data, incarnation);
-        }
-
+        final var result = sealImpl();
         // This forces a NPE if this class is accessed again. Better than corruption.
         children = null;
-        return ret;
+        return result;
+
+    }
+
+    // There three possible outcomes here:
+    @NonNullByDefault
+    private AbstractContainerNode sealImpl() {
+        // - incarnation equals subtree version, this node has not been updated since its creation, or
+        return incarnation.equals(subtreeVersion) ? new SimpleContainerNode(data, incarnation) : sealSubtree();
+    }
+
+    @NonNullByDefault
+    private AbstractContainerNode sealSubtree() {
+        final var newChildren = MapAdaptor.getDefaultInstance().optimize(children);
+        final int dataSize = getData().size();
+        final int childrenSize = newChildren.size();
+
+        // - children.size() equals data child size, this node has been completely materialized and further lookups into
+        //   data will not happen, or
+        if (dataSize == childrenSize) {
+            return new MaterializedContainerNode(data, incarnation, newChildren, subtreeVersion);
+        }
+
+        // - more materialization can happen
+        verify(dataSize > childrenSize, "Detected %s modified children, data has only %s", childrenSize, dataSize);
+        return new LazyContainerNode(data, incarnation, newChildren, subtreeVersion);
     }
 }
