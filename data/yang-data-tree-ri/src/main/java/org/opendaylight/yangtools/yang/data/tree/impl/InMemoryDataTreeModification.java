@@ -17,6 +17,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.ConcurrentModificationException;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -181,25 +182,20 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public Optional<NormalizedNode> readNode(final YangInstanceIdentifier path) {
-        final var terminal = resolveTerminal(path);
-        final var terminalPath = terminal.getKey();
-
-        final var result = resolveSnapshot(terminalPath, terminal.getValue());
-        return result == null ? Optional.empty() : NormalizedNodes.findNode(terminalPath, result.data(), path);
+        final var tree = resolveSnapshot(path);
+        return tree == null ? Optional.empty()
+            : NormalizedNodes.findNode(tree.getValue(), tree.getKey().data(), path);
     }
 
     @Override
     public Optional<VersionInfo> readVersionInfo(final YangInstanceIdentifier path) {
-        final var terminal = resolveTerminal(path);
-        final var terminalPath = terminal.getKey();
-
-        final var result = resolveSnapshot(terminalPath, terminal.getValue());
-        return result == null ? Optional.empty()
-            : StoreTreeNodes.findNode(result, path.relativeTo(terminalPath).orElseThrow())
+        final var snapshot = resolveSnapshot(path);
+        return snapshot == null ? Optional.empty()
+            : StoreTreeNodes.findNode(snapshot.getKey(), path.relativeTo(snapshot.getValue()).orElseThrow())
                 .flatMap(treeNode -> Optional.ofNullable(treeNode.subtreeVersion().readInfo()));
     }
 
-    private Entry<YangInstanceIdentifier, ModifiedNode> resolveTerminal(final YangInstanceIdentifier path) {
+    private @Nullable Entry<TreeNode, YangInstanceIdentifier> resolveSnapshot(final YangInstanceIdentifier path) {
         final var local = acquireState();
         final var rootNode = switch (local) {
             case Open(var root) -> root;
@@ -207,14 +203,16 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             default -> throw new IllegalStateException("Cannot access data in state " + local);
         };
 
-        /*
-         * Walk the tree from the top, looking for the first node between root and the requested path which has been
-         * modified. If no such node exists, we use the node itself.
-         */
-        return StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path, input -> switch (input.getOperation()) {
-            case DELETE, MERGE, WRITE -> true;
-            case TOUCH, NONE -> false;
-        });
+        // Walk the tree from the top, looking for the first node between root and the requested path which has been
+        // modified. If no such node exists, we use the node itself.
+        final var terminal = StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path,
+            node -> switch (node.getOperation()) {
+                case DELETE, MERGE, WRITE -> true;
+                case TOUCH, NONE -> false;
+            });
+        final var terminalPath = terminal.getKey();
+        final var result = resolveSnapshot(terminalPath, terminal.getValue());
+        return result == null ? null : Map.entry(result, terminalPath);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
