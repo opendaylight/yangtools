@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
@@ -117,111 +119,122 @@ class Bug4295Test {
     private static void assertCandidateOne(final DataTreeCandidateNode top) {
         assertEquals(ModificationType.SUBTREE_MODIFIED, top.modificationType());
         final var topIt = top.childNodes().iterator();
-        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT));
+        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT), 1);
         assertFalse(topIt.hasNext());
 
-        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT));
+        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT), 1);
         assertFalse(rootIt.hasNext());
 
-        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST));
+        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST), 4);
         assertFalse(subRootIt.hasNext());
         final var outerListFirstIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"));
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"), 1);
         assertDelete(outerListFirstIt.next(), new NodeIdentifier(INNER_LIST));
         assertFalse(outerListFirstIt.hasNext());
 
         assertWrite(outerListIt.next(), NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "5"));
         assertWrite(outerListIt.next(), NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "4"));
 
-        final var outerListFourthIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"));
+        final var outerListFourth = outerListIt.next();
+        final var outerListFourthIt = assertSubtreeModified(outerListFourth,
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"), 2);
         assertFalse(outerListIt.hasNext());
 
         // O and O_ID, in some order
-        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
-        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        assertOuterEntry(outerListFourthIt, outerListFourth, "o-3", "3");
         assertFalse(outerListFourthIt.hasNext());
     }
 
     private static void assertCandidateTwo(final DataTreeCandidateNode top) {
         assertEquals(ModificationType.SUBTREE_MODIFIED, top.modificationType());
         final var topIt = top.childNodes().iterator();
-        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT));
+        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT), 1);
         assertFalse(topIt.hasNext());
 
-        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT));
+        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT), 1);
         assertFalse(rootIt.hasNext());
 
-        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST));
+        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST), 4);
         assertFalse(subRootIt.hasNext());
 
         final var outerListFirstIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"));
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"), 1);
 
-        final var outerListFirstFirstIt = assertAppeared(outerListFirstIt.next(), new NodeIdentifier(INNER_LIST));
+        final var outerListFirstFirstIt = assertAppeared(outerListFirstIt.next(), new NodeIdentifier(INNER_LIST), 1);
         assertFalse(outerListFirstIt.hasNext());
         assertWrite(outerListFirstFirstIt.next(), NodeIdentifierWithPredicates.of(INNER_LIST, I_ID, "a"));
         assertFalse(outerListFirstFirstIt.hasNext());
 
-        final var outerListSecondIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "5"));
+        final var outerListSecond = outerListIt.next();
+        final var outerListSecondIt = assertSubtreeModified(outerListSecond,
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "5"), 2);
         // O and O_ID, in some order
-        assertEquals(ModificationType.WRITE, outerListSecondIt.next().modificationType());
-        assertEquals(ModificationType.WRITE, outerListSecondIt.next().modificationType());
+        assertOuterEntry(outerListSecondIt, outerListSecond, "o-5", "5");
         assertFalse(outerListSecondIt.hasNext());
 
-        final var outerListThirdIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "4"));
+        final var outerListThird = outerListIt.next();
+        final var outerListThirdIt = assertSubtreeModified(outerListThird,
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "4"), 2);
         // O and O_ID, in some order
-        assertEquals(ModificationType.WRITE, outerListThirdIt.next().modificationType());
-        assertEquals(ModificationType.WRITE, outerListThirdIt.next().modificationType());
+        assertOuterEntry(outerListThirdIt, outerListThird, "o-4", "4");
         assertFalse(outerListThirdIt.hasNext());
 
-        final var outerListFourthIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"));
+        final var outerListFourth = outerListIt.next();
+        final var outerListFourthIt = assertSubtreeModified(outerListFourth,
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"), 2);
         assertFalse(outerListIt.hasNext());
-        // O and O_ID, in some order
-        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
-        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        // and O and O_ID in some order
+        assertOuterEntry(outerListFourthIt, outerListFourth, "o-3", "3");
         assertFalse(outerListFourthIt.hasNext());
+    }
+
+    private static void assertOuterEntry(final Iterator<DataTreeCandidateNode> it, final DataTreeCandidateNode entry,
+            final String obody, final String oidBody) {
+        assertEquals(obody, assertInstanceOf(LeafNode.class,
+            entry.getModifiedChild(new NodeIdentifier(O)).dataAfter()).body());
+        assertEquals(oidBody, assertInstanceOf(LeafNode.class,
+            entry.getModifiedChild(new NodeIdentifier(O_ID)).dataAfter()).body());
+        // Account for these
+        assertEquals(ModificationType.WRITE, it.next().modificationType());
+        assertEquals(ModificationType.WRITE, it.next().modificationType());
     }
 
     private static void assertCandidateThree(final DataTreeCandidateNode top) {
         assertEquals(ModificationType.SUBTREE_MODIFIED, top.modificationType());
         final var topIt = top.childNodes().iterator();
-        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT));
+        final var rootIt = assertSubtreeModified(topIt.next(), new NodeIdentifier(ROOT), 1);
         assertFalse(topIt.hasNext());
 
-        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT));
+        final var subRootIt = assertSubtreeModified(rootIt.next(), new NodeIdentifier(SUB_ROOT), 1);
         assertFalse(rootIt.hasNext());
 
-        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST));
+        final var outerListIt = assertSubtreeModified(subRootIt.next(), new NodeIdentifier(OUTER_LIST), 4);
         assertFalse(subRootIt.hasNext());
 
         final var outerListFirstIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"));
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "2"), 1);
         assertWrite(outerListFirstIt.next(), new NodeIdentifier(INNER_LIST));
         assertFalse(outerListFirstIt.hasNext());
 
-        final var outerListSecondIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "5"));
+        final var outerListSecond = outerListIt.next();
+        final var outerListSecondIt = assertSubtreeModified(outerListSecond,
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "5"), 2);
         // O and O_ID, in some order
-        assertEquals(ModificationType.WRITE, outerListSecondIt.next().modificationType());
-        assertEquals(ModificationType.WRITE, outerListSecondIt.next().modificationType());
+        assertOuterEntry(outerListSecondIt, outerListSecond, "o-5", "5");
         assertFalse(outerListSecondIt.hasNext());
 
-        final var outerListThirdIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "4"));
+        final var outerListThird = outerListIt.next();
+        final var outerListThirdIt = assertSubtreeModified(outerListThird,
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "4"), 2);
         // O and O_ID, in some order
-        assertEquals(ModificationType.WRITE, outerListThirdIt.next().modificationType());
-        assertEquals(ModificationType.WRITE, outerListThirdIt.next().modificationType());
+        assertOuterEntry(outerListThirdIt, outerListThird, "o-4", "4");
         assertFalse(outerListThirdIt.hasNext());
 
-        final var outerListFourthIt = assertSubtreeModified(outerListIt.next(),
-            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"));
+        final var outerListFourth = outerListIt.next();
+        final var outerListFourthIt = assertSubtreeModified(outerListFourth,
+            NodeIdentifierWithPredicates.of(OUTER_LIST, O_ID, "3"), 2);
         // O and O_ID, in some order
-        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
-        assertEquals(ModificationType.WRITE, outerListFourthIt.next().modificationType());
+        assertOuterEntry(outerListFourthIt, outerListFourth, "o-3", "3");
         assertFalse(outerListFourthIt.hasNext());
 
         assertFalse(outerListIt.hasNext());
@@ -322,19 +335,23 @@ class Bug4295Test {
     }
 
     private static Iterator<DataTreeCandidateNode> assertSubtreeModified(final DataTreeCandidateNode node,
-            final PathArgument name) {
+            final PathArgument name, final int size) {
         assertEquals(name, node.name());
         assertEquals(ModificationType.SUBTREE_MODIFIED, node.modificationType());
-        final var it = node.childNodes().iterator();
-        assertTrue(it.hasNext());
-        return it;
+        return assertChildren(node, size);
     }
 
     private static Iterator<DataTreeCandidateNode> assertAppeared(final DataTreeCandidateNode node,
-            final PathArgument name) {
+            final PathArgument name, final int size) {
         assertEquals(name, node.name());
         assertEquals(ModificationType.APPEARED, node.modificationType());
-        final var it = node.childNodes().iterator();
+        return assertChildren(node, size);
+    }
+
+    private static Iterator<DataTreeCandidateNode> assertChildren(final DataTreeCandidateNode node, final int size) {
+        final var childNodes = node.childNodes();
+        assertEquals(size, childNodes.size());
+        final var it = childNodes.iterator();
         assertTrue(it.hasNext());
         return it;
     }
