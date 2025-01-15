@@ -70,8 +70,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     // on top of 'original' -- see the seal() method below.
     //
     // After this process completes, the following four fields are guaranteed to remain stable.
-    private final Map<PathArgument, ModifiedNode> children;
-    private LogicalOperation operation;
+    private @NonNull Map<PathArgument, ModifiedNode> children;
+    private @NonNull LogicalOperation operation;
 
     // The argument to LogicalOperation.{MERGE,WRITE}, invalid otherwise
     private NormalizedNode value;
@@ -296,19 +296,21 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         clearSnapshot();
         writtenOriginal = null;
 
+        var isEmpty = children.isEmpty();
+
         switch (operation) {
             case TOUCH -> {
                 // A TOUCH node without any children is a no-op
-                if (children.isEmpty()) {
+                if (isEmpty) {
                     updateOperationType(LogicalOperation.NONE);
                 }
             }
             case WRITE -> {
                 // A WRITE can collapse all of its children
-                if (!children.isEmpty()) {
+                if (!isEmpty) {
                     final var applied = schema.apply(this, original(), version);
                     value = applied != null ? applied.data() : null;
-                    children.clear();
+                    isEmpty = true;
                 }
 
                 if (value == null) {
@@ -321,6 +323,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             default -> {
                 // No-op
             }
+        }
+
+        if (isEmpty) {
+            //
+            children = Map.of();
         }
     }
 
@@ -338,7 +345,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     void updateOperationType(final LogicalOperation type) {
-        operation = type;
+        operation = requireNonNull(type);
         modType = null;
         applyChildren = null;
 

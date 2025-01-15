@@ -26,7 +26,7 @@ abstract sealed class NodeModification implements Identifiable<PathArgument> per
      *
      * @return Operation type.
      */
-    abstract LogicalOperation getOperation();
+    abstract @NonNull LogicalOperation getOperation();
 
     /**
      * Return the value which was written to this node. The returned object is only valid for
