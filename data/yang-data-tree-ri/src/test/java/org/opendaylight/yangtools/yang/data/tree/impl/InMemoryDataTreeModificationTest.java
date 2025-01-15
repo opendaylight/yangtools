@@ -110,6 +110,10 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
         assertNotSame(mod.snapshotRoot(), thirdMod.snapshotRoot());
         assertNotSame(firstMod.snapshotRoot(), thirdMod.snapshotRoot());
         assertSame(candidate.getTipRoot(), thirdMod.snapshotRoot());
+
+        // a further validate() is a no-op
+        tree.validate(mod);
+        assertState(prepared);
     }
 
     @Test
