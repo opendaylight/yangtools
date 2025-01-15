@@ -70,8 +70,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     // on top of 'original' -- see the seal() method below.
     //
     // After this process completes, the following four fields are guaranteed to remain stable.
-    private final Map<PathArgument, ModifiedNode> children;
-    private LogicalOperation operation;
+    private @NonNull Map<PathArgument, ModifiedNode> children;
+    private @NonNull LogicalOperation operation;
 
     // The argument to LogicalOperation.{MERGE,WRITE}, invalid otherwise
     private NormalizedNode value;
@@ -296,19 +296,21 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         clearSnapshot();
         writtenOriginal = null;
 
+        var clearChildren = children.isEmpty();
+
         switch (operation) {
             case TOUCH -> {
                 // A TOUCH node without any children is a no-op
-                if (children.isEmpty()) {
+                if (clearChildren) {
                     updateOperationType(LogicalOperation.NONE);
                 }
             }
             case WRITE -> {
                 // A WRITE can collapse all of its children
-                if (!children.isEmpty()) {
+                if (!clearChildren) {
                     final var applied = schema.apply(this, original(), version);
                     value = applied != null ? applied.data() : null;
-                    children.clear();
+                    clearChildren = true;
                 }
 
                 if (value == null) {
@@ -321,6 +323,15 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             default -> {
                 // No-op
             }
+        }
+
+        // Mild enforcement of invariants: children is supposed to be immutable from this point on.
+        // We could perform a defensive ImmutableMap.copyOf(), but that would force re-indexing, which we want to avoid.
+        // We could wrap in with Collections.unmodifiableMap(), but that costs heap, which we do not want to pay.
+        // This just squashes empty children into an immutable singleton, so we catch at least some would-be offenders.
+        // Removing references to empty HashMaps should also be friendly to GC.
+        if (clearChildren) {
+            children = Map.of();
         }
     }
 
@@ -338,7 +349,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     void updateOperationType(final LogicalOperation type) {
-        operation = type;
+        operation = requireNonNull(type);
         modType = null;
         applyChildren = null;
 

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -54,5 +55,5 @@ abstract class ChildTrackingPolicy {
      *
      * @return An empty map instance
      */
-    abstract Map<PathArgument, ModifiedNode> createMap();
+    abstract @NonNull Map<PathArgument, ModifiedNode> createMap();
 }
