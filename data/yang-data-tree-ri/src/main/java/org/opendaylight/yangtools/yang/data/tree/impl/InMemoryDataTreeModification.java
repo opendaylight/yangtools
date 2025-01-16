@@ -44,7 +44,12 @@ import org.slf4j.LoggerFactory;
 
 final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification {
     /**
-     * Internal state of a modification.
+     * Internal state of a modification. It looks something like this:
+     * <pre>{@code
+     *   Open -> Sealing -> Defunct
+     *                   -> Noop
+     *                   -> Ready (-> AppliedToSnapshot) -> Prepared (-> Prepared)...
+     * }</pre>
      */
     @VisibleForTesting
     sealed interface State {
@@ -148,13 +153,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     /**
      * The same thing as {@link Ready}, but we have also seen a call to {@code newModification()} and will never touch
-     * modification from that code path. We can transition from this state to {@link Prepared} via a locked operation.
+     * modification from that code path. We can transition from this state to {@link Prepared} without synchronization,
+     * as state is only affected by 'write' threads, who are expected to provide external synchronization, symmetric to
+     * how {@code Open} is affected only by 'read' threads.
      */
-    // TODO: Transition to Prepared needs to be further fleshed out. Most notably root holds the side effects of
-    //       SchemaAwareOperation.apply(), but we do not use those results at all.
-    //       It feels like we should have a specialized transition when we observe this state in validate(), but doing
-    //       so requires a figuring out the relationship between 'applied' and the result of 'prepare': can we just
-    //       reuse the 'applied' when 'snapshot.getRootNode() == current'?
     @NonNullByDefault
     private record AppliedToSnapshot(ModifiedNode root, TreeNode applied) implements State {
         AppliedToSnapshot {
@@ -169,7 +171,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     /**
-     * A ready modification has been completed {@code prepare()} step. This is a terminal state.
+     * A ready modification has been completed {@code prepare()} step. This is a terminal state which can be updated
+     * by 'write' threads.
      */
     @NonNullByDefault
     private record Prepared(ModifiedNode root, TreeNode applied) implements State {
@@ -332,16 +335,13 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             final YangInstanceIdentifier path) {
         upgradeIfPossible(rootNode);
 
-        /*
-         * Walk the strategy and modification trees in-sync, creating modification nodes as needed.
-         *
-         * If the user has provided wrong input, we may end up with a bunch of TOUCH nodes present
-         * ending with an empty one, as we will throw the exception below. This fact could end up
-         * being a problem, as we'd have bunch of phantom operations.
-         *
-         * That is fine, as we will prune any empty TOUCH nodes in the last phase of the ready
-         * process.
-         */
+        // Walk the strategy and modification trees in-sync, creating modification nodes as needed.
+        //
+        // If the user has provided wrong input, we may end up with a bunch of TOUCH nodes present ending with an empty
+        // one, as we will throw the exception below. This fact could end up being a problem, as we would have bunch of
+        // phantom operations.
+        //
+        // That is fine, as we will prune any empty TOUCH nodes in the last phase of the ready process.
         var operation = getStrategy();
         var modification = rootNode;
 
@@ -533,8 +533,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         // including whatever user code works.
         final var witness = (State) STATE.compareAndExchange(this, open, Sealing.INSTANCE);
         if (witness != open) {
-            throw new ConcurrentModificationException(
-                "Concurrent ready of " + this + ", state changed from " + open + " to " + witness);
+            throw new ConcurrentModificationException(this + " state changed from " + open + " to " + witness);
         }
 
         LOG.trace("Ready operation started");
@@ -597,27 +596,35 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      */
     @NonNullByDefault
     void validate(final YangInstanceIdentifier path, final TreeNode current) throws DataValidationFailedException {
-        final NodeModification rootNode;
         final var local = acquireState();
         if (local instanceof Ready ready) {
-            rootNode = ready.root;
+            lockedValidate(ready.root, path, current);
         } else if (local instanceof AppliedToSnapshot applied) {
-            rootNode = applied.root;
+            LOG.trace("Concurrent validate()");
+            validate(applied.root, path, current);
         } else if (local instanceof Noop) {
             LOG.trace("No-op validate()");
-            return;
-        } else if (local instanceof Prepared prepared) {
-            LOG.trace("Skipping validate() in state {}", prepared);
-            return;
+        } else if (local instanceof Prepared) {
+            LOG.trace("Prepared validate()");
         } else {
             throw illegalState(local, "validate");
         }
+    }
 
-        // synchronizes with newModification() and prepare() to protect rootNode internals
-        synchronized (this) {
-            LOG.trace("Locked validate() in state {}", local);
-            getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
-        }
+    @NonNullByDefault
+    private void validate(final NodeModification rootNode, final YangInstanceIdentifier path, final TreeNode current)
+            throws DataValidationFailedException {
+        getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
+    }
+
+    // Public state synchronized between newModification() and validate().
+    // TODO: the two are comparable, and at some point we need to have enough state transfer to give out enough of
+    //       TreeNode view to give that out of newModification().
+    @NonNullByDefault
+    private synchronized void lockedValidate(final NodeModification rootNode, final YangInstanceIdentifier path,
+            final TreeNode current) throws DataValidationFailedException {
+        LOG.trace("Locked validate()");
+        validate(rootNode, path, current);
     }
 
     /**
@@ -634,11 +641,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
         final var local = acquireState();
         if (local instanceof Ready ready) {
-            return prepare(ready, path, current);
+            return lockedPrepare(ready, path, current);
         } else if (local instanceof AppliedToSnapshot applied) {
-            return prepare(applied, path, current);
+            return concurrentPrepare(applied, applied.root, path, current);
         } else if (local instanceof Prepared prepared) {
-            return prepare(prepared, path, current);
+            return concurrentPrepare(prepared, prepared.root, path, current);
         } else if (local instanceof Noop) {
             LOG.trace("No-op prepare()");
             return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
@@ -647,9 +654,37 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         }
     }
 
-    // synchronizes with newModification() and validate() to protect rootNode internals
     @NonNullByDefault
-    private synchronized DataTreeCandidateTip prepare(final State prev, final YangInstanceIdentifier path,
+    private Prepared prepare(final ModifiedNode rootNode, final YangInstanceIdentifier path, final TreeNode current) {
+        final var newRoot = getStrategy().apply(rootNode, current, version);
+        if (newRoot == null) {
+            // TODO: this precludes rooting using transient root, for example a non-presence container
+            throw new IllegalStateException("Apply strategy failed to produce root node for modification " + this);
+        }
+        return new Prepared(rootNode, newRoot);
+    }
+
+    // TODO: Transition from AppliedToSnapshot to Prepared needs to be further fleshed out. Most notably root holds the
+    //       side effects of SchemaAwareOperation.apply(), but we do not use those results at all.
+    //       It feels like we should have a specialized transition when we observe this state in validate(), but doing
+    //       so requires a figuring out the relationship between 'applied' and the result of 'prepare': can we just
+    //       reuse the 'applied' when 'snapshot.getRootNode() == current'?
+    @NonNullByDefault
+    private DataTreeCandidateTip concurrentPrepare(final State prev, final ModifiedNode rootNode,
+            final YangInstanceIdentifier path, final TreeNode current) {
+        LOG.trace("Concurrent prepare() in state {}", prev);
+        final var prepared = prepare(rootNode, path, current);
+        final var witness = STATE.compareAndExchangeRelease(this, prev, prepared);
+        if (witness != prev) {
+            throw new ConcurrentModificationException(this + " changed state changed from " + prev + " to " + witness);
+        }
+
+        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, prepared.applied);
+    }
+
+    // Synchronizes with newModification() to make the Ready -> Prepared transition
+    @NonNullByDefault
+    private synchronized DataTreeCandidateTip lockedPrepare(final Ready prev, final YangInstanceIdentifier path,
             final TreeNode current) {
         final var local = plainState();
         LOG.trace("Locked prepare() in state {}", local);
@@ -659,23 +694,16 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             rootNode = ready.root;
         } else if (local instanceof AppliedToSnapshot applied) {
             rootNode = applied.root;
-        } else if (local instanceof Prepared prepared) {
-            rootNode = prepared.root;
-        } else if (local instanceof Noop) {
-            return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
+        } else if (local instanceof Prepared) {
+            throw new ConcurrentModificationException(this + " changed state changed from " + prev + " to " + local);
         } else {
             throw new VerifyException("Unexpected transition from " + prev + " to " + local);
         }
 
-        final var newRoot = getStrategy().apply(rootNode, current, version);
-        if (newRoot == null) {
-            // FIXME: this should be a VerifyException
-            throw new IllegalStateException("Apply strategy failed to produce root node for modification " + this);
-        }
+        final var prepared = prepare(rootNode, path, current);
+        STATE.set(this, prepared);
 
-        final var candidate = new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, newRoot);
-        STATE.set(this, new Prepared(rootNode, newRoot));
-        return candidate;
+        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, prepared.applied);
     }
 
     /**
