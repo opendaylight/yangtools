@@ -597,27 +597,33 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      */
     @NonNullByDefault
     void validate(final YangInstanceIdentifier path, final TreeNode current) throws DataValidationFailedException {
-        final NodeModification rootNode;
         final var local = acquireState();
         switch (local) {
-            case Noop noop -> {
-                LOG.trace("No-op validate()");
-                return;
-            }
-            case Ready(var root) -> rootNode = root;
-            case AppliedToSnapshot ready -> rootNode = ready.root;
-            case Prepared prepared -> {
-                LOG.trace("Skipping validate() in state {}", prepared);
-                return;
+            case Noop noop -> LOG.trace("No-op validate()");
+            case Prepared prepared -> LOG.trace("Prepared validate()");
+            case Ready(var root) -> validateReady(root, path, current);
+            case AppliedToSnapshot ready -> {
+                LOG.trace("Concurrent validate()");
+                validate(ready.root, path, current);
             }
             default -> throw illegalState(local, "validate");
         }
+    }
 
-        // synchronizes with newModification() and prepare() to protect rootNode internals
-        synchronized (this) {
-            LOG.trace("Locked validate() in state {}", local);
-            getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
-        }
+    @NonNullByDefault
+    private void validate(final NodeModification rootNode, final YangInstanceIdentifier path, final TreeNode current)
+            throws DataValidationFailedException {
+        getStrategy().checkApplicable(new ModificationPath(path), rootNode, current, version);
+    }
+
+    // Public state synchronized between newModification() and validate().
+    // FIXME: the two are comparable, and at some point we need to have enough state transfer to give out enough of
+    //        TreeNode view to give that out of newModification().
+    @NonNullByDefault
+    private synchronized void validateReady(final NodeModification rootNode, final YangInstanceIdentifier path,
+            final TreeNode current) throws DataValidationFailedException {
+        LOG.trace("Locked validate()");
+        validate(rootNode, path, current);
     }
 
     /**
@@ -638,25 +644,19 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
                 LOG.trace("No-op prepare()");
                 yield new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
             }
-            case Ready ready -> prepare(ready, path, current);
-            case AppliedToSnapshot ready -> prepare(ready, path, current);
-            case Prepared prepared -> prepare(prepared, path, current);
+            case AppliedToSnapshot ready -> concurrentPrepare(ready, path, current);
+            case Prepared prepared -> concurrentPrepare(prepared, path, current);
+            case Ready ready -> lockedPrepare(path, current);
             default -> throw illegalState(local, "prepare");
         };
     }
 
-    // synchronizes with newModification() and validate() to protect rootNode internals
     @NonNullByDefault
-    private synchronized DataTreeCandidateTip prepare(final State prev, final YangInstanceIdentifier path,
+    private DataTreeCandidateTip prepare(final State prev, final YangInstanceIdentifier path,
             final TreeNode current) {
         final var local = plainState();
-        LOG.trace("Locked prepare() in state {}", local);
-
         final ModifiedNode rootNode;
         switch (local) {
-            case Noop noop -> {
-                return new NoopDataTreeCandidate(YangInstanceIdentifier.of(), current);
-            }
             case Ready(var root) -> rootNode = root;
             case AppliedToSnapshot ready -> rootNode = ready.root;
             case Prepared prepared -> rootNode = prepared.root;
@@ -672,6 +672,19 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final var candidate = new InMemoryDataTreeCandidate(YangInstanceIdentifier.of(), rootNode, current, newRoot);
         STATE.set(this, new Prepared(rootNode, newRoot));
         return candidate;
+    }
+
+    @NonNullByDefault
+    private DataTreeCandidateTip concurrentPrepare(final State prev, final YangInstanceIdentifier path,
+            final TreeNode current) {
+        LOG.trace("Concurrent prepare{} in state {}", prev);
+        return prepare(prev, path, current);
+    }
+
+    // Synchronizes with newModification() to make the Ready -> Prepared transition
+    @NonNullByDefault
+    private synchronized DataTreeCandidateTip lockedPrepare(final YangInstanceIdentifier path, final TreeNode current) {
+        return prepare(plainState(), path, current);
     }
 
     /**
