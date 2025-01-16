@@ -175,10 +175,12 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
         assertISE(defunct, cause, "ready", mod::ready);
         assertISE(defunct, cause, "chain on", mod::newModification);
         assertISE(defunct, cause, "access data of", () -> mod.readNode(YangInstanceIdentifier.of()));
-        assertISE(defunct, cause, "access contents of", () -> mod.applyToCursor(cursor));
 
         assertIAE(defunct, cause, "validate", () -> tree.validate(mod));
         assertIAE(defunct, cause, "prepare", () -> tree.prepare(mod));
+
+        doNothing().when(cursor).delete(new NodeIdentifier(TestModel.TEST_QNAME));
+        mod.applyToCursor(cursor);
     }
 
     private void assertIAE(final State defunct, final Throwable cause, final String op, final Executable executable) {

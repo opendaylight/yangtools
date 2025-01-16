@@ -88,10 +88,12 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     /**
-     * The call to {@code ready()} has failed to complete. No further operations are allowed.
+     * The call to {@code ready()} has failed to complete. No further operations are allowed, except for
+     * applyToCursor(), which should still work.
      */
-    private record Defunct(String threadName, @NonNull Throwable cause) implements State {
+    private record Defunct(NodeModification root, String threadName, @NonNull Throwable cause) implements State {
         Defunct {
+            requireNonNull(root);
             requireNonNull(cause);
         }
 
@@ -459,6 +461,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             case Open(var root) -> rootNode = root;
             case Ready(var root) -> rootNode = root;
             case AppliedToSnapshot ready -> rootNode = ready.root;
+            case Defunct defunct -> rootNode = defunct.root;
             default -> throw illegalState(local, "access contents of");
         }
 
@@ -515,7 +518,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             rootOperation = runReady(rootNode);
         } catch (Throwable t) {
             // failure: transition to Defunct
-            finishReady(new Defunct(Thread.currentThread().getName(), t));
+            finishReady(new Defunct(rootNode, Thread.currentThread().getName(), t));
             throw t;
         }
 
