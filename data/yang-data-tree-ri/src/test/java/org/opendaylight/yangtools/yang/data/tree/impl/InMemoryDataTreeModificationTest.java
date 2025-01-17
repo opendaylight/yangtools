@@ -58,6 +58,13 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
     }
 
     @Test
+    void testToString() {
+        assertEquals("InMemoryDataTreeModification{state=Open}", mod.toString());
+        mod.ready();
+        assertEquals("InMemoryDataTreeModification{state=Noop}", mod.toString());
+    }
+
+    @Test
     void testReadyNewModicationValidatePrepare() throws Exception {
         mod.write(TestModel.TEST_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
@@ -79,7 +86,7 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
         assertNotSame(firstMod, secondMod);
         assertSame(firstMod.snapshotRoot(), secondMod.snapshotRoot());
 
-        // validate is a no-op as we have already
+        // validate is a no-op as we have the DataTree
         tree.validate(mod);
         assertState(applied);
 
