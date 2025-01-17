@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,9 @@ import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory
 @ExtendWith(MockitoExtension.class)
 class YT1655Test extends AbstractTestModelTest {
     @Mock
-    private VersionInfo version;
+    private VersionInfo version1;
+    @Mock
+    private VersionInfo version2;
 
     @Test
     void testVersionInfoRead() throws Exception {
@@ -42,14 +45,34 @@ class YT1655Test extends AbstractTestModelTest {
         mod.ready();
 
         tree.validate(mod);
-        tree.commit(tree.prepare(mod), version);
+        tree.commit(tree.prepare(mod), version1);
 
         final var snap2 = tree.takeSnapshot();
-        assertEquals(Optional.of(version), snap2.readVersionInfo(YangInstanceIdentifier.of()));
+        assertEquals(Optional.of(version1), snap2.readVersionInfo(YangInstanceIdentifier.of()));
+        assertEquals(Optional.of(version1), snap2.readVersionInfo(TestModel.TEST_PATH));
 
         // noop
         final var mod2 = snap2.newModification();
+        assertEquals(Optional.of(version1), mod2.readVersionInfo(YangInstanceIdentifier.of()));
         mod2.ready();
-        assertEquals(Optional.of(version), mod2.readVersionInfo(YangInstanceIdentifier.of()));
+        assertEquals(Optional.of(version1), mod2.readVersionInfo(YangInstanceIdentifier.of()));
+
+        // second modification
+        final var mod3 = snap2.newModification();
+        mod3.write(TestModel.NAME_PATH, ImmutableNodes.leafNode(TestModel.NAME_QNAME, "foo"));
+        mod3.ready();
+
+        // mod3.version does not have info yet
+        // FIXME: this seems odd, though
+        assertEquals(Optional.empty(), mod3.readVersionInfo(YangInstanceIdentifier.of()));
+        assertNotNull(mod3.newModification());
+        assertEquals(Optional.empty(), mod3.readVersionInfo(YangInstanceIdentifier.of()));
+
+        tree.validate(mod3);
+        tree.commit(tree.prepare(mod3), version2);
+
+        assertEquals(Optional.of(version2), mod3.readVersionInfo(YangInstanceIdentifier.of()));
+        assertEquals(Optional.of(version2), mod3.readVersionInfo(TestModel.NAME_PATH));
+        assertEquals(Optional.of(version1), mod3.readVersionInfo(TestModel.TEST_PATH));
     }
 }
