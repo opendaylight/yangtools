@@ -9,4 +9,5 @@
  * Additional services provided by a dynamic {@link org.opendaylight.yangtools.binding.data.codec.api.BindingDataCodec}
  * implementation.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.binding.data.codec.dynamic;
