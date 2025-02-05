@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opendaylight.yangtools.yang.common.YangConstants.operationInputQName;
 import static org.opendaylight.yangtools.yang.common.YangConstants.operationOutputQName;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.Foo;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.FooInput;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.FooInputBuilder;
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
-public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
+class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
     private static final NodeIdentifier FOO_INPUT = NodeIdentifier.create(operationInputQName(Foo.QNAME.getModule()));
     private static final NodeIdentifier FOO_OUTPUT = NodeIdentifier.create(operationOutputQName(Foo.QNAME.getModule()));
     private static final NodeIdentifier FOO_XYZZY = NodeIdentifier.create(QName.create(Foo.QNAME, "xyzzy"));
@@ -78,7 +78,7 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
     private static final @NonNull FooioOutput BINDING_FOOIO_OUTPUT = new FooioOutputBuilder().setFooo("ofoo").build();
 
     @Test
-    public void testSerialization() {
+    void testSerialization() {
         assertEquals(DOM_FOO_INPUT, codecContext.toLazyNormalizedNodeActionInput(Foo.class, BINDING_FOO_INPUT)
                 .getDelegate());
         assertEquals(DOM_BAR_INPUT, codecContext.toLazyNormalizedNodeActionInput(Bar.class, BINDING_BAR_INPUT)
@@ -90,7 +90,7 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testKeyedListActionSerialization() {
+    void testKeyedListActionSerialization() {
         assertEquals(DOM_FOOIO_INPUT, codecContext.toLazyNormalizedNodeActionInput(Fooio.class, BINDING_FOOIO_INPUT)
                 .getDelegate());
         assertEquals(DOM_FOOIO_OUTPUT, codecContext.toLazyNormalizedNodeActionOutput(Fooio.class, BINDING_FOOIO_OUTPUT)
@@ -98,7 +98,7 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testDeserialization() {
+    void testDeserialization() {
         assertEquals(BINDING_FOO_INPUT, codecContext.fromNormalizedNodeActionInput(Foo.class, DOM_FOO_INPUT));
         assertEquals(BINDING_BAR_INPUT, codecContext.fromNormalizedNodeActionInput(Bar.class, DOM_FOO_INPUT));
         assertEquals(BINDING_FOO_OUTPUT, codecContext.fromNormalizedNodeActionOutput(Foo.class, DOM_FOO_OUTPUT));
@@ -106,7 +106,7 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testKeyedListActionDeserialization() {
+    void testKeyedListActionDeserialization() {
         assertEquals(BINDING_FOOIO_INPUT, codecContext.fromNormalizedNodeActionInput(Fooio.class, DOM_FOOIO_INPUT));
         assertEquals(BINDING_FOOIO_OUTPUT, codecContext.fromNormalizedNodeActionOutput(Fooio.class, DOM_FOOIO_OUTPUT));
     }

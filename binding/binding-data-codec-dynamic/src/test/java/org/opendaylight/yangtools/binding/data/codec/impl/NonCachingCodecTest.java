@@ -10,32 +10,32 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class NonCachingCodecTest {
+@ExtendWith(MockitoExtension.class)
+class NonCachingCodecTest {
     @Mock
-    public BindingNormalizedNodeCodec<DataObject> codec;
+    private BindingNormalizedNodeCodec<DataObject> codec;
     @Mock
-    public ContainerNode node;
+    private ContainerNode node;
     @Mock
-    public DataObject object;
+    private DataObject object;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    void beforeEach() {
         doReturn(node).when(codec).serialize(object);
         doReturn(object).when(codec).deserialize(node);
     }
 
     @Test
-    public void basicTest() {
+    void basicTest() {
         try (var nonCachingCodec = new NonCachingCodec<>(codec)) {
             nonCachingCodec.serialize(object);
             verify(codec).serialize(object);

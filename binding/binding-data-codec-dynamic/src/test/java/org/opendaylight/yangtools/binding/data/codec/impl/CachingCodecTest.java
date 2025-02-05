@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TopBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
@@ -35,15 +34,11 @@ import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCa
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public class CachingCodecTest extends AbstractBindingCodecTest {
-
+class CachingCodecTest extends AbstractBindingCodecTest {
     private static final NodeIdentifier TOP_LEVEL_LIST_ARG = new NodeIdentifier(TopLevelList.QNAME);
     private static final InstanceIdentifier<Top> TOP_PATH = InstanceIdentifier.create(Top.class);
     private static final Map<TopLevelListKey, TopLevelList> TWO_LIST = createList(2);
@@ -68,79 +63,83 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         return new StringBuilder("foo").toString();
     }
 
-    @Override
-    @Before
-    public void before() {
-        super.before();
+    @BeforeEach
+    void beforeEach() {
         topNode = codecContext.getDataObjectCodec(TOP_PATH);
         contNode = codecContext.getDataObjectCodec(CONT_PATH);
     }
 
     private static Map<TopLevelListKey, TopLevelList> createList(final int num) {
-        final ImmutableMap.Builder<TopLevelListKey, TopLevelList> builder = ImmutableMap.builder();
+        final var builder = ImmutableMap.<TopLevelListKey, TopLevelList>builderWithExpectedSize(num);
         for (int i = 0; i < num; i++) {
-            final TopLevelListKey key = new TopLevelListKey("test-" + i);
+            final var key = new TopLevelListKey("test-" + i);
             builder.put(key, new TopLevelListBuilder().withKey(key).build());
         }
         return builder.build();
     }
 
     @Test
-    public void testListCache() {
-        final BindingNormalizedNodeCachingCodec<Top> cachingCodec = createCachingCodec(TopLevelList.class);
-        final NormalizedNode first = cachingCodec.serialize(TOP_TWO_LIST_DATA);
-        final NormalizedNode second = cachingCodec.serialize(TOP_TWO_LIST_DATA);
+    void testListCache() {
+        final var cachingCodec = createCachingCodec(TopLevelList.class);
+        final var first = assertInstanceOf(ContainerNode.class, cachingCodec.serialize(TOP_TWO_LIST_DATA));
+        final var second = assertInstanceOf(ContainerNode.class, cachingCodec.serialize(TOP_TWO_LIST_DATA));
 
         assertNotSame(first, second);
         assertEquals(first, second);
         verifyListItemSame(first, second);
 
-        final NormalizedNode third = cachingCodec.serialize(TOP_THREE_LIST_DATA);
+        final var third = assertInstanceOf(ContainerNode.class, cachingCodec.serialize(TOP_THREE_LIST_DATA));
         verifyListItemSame(first, third);
         verifyListItemSame(second, third);
     }
 
     @Test
-    public void testTopAndListCache() {
-        final BindingNormalizedNodeCachingCodec<Top> cachingCodec = createCachingCodec(Top.class, TopLevelList.class);
-        final NormalizedNode first = cachingCodec.serialize(TOP_TWO_LIST_DATA);
-        final NormalizedNode second = cachingCodec.serialize(TOP_TWO_LIST_DATA);
+    void testTopAndListCache() {
+        final var cachingCodec = createCachingCodec(Top.class, TopLevelList.class);
+        final var first = assertInstanceOf(ContainerNode.class, cachingCodec.serialize(TOP_TWO_LIST_DATA));
+        final var second = assertInstanceOf(ContainerNode.class, cachingCodec.serialize(TOP_TWO_LIST_DATA));
 
         assertEquals(first, second);
         assertSame(first, second);
 
-        final NormalizedNode third = cachingCodec.serialize(TOP_THREE_LIST_DATA);
+        final var third = assertInstanceOf(ContainerNode.class, cachingCodec.serialize(TOP_THREE_LIST_DATA));
         verifyListItemSame(first, third);
     }
 
     @Test
-    public void testLeafCache() {
+    void testLeafCache() {
         // The integers should be distinct
         assertNotSame(CONT_DATA.getCaching().getValue(), CONT2_DATA.getCaching().getValue());
 
-        final BindingNormalizedNodeCachingCodec<Cont> cachingCodec = createContCachingCodec(Cont.class, MyType.class);
-        final NormalizedNode first = cachingCodec.serialize(CONT_DATA);
-        final NormalizedNode second = cachingCodec.serialize(CONT2_DATA);
+        final var cachingCodec = createContCachingCodec(Cont.class, MyType.class);
+        final var firstCont = assertInstanceOf(ContainerNode.class, cachingCodec.serialize(CONT_DATA));
+        final var secondCont = assertInstanceOf(ContainerNode.class, cachingCodec.serialize(CONT2_DATA));
 
-        assertNotEquals(first, second);
-        verifyLeafItemSame(first, second);
+        assertNotEquals(firstCont, secondCont);
+
+        final var first = assertInstanceOf(LeafNode.class, firstCont.childByArg(LEAF_ARG));
+        final var second = assertInstanceOf(LeafNode.class, secondCont.childByArg(LEAF_ARG));
+
+        // The leaf nodes are transient, but the values should be the same
+        assertEquals(first, second);
+        assertSame(first.body(), second.body());
     }
 
     @Test
-    public void testDefaultInvocation() {
-        final BindingNormalizedNodeCachingCodec<Top> cachingCodec = createCachingCodec(Top.class, TopLevelList.class);
+    void testDefaultInvocation() {
+        final var cachingCodec = createCachingCodec(Top.class, TopLevelList.class);
 
-        final Top input = new TopBuilder().build();
+        final var input = new TopBuilder().build();
         assertNull(input.getTopLevelList());
-        assertEquals(ImmutableMap.of(), input.nonnullTopLevelList());
+        assertEquals(Map.of(), input.nonnullTopLevelList());
 
-        final NormalizedNode dom = cachingCodec.serialize(input);
-        final Top output = cachingCodec.deserialize(dom);
-        assertTrue(input.equals(output));
-        assertTrue(output.equals(input));
+        final var dom = cachingCodec.serialize(input);
+        final var output = cachingCodec.deserialize(dom);
+        assertEquals(input, output);
+        assertEquals(output, input);
 
         assertNull(output.getTopLevelList());
-        assertEquals(ImmutableMap.of(), output.nonnullTopLevelList());
+        assertEquals(Map.of(), output.nonnullTopLevelList());
     }
 
     @SafeVarargs
@@ -155,30 +154,18 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         return contNode.createCachingCodec(ImmutableSet.copyOf(classes));
     }
 
-    private static void verifyListItemSame(final NormalizedNode firstTop, final NormalizedNode secondTop) {
-        final Collection<MapEntryNode> initialNodes = getListItems(firstTop).body();
-        final MapNode secondMap = getListItems(secondTop);
+    private static void verifyListItemSame(final ContainerNode firstTop, final ContainerNode secondTop) {
+        final var initialNodes = getListItems(firstTop).body();
+        final var secondMap = getListItems(secondTop);
 
-        for (final MapEntryNode initial : initialNodes) {
-            final MapEntryNode second = secondMap.childByArg(initial.name());
+        for (var initial : initialNodes) {
+            final var second = secondMap.childByArg(initial.name());
             assertEquals(initial, second);
             assertSame(initial, second);
         }
     }
 
-    private static MapNode getListItems(final NormalizedNode top) {
-        return (MapNode) ((DataContainerNode) top).getChildByArg(TOP_LEVEL_LIST_ARG);
-    }
-
-    private static void verifyLeafItemSame(final NormalizedNode firstCont, final NormalizedNode secondCont) {
-        final DataContainerChild first = ((DataContainerNode) firstCont).childByArg(LEAF_ARG);
-        assertTrue(first instanceof LeafNode);
-
-        final DataContainerChild second = ((DataContainerNode) secondCont).childByArg(LEAF_ARG);
-        assertTrue(second instanceof LeafNode);
-
-        // The leaf nodes are transient, but the values should be the same
-        assertEquals(first, second);
-        assertSame(first.body(), second.body());
+    private static MapNode getListItems(final ContainerNode top) {
+        return assertInstanceOf(MapNode.class, top.getChildByArg(TOP_LEVEL_LIST_ARG));
     }
 }

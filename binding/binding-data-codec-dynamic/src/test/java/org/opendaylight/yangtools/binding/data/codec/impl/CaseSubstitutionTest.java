@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collections;
-import org.junit.Test;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.ThirdParty;
@@ -28,8 +28,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public class CaseSubstitutionTest extends AbstractBindingCodecTest {
-
+class CaseSubstitutionTest extends AbstractBindingCodecTest {
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final ChoiceListKey CHOICE_FOO_KEY = new ChoiceListKey("foo");
 
@@ -45,12 +44,12 @@ public class CaseSubstitutionTest extends AbstractBindingCodecTest {
     private static final QName SIMPLE_VALUE_QNAME = QName.create(ThirdParty.QNAME, "simple-value");
 
     @Test
-    public void choiceInGroupingSubstituted() {
-        final ChoiceList baRpc = new ChoiceListBuilder()
+    void choiceInGroupingSubstituted() {
+        final var baRpc = new ChoiceListBuilder()
             .withKey(CHOICE_FOO_KEY)
             .setChoiceInChoiceList(new ComplexViaUsesWithDifferentNameBuilder(createComplexData()).build())
             .build();
-        final ChoiceList baTree = new ChoiceListBuilder()
+        final var baTree = new ChoiceListBuilder()
             .withKey(CHOICE_FOO_KEY)
             .setChoiceInChoiceList(new ComplexViaUsesBuilder(createComplexData()).build())
             .build();
@@ -61,8 +60,8 @@ public class CaseSubstitutionTest extends AbstractBindingCodecTest {
 
     private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
-                .setContainerWithUses(new ContainerWithUsesBuilder().setLeafFromGrouping("foo").build())
-                .setListViaUses(Collections.emptyMap())
-                .build();
+            .setContainerWithUses(new ContainerWithUsesBuilder().setLeafFromGrouping("foo").build())
+            .setListViaUses(Map.of())
+            .build();
     }
 }

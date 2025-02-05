@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.Cont;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.Cont.Ref;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContBuilder;

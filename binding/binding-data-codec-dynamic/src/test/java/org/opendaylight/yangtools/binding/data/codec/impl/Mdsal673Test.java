@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.Bar;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.BarBuilder;
@@ -31,15 +30,13 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
      * Test when BAR is not initialized (its {@code null}) the {@code nonnullBar} method returns its empty instance.
      */
     @Test
-    public void testNonnullContainer() {
+    void testNonnullContainer() {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO),
             ImmutableNodes.newContainerBuilder().withNodeIdentifier(FOO).build());
         assertNotNull(entry);
         assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
 
-        final var obj = entry.getValue();
-        assertThat(obj, instanceOf(Foo.class));
-        final var foo = (Foo) obj;
+        final var foo = assertInstanceOf(Foo.class, entry.getValue());
         assertNull(foo.getBar());
         // We check if nonnullBar() returns empty Bar.
         // But we don't want to rely on provided builder in codec so the objects are not same.
@@ -50,7 +47,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
      * Test when BAR is empty container the {@code getBar} and {@code nonnullBar} returns the same BAR instance.
      */
     @Test
-    public void testEmptyContainer() {
+    void testEmptyContainer() {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO),
             ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(FOO)
@@ -59,9 +56,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
         assertNotNull(entry);
         assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
 
-        final var obj = entry.getValue();
-        assertThat(obj, instanceOf(Foo.class));
-        final var foo = (Foo) obj;
+        final var foo = assertInstanceOf(Foo.class, entry.getValue());
         final var bar = foo.getBar();
         assertNotNull(bar);
         assertSame(bar, foo.nonnullBar());
@@ -87,9 +82,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
         assertNotNull(entry);
         assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
 
-        final var obj = entry.getValue();
-        assertThat(obj, instanceOf(Foo.class));
-        final var foo = (Foo) obj;
+        final var foo = assertInstanceOf(Foo.class, entry.getValue());
         final var bar = foo.getBar();
         assertNotNull(bar);
         assertSame(bar, foo.nonnullBar());

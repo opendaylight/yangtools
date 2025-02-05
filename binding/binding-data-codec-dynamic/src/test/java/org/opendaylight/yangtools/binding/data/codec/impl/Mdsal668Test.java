@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.FooBuilder;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.Bar;
@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
-public class Mdsal668Test extends AbstractBindingCodecTest {
+class Mdsal668Test extends AbstractBindingCodecTest {
     private static final NodeIdentifier FOO = new NodeIdentifier(Foo.QNAME);
     private static final DataObjectIdentifier<Foo> FOO_IID = InstanceIdentifier.create(Foo.class).toIdentifier();
 
     @Test
-    public void testLeaflistLeafref() {
+    void testLeaflistLeafref() {
         assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(FOO)
             .withChild(ImmutableNodes.newContainerBuilder()

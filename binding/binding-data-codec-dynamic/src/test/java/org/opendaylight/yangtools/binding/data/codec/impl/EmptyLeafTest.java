@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ContainerWithUsesBuilder;
@@ -21,28 +21,25 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.ChoiceInList;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
 
-public class EmptyLeafTest extends AbstractBindingCodecTest {
-
+class EmptyLeafTest extends AbstractBindingCodecTest {
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final DataObjectIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = DataObjectIdentifier.builder(Top.class)
             .child(TopLevelList.class, TOP_FOO_KEY)
             .build();
 
     @Test
-    public void testCaseWithEmptyLeafType() {
-        final TopLevelList withEmptyCase = new TopLevelListBuilder()
+    void testCaseWithEmptyLeafType() {
+        final var withEmptyCase = new TopLevelListBuilder()
             .withKey(TOP_FOO_KEY)
             .setChoiceInList(new EmptyLeafBuilder().setEmptyType(Empty.value()).build())
             .build();
         final var dom = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, withEmptyCase);
         final var readed = codecContext.fromNormalizedNode(dom.path(), dom.node());
-        final ChoiceInList list = ((TopLevelList) readed.getValue()).getChoiceInList();
-        assertTrue(list instanceof EmptyLeaf);
-        assertNotNull(((EmptyLeaf) list).getEmptyType());
+        final var list = assertInstanceOf(EmptyLeaf.class, ((TopLevelList) readed.getValue()).getChoiceInList());
+        assertNotNull(list.getEmptyType());
     }
 
     // FIXME: either remove this method or take advantage of it

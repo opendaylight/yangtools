@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.ListModule11Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.list.module1._1.ListModule12Builder;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.list.module1._1.list.module1._2.ContainerModule1Builder;
@@ -28,9 +28,9 @@ import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev1
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module4.rev160101.module4.main.container.module._4.ManualContainerModule11Builder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class Bug5524augmentUses extends AbstractBindingCodecTest {
+class Bug5524augmentUses extends AbstractBindingCodecTest {
     @Test
-    public void testBug5224() {
+    void testBug5224() {
         final var module4Main = new Module4MainBuilder()
             .setContainerModule4(new ContainerModule4Builder()
                 .setListModule11(List.of(new ListModule11Builder()

@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import javax.xml.transform.dom.DOMSource;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.Any;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.Cont;
 import org.opendaylight.yang.gen.v1.mdsal438.norev.ContBuilder;
@@ -34,21 +35,17 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-public class AnydataLeafTest extends AbstractBindingCodecTest {
+class AnydataLeafTest extends AbstractBindingCodecTest {
     private static final NodeIdentifier CONT_NODE_ID = new NodeIdentifier(Cont.QNAME);
 
     private DOMSource domSource;
     private ContainerNode cont;
 
-    @Override
-    public void before() {
-        super.before();
-
-        final Document doc = UntrustedXML.newDocumentBuilder().newDocument();
-        final Element element = doc.createElement("foo");
+    @BeforeEach
+    void beforeEach() {
+        final var doc = UntrustedXML.newDocumentBuilder().newDocument();
+        final var element = doc.createElement("foo");
         domSource = new DOMSource(element);
 
         cont = ImmutableNodes.newContainerBuilder()
@@ -61,20 +58,20 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testAnydataToBinding() {
+    void testAnydataToBinding() {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(CONT_NODE_ID), cont);
         assertEquals(InstanceIdentifier.create(Cont.class), entry.getKey());
 
         // So no... GrpAny should be null ..
-        final Cont contValue = assertInstanceOf(Cont.class, entry.getValue());
+        final var contValue = assertInstanceOf(Cont.class, entry.getValue());
         assertNull(contValue.getGrpAny());
 
         // ContAny is interesting
-        final ContAny anyCont = contValue.getContAny();
+        final var anyCont = contValue.getContAny();
         assertNotNull(anyCont);
         assertEquals(ContAny.class, anyCont.implementedInterface());
 
-        final OpaqueData<?> value = anyCont.getValue();
+        final var value = anyCont.getValue();
         assertNotNull(value);
         assertEquals(DOMSource.class, value.getObjectModel());
         assertSame(domSource, value.getData());
@@ -94,7 +91,7 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testAnydataFromBinding() {
+    void testAnydataFromBinding() {
         final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Cont.class),
             new ContBuilder().setContAny(new FakeCont()).build());
         assertEquals(YangInstanceIdentifier.of(CONT_NODE_ID), entry.path());
@@ -102,7 +99,7 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void anydataIsPropertyAddressable() {
+    void anydataIsPropertyAddressable() {
         assertEquals(YangInstanceIdentifier.of(Cont.QNAME, ContAny.QNAME), codecContext.getInstanceIdentifierCodec()
             .fromBinding((BindingInstanceIdentifier) new PropertyIdentifier<>(
                 InstanceIdentifier.create(Cont.class).toIdentifier(),
@@ -110,7 +107,7 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void anydataHasCodecNode() {
+    void anydataHasCodecNode() {
         final var contAny = assertInstanceOf(AnydataCodecContext.class,
             codecContext.getSubtreeCodec(YangInstanceIdentifier.of(Cont.QNAME, ContAny.QNAME)));
         assertEquals(ContAny.class, contAny.getBindingClass());
@@ -121,7 +118,7 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void anyxmlIsYangAddressable() {
+    void anyxmlIsYangAddressable() {
         assertEquals(new PropertyIdentifier<>(InstanceIdentifier.create(Cont.class).toIdentifier(),
             new LeafPropertyStep<>(Cont.class, ContAny.class, Unqualified.of("cont-any"))),
             codecContext.getInstanceIdentifierCodec().toBindingInstanceIdentifier(
@@ -141,7 +138,7 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
     }
 
     private abstract static class AbstractTestCont extends AbstractOpaqueObject<ContAny> implements ContAny {
-
+        // Nothing else
     }
 
     private final class FakeCont extends AbstractTestCont {

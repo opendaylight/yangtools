@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaForClassEx
 import org.opendaylight.yangtools.binding.runtime.spi.BindingRuntimeHelpers;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
-public class ExceptionReportingTest {
+class ExceptionReportingTest {
     private static final BindingNormalizedNodeSerializer CODEC_WITHOUT_TOP = codec(LowestLevel1.class);
     private static final BindingNormalizedNodeSerializer ONLY_TOP_CODEC = codec(Top.class);
     private static final BindingNormalizedNodeSerializer FULL_CODEC = codec(TreeComplexUsesAugment.class);
@@ -40,38 +40,38 @@ public class ExceptionReportingTest {
     private static final YangInstanceIdentifier BI_TOP_PATH = YangInstanceIdentifier.of(Top.QNAME);
 
     @Test
-    public void testDOMTop() {
+    void testDOMTop() {
         assertThrows(MissingSchemaException.class,
             () -> CODEC_WITHOUT_TOP.fromYangInstanceIdentifier(BI_TOP_PATH));
     }
 
     @Test
-    public void testDOMAugment() {
+    void testDOMAugment() {
         final var yiid = FULL_CODEC.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
         assertThrows(MissingSchemaException.class, () -> CODEC_WITHOUT_TOP.fromYangInstanceIdentifier(yiid));
     }
 
     @Test
-    public void testBindingTop() {
+    void testBindingTop() {
         assertThrows(MissingSchemaForClassException.class,
             () -> CODEC_WITHOUT_TOP.toYangInstanceIdentifier(BA_TOP_LEVEL_LIST));
     }
 
     @Test
-    public void testBindingAugment() {
+    void testBindingAugment() {
         assertThrows(MissingSchemaForClassException.class,
             () -> ONLY_TOP_CODEC.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY));
     }
 
     @Test
-    public void testBindingSkippedRoot() {
+    void testBindingSkippedRoot() {
         @SuppressWarnings({"unchecked", "rawtypes"})
         final var iid = DataObjectReference.builder((Class) TopLevelList.class).build();
         assertThrows(IncorrectNestingException.class, () -> FULL_CODEC.toYangInstanceIdentifier(iid));
     }
 
     @Test
-    public void testBindingIncorrectAugment() {
+    void testBindingIncorrectAugment() {
         @SuppressWarnings({"unchecked", "rawtypes"})
         final var iid = DataObjectIdentifier.builder(Top.class)
             .augmentation((Class) TreeComplexUsesAugment.class)

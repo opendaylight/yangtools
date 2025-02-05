@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal552.norev.Mdsal552Data.OutputA;
 import org.opendaylight.yang.gen.v1.mdsal552.norev.RefTestOutput;
 import org.opendaylight.yang.gen.v1.mdsal552.norev.RefTestOutputBuilder;
@@ -18,13 +18,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
-public class Mdsal552Test extends AbstractBindingCodecTest {
+class Mdsal552Test extends AbstractBindingCodecTest {
     private static final Absolute OUTPUT_PATH = Absolute.of(QName.create(RefTestOutput.QNAME, "ref_test"),
         RefTestOutput.QNAME);
     private static final QName OUTPUTREF = QName.create(RefTestOutput.QNAME, "outputref");
 
     @Test
-    public void testLeafrefEnumerationToNormalized() {
+    void testLeafrefEnumerationToNormalized() {
         assertEquals(ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(RefTestOutput.QNAME))
             .withChild(ImmutableNodes.leafNode(OUTPUTREF, OutputA.DownTest.getName()))
@@ -33,7 +33,7 @@ public class Mdsal552Test extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testLeafrefEnumerationFromNormalized() {
+    void testLeafrefEnumerationFromNormalized() {
         assertEquals(new RefTestOutputBuilder().setOutputref(OutputA.DownTest).build(),
             codecContext.fromNormalizedNodeRpcData(OUTPUT_PATH, ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(RefTestOutput.QNAME))

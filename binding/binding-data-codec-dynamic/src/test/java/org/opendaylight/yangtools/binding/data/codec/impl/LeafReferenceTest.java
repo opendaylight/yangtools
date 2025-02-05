@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.ThirdParty;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexLeaves;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexLeavesBuilder;
@@ -20,15 +20,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class LeafReferenceTest extends AbstractBindingCodecTest {
-
+class LeafReferenceTest extends AbstractBindingCodecTest {
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
             .child(TopLevelList.class, TOP_FOO_KEY).build();
 
     @Test
-    public void testCaseWithLeafReferencesType() {
-        final TreeComplexLeaves augment = new TreeComplexLeavesBuilder()
+    void testCaseWithLeafReferencesType() {
+        final var augment = new TreeComplexLeavesBuilder()
             .setIdentity(ThirdParty.VALUE)
             .setIdentityRef(ThirdParty.VALUE)
             .setSimpleType(10)
@@ -36,7 +35,7 @@ public class LeafReferenceTest extends AbstractBindingCodecTest {
             .setSchemaUnawareUnion(new Int32StringUnion("foo"))
             .setSchemaUnawareUnionRef(new Int32StringUnion(10))
             .build();
-        final TopLevelList list = new TopLevelListBuilder()
+        final var list = new TopLevelListBuilder()
             .setName("foo")
             .addAugmentation(augment)
             .build();

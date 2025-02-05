@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test.bi.ba.notification.rev150205.OutOfPixieDustNotification;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock.rev180723.KnockKnockInput;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class Mdsal724Test {
+class Mdsal724Test {
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testNotificationInstanceIdentifier() {
+    void testNotificationInstanceIdentifier() {
         // An InstanceIdentifier pointing at a notification, unsafe to create
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> InstanceIdentifier.create((Class) OutOfPixieDustNotification.class));
         assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test"
@@ -27,9 +27,9 @@ public class Mdsal724Test {
     }
 
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testRpcInputInstanceIdentifier() {
+    void testRpcInputInstanceIdentifier() {
         // An InstanceIdentifier pointing at a notification, unsafe to create
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> InstanceIdentifier.create((Class) KnockKnockInput.class));
         assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.knock.knock"

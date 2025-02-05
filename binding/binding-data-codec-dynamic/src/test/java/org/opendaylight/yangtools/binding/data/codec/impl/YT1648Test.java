@@ -12,10 +12,10 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.FooBuilder;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
@@ -24,13 +24,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class YT1648Test extends AbstractBindingCodecTest {
+@ExtendWith(MockitoExtension.class)
+class YT1648Test extends AbstractBindingCodecTest {
     @Mock
     private NormalizedNodeStreamWriter writer;
 
     @Test
-    public void testStreamTo() throws Exception {
+    void testStreamTo() throws Exception {
         final var codec = codecContext.getStreamDataObject(Foo.class);
 
         doNothing().when(writer).startContainerNode(new NodeIdentifier(Foo.QNAME), -1);

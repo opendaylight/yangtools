@@ -25,7 +25,7 @@ public class UnionTypeTest extends AbstractBindingCodecTest {
     //                .withNodeIdentifier(new NodeIdentifier(WRAPPER_QNAME))
     //                .withChild(ImmutableNodes.leafNode(WRAP_LEAF_QNAME, TEST_STRING))
     //                .build();
-    //        Assert.assertEquals(topLevelEntry, containerNode);
+    //        assertEquals(topLevelEntry, containerNode);
     //    }
     //
     //    @Test

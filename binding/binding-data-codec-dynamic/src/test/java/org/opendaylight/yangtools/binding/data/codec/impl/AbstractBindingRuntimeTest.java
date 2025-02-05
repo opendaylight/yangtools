@@ -7,25 +7,25 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.spi.BindingRuntimeHelpers;
 
-public abstract class AbstractBindingRuntimeTest {
+abstract class AbstractBindingRuntimeTest {
     private static BindingRuntimeContext runtimeContext;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static final void setupRuntimeContext() {
         runtimeContext = BindingRuntimeHelpers.createRuntimeContext();
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static final void tearDownRuntimeContext() {
         runtimeContext = null;
     }
 
-    public static final BindingRuntimeContext getRuntimeContext() {
+    static final BindingRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }
 }

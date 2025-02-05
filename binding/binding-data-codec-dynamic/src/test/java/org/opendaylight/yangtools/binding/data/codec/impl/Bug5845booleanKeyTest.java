@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainer;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.BooleanListBuilder;
@@ -19,9 +19,9 @@ import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101._boolean.container.Bo
 import org.opendaylight.yangtools.binding.util.BindingMap;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
+class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
     @Test
-    public void testBug5845() {
+    void testBug5845() {
         final var booleanContainer = new BooleanContainerBuilder()
             .setBooleanList(BindingMap.of(new BooleanListBuilder()
                 .withKey(new BooleanListKey(true, true))
@@ -30,7 +30,7 @@ public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
                 .build()))
             .build();
 
-        final BooleanContainer booleanContainerInt = new BooleanContainerBuilder()
+        final var booleanContainerInt = new BooleanContainerBuilder()
             .setBooleanListInt(BindingMap.of(new BooleanListIntBuilder()
                 .withKey(new BooleanListIntKey((byte) 1))
                 .setBooleanLeafInt((byte) 1)

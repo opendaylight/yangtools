@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Iterables;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.Lst;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lst.Foo;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test.bi.ba.notification.rev150205.OutOfPixieDustNotification;
@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
-public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTest {
+class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTest {
     public static final String TOP_LEVEL_LIST_KEY_VALUE = "foo";
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
@@ -57,19 +57,19 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
             .node(NodeIdentifierWithPredicates.of(TopLevelList.QNAME, TOP_LEVEL_LIST_KEY, TOP_LEVEL_LIST_KEY_VALUE));
 
     @Test
-    public void testYangIIToBindingAwareII() {
+    void testYangIIToBindingAwareII() {
         assertEquals(DataObjectReference.builder(Top.class).build(),
             codecContext.fromYangInstanceIdentifier(BI_TOP_PATH));
     }
 
     @Test
-    public void testYangIIToBindingAwareIIListWildcarded() {
+    void testYangIIToBindingAwareIIListWildcarded() {
         assertEquals(DataObjectReference.builder(Top.class).child(TopLevelList.class).build(),
             codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_PATH));
     }
 
     @Test
-    public void testYangIIToBindingAwareIIListWithKey() {
+    void testYangIIToBindingAwareIIListWithKey() {
         final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_1_PATH);
         final var last = Iterables.getLast(instanceIdentifier.steps());
         assertEquals(TopLevelList.class, instanceIdentifier.lastStep().type());
@@ -81,35 +81,35 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     }
 
     @Test
-    public void testBindingAwareIIToYangIContainer() {
+    void testBindingAwareIIToYangIContainer() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class));
-        final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
-        assertTrue(lastPathArgument instanceof NodeIdentifier);
+        final var lastPathArgument = assertInstanceOf(NodeIdentifier.class,
+            yangInstanceIdentifier.getLastPathArgument());
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
     }
 
     @Test
-    public void testBindingAwareIIToYangIIWildcard() {
+    void testBindingAwareIIToYangIIWildcard() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class));
-        final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
-        assertTrue(lastPathArgument instanceof NodeIdentifier);
+        final var lastPathArgument =
+            assertInstanceOf(NodeIdentifier.class, yangInstanceIdentifier.getLastPathArgument());
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
     }
 
     @Test
-    public void testBindingAwareIIToYangIIListWithKey() {
+    void testBindingAwareIIToYangIIListWithKey() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class, TOP_FOO_KEY));
-        final var lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
-        assertTrue(lastPathArgument instanceof NodeIdentifierWithPredicates);
-        assertTrue(((NodeIdentifierWithPredicates) lastPathArgument).values().contains(TOP_LEVEL_LIST_KEY_VALUE));
+        final var lastPathArgument = assertInstanceOf(NodeIdentifierWithPredicates.class,
+            yangInstanceIdentifier.getLastPathArgument());
+        assertTrue(lastPathArgument.values().contains(TOP_LEVEL_LIST_KEY_VALUE));
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
     }
 
     @Test
-    public void testChoiceCaseGroupingFromBinding() {
+    void testChoiceCaseGroupingFromBinding() {
         final var contBase = codecContext.toYangInstanceIdentifier(
             DataObjectIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.of(NodeIdentifier.create(Cont.QNAME),
@@ -140,7 +140,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     }
 
     @Test
-    public void testChoiceCaseGroupingToBinding() {
+    void testChoiceCaseGroupingToBinding() {
         final var contBase = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.of(Cont.QNAME, ContChoice.QNAME, GrpCont.QNAME));
         assertEquals(DataObjectIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build(), contBase);
@@ -159,7 +159,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     }
 
     @Test
-    public void testRejectNotificationQName() {
+    void testRejectNotificationQName() {
         // A purposely-wrong YangInstanceIdentifier
         final var yiid = YangInstanceIdentifier.of(OutOfPixieDustNotification.QNAME);
         final var ex = assertThrows(IncorrectNestingException.class,
@@ -170,7 +170,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     }
 
     @Test
-    public void testRejectRpcQName() {
+    void testRejectRpcQName() {
         // A purposely-wrong YangInstanceIdentifier
         final var yiid = YangInstanceIdentifier.of(
             // TODO: use the RPC interface once we are generating it
@@ -182,7 +182,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
     }
 
     @Test
-    public void testRejectActionQName() {
+    void testRejectActionQName() {
         // A purposely-wrong YangInstanceIdentifier
         final var yiid = YangInstanceIdentifier.of(
             NodeIdentifier.create(Lst.QNAME),

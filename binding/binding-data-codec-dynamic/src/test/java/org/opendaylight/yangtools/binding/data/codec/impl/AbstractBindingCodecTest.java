@@ -9,32 +9,20 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeEach;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 
-public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTest {
-    protected BindingCodecContext codecContext;
+abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTest {
+    BindingCodecContext codecContext;
 
-    @BeforeClass
-    public static void beforeClass() {
-        AbstractBindingRuntimeTest.beforeClass();
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        AbstractBindingRuntimeTest.afterClass();
-    }
-
-    @Before
-    public void before() {
+    @BeforeEach
+    final void setupCodecContext() {
         codecContext = new BindingCodecContext(getRuntimeContext());
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends DataObject> T thereAndBackAgain(final DataObjectReference<T> path, final T data) {
+    protected final <T extends DataObject> T thereAndBackAgain(final DataObjectReference<T> path, final T data) {
         final var there = codecContext.toNormalizedDataObject(path, data);
         final var backAgain = codecContext.fromNormalizedNode(there.path(), there.node());
         assertEquals(path, backAgain.getKey());

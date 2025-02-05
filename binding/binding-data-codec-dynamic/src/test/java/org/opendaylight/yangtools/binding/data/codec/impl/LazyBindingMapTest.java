@@ -7,24 +7,22 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TopBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
@@ -35,14 +33,20 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class LazyBindingMapTest extends AbstractBindingCodecTest {
+@ExtendWith(MockitoExtension.class)
+class LazyBindingMapTest extends AbstractBindingCodecTest {
     private static Top TOP;
 
-    @BeforeClass
-    public static void prepareTop() {
-        final Map<TopLevelListKey, TopLevelList> map = new HashMap<>();
+    @Mock
+    private DataObject mockDataObject;
+    @Mock
+    private EntryObject<?, ?> mockEntryObject;
+
+    @BeforeAll
+    static void prepareTop() {
+        final var map = new HashMap<TopLevelListKey, TopLevelList>();
         for (int i = 0; i < 2 * LazyBindingMap.LAZY_CUTOFF; i++) {
-            final TopLevelList item = new TopLevelListBuilder().setName(String.valueOf(i)).build();
+            final var item = new TopLevelListBuilder().setName(String.valueOf(i)).build();
             map.put(item.key(), item);
         }
 
@@ -50,50 +54,50 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testSimpleEquals() {
-        final Top actual = prepareData();
-        assertThat(actual.getTopLevelList(), instanceOf(LazyBindingMap.class));
+    void testSimpleEquals() {
+        final var actual = prepareData();
+        assertInstanceOf(LazyBindingMap.class, actual.getTopLevelList());
         // AbstractMap.equals() goes through its entrySet and performs lookup for each key, hence it is excercising
         // primarily LookupState
         assertEquals(TOP, actual);
     }
 
     @Test
-    public void testEqualEntrySet() {
-        final Top actual = prepareData();
+    void testEqualEntrySet() {
+        final var actual = prepareData();
         // Check equality based on entry set. This primarily exercises IterState
         assertEquals(TOP.getTopLevelList().entrySet(), actual.getTopLevelList().entrySet());
     }
 
     @Test
-    public void testEqualKeySet() {
-        final Top actual = prepareData();
+    void testEqualKeySet() {
+        final var actual = prepareData();
         // Check equality based on key set. This primarily exercises IterState
         assertEquals(TOP.getTopLevelList().keySet(), actual.getTopLevelList().keySet());
     }
 
     @Test
-    public void testIterKeySetLookup() {
-        final Top actual = prepareData();
+    void testIterKeySetLookup() {
+        final var actual = prepareData();
         // Forces IterState but then switches to key lookups
         assertTrue(actual.getTopLevelList().keySet().containsAll(TOP.getTopLevelList().keySet()));
     }
 
     @Test
-    public void testIterEntrySetLookup() {
-        final Top actual = prepareData();
+    void testIterEntrySetLookup() {
+        final var actual = prepareData();
         // Forces IterState but then switches to value lookups
         assertTrue(actual.getTopLevelList().entrySet().containsAll(TOP.getTopLevelList().entrySet()));
     }
 
     @Test
-    public void testIterValueIteration() {
+    void testIterValueIteration() {
         assertSameIteratorObjects(prepareData().getTopLevelList().values());
     }
 
     @Test
-    public void testLookupValueIteration() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+    void testLookupValueIteration() {
+        final var list = prepareData().getTopLevelList();
         // Force lookup state instantiation
         assertFalse(list.containsKey(new TopLevelListKey("blah")));
 
@@ -101,13 +105,13 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testIterKeysetIteration() {
+    void testIterKeysetIteration() {
         assertSameIteratorObjects(prepareData().getTopLevelList().keySet());
     }
 
     @Test
-    public void testLookupKeysetIteration() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+    void testLookupKeysetIteration() {
+        final var list = prepareData().getTopLevelList();
         // Force lookup state instantiation
         assertFalse(list.containsKey(new TopLevelListKey("blah")));
 
@@ -125,24 +129,24 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testIterSameViews() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+    void testIterSameViews() {
+        final var list = prepareData().getTopLevelList();
         assertSame(list.values(), list.values());
         assertSame(list.keySet(), list.keySet());
         assertSame(list.entrySet(), list.entrySet());
     }
 
     @Test
-    public void testLookupSameViews() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+    void testLookupSameViews() {
+        final var list = prepareData().getTopLevelList();
         // Force lookup state instantiation
         assertFalse(list.containsKey(new TopLevelListKey("blah")));
 
         // Careful now ... first compare should  end up changing the iteration of keyset/entryset
-        final Set<TopLevelListKey> keySet1 = list.keySet();
-        final Set<TopLevelListKey> keySet2 = list.keySet();
-        final Set<Entry<TopLevelListKey, TopLevelList>> entrySet1 = list.entrySet();
-        final Set<Entry<TopLevelListKey, TopLevelList>> entrySet2 = list.entrySet();
+        final var keySet1 = list.keySet();
+        final var keySet2 = list.keySet();
+        final var entrySet1 = list.entrySet();
+        final var entrySet2 = list.entrySet();
 
         // .. right here ...
         assertSame(list.values(), list.values());
@@ -157,8 +161,8 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testIterSameSize() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+    void testIterSameSize() {
+        final var list = prepareData().getTopLevelList();
         // Force lookup state instantiation
         assertFalse(list.containsKey(new TopLevelListKey("blah")));
 
@@ -168,16 +172,16 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testLookupSameSize() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+    void testLookupSameSize() {
+        final var list = prepareData().getTopLevelList();
         assertEquals(list.size(), list.entrySet().size());
         assertEquals(list.size(), list.size());
         assertEquals(list.size(), list.size());
     }
 
     @Test
-    public void testImmutableThrows() {
-        final Map<TopLevelListKey, TopLevelList> list = prepareData().getTopLevelList();
+    void testImmutableThrows() {
+        final var list = prepareData().getTopLevelList();
         // Various asserts for completeness' sake
         assertThrows(UnsupportedOperationException.class, () -> list.clear());
         assertThrows(UnsupportedOperationException.class, () -> list.remove(null));
@@ -185,21 +189,21 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testLookupContainsValueThrows() {
+    void testLookupContainsValueThrows() {
         final var list = prepareData().getTopLevelList();
         assertThrows(NullPointerException.class, () -> list.containsValue(null));
-        assertThrows(ClassCastException.class, () -> list.containsValue(mock(DataObject.class)));
+        assertThrows(ClassCastException.class, () -> list.containsValue(mockDataObject));
     }
 
     @Test
-    public void testLookupContainsKeyThrows() {
+    void testLookupContainsKeyThrows() {
         final var list = prepareData().getTopLevelList();
         assertThrows(NullPointerException.class, () -> list.containsKey(null));
-        assertThrows(ClassCastException.class, () -> list.containsKey(mock(EntryObject.class)));
+        assertThrows(ClassCastException.class, () -> list.containsKey(mockEntryObject));
     }
 
     @Test
-    public void testLookupKey() {
+    void testLookupKey() {
         final var list = prepareData().getTopLevelList();
         for (var key : TOP.getTopLevelList().keySet()) {
             assertTrue(list.containsKey(key));
@@ -209,7 +213,7 @@ public class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testLookupValue() {
+    void testLookupValue() {
         final var list = prepareData().getTopLevelList();
         for (var val : TOP.getTopLevelList().values()) {
             assertTrue(list.containsValue(val));

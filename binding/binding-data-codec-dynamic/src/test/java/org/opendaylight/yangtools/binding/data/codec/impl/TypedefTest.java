@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.DefaultPolicy;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.DefaultPolicyBuilder;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.PolicyLoggingFlag;
@@ -19,35 +19,35 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.common.Empty;
 
-public class TypedefTest extends AbstractBindingCodecTest {
+class TypedefTest extends AbstractBindingCodecTest {
     private static final DataObjectIdentifier<DefaultPolicy> BA_DEFAULT_POLICY =
         DataObjectIdentifier.builder(DefaultPolicy.class).build();
     private static final DataObjectIdentifier<TestCont> BA_TEST_CONT =
         DataObjectIdentifier.builder(TestCont.class).build();
 
     @Test
-    public void testTypedef() {
-        DefaultPolicy binding = new DefaultPolicyBuilder()
+    void testTypedef() {
+        final var binding = new DefaultPolicyBuilder()
                 .setAction(true)
                 .setAction2(new PolicyLoggingFlag(false))
                 .setAction3(true)
                 .build();
         final var dom = codecContext.toNormalizedDataObject(BA_DEFAULT_POLICY, binding);
-        final var readed = codecContext.fromNormalizedNode(dom.path(),dom.node());
+        final var read = codecContext.fromNormalizedNode(dom.path(),dom.node());
 
-        assertEquals(binding, readed.getValue());
+        assertEquals(binding, read.getValue());
     }
 
     @Test
-    public void testTypedefEmptyType() {
-        TestCont binding = new TestContBuilder()
+    void testTypedefEmptyType() {
+        final var binding = new TestContBuilder()
                 .setEmptyLeaf(Empty.value())
                 .setEmptyLeaf2(new TypedefEmpty(Empty.value()))
                 .setEmptyLeaf3(Empty.value())
                 .build();
         final var dom = codecContext.toNormalizedDataObject(BA_TEST_CONT, binding);
-        final var readed = codecContext.fromNormalizedNode(dom.path(),dom.node());
+        final var read = codecContext.fromNormalizedNode(dom.path(),dom.node());
 
-        assertEquals(binding, readed.getValue());
+        assertEquals(binding, read.getValue());
     }
 }

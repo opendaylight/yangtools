@@ -8,22 +8,25 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yang.gen.v1.urn.test.yang.data.demo.rev220222.YangDataWithContainer;
 import org.opendaylight.yang.gen.v1.urn.test.yang.data.demo.rev220222.YangDataWithContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.test.yang.data.demo.rev220222.yang.data.with.container.ContainerFromYangDataBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedYangData;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class Mdsal805Test extends AbstractBindingCodecTest {
-    @Ignore
+@ExtendWith(MockitoExtension.class)
+class Mdsal805Test extends AbstractBindingCodecTest {
+    @Mock
+    private NormalizedYangData mockYangData;
+
+    @Disabled
     @Test
-    public void testFromBinding() {
+    void testFromBinding() {
         final var binding = new YangDataWithContainerBuilder()
             .setContainerFromYangData(new ContainerFromYangDataBuilder().setStr("str").build())
             .build();
@@ -32,12 +35,10 @@ public class Mdsal805Test extends AbstractBindingCodecTest {
         assertNotNull(dom);
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void testToBinding() {
-        final var dom = mock(NormalizedYangData.class);
-
-        final var binding = codecContext.getYangDataCodec(YangDataWithContainer.NAME).toBinding(dom);
+    void testToBinding() {
+        final var binding = codecContext.getYangDataCodec(YangDataWithContainer.NAME).toBinding(mockYangData);
         assertNotNull(binding);
     }
 }

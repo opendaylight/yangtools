@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
@@ -20,18 +20,18 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 
-public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
+class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final DataObjectIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = DataObjectIdentifier.builder(Top.class)
             .child(TopLevelList.class, TOP_FOO_KEY).build();
 
     @Test
-    public void augmentationInGroupingSubstituted() {
-        final TopLevelList baRpc = new TopLevelListBuilder()
+    void augmentationInGroupingSubstituted() {
+        final var baRpc = new TopLevelListBuilder()
             .withKey(TOP_FOO_KEY)
             .addAugmentation(new RpcComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
-        final TopLevelList baTree = new TopLevelListBuilder()
+        final var baTree = new TopLevelListBuilder()
             .withKey(TOP_FOO_KEY)
             .addAugmentation(new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
@@ -41,17 +41,17 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void copyBuilderWithAugmenationsTest() {
-        final TopLevelList manuallyConstructed = new TopLevelListBuilder()
+    void copyBuilderWithAugmenationsTest() {
+        final var manuallyConstructed = new TopLevelListBuilder()
             .withKey(TOP_FOO_KEY)
             .addAugmentation(new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
 
         final var result = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, manuallyConstructed);
-        final TopLevelList deserialized =
+        final var deserialized =
             (TopLevelList) codecContext.fromNormalizedNode(result.path(), result.node()).getValue();
         assertEquals(manuallyConstructed, deserialized);
-        final TopLevelList copiedFromDeserialized = new TopLevelListBuilder(deserialized).build();
+        final var copiedFromDeserialized = new TopLevelListBuilder(deserialized).build();
         assertEquals(manuallyConstructed, copiedFromDeserialized);
     }
 

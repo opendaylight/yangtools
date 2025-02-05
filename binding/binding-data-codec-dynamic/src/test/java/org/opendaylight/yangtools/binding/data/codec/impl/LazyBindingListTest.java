@@ -13,10 +13,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
@@ -24,22 +25,21 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class LazyBindingListTest extends AbstractBindingCodecTest {
+class LazyBindingListTest extends AbstractBindingCodecTest {
     @Test
-    public void testLazyList() {
-        final List<NestedList> nested = new ArrayList<>();
+    void testLazyList() {
+        final var nested = new ArrayList<NestedList>();
         for (int i = 0; i < 2 * LazyBindingList.LAZY_CUTOFF; ++i) {
             nested.add(new NestedListBuilder().setName(String.valueOf(i)).build());
         }
-        final TopLevelList expected = new TopLevelListBuilder()
+        final var expected = new TopLevelListBuilder()
                 .setName("test")
                 .setNestedList(nested)
                 .build();
-        final TopLevelList actual = thereAndBackAgain(
+        final var actual = thereAndBackAgain(
             InstanceIdentifier.create(Top.class).child(TopLevelList.class, expected.key()), expected);
 
-        final List<NestedList> list = actual.getNestedList();
-        assertThat(list, instanceOf(LazyBindingList.class));
+        final var list = assertInstanceOf(LazyBindingList.class, actual.getNestedList());
 
         // Equality does all the right things to check happy paths
         assertEquals(expected.getNestedList(), list);
@@ -61,15 +61,15 @@ public class LazyBindingListTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testSingletonList() {
-        final TopLevelList expected = new TopLevelListBuilder()
+    void testSingletonList() {
+        final var expected = new TopLevelListBuilder()
                 .setName("test")
                 .setNestedList(List.of(new NestedListBuilder().setName(String.valueOf("one")).build()))
                 .build();
-        final TopLevelList actual = thereAndBackAgain(
+        final var actual = thereAndBackAgain(
             InstanceIdentifier.create(Top.class).child(TopLevelList.class, expected.key()), expected);
 
-        final List<NestedList> list = actual.getNestedList();
+        final var list = actual.getNestedList();
         assertThat(list, not(instanceOf(LazyBindingList.class)));
         assertEquals(expected.getNestedList(), list);
     }
