@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.api;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
