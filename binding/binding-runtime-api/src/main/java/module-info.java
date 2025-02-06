@@ -5,6 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+/**
+ * Binding run-time APIs. These are centred around
+ * {@link org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext} operating on
+ * {@link org.opendaylight.yangtools.binding.runtime.api.RuntimeType}s.
+ */
 module org.opendaylight.yangtools.binding.runtime.api {
     exports org.opendaylight.yangtools.binding.runtime.api;
 
@@ -19,4 +24,5 @@ module org.opendaylight.yangtools.binding.runtime.api {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }
