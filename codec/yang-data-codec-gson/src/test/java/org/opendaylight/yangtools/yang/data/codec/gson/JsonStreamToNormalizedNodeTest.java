@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -128,9 +127,9 @@ class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
             () -> verifyTransformationToNormalizedNode(inputJson, null));
 
         final var errorMessage = ex.getMessage();
-        assertThat(errorMessage, containsString("Choose suitable module name for element lf11-namesake:"));
-        assertThat(errorMessage, containsString("complexjson-augmentation"));
-        assertThat(errorMessage, containsString("complexjson-augmentation-namesake"));
+        assertThat(errorMessage).contains("Choose suitable module name for element lf11-namesake:");
+        assertThat(errorMessage).contains("complexjson-augmentation");
+        assertThat(errorMessage).contains("complexjson-augmentation-namesake");
     }
 
     @Test
@@ -151,7 +150,7 @@ class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
             //second parameter isn't necessary because error will be raised before it is used.
             () -> verifyTransformationToNormalizedNode(inputJson, null));
 
-        assertThat(ex.getMessage(), containsString("Schema node with name dummy-element was not found"));
+        assertThat(ex.getMessage()).contains("Schema node with name dummy-element was not found");
     }
 
     /**
