@@ -12,4 +12,5 @@
  * {@link BindingDataCodec}, which is a service typically provided by dependency injection.
  * {@link java.util.ServiceLoader} is provided for simple environments.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.binding.data.codec.api;
