@@ -5,6 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+/**
+ * Utilities for parsing JSON as YANG-modeled data and writing the same.
+ */
 module org.opendaylight.yangtools.yang.data.codec.gson {
     exports org.opendaylight.yangtools.yang.data.codec.gson;
 
@@ -26,4 +29,5 @@ module org.opendaylight.yangtools.yang.data.codec.gson {
     requires static org.checkerframework.checker.qual;
     requires static com.github.spotbugs.annotations;
     requires static org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }
