@@ -22,6 +22,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
+import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.NodeStep;
@@ -54,6 +56,22 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     @Override
     public DataObjectStep<T> lastStep() {
         return getLast(steps);
+    }
+
+    // FIXME: final when we do not have InstanceIdentifier
+    @Override
+    public <N extends EntryObject<N, K>, K extends Key<N>> @Nullable K firstKeyOf(final Class<@NonNull N> listItem) {
+        // Guard against nulls and type smuggling
+        listItem.asSubclass(EntryObject.class);
+
+        for (var step : steps) {
+            if (step instanceof KeyStep<?, ?> keyStep && listItem.equals(step.type())) {
+                @SuppressWarnings("unchecked")
+                final var ret = (K) keyStep.key();
+                return ret;
+            }
+        }
+        return null;
     }
 
     @Override
