@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.HashMap;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import org.junit.jupiter.api.AfterAll;
@@ -24,12 +22,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolder;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -124,9 +117,9 @@ class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("""
+        assertThat(ex.getMessage()).contains("""
             Duplicate element "decimal64-leaf" in namespace "foo-namespace" with parent \
-            "EmptyContainerEffectiveStatement{argument=(foo-namespace)leaf-container}" in XML input"""));
+            "EmptyContainerEffectiveStatement{argument=(foo-namespace)leaf-container}" in XML input""");
     }
 
     @Test
@@ -137,9 +130,9 @@ class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("""
+        assertThat(ex.getMessage()).contains("""
             Duplicate element "my-anyxml" in namespace "foo-namespace" with parent \
-            "EmptyContainerEffectiveStatement{argument=(foo-namespace)anyxml-container}" in XML input"""));
+            "EmptyContainerEffectiveStatement{argument=(foo-namespace)anyxml-container}" in XML input""");
     }
 
     @Test
@@ -150,9 +143,9 @@ class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("""
+        assertThat(ex.getMessage()).contains("""
             Duplicate element "leaf-container" in namespace "foo-namespace" with parent \
-            "EmptyContainerEffectiveStatement{argument=(foo-namespace)parent-container}" in XML input"""));
+            "EmptyContainerEffectiveStatement{argument=(foo-namespace)parent-container}" in XML input""");
     }
 
     @Test
@@ -163,7 +156,7 @@ class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString(" START_ELEMENT "));
+        assertThat(ex.getMessage()).contains(" START_ELEMENT ");
     }
 
     @Test
@@ -174,7 +167,7 @@ class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("</my-leaf-1>"));
+        assertThat(ex.getMessage()).contains("</my-leaf-1>");
     }
 
     @Test
@@ -185,7 +178,7 @@ class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("</my-container-1>"));
+        assertThat(ex.getMessage()).contains("</my-container-1>");
     }
 
     @Test
@@ -196,14 +189,14 @@ class XmlToNormalizedNodesTest {
         final var streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final var xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("""
+        assertThat(ex.getMessage()).contains("""
             Schema for node with name my-container-1 and namespace baz-namespace does not exist in parent \
-            EmptyContainerEffectiveStatement{argument=(baz-namespace)my-container-1}"""));
+            EmptyContainerEffectiveStatement{argument=(baz-namespace)my-container-1}""");
     }
 
     private static NormalizedNode buildOuterContainerNode() {
         // my-container-1
-        MapNode myKeyedListNode = ImmutableNodes.newSystemMapBuilder()
+        final var myKeyedListNode = ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_KEYED_LIST))
             .withChild(ImmutableNodes.newMapEntryBuilder()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_KEYED_LIST, MY_KEY_LEAF, "listkeyvalue1"))
@@ -217,15 +210,15 @@ class XmlToNormalizedNodesTest {
                 .build())
             .build();
 
-        LeafNode<?> myLeaf1Node = ImmutableNodes.leafNode(MY_LEAF_1, "value1");
+        final var myLeaf1Node = ImmutableNodes.leafNode(MY_LEAF_1, "value1");
 
-        SystemLeafSetNode<?> myLeafListNode = ImmutableNodes.newSystemLeafSetBuilder()
+        final var myLeafListNode = ImmutableNodes.newSystemLeafSetBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_LEAFLIST))
             .withChild(ImmutableNodes.leafSetEntry(MY_LEAFLIST, "lflvalue1"))
             .withChild(ImmutableNodes.leafSetEntry(MY_LEAFLIST, "lflvalue2"))
             .build();
 
-        ContainerNode myContainer1Node = ImmutableNodes.newContainerBuilder()
+        final var myContainer1Node = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_CONTAINER_1))
             .withChild(myKeyedListNode)
             .withChild(myLeaf1Node)
@@ -233,19 +226,19 @@ class XmlToNormalizedNodesTest {
             .build();
 
         // my-container-2
-        ContainerNode innerContainerNode = ImmutableNodes.newContainerBuilder()
+        final var innerContainerNode = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(INNER_CONTAINER))
             .withChild(ImmutableNodes.leafNode(MY_LEAF_2, "value2"))
             .build();
 
-        LeafNode<?> myLeaf3Node = ImmutableNodes.leafNode(MY_LEAF_3, "value3");
+        final var myLeaf3Node = ImmutableNodes.leafNode(MY_LEAF_3, "value3");
 
-        ChoiceNode myChoiceNode = ImmutableNodes.newChoiceBuilder()
+        final var myChoiceNode = ImmutableNodes.newChoiceBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_CHOICE))
             .withChild(ImmutableNodes.leafNode(MY_LEAF_IN_CASE_2, "case2value"))
             .build();
 
-        ContainerNode myContainer2Node = ImmutableNodes.newContainerBuilder()
+        final var myContainer2Node = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_CONTAINER_2))
             .withChild(innerContainerNode)
             .withChild(myLeaf3Node)
@@ -253,24 +246,22 @@ class XmlToNormalizedNodesTest {
             .build();
 
         // my-container-3
-        Map<QName, Object> keys = new HashMap<>();
-        keys.put(MY_FIRST_KEY_LEAF, "listkeyvalue1");
-        keys.put(MY_SECOND_KEY_LEAF, "listkeyvalue2");
 
-        MapNode myDoublyKeyedListNode = ImmutableNodes.newSystemMapBuilder()
+        final var myDoublyKeyedListNode = ImmutableNodes.newSystemMapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MY_DOUBLY_KEYED_LIST))
                 .withChild(ImmutableNodes.newMapEntryBuilder()
-                    .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_DOUBLY_KEYED_LIST, keys))
+                    .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_DOUBLY_KEYED_LIST,
+                        Map.of(MY_FIRST_KEY_LEAF, "listkeyvalue1", MY_SECOND_KEY_LEAF, "listkeyvalue2")))
                     .withChild(ImmutableNodes.leafNode(MY_LEAF_IN_LIST_3, "listleafvalue1"))
                     .build())
                 .build();
 
-        ContainerNode myContainer3Node = ImmutableNodes.newContainerBuilder()
+        final var myContainer3Node = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(MY_CONTAINER_3))
             .withChild(myDoublyKeyedListNode)
             .build();
 
-        ContainerNode outerContainerNode = ImmutableNodes.newContainerBuilder()
+        final var outerContainerNode = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(OUTER_CONTAINER))
             .withChild(myContainer1Node)
             .withChild(myContainer2Node)
