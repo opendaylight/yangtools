@@ -20,7 +20,7 @@ class SampleNormalizedNodeSerializable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private transient NormalizedNodeStreamVersion version;
-    private NormalizedNode input;
+    private transient NormalizedNode input;
 
     SampleNormalizedNodeSerializable(final NormalizedNodeStreamVersion version, final NormalizedNode input) {
         this.version = requireNonNull(version);

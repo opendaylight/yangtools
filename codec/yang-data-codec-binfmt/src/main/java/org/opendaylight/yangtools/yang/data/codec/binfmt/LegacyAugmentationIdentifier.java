@@ -15,9 +15,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Representation of legacy {@code yang.data.api.YangInstanceIdentifier.AugmentationIdentifier}.
+ *
+ * @param childNames the {@link QName}s introduced by the augmentation
  */
 @Deprecated(since = "11.0.0")
 public record LegacyAugmentationIdentifier(@NonNull ImmutableSet<QName> childNames) implements LegacyPathArgument {
+    /**
+     * Default constructor.
+     *
+     * @param childNames the {@link QName}s introduced by the augmentation
+     */
     public LegacyAugmentationIdentifier {
         requireNonNull(childNames);
     }

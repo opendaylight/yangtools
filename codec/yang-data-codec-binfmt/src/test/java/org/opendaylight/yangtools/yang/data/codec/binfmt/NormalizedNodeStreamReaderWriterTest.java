@@ -308,9 +308,11 @@ class NormalizedNodeStreamReaderWriterTest {
             throw new AssertionError("Failed to serialize object", e);
         }
 
-        final byte[] bytes = baos.toByteArray();
+        final var bytes = baos.toByteArray();
         try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
-            return (T) ois.readObject();
+            @SuppressWarnings("unchecked")
+            final var cast = (T) ois.readObject();
+            return cast;
         } catch (ClassNotFoundException | IOException e) {
             throw new AssertionError("Failed to deserialize object", e);
         }
