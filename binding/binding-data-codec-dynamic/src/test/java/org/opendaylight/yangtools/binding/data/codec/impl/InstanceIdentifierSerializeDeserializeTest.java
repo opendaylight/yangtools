@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -164,9 +163,9 @@ class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTes
         final var yiid = YangInstanceIdentifier.of(OutOfPixieDustNotification.QNAME);
         final var ex = assertThrows(IncorrectNestingException.class,
             () -> codecContext.fromYangInstanceIdentifier(yiid));
-        assertThat(ex.getMessage(),
-            startsWith("Argument (urn:opendaylight:params:xml:ns:yang:controller:md:sal:test:bi:ba:notification"
-                + "?revision=2015-02-05)out-of-pixie-dust-notification is not valid data tree child of "));
+        assertThat(ex.getMessage())
+            .startsWith("Argument (urn:opendaylight:params:xml:ns:yang:controller:md:sal:test:bi:ba:notification"
+                + "?revision=2015-02-05)out-of-pixie-dust-notification is not valid data tree child of ");
     }
 
     @Test
@@ -177,8 +176,8 @@ class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTes
             QName.create(KnockKnockInput.QNAME, "knock-knock"));
         final var ex = assertThrows(IncorrectNestingException.class,
             () -> codecContext.fromYangInstanceIdentifier(yiid));
-        assertThat(ex.getMessage(), startsWith("Argument (urn:opendaylight:params:xml:ns:yang:md:sal:knock-knock"
-            + "?revision=2018-07-23)knock-knock is not valid data tree child of "));
+        assertThat(ex.getMessage()).startsWith("Argument (urn:opendaylight:params:xml:ns:yang:md:sal:knock-knock"
+            + "?revision=2018-07-23)knock-knock is not valid data tree child of ");
     }
 
     @Test
