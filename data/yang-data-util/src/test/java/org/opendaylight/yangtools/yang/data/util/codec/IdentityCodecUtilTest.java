@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util.codec;
 
-import static com.google.common.base.Preconditions.checkState;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -83,7 +83,7 @@ class IdentityCodecUtilTest {
     private static QNameModule resolvePrefix(final String prefix) {
         // TODO: QNameCodecUtil should deal with some of the malformed stuff here by throwing IAE. We throw an ISE
         //       to discern what is happening.
-        checkState("yt846".equals(prefix), "Unexpected prefix %s", prefix);
+        assertEquals("yt846", prefix);
         return MODULE;
     }
 }
