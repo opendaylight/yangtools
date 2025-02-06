@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -68,6 +67,6 @@ class DurationStatisticsTrackerTest {
     }
 
     private static void verifyDisplayableString(final String name, final String actual, final String expPrefix) {
-        assertThat(actual, startsWith(expPrefix));
+        assertThat(actual).startsWith(expPrefix);
     }
 }

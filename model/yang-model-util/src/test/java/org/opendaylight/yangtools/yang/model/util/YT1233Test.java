@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -69,6 +68,6 @@ class YT1233Test {
     void testSchemaExitToDataTree() {
         stack.enterSchemaTree(QName.create("foo", "bar"));
         final var ex = assertThrows(IllegalStateException.class, stack::exitToDataTree);
-        assertThat(ex.getMessage(), startsWith("Unexpected current "));
+        assertThat(ex.getMessage()).startsWith("Unexpected current ");
     }
 }

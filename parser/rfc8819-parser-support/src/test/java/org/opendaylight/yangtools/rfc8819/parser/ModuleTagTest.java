@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8819.parser;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,11 +30,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
-public class ModuleTagTest {
+class ModuleTagTest {
     private static CrossSourceStatementReactor reactor;
 
     @BeforeAll
-    public static void createReactor() {
+    static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                         new ModuleTagStatementSupport(YangParserConfiguration.DEFAULT))
@@ -43,12 +42,12 @@ public class ModuleTagTest {
     }
 
     @AfterAll
-    public static void freeReactor() {
+    static void freeReactor() {
         reactor = null;
     }
 
     @Test
-    public void testModuleTagSupportExtension() throws ReactorException {
+    void testModuleTagSupportExtension() throws ReactorException {
         final var moduleTags = reactor.newBuild()
             .addSources(
                 moduleFromResources("/example-tag-module.yang"),
@@ -73,7 +72,7 @@ public class ModuleTagTest {
     }
 
     @Test
-    public void throwExceptionWhenTagParentIsNotModuleOrSubmodule() {
+    void throwExceptionWhenTagParentIsNotModuleOrSubmodule() {
         final var action = reactor.newBuild()
             .addSources(
                 moduleFromResources("/foo-tag-module.yang"),
@@ -83,8 +82,8 @@ public class ModuleTagTest {
 
         final var cause = assertThrows(ReactorException.class, action::buildEffective).getCause();
         assertInstanceOf(SourceException.class, cause);
-        assertThat(cause.getMessage(),
-            startsWith("Tags may only be defined at root of either a module or a submodule [at "));
+        assertThat(cause.getMessage())
+            .startsWith("Tags may only be defined at root of either a module or a submodule [at ");
     }
 
     private static YangStatementStreamSource moduleFromResources(final String resourceName) {
@@ -92,7 +91,7 @@ public class ModuleTagTest {
             return YangStatementStreamSource.create(new URLYangTextSource(
                 ModuleTagTest.class.getResource(resourceName)));
         } catch (final YangSyntaxErrorException | IOException e) {
-            throw new IllegalStateException("Failed to find resource " + resourceName, e);
+            throw new AssertionError("Failed to find resource " + resourceName, e);
         }
     }
 }

@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,7 +62,7 @@ class YT1127Test {
         final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf1.getType());
 
         final var ex = assertThrows(IllegalArgumentException.class, () -> stack.resolveLeafref(type));
-        assertThat(ex.getMessage(), startsWith("Illegal parent access in YangLocationPath"));
+        assertThat(ex.getMessage()).startsWith("Illegal parent access in YangLocationPath");
         final var cause = assertInstanceOf(IllegalStateException.class, ex.getCause());
         assertEquals("Unexpected current EmptyGroupingEffectiveStatement{argument=(foo)grp}", cause.getMessage());
     }
@@ -77,7 +76,7 @@ class YT1127Test {
         final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf2.getType());
 
         final var ex = assertThrows(IllegalArgumentException.class, () -> stack.resolveLeafref(type));
-        assertThat(ex.getMessage(), startsWith("Illegal parent access in YangLocationPath"));
+        assertThat(ex.getMessage()).startsWith("Illegal parent access in YangLocationPath");
         assertInstanceOf(NoSuchElementException.class, ex.getCause());
     }
 }
