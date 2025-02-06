@@ -16,10 +16,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.IOException;
+import java.lang.module.Configuration;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import net.bytebuddy.dynamic.DynamicType.Unloaded;
@@ -51,12 +53,13 @@ public abstract sealed class BindingClassLoader extends ClassLoader
      * A builder of {@link BindingClassLoader} instances.
      */
     public static final class Builder {
-        private final @NonNull ClassLoader parentLoader;
+        private final @NonNull Class<?> rootClass;
 
         private @Nullable Path dumpDirectory;
 
-        Builder(final ClassLoader parentLoader) {
-            this.parentLoader = requireNonNull(parentLoader);
+        Builder(final Class<?> rootClass) {
+            this.rootClass = requireNonNull(rootClass);
+
         }
 
         public Builder dumpBytecode(final Path toDirectory) {
@@ -65,6 +68,16 @@ public abstract sealed class BindingClassLoader extends ClassLoader
         }
 
         public @NonNull BindingClassLoader build() {
+            final var parentModule = rootClass.getModule();
+            final var parentLoader = parentModule.getClassLoader();
+
+            // FIXME: we need to define a new module layer: parentModule is our window into the outside world and for
+            //        each Module that we encounter during class loading we
+
+            final var ctlr = ModuleLayer.defineModulesWithOneLoader(Configuration.empty(),
+                List.of(parentModule.getLayer()), parentLoader);
+            final var layer = ctlr.layer();
+
             return AccessControllerCompat.get(() -> new RootBindingClassLoader(parentLoader, dumpDirectory));
         }
     }
@@ -175,7 +188,7 @@ public abstract sealed class BindingClassLoader extends ClassLoader
     }
 
     public static @NonNull Builder builder(final Class<?> rootClass) {
-        return new Builder(rootClass.getClassLoader());
+        return new Builder(rootClass);
     }
 
     /**
