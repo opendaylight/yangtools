@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -70,7 +68,7 @@ class LazyBindingListTest extends AbstractBindingCodecTest {
             InstanceIdentifier.create(Top.class).child(TopLevelList.class, expected.key()), expected);
 
         final var list = actual.getNestedList();
-        assertThat(list, not(instanceOf(LazyBindingList.class)));
+        assertThat(list).isNotInstanceOf(LazyBindingList.class);
         assertEquals(expected.getNestedList(), list);
     }
 }
