@@ -91,6 +91,12 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
     @Deprecated(since = "11.0.0")
     @NonNull Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException;
 
+    /**
+     * Read a {@link SchemaNodeIdentifier}.
+     *
+     * @return a {@link SchemaNodeIdentifier}
+     * @throws IOException if an error occurs
+     */
     @NonNull SchemaNodeIdentifier readSchemaNodeIdentifier() throws IOException;
 
     /**
@@ -101,6 +107,12 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      */
     @NonNull NormalizedNodeStreamVersion getVersion() throws IOException;
 
+    /**
+     * The equivalent of {@code readBoolean() ? Optional.of(readNormalizedNode()) : Optional.empty()}.
+     *
+     * @return an optional {@link NormalizedNode}
+     * @throws IOException if an error occurs
+     */
     default Optional<NormalizedNode> readOptionalNormalizedNode() throws IOException {
         return readBoolean() ? Optional.of(readNormalizedNode()) : Optional.empty();
     }

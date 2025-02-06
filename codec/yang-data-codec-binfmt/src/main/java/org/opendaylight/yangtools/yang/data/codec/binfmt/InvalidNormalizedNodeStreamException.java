@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 
 /**
@@ -18,11 +20,22 @@ import java.io.IOException;
 public class InvalidNormalizedNodeStreamException extends IOException {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Construct an instance with a detail message.
+     *
+     * @param message the detail message
+     */
     public InvalidNormalizedNodeStreamException(final String message) {
-        super(message);
+        super(requireNonNull(message));
     }
 
+    /**
+     * Construct an instance with a detail message and an optional cause.
+     *
+     * @param message the detail message
+     * @param cause the cause, {@code null} if not available
+     */
     public InvalidNormalizedNodeStreamException(final String message, final Throwable cause) {
-        super(message, cause);
+        super(requireNonNull(message), cause);
     }
 }

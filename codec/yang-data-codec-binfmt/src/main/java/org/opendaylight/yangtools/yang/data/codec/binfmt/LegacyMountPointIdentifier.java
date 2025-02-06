@@ -14,9 +14,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Representation of legacy {@code org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier}.
+ *
+ * @param qname the mount point QName
  */
 @Deprecated(since = "11.0.0")
 public record LegacyMountPointIdentifier(@NonNull QName qname) implements LegacyPathArgument {
+    /**
+     * Default constructor.
+     *
+     * @param qname the mount point QName
+     */
     public LegacyMountPointIdentifier {
         requireNonNull(qname);
     }

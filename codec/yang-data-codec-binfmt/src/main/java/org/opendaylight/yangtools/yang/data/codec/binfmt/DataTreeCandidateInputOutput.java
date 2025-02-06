@@ -41,11 +41,30 @@ public final class DataTreeCandidateInputOutput {
         // Hidden on purpose
     }
 
+    /**
+     * Read a {@link DataTreeCandidate} from a {@link NormalizedNodeDataInput}. Note that if multiple invocations are
+     * expected, {@link #readDataTreeCandidate(NormalizedNodeDataInput, ReusableStreamReceiver)} may offer better
+     * throughput.
+     *
+     * @param in the input
+     * @return a {@link DataTreeCandidate}
+     * @throws IOException when an I/O error occurs
+     * @throws NullPointerException if {@code in} is {@code null}
+     */
     public static @NonNull DataTreeCandidate readDataTreeCandidate(final NormalizedNodeDataInput in)
             throws IOException {
         return readDataTreeCandidate(in, ReusableImmutableNormalizedNodeStreamWriter.create());
     }
 
+    /**
+     * Read a {@link DataTreeCandidate} from a {@link NormalizedNodeDataInput}, using a {@link ReusableStreamReceiver}.
+     *
+     * @param in the input
+     * @param receiver the receiver
+     * @return a {@link DataTreeCandidate}
+     * @throws IOException when an I/O error occurs
+     * @throws NullPointerException if any argument is {@code null}
+     */
     public static @NonNull DataTreeCandidate readDataTreeCandidate(final NormalizedNodeDataInput in,
             final ReusableStreamReceiver receiver) throws IOException {
         final var rootPath = in.readYangInstanceIdentifier();
@@ -66,6 +85,14 @@ public final class DataTreeCandidateInputOutput {
         return DataTreeCandidates.newDataTreeCandidate(rootPath, rootNode);
     }
 
+    /**
+     * Write a {@link DataTreeCandidate} to specified {@link NormalizedNodeDataOutput}.
+     *
+     * @param out the output
+     * @param candidate the candidate
+     * @throws IOException when an I/O error occurs
+     * @throws NullPointerException if any argument is {@code null}
+     */
     public static void writeDataTreeCandidate(final NormalizedNodeDataOutput out, final DataTreeCandidate candidate)
             throws IOException {
         out.writeYangInstanceIdentifier(candidate.getRootPath());

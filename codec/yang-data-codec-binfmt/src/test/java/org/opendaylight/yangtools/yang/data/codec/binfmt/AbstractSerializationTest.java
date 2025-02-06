@@ -64,7 +64,10 @@ abstract class AbstractSerializationTest {
             throw new AssertionError("Failed to deserialize", e);
         }
         Assertions.assertEquals(arg, deser);
-        return (T) deser;
+
+        @SuppressWarnings("unchecked")
+        final var cast = (T) deser;
+        return cast;
     }
 
     static final void assertEqualsTwice(final NormalizedNodeStreamVersion version, final PathArgument arg,
