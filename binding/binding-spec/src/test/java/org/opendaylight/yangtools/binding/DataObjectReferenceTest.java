@@ -8,9 +8,13 @@
 package org.opendaylight.yangtools.binding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.test.mock.FooRoot;
 import org.opendaylight.yangtools.binding.test.mock.Node;
+import org.opendaylight.yangtools.binding.test.mock.NodeChild;
+import org.opendaylight.yangtools.binding.test.mock.NodeChildKey;
 import org.opendaylight.yangtools.binding.test.mock.NodeKey;
 import org.opendaylight.yangtools.binding.test.mock.Nodes;
 
@@ -19,5 +23,15 @@ class DataObjectReferenceTest {
     void keyedToLegacy() {
         final var nodes = DataObjectReference.builder(Nodes.class).child(Node.class, new NodeKey(10)).build();
         assertEquals(10, nodes.toLegacy().key().getId());
+    }
+
+    @Test
+    void firstKeyOfTest() {
+        final var nodes = DataObjectIdentifier.builder(Nodes.class).child(Node.class, new NodeKey(5))
+                .child(NodeChild.class, new NodeChildKey(10)).build();
+        assertEquals(new NodeKey(5), nodes.firstKeyOf(Node.class));
+        assertEquals(new NodeChildKey(10), nodes.firstKeyOf(NodeChild.class));
+        final var fooRoot = DataObjectIdentifier.builder(FooRoot.class).build();
+        assertNull(fooRoot.firstKeyOf(Node.class));
     }
 }
