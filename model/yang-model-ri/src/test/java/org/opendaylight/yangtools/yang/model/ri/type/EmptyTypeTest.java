@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -32,6 +31,6 @@ class EmptyTypeTest {
         assertEquals(Optional.empty(), emptyType.getUnits(), "Units");
         assertEquals(Optional.empty(), emptyType.getDescription());
         assertEquals(List.of(), emptyType.getUnknownSchemaNodes(), "UnknownSchemaNodes");
-        assertThat(emptyType.toString(), containsString("name=(urn:ietf:params:xml:ns:yang:1)empty"));
+        assertThat(emptyType.toString()).contains("name=(urn:ietf:params:xml:ns:yang:1)empty");
     }
 }

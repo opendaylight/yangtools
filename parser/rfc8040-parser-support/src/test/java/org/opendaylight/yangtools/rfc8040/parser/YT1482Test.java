@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -23,8 +22,8 @@ class YT1482Test extends AbstractYangDataTest {
 
         final var ex = assertThrows(SomeModifiersUnresolvedException.class, action::buildEffective);
         final var cause = assertInstanceOf(SourceException.class, ex.getCause());
-        assertThat(cause.getMessage(), startsWith("""
+        assertThat(cause.getMessage()).startsWith("""
             Error in module 'yt1482': cannot add 'YangDataName[module=QNameModule{ns=yt1482}, name=some]'. Node name \
-            collision: 'YangDataName[module=QNameModule{ns=yt1482}, name=some]' already declared at """));
+            collision: 'YangDataName[module=QNameModule{ns=yt1482}, name=some]' already declared at """);
     }
 }

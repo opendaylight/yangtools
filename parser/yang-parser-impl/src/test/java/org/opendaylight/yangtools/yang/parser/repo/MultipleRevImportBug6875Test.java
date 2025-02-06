@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -84,7 +83,7 @@ class MultipleRevImportBug6875Test extends AbstractSchemaRepositoryTest {
 
         final var ex = assertThrows(ExecutionException.class, schemaContextFuture::get);
         final var cause = assertInstanceOf(IllegalArgumentException.class, ex.getCause());
-        assertThat(cause.getMessage(), startsWith("Module:bar imported twice with different revisions"));
+        assertThat(cause.getMessage()).startsWith("Module:bar imported twice with different revisions");
     }
 
     private static void setAndRegister(final SharedSchemaRepository sharedSchemaRepository,

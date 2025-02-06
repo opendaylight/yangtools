@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin.it;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -81,7 +80,7 @@ class YangToSourcesPluginTestIT {
     @Test
     void testMissingYangInDep() throws Exception {
         final var ex = assertThrows(VerificationException.class, () -> setUp("test-parent/MissingYangInDep/", false));
-        assertThat(ex.getMessage(), containsString("Imported module [unknownDep] was not found."));
+        assertThat(ex.getMessage()).contains("Imported module [unknownDep] was not found.");
     }
 
     void verifyCorrectLog(final Verifier vrf) throws VerificationException {

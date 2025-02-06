@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.spi;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
@@ -68,7 +67,7 @@ class YT1414Test {
 
         assertThat(assertThrows(IllegalArgumentException.class,
             () -> DefaultSchemaTreeInference.verifiedOf(modelContext, ImmutableList.of(container)))
-            .getMessage(), startsWith(
-                "Provided path [container] is not consistent with resolved path [Mock for ListEffectiveStatement, "));
+            .getMessage()).startsWith(
+                "Provided path [container] is not consistent with resolved path [Mock for ListEffectiveStatement, ");
     }
 }

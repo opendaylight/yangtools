@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -135,7 +134,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
         final var build = REACTOR.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE);
         final var ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final var cause = assertInstanceOf(MissingSubstatementException.class, ex.getCause());
-        assertThat(cause.getMessage(), startsWith("yang-data requires at least one substatement [at "));
+        assertThat(cause.getMessage()).startsWith("yang-data requires at least one substatement [at ");
     }
 
     @Test
@@ -143,7 +142,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
         final var build = REACTOR.newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE);
         final var ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final var cause = assertInstanceOf(InvalidSubstatementException.class, ex.getCause());
-        assertThat(cause.getMessage(),
-            startsWith("yang-data requires exactly one container data node definition, found ["));
+        assertThat(cause.getMessage())
+            .startsWith("yang-data requires exactly one container data node definition, found [");
     }
 }

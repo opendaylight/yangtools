@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -160,7 +159,7 @@ class LeafrefStaticAnalysisTest {
 
     private static void assertThrowsInvalidPath(final SchemaInferenceStack stack, final LeafSchemaNode leaf) {
         final var ex = assertThrowsIAE(stack, leaf);
-        assertThat(ex.getMessage(), startsWith("Illegal parent access in "));
+        assertThat(ex.getMessage()).startsWith("Illegal parent access in ");
         final var cause = assertInstanceOf(IllegalStateException.class, ex.getCause());
         assertEquals("Unexpected current EmptyGroupingEffectiveStatement{argument=(leafrefs)grp}", cause.getMessage());
     }
