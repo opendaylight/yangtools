@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -98,8 +97,8 @@ class Bug8307Test {
 
         final var cause = assertInstanceOf(InferenceException.class,
             assertThrows(ReactorException.class, reactor::buildEffective).getCause());
-        assertThat(cause.getMessage(),
-            startsWith("Deviation must not target the same module as the one it is defined in"));
+        assertThat(cause.getMessage())
+            .startsWith("Deviation must not target the same module as the one it is defined in");
     }
 
     @Test
@@ -109,7 +108,7 @@ class Bug8307Test {
 
         final var cause = assertInstanceOf(InferenceException.class,
             assertThrows(ReactorException.class, reactor::buildEffective).getCause());
-        assertThat(cause.getMessage(),
-            startsWith("Deviation must not target the same module as the one it is defined in"));
+        assertThat(cause.getMessage())
+            .startsWith("Deviation must not target the same module as the one it is defined in");
     }
 }

@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -57,10 +56,10 @@ class TypesResolutionTest extends AbstractYangTest {
         assertEquals(14, typedefs.size());
 
         var type = TestUtils.findTypedef(typedefs, "ip-version");
-        assertThat(type.getDescription().orElseThrow(),
-            containsString("This value represents the version of the IP protocol."));
-        assertThat(type.getReference().orElseThrow(),
-            containsString("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
+        assertThat(type.getDescription().orElseThrow())
+            .contains("This value represents the version of the IP protocol.");
+        assertThat(type.getReference().orElseThrow())
+            .contains("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification");
 
         var enumType = assertInstanceOf(EnumTypeDefinition.class, type.getBaseType());
         var values = enumType.getValues();
@@ -278,8 +277,8 @@ class TypesResolutionTest extends AbstractYangTest {
         var typedefs = tested.getTypeDefinitions();
         var testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
 
-        assertThat(testedType.getDescription().orElseThrow(),
-            containsString("A timezone location as defined by the IANA timezone"));
+        assertThat(testedType.getDescription().orElseThrow())
+            .contains("A timezone location as defined by the IANA timezone");
         assertFalse(testedType.getReference().isPresent());
         assertEquals(Status.CURRENT, testedType.getStatus());
 

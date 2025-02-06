@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -47,13 +46,13 @@ class YT1339Test extends AbstractYangTest {
     }
 
     private static void assertFailedImport(final String subdir) {
-        assertThat(assertYangVersionLinkageException(subdir),
-            startsWith("Cannot import by revision version 1.1 module new [at "));
+        assertThat(assertYangVersionLinkageException(subdir))
+            .startsWith("Cannot import by revision version 1.1 module new [at ");
     }
 
     private static void assertFailedInclude(final String subdir, final YangVersion subVer, final YangVersion modVer) {
-        assertThat(assertYangVersionLinkageException(subdir),
-            startsWith("Cannot include a version " + subVer + " submodule in a version " + modVer + " module [at "));
+        assertThat(assertYangVersionLinkageException(subdir))
+            .startsWith("Cannot include a version " + subVer + " submodule in a version " + modVer + " module [at ");
     }
 
     private static String assertYangVersionLinkageException(final String subdir) {

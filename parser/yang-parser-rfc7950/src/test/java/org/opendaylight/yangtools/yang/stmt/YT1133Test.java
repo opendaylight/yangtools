@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
@@ -22,11 +20,11 @@ class YT1133Test extends AbstractYangTest {
     @Test
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
     void testAugmentKeys() {
-        final PrintStream stdout = System.out;
-        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        final var stdout = System.out;
+        final var output = new ByteArrayOutputStream();
         final EffectiveModelContext ctx;
 
-        try (PrintStream out = new PrintStream(output, true, StandardCharsets.UTF_8)) {
+        try (var out = new PrintStream(output, true, StandardCharsets.UTF_8)) {
             System.setOut(out);
             ctx = assertEffectiveModelDir("/bugs/YT1133");
         } finally {
@@ -34,7 +32,6 @@ class YT1133Test extends AbstractYangTest {
         }
 
         assertEquals(2, ctx.getModules().size());
-        final String log = output.toString();
-        assertThat(log, not(containsString("Configuration list (bar)values")));
+        assertThat(output.toString()).doesNotContain("Configuration list (bar)values");
     }
 }

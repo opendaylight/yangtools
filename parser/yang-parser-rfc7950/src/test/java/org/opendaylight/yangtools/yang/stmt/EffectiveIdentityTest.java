@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -44,7 +43,7 @@ class EffectiveIdentityTest {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(CYCLIC_IDENTITY_TEST);
         final var cause = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause();
         assertInstanceOf(InferenceException.class, cause);
-        assertThat(cause.getMessage(), startsWith("Yang model processing phase STATEMENT_DEFINITION failed [at "));
+        assertThat(cause.getMessage()).startsWith("Yang model processing phase STATEMENT_DEFINITION failed [at ");
 
         // This is a bit complicated, as the order of exceptions may differ
         final var causes = new ArrayList<Throwable>();
@@ -57,18 +56,18 @@ class EffectiveIdentityTest {
         assertEquals(4, causes.size());
         causes.forEach(throwable -> assertInstanceOf(InferenceException.class, throwable));
 
-        assertThat(causes.get(0).getMessage(),
-            startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-1 and base identity "
-                + "(cyclic.identity.test)child-identity-2 [at "));
-        assertThat(causes.get(1).getMessage(),
-            startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-2 and base identity "
-                + "(cyclic.identity.test)child-identity-3 [at "));
-        assertThat(causes.get(2).getMessage(),
-            startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-3 and base identity "
-                + "(cyclic.identity.test)child-identity-4 [at "));
-        assertThat(causes.get(3).getMessage(),
-            startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-4 and base identity "
-                + "(cyclic.identity.test)child-identity-1 [at "));
+        assertThat(causes.get(0).getMessage())
+            .startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-1 and base identity "
+                + "(cyclic.identity.test)child-identity-2 [at ");
+        assertThat(causes.get(1).getMessage())
+            .startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-2 and base identity "
+                + "(cyclic.identity.test)child-identity-3 [at ");
+        assertThat(causes.get(2).getMessage())
+            .startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-3 and base identity "
+                + "(cyclic.identity.test)child-identity-4 [at ");
+        assertThat(causes.get(3).getMessage())
+            .startsWith("Unable to resolve identity (cyclic.identity.test)child-identity-4 and base identity "
+                + "(cyclic.identity.test)child-identity-1 [at ");
     }
 
     @Test

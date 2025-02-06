@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
@@ -22,6 +21,6 @@ class Bug7146Test {
         final var cause = assertThrows(IllegalArgumentException.class,
             () -> StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug7146/foo.yang"))).getCause();
         assertInstanceOf(YangSyntaxErrorException.class, cause);
-        assertThat(cause.getMessage(), containsString("extraneous input '#'"));
+        assertThat(cause.getMessage()).contains("extraneous input '#'");
     }
 }

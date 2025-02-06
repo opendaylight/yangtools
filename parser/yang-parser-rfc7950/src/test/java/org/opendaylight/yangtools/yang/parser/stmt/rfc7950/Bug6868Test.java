@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.Sets;
@@ -54,9 +53,8 @@ class Bug6868Test extends AbstractYangTest {
         assertNotNull(schemaContext);
 
         for (var expectedContainer : expectedContainers) {
-            assertThat(String.format("Expected container %s not found.", expectedContainer),
-                schemaContext.findDataTreeChild(QName.create(FOO_NS, expectedContainer)).orElseThrow(),
-                instanceOf(ContainerSchemaNode.class));
+            assertInstanceOf(ContainerSchemaNode.class,
+                schemaContext.findDataTreeChild(QName.create(FOO_NS, expectedContainer)).orElseThrow());
         }
 
         for (var unexpectedContainer : Sets.difference(ALL_CONTAINERS, expectedContainers)) {

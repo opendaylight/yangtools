@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -269,9 +268,9 @@ class DeviationResolutionTest extends AbstractYangTest {
 
         final var testLog = output.toString();
         System.setOut(stdout);
-        assertThat(testLog, containsString("""
+        assertThat(testLog).contains("""
             Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default in target leaf-list \
-            (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple default statements."""));
+            (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple default statements.""");
     }
 
     @Test
@@ -289,9 +288,9 @@ class DeviationResolutionTest extends AbstractYangTest {
 
         testLog = output.toString();
         System.setOut(stdout);
-        assertThat(testLog, containsString(
+        assertThat(testLog).contains(
             "Deviation cannot delete substatement (urn:ietf:params:xml:ns:yang:yin:1)units with argument 'seconds' in "
-                + "target node (bar?revision=2017-01-20)my-leaf because it does not exist in the target node."));
+                + "target node (bar?revision=2017-01-20)my-leaf because it does not exist in the target node.");
     }
 
     @Test
