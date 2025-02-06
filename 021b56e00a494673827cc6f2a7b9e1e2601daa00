@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "797e1f2d_eb242501",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7231
+      },
+      "writtenOn": "2025-02-06T14:01:01Z",
+      "side": 1,
+      "message": "Hello Robert,\n\nHere it is a proposition to re-introduced some deprecated methods.\nLet me know if it suitable for you.\n\nRegards\n\nOlivier",
+      "revId": "021b56e00a494673827cc6f2a7b9e1e2601daa00",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
