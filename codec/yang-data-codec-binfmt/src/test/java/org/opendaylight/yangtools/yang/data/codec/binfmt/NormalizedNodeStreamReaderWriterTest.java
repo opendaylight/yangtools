@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
@@ -199,17 +201,17 @@ class NormalizedNodeStreamReaderWriterTest {
 
         final var nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
 
-        final var deserialized = (ContainerNode)nnin.readNormalizedNode();
+        final var deserialized = assertInstanceOf(ContainerNode.class, nnin.readNormalizedNode());
 
         final var child = deserialized.findChildByArg(new NodeIdentifier(TestModel.ANY_XML_QNAME));
-        assertEquals("AnyXml child present", true, child.isPresent());
+        assertTrue(child.isPresent());
 
         final var xmlOutput = new StreamResult(new StringWriter());
         final var transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(((DOMSourceAnyxmlNode)child.orElseThrow()).body(), xmlOutput);
 
-        assertEquals("XML", xml, xmlOutput.getWriter().toString());
+        assertEquals(xml, xmlOutput.getWriter().toString());
         assertEquals("http://www.w3.org/TR/html4/",
             ((DOMSourceAnyxmlNode)child.orElseThrow()).body().getNode().getNamespaceURI());
     }

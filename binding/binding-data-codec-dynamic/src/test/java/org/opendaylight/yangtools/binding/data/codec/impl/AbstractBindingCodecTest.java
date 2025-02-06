@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.opendaylight.yangtools.binding.DataObject;

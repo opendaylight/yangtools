@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.yang.foo.rev160101.BooleanContainer;

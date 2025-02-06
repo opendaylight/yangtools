@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.StringWriter;
 import javax.xml.stream.XMLOutputFactory;
@@ -65,9 +64,7 @@ class AnydataSerializeTest extends AbstractAnydataTest {
         final var xmlParser = XmlParserStream.create(streamWriter, Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
         xmlParser.parse(reader);
 
-        final var transformedInput = result.getResult().data();
-        assertThat(transformedInput, instanceOf(AnydataNode.class));
-        final var anydataNode = (AnydataNode<?>) transformedInput;
+        final var anydataNode = assertInstanceOf(AnydataNode.class, result.getResult().data());
 
         // serialization
         final var writer = new StringWriter();
@@ -75,11 +72,12 @@ class AnydataSerializeTest extends AbstractAnydataTest {
         final var xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter,
             SCHEMA_CONTEXT);
         final var normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(transformedInput);
+        normalizedNodeWriter.write(anydataNode);
         normalizedNodeWriter.flush();
 
         final String serializedXml = writer.toString();
-        final String deserializeXml = getXmlFromDOMSource(((DOMSourceAnydata) anydataNode.body()).getSource());
+        final String deserializeXml = getXmlFromDOMSource(assertInstanceOf(DOMSourceAnydata.class, anydataNode.body())
+            .getSource());
         assertFalse(serializedXml.isEmpty());
 
         // Check if is Serialize Node same as Deserialize Node
@@ -139,13 +137,11 @@ class AnydataSerializeTest extends AbstractAnydataTest {
         xmlParser.flush();
 
         //Get Result
-        final var node = normalizedResult.getResult().data();
-        assertThat(node, instanceOf(AnydataNode.class));
-        final var anydataResult = (AnydataNode<?>) node;
+        final var anydataResult = assertInstanceOf(AnydataNode.class, normalizedResult.getResult().data());
 
         //Get Result in formatted String
-        assertThat(anydataResult.body(), instanceOf(DOMSourceAnydata.class));
-        final String serializedXml = getXmlFromDOMSource(((DOMSourceAnydata)anydataResult.body()).getSource());
+        final String serializedXml = getXmlFromDOMSource(assertInstanceOf(DOMSourceAnydata.class, anydataResult.body())
+            .getSource());
         final String expectedXml = toString(doc.getDocumentElement());
 
         //Looking for difference in Serialized xml and in Loaded XML
