@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 class Bug6240Test extends AbstractYangTest {
@@ -41,19 +38,16 @@ class Bug6240Test extends AbstractYangTest {
 
         assertNotNull(bar);
         assertInstanceOf(ContainerSchemaNode.class, bar.getDataChildByName(QName.create(NS, REV, "foo-grp-con")));
-        assertThat(bar.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con")),
-            instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, bar.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con")));
 
         assertEquals(1, bar.getSubmodules().size());
 
-        final DataSchemaNode dataChildByName = bar.getDataChildByName(QName.create(NS, REV, "sub-bar-con"));
-        assertInstanceOf(ContainerSchemaNode.class, dataChildByName);
-        final ContainerSchemaNode subBarCon = (ContainerSchemaNode) dataChildByName;
+        final var subBarCon = assertInstanceOf(ContainerSchemaNode.class,
+            bar.getDataChildByName(QName.create(NS, REV, "sub-bar-con")));
 
-        assertThat(subBarCon.getDataChildByName(QName.create(NS, REV, "foo-grp-con")),
-            instanceOf(ContainerSchemaNode.class));
-        assertThat(subBarCon.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con")),
-            instanceOf(ContainerSchemaNode.class));
+        assertInstanceOf(ContainerSchemaNode.class, subBarCon.getDataChildByName(QName.create(NS, REV, "foo-grp-con")));
+        assertInstanceOf(ContainerSchemaNode.class,
+            subBarCon.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con")));
     }
 
     @Test

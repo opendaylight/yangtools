@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 
 class AugmentArgumentParsingTest {
@@ -72,32 +70,28 @@ class AugmentArgumentParsingTest {
 
     @Test
     void invalidAugEmptyTest() {
-        final ReactorException ex = assertReactorThrows(INVALID_EMPTY);
-        final Throwable cause = ex.getCause();
-        assertInstanceOf(SourceException.class, cause);
-        assertThat(cause.getMessage(), startsWith("Schema node identifier must not be empty"));
+        final var ex = assertReactorThrows(INVALID_EMPTY);
+        final var cause = assertInstanceOf(SourceException.class, ex.getCause());
+        assertThat(cause.getMessage()).startsWith("Schema node identifier must not be empty");
     }
 
     @Test
     void invalidAugXPathTest() {
-        final ReactorException ex = assertReactorThrows(INVALID_XPATH);
-        final Throwable cause = ex.getCause();
-        assertInstanceOf(SourceException.class, cause);
-        assertThat(cause.getMessage(), startsWith("Failed to parse node '-' in path '/aug1/-'"));
+        final var ex = assertReactorThrows(INVALID_XPATH);
+        final var cause = assertInstanceOf(SourceException.class, ex.getCause());
+        assertThat(cause.getMessage()).startsWith("Failed to parse node '-' in path '/aug1/-'");
 
-        final Throwable nested = cause.getCause();
-        assertInstanceOf(SourceException.class, nested);
-        assertThat(nested.getMessage(), startsWith("Invalid identifier '-'"));
+        final var nested = assertInstanceOf(SourceException.class, cause.getCause());
+        assertThat(nested.getMessage()).startsWith("Invalid identifier '-'");
     }
 
     private static ReactorException assertReactorThrows(final StatementStreamSource source) {
-        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(source);
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(source);
         return assertThrows(ReactorException.class, () -> reactor.build());
     }
 
     private static void assertSourceExceptionCause(final Throwable exception, final String start) {
-        final Throwable cause = exception.getCause();
-        assertInstanceOf(SourceException.class, cause);
-        assertThat(cause.getMessage(), startsWith(start));
+        final var cause = assertInstanceOf(SourceException.class, exception.getCause());
+        assertThat(cause.getMessage()).startsWith(start);
     }
 }

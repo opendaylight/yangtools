@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
@@ -43,8 +41,8 @@ class YT1471Test extends AbstractYangTest {
 
     @Test
     void testAugmentNestedGroupingWithFeatureNotSupported() {
-        assertThat(assertFoo("nested", Set.of()).effectiveSubstatements(),
-            contains(instanceOf(UsesEffectiveStatement.class)));
+        assertThat(assertFoo("nested", Set.of()).effectiveSubstatements())
+            .anyMatch(UsesEffectiveStatement.class::isInstance);
     }
 
     private static ContainerEffectiveStatement assertFoo(final String dirName, final Set<QName> supportedFeatures) {

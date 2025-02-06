@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
@@ -28,11 +26,11 @@ class YT1410Test extends AbstractYangTest {
     @Test
     void testRFC7950() {
         final var module = assertEffectiveModel("/bugs/YT1410/bar.yang").getModuleStatement(QName.create("bar", "bar"));
-        final var one = module.findSchemaTreeNode(QName.create("bar", "one")).orElseThrow();
-        assertInstanceOf(ChoiceEffectiveStatement.class, one);
-        final var two = ((ChoiceEffectiveStatement) one).findSchemaTreeNode(QName.create("bar", "two")).orElseThrow();
-        assertInstanceOf(CaseEffectiveStatement.class, two);
-        assertThat(((CaseEffectiveStatement) two).findSchemaTreeNode(QName.create("bar", "two")).orElseThrow(),
-            instanceOf(ChoiceEffectiveStatement.class));
+        final var one = assertInstanceOf(ChoiceEffectiveStatement.class,
+            module.findSchemaTreeNode(QName.create("bar", "one")).orElseThrow());
+        final var two = assertInstanceOf(CaseEffectiveStatement.class,
+            one.findSchemaTreeNode(QName.create("bar", "two")).orElseThrow());
+        assertInstanceOf(ChoiceEffectiveStatement.class,
+            two.findSchemaTreeNode(QName.create("bar", "two")).orElseThrow());
     }
 }

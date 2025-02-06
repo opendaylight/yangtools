@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,7 +51,7 @@ class Bug7480Test {
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
         final var message = ex.getSuppressed().length > 0 ? ex.getSuppressed()[0].getMessage()
             : ex.getCause().getMessage();
-        assertThat(message, startsWith("Imported module [missing-lib] was not found."));
+        assertThat(message).startsWith("Imported module [missing-lib] was not found.");
     }
 
     @Test

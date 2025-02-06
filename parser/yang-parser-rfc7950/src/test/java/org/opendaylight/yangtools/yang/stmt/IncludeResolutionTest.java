@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,7 +71,7 @@ class IncludeResolutionTest {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class, callable::call);
         assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
         var cause = assertInstanceOf(InferenceException.class, ex.getCause());
-        assertThat(cause.getMessage(), startsWith(startStr));
+        assertThat(cause.getMessage()).startsWith(startStr);
         return cause;
     }
 }
