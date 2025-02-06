@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -22,7 +21,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 
-public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepositoryTest {
+class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepositoryTest {
     private static final String FOO = "/bug9195/foo.yang";
     private static final String BAR = "/bug9195/bar.yang";
     private static final String BAZ = "/bug9195/baz.yang";
@@ -39,7 +38,7 @@ public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepository
     private static final QNameModule BAZ_MODULE = QNameModule.of("baz-ns", "2017-05-16");
 
     @Test
-    public void testDeviationsSupportedInSomeModules() {
+    void testDeviationsSupportedInSomeModules() {
         final var context = assertModelContext(ImmutableSetMultimap.<QNameModule, QNameModule>builder()
             .put(FOO_MODULE, BAR_MODULE)
             .put(FOO_MODULE, BAZ_MODULE)
@@ -55,7 +54,7 @@ public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepository
     }
 
     @Test
-    public void testDeviationsSupportedInAllModules() {
+    void testDeviationsSupportedInAllModules() {
         final var context = assertModelContext(null, FOO, BAR, BAZ, FOOBAR);
 
         assertAbsent(context, MY_FOO_CONT_A);
@@ -66,7 +65,7 @@ public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepository
     }
 
     @Test
-    public void testDeviationsSupportedInNoModule() {
+    void testDeviationsSupportedInNoModule() {
         final var context = assertModelContext(ImmutableSetMultimap.of(), FOO, BAR, BAZ, FOOBAR);
 
         assertPresent(context, MY_FOO_CONT_A);
@@ -77,11 +76,11 @@ public class SchemaContextFactoryDeviationsTest extends AbstractSchemaRepository
     }
 
     @Test
-    public void shouldFailOnAttemptToDeviateTheSameModule2() {
+    void shouldFailOnAttemptToDeviateTheSameModule2() {
         final var cause = assertInstanceOf(InferenceException.class,
             Throwables.getRootCause(assertExecutionException(null, BAR_INVALID, BAZ_INVALID)));
-        assertThat(cause.getMessage(),
-            startsWith("Deviation must not target the same module as the one it is defined in"));
+        assertThat(cause.getMessage())
+            .startsWith("Deviation must not target the same module as the one it is defined in");
     }
 
     private static void assertAbsent(final EffectiveModelContext schemaContext, final QName qname) {

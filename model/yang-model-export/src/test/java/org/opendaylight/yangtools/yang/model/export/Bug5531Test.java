@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,9 +17,9 @@ import java.io.ByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug5531Test {
+class Bug5531Test {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final var schema = YangParserTestUtils.parseYang("""
             module foo {
               namespace "foo";
@@ -48,6 +46,6 @@ public class Bug5531Test {
 
         // if all changes were flushed then following conditions are satisfied
         assertNotEquals(0, output.length());
-        assertThat(output, allOf(containsString("<module"), containsString("</module>")));
+        assertThat(output).contains("<module").contains("</module>");
     }
 }
