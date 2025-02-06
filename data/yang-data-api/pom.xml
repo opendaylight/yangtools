@@ -19,7 +19,7 @@
     <artifactId>yang-data-api</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <description>Object model for normalized YANG-modeled data</description>
 
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
