@@ -21,4 +21,5 @@
  * allowed values has been determined to have a sufficiently-low cardinality, in which case these will reuse value
  * nodes.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.data.spi.node;
