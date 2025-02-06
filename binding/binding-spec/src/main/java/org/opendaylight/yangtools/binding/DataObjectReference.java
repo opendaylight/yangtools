@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReferenceBuilder;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierImpl;
@@ -344,4 +345,14 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
     default boolean isWildcarded() {
         return true;
     }
+
+    /**
+     * Return the key associated with the first component of specified type in
+     * an identifier.
+     *
+     * @param listItem component type
+     * @return key associated with the component, or null if the component type
+     *         is not present.
+     */
+    <N extends EntryObject<N, K>, K extends Key<N>> @Nullable K firstKeyOf(Class<@NonNull N> listItem);
 }
