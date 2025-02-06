@@ -7,19 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
-import org.junit.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal438Test extends AbstractOpaqueTest {
+class Mdsal438Test extends AbstractOpaqueTest {
     @Test
-    public void generateAnydataTest() {
-        final List<GeneratedType> types = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
-            "/mdsal438.yang"));
+    void generateAnydataTest() {
+        final var types = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/mdsal438.yang"));
         assertNotNull(types);
         assertEquals(7, types.size());
 

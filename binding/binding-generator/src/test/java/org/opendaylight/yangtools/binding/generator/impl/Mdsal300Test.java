@@ -7,20 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
-import org.junit.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal300Test {
+class Mdsal300Test {
     @Test
-    public void testActionsAndAugmentsTest() {
-        List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(
+    void testActionsAndAugmentsTest() {
+        final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResourceDirectory("/mdsal-300"));
-        assertNotNull(generateTypes);
-        assertEquals(19, generateTypes.size());
+        assertNotNull(types);
+        assertEquals(19, types.size());
     }
 }

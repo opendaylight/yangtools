@@ -7,21 +7,21 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class BindingGeneratorImplTest {
+class BindingGeneratorImplTest {
     @Test
-    public void isisTotpologyStatementParserTest()  {
-        List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
+    void isisTotpologyStatementParserTest()  {
+        final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             BindingGeneratorImplTest.class,
             "/isis-topology/network-topology@2013-10-21.yang", "/isis-topology/isis-topology@2013-10-21.yang",
             "/isis-topology/l3-unicast-igp-topology@2013-10-21.yang"));
@@ -29,8 +29,8 @@ public class BindingGeneratorImplTest {
     }
 
     @Test
-    public void choiceNodeGenerationTest() {
-        List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+    void choiceNodeGenerationTest() {
+        final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/binding-generator-impl-test/choice-test.yang"));
 
         GeneratedType choiceTestData = null;
@@ -40,28 +40,17 @@ public class BindingGeneratorImplTest {
         GeneratedType myList2 = null;
         GeneratedType myContainer2 = null;
 
-        for (GeneratedType type : generateTypes) {
+        for (var type : generateTypes) {
             switch (type.getName()) {
-                case "ChoiceTestData":
-                    choiceTestData = type;
-                    break;
-                case "Myrootcontainer":
-                    myRootContainer = type;
-                    break;
-                case "Mylist":
-                    myList = type;
-                    break;
-                case "Mylist2":
-                    myList2 = type;
-                    break;
-                case "Mycontainer":
-                    myContainer = type;
-                    break;
-                case "Mycontainer2":
-                    myContainer2 = type;
-                    break;
-                default:
+                case "ChoiceTestData" -> choiceTestData = type;
+                case "Myrootcontainer" -> myRootContainer = type;
+                case "Mylist" -> myList = type;
+                case "Mylist2" -> myList2 = type;
+                case "Mycontainer" -> myContainer = type;
+                case "Mycontainer2" -> myContainer2 = type;
+                default -> {
                     // ignore
+                }
             }
         }
 
@@ -73,9 +62,9 @@ public class BindingGeneratorImplTest {
         assertNotNull(myContainer2);
 
         Type childOfParamType = null;
-        for (Type type : myContainer.getImplements()) {
+        for (var type : myContainer.getImplements()) {
             if (type.getName().equals("ChildOf")) {
-                childOfParamType = ((ParameterizedType) type).getActualTypeArguments()[0];
+                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
                 break;
             }
         }
@@ -83,9 +72,9 @@ public class BindingGeneratorImplTest {
         assertEquals("ChoiceTestData", childOfParamType.getName());
 
         childOfParamType = null;
-        for (Type type : myList.getImplements()) {
+        for (var type : myList.getImplements()) {
             if (type.getName().equals("ChildOf")) {
-                childOfParamType = ((ParameterizedType) type).getActualTypeArguments()[0];
+                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
                 break;
             }
         }
@@ -93,9 +82,9 @@ public class BindingGeneratorImplTest {
         assertEquals("ChoiceTestData", childOfParamType.getName());
 
         childOfParamType = null;
-        for (Type type : myContainer2.getImplements()) {
+        for (var type : myContainer2.getImplements()) {
             if (type.getName().equals("ChildOf")) {
-                childOfParamType = ((ParameterizedType) type).getActualTypeArguments()[0];
+                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
                 break;
             }
         }
@@ -114,21 +103,23 @@ public class BindingGeneratorImplTest {
     }
 
     @Test
-    public void notificationGenerationTest() {
-        List<GeneratedType> generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
+    void notificationGenerationTest() {
+        final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/binding-generator-impl-test/notification-test.yang"));
 
         GeneratedType foo = null;
-        for (GeneratedType type : generateTypes) {
+        for (var type : generateTypes) {
             if (type.getName().equals("Foo")) {
                 foo = type;
                 break;
             }
         }
 
+        assertNotNull(foo);
+
         Type childOf = null;
         Type dataObject = null;
-        for (Type type :  foo.getImplements()) {
+        for (var type :  foo.getImplements()) {
             switch (type.getName()) {
                 case "ChildOf":
                     childOf = type;
@@ -146,7 +137,7 @@ public class BindingGeneratorImplTest {
     }
 
     @Test
-    public void testBaseYangTypes() {
+    void testBaseYangTypes() {
         final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/base-yang-types.yang"));
         assertEquals(19, types.size());

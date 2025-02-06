@@ -7,20 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class GenEnumResolvingTest {
+class GenEnumResolvingTest {
     @Test
-    public void testLeafEnumResolving() {
+    void testLeafEnumResolving() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             GenEnumResolvingTest.class,
             "/enum-test-models/ietf-interfaces@2012-11-15.yang", "/ietf-models/iana-if-type.yang"));
@@ -34,14 +32,14 @@ public class GenEnumResolvingTest {
                 genInterface = type;
             }
         }
-        assertNotNull("Generated Type Interface is not present in list of Generated Types", genInterface);
+        assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
 
         Enumeration linkUpDownTrapEnable = null;
         Enumeration operStatus = null;
         final var enums = genInterface.getEnumerations();
-        assertNotNull("Generated Type Interface cannot contain NULL reference to Enumeration types!", enums);
-        assertEquals("Generated Type Interface MUST contain 2 Enumeration Types", 2, enums.size());
-        for (final Enumeration e : enums) {
+        assertNotNull(enums, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
+        assertEquals(2, enums.size(), "Generated Type Interface MUST contain 2 Enumeration Types");
+        for (var e : enums) {
             if (e.getName().equals("LinkUpDownTrapEnable")) {
                 linkUpDownTrapEnable = e;
             } else if (e.getName().equals("OperStatus")) {
@@ -49,18 +47,18 @@ public class GenEnumResolvingTest {
             }
         }
 
-        assertNotNull("Expected Enum LinkUpDownTrapEnable, but was NULL!", linkUpDownTrapEnable);
-        assertNotNull("Expected Enum OperStatus, but was NULL!", operStatus);
+        assertNotNull(linkUpDownTrapEnable, "Expected Enum LinkUpDownTrapEnable, but was NULL!");
+        assertNotNull(operStatus, "Expected Enum OperStatus, but was NULL!");
 
-        assertNotNull("Enum LinkUpDownTrapEnable MUST contain Values definition not NULL reference!",
-                linkUpDownTrapEnable.getValues());
-        assertNotNull("Enum OperStatus MUST contain Values definition not NULL reference!", operStatus.getValues());
-        assertEquals("Enum LinkUpDownTrapEnable MUST contain 2 values!", 2, linkUpDownTrapEnable.getValues().size());
-        assertEquals("Enum OperStatus MUST contain 7 values!", 7, operStatus.getValues().size());
+        assertNotNull(linkUpDownTrapEnable.getValues(),
+            "Enum LinkUpDownTrapEnable MUST contain Values definition not NULL reference!");
+        assertNotNull(operStatus.getValues(), "Enum OperStatus MUST contain Values definition not NULL reference!");
+        assertEquals(2, linkUpDownTrapEnable.getValues().size(), "Enum LinkUpDownTrapEnable MUST contain 2 values!");
+        assertEquals(7, operStatus.getValues().size(), "Enum OperStatus MUST contain 7 values!");
 
         final var methods = genInterface.getMethodDefinitions();
 
-        assertNotNull("Generated Interface cannot contain NULL reference for Method Signature Definitions!", methods);
+        assertNotNull(methods, "Generated Interface cannot contain NULL reference for Method Signature Definitions!");
 
         // FIXME: split this into getter/default/static asserts
         assertEquals(33, methods.size());
@@ -73,26 +71,23 @@ public class GenEnumResolvingTest {
             }
         }
 
-        assertNotNull("Method getType MUST return Enumeration Type not NULL reference!", ianaIfType);
-        assertEquals("Enumeration getType MUST contain 272 values!", 272, ianaIfType.getValues().size());
+        assertNotNull(ianaIfType, "Method getType MUST return Enumeration Type not NULL reference!");
+        assertEquals(272, ianaIfType.getValues().size(), "Enumeration getType MUST contain 272 values!");
     }
 
     @Test
-    public void testTypedefEnumResolving() {
+    void testTypedefEnumResolving() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/ietf-models/iana-if-type.yang"));
         assertNotNull(genTypes);
         assertEquals(2, genTypes.size());
 
-        final var type = genTypes.get(1);
-        assertThat(type, instanceOf(Enumeration.class));
-
-        final var enumer = (Enumeration) type;
-        assertEquals("Enumeration type MUST contain 272 values!", 272, enumer.getValues().size());
+        final var type = assertInstanceOf(Enumeration.class, genTypes.get(1));
+        assertEquals(272, type.getValues().size(), "Enumeration type MUST contain 272 values!");
     }
 
     @Test
-    public void testLeafrefEnumResolving() {
+    void testLeafrefEnumResolving() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             GenEnumResolvingTest.class,
             "/enum-test-models/abstract-topology@2013-02-08.yang", "/enum-test-models/ietf-interfaces@2012-11-15.yang",
@@ -107,31 +102,29 @@ public class GenEnumResolvingTest {
                 genInterface = type;
             }
         }
-        assertNotNull("Generated Type Interface is not present in list of Generated Types", genInterface);
+        assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
 
-        Type linkUpDownTrapEnable = null;
-        Type operStatus = null;
+        Enumeration linkUpDownTrapEnable = null;
+        Enumeration operStatus = null;
         final var methods = genInterface.getMethodDefinitions();
-        assertNotNull("Generated Type Interface cannot contain NULL reference to Enumeration types!", methods);
+        assertNotNull(methods, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
 
         // FIXME: split this into getter/default/static asserts
         assertEquals(13, methods.size());
         for (var method : methods) {
             if (method.getName().equals("getLinkUpDownTrapEnable")) {
-                linkUpDownTrapEnable = method.getReturnType();
+                linkUpDownTrapEnable = assertInstanceOf(Enumeration.class, method.getReturnType());
             } else if (method.getName().equals("getOperStatus")) {
-                operStatus = method.getReturnType();
+                operStatus = assertInstanceOf(Enumeration.class, method.getReturnType());
             }
         }
 
-        assertNotNull("Expected Referenced Enum LinkUpDownTrapEnable, but was NULL!", linkUpDownTrapEnable);
-        assertThat(linkUpDownTrapEnable, instanceOf(Enumeration.class));
+        assertNotNull(linkUpDownTrapEnable, "Expected Referenced Enum LinkUpDownTrapEnable, but was NULL!");
         assertEquals(
             "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface",
             linkUpDownTrapEnable.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString());
 
-        assertNotNull("Expected Referenced Enum OperStatus, but was NULL!", operStatus);
-        assertThat(operStatus, instanceOf(Enumeration.class));
+        assertNotNull(operStatus, "Expected Referenced Enum OperStatus, but was NULL!");
         assertEquals(
             "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev121115.interfaces.Interface",
             operStatus.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString());

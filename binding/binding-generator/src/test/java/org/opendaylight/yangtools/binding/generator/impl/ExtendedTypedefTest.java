@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class ExtendedTypedefTest {
+class ExtendedTypedefTest {
     @Test
-    public void constantGenerationTest() {
+    void constantGenerationTest() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             ExtendedTypedefTest.class, "/typedef_of_typedef.yang", "/ietf-models/ietf-inet-types.yang"));
 
@@ -28,75 +28,71 @@ public class ExtendedTypedefTest {
         GeneratedTransferObject extendedTypedefUnion = null;
         GeneratedTransferObject unionTypedef = null;
         GeneratedTransferObject typedefFromImport = null;
-        for (final GeneratedType type : genTypes) {
-            if (type instanceof GeneratedTransferObject) {
+        for (var type : genTypes) {
+            if (type instanceof GeneratedTransferObject gto) {
                 if (type.getName().equals("SimpleTypedef4")) {
-                    simpleTypedef4 = (GeneratedTransferObject) type;
+                    simpleTypedef4 = gto;
                 } else if (type.getName().equals("ExtendedTypedefUnion")) {
-                    extendedTypedefUnion = (GeneratedTransferObject) type;
+                    extendedTypedefUnion = gto;
                 } else if (type.getName().equals("UnionTypedef")) {
-                    unionTypedef = (GeneratedTransferObject) type;
+                    unionTypedef = gto;
                 } else if (type.getName().equals("TypedefFromImport")) {
-                    typedefFromImport = (GeneratedTransferObject) type;
+                    typedefFromImport = gto;
                 }
             }
         }
 
         // typedef-from-import
-        assertNotNull("TypedefFromImport not found", typedefFromImport);
-        var properties = typedefFromImport.getProperties();
-        assertEquals("Properties of TypedefFromImport should be empty", 0, properties.size());
-        assertEquals("TypedefFromImport should be extended", "Ipv4Address", typedefFromImport.getSuperType().getName());
+        assertNotNull(typedefFromImport, "TypedefFromImport not found");
+        assertEquals(List.of(), typedefFromImport.getProperties(), "Properties of TypedefFromImport should be empty");
+        assertEquals("Ipv4Address", typedefFromImport.getSuperType().getName(), "TypedefFromImport should be extended");
 
         // simple-typedef4
-        assertNotNull("SimpleTypedef4 not found", simpleTypedef4);
-        assertNotNull("ExtendedTypedefUnion not found", extendedTypedefUnion);
-        assertNotNull("UnionTypedef", unionTypedef);
+        assertNotNull(simpleTypedef4, "SimpleTypedef4 not found");
+        assertNotNull(extendedTypedefUnion, "ExtendedTypedefUnion not found");
+        assertNotNull(unionTypedef, "UnionTypedef");
 
-        properties = simpleTypedef4.getProperties();
-        assertEquals("SimpleTypedef4 shouldn't have properties.", 0, properties.size());
+        assertEquals(List.of(), simpleTypedef4.getProperties(), "SimpleTypedef4 shouldn't have properties.");
 
-        GeneratedTransferObject extendTO = simpleTypedef4.getSuperType();
-        assertNotNull("SimpleTypedef4 should have extend.", extendTO);
-        assertEquals("Incorrect extension for SimpleTypedef4.", "SimpleTypedef3", extendTO.getName());
-        properties = extendTO.getProperties();
-        assertEquals("SimpleTypedef3 shouldn't have properties.", 0, properties.size());
+        var extendTO = simpleTypedef4.getSuperType();
+        assertNotNull(extendTO, "SimpleTypedef4 should have extend.");
+        assertEquals("SimpleTypedef3", extendTO.getName(), "Incorrect extension for SimpleTypedef4.");
+        assertEquals(List.of(), extendTO.getProperties(), "SimpleTypedef3 shouldn't have properties.");
 
         extendTO = extendTO.getSuperType();
-        assertNotNull("SimpleTypedef3 should have extend.", extendTO);
-        assertEquals("Incorrect extension for SimpleTypedef3.", "SimpleTypedef2", extendTO.getName());
-        properties = extendTO.getProperties();
-        assertEquals("SimpleTypedef2 shouldn't have properties.", 0, properties.size());
+        assertNotNull(extendTO, "SimpleTypedef3 should have extend.");
+        assertEquals("SimpleTypedef2", extendTO.getName(), "Incorrect extension for SimpleTypedef3.");
+        assertEquals(List.of(), extendTO.getProperties(), "SimpleTypedef2 shouldn't have properties.");
 
         extendTO = extendTO.getSuperType();
-        assertNotNull("SimpleTypedef2 should have extend.", extendTO);
-        assertEquals("SimpleTypedef2 should be extended with SimpleTypedef1.", "SimpleTypedef1", extendTO.getName());
-        properties = extendTO.getProperties();
-        assertEquals("Incorrect number of properties in class SimpleTypedef1.", 1, properties.size());
+        assertNotNull(extendTO, "SimpleTypedef2 should have extend.");
+        assertEquals("SimpleTypedef1", extendTO.getName(), "SimpleTypedef2 should be extended with SimpleTypedef1.");
+        var properties = extendTO.getProperties();
+        assertEquals(1, properties.size(), "Incorrect number of properties in class SimpleTypedef1.");
 
-        assertEquals("Incorrect property's name", "value", properties.get(0).getName());
-        assertEquals("Property's incorrect type", BaseYangTypes.UINT8_TYPE, properties.get(0).getReturnType());
+        assertEquals("value", properties.getFirst().getName(), "Incorrect property's name");
+        assertEquals(BaseYangTypes.UINT8_TYPE, properties.get(0).getReturnType(), "Property's incorrect type");
 
         extendTO = extendTO.getSuperType();
-        assertNull("SimpleTypedef1 shouldn't have extend.", extendTO);
+        assertNull(extendTO, "SimpleTypedef1 shouldn't have extend.");
 
         // extended-typedef-union
-        assertNotNull("ExtendedTypedefUnion object not found", extendedTypedefUnion);
-        properties = extendedTypedefUnion.getProperties();
-        assertEquals("ExtendedTypedefUnion shouldn't have any property", 0, properties.size());
+        assertNotNull(extendedTypedefUnion, "ExtendedTypedefUnion object not found");
+        assertEquals(List.of(), extendedTypedefUnion.getProperties(),
+            "ExtendedTypedefUnion shouldn't have any property");
 
         extendTO = extendedTypedefUnion.getSuperType();
-        assertEquals("Incorrect extension fo ExtendedTypedefUnion.", "UnionTypedef", extendTO.getName());
-        assertNull("UnionTypedef shouldn't be extended", extendTO.getSuperType());
+        assertEquals("UnionTypedef", extendTO.getName(), "Incorrect extension fo ExtendedTypedefUnion.");
+        assertNull(extendTO.getSuperType(), "UnionTypedef shouldn't be extended");
 
         properties = extendTO.getProperties();
-        assertEquals("Incorrect number of properties for UnionTypedef.", 4, properties.size());
+        assertEquals(4, properties.size(), "Incorrect number of properties for UnionTypedef.");
 
         GeneratedProperty simpleTypedef4Property = null;
         GeneratedProperty simpleTypedef1Property = null;
         GeneratedProperty byteTypeProperty = null;
         GeneratedProperty typedefEnumFruitProperty = null;
-        for (GeneratedProperty genProperty : properties) {
+        for (var genProperty : properties) {
             if (genProperty.getName().equals("simpleTypedef1")) {
                 simpleTypedef1Property = genProperty;
             } else if (genProperty.getName().equals("simpleTypedef4")) {
@@ -108,17 +104,17 @@ public class ExtendedTypedefTest {
             }
         }
 
-        assertNotNull("simpleTypedef4 property not found in UnionTypedef", simpleTypedef4Property);
-        assertNotNull("simpleTypedef1 property not found in UnionTypedef", simpleTypedef1Property);
-        assertNotNull("byteType property not found in UnionTypedef", byteTypeProperty);
-        assertNotNull("typedefEnumFruit property not found in UnionTypedef", typedefEnumFruitProperty);
+        assertNotNull(simpleTypedef4Property, "simpleTypedef4 property not found in UnionTypedef");
+        assertNotNull(simpleTypedef1Property, "simpleTypedef1 property not found in UnionTypedef");
+        assertNotNull(byteTypeProperty, "byteType property not found in UnionTypedef");
+        assertNotNull(typedefEnumFruitProperty, "typedefEnumFruit property not found in UnionTypedef");
 
-        assertEquals("Incorrect type for property simpleTypedef4.", "SimpleTypedef4", simpleTypedef4Property
-                .getReturnType().getName());
-        assertEquals("Incorrect type for property simpleTypedef1.", "SimpleTypedef1", simpleTypedef1Property
-                .getReturnType().getName());
-        assertEquals("Incorrect type for property byteType.", "ByteType", byteTypeProperty.getReturnType().getName());
-        assertEquals("Incorrect type for property typedefEnumFruit.", "TypedefEnumFruit", typedefEnumFruitProperty
-                .getReturnType().getName());
+        assertEquals("SimpleTypedef4", simpleTypedef4Property.getReturnType().getName(),
+            "Incorrect type for property simpleTypedef4.");
+        assertEquals("SimpleTypedef1", simpleTypedef1Property.getReturnType().getName(),
+            "Incorrect type for property simpleTypedef1.");
+        assertEquals("ByteType", byteTypeProperty.getReturnType().getName(), "Incorrect type for property byteType.");
+        assertEquals("TypedefEnumFruit", typedefEnumFruitProperty.getReturnType().getName(),
+            "Incorrect type for property typedefEnumFruit.");
     }
 }

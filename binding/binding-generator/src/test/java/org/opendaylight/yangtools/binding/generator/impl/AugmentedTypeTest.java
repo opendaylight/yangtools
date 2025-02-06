@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -21,21 +19,19 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class AugmentedTypeTest {
+class AugmentedTypeTest {
     @Test
-    public void augmentedAbstractTopologyTest() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResources(AugmentedTypeTest.class,
+    void augmentedAbstractTopologyTest() {
+        final var context = YangParserTestUtils.parseYangResources(AugmentedTypeTest.class,
             "/augment-test-models/abstract-topology@2013-02-08.yang",
             "/augment-test-models/augment-abstract-topology@2013-05-03.yang",
             "/augment-test-models/augment-network-link-attributes@2013-05-03.yang",
             "/augment-test-models/augment-topology-tunnels@2013-05-03.yang",
             "/augment-test-models/ietf-interfaces@2012-11-15.yang");
-        assertNotNull("Schema Context is null", context);
 
-        final List<GeneratedType> genTypes = DefaultBindingGenerator.generateFor(context);
+        final var genTypes = DefaultBindingGenerator.generateFor(context);
         assertEquals(31, genTypes.size());
 
         GeneratedTransferObject gtInterfaceKey = null;
@@ -44,28 +40,28 @@ public class AugmentedTypeTest {
         GeneratedTransferObject gtTunnelKey = null;
         GeneratedType gtNetworkLink2 = null;
 
-        for (final GeneratedType type : genTypes) {
+        for (var type : genTypes) {
             if (!type.getPackageName().contains("augment._abstract.topology")) {
                 continue;
             }
 
             if (type.getName().equals("InterfaceKey")) {
-                gtInterfaceKey = (GeneratedTransferObject) type;
+                gtInterfaceKey = assertInstanceOf(GeneratedTransferObject.class, type);
             } else if (type.getName().equals("Interface")) {
                 gtInterface = type;
             } else if (type.getName().equals("Tunnel")) {
                 gtTunnel = type;
             } else if (type.getName().equals("TunnelKey")) {
-                gtTunnelKey = (GeneratedTransferObject) type;
+                gtTunnelKey = assertInstanceOf(GeneratedTransferObject.class, type);
             } else if (type.getName().equals("NetworkLink2")) {
                 gtNetworkLink2 = type;
             }
         }
 
         // 'Interface
-        assertNotNull("gtInterface is null", gtInterface);
-        final List<MethodSignature> gtInterfaceMethods = gtInterface.getMethodDefinitions();
-        assertNotNull("gtInterfaceMethods is null", gtInterfaceMethods);
+        assertNotNull(gtInterface, "gtInterface is null");
+        final var gtInterfaceMethods = gtInterface.getMethodDefinitions();
+        assertNotNull(gtInterfaceMethods, "gtInterfaceMethods is null");
         MethodSignature getIfcKeyMethod = null;
         for (final MethodSignature method : gtInterfaceMethods) {
             if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
@@ -73,83 +69,82 @@ public class AugmentedTypeTest {
                 break;
             }
         }
-        assertNotNull("getIfcKeyMethod is null", getIfcKeyMethod);
-        assertThat(getIfcKeyMethod.getReturnType(), instanceOf(GeneratedTransferObject.class));
+        assertNotNull(getIfcKeyMethod, "getIfcKeyMethod is null");
+        var retType = assertInstanceOf(GeneratedTransferObject.class, getIfcKeyMethod.getReturnType());
         assertEquals(JavaTypeName.create(
             "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-            "InterfaceKey"), getIfcKeyMethod.getReturnType().getIdentifier());
+            "InterfaceKey"), retType.getIdentifier());
 
         MethodSignature getHigherLayerIfMethod = null;
-        for (final MethodSignature method : gtInterfaceMethods) {
+        for (var method : gtInterfaceMethods) {
             if (method.getName().equals("getHigherLayerIf")) {
                 getHigherLayerIfMethod = method;
                 break;
             }
         }
-        assertNotNull("getHigherLayerIf method is null", getHigherLayerIfMethod);
+        assertNotNull(getHigherLayerIfMethod, "getHigherLayerIf method is null");
         assertEquals(Types.setTypeFor(Types.STRING), getHigherLayerIfMethod.getReturnType());
 
         // 'InterfaceKey'
-        assertNotNull("InterfaceKey is null", gtInterfaceKey);
-        final List<GeneratedProperty> properties = gtInterfaceKey.getProperties();
-        assertNotNull("properties is null", properties);
+        assertNotNull(gtInterfaceKey, "InterfaceKey is null");
+        final var properties = gtInterfaceKey.getProperties();
+        assertNotNull(properties, "properties is null");
         GeneratedProperty gtInterfaceId = null;
-        for (final GeneratedProperty property : properties) {
+        for (var property : properties) {
             if (property.getName().equals("interfaceId")) {
                 gtInterfaceId = property;
                 break;
             }
         }
-        assertNotNull("interfaceId is null", gtInterfaceId);
+        assertNotNull(gtInterfaceId, "interfaceId is null");
         assertEquals(Types.STRING, gtInterfaceId.getReturnType());
 
         // 'Tunnel'
-        assertNotNull("Tunnel is null", gtTunnel);
-        final List<MethodSignature> tunnelMethods = gtTunnel.getMethodDefinitions();
-        assertNotNull("Tunnel methods are null", tunnelMethods);
+        assertNotNull(gtTunnel, "Tunnel is null");
+        final var tunnelMethods = gtTunnel.getMethodDefinitions();
+        assertNotNull(tunnelMethods, "Tunnel methods are null");
         MethodSignature getTunnelKeyMethod = null;
-        for (MethodSignature method : tunnelMethods) {
+        for (var method : tunnelMethods) {
             if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
                 getTunnelKeyMethod = method;
                 break;
             }
         }
-        assertNotNull("getKey method of Tunnel is null", getTunnelKeyMethod);
+        assertNotNull(getTunnelKeyMethod, "getKey method of Tunnel is null");
 
-        var retType = getTunnelKeyMethod.getReturnType();
-        assertThat(retType, instanceOf(GeneratedTransferObject.class));
+        retType = assertInstanceOf(GeneratedTransferObject.class, getTunnelKeyMethod.getReturnType());
         assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503"
             + ".topology.network.links.network.link.tunnels", "TunnelKey"), retType.getIdentifier());
 
         // 'TunnelKey'
-        assertNotNull("TunnelKey is null", gtTunnelKey);
-        final List<GeneratedProperty> tunnelKeyProperties = gtTunnelKey.getProperties();
-        assertNotNull("TunnelKey properties are null", tunnelKeyProperties);
+        assertNotNull(gtTunnelKey, "TunnelKey is null");
+        final var tunnelKeyProperties = gtTunnelKey.getProperties();
+        assertNotNull(tunnelKeyProperties, "TunnelKey properties are null");
 
         GeneratedProperty gtTunnelId = null;
-        for (final GeneratedProperty property : tunnelKeyProperties) {
+        for (var property : tunnelKeyProperties) {
             if (property.getName().equals("tunnelId")) {
                 gtTunnelId = property;
             }
         }
-        assertNotNull("tunnelId is null", gtTunnelId);
+        assertNotNull(gtTunnelId, "tunnelId is null");
         assertEquals(Types.typeForClass(Integer.class), gtTunnelId.getReturnType());
 
         // 'NetworkLink2'
-        assertNotNull("NetworkLink2 is null", gtNetworkLink2);
+        assertNotNull(gtNetworkLink2, "NetworkLink2 is null");
 
-        final List<MethodSignature> networkLink2Methods = gtNetworkLink2.getMethodDefinitions();
-        assertNotNull("NetworkLink2 methods are null", networkLink2Methods);
+        final var networkLink2Methods = gtNetworkLink2.getMethodDefinitions();
+        assertNotNull(networkLink2Methods, "NetworkLink2 methods are null");
 
         MethodSignature getIfcMethod = null;
-        for (MethodSignature method : networkLink2Methods) {
+        for (var method : networkLink2Methods) {
             if (method.getName().equals("getInterface")) {
                 getIfcMethod = method;
                 break;
             }
         }
 
-        assertNotNull("getInterface method is null", getIfcMethod);
+        assertNotNull(getIfcMethod, "getInterface method is null");
         assertEquals(Types.STRING, getIfcMethod.getReturnType());
     }
 }

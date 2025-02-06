@@ -7,24 +7,24 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Test leafref resolution when the leaf is from a grouping.
  */
-public class Mdsal182Test {
+class Mdsal182Test {
     @Test
-    public void testOneUpLeafref() {
+    void testOneUpLeafref() {
         final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal-182/good-leafref.yang"));
         assertEquals(6, types.size());
     }
 
     @Test
-    public void testTwoUpLeafref() {
+    void testTwoUpLeafref() {
         final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal-182/grouping-leafref.yang"));
         assertEquals(4, types.size());

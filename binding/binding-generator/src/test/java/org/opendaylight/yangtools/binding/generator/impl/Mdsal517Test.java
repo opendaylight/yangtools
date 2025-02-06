@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal517Test extends AbstractOpaqueTest {
+class Mdsal517Test extends AbstractOpaqueTest {
     @Test
-    public void augmentActionInputInGroupingTest() {
+    void augmentActionInputInGroupingTest() {
         final var types = DefaultBindingGenerator.generateFor(
                 YangParserTestUtils.parseYangResourceDirectory("/mdsal-517"));
         assertNotNull(types);

@@ -7,25 +7,24 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import org.junit.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class GeneratedTypesBitsTest {
+class GeneratedTypesBitsTest {
     @Test
-    public void testGeneretedTypesBitsTest() {
+    void testGeneretedTypesBitsTest() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-bits-demo.yang"));
-        assertTrue(genTypes != null);
+        assertNotNull(genTypes);
 
         List<MethodSignature> methodSignaturesList = null;
 
@@ -46,7 +45,7 @@ public class GeneratedTypesBitsTest {
             if (genType instanceof GeneratedTransferObject genTO) {
                 if (genTO.getName().equals("ByteType")) {
                     byteTypeFound = true;
-                    List<GeneratedProperty> genProperties = genTO.getProperties();
+                    var genProperties = genTO.getProperties();
                     classPropertiesNumb = genProperties.size();
 
                     genProperties = genTO.getToStringIdentifiers();

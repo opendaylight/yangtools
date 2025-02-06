@@ -7,27 +7,27 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal829Test {
+class Mdsal829Test {
     private static final EffectiveModelContext MODEL_CONTEXT =
         YangParserTestUtils.parseYangResource("/mdsal829.yang", Set.of());
 
     @Test
-    public void testCompileTimeTypes() {
+    void testCompileTimeTypes() {
         assertEquals(1, DefaultBindingGenerator.generateFor(MODEL_CONTEXT).size());
     }
 
     @Test
-    public void testRunTimeTypes() {
+    void testRunTimeTypes() {
         final var types = BindingRuntimeTypesFactory.createTypes(MODEL_CONTEXT);
         assertSame(MODEL_CONTEXT, types.modelContext());
         final var schema = types.findSchema(

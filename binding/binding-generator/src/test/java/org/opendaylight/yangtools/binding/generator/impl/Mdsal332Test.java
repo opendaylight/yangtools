@@ -7,26 +7,25 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.junit.Test;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal332Test {
+class Mdsal332Test {
     @Test
-    public void mdsal332Test() {
+    void mdsal332Test() {
         final var generateTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal332.yang"));
         assertNotNull(generateTypes);
         assertEquals(5, generateTypes.size());
 
-        final var names = generateTypes.stream().map(GeneratedType::getIdentifier)
-                .collect(ImmutableList.toImmutableList());
+        final var names = generateTypes.stream().map(GeneratedType::getIdentifier).toList();
         final var uniqueNames = ImmutableSet.copyOf(names);
-        assertEquals(ImmutableList.copyOf(uniqueNames), names);
+        assertEquals(List.copyOf(uniqueNames), names);
     }
 }

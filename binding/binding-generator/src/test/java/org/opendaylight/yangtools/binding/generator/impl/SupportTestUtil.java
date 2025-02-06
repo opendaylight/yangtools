@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -18,17 +18,16 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
-public final class SupportTestUtil {
+final class SupportTestUtil {
     private SupportTestUtil() {
-
+        // Hidden on purpose
     }
 
-    public static void containsMethods(final GeneratedType genType, final NameTypePattern... searchedSignsWhat) {
-        final List<MethodSignature> searchedSignsIn = genType.getMethodDefinitions();
-        containsMethods(searchedSignsIn, searchedSignsWhat);
+    static void containsMethods(final GeneratedType genType, final NameTypePattern... searchedSignsWhat) {
+        containsMethods(genType.getMethodDefinitions(), searchedSignsWhat);
     }
 
-    public static void containsMethods(final List<MethodSignature> searchedSignsIn,
+    static void containsMethods(final List<MethodSignature> searchedSignsIn,
             final NameTypePattern... searchedSignsWhat) {
         if (searchedSignsIn == null) {
             throw new IllegalArgumentException("List of method signatures in which should be searched can't be null");
@@ -37,10 +36,10 @@ public final class SupportTestUtil {
             throw new IllegalArgumentException("Array of method signatures which should be searched can't be null");
         }
 
-        for (NameTypePattern searchedSignWhat : searchedSignsWhat) {
+        for (var searchedSignWhat : searchedSignsWhat) {
             boolean nameMatchFound = false;
             String typeNameFound = "";
-            for (MethodSignature searchedSignIn : searchedSignsIn) {
+            for (var searchedSignIn : searchedSignsIn) {
                 if (searchedSignWhat.getName().equals(searchedSignIn.getName())) {
                     nameMatchFound = true;
                     typeNameFound = resolveFullNameOfReturnType(searchedSignIn.getReturnType());
@@ -49,16 +48,16 @@ public final class SupportTestUtil {
                     }
                 }
             }
-            assertTrue("Method " + searchedSignWhat.getName() + " wasn't found.", nameMatchFound);
-            assertEquals("Return type in method " + searchedSignWhat.getName() + " doesn't match expected type ",
-                    searchedSignWhat.getType(), typeNameFound);
+            assertTrue(nameMatchFound, "Method " + searchedSignWhat.getName() + " wasn't found.");
+            assertEquals(searchedSignWhat.getType(), typeNameFound,
+                "Return type in method " + searchedSignWhat.getName() + " doesn't match expected type ");
 
         }
     }
 
-    public static void containsAttributes(final GeneratedTransferObject genTO, final boolean equal, final boolean hash,
+    static void containsAttributes(final GeneratedTransferObject genTO, final boolean equal, final boolean hash,
             final boolean toString, final NameTypePattern... searchedSignsWhat) {
-        List<GeneratedProperty> searchedPropertiesIn = genTO.getProperties();
+        var searchedPropertiesIn = genTO.getProperties();
         containsAttributes(searchedPropertiesIn, "", searchedSignsWhat);
         if (equal) {
             searchedPropertiesIn = genTO.getEqualsIdentifiers();
@@ -72,16 +71,15 @@ public final class SupportTestUtil {
             searchedPropertiesIn = genTO.getToStringIdentifiers();
             containsAttributes(searchedPropertiesIn, "toString", searchedSignsWhat);
         }
-
     }
 
-    public static void containsAttributes(final List<GeneratedProperty> searchedPropertiesIn, final String listType,
+    static void containsAttributes(final List<GeneratedProperty> searchedPropertiesIn, final String listType,
             final NameTypePattern... searchedPropertiesWhat) {
 
-        for (NameTypePattern searchedPropertyWhat : searchedPropertiesWhat) {
+        for (var searchedPropertyWhat : searchedPropertiesWhat) {
             boolean nameMatchFound = false;
             String typeNameFound = "";
-            for (GeneratedProperty searchedPropertyIn : searchedPropertiesIn) {
+            for (var searchedPropertyIn : searchedPropertiesIn) {
                 if (searchedPropertyWhat.getName().equals(searchedPropertyIn.getName())) {
                     nameMatchFound = true;
                     typeNameFound = resolveFullNameOfReturnType(searchedPropertyIn.getReturnType());
@@ -90,44 +88,41 @@ public final class SupportTestUtil {
                     }
                 }
             }
-            assertTrue("Property " + searchedPropertyWhat.getName() + " wasn't found in " + listType
-                    + " property list.", nameMatchFound);
-            assertEquals("The type of property " + searchedPropertyWhat.getName() + " in " + listType
-                    + " property list doesn't match expected type.", searchedPropertyWhat.getType(), typeNameFound);
-
+            assertTrue(nameMatchFound,
+                "Property " + searchedPropertyWhat.getName() + " wasn't found in " + listType + " property list.");
+            assertEquals(searchedPropertyWhat.getType(), typeNameFound,
+                "The type of property " + searchedPropertyWhat.getName() + " in " + listType
+                + " property list doesn't match expected type.");
         }
     }
 
-    public static String resolveFullNameOfReturnType(final Type type) {
-        final StringBuilder nameBuilder = new StringBuilder();
-        if (type instanceof ParameterizedType) {
-            nameBuilder.append(type.getName()).append('<');
-            ParameterizedType parametrizedTypes = (ParameterizedType) type;
-            for (Type parametrizedType : parametrizedTypes.getActualTypeArguments()) {
-                nameBuilder.append(parametrizedType.getName()).append(',');
+    static String resolveFullNameOfReturnType(final Type type) {
+        final var sb = new StringBuilder();
+        if (type instanceof ParameterizedType parameterizedTypes) {
+            sb.append(type.getName()).append('<');
+            for (var parameterizedType : parameterizedTypes.getActualTypeArguments()) {
+                sb.append(parameterizedType.getName()).append(',');
             }
-            if (nameBuilder.charAt(nameBuilder.length() - 1) == ',') {
-                nameBuilder.deleteCharAt(nameBuilder.length() - 1);
+            if (sb.charAt(sb.length() - 1) == ',') {
+                sb.deleteCharAt(sb.length() - 1);
             }
-            nameBuilder.append(">");
+            sb.append(">");
         } else {
-            nameBuilder.append(type.getName());
+            sb.append(type.getName());
         }
-        return nameBuilder.toString();
+        return sb.toString();
     }
 
-    public static void containsInterface(final String interfaceNameSearched, final GeneratedType genType) {
-        List<Type> caseCImplements = genType.getImplements();
+    static void containsInterface(final String interfaceNameSearched, final GeneratedType genType) {
+        final var caseCImplements = genType.getImplements();
         boolean interfaceFound = false;
-        for (Type caseCImplement : caseCImplements) {
-            String interfaceName = resolveFullNameOfReturnType(caseCImplement);
-            if (interfaceName.equals(interfaceNameSearched)) {
+        for (var caseCImplement : caseCImplements) {
+            if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
                 interfaceFound = true;
                 break;
             }
         }
-        assertTrue("Generated type " + genType.getName() + " doesn't implement interface " + interfaceNameSearched,
-                interfaceFound);
+        assertTrue(interfaceFound,
+            "Generated type " + genType.getName() + " doesn't implement interface " + interfaceNameSearched);
     }
-
 }

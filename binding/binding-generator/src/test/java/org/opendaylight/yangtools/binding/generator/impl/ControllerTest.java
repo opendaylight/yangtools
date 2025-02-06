@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class ControllerTest {
+class ControllerTest {
     @Test
-    public void controllerAugmentationTest() {
+    void controllerAugmentationTest() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             ControllerTest.class,
             "/controller-models/controller-network.yang", "/controller-models/controller-openflow.yang",

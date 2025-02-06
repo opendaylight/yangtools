@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -20,21 +21,23 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @NonNullByDefault
-public class Mdsal600Test {
+class Mdsal600Test {
     private static final JavaTypeName FOO = JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal600.norev", "Foo");
 
     @Test
-    public void mdsal600Test() {
+    void mdsal600Test() {
         final var models = YangParserTestUtils.parseYangResource("/mdsal600.yang");
         final var module = models.getModules().iterator().next();
         final var fooSchema = (ContainerSchemaNode) module.findDataTreeChild(QName.create("mdsal600", "foo"))
             .orElseThrow();
 
         // Verify leaves
-        final var barSchema = fooSchema.findDataTreeChild(QName.create("mdsal600", "bar")).orElseThrow();
-        final var bazSchema = fooSchema.findDataTreeChild(QName.create("mdsal600", "baz")).orElseThrow();
-        final var barTypeSchema = ((LeafSchemaNode) barSchema).getType();
-        final var bazTypeSchema = ((LeafSchemaNode) bazSchema).getType();
+        final var barSchema = assertInstanceOf(LeafSchemaNode.class,
+            fooSchema.findDataTreeChild(QName.create("mdsal600", "bar")).orElseThrow());
+        final var bazSchema = assertInstanceOf(LeafSchemaNode.class,
+            fooSchema.findDataTreeChild(QName.create("mdsal600", "baz")).orElseThrow());
+        final var barTypeSchema = barSchema.getType();
+        final var bazTypeSchema = bazSchema.getType();
 
         // Precondition to our bug: the two types compare as equal, but are not the same
         assertEquals(barTypeSchema, bazTypeSchema);

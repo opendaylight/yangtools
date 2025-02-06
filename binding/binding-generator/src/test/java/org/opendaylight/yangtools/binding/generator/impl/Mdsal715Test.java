@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal715Test {
+class Mdsal715Test {
     @Test
-    public void testAugmentLinking() {
+    void testAugmentLinking() {
         final var generatedTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResourceDirectory("/mdsal715"));
         assertEquals(15, generatedTypes.size());

@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.in;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -27,7 +25,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal675Test {
+class Mdsal675Test {
     private static final String PACKAGE = "org.opendaylight.yang.gen.v1.urn.test.yang.data.demo.norev.";
     private static final String PACKAGE2 = "org.opendaylight.yang.gen.v1.urn.test.yang.data.naming.norev.";
     private static final String MODULE_CLASS_NAME = PACKAGE + "YangDataDemoData";
@@ -36,14 +34,14 @@ public class Mdsal675Test {
             Map.of("implementedInterface", Types.typeForClass(Class.class));
 
     @Test
-    public void yangDataGen() {
-        final List<GeneratedType> allGenTypes = DefaultBindingGenerator.generateFor(
+    void yangDataGen() {
+        final var allGenTypes = DefaultBindingGenerator.generateFor(
                 YangParserTestUtils.parseYangResources(Mdsal675Test.class,
                         "/yang-data-models/ietf-restconf.yang", "/yang-data-models/yang-data-demo.yang"));
         assertNotNull(allGenTypes);
         assertEquals(29, allGenTypes.size());
-        final Map<String, GeneratedType> genTypesMap = allGenTypes.stream()
-                .collect(ImmutableMap.toImmutableMap(type -> type.getIdentifier().toString(), type -> type));
+        final var genTypesMap = allGenTypes.stream()
+            .collect(ImmutableMap.toImmutableMap(type -> type.getIdentifier().toString(), Function.identity()));
 
         // ensure generated yang-data classes contain getters for inner structure types
 
@@ -119,64 +117,62 @@ public class Mdsal675Test {
                 List.of("getAnyxmlFromGroup", "requireAnyxmlFromGroup"));
 
         // ensure module class has only getter for root container
-        final GeneratedType moduleType = assertGenType(genTypesMap, MODULE_CLASS_NAME);
+        final var moduleType = assertGenType(genTypesMap, MODULE_CLASS_NAME);
         assertNotNull(moduleType.getMethodDefinitions());
         assertEquals(List.of("getRootContainer"),
                 moduleType.getMethodDefinitions().stream().map(MethodSignature::getName)
                         .filter(methodName -> methodName.startsWith("get")).toList());
 
         // ensure yang-data at non-top level is ignored (no getters in parent container)
-        GeneratedType rootContainerType = assertGenType(genTypesMap, ROOT_CONTAINER_CLASS_NAME);
+        final var rootContainerType = assertGenType(genTypesMap, ROOT_CONTAINER_CLASS_NAME);
         assertNotNull(rootContainerType.getMethodDefinitions());
-        assertTrue(rootContainerType.getMethodDefinitions().stream()
-                .filter(method -> method.getName().startsWith("get"))
-                .findFirst().isEmpty());
+        assertThat(rootContainerType.getMethodDefinitions()).noneMatch(method -> method.getName().startsWith("get"));
     }
 
     @Test
-    public void yangDataNamingStrategy() {
-        final List<GeneratedType> allGenTypes = DefaultBindingGenerator.generateFor(
+    void yangDataNamingStrategy() {
+        final var allGenTypes = DefaultBindingGenerator.generateFor(
                 YangParserTestUtils.parseYangResources(Mdsal675Test.class,
                         "/yang-data-models/ietf-restconf.yang", "/yang-data-models/yang-data-naming.yang"));
         assertNotNull(allGenTypes);
         assertEquals(22, allGenTypes.size());
-        final Set<String> genTypeNames =
-                allGenTypes.stream().map(type -> type.getIdentifier().toString()).collect(Collectors.toSet());
+        final var genTypeNames = allGenTypes.stream().map(type -> type.getIdentifier().toString())
+            .collect(Collectors.toSet());
 
         // template name is not compliant to YANG identifier -> char encoding used, name starts with $ char
         // a) latin1, but not a valid Java identifier
-        assertTrue(genTypeNames.contains(PACKAGE2 + "$ľaľa$20$ho$2C$$20$papľuha$2C$$20$ogrcal$20$mi$20$krpce$21$"));
+        assertThat(genTypeNames).contains(PACKAGE2 + "$ľaľa$20$ho$2C$$20$papľuha$2C$$20$ogrcal$20$mi$20$krpce$21$");
         // b) cyrillic, but a valid Java identifier
-        assertTrue(genTypeNames.contains(PACKAGE2 + "привет"));
+        assertThat(genTypeNames).contains(PACKAGE2 + "привет");
 
         // template name is compliant to yang identifier -> camel-case used
-        assertTrue(genTypeNames.contains(PACKAGE2 + "IdentifierCompliantName"));
+        assertThat(genTypeNames).contains(PACKAGE2 + "IdentifierCompliantName");
 
         // name collision with a typedef
-        assertTrue(genTypeNames.contains(PACKAGE2 + "Collision1$T"));
-        assertTrue(genTypeNames.contains(PACKAGE2 + "collision1.Collision1"));
-        assertTrue(genTypeNames.contains(PACKAGE2 + "Collision1$YD"));
+        assertThat(genTypeNames).contains(PACKAGE2 + "Collision1$T");
+        assertThat(genTypeNames).contains(PACKAGE2 + "collision1.Collision1");
+        assertThat(genTypeNames).contains(PACKAGE2 + "Collision1$YD");
 
         // name collision with top level container
-        assertTrue(genTypeNames.contains(PACKAGE2 + "Collision2"));
-        assertTrue(genTypeNames.contains(PACKAGE2 + "Collision2$YD"));
+        assertThat(genTypeNames).contains(PACKAGE2 + "Collision2");
+        assertThat(genTypeNames).contains(PACKAGE2 + "Collision2$YD");
 
         // name collision with group used
-        assertTrue(genTypeNames.contains(PACKAGE2 + "Collision3$G"));
-        assertTrue(genTypeNames.contains(PACKAGE2 + "Collision3$YD"));
+        assertThat(genTypeNames).contains(PACKAGE2 + "Collision3$G");
+        assertThat(genTypeNames).contains(PACKAGE2 + "Collision3$YD");
 
         // rc:yang-data .-/#
-        assertTrue(genTypeNames.contains(PACKAGE2 + "$$2E$$2D$$2F$$23$"));
-        assertTrue(genTypeNames.contains(PACKAGE2 + "$$2e$$2d$$2f$$23$$.Foo"));
+        assertThat(genTypeNames).contains(PACKAGE2 + "$$2E$$2D$$2F$$23$");
+        assertThat(genTypeNames).contains(PACKAGE2 + "$$2e$$2d$$2f$$23$$.Foo");
 
         // rc:yang-data -./#
-        assertTrue(genTypeNames.contains(PACKAGE2 + "$$2D$$2E$$2F$$23$"));
-        assertTrue(genTypeNames.contains(PACKAGE2 + "$$2d$$2e$$2f$$23$$.Foo"));
+        assertThat(genTypeNames).contains(PACKAGE2 + "$$2D$$2E$$2F$$23$");
+        assertThat(genTypeNames).contains(PACKAGE2 + "$$2d$$2e$$2f$$23$$.Foo");
     }
 
     private static GeneratedType assertGenType(final Map<String, GeneratedType> genTypesMap, final String className) {
         final var ret = genTypesMap.get(className);
-        assertNotNull("no type generated: " + className, ret);
+        assertNotNull(ret, "no type generated: " + className);
         return ret;
     }
 
@@ -201,13 +197,11 @@ public class Mdsal675Test {
 
     private static void assertHasMethod(final GeneratedType genType, final String methodName,
             final Type returnType) {
-        assertTrue("no expected method " + methodName + " returning " + returnType,
-            genType.getMethodDefinitions().stream().anyMatch(
-                method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType())));
+        assertThat(genType.getMethodDefinitions())
+            .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));
     }
 
     private static void assertImplements(final GeneratedType genType, final Type implementedType) {
-        assertThat(implementedType, in(genType.getImplements()));
+        assertThat(genType.getImplements()).contains(implementedType);
     }
-
 }

@@ -7,20 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Map;
-import org.junit.Test;
-import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class GeneratedTypesStringTest {
+class GeneratedTypesStringTest {
     @Test
-    public void constantGenerationTest() {
+    void constantGenerationTest() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-string-demo.yang"));
 
@@ -36,16 +35,15 @@ public class GeneratedTypesStringTest {
                 if (genTO.getName().equals("TypedefString")) {
                     typedefStringFound = true;
 
-                    List<Constant> constants = genTO.getConstantDefinitions();
-                    for (Constant con : constants) {
+                    for (var con : genTO.getConstantDefinitions()) {
                         if (con.getName().equals("PATTERN_CONSTANTS")) {
                             constantRegExListFound = true;
                         } else {
                             break;
                         }
                         ParameterizedType paramType;
-                        if (con.getType() instanceof ParameterizedType) {
-                            paramType = (ParameterizedType) con.getType();
+                        if (con.getType() instanceof ParameterizedType parameterized) {
+                            paramType = parameterized;
                         } else {
                             break;
                         }
@@ -89,12 +87,12 @@ public class GeneratedTypesStringTest {
 
         }
 
-        assertTrue("Typedef >>TypedefString<< wasn't found", typedefStringFound);
-        assertTrue("Constant PATTERN_CONSTANTS is missing in TO", constantRegExListFound);
-        assertTrue("Constant PATTERN_CONSTANTS doesn't have correct container type", constantRegExListTypeContainer);
-        assertTrue("Constant PATTERN_CONSTANTS has more than one generic type", constantRegExListTypeOneGeneric);
-        assertTrue("Constant PATTERN_CONSTANTS doesn't have correct generic type", constantRegExListTypeGeneric);
-        assertTrue("Constant PATTERN_CONSTANTS doesn't contain List object", constantRegExListValueOK);
-        assertTrue("In list found other type than String", !noStringInReqExListFound);
+        assertTrue(typedefStringFound, "Typedef >>TypedefString<< wasn't found");
+        assertTrue(constantRegExListFound, "Constant PATTERN_CONSTANTS is missing in TO");
+        assertTrue(constantRegExListTypeContainer, "Constant PATTERN_CONSTANTS doesn't have correct container type");
+        assertTrue(constantRegExListTypeOneGeneric, "Constant PATTERN_CONSTANTS has more than one generic type");
+        assertTrue(constantRegExListTypeGeneric, "Constant PATTERN_CONSTANTS doesn't have correct generic type");
+        assertTrue(constantRegExListValueOK, "Constant PATTERN_CONSTANTS doesn't contain List object");
+        assertFalse(noStringInReqExListFound, "In list found other type than String");
     }
 }

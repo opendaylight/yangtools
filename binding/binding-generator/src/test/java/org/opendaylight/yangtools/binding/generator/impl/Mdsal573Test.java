@@ -7,21 +7,21 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal573Test {
+class Mdsal573Test {
     @Test
-    public void mdsal573Test() {
+    void mdsal573Test() {
         final var generateTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal573.yang"));
         assertNotNull(generateTypes);
         assertEquals(7, generateTypes.size());
 
-        final var methodSignature = generateTypes.get(0).getMethodDefinitions().get(0);
+        final var methodSignature = generateTypes.getFirst().getMethodDefinitions().getFirst();
         assertEquals("implementedInterface", methodSignature.getName());
     }
 }

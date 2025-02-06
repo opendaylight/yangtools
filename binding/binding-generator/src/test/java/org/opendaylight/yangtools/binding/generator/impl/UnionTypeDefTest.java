@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class UnionTypeDefTest {
+class UnionTypeDefTest {
     @Test
-    public void unionTypeResolvingTest() {
+    void unionTypeResolvingTest() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             UnionTypeDefTest.class, "/union-test-models/abstract-topology.yang", "/ietf-models/ietf-inet-types.yang"));
         assertEquals(29, genTypes.size());
@@ -24,7 +24,7 @@ public class UnionTypeDefTest {
     }
 
     @Test
-    public void unionTypedefLeafrefTest() {
+    void unionTypedefLeafrefTest() {
         final var generateTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/bug8449.yang"));
         assertEquals(5, generateTypes.size());

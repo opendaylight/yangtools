@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal552Test {
+class Mdsal552Test {
     private static final JavaTypeName BAR_INPUT =
             JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal552.norev", "BarInput");
     private static final JavaTypeName BAZ =
@@ -23,7 +23,7 @@ public class Mdsal552Test {
             JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal552.norev", "Mdsal552Data").createEnclosed("Foo");
 
     @Test
-    public void enumLeafrefTest() {
+    void enumLeafrefTest() {
         final var types = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/mdsal552.yang"));
         assertNotNull(types);
         assertEquals(5, types.size());

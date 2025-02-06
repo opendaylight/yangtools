@@ -7,35 +7,35 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.UNION_TYPE_OBJECT;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal406TypeObjectTest {
+class Mdsal406TypeObjectTest {
     private static EffectiveModelContext CONTEXT;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         CONTEXT = YangParserTestUtils.parseYangResources(ExtendedTypedefTest.class,
             "/type-provider/test.yang", "/ietf-models/ietf-inet-types.yang");
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    static void afterClass() {
         CONTEXT = null;
     }
 
     @Test
-    public void typeObjectTest() {
+    void typeObjectTest() {
         final var generateTypes = DefaultBindingGenerator.generateFor(CONTEXT);
         assertNotNull(generateTypes);
 
@@ -51,7 +51,7 @@ public class Mdsal406TypeObjectTest {
     }
 
     @Test
-    public void bitsTypeObjectForBitsTypedefTest() {
+    void bitsTypeObjectForBitsTypedefTest() {
         final var generateTypes = DefaultBindingGenerator.generateFor(CONTEXT);
         assertNotNull(generateTypes);
 
@@ -67,7 +67,7 @@ public class Mdsal406TypeObjectTest {
     }
 
     @Test
-    public void typeObjectForUnionTypedefTest() {
+    void typeObjectForUnionTypedefTest() {
         final var generateTypes = DefaultBindingGenerator.generateFor(CONTEXT);
         assertNotNull(generateTypes);
 

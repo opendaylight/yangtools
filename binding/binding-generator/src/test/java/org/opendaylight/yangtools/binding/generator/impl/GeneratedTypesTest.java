@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class GeneratedTypesTest {
+class GeneratedTypesTest {
     @Test
-    public void testMultipleModulesResolving() {
+    void testMultipleModulesResolving() {
         final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResources(GeneratedTypesTest.class,
                 "/abstract-topology.yang", "/ietf-models/ietf-inet-types.yang"));
@@ -26,7 +26,7 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testContainerResolving() {
+    void testContainerResolving() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-container-demo.yang"));
 
@@ -108,7 +108,7 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testLeafListResolving() {
+    void testLeafListResolving() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-leaf-list-demo.yang"));
 
@@ -193,7 +193,7 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testListResolving() {
+    void testListResolving() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-list-demo.yang"));
 
@@ -258,19 +258,19 @@ public class GeneratedTypesTest {
                 final var hashProps = genTO.getHashCodeIdentifiers();
                 final var equalProps = genTO.getEqualsIdentifiers();
 
-                assertEquals("Unexpected key", 0, listKeyClassCount++);
+                assertEquals(0, listKeyClassCount++, "Unexpected key");
                 assertEquals(1, properties.size());
-                assertEquals("listKey", properties.get(0).getName());
-                assertEquals("Byte", properties.get(0).getReturnType().getName());
-                assertTrue(properties.get(0).isReadOnly());
+                assertEquals("listKey", properties.getFirst().getName());
+                assertEquals("Byte", properties.getFirst().getReturnType().getName());
+                assertTrue(properties.getFirst().isReadOnly());
 
                 assertEquals(1, hashProps.size());
-                assertEquals("listKey", hashProps.get(0).getName());
-                assertEquals("Byte", hashProps.get(0).getReturnType().getName());
+                assertEquals("listKey", hashProps.getFirst().getName());
+                assertEquals("Byte", hashProps.getFirst().getReturnType().getName());
 
                 assertEquals(1, equalProps.size());
-                assertEquals("listKey", equalProps.get(0).getName());
-                assertEquals("Byte",  equalProps.get(0).getReturnType().getName());
+                assertEquals("listKey", equalProps.getFirst().getName());
+                assertEquals("Byte",  equalProps.getFirst().getReturnType().getName());
             }
         }
 
@@ -296,7 +296,7 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testListCompositeKeyResolving() {
+    void testListCompositeKeyResolving() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/list-composite-key.yang"));
 
@@ -336,7 +336,7 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testGeneratedTypes() {
+    void testGeneratedTypes() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/demo-topology.yang"));
 
@@ -358,7 +358,7 @@ public class GeneratedTypesTest {
     }
 
     @Test
-    public void testAugmentRpcInput() {
+    void testAugmentRpcInput() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/augment-rpc-input.yang"));
         assertEquals(6, genTypes.size());

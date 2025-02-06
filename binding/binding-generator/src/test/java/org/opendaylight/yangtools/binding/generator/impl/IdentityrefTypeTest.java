@@ -7,22 +7,21 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class IdentityrefTypeTest {
-    private static List<File> testModels;
+class IdentityrefTypeTest {
+    private List<File> testModels;
 
-    @Before
-    public void loadTestResources() throws URISyntaxException {
+    @BeforeEach
+    void loadTestResources() throws Exception {
         final var folderFile = Path.of(IdentityrefTypeTest.class.getResource("/identityref.yang").toURI()).toFile();
         testModels = new ArrayList<>();
 
@@ -42,7 +41,7 @@ public class IdentityrefTypeTest {
      * provideTypeForIdentityref}.
      */
     @Test
-    public void testIdentityrefYangBuiltInType() {
+    void testIdentityrefYangBuiltInType() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangFiles(testModels));
         assertEquals(2, genTypes.size());
 

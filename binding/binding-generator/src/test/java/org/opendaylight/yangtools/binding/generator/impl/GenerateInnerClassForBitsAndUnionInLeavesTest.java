@@ -7,22 +7,20 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-import org.junit.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class GenerateInnerClassForBitsAndUnionInLeavesTest {
+class GenerateInnerClassForBitsAndUnionInLeavesTest {
     @Test
-    public void testInnerClassCreationForBitsAndUnionsInLeafes() {
+    void testInnerClassCreationForBitsAndUnionsInLeafes() {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/bit_and_union_in_leaf.yang"));
         assertEquals(4, genTypes.size());
@@ -36,14 +34,13 @@ public class GenerateInnerClassForBitsAndUnionInLeavesTest {
                 if (type.getName().equals("ParentContainer")) {
                     parentContainerFound = true;
                     GeneratedType parentContainer = type;
-                    List<GeneratedType> enclosedTypes = parentContainer.getEnclosedTypes();
-                    for (var genType : enclosedTypes) {
+                    for (var genType : parentContainer.getEnclosedTypes()) {
                         if (genType instanceof GeneratedTransferObject gto) {
                             if (genType.getName().equals("BitLeaf")) {
-                                assertFalse("Unexpected duplicate BitLeaf", bitLeafTOFound);
+                                assertFalse(bitLeafTOFound, "Unexpected duplicate BitLeaf");
                                 bitLeafTOFound = true;
 
-                                List<GeneratedProperty> bitLeafProperties = gto.getProperties();
+                                final var bitLeafProperties = gto.getProperties();
                                 assertEquals(3, bitLeafProperties.size());
 
                                 boolean firstBitPropertyFound = false;
@@ -65,10 +62,10 @@ public class GenerateInnerClassForBitsAndUnionInLeavesTest {
                                 assertTrue(secondBitPropertyFound);
                                 assertTrue(thirdBitPropertyFound);
                             } else if (genType.getName().equals("UnionLeaf")) {
-                                assertFalse("Unexpected duplicate UnionLeaf", unionLeafTOFound);
+                                assertFalse(unionLeafTOFound, "Unexpected duplicate UnionLeaf");
                                 unionLeafTOFound = true;
 
-                                List<GeneratedProperty> unionLeafProperties = gto.getProperties();
+                                final var unionLeafProperties = gto.getProperties();
                                 assertEquals(3, unionLeafProperties.size());
 
                                 boolean int32UnionPropertyFound = false;

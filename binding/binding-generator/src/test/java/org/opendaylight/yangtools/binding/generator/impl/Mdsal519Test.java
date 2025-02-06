@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Test specific combination of leafrefs, grouping and relative paths.
  */
-public class Mdsal519Test {
+class Mdsal519Test {
     @Test
-    public void testNestedLeafref2() {
+    void testNestedLeafref2() {
         final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/mdsal519.yang"));
         assertNotNull(types);

@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
@@ -23,36 +22,36 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Mdsal824Test {
+class Mdsal824Test {
     private static EffectiveModelContext CONTEXT;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    static void beforeClass() {
         CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/mdsal824");
     }
 
     @Test
-    public void testCompileTimeTypes() {
+    void testCompileTimeTypes() {
         assertEquals(13, DefaultBindingGenerator.generateFor(CONTEXT).size());
     }
 
     @Test
-    public void testRunTimeTypes() {
+    void testRunTimeTypes() {
         final var types = BindingRuntimeTypesFactory.createTypes(CONTEXT);
-        final var barTop = types.schemaTreeChild(QName.create("bar", "bar-top"));
-        assertThat(barTop, instanceOf(ContainerRuntimeType.class));
-        final var barList = ((ContainerRuntimeType) barTop).schemaTreeChild(QName.create("bar", "bar-list"));
-        assertThat(barList, instanceOf(ListRuntimeType.class));
-        final var barAction = ((ListRuntimeType) barList).schemaTreeChild(QName.create("bar", "foo"));
-        assertThat(barAction, instanceOf(ActionRuntimeType.class));
+        final var barTop = assertInstanceOf(ContainerRuntimeType.class,
+            types.schemaTreeChild(QName.create("bar", "bar-top")));
+        final var barList = assertInstanceOf(ListRuntimeType.class,
+            barTop.schemaTreeChild(QName.create("bar", "bar-list")));
+        final var barAction = assertInstanceOf(ActionRuntimeType.class,
+            barList.schemaTreeChild(QName.create("bar", "foo")));
 
-        final var barInput = ((ActionRuntimeType) barAction).schemaTreeChild(QName.create("bar", "input"));
-        assertThat(barInput, instanceOf(InputRuntimeType.class));
+        final var barInput = assertInstanceOf(InputRuntimeType.class,
+            barAction.schemaTreeChild(QName.create("bar", "input")));
         assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev.act.grp", "FooInput"),
             barInput.javaType().getIdentifier());
 
-        final var barOutput = ((ActionRuntimeType) barAction).schemaTreeChild(QName.create("bar", "output"));
-        assertThat(barOutput, instanceOf(OutputRuntimeType.class));
+        final var barOutput = assertInstanceOf(OutputRuntimeType.class,
+            barAction.schemaTreeChild(QName.create("bar", "output")));
         assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev.act.grp", "FooOutput"),
             barOutput.javaType().getIdentifier());
     }
