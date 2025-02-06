@@ -9,5 +9,5 @@
  * Package exposing components to various dependency injection frameworks, so they can locate them. This package is not
  * exposed to OSGi runtime.
  */
-// FIXME: 15.0.0: rename to codec.ri
+// FIXME: 15.0.0: rename to codec.dynamic.ri
 package org.opendaylight.yangtools.binding.data.codec.impl.di;
