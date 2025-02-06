@@ -16,6 +16,46 @@
       "message": "Hello Robert,\n\nHere it is a proposition to re-introduced some deprecated methods.\nLet me know if it suitable for you.\n\nRegards\n\nOlivier",
       "revId": "021b56e00a494673827cc6f2a7b9e1e2601daa00",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a5da21f_f2296717",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7446
+      },
+      "writtenOn": "2025-02-06T14:12:28Z",
+      "side": 1,
+      "message": "Thanks Olivier. It is a very useful method.",
+      "revId": "021b56e00a494673827cc6f2a7b9e1e2601daa00",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1509ae83_04793787",
+        "filename": "binding/binding-spec/src/test/java/org/opendaylight/yangtools/binding/DataObjectReferenceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 7446
+      },
+      "writtenOn": "2025-02-06T14:12:28Z",
+      "side": 1,
+      "message": "redundant with the following test.",
+      "range": {
+        "startLine": 26,
+        "startChar": 7,
+        "endLine": 26,
+        "endChar": 68
+      },
+      "revId": "021b56e00a494673827cc6f2a7b9e1e2601daa00",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
