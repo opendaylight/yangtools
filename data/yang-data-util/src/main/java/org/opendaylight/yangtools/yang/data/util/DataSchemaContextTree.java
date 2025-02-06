@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.concepts.CheckedValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
-import org.opendaylight.yangtools.yang.data.util.impl.context.ContainerContext;
+import org.opendaylight.yangtools.yang.data.util.context.ContainerContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 

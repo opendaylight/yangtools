@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
@@ -50,9 +49,9 @@ class DataSchemaContextTreeTest {
 
     @Test
     void testCorrectInput() {
-        assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO)).isPresent());
-        assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR)).isPresent());
-        assertTrue(CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR, BAZ)).isPresent());
+        CONTEXT.findChild(YangInstanceIdentifier.of(FOO)).orElseThrow();
+        CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR)).orElseThrow();
+        CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR, BAZ)).orElseThrow();
     }
 
     @Test
