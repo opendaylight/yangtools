@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -79,7 +78,7 @@ class StrictParsingModeTest {
             Inference.ofDataTreePath(schemaContext, QName.create("foo", "top-level-container")), true);
 
         final var ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
-        assertThat(ex.getMessage(), containsString("Schema for node with name unknown-container-a and namespace foo "
-            + "does not exist in parent EmptyContainerEffectiveStatement{argument=(foo)top-level-container}"));
+        assertThat(ex.getMessage()).contains("Schema for node with name unknown-container-a and namespace foo "
+            + "does not exist in parent EmptyContainerEffectiveStatement{argument=(foo)top-level-container}");
     }
 }

@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -31,8 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
@@ -42,6 +38,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 class XmlStreamUtilsTest {
     @FunctionalInterface
     interface XMLStreamWriterConsumer {
+
         void accept(XMLStreamWriter writer) throws XMLStreamException;
     }
 
@@ -77,7 +74,7 @@ class XmlStreamUtilsTest {
             writer.writeEndElement();
         });
 
-        assertThat(xmlAsString, containsString("element>identity"));
+        assertThat(xmlAsString).contains("element>identity");
 
         xmlAsString = createXml(writer -> {
             writer.writeStartElement("elementDifferent");
@@ -88,14 +85,14 @@ class XmlStreamUtilsTest {
             writer.writeEndElement();
         });
 
-        final Pattern prefixedIdentityPattern = Pattern.compile(".*\"different:namespace\">(.*):identity.*");
-        final Matcher matcher = prefixedIdentityPattern.matcher(xmlAsString);
+        final var prefixedIdentityPattern = Pattern.compile(".*\"different:namespace\">(.*):identity.*");
+        final var matcher = prefixedIdentityPattern.matcher(xmlAsString);
         assertTrue(matcher.matches(), "Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern);
     }
 
     private static String createXml(final XMLStreamWriterConsumer consumer) throws XMLStreamException, IOException {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLStreamWriter writer = TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(out);
+        final var out = new ByteArrayOutputStream();
+        final var writer = TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(out);
 
         consumer.accept(writer);
 
@@ -139,20 +136,17 @@ class XmlStreamUtilsTest {
             getTargetNodeForLeafRef(InstanceIdentifierTypeDefinition.class, "relname"));
     }
 
-    private static TypeDefinition<?> getTargetNodeForLeafRef(final Class<?> clas, final String... names) {
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(modelContext);
+    private static TypeDefinition<?> getTargetNodeForLeafRef(final Class<? extends TypeDefinition<?>> expected,
+            final String... names) {
+        final var stack = SchemaInferenceStack.of(modelContext);
         stack.enterDataTree(QName.create(leafRefModule.getQNameModule(), "cont2"));
-        for (String name : names) {
+        for (var name : names) {
             stack.enterDataTree(QName.create(leafRefModule.getQNameModule(), name));
         }
 
-        final EffectiveStatement<?, ?> leaf = stack.currentStatement();
-        assertThat(leaf, instanceOf(LeafSchemaNode.class));
-        final TypeDefinition<? extends TypeDefinition<?>> type = ((TypedDataSchemaNode) leaf).getType();
-        assertThat(type, instanceOf(LeafrefTypeDefinition.class));
+        final var leaf = assertInstanceOf(LeafSchemaNode.class, stack.currentStatement());
+        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
 
-        final TypeDefinition<?> resolved = stack.resolveLeafref((LeafrefTypeDefinition) type);
-        assertThat(resolved, instanceOf(clas));
-        return resolved;
+        return assertInstanceOf(expected, stack.resolveLeafref(type));
     }
 }

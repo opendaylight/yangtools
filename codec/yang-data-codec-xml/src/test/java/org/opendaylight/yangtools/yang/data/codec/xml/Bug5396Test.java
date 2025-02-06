@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -73,7 +72,7 @@ class Bug5396Test {
 
         final var ex = assertThrows(IllegalArgumentException.class,
             () -> testInputXML("/bug5396/xml/invalid-foo.xml", null));
-        assertThat(ex.getMessage(), startsWith("Invalid value \"dp09P1p2s1234\" for union type."));
+        assertThat(ex.getMessage()).startsWith("Invalid value \"dp09P1p2s1234\" for union type.");
     }
 
     private void testInputXML(final String xmlPath, final String expectedValue) throws Exception {

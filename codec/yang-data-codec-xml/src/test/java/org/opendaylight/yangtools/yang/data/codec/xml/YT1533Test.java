@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.StringReader;
@@ -42,8 +41,8 @@ class YT1533Test {
                   <bar/>
                 </foo>""")))
         );
-        assertThat(ex.getMessage(), startsWith("""
+        assertThat(ex.getMessage()).startsWith("""
             ParseError at [row,col]:[2,9]
-            Message: Schema for node with name bar and namespace foo does not exist in parent EffectiveSchema"""));
+            Message: Schema for node with name bar and namespace foo does not exist in parent EffectiveSchema""");
     }
 }
