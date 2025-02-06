@@ -158,24 +158,10 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         return null;
     }
 
-    /**
-     * Return the key associated with the first component of specified type in
-     * an identifier.
-     *
-     * @param listItem component type
-     * @return key associated with the component, or null if the component type
-     *         is not present.
-     */
-    public final <N extends EntryObject<N, K>, K extends Key<N>> @Nullable K firstKeyOf(
-            final Class<@NonNull N> listItem) {
-        for (var step : steps()) {
-            if (step instanceof KeyStep<?, ?> keyPredicate && listItem.equals(step.type())) {
-                @SuppressWarnings("unchecked")
-                final var ret = (K) keyPredicate.key();
-                return ret;
-            }
-        }
-        return null;
+    @Override
+    public final <E extends EntryObject<E, K>, K extends Key<E>> @Nullable K firstKeyOf(
+            final Class<@NonNull E> listItem) {
+        return super.firstKeyOf(listItem);
     }
 
     /**
