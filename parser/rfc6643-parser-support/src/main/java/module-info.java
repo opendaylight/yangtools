@@ -11,13 +11,13 @@ module org.opendaylight.yangtools.rfc6643.parser.support {
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
     requires transitive org.opendaylight.yangtools.rfc6643.model.api;
+    requires transitive org.opendaylight.yangtools.yang.parser.spi;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
-    requires org.opendaylight.yangtools.yang.parser.spi;
     requires org.slf4j;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }
-
