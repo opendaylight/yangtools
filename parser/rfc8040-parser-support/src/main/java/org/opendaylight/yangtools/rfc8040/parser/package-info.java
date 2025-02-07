@@ -8,4 +8,5 @@
 /**
  * Support package for semantics defined in RFC8040, most notably yang-data statement.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc8040.parser;
