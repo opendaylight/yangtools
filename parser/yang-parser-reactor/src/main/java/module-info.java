@@ -19,4 +19,5 @@ module org.opendaylight.yangtools.yang.parser.reactor {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }

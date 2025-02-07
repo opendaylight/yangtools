@@ -20,4 +20,5 @@
  *       {@link org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor}</li>
  * </ul>
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
