@@ -48,7 +48,7 @@ public class YangSyntaxErrorException extends YangParserException {
     }
 
     public @NonNull String getFormattedMessage() {
-        final StringBuilder sb = new StringBuilder(getMessage());
+        final var sb = new StringBuilder(getMessage());
         if (sourceId != null) {
             sb.append(" in source ").append(sourceId);
         }
