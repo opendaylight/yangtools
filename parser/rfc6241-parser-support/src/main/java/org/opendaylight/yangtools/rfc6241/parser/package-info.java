@@ -10,4 +10,5 @@
  * Add {@link org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport} to your reactor to
  * add support for this extension.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc6241.parser;
