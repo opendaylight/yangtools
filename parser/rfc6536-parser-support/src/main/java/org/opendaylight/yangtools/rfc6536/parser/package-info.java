@@ -10,7 +10,6 @@
  * Add {@link org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport} and
  * {@link org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport} to your reactor to add support
  * for this extension.
- *
- * @author Robert Varga
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc6536.parser;
