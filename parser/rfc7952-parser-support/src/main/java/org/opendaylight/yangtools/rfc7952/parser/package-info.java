@@ -9,7 +9,6 @@
  * YANG parser support for metamodel extensions defined in <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  * Add {@link org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport} to your reactor to add support
  * for this extension.
- *
- * @author Robert Varga
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc7952.parser;
