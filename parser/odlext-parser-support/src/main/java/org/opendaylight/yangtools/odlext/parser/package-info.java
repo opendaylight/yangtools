@@ -6,6 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG parser support for OpenDaylight extensions as defined in yang-ext.yang.
+ * YANG parser support for OpenDaylight extensions as defined in {@code yang-ext.yang}.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.odlext.parser;
