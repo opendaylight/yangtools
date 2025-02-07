@@ -56,6 +56,30 @@
       },
       "revId": "021b56e00a494673827cc6f2a7b9e1e2601daa00",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "667f2b93_aea1ffed",
+        "filename": "binding/binding-spec/src/test/java/org/opendaylight/yangtools/binding/DataObjectReferenceTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-02-07T08:57:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1509ae83_04793787",
+      "range": {
+        "startLine": 26,
+        "startChar": 7,
+        "endLine": 26,
+        "endChar": 68
+      },
+      "revId": "021b56e00a494673827cc6f2a7b9e1e2601daa00",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
