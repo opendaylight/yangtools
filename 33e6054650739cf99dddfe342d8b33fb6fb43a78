@@ -16,6 +16,24 @@
       "message": "Do we want to support just the `master` branch or other stable branches, too?\nIf we want the latter, then can we use [glob pattern](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#onpull_requestpull_request_targetbranchesbranches-ignore) so we don\u0027t need to update this after branch cut?",
       "revId": "33e6054650739cf99dddfe342d8b33fb6fb43a78",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88173936_26e84dae",
+        "filename": ".github/workflows/github2gerrit.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-02-08T14:51:48Z",
+      "side": 1,
+      "message": "Let\u0027s get this in and see how this ends up working -- but yes, there is going to be probably some adjustment needed in the future.",
+      "parentUuid": "78d4daaa_36a2506d",
+      "revId": "33e6054650739cf99dddfe342d8b33fb6fb43a78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
