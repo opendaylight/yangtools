@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>feature-parent</artifactId>
-        <version>14.0.9-SNAPSHOT</version>
+        <version>14.0.9</version>
         <relativePath>../parent</relativePath>
     </parent>
 
