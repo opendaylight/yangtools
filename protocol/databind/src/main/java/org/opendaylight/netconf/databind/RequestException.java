@@ -80,7 +80,7 @@ public final class RequestException extends Exception {
 
     public RequestException(final ErrorType type, final ErrorTag tag, final String message,
             final @Nullable ErrorPath path, final @Nullable Throwable cause) {
-        this(message, new RequestError(type, tag, new ErrorMessage(message), null, path, null), cause);
+        this(message, new RequestError(type, tag, new ErrorMessage(message), null, path, errorInfoOf(cause)), cause);
     }
 
     public RequestException(final List<RequestError> errors, final @Nullable Throwable cause, final String message) {
