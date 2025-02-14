@@ -45,6 +45,9 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
                 /* permits DataObjectReferenceBuilderWithKey, KeyedBuilder */ {
             @Override
             DataObjectIdentifier.WithKey<T, K> build();
+
+            @Override
+            DataObjectReference.Builder.WithKey<T, K> toReferenceBuilder();
         }
 
         @Override
@@ -67,6 +70,14 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
 
         @Override
         DataObjectIdentifier<T> build();
+
+        /**
+         * Returns a {@link DataObjectReference.Builder} equivalent of this builder, allowing
+         * {@link InexactDataObjectStep}s to be added, resulting in a {@link DataObjectReference}.
+         *
+         * @return A {@link DataObjectReference.Builder}
+         */
+        DataObjectReference.Builder<T> toReferenceBuilder();
     }
 
     /**

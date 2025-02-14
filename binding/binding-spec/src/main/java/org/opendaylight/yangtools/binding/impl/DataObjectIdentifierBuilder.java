@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.impl;
 
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
@@ -35,6 +36,11 @@ public final class DataObjectIdentifierBuilder<T extends DataObject> extends Abs
     @Override
     public DataObjectIdentifier<T> build() {
         return new DataObjectIdentifierImpl<>(null, buildSteps());
+    }
+
+    @Override
+    public DataObjectReference.Builder<T> toReferenceBuilder() {
+        return new DataObjectReferenceBuilder<>(this);
     }
 
     @Override

@@ -360,12 +360,13 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
     <E extends EntryObject<E, K>, K extends Key<E>> @Nullable K firstKeyOf(Class<@NonNull E> listItem);
 
     /**
-     *
+     * Returns an {@link Optional} containing the {@link Key} associated with the first component of specified type in
+     * this reference.
      *
      * @param <E> entry type
      * @param <K> key type
      * @param listItem entry type class
-     * @return the {@link Key} associated with the component, or {code null} if the component type is not present
+     * @return an optional {@link Key}
      * @throws NullPointerException if {@code listItem} is {@code null}
      */
     default <E extends EntryObject<E, K>, K extends Key<E>> Optional<K> findFirstKeyOf(

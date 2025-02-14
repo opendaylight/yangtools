@@ -22,9 +22,6 @@ import org.opendaylight.yangtools.binding.test.mock.NodeChildKey;
 import org.opendaylight.yangtools.binding.test.mock.NodeKey;
 import org.opendaylight.yangtools.binding.test.mock.Nodes;
 
-/**
- *
- */
 class YT1660Test {
     private final WithKey<NodeChild, NodeChildKey> id = DataObjectIdentifier.builder(Nodes.class)
         .child(Node.class, new NodeKey(3))
