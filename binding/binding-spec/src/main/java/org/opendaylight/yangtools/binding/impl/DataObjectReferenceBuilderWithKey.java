@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.binding.KeyStep;
 
 public final class DataObjectReferenceBuilderWithKey<T extends EntryObject<T, K>, K extends Key<T>>
         extends AbstractDataObjectReferenceBuilder<T> implements WithKey<T, K> {
-    DataObjectReferenceBuilderWithKey(final DataObjectReferenceBuilder<?> prev) {
+    DataObjectReferenceBuilderWithKey(final AbstractDataObjectReferenceBuilder<?> prev) {
         super(prev);
     }
 
