@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectReference;
@@ -356,4 +358,37 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @throws NullPointerException if {@code listItem} is {@code null}
      */
     <E extends EntryObject<E, K>, K extends Key<E>> @Nullable K firstKeyOf(Class<@NonNull E> listItem);
+
+    /**
+     *
+     *
+     * @param <E> entry type
+     * @param <K> key type
+     * @param listItem entry type class
+     * @return the {@link Key} associated with the component, or {code null} if the component type is not present
+     * @throws NullPointerException if {@code listItem} is {@code null}
+     */
+    default <E extends EntryObject<E, K>, K extends Key<E>> Optional<K> findFirstKeyOf(
+            final Class<@NonNull E> listItem) {
+        return Optional.ofNullable(firstKeyOf(listItem));
+    }
+
+    /**
+     * Returns the {@link Key} associated with the first component of specified type in this reference, throwing
+     * {@link NoSuchElementException} if no match is found.
+     *
+     * @param <E> entry type
+     * @param <K> key type
+     * @param listItem entry type class
+     * @return the {@link Key} associated with the component
+     * @throws NullPointerException if {@code listItem} is {@code null}
+     * @throws NoSuchElementException if the component type is not present
+     */
+    default <E extends EntryObject<E, K>, K extends Key<E>> @NonNull K getFirstKeyOf(final Class<@NonNull E> listItem) {
+        final var key = firstKeyOf(listItem);
+        if (key != null) {
+            return key;
+        }
+        throw new NoSuchElementException("No step matching " + listItem + " found in " + this);
+    }
 }
