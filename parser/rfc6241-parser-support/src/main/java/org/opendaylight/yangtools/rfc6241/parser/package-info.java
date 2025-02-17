@@ -8,7 +8,9 @@
 /**
  * YANG parser support for metamodel extensions defined in <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  * Add {@link org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport} to your reactor to
- * add support for this extension.
+ * add support for this extension, or wire it through
+ * {@link org.opendaylight.yangtools.yang.parser.spi.ParserExtension}.
  */
+// FIXME: 15.0.0: do not export this package
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc6241.parser;
