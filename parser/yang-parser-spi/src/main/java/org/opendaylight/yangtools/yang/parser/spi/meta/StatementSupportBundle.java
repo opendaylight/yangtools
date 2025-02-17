@@ -29,8 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class StatementSupportBundle implements Immutable {
-    private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, null, ImmutableMap.of(),
-            ImmutableMap.of(), ImmutableTable.of());
+    private static final ImmutableSet<YangVersion> ALL_VERSIONS = ImmutableSet.copyOf(YangVersion.values());
+    private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, ALL_VERSIONS,
+        ImmutableMap.of(), ImmutableMap.of(), ImmutableTable.of());
 
     private final StatementSupportBundle parent;
     private final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions;
@@ -44,8 +45,7 @@ public final class StatementSupportBundle implements Immutable {
             final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaceDefinitions,
             final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions) {
         this.parent = parent;
-        // FIXME: should requireNonNull()
-        this.supportedVersions = supportedVersions;
+        this.supportedVersions = requireNonNull(supportedVersions);
         this.commonDefinitions = requireNonNull(commonDefinitions);
         this.namespaceDefinitions = requireNonNull(namespaceDefinitions);
         this.versionSpecificDefinitions = requireNonNull(versionSpecificDefinitions);
@@ -90,6 +90,10 @@ public final class StatementSupportBundle implements Immutable {
 
     public static Builder builder(final Set<YangVersion> supportedVersions) {
         return new Builder(supportedVersions, EMPTY);
+    }
+
+    public static Builder builderWithAllVersions() {
+        return builder(ALL_VERSIONS);
     }
 
     public static Builder derivedFrom(final StatementSupportBundle parent) {

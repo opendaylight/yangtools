@@ -29,13 +29,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Support for {@link GetFilterElementAttributesStatement} and its effective view.
  */
-public final class GetFilterElementAttributesStatementSupport extends AbstractEmptyStatementSupport<
+final class GetFilterElementAttributesStatementSupport extends AbstractEmptyStatementSupport<
         GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES).build();
 
-    public GetFilterElementAttributesStatementSupport(final YangParserConfiguration config) {
+    GetFilterElementAttributesStatementSupport(final YangParserConfiguration config) {
         super(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES, StatementPolicy.reject(), config, VALIDATOR);
     }
 
