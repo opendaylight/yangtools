@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupp
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.OpenConfigVersionSupport;
-import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
+import org.opendaylight.yangtools.rfc6241.parser.inject.InjectRfc6241Extension;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.AliasStatementSupport;
@@ -134,8 +134,8 @@ public final class DefaultReactors {
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new RpcContextReferenceStatementSupport(config))
 
             // RFC6241 get-filter-element-attributes support
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new GetFilterElementAttributesStatementSupport(config))
+            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+                new InjectRfc6241Extension().configureBundle(config))
 
             // RFC6536 default-deny-{all,write} support
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DefaultDenyAllStatementSupport(config))
