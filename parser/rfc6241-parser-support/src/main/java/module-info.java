@@ -5,8 +5,21 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+import org.opendaylight.yangtools.rfc6241.parser.impl.Rfc6241Extension;
+import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
+
+/**
+ * A {@link ParserExtension} providing support for extensions introduced in
+ * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
+ *
+* @provides ParserExtension
+ */
 module org.opendaylight.yangtools.rfc6241.parser.support {
+    // FIXME: do not export this package
     exports org.opendaylight.yangtools.rfc6241.parser;
+    exports org.opendaylight.yangtools.rfc6241.parser.inject;
+
+    provides ParserExtension with Rfc6241Extension;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
@@ -18,7 +31,9 @@ module org.opendaylight.yangtools.rfc6241.parser.support {
     requires org.slf4j;
 
     // Annotations
+    requires static transitive javax.inject;
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
+    requires static org.osgi.service.component.annotations;
 }
-
