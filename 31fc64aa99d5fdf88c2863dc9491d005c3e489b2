@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd53af40_cf50c9cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7231
+      },
+      "writtenOn": "2025-02-18T09:50:05Z",
+      "side": 1,
+      "message": "LGTM. Can you confirm that this give us the possibility to build a DataObjectReference from a DataObjectIdentifier including for KeyLessStep like that:\n\ntablesId.toReferenceBuilder().child(Ipv4RoutesCase.class, Ipv4Routes.class).child(Ipv4Route.class).build()",
+      "revId": "31fc64aa99d5fdf88c2863dc9491d005c3e489b2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
