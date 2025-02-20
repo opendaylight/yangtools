@@ -101,7 +101,7 @@ module yang-data-demo {
     anydata anydata-from-group;
   }
 
-  grouping grp-for-anyxml{
+  grouping grp-for-anyxml {
     anyxml anyxml-from-group;
   }
 
@@ -115,5 +115,13 @@ module yang-data-demo {
 
   rc:yang-data /.# {
     list foo;
+  }
+
+  rc:yang-data "ľaľaho papľuhu" {
+    container latin-naming;
+  }
+
+  rc:yang-data привет {
+    container cyrillic-naming;
   }
 }
