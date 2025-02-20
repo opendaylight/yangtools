@@ -109,6 +109,14 @@ module yang-data-demo {
     rc:yang-data "yang-data-ignored";
   }
 
+  rc:yang-data ./# {
+    container foo;
+  }
+
+  rc:yang-data /.# {
+    list foo;
+  }
+
   rc:yang-data "ľaľaho papľuhu" {
     container latin-naming;
   }
