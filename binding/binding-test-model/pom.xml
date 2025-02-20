@@ -21,6 +21,10 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+    <properties>
+        <forceRootLocale>false</forceRootLocale>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
