@@ -318,7 +318,8 @@ public final class CompilationTestUtils {
         final var collector = new DiagnosticCollector<JavaFileObject>();
         final var compiler = ToolProvider.getSystemJavaCompiler();
         final var task = compiler.getTask(null, null, collector, List.of(
-            "-proc:none",
+            "-encoding UTF-8", "-proc:none",
+            "--source-path", sourcesOutputDir.toAbsolutePath().toString(),
             "-d", compiledOutputDir.toAbsolutePath().toString()), null,
             compiler.getStandardFileManager(collector, Locale.ROOT, StandardCharsets.UTF_8)
                 .getJavaFileObjectsFromPaths(getJavaFiles(sourcesOutputDir)));
