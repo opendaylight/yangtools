@@ -22,14 +22,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
@@ -319,9 +316,8 @@ public final class CompilationTestUtils {
         final var compiler = ToolProvider.getSystemJavaCompiler();
         final var task = compiler.getTask(null, null, collector, List.of(
             "-proc:none",
-            "-d", compiledOutputDir.toAbsolutePath().toString()), null,
-            compiler.getStandardFileManager(collector, Locale.ROOT, StandardCharsets.UTF_8)
-                .getJavaFileObjectsFromPaths(getJavaFiles(sourcesOutputDir)));
+            "--source-path", sourcesOutputDir.toAbsolutePath().toString(),
+            "-d", compiledOutputDir.toAbsolutePath().toString()), null, null);
 
         if (!task.call()) {
             final var diags = collector.getDiagnostics();
@@ -351,28 +347,6 @@ public final class CompilationTestUtils {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-    }
-
-    /**
-     * Search recursively given directory for *.java files.
-     *
-     * @param directory directory to search
-     * @return List of java files found
-     */
-    private static List<Path> getJavaFiles(final Path directory) {
-        final var result = new ArrayList<Path>();
-        try (var stream = Files.list(directory)) {
-            stream.forEach(file -> {
-                if (Files.isDirectory(file)) {
-                    result.addAll(getJavaFiles(file));
-                } else if (file.getFileName().toString().endsWith(".java")) {
-                    result.add(file);
-                }
-            });
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
-        return result;
     }
 
     static void deleteTestDir(final Path file) throws IOException {
