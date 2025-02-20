@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,13 +22,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import javax.tools.Diagnostic;
+import java.util.Locale;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
 
 public final class CompilationTestUtils {
@@ -313,15 +315,25 @@ public final class CompilationTestUtils {
      * @param compiledOutputDir compiler output directory
      */
     static void testCompilation(final Path sourcesOutputDir, final Path compiledOutputDir) {
+        final var collector = new DiagnosticCollector<JavaFileObject>();
         final var compiler = ToolProvider.getSystemJavaCompiler();
-        final var fileManager = compiler.getStandardFileManager(null, null, null);
-        final var filesList = getJavaFiles(sourcesOutputDir);
-        final var compilationUnits = fileManager.getJavaFileObjectsFromPaths(filesList);
-        final var options = List.of("-d", compiledOutputDir.toAbsolutePath().toString());
+        final var task = compiler.getTask(null, null, collector, List.of(
+            "-proc:none",
+            "-d", compiledOutputDir.toAbsolutePath().toString()), null,
+            compiler.getStandardFileManager(collector, Locale.ROOT, StandardCharsets.UTF_8)
+                .getJavaFileObjectsFromPaths(getJavaFiles(sourcesOutputDir)));
 
-        final var diags = new ArrayList<Diagnostic<?>>();
-        if (!compiler.getTask(null, null, diags::add, options, null, compilationUnits).call()) {
-            fail("Compilation failed with " + diags);
+        if (!task.call()) {
+            final var diags = collector.getDiagnostics();
+            final var len = diags.size();
+            final var sb = new StringBuilder().append("Compilation failed with ").append(len).append(" messages");
+            if (len > 0) {
+                sb.append(':');
+                for (var diag : diags) {
+                    sb.append("\n\n").append(diag);
+                }
+            }
+            throw new AssertionError(sb.toString());
         }
     }
 
