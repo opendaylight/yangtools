@@ -812,13 +812,15 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    void yangDataCompilation() {
+    void yangDataCompilation() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("yang-data-gen");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("yang-data-gen");
 
         generateTestSources("/compilation/yang-data-gen", sourcesOutputDir);
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final List<String> artifactNames = List.of(
+        final var loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final var artifactNames = List.of(
                 // module with top level container
                 "YangDataDemoData", "RootContainer", "RootContainerBuilder",
 
@@ -858,11 +860,12 @@ class CompilationTest extends BaseCompilationTest {
                 "привет", "приветBuilder", "привет$.CyrillicNaming", "привет$.CyrillicNamingBuilder"
         );
 
-        for (String name : artifactNames) {
+        for (var name : artifactNames) {
             final String className = CompilationTestUtils.BASE_PKG + ".urn.test.yang.data.demo.rev220222." + name;
             // ensure class source is generated
             final String srcPath = className.replace('.', File.separatorChar) + ".java";
             assertTrue(new File(sourcesOutputDir, srcPath).exists(), srcPath + " exists");
+            Class.forName(className, true, loader);
         }
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
