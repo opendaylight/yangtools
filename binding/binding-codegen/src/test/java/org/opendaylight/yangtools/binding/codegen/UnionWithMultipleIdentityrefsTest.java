@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -20,14 +19,14 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 class UnionWithMultipleIdentityrefsTest extends BaseCompilationTest {
     @Test
     void test() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-with-multiple-identityrefs");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-with-multiple-identityrefs");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("union-with-multiple-identityrefs");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("union-with-multiple-identityrefs");
         generateTestSources("/compilation/union-with-multiple-identityrefs", sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         Class<?> identOneClass = Class.forName(CompilationTestUtils.BASE_PKG
                 + ".urn.opendaylight.yang.union.test.rev220428.IdentOne", true, loader);
         Class<?> identTwoClass = Class.forName(CompilationTestUtils.BASE_PKG

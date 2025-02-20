@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+@Deprecated
 class ByteRangeGeneratorTest {
     @Test
-    @Deprecated
     void convertTest() {
-        assertTrue(new ByteRangeGenerator().convert(1L).equals(Long.valueOf(1).byteValue()));
+        assertEquals(Long.valueOf(1).byteValue(), new ByteRangeGenerator().convert(1L));
     }
 }

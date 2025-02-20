@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class Mdsal738Test extends BaseCompilationTest {
-    private File sourcesOutputDir;
-    private File compiledOutputDir;
+    private Path sourcesOutputDir;
+    private Path compiledOutputDir;
 
     @BeforeEach
     void before() {
@@ -26,7 +26,7 @@ public class Mdsal738Test extends BaseCompilationTest {
     }
 
     @AfterEach
-    void after() {
+    void after() throws Exception {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
@@ -36,7 +36,7 @@ public class Mdsal738Test extends BaseCompilationTest {
         final var pmDataType = FileSearchUtil.getFiles(sourcesOutputDir).get("PmDataType.java");
         assertNotNull(pmDataType);
 
-        final var content = Files.readString(pmDataType.toPath());
+        final var content = Files.readString(pmDataType);
         FileSearchUtil.assertFileContainsConsecutiveLines(pmDataType, content,
             "    public String stringValue() {",
             "        if (_uint64 != null) {",

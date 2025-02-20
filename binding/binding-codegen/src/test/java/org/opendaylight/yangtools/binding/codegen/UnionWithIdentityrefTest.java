@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -25,14 +24,14 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 class UnionWithIdentityrefTest extends BaseCompilationTest {
     @Test
     void test() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-with-identityref");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-with-identityref");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("union-with-identityref");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("union-with-identityref");
         generateTestSources("/compilation/union-with-identityref", sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         Class<?> identBaseClass = Class.forName(CompilationTestUtils.BASE_PKG
             + ".urn.opendaylight.yang.union.test.rev160509.IdentBase", true, loader);
         Class<?> identOneClass = Class.forName(CompilationTestUtils.BASE_PKG

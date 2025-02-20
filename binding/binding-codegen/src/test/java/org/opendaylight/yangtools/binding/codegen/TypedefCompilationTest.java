@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertRegularFile;
 
 import com.google.common.collect.Range;
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -34,32 +33,31 @@ class TypedefCompilationTest extends BaseCompilationTest {
 
     @Test
     void test() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("typedef");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("typedef");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("typedef");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("typedef");
         generateTestSources("/compilation/typedef", sourcesOutputDir);
 
-        final File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
-        assertTrue(new File(parent, "BitsExt.java").exists());
-        assertTrue(new File(parent, "Int32Ext0.java").exists());
-        assertTrue(new File(parent, "Int32Ext1.java").exists());
-        assertTrue(new File(parent, "Int32Ext2.java").exists());
-        assertTrue(new File(parent, "MyDecimalType.java").exists());
-        assertTrue(new File(parent, "StringExt1.java").exists());
-        assertTrue(new File(parent, "StringExt2.java").exists());
-        assertTrue(new File(parent, "StringExt3.java").exists());
-        assertTrue(new File(parent, "UnionExt1.java").exists());
-        assertTrue(new File(parent, "UnionExt2.java").exists());
-        assertTrue(new File(parent, "UnionExt3.java").exists());
-        assertTrue(new File(parent, "UnionExt4.java").exists());
+        final var parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO);
+        assertRegularFile(parent, "BitsExt.java");
+        assertRegularFile(parent, "Int32Ext0.java");
+        assertRegularFile(parent, "Int32Ext1.java");
+        assertRegularFile(parent, "Int32Ext2.java");
+        assertRegularFile(parent, "MyDecimalType.java");
+        assertRegularFile(parent, "StringExt1.java");
+        assertRegularFile(parent, "StringExt2.java");
+        assertRegularFile(parent, "StringExt3.java");
+        assertRegularFile(parent, "UnionExt1.java");
+        assertRegularFile(parent, "UnionExt2.java");
+        assertRegularFile(parent, "UnionExt3.java");
+        assertRegularFile(parent, "UnionExt4.java");
         CompilationTestUtils.assertFilesCount(parent, 30);
-        final File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_FOO);
-        CompilationTestUtils.assertFilesCount(svcParent, 1);
+        CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO), 1);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         String pkg = CompilationTestUtils.BASE_PKG + ".urn.opendaylight.foo.rev131008";
-        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         final Class<?> bitsExtClass = Class.forName(pkg + ".BitsExt", true, loader);
         final Class<?> int32Ext1Class = Class.forName(pkg + ".Int32Ext1", true, loader);
         final Class<?> int32Ext2Class = Class.forName(pkg + ".Int32Ext2", true, loader);

@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class Mdsal732Test extends BaseCompilationTest {
-    private File sourcesOutputDir;
-    private File compiledOutputDir;
+    private Path sourcesOutputDir;
+    private Path compiledOutputDir;
 
     @BeforeEach
     void before() {
@@ -26,7 +26,7 @@ class Mdsal732Test extends BaseCompilationTest {
     }
 
     @AfterEach
-    void after() {
+    void after() throws Exception {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
@@ -36,7 +36,7 @@ class Mdsal732Test extends BaseCompilationTest {
         final var xyzzyBuilder = FileSearchUtil.getFiles(sourcesOutputDir).get("XyzzyBuilder.java");
         assertNotNull(xyzzyBuilder);
 
-        final var content = Files.readString(xyzzyBuilder.toPath());
+        final var content = Files.readString(xyzzyBuilder);
         FileSearchUtil.assertFileContainsConsecutiveLines(xyzzyBuilder, content,
             "    public XyzzyBuilder(Grp arg) {",
             "        this._foo = CodeHelpers.checkFieldCast(Foo.class, \"foo\", arg.getFoo());",

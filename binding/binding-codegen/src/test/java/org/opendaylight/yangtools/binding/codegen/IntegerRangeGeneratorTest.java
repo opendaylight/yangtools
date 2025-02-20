@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+@Deprecated
 class IntegerRangeGeneratorTest {
     @Test
-    @Deprecated
     void convertTest() {
-        assertTrue(new IntegerRangeGenerator().convert(1L).equals(Long.valueOf(1).intValue()));
+        assertEquals(Long.valueOf(1).intValue(), new IntegerRangeGenerator().convert(1L));
     }
 }

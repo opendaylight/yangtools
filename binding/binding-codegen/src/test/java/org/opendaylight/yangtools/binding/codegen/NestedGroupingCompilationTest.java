@@ -13,48 +13,38 @@ import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS_TEST;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertFilesCount;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertImplementsIfc;
+import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertRegularFile;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.testCompilation;
 
-import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.junit.jupiter.api.Test;
 
-/**
- * Test correct code generation.
- *
- */
 class NestedGroupingCompilationTest extends BaseCompilationTest {
     @Test
     void testListGeneration() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("nested-grouping");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("nested-grouping");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("nested-grouping");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("nested-grouping");
         generateTestSources("/compilation/nested-grouping", sourcesOutputDir);
 
         // Test if all sources are generated
-        File parent = new File(sourcesOutputDir, NS_TEST);
-        final File foo = new File(parent, "Foo.java");
-        final File fooBuilder = new File(parent, "FooBuilder.java");
-        final File testData = new File(parent, "TestData.java");
-        final File fooDir = new File(parent, "foo");
-        assertTrue(foo.exists());
-        assertTrue(fooBuilder.exists());
-        assertTrue(testData.exists());
-        assertTrue(fooDir.exists());
+        var parent = sourcesOutputDir.resolve(NS_TEST);
+        assertRegularFile(parent, "Foo.java");
+        assertRegularFile(parent, "FooBuilder.java");
+        assertRegularFile(parent, "TestData.java");
         assertFilesCount(parent, 4);
-        final File svcParent = new File(sourcesOutputDir, NS_SVC_TEST);
+        final var svcParent = sourcesOutputDir.resolve(NS_SVC_TEST);
         assertFilesCount(svcParent, 1);
 
-        parent = new File(parent, "foo");
-        final File bar = new File(parent, "Bar.java");
-        assertTrue(bar.exists());
+        parent = parent.resolve("foo");
+        assertRegularFile(parent, "Bar.java");
         assertFilesCount(parent, 1);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         Class<?> fooClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.Foo", true, loader);
         Class<?> barClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.foo.Bar", true, loader);
 

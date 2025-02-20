@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.testCompilation;
 
-import java.io.File;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -19,9 +18,9 @@ import org.junit.jupiter.api.Test;
  */
 class EncodingInJavaDocTest extends BaseCompilationTest {
     @Test
-    void testAugmentToUsesInAugment() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("encoding-javadoc");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("encoding-javadoc");
+    void testAugmentToUsesInAugment() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("encoding-javadoc");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("encoding-javadoc");
         generateTestSources("/compilation/encoding-javadoc", sourcesOutputDir);
 
         // Test if sources are compilable

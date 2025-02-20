@@ -104,7 +104,7 @@ class GeneratorUtilTest {
         doReturn(List.of(enclosedType)).when(generatedType).getEnclosedTypes();
         final var generated = GeneratorUtil.createChildImports(generatedType);
         assertNotNull(generated);
-        assertTrue(generated.get("tstName").equals("tst.package"));
+        assertEquals("tst.package", generated.get("tstName"));
     }
 
     @Test

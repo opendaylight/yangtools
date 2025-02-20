@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Preconditions.checkState;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -24,67 +23,63 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import javax.tools.Diagnostic;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 public final class CompilationTestUtils {
-    public static final String FS = File.separator;
     static final String BASE_PKG = "org.opendaylight.yang.gen.v1";
 
-    static final String TEST_PATH = "target" + FS + "test";
-    static final File TEST_DIR = new File(TEST_PATH);
-
-    static final String GENERATOR_OUTPUT_PATH = TEST_PATH + FS + "src";
-    static final File GENERATOR_OUTPUT_DIR = new File(GENERATOR_OUTPUT_PATH);
-    private static final String COMPILER_OUTPUT_PATH = TEST_PATH + FS + "bin";
-    static final File COMPILER_OUTPUT_DIR = new File(COMPILER_OUTPUT_PATH);
+    static final Path TEST_DIR = Path.of("target", "test");
+    static final Path GENERATOR_OUTPUT_DIR = TEST_DIR.resolve("src");
+    static final Path COMPILER_OUTPUT_DIR = TEST_DIR.resolve("bin");
 
     static final String AUGMENTATION = "interface org.opendaylight.yangtools.binding.Augmentation";
-    static final String BASE_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1";
-    static final String BASE_SVC_PATH = "org" + FS + "opendaylight" + FS + "yang" + FS + "svc" + FS + "v1";
-    static final String NS_TEST = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
-    static final String NS_SVC_TEST = BASE_SVC_PATH + FS + "urn" + FS + "opendaylight" + FS + "test" + FS + "rev131008";
-    static final String NS_FOO = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
-    static final String NS_SVC_FOO = BASE_SVC_PATH + FS + "urn" + FS + "opendaylight" + FS + "foo" + FS + "rev131008";
-    static final String NS_BAR = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "bar" + FS + "rev131008";
-    static final String NS_SVC_BAR = BASE_SVC_PATH + FS + "urn" + FS + "opendaylight" + FS + "bar" + FS + "rev131008";
-    static final String NS_BAZ = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "baz" + FS + "rev131008";
-    static final String NS_SVC_BAZ = BASE_SVC_PATH + FS + "urn" + FS + "opendaylight" + FS + "baz" + FS + "rev131008";
-    static final String NS_BUG5882 = BASE_PATH + FS + "urn" + FS + "yang" + FS + "foo" + FS + "rev160102";
+    static final Path BASE_PATH = Path.of("org", "opendaylight", "yang", "gen", "v1");
+    static final Path BASE_SVC_PATH = Path.of("org", "opendaylight", "yang", "svc", "v1");
+    static final Path NS_TEST = BASE_PATH.resolve(Path.of("urn", "opendaylight", "test", "rev131008"));
+    static final Path NS_SVC_TEST = BASE_SVC_PATH.resolve(Path.of("urn", "opendaylight", "test", "rev131008"));
+    static final Path NS_FOO = BASE_PATH.resolve(Path.of("urn", "opendaylight", "foo", "rev131008"));
+    static final Path NS_SVC_FOO = BASE_SVC_PATH.resolve(Path.of("urn", "opendaylight", "foo", "rev131008"));
+    static final Path NS_BAR = BASE_PATH.resolve(Path.of("urn", "opendaylight", "bar", "rev131008"));
+    static final Path NS_SVC_BAR = BASE_SVC_PATH.resolve(Path.of("urn", "opendaylight", "bar", "rev131008"));
+    static final Path NS_BAZ = BASE_PATH.resolve(Path.of("urn", "opendaylight", "baz", "rev131008"));
+    static final Path NS_SVC_BAZ = BASE_SVC_PATH.resolve(Path.of("urn", "opendaylight", "baz", "rev131008"));
+    static final Path NS_BUG5882 = BASE_PATH.resolve(Path.of("urn", "yang", "foo", "rev160102"));
 
     private CompilationTestUtils() {
-
+        // Hidden on purpose
     }
 
-    static File compilerOutput(final String name) {
-        return createDirectory(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + name);
+    static Path compilerOutput(final String name) {
+        return createDirectory(COMPILER_OUTPUT_DIR.resolve(name));
     }
 
-    static File generatorOutput(final String name) {
-        return createDirectory(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + name);
+    static Path generatorOutput(final String name) {
+        return createDirectory(GENERATOR_OUTPUT_DIR.resolve(name));
     }
 
-    private static File createDirectory(final String path) {
-        final File ret = new File(path);
-        checkState(ret.mkdir(), "Failed to create test directory %s", path);
-        return ret;
+    private static Path createDirectory(final Path path) {
+        try {
+            Files.createDirectory(path);
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        return path;
     }
 
     /**
      * Method to clean resources. It is manually called at the end of each test instead of marking it with @After
      * annotation to prevent removing generated code if test fails.
      */
-    static void cleanUp(final File... resourceDirs) {
-        for (File resourceDir : resourceDirs) {
-            if (resourceDir.exists()) {
+    static void cleanUp(final Path... resourceDirs) throws IOException {
+        for (var resourceDir : resourceDirs) {
+            if (Files.exists(resourceDir)) {
                 deleteTestDir(resourceDir);
             }
         }
@@ -317,16 +312,15 @@ public final class CompilationTestUtils {
      * @param sourcesOutputDir directory containing source files
      * @param compiledOutputDir compiler output directory
      */
-    static void testCompilation(final File sourcesOutputDir, final File compiledOutputDir) {
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-        List<File> filesList = getJavaFiles(sourcesOutputDir);
-        Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
-        Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
+    static void testCompilation(final Path sourcesOutputDir, final Path compiledOutputDir) {
+        final var compiler = ToolProvider.getSystemJavaCompiler();
+        final var fileManager = compiler.getStandardFileManager(null, null, null);
+        final var filesList = getJavaFiles(sourcesOutputDir);
+        final var compilationUnits = fileManager.getJavaFileObjectsFromPaths(filesList);
+        final var options = List.of("-d", compiledOutputDir.toAbsolutePath().toString());
 
-        List<Diagnostic<?>> diags = new ArrayList<>();
-        boolean compiled = compiler.getTask(null, null, diags::add, options, null, compilationUnits).call();
-        if (!compiled) {
+        final var diags = new ArrayList<Diagnostic<?>>();
+        if (!compiler.getTask(null, null, diags::add, options, null, compilationUnits).call()) {
             fail("Compilation failed with " + diags);
         }
     }
@@ -339,13 +333,12 @@ public final class CompilationTestUtils {
      * @param count
      *            expected count of files in directory
      */
-    static void assertFilesCount(final File dir, final int count) {
-        File[] dirContent = dir.listFiles();
-        if (dirContent == null) {
-            throw new AssertionError("File " + dir + " doesn't exists or it's not a directory");
+    static void assertFilesCount(final Path dir, final int count) {
+        try (var files = Files.list(dir)) {
+            assertEquals(count, files.count(), "Unexpected count of generated files");
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
-
-        assertEquals(count, dirContent.length, "Unexpected count of generated files");
     }
 
     /**
@@ -354,51 +347,33 @@ public final class CompilationTestUtils {
      * @param directory directory to search
      * @return List of java files found
      */
-    private static List<File> getJavaFiles(final File directory) {
-        List<File> result = new ArrayList<>();
-        File[] filesToRead = directory.listFiles();
-        if (filesToRead != null) {
-            for (File file : filesToRead) {
-                if (file.isDirectory()) {
+    private static List<Path> getJavaFiles(final Path directory) {
+        final var result = new ArrayList<Path>();
+        try (var stream = Files.list(directory)) {
+            stream.forEach(file -> {
+                if (Files.isDirectory(file)) {
                     result.addAll(getJavaFiles(file));
-                } else {
-                    String absPath = file.getAbsolutePath();
-                    if (absPath.endsWith(".java")) {
-                        result.add(file);
-                    }
+                } else if (file.getFileName().toString().endsWith(".java")) {
+                    result.add(file);
                 }
-            }
+            });
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
         return result;
     }
 
-    static List<File> getSourceFiles(final String path) throws FileNotFoundException, URISyntaxException {
-        final URI resPath = BaseCompilationTest.class.getResource(path).toURI();
-        final File sourcesDir = new File(resPath);
-        if (!sourcesDir.exists()) {
-            throw new FileNotFoundException("Testing files were not found(" + sourcesDir.getName() + ")");
+    static void deleteTestDir(final Path file) throws IOException {
+        if (Files.isDirectory(file)) {
+            try (var paths = Files.walk(file)) {
+                paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+            }
+        } else {
+            Files.delete(file);
         }
-
-        final List<File> sourceFiles = new ArrayList<>();
-        final File[] fileArray = sourcesDir.listFiles();
-        if (fileArray == null) {
-            throw new IllegalArgumentException("Unable to locate files in " + sourcesDir);
-        }
-        sourceFiles.addAll(Arrays.asList(fileArray));
-        return sourceFiles;
     }
 
-    static void deleteTestDir(final File file) {
-        if (file.isDirectory()) {
-            File[] filesToDelete = file.listFiles();
-            if (filesToDelete != null) {
-                for (File f : filesToDelete) {
-                    deleteTestDir(f);
-                }
-            }
-        }
-        if (!file.delete()) {
-            throw new RuntimeException("Failed to clean up after test");
-        }
+    static void assertRegularFile(final Path parent, final String name) {
+        assertTrue(Files.isRegularFile(parent.resolve(name)));
     }
 }

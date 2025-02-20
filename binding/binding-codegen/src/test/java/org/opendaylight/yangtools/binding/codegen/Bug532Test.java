@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.BA
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.testCompilation;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -27,14 +26,14 @@ import org.mockito.Mockito;
 class Bug532Test extends BaseCompilationTest {
     @Test
     void test() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug532");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug532");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug532");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug532");
         generateTestSources("/compilation/list-gen-test", sourcesOutputDir);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         Class<?> linksKeyClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.LinksKey", true, loader);
         Class<?> linksClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.Links", true, loader);
         Class<?> linksBuilderClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.LinksBuilder", true,

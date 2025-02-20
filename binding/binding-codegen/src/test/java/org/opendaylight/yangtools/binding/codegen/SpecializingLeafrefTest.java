@@ -18,7 +18,6 @@ import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.getFiles
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.tab;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.tripleTab;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -70,10 +69,10 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final String TTAB_SET_IS_VALID_ARG_TRUE = TRIPLE_TAB + "isValidArg = true;";
     private static final String DTAB_INIT_IS_VALID_ARG_FALSE = DOUBLE_TAB + "boolean isValidArg = false;";
 
-    private File sourcesOutputDir;
-    private File compiledOutputDir;
+    private Path sourcesOutputDir;
+    private Path compiledOutputDir;
     private List<GeneratedType> types;
-    private Map<String, File> files;
+    private Map<String, Path> files;
 
     @BeforeEach
     void before() {
@@ -85,7 +84,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     @AfterEach
-    void after() {
+    void after() throws Exception {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
@@ -187,15 +186,15 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void barContBuilderDataObjectTest() throws Exception {
-        final File file = files.get(getJavaBuilderFileName(BAR_CONT));
-        final String content = Files.readString(file.toPath());
+        final var file = files.get(getJavaBuilderFileName(BAR_CONT));
+        final String content = Files.readString(file);
 
         barContBuilderConstructorResolvedLeafGrpTest(file, content);
         barContBuilderConstructorFooGrpTest(file, content);
         barContBuilderFieldsFromTest(file, content);
     }
 
-    private static void barContBuilderConstructorResolvedLeafGrpTest(final File file, final String content) {
+    private static void barContBuilderConstructorResolvedLeafGrpTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 tab("public BarContBuilder(" + RESOLVED_LEAF_GRP_REF + " arg) {"),
                 doubleTab("this._leaf1 = arg.getLeaf1();"),
@@ -205,7 +204,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
                 TAB_CLOSING_METHOD_BRACE);
     }
 
-    private static void barContBuilderFieldsFromTest(final File file, final String content) {
+    private static void barContBuilderFieldsFromTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 TAB_FIELDS_FROM_SIGNATURE,
                 DTAB_INIT_IS_VALID_ARG_FALSE,
@@ -225,7 +224,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
                 TAB_CLOSING_METHOD_BRACE);
     }
 
-    private static void barContBuilderConstructorFooGrpTest(final File file, final String content) {
+    private static void barContBuilderConstructorFooGrpTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 tab("public BarContBuilder(" + FOO_GRP_REF + " arg) {"),
                 doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", "
@@ -238,14 +237,14 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void booleanContBuilderDataObjectTest() throws Exception {
-        final File file = files.get(getJavaBuilderFileName(BOOLEAN_CONT));
-        final String content = Files.readString(file.toPath());
+        final var file = files.get(getJavaBuilderFileName(BOOLEAN_CONT));
+        final var content = Files.readString(file);
 
         booleanContBuilderFieldsFromTest(file, content);
         booleanContBuilderConstructorTest(file, content);
     }
 
-    private static void booleanContBuilderFieldsFromTest(final File file, final String content) {
+    private static void booleanContBuilderFieldsFromTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 TAB_FIELDS_FROM_SIGNATURE,
                 DTAB_INIT_IS_VALID_ARG_FALSE,
@@ -257,7 +256,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
                 TAB_CLOSING_METHOD_BRACE);
     }
 
-    private static void booleanContBuilderConstructorTest(final File file, final String content) {
+    private static void booleanContBuilderConstructorTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 tab("public BooleanContBuilder(" + UNRESOLVED_GROUPING_REF + " arg) {"),
                 doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", "
@@ -274,9 +273,9 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private String getFileContent(final String fileName) throws Exception {
-        final File file = files.get(getJavaFileName(fileName));
-        assertNotNull(Files.lines(file.toPath()).findFirst());
-        final String content = Files.readString(Path.of(file.getAbsolutePath()));
+        final var file = files.get(getJavaFileName(fileName));
+        assertNotNull(Files.lines(file).findFirst());
+        final var content = Files.readString(file.toAbsolutePath());
         assertNotNull(content);
         return content;
     }
@@ -286,7 +285,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private void verifyReturnType(final String typeName, final String getterName, final Type returnType) {
-        final GeneratedType generated = typeByName(types, typeName);
+        final var generated = typeByName(types, typeName);
         assertNotNull(generated);
         assertEquals(returnType, returnTypeByMethodName(generated, getterName));
     }

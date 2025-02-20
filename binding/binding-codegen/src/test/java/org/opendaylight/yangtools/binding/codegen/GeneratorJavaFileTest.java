@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,8 +23,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 
 class GeneratorJavaFileTest extends BaseCompilationTest {
-    private static final String FS = File.separator;
-    private static final String PATH = "target/test/test-dir";
+    private static final Path PATH = Path.of("target", "test", "test-dir");
 
     @Test
     void test() throws IOException {
@@ -35,17 +35,12 @@ class GeneratorJavaFileTest extends BaseCompilationTest {
             createGeneratedType("org.opendaylight.controller.gen", "Type1"),
             createGeneratedType("org.opendaylight.controller.gen", "Type2"),
             createGeneratedType("org.opendaylight.controller.gen", "Type3"),
-            gtb.build()), new File(PATH));
+            gtb.build()), PATH);
 
-        List<String> filesList = Arrays.asList(
-            new File(PATH + FS + "org" + FS + "opendaylight" + FS + "controller" + FS + "gen").list());
-
-        // assertEquals(5, files.length);
-        assertTrue(filesList.contains("Type1.java"));
-        assertTrue(filesList.contains("Type2.java"));
-        assertTrue(filesList.contains("Type3.java"));
-        assertTrue(filesList.contains("Type4.java"));
-        assertTrue(filesList.contains("Type4Builder.java"));
+        try (var dir = Files.list(PATH.resolve(Path.of("org", "opendaylight", "controller", "gen")))) {
+            assertEquals(List.of("Type1.java", "Type2.java", "Type3.java", "Type4.java", "Type4Builder.java"),
+                dir.map(Path::getFileName).map(Path::toString).sorted().toList());
+        }
     }
 
     @NonNullByDefault

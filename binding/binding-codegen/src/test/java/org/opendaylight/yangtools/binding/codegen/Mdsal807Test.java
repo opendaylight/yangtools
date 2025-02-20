@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class Mdsal807Test extends BaseCompilationTest {
-    private File sourcesOutputDir;
-    private File compiledOutputDir;
+    private Path sourcesOutputDir;
+    private Path compiledOutputDir;
 
     @BeforeEach
     void before() {
@@ -26,7 +26,7 @@ class Mdsal807Test extends BaseCompilationTest {
     }
 
     @AfterEach
-    void after() {
+    void after() throws Exception {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
@@ -36,7 +36,7 @@ class Mdsal807Test extends BaseCompilationTest {
         final var pmDataType = FileSearchUtil.getFiles(sourcesOutputDir).get("TableConfig.java");
         assertNotNull(pmDataType);
 
-        FileSearchUtil.assertFileContainsConsecutiveLines(pmDataType, Files.readString(pmDataType.toPath()),
+        FileSearchUtil.assertFileContainsConsecutiveLines(pmDataType, Files.readString(pmDataType),
             "    public static TableConfig getDefaultInstance(final String defaultValue) {",
             "        List<String> properties = Lists.newArrayList(\"oFPTCDEPRECATEDMASK\"",
             "        );",

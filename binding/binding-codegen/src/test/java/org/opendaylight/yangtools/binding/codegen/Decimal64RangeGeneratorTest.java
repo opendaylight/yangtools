@@ -13,9 +13,9 @@ import java.math.BigInteger;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
+@Deprecated
 class Decimal64RangeGeneratorTest {
     @Test
-    @Deprecated
     void convertTest() {
         Decimal64RangeGenerator generator = new Decimal64RangeGenerator();
         Decimal64 one = Decimal64.valueOf(1, 1);

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.io.File;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -37,14 +38,14 @@ import org.junit.jupiter.api.Test;
 class Bug1276Test extends BaseCompilationTest {
     @Test
     void test() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1276");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug1276");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1276");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug1276");
         generateTestSources("/compilation/bug1276", sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         Class<?> ipAddressClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.IpAddress",
             true, loader);
         Class<?> ipv4AddressClass = Class.forName(CompilationTestUtils.BASE_PKG
@@ -63,7 +64,7 @@ class Bug1276Test extends BaseCompilationTest {
         Object ipAddress = ipAddressConstructor.newInstance(ipv4address);
 
         // test Host with IpAddress argument
-        Object host = hostConstructor.newInstance(ipAddress);
+        assertNotNull(hostConstructor.newInstance(ipAddress));
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertRegularFile;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -58,47 +60,35 @@ class CompilationTest extends BaseCompilationTest {
 
     @Test
     void testListGeneration() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("list-gen");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("list-gen");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("list-gen");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("list-gen");
         generateTestSources("/compilation/list-gen", sourcesOutputDir);
 
         // Test if all sources are generated
-        File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_TEST);
-        final File keyArgs = new File(parent, "KeyArgs.java");
-        final File links = new File(parent, "Links.java");
-        final File linksBuilder = new File(parent, "LinksBuilder.java");
-        final File linksKey = new File(parent, "LinksKey.java");
-        final File testData = new File(parent, "TestData.java");
-        assertTrue(keyArgs.exists());
-        assertTrue(links.exists());
-        assertTrue(linksBuilder.exists());
-        assertTrue(linksKey.exists());
-        assertTrue(testData.exists());
+        var parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_TEST);
+        assertRegularFile(parent, "KeyArgs.java");
+        assertRegularFile(parent, "Links.java");
+        assertRegularFile(parent, "LinksBuilder.java");
+        assertRegularFile(parent, "LinksKey.java");
+        assertRegularFile(parent, "TestData.java");
         CompilationTestUtils.assertFilesCount(parent, 6);
-        final File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_TEST);
+        final var svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_TEST);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_TEST + CompilationTestUtils.FS + "links");
-        final File level = new File(parent, "Level.java");
-        final File linkGroup = new File(parent, "LinkGroup.java");
-        final File node = new File(parent, "Node.java");
-        final File nodeBuilder = new File(parent, "NodeBuilder.java");
-        final File nodeList = new File(parent, "NodeList.java");
-        final File nodeListBuilder = new File(parent, "NodeListBuilder.java");
-        final File nodesType = new File(parent, "NodesType.java");
-        assertTrue(level.exists());
-        assertTrue(linkGroup.exists());
-        assertTrue(node.exists());
-        assertTrue(nodeBuilder.exists());
-        assertTrue(nodeList.exists());
-        assertTrue(nodeListBuilder.exists());
-        assertTrue(nodesType.exists());
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_TEST).resolve("links");
+        assertRegularFile(parent, "Level.java");
+        assertRegularFile(parent, "LinkGroup.java");
+        assertRegularFile(parent, "Node.java");
+        assertRegularFile(parent, "NodeBuilder.java");
+        assertRegularFile(parent, "NodeList.java");
+        assertRegularFile(parent, "NodeListBuilder.java");
+        assertRegularFile(parent, "NodesType.java");
         CompilationTestUtils.assertFilesCount(parent, 8);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         final Class<?> keyArgsClass = Class.forName(CompilationTestUtils.BASE_PKG
             + ".urn.opendaylight.test.rev131008.KeyArgs", true, loader);
         final Class<?> linksClass = Class.forName(CompilationTestUtils.BASE_PKG
@@ -138,23 +128,23 @@ class CompilationTest extends BaseCompilationTest {
      */
     @Test
     void testContainerGettersGeneration() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("containers-gen");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("containers-gen");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("containers-gen");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("containers-gen");
         generateTestSources("/compilation/containers-gen", sourcesOutputDir);
 
         // Test if all sources were generated from 'module containers'
-        File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_TEST);
-        assertTrue(new File(parent, "RootContainer.java").exists());
-        assertTrue(new File(parent, "rootcontainer/PresenceContainer.java").exists());
-        assertTrue(new File(parent, "rootcontainer/NonPresenceContainer.java").exists());
+        var parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_TEST);
+        assertRegularFile(parent, "RootContainer.java");
+        assertRegularFile(parent, "rootcontainer/PresenceContainer.java");
+        assertRegularFile(parent, "rootcontainer/NonPresenceContainer.java");
         CompilationTestUtils.assertFilesCount(parent, 4);
-        File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_TEST);
+        var svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_TEST);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         final Class<?> rootClass = Class.forName(CompilationTestUtils.BASE_PKG
                 + ".urn.opendaylight.test.rev131008.RootContainer", true, loader);
 
@@ -170,7 +160,7 @@ class CompilationTest extends BaseCompilationTest {
                 CompilationTestUtils.assertContainsMethod(rootClass,
                         "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.rootcontainer.PresenceContainer",
                         "nonnullPresenceContainer", loader));
-        assertTrue(error.getCause() instanceof NoSuchMethodException);
+        assertInstanceOf(NoSuchMethodException.class, error.getCause());
 
         // Test generated getter and nonnull methods for non-presence container
         CompilationTestUtils.assertContainsMethod(rootClass,
@@ -184,105 +174,105 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    void testAugmentUnderUsesGeneration() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("augment-under-uses");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("augment-under-uses");
+    void testAugmentUnderUsesGeneration() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("augment-under-uses");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("augment-under-uses");
         generateTestSources("/compilation/augment-under-uses", sourcesOutputDir);
 
         // Test if all sources were generated from 'module foo'
-        File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
-        assertTrue(new File(parent, "Object.java").exists());
-        assertTrue(new File(parent, "ClosedObject.java").exists());
-        assertTrue(new File(parent, "OpenObject.java").exists());
-        assertTrue(new File(parent, "ExplicitRouteObject.java").exists());
-        assertTrue(new File(parent, "PathKeySubobject.java").exists());
-        assertTrue(new File(parent, "FooData.java").exists());
+        var parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO);
+        assertRegularFile(parent, "Object.java");
+        assertRegularFile(parent, "ClosedObject.java");
+        assertRegularFile(parent, "OpenObject.java");
+        assertRegularFile(parent, "ExplicitRouteObject.java");
+        assertRegularFile(parent, "PathKeySubobject.java");
+        assertRegularFile(parent, "FooData.java");
         CompilationTestUtils.assertFilesCount(parent, 10);
-        File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_FOO);
+        var svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
-        parent = new File(parent, "object");
-        assertTrue(new File(parent, "Nodes.java").exists());
-        assertTrue(new File(parent, "NodesBuilder.java").exists());
+        parent = parent.resolve("object");
+        assertRegularFile(parent, "Nodes.java");
+        assertRegularFile(parent, "NodesBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 2);
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "closed");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO).resolve("closed");
         CompilationTestUtils.assertFilesCount(parent, 1);
 
-        parent = new File(parent, "object");
-        assertTrue(new File(parent, "Link1.java").exists());
-        assertTrue(new File(parent, "Link1Builder.java").exists());
+        parent = parent.resolve("object");
+        assertRegularFile(parent, "Link1.java");
+        assertRegularFile(parent, "Link1Builder.java");
         CompilationTestUtils.assertFilesCount(parent, 2);
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "open");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO).resolve("open");
         CompilationTestUtils.assertFilesCount(parent, 1);
 
-        parent = new File(parent, "object");
-        assertTrue(new File(parent, "Nodes1.java").exists());
-        assertTrue(new File(parent, "Nodes1Builder.java").exists());
+        parent = parent.resolve("object");
+        assertRegularFile(parent, "Nodes1.java");
+        assertRegularFile(parent, "Nodes1Builder.java");
         CompilationTestUtils.assertFilesCount(parent, 3);
 
-        parent = new File(parent, "nodes");
-        assertTrue(new File(parent, "Links.java").exists());
-        assertTrue(new File(parent, "LinksBuilder.java").exists());
+        parent = parent.resolve("nodes");
+        assertRegularFile(parent, "Links.java");
+        assertRegularFile(parent, "LinksBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 2);
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "explicit");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO).resolve("explicit");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "route");
+        parent = parent.resolve("route");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "object");
-        assertTrue(new File(parent, "Subobjects.java").exists());
-        assertTrue(new File(parent, "SubobjectsBuilder.java").exists());
+        parent = parent.resolve("object");
+        assertRegularFile(parent, "Subobjects.java");
+        assertRegularFile(parent, "SubobjectsBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 3);
 
-        parent = new File(parent, "subobjects");
+        parent = parent.resolve("subobjects");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "subobject");
+        parent = parent.resolve("subobject");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "type");
-        assertTrue(new File(parent, "PathKey.java").exists());
-        assertTrue(new File(parent, "PathKeyBuilder.java").exists());
+        parent = parent.resolve("type");
+        assertRegularFile(parent, "PathKey.java");
+        assertRegularFile(parent, "PathKeyBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 3);
 
-        parent = new File(parent, "path");
+        parent = parent.resolve("path");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "key");
-        assertTrue(new File(parent, "PathKey.java").exists());
-        assertTrue(new File(parent, "PathKeyBuilder.java").exists());
+        parent = parent.resolve("key");
+        assertRegularFile(parent, "PathKey.java");
+        assertRegularFile(parent, "PathKeyBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 2);
 
         // Test if all sources were generated from 'module bar'
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR);
-        assertTrue(new File(parent, "BarData.java").exists());
-        assertTrue(new File(parent, "BasicExplicitRouteSubobjects.java").exists());
-        assertTrue(new File(parent, "ExplicitRouteSubobjects.java").exists());
-        assertTrue(new File(parent, "RouteSubobjects.java").exists());
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAR);
+        assertRegularFile(parent, "BarData.java");
+        assertRegularFile(parent, "BasicExplicitRouteSubobjects.java");
+        assertRegularFile(parent, "ExplicitRouteSubobjects.java");
+        assertRegularFile(parent, "RouteSubobjects.java");
         CompilationTestUtils.assertFilesCount(parent, 6);
-        svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_BAR);
+        svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAR);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
-        parent = new File(parent, "route");
+        parent = parent.resolve("route");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(new File(sourcesOutputDir, CompilationTestUtils.NS_BAR), "basic");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAR).resolve("basic");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "explicit");
+        parent = parent.resolve("explicit");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "route");
+        parent = parent.resolve("route");
         CompilationTestUtils.assertFilesCount(parent, 1);
 
-        parent = new File(parent, "subobjects");
+        parent = parent.resolve("subobjects");
         CompilationTestUtils.assertFilesCount(parent, 2);
-        assertTrue(new File(parent, "SubobjectType.java").exists());
+        assertRegularFile(parent, "SubobjectType.java");
 
-        parent = new File(parent, "subobject");
+        parent = parent.resolve("subobject");
         CompilationTestUtils.assertFilesCount(parent, 1);
 
-        parent = new File(parent, "type");
-        assertTrue(new File(parent, "IpPrefix.java").exists());
-        assertTrue(new File(parent, "IpPrefixBuilder.java").exists());
-        assertTrue(new File(parent, "Label.java").exists());
-        assertTrue(new File(parent, "LabelBuilder.java").exists());
+        parent = parent.resolve("type");
+        assertRegularFile(parent, "IpPrefix.java");
+        assertRegularFile(parent, "IpPrefixBuilder.java");
+        assertRegularFile(parent, "Label.java");
+        assertRegularFile(parent, "LabelBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 4);
 
         // Test if sources are compilable
@@ -292,130 +282,115 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    void testAugmentOfAugmentGeneration() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("aug-of-aug");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("aug-of-aug");
+    void testAugmentOfAugmentGeneration() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("aug-of-aug");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("aug-of-aug");
         generateTestSources("/compilation/augment-of-augment", sourcesOutputDir);
 
         // Test if all sources were generated from 'module foo'
-        File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
-        assertTrue(new File(parent, "FooData.java").exists());
-        assertTrue(new File(parent, "PathAttributes.java").exists());
-        assertTrue(new File(parent, "Update.java").exists());
-        assertTrue(new File(parent, "UpdateBuilder.java").exists());
+        var parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO);
+        assertRegularFile(parent, "FooData.java");
+        assertRegularFile(parent, "PathAttributes.java");
+        assertRegularFile(parent, "Update.java");
+        assertRegularFile(parent, "UpdateBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 6);
-        File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_FOO);
+        var svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "path");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO).resolve("path");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "attributes");
+        parent = parent.resolve("attributes");
         CompilationTestUtils.assertFilesCount(parent, 2);
-        final File origin = new File(parent, "Origin.java");
-        final File originBuilder = new File(parent, "OriginBuilder.java");
-        assertTrue(origin.exists());
-        assertTrue(originBuilder.exists());
+        assertRegularFile(parent, "Origin.java");
+        assertRegularFile(parent, "OriginBuilder.java");
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO + CompilationTestUtils.FS + "update");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO).resolve("update");
         CompilationTestUtils.assertFilesCount(parent, 2);
-        assertTrue(new File(parent, "PathAttributes.java").exists());
-        assertTrue(new File(parent, "PathAttributesBuilder.java").exists());
+        assertRegularFile(parent, "PathAttributes.java");
+        assertRegularFile(parent, "PathAttributesBuilder.java");
 
         // Test if all sources were generated from 'module bar'
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR);
-        assertTrue(new File(parent, "BarData.java").exists());
-        assertTrue(new File(parent, "Destination.java").exists());
-        assertTrue(new File(parent, "PathAttributes1.java").exists());
-        assertTrue(new File(parent, "PathAttributes1Builder.java").exists());
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAR);
+        assertRegularFile(parent, "BarData.java");
+        assertRegularFile(parent, "Destination.java");
+        assertRegularFile(parent, "PathAttributes1.java");
+        assertRegularFile(parent, "PathAttributes1Builder.java");
         CompilationTestUtils.assertFilesCount(parent, 6);
-        svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_BAR);
+        svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAR);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR + CompilationTestUtils.FS + "destination");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAR).resolve("destination");
         CompilationTestUtils.assertFilesCount(parent, 2);
-        final File destinationType = new File(parent, "DestinationType.java");
-        assertTrue(destinationType.exists());
+        assertRegularFile(parent, "DestinationType.java");
 
-        parent = new File(parent, "destination");
+        parent = parent.resolve("destination");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "type");
+        parent = parent.resolve("type");
         CompilationTestUtils.assertFilesCount(parent, 2);
-        final File destinationIpv4 = new File(parent, "DestinationIp.java");
-        final File destinationIpv4Builder = new File(parent, "DestinationIpBuilder.java");
-        assertTrue(destinationIpv4.exists());
-        assertTrue(destinationIpv4Builder.exists());
+        assertRegularFile(parent, "DestinationIp.java");
+        assertRegularFile(parent, "DestinationIpBuilder.java");
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR + CompilationTestUtils.FS + "update");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAR).resolve("update");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "path");
+        parent = parent.resolve("path");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "attributes");
-        final File mpUnreachNlri = new File(parent, "MpUnreachNlri.java");
-        final File mpUnreachNlriBuilder = new File(parent, "MpUnreachNlriBuilder.java");
-        assertTrue(mpUnreachNlri.exists());
-        assertTrue(mpUnreachNlriBuilder.exists());
+        parent = parent.resolve("attributes");
+        assertRegularFile(parent, "MpUnreachNlri.java");
+        assertRegularFile(parent, "MpUnreachNlriBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 3);
 
-        parent = new File(parent, "mp");
+        parent = parent.resolve("mp");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "unreach");
+        parent = parent.resolve("unreach");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "nlri");
-        assertTrue(new File(parent, "WithdrawnRoutes.java").exists());
-        assertTrue(new File(parent, "WithdrawnRoutesBuilder.java").exists());
+        parent = parent.resolve("nlri");
+        assertRegularFile(parent, "WithdrawnRoutes.java");
+        assertRegularFile(parent, "WithdrawnRoutesBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 2);
 
         // Test if all sources were generated from 'module baz'
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAZ);
-        assertTrue(new File(parent, "BazData.java").exists());
-        assertTrue(new File(parent, "LinkstateDestination.java").exists());
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAZ);
+        assertRegularFile(parent, "BazData.java");
+        assertRegularFile(parent, "LinkstateDestination.java");
         CompilationTestUtils.assertFilesCount(parent, 3);
-        svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_BAZ);
+        svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAZ);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
-        parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAZ + CompilationTestUtils.FS + "update");
+        parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAZ).resolve("update");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "path");
+        parent = parent.resolve("path");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "attributes");
+        parent = parent.resolve("attributes");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "mp");
+        parent = parent.resolve("mp");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "unreach");
+        parent = parent.resolve("unreach");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "nlri");
+        parent = parent.resolve("nlri");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "withdrawn");
+        parent = parent.resolve("withdrawn");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "routes");
+        parent = parent.resolve("routes");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "destination");
+        parent = parent.resolve("destination");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "type");
-        final File destinationLinkstate = new File(parent, "DestinationLinkstate.java");
-        final File destinationLinkstateBuilder = new File(parent, "DestinationLinkstateBuilder.java");
-        assertTrue(destinationLinkstate.exists());
-        assertTrue(destinationLinkstateBuilder.exists());
+        parent = parent.resolve("type");
+        assertRegularFile(parent, "DestinationLinkstate.java");
+        assertRegularFile(parent, "DestinationLinkstateBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 3);
-        parent = new File(parent, "destination");
+        parent = parent.resolve("destination");
         CompilationTestUtils.assertFilesCount(parent, 1);
-        parent = new File(parent, "linkstate");
-        final File links = new File(parent, "Links.java");
-        final File linksBuilder = new File(parent, "LinksBuilder.java");
-        assertTrue(links.exists());
-        assertTrue(linksBuilder.exists());
+        parent = parent.resolve("linkstate");
+        assertRegularFile(parent, "Links.java");
+        assertRegularFile(parent, "LinksBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 3);
-        parent = new File(parent, "links");
-        final File source = new File(parent, "Source.java");
-        final File sourceBuilder = new File(parent, "SourceBuilder.java");
-        assertTrue(source.exists());
-        assertTrue(sourceBuilder.exists());
+        parent = parent.resolve("links");
+        assertRegularFile(parent, "Source.java");
+        assertRegularFile(parent, "SourceBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 3);
-        parent = new File(parent, "source");
-        final File address = new File(parent, "Address.java");
-        final File addressBuilder = new File(parent, "AddressBuilder.java");
-        assertTrue(address.exists());
-        assertTrue(addressBuilder.exists());
+        parent = parent.resolve("source");
+        assertRegularFile(parent, "Address.java");
+        assertRegularFile(parent, "AddressBuilder.java");
         CompilationTestUtils.assertFilesCount(parent, 2);
 
         // Test if sources are compilable
@@ -426,24 +401,23 @@ class CompilationTest extends BaseCompilationTest {
 
     @Test
     void testLeafReturnTypes() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("leaf-return-types");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("leaf-return-types");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("leaf-return-types");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("leaf-return-types");
         generateTestSources("/compilation/leaf-return-types", sourcesOutputDir);
 
-        final File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_TEST);
-        assertTrue(new File(parent, "TestData.java").exists());
-        assertTrue(new File(parent, "Nodes.java").exists());
-        assertTrue(new File(parent, "NodesBuilder.java").exists());
-        assertTrue(new File(parent, "Alg.java").exists());
+        final var parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_TEST);
+        assertRegularFile(parent, "TestData.java");
+        assertRegularFile(parent, "Nodes.java");
+        assertRegularFile(parent, "NodesBuilder.java");
+        assertRegularFile(parent, "Alg.java");
         CompilationTestUtils.assertFilesCount(parent, 4);
-        final File svcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_TEST);
-        CompilationTestUtils.assertFilesCount(svcParent, 1);
+        CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_TEST), 1);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         final String pkg = CompilationTestUtils.BASE_PKG + ".urn.opendaylight.test.rev131008";
-        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         final Class<?> nodesClass = Class.forName(pkg + ".Nodes", true, loader);
         final Class<?> builderClass = Class.forName(pkg + ".NodesBuilder", true, loader);
 
@@ -493,30 +467,28 @@ class CompilationTest extends BaseCompilationTest {
 
     @Test
     void testGenerationContextReferenceExtension() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("context-reference");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("context-reference");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("context-reference");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("context-reference");
         generateTestSources("/compilation/context-reference", sourcesOutputDir);
 
         // Test if all sources are generated
-        final File fooParent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
+        final var fooParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO);
         CompilationTestUtils.assertFilesCount(fooParent, 3);
-        final File fooSvcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_FOO);
-        CompilationTestUtils.assertFilesCount(fooSvcParent, 1);
-        assertTrue(new File(fooParent, "FooData.java").exists());
-        assertTrue(new File(fooParent, "Nodes.java").exists());
-        assertTrue(new File(fooParent, "NodesBuilder.java").exists());
+        CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO), 1);
+        assertRegularFile(fooParent, "FooData.java");
+        assertRegularFile(fooParent, "Nodes.java");
+        assertRegularFile(fooParent, "NodesBuilder.java");
 
-        final File barParent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR);
+        final var barParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAR);
         CompilationTestUtils.assertFilesCount(barParent, 2);
-        final File barSvcParent = new File(sourcesOutputDir, CompilationTestUtils.NS_SVC_BAR);
-        CompilationTestUtils.assertFilesCount(barSvcParent, 1);
-        assertTrue(new File(barParent, "BarData.java").exists());
-        assertTrue(new File(barParent, "IdentityClass.java").exists());
+        CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAR), 1);
+        assertRegularFile(barParent, "BarData.java");
+        assertRegularFile(barParent, "IdentityClass.java");
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         final Class<?> nodesClass = Class.forName(CompilationTestUtils.BASE_PKG
             + ".urn.opendaylight.foo.rev131008.Nodes", true, loader);
         final Class<?> identityClass = Class
@@ -541,9 +513,9 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    void compilationTest() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("yang");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("yang");
+    void compilationTest() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("yang");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("yang");
         generateTestSources("/yang", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -553,9 +525,9 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    void testBug586() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug586");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug586");
+    void testBug586() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug586");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug586");
         generateTestSources("/compilation/bug586", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -565,9 +537,9 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    void testBug4760() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug4760");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug4760");
+    void testBug4760() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug4760");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug4760");
         generateTestSources("/compilation/bug4760", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -580,9 +552,9 @@ class CompilationTest extends BaseCompilationTest {
      * Test handling nested uses-augmentations.
      */
     @Test
-    void testBug1172() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1172");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug1172");
+    void testBug1172() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1172");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug1172");
         generateTestSources("/compilation/bug1172", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -592,9 +564,9 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    void testBug5461() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5461");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug5461");
+    void testBug5461() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5461");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug5461");
         generateTestSources("/compilation/bug5461", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -605,19 +577,19 @@ class CompilationTest extends BaseCompilationTest {
 
     @Test
     void testBug5882() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5882");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug5882");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5882");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug5882");
         generateTestSources("/compilation/bug5882", sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BUG5882);
-        assertTrue(new File(parent, "FooData.java").exists());
-        assertTrue(new File(parent, "TypedefCurrent.java").exists());
-        assertTrue(new File(parent, "TypedefDeprecated.java").exists());
+        final var parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BUG5882);
+        assertRegularFile(parent, "FooData.java");
+        assertRegularFile(parent, "TypedefCurrent.java");
+        assertRegularFile(parent, "TypedefDeprecated.java");
 
-        try (var loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() })) {
+        try (var loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() })) {
             final String pkg = CompilationTestUtils.BASE_PKG + ".urn.yang.foo.rev160102";
             final Class<?> cls = loader.loadClass(pkg + ".FooData");
             final Class<?> clsContainer = loader.loadClass(pkg + ".ContainerMain");
@@ -665,15 +637,15 @@ class CompilationTest extends BaseCompilationTest {
      */
     @Test
     void testBug1377() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1377");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug1377");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1377");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug1377");
 
         generateTestSources("/compilation/bug1377", sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         final Class<?> outputActionClass = Class.forName(CompilationTestUtils.BASE_PKG
                 + ".urn.test.foo.rev140717.action.action.output.action._case.OutputAction", true, loader);
         final Class<?> actionClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.test.foo.rev140717.Action",
@@ -688,108 +660,108 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    void testMdsal327() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal327");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal327");
+    void testMdsal327() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal327");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal327");
         generateTestSources("/compilation/mdsal327", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void testMdsal365() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal365");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal365");
+    void testMdsal365() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal365");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal365");
         generateTestSources("/compilation/mdsal365", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void testMdsal395() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal395");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal395");
+    void testMdsal395() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal395");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal395");
         generateTestSources("/compilation/mdsal395", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void classNamesColisionTest() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("class-name-collision");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("class-name-collision");
+    void classNamesColisionTest() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("class-name-collision");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("class-name-collision");
         generateTestSources("/compilation/class-name-collision", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void innerEnumerationNameCollisionTest() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal321");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal321");
+    void innerEnumerationNameCollisionTest() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal321");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal321");
         generateTestSources("/compilation/mdsal321", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void twoNestedUnionsTest() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal320");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal320");
+    void twoNestedUnionsTest() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal320");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal320");
         generateTestSources("/compilation/mdsal320", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void testMdsal425() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal425");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal425");
+    void testMdsal425() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal425");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal425");
         generateTestSources("/compilation/mdsal425", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void testMdsal426() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal426");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal426");
+    void testMdsal426() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal426");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal426");
         generateTestSources("/compilation/mdsal426", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void testMdsal529() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal529");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal529");
+    void testMdsal529() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal529");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal529");
         generateTestSources("/compilation/mdsal529", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void testMdsal589() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal589");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal589");
+    void testMdsal589() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal589");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal589");
         generateTestSources("/compilation/mdsal589", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void testMdsal533() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal533");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal533");
+    void testMdsal533() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal533");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal533");
         generateTestSources("/compilation/mdsal533", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void testMdsal664() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal664");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal664");
+    void testMdsal664() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal664");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal664");
         generateTestSources("/compilation/mdsal664", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
@@ -797,72 +769,72 @@ class CompilationTest extends BaseCompilationTest {
 
     @Test
     void testUnionStringPatterns() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-string-pattern");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-string-pattern");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("union-string-pattern");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("union-string-pattern");
         generateTestSources("/compilation/union-string-pattern", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final ClassLoader loader = new URLClassLoader(new URL[]{compiledOutputDir.toURI().toURL()});
-        final Class<?> fooClass = Class.forName(CompilationTestUtils.BASE_PKG + ".foo.norev.Foo", true, loader);
+        final var loader = new URLClassLoader(new URL[]{compiledOutputDir.toUri().toURL()});
+        final var fooClass = Class.forName(CompilationTestUtils.BASE_PKG + ".foo.norev.Foo", true, loader);
 
-        final Field patterns = fooClass.getDeclaredField(TypeConstants.PATTERN_CONSTANT_NAME);
+        final var patterns = fooClass.getDeclaredField(TypeConstants.PATTERN_CONSTANT_NAME);
         assertEquals(List.class, patterns.getType());
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     @Test
-    void yangDataCompilation() {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("yang-data-gen");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("yang-data-gen");
+    void yangDataCompilation() throws Exception {
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("yang-data-gen");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("yang-data-gen");
 
         generateTestSources("/compilation/yang-data-gen", sourcesOutputDir);
 
-        final List<String> artifactNames = List.of(
-                // module with top level container
-                "YangDataDemoData", "RootContainer", "RootContainerBuilder",
+        final var artifactNames = List.of(
+            // module with top level container
+            "YangDataDemoData", "RootContainer", "RootContainerBuilder",
 
-                // yang-data artifacts
-                "YangDataWithContainer", "YangDataWithContainerBuilder",
-                "YangDataWithList", "YangDataWithListBuilder",
-                "YangDataWithLeaf", "YangDataWithLeafBuilder",
-                "YangDataWithLeafList", "YangDataWithLeafListBuilder",
-                "YangDataWithAnydata", "YangDataWithAnydataBuilder",
-                "YangDataWithAnyxml", "YangDataWithAnyxmlBuilder",
+            // yang-data artifacts
+            "YangDataWithContainer", "YangDataWithContainerBuilder",
+            "YangDataWithList", "YangDataWithListBuilder",
+            "YangDataWithLeaf", "YangDataWithLeafBuilder",
+            "YangDataWithLeafList", "YangDataWithLeafListBuilder",
+            "YangDataWithAnydata", "YangDataWithAnydataBuilder",
+            "YangDataWithAnyxml", "YangDataWithAnyxmlBuilder",
 
-                // yang-data content artifacts
-                "yang.data.with.container.ContainerFromYangData",
-                "yang.data.with.container.ContainerFromYangDataBuilder",
-                "yang.data.with.list.ListFromYangData", "yang.data.with.list.ListFromYangDataBuilder",
-                "yang.data.with.anydata.AnydataFromYangData", "yang.data.with.anyxml.AnyxmlFromYangData",
+            // yang-data content artifacts
+            "yang.data.with.container.ContainerFromYangData",
+            "yang.data.with.container.ContainerFromYangDataBuilder",
+            "yang.data.with.list.ListFromYangData", "yang.data.with.list.ListFromYangDataBuilder",
+            "yang.data.with.anydata.AnydataFromYangData", "yang.data.with.anyxml.AnyxmlFromYangData",
 
-                // yang-data artifacts using groups
-                "YangDataWithContainerFromGroup", "YangDataWithContainerFromGroupBuilder",
-                "YangDataWithListFromGroup", "YangDataWithListFromGroupBuilder",
-                "YangDataWithLeafFromGroup", "YangDataWithLeafFromGroupBuilder",
-                "YangDataWithLeafListFromGroup", "YangDataWithLeafListFromGroupBuilder",
-                "YangDataWithAnydataFromGroup", "YangDataWithAnydataFromGroupBuilder",
-                "YangDataWithAnyxmlFromGroup", "YangDataWithAnyxmlFromGroupBuilder",
+            // yang-data artifacts using groups
+            "YangDataWithContainerFromGroup", "YangDataWithContainerFromGroupBuilder",
+            "YangDataWithListFromGroup", "YangDataWithListFromGroupBuilder",
+            "YangDataWithLeafFromGroup", "YangDataWithLeafFromGroupBuilder",
+            "YangDataWithLeafListFromGroup", "YangDataWithLeafListFromGroupBuilder",
+            "YangDataWithAnydataFromGroup", "YangDataWithAnydataFromGroupBuilder",
+            "YangDataWithAnyxmlFromGroup", "YangDataWithAnyxmlFromGroupBuilder",
 
-                // group artifacts
-                "GrpForContainer", "GrpForList", "GrpForLeaf", "GrpForLeafList", "GrpForAnydata", "GrpForAnyxml",
+            // group artifacts
+            "GrpForContainer", "GrpForList", "GrpForLeaf", "GrpForLeafList", "GrpForAnydata", "GrpForAnyxml",
 
-                // group content artifacts
-                "grp._for.container.ContainerFromGroup", "grp._for.container.ContainerFromGroupBuilder",
-                "grp._for.list.ListFromGroup", "grp._for.list.ListFromGroupBuilder",
-                "grp._for.anydata.AnydataFromGroup", "grp._for.anyxml.AnyxmlFromGroup",
+            // group content artifacts
+            "grp._for.container.ContainerFromGroup", "grp._for.container.ContainerFromGroupBuilder",
+            "grp._for.list.ListFromGroup", "grp._for.list.ListFromGroupBuilder",
+            "grp._for.anydata.AnydataFromGroup", "grp._for.anyxml.AnyxmlFromGroup",
 
-                // artifacts for non-ascii template naming: yang data artifact, inner container + builder
-                "$ľaľaho$20$papľuhu", "$ľaľaho$20$papľuhuBuilder",
-                "$ľaľaho$20$papľuhu$.LatinNaming", "$ľaľaho$20$papľuhu$.LatinNamingBuilder",
-                "привет", "приветBuilder", "привет$.CyrillicNaming", "привет$.CyrillicNamingBuilder"
+            // artifacts for non-ascii template naming: yang data artifact, inner container + builder
+            "$ľaľaho$20$papľuhu", "$ľaľaho$20$papľuhuBuilder",
+            "$ľaľaho$20$papľuhu$.LatinNaming", "$ľaľaho$20$papľuhu$.LatinNamingBuilder",
+            "привет", "приветBuilder", "привет$.CyrillicNaming", "привет$.CyrillicNamingBuilder"
         );
 
-        for (String name : artifactNames) {
-            final String className = CompilationTestUtils.BASE_PKG + ".urn.test.yang.data.demo.rev220222." + name;
+        for (var name : artifactNames) {
+            final var className = CompilationTestUtils.BASE_PKG + ".urn.test.yang.data.demo.rev220222." + name;
             // ensure class source is generated
-            final String srcPath = className.replace('.', File.separatorChar) + ".java";
-            assertTrue(new File(sourcesOutputDir, srcPath).exists(), srcPath + " exists");
+            final var srcPath = className.replace('.', File.separatorChar) + ".java";
+            assertRegularFile(sourcesOutputDir, srcPath);
         }
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);

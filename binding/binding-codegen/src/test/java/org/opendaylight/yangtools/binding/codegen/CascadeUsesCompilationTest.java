@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.BASE_PKG;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS_BAR;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS_BAZ;
@@ -20,10 +19,10 @@ import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.NS_SVC_FOO;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertFilesCount;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertImplementsIfc;
+import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertRegularFile;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.testCompilation;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -33,41 +32,41 @@ import org.junit.jupiter.api.Test;
 class CascadeUsesCompilationTest extends BaseCompilationTest {
     @Test
     void testCascadeUsesCompilation() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("cascade-uses");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("cascade-uses");
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("cascade-uses");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("cascade-uses");
         generateTestSources("/compilation/cascade-uses", sourcesOutputDir);
 
         // Test if all sources are generated from module foo
-        File parent = new File(sourcesOutputDir, NS_FOO);
-        assertTrue(new File(parent, "FooData.java").exists());
-        assertTrue(new File(parent, "FooGr1.java").exists());
-        assertTrue(new File(parent, "Nodes.java").exists());
-        assertTrue(new File(parent, "NodesBuilder.java").exists());
+        var parent = sourcesOutputDir.resolve(NS_FOO);
+        assertRegularFile(parent, "FooData.java");
+        assertRegularFile(parent, "FooGr1.java");
+        assertRegularFile(parent, "Nodes.java");
+        assertRegularFile(parent, "NodesBuilder.java");
         assertFilesCount(parent, 5);
-        File svcParent = new File(sourcesOutputDir, NS_SVC_FOO);
+        var svcParent = sourcesOutputDir.resolve(NS_SVC_FOO);
         assertFilesCount(svcParent, 1);
 
         // Test if all sources are generated from module bar
-        parent = new File(sourcesOutputDir, NS_BAR);
-        assertTrue(new File(parent, "BarData.java").exists());
-        assertTrue(new File(parent, "BarGr1.java").exists());
-        assertTrue(new File(parent, "BarGr2.java").exists());
+        parent = sourcesOutputDir.resolve(NS_BAR);
+        assertRegularFile(parent, "BarData.java");
+        assertRegularFile(parent, "BarGr1.java");
+        assertRegularFile(parent, "BarGr2.java");
         assertFilesCount(parent, 3);
-        svcParent = new File(sourcesOutputDir, NS_SVC_BAR);
+        svcParent = sourcesOutputDir.resolve(NS_SVC_BAR);
         assertFilesCount(svcParent, 1);
 
         // Test if all sources are generated from module baz
-        parent = new File(sourcesOutputDir, NS_BAZ);
-        assertTrue(new File(parent, "BazData.java").exists());
-        assertTrue(new File(parent, "BazGr1.java").exists());
+        parent = sourcesOutputDir.resolve(NS_BAZ);
+        assertRegularFile(parent, "BazData.java");
+        assertRegularFile(parent, "BazGr1.java");
         assertFilesCount(parent, 2);
-        svcParent = new File(sourcesOutputDir, NS_SVC_BAZ);
+        svcParent = sourcesOutputDir.resolve(NS_SVC_BAZ);
         assertFilesCount(svcParent, 1);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        final var loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final var loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         final var nodesClass = Class.forName(BASE_PKG + ".urn.opendaylight.foo.rev131008.Nodes", true, loader);
         final var nodesBuilderClass = Class.forName(BASE_PKG + ".urn.opendaylight.foo.rev131008.NodesBuilder", true,
                 loader);
