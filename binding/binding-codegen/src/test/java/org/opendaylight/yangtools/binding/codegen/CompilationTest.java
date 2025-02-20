@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertRegularFile;
@@ -789,6 +790,7 @@ class CompilationTest extends BaseCompilationTest {
         final var compiledOutputDir = CompilationTestUtils.compilerOutput("yang-data-gen");
 
         generateTestSources("/compilation/yang-data-gen", sourcesOutputDir);
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         final var artifactNames = List.of(
             // module with top level container
@@ -830,11 +832,13 @@ class CompilationTest extends BaseCompilationTest {
             "привет", "приветBuilder", "привет$.CyrillicNaming", "привет$.CyrillicNamingBuilder"
         );
 
+        final var loader = new URLClassLoader(new URL[] { compiledOutputDir.toUri().toURL() });
         for (var name : artifactNames) {
             final var className = CompilationTestUtils.BASE_PKG + ".urn.test.yang.data.demo.rev220222." + name;
             // ensure class source is generated
             final var srcPath = className.replace('.', File.separatorChar) + ".java";
             assertRegularFile(sourcesOutputDir, srcPath);
+            assertNotNull(Class.forName(className, true, loader));
         }
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
