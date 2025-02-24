@@ -22,6 +22,30 @@
       },
       "revId": "20656fa2ff36e07c21c08d76d1f5c0f3a79f9033",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "efe3f0a3_64607a62",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/InterfaceTemplate.xtend",
+        "patchSetId": 23
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-02-24T15:11:34Z",
+      "side": 1,
+      "message": "also: we do not want to emit the method from generator -- and then we don\u0027t have to ignore it here",
+      "parentUuid": "9595401e_277523b2",
+      "range": {
+        "startLine": 199,
+        "startChar": 24,
+        "endLine": 199,
+        "endChar": 59
+      },
+      "revId": "20656fa2ff36e07c21c08d76d1f5c0f3a79f9033",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
