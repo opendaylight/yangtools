@@ -52,18 +52,40 @@ public final class DatabindContext {
         this.mountContext = requireNonNull(mountContext);
     }
 
+    /**
+     * Returns a {@link DatabindContext} backed by an {@link EffectiveModelContext}.
+     *
+     * @param modelContext the model context
+     * @return a {@link DatabindContext} backed by an {@link EffectiveModelContext}
+     */
     public static @NonNull DatabindContext ofModel(final EffectiveModelContext modelContext) {
         return ofMountPoint(MountPointContext.of(modelContext));
     }
 
+    /**
+     * Returns a {@link DatabindContext} backed by a {@link MountPointContext}.
+     *
+     * @param mountContext the mount context
+     * @return a {@link DatabindContext} backed by a {@link MountPointContext}
+     */
     public static @NonNull DatabindContext ofMountPoint(final MountPointContext mountContext) {
         return new DatabindContext(mountContext);
     }
 
+    /**
+     * Returns the {@link EffectiveModelContext}.
+     *
+     * @return the {@link EffectiveModelContext}
+     */
     public @NonNull EffectiveModelContext modelContext() {
         return mountContext.modelContext();
     }
 
+    /**
+     * Returns the {@link DataSchemaContextTree}.
+     *
+     * @return the {@link DataSchemaContextTree}
+     */
     public @NonNull DataSchemaContextTree schemaTree() {
         final var existing = (DataSchemaContextTree) SCHEMA_TREE.getAcquire(this);
         return existing != null ? existing : createSchemaTree();
@@ -75,6 +97,11 @@ public final class DatabindContext {
         return witness != null ? witness : created;
     }
 
+    /**
+     * Returns the {@link JSONCodecFactory}.
+     *
+     * @return the {@link JSONCodecFactory}
+     */
     public @NonNull JSONCodecFactory jsonCodecs() {
         final var existing = (JSONCodecFactory) JSON_CODECS.getAcquire(this);
         return existing != null ? existing : createJsonCodecs();
@@ -86,6 +113,11 @@ public final class DatabindContext {
         return witness != null ? witness : created;
     }
 
+    /**
+     * Returns the {@link XmlCodecFactory}.
+     *
+     * @return the {@link XmlCodecFactory}
+     */
     public @NonNull XmlCodecFactory xmlCodecs() {
         final var existing = (XmlCodecFactory) XML_CODECS.getAcquire(this);
         return existing != null ? existing : createXmlCodecs();
