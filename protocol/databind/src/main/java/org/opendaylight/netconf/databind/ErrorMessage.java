@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param elementBody the string to be displayed
  * @param xmlLang optional Language Identification string
  */
-// TODO: move to yangtools.yang.common for integration into RpcError
+// FIXME: move to yangtools.yang.common for integration into RpcError
 @Beta
 @NonNullByDefault
 public record ErrorMessage(String elementBody, @Nullable String xmlLang) {
