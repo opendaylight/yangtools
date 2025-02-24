@@ -82,6 +82,15 @@ public final class DatabindContext {
     }
 
     /**
+     * Returns the {@link MountPointContext}.
+     *
+     * @return the {@link MountPointContext}
+     */
+    public @NonNull MountPointContext mountContext() {
+        return mountContext;
+    }
+
+    /**
      * Returns the {@link DataSchemaContextTree}.
      *
      * @return the {@link DataSchemaContextTree}

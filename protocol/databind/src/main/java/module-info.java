@@ -5,6 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+/**
+ * Object models of NETCONF/RESTCONF constructs and their YANG-assisted data binding operations.
+ */
 module org.opendaylight.netconf.databind {
     exports org.opendaylight.netconf.databind;
 
