@@ -13,10 +13,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.codec.gson.JSONCodecFactory;
 import org.opendaylight.yangtools.yang.data.codec.gson.JSONCodecFactorySupplier;
 import org.opendaylight.yangtools.yang.data.codec.xml.XmlCodecFactory;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
@@ -40,6 +43,7 @@ public final class DatabindContext {
     }
 
     private final @NonNull MountPointContext mountContext;
+    private final @NonNull BuilderFactory builderFactory;
 
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile DataSchemaContextTree schemaTree;
@@ -48,8 +52,10 @@ public final class DatabindContext {
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile XmlCodecFactory xmlCodecs;
 
-    private DatabindContext(final @NonNull MountPointContext mountContext) {
+    @NonNullByDefault
+    private DatabindContext(final MountPointContext mountContext, final BuilderFactory builderFactory) {
         this.mountContext = requireNonNull(mountContext);
+        this.builderFactory = requireNonNull(builderFactory);
     }
 
     /**
@@ -58,18 +64,47 @@ public final class DatabindContext {
      * @param modelContext the model context
      * @return a {@link DatabindContext} backed by an {@link EffectiveModelContext}
      */
-    public static @NonNull DatabindContext ofModel(final EffectiveModelContext modelContext) {
+    @NonNullByDefault
+    public static DatabindContext ofModel(final EffectiveModelContext modelContext) {
         return ofMountPoint(MountPointContext.of(modelContext));
+    }
+
+    /**
+     * Returns a {@link DatabindContext} backed by an {@link EffectiveModelContext} and a {@link BuilderFactory}.
+     *
+     * @param modelContext the model context
+     * @param builderFactory the builder factory
+     * @return a {@link DatabindContext} backed by an {@link EffectiveModelContext}
+     */
+    @NonNullByDefault
+    public static DatabindContext ofModel(final EffectiveModelContext modelContext,
+            final BuilderFactory builderFactory) {
+        return ofMountPoint(MountPointContext.of(modelContext), builderFactory);
+    }
+
+    /**
+     * Returns a {@link DatabindContext} backed by a {@link MountPointContext} and
+     * {@link ImmutableNodes#builderFactory()}.
+     *
+     * @param mountContext the mount context
+     * @return a {@link DatabindContext} backed by a {@link MountPointContext}
+     */
+    @NonNullByDefault
+    public static DatabindContext ofMountPoint(final MountPointContext mountContext) {
+        return ofMountPoint(mountContext, ImmutableNodes.builderFactory());
     }
 
     /**
      * Returns a {@link DatabindContext} backed by a {@link MountPointContext}.
      *
      * @param mountContext the mount context
+     * @param builderFactory the builder factory
      * @return a {@link DatabindContext} backed by a {@link MountPointContext}
      */
-    public static @NonNull DatabindContext ofMountPoint(final MountPointContext mountContext) {
-        return new DatabindContext(mountContext);
+    @NonNullByDefault
+    public static DatabindContext ofMountPoint(final MountPointContext mountContext,
+            final BuilderFactory builderFactory) {
+        return new DatabindContext(mountContext, builderFactory);
     }
 
     /**
@@ -88,6 +123,15 @@ public final class DatabindContext {
      */
     public @NonNull MountPointContext mountContext() {
         return mountContext;
+    }
+
+    /**
+     * Returns the {@link BuilderFactory}.
+     *
+     * @return the {@link BuilderFactory}
+     */
+    public @NonNull BuilderFactory builderFactory() {
+        return builderFactory;
     }
 
     /**
