@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.binding;
+package org.opendaylight.yangtools.binding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.DataObjectIdentifier;
-import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
 import org.opendaylight.yangtools.binding.test.mock.Node;
 import org.opendaylight.yangtools.binding.test.mock.NodeChild;
@@ -49,7 +47,7 @@ class YT1660Test {
         assertEquals(ref.key(), ref.getFirstKeyOf(NodeChild.class));
         final var ex = assertThrows(NoSuchElementException.class, () -> ref.getFirstKeyOf(Node.class));
         assertEquals("""
-            No step matching interface org.opendaylight.yangtools.binding.test.mock.Node found in DataObjectReference[
+            No key matching org.opendaylight.yangtools.binding.test.mock.Node found in DataObjectReference[
               org.opendaylight.yangtools.binding.test.mock.Nodes
               org.opendaylight.yangtools.binding.test.mock.Node(any)
               org.opendaylight.yangtools.binding.test.mock.NodeChild[org.opendaylight.yangtools.binding.test.mock\

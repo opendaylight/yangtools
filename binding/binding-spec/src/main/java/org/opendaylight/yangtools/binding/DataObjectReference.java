@@ -390,6 +390,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         if (key != null) {
             return key;
         }
-        throw new NoSuchElementException("No step matching " + listItem + " found in " + this);
+        throw new NoSuchElementException("No key matching " + listItem.getName() + " found in " + this);
     }
 }
