@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.binding;
+package org.opendaylight.yangtools.binding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.DataObjectIdentifier;
-import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.WithKey;
 import org.opendaylight.yangtools.binding.test.mock.Node;
 import org.opendaylight.yangtools.binding.test.mock.NodeChild;
