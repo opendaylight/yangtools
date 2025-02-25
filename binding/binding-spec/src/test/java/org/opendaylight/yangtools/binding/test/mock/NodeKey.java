@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.test.mock;
 
-import java.io.Serial;
 import org.opendaylight.yangtools.binding.Key;
 
 public class NodeKey implements Key<Node> {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final int id;
