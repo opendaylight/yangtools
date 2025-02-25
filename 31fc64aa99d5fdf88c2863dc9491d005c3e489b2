@@ -16,6 +16,24 @@
       "message": "LGTM. Can you confirm that this give us the possibility to build a DataObjectReference from a DataObjectIdentifier including for KeyLessStep like that:\n\ntablesId.toReferenceBuilder().child(Ipv4RoutesCase.class, Ipv4Routes.class).child(Ipv4Route.class).build()",
       "revId": "31fc64aa99d5fdf88c2863dc9491d005c3e489b2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc808c54_c2312f41",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-02-25T11:41:56Z",
+      "side": 1,
+      "message": "yes, that is the plan. next revision of the patch will have UTs showing that",
+      "parentUuid": "bd53af40_cf50c9cd",
+      "revId": "31fc64aa99d5fdf88c2863dc9491d005c3e489b2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
