@@ -14,8 +14,10 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.security.Principal;
 import java.util.UUID;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Abstract base class for {@link Request} implementations. Each instance is automatically assigned a
@@ -34,14 +36,18 @@ public abstract class AbstractRequest<R> implements Request<R> {
         }
     }
 
+    private final @Nullable Principal principal;
+
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile UUID uuid;
 
     /**
      * Default constructor.
+     *
+     * @param principal the {@link Principal} making the request, {@code null} if not authenticated.
      */
-    protected AbstractRequest() {
-        // nothing here
+    protected AbstractRequest(final @Nullable Principal principal) {
+        this.principal = principal;
     }
 
     @Override
@@ -54,6 +60,11 @@ public abstract class AbstractRequest<R> implements Request<R> {
         final var created = UUID.randomUUID();
         final var witness = (UUID) UUID_VH.compareAndExchangeRelease(this, null, created);
         return witness != null ? witness : created;
+    }
+
+    @Override
+    public final Principal principal() {
+        return principal;
     }
 
     @Override
@@ -94,9 +105,9 @@ public abstract class AbstractRequest<R> implements Request<R> {
     protected @NonNull ToStringHelper addToStringAttributes(final @NonNull ToStringHelper helper) {
         helper.add("uuid", uuid());
 
-        final var principal = principal();
-        if (principal != null) {
-            helper.add("principal", principal.getName());
+        final var tmp = principal;
+        if (tmp != null) {
+            helper.add("principal", tmp.getName());
         }
 
         return helper;
