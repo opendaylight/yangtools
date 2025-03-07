@@ -5,6 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+/**
+ * Utilities for constructing and working with
+ * {@link org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext}.
+ */
 module org.opendaylight.yangtools.binding.runtime.spi {
     exports org.opendaylight.yangtools.binding.runtime.spi;
 
@@ -26,4 +30,5 @@ module org.opendaylight.yangtools.binding.runtime.spi {
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
     requires static org.checkerframework.checker.qual;
+    requires static org.osgi.annotation.bundle;
 }
