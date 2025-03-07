@@ -247,6 +247,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
+    @Deprecated(since = "14.0.11", forRemoval = true)
     public BindingRuntimeContext getRuntimeContext() {
         return delegate().getRuntimeContext();
     }
