@@ -91,7 +91,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     }
 
     static final class RFC7951 extends JSONCodecFactory {
-        RFC7951(final @NonNull  EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
+        RFC7951(final @NonNull EffectiveModelContext context, final @NonNull CodecCache<JSONCodec<?>> cache) {
             super(context, cache, InstanceIdentifierJSONCodec.RFC7951::new);
         }
 
