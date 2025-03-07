@@ -112,7 +112,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <javaSourceVersion>17</javaSourceVersion>
+                            <javaSourceVersion>${maven.compiler.release}</javaSourceVersion>
                             <outputDirectory>${project.build.directory}/generated-sources/xtend</outputDirectory>
                         </configuration>
                     </execution>
