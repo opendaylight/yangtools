@@ -19,6 +19,7 @@
     <artifactId>odl-yangtools-xpath-api</artifactId>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: XPath API</name>
+    <description>YANG XPath API</description>
 
     <dependencies>
         <dependency>
