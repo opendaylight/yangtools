@@ -32,16 +32,26 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- NOTE: The use of <scope> here is a little particular, compared to other standard projects...
+        <!--
+            NOTE: The use of <scope> here is a little particular, compared to other standard projects...
 
-             As this test helper project is intended to itself be used as a <scope>test
-             <dependency> so that the utility code in src/main/java of this project can
-             be used to write src/test/java code in projects using it, all <dependencies>
-             here are <scope>compile here (the default, don't mention it), and NOT <scope>test.
-             (Only a <dependency> which only this project would want to use in its own src/test/java code
-             but not expose to projects depending on it would be <scope>test.  However that kind of against
-             the whole point of this project, and currently there no such dependencies here.
+            As this test helper project is intended to itself be used as a scope=test dependency so that
+            the utility code in src/main/java of this project can be used to write src/test/java code in
+            projects using it, all dependencies here are scope=compile here (the default, don't mention it),
+            and NOT scope=test.
+            (Only a dependency which only this project would want to use in its own src/test/java code
+            but not expose to projects depending on it would be scope=test. However that kind of against
+            the whole point of this project, and currently there no such dependencies here.
          -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -49,16 +59,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 </project>

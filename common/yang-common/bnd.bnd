@@ -1,1 +1,0 @@
-Import-Package: org.checkerframework.*;resolution:=optional, *
