@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.regex.qual.Regex;
 
 /**
  * Nicer shorter toString() for {@link Method} than it's default.
@@ -21,9 +20,7 @@ import org.checkerframework.checker.regex.qual.Regex;
  * @author Michael Vorburger
  */
 public final class MethodExtensions {
-    @Regex
-    private static final String PARAM_PATTERN_STR = "\\[\\]$";
-    private static final Pattern PARAM_PATTERN = Pattern.compile(PARAM_PATTERN_STR);
+    private static final Pattern PARAM_PATTERN = Pattern.compile("\\[\\]$");
 
     private MethodExtensions() {
     }
