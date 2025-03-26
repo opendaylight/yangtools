@@ -15,12 +15,10 @@ import com.google.common.collect.Interners;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -47,16 +45,12 @@ import org.eclipse.jdt.annotation.Nullable;
 public final class QName extends AbstractQName implements Comparable<QName> {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    @Regex
-    private static final String QNAME_STRING_FULL = "^\\((.+)\\?revision=(.+)\\)(.+)$";
-    private static final Pattern QNAME_PATTERN_FULL = Pattern.compile(QNAME_STRING_FULL);
+    private static final Pattern QNAME_PATTERN_FULL = Pattern.compile("^\\((.+)\\?revision=(.+)\\)(.+)$");
 
-    @Regex
-    private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
-    private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
+    private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile("^\\((.+)\\)(.+)$");
 
     private final @NonNull QNameModule module;
     private transient int hash = 0;
