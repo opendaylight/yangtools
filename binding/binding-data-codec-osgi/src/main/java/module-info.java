@@ -20,6 +20,6 @@ module org.opendaylight.yangtools.binding.data.codec.osgi {
     requires org.slf4j;
 
     // Annotations
-    requires static org.checkerframework.checker.qual;
+    requires static transitive org.checkerframework.checker.qual;
     requires static org.osgi.service.component.annotations;
 }
