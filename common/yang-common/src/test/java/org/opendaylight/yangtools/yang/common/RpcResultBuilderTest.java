@@ -109,7 +109,7 @@ class RpcResultBuilderTest {
     }
 
     @Test
-    public void testErrors() {
+    void testErrors() {
         final RpcResultBuilder<Object> rpcResultBuilder = RpcResultBuilder.status(true);
         final RpcError rpcErrorShort = RpcResultBuilder.newError(ErrorType.RPC, TAG, "msg");
         final RpcError rpcErrorLong = RpcResultBuilder.newError(ErrorType.RPC, TAG, "msg", "applicationTag", "info",

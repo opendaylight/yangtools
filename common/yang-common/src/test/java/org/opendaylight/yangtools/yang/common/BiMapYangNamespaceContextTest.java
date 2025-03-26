@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-public class BiMapYangNamespaceContextTest {
+class BiMapYangNamespaceContextTest {
     private static final QNameModule FOO = QNameModule.of("foo");
     private static final QNameModule BAR = QNameModule.of("bar");
     private static final QNameModule BAZ = QNameModule.of("baz");
@@ -29,7 +29,7 @@ public class BiMapYangNamespaceContextTest {
         ImmutableBiMap.of("foo", FOO, "bar", BAR));
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         assertTrue(context.equals(context));
         assertTrue(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("foo", FOO, "bar", BAR))));
         assertFalse(context.equals(null));
@@ -38,31 +38,31 @@ public class BiMapYangNamespaceContextTest {
     }
 
     @Test
-    public void testPrefixForNamespace() {
+    void testPrefixForNamespace() {
         assertEquals(Optional.of("foo"), context.findPrefixForNamespace(FOO));
         assertEquals(Optional.of("bar"), context.findPrefixForNamespace(BAR));
         assertEquals(Optional.empty(), context.findPrefixForNamespace(BAZ));
     }
 
     @Test
-    public void testNamespaceForPrefix() {
+    void testNamespaceForPrefix() {
         assertEquals(Optional.of(FOO), context.findNamespaceForPrefix("foo"));
         assertEquals(Optional.of(BAR), context.findNamespaceForPrefix("bar"));
         assertEquals(Optional.empty(), context.findNamespaceForPrefix("baz"));
     }
 
     @Test
-    public void testReadWrite() throws IOException {
+    void testReadWrite() throws IOException {
         final byte[] bytes;
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            try (DataOutputStream dos = new DataOutputStream(bos)) {
+        try (var bos = new ByteArrayOutputStream()) {
+            try (var dos = new DataOutputStream(bos)) {
                 context.writeTo(dos);
             }
             bytes = bos.toByteArray();
         }
 
         final BiMapYangNamespaceContext other;
-        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
+        try (var dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
             other = BiMapYangNamespaceContext.readFrom(dis);
         }
 
@@ -70,7 +70,7 @@ public class BiMapYangNamespaceContextTest {
     }
 
     @Test
-    public void testCreateQName() {
+    void testCreateQName() {
         assertEquals(QName.create(FOO, "some"), context.createQName("foo", "some"));
     }
 }

@@ -13,15 +13,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-public class YangVersionTest {
+class YangVersionTest {
     @Test
-    public void testGetReference() {
+    void testGetReference() {
         assertEquals("RFC6020", YangVersion.VERSION_1.reference());
         assertEquals("RFC7950", YangVersion.VERSION_1_1.reference());
     }
 
     @Test
-    public void testParse() {
+    void testParse() {
         assertNull(YangVersion.forString(""));
         assertNull(YangVersion.forString("1."));
         assertEquals(YangVersion.VERSION_1, YangVersion.forString("1"));
@@ -29,12 +29,12 @@ public class YangVersionTest {
     }
 
     @Test
-    public void testParseNull() {
+    void testParseNull() {
         assertThrows(NullPointerException.class, () -> YangVersion.forString(null));
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("1", YangVersion.VERSION_1.toString());
         assertEquals("1.1", YangVersion.VERSION_1_1.toString());
     }
