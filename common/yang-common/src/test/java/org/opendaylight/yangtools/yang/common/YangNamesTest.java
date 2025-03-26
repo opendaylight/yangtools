@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import org.junit.jupiter.api.Test;
 
-public class YangNamesTest {
+class YangNamesTest {
     @Test
     public void testParseFileName() {
         assertEquals(new SimpleImmutableEntry<>("foo", null), YangNames.parseFilename("foo"));
@@ -22,7 +22,7 @@ public class YangNamesTest {
     }
 
     @Test
-    public void testParseFileNameNull() {
+    void testParseFileNameNull() {
         assertThrows(NullPointerException.class, () -> YangNames.parseFilename(null));
     }
 }

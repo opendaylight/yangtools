@@ -22,7 +22,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-public class RevisionTest {
+class RevisionTest {
     @Test
     void testOf() {
         assertEquals("2017-12-25", Revision.of("2017-12-25").toString());
