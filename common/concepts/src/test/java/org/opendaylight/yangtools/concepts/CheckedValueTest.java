@@ -24,25 +24,26 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 
-public class CheckedValueTest {
+class CheckedValueTest {
     @Test
-    public void testNullValue() {
+    void testNullValue() {
         assertThrows(NullPointerException.class, () -> CheckedValue.ofValue(null));
     }
 
-    public void testExceptionGet() {
+    @Test
+    void testExceptionGet() {
         final var value = CheckedValue.ofException(new Exception());
         assertThrows(IllegalStateException.class, () -> value.get());
     }
 
     @Test
-    public void testValueException() {
+    void testValueException() {
         final var value = CheckedValue.ofValue("foo");
         assertThrows(IllegalStateException.class, () -> value.getException());
     }
 
     @Test
-    public void testGet() {
+    void testGet() {
         final var value = "foo";
         final var val = CheckedValue.ofValue(value);
         assertTrue(val.isPresent());
@@ -50,7 +51,7 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testThrowableGetThrowable() {
+    void testThrowableGetThrowable() {
         final var cause = new Exception();
         final var val = CheckedValue.ofException(cause);
         assertFalse(val.isPresent());
@@ -58,14 +59,14 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("CheckedValue{first=foo}", CheckedValue.ofValue("foo").toString());
         assertEquals("CheckedValue{second=java.lang.NullPointerException: foo}",
             CheckedValue.ofException(new NullPointerException("foo")).toString());
     }
 
     @Test
-    public void testEqualsHashCode() {
+    void testEqualsHashCode() {
         final var fooVal = CheckedValue.ofValue("foo");
         final var fooVal2 = CheckedValue.ofValue("foo");
         final var oneVal = CheckedValue.ofValue(1);
@@ -87,7 +88,7 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testIfPresent() {
+    void testIfPresent() {
         final String foo = "foo";
         @SuppressWarnings("unchecked")
         final Consumer<Object> consumer = mock(Consumer.class);
@@ -97,7 +98,7 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testThrowableIfPresent() {
+    void testThrowableIfPresent() {
         @SuppressWarnings("unchecked")
         final Consumer<Object> consumer = mock(Consumer.class);
         doNothing().when(consumer).accept(any(Object.class));
@@ -106,7 +107,7 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testOrElse() {
+    void testOrElse() {
         final String foo = "foo";
         final String bar = "bar";
         assertSame(foo, CheckedValue.ofValue(foo).orElse(bar));
@@ -114,7 +115,7 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testMap() {
+    void testMap() {
         final String foo = "foo";
         final String bar = "bar";
         final CheckedValue<Object, ?> errVal = CheckedValue.ofValue(foo);
@@ -126,7 +127,7 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testExceptionMap() {
+    void testExceptionMap() {
         final var errVal = CheckedValue.ofException(new NullPointerException());
         @SuppressWarnings("unchecked")
         final Function<Object, Object> mapper = mock(Function.class);
@@ -136,7 +137,7 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testOrElseGet() {
+    void testOrElseGet() {
         final String foo = "foo";
         @SuppressWarnings("unchecked")
         final Supplier<String> supplier = mock(Supplier.class);
@@ -146,7 +147,7 @@ public class CheckedValueTest {
     }
 
     @Test
-    public void testExceptionOrElseGet() {
+    void testExceptionOrElseGet() {
         final String bar = "bar";
         @SuppressWarnings("unchecked")
         final Supplier<Object> supplier = mock(Supplier.class);
