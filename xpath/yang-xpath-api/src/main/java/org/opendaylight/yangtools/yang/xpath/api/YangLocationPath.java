@@ -306,8 +306,6 @@ public abstract sealed class YangLocationPath implements YangExpr {
         }
     }
 
-    @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS",
-            justification = "https://github.com/spotbugs/spotbugs/issues/511")
     static final class NodeTypeStepWithPredicates extends NodeTypeStep {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
