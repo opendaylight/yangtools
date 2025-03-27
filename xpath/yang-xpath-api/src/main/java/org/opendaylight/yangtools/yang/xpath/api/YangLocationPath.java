@@ -13,7 +13,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,9 +79,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
                 && getPredicates().equals(other.getPredicates());
         }
 
-        @SuppressFBWarnings(value = "SE_PRIVATE_READ_RESOLVE_NOT_INHERITED",
-                justification = "We have only one subclass, and that does not want to inherit this")
-        private Object readResolve() {
+        Object readResolve() {
             return getAxis().asStep();
         }
     }
@@ -101,6 +98,11 @@ public abstract sealed class YangLocationPath implements YangExpr {
         @Override
         public ImmutableSet<YangExpr> getPredicates() {
             return predicates;
+        }
+
+        @Override
+        Object readResolve() {
+            return this;
         }
     }
 
