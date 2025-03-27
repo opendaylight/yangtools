@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,14 +23,12 @@ import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * A violation of a {@link CanonicalValue} validation. Contains details as mandated by RFC7950 Section 8.3.1.
- *
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
 public abstract class CanonicalValueViolation implements Immutable, Serializable {
     public static class Regular extends CanonicalValueViolation {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final @Nullable String appTag;
@@ -58,9 +55,39 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
         }
     }
 
+    public static final class WithCause extends CanonicalValueViolation {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        private final Exception cause;
+
+        WithCause(final Exception cause) {
+            this.cause = requireNonNull(cause);
+        }
+
+        @Override
+        @Nullable String appTag() {
+            return null;
+        }
+
+        @Override
+        @Nullable String message() {
+            return cause.getMessage();
+        }
+
+        public Exception getCause() {
+            return cause;
+        }
+
+        @Override
+        ToStringHelper addToString(final ToStringHelper helper) {
+            return helper.add("cause", cause);
+        }
+    }
+
     @SuppressFBWarnings("NM_CLASS_NOT_EXCEPTION")
-    public static class WithException extends CanonicalValueViolation {
-        @Serial
+    static class WithException extends CanonicalValueViolation {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final Exception cause;
@@ -87,19 +114,24 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
         ToStringHelper addToString(final ToStringHelper helper) {
             return helper.add("cause", cause);
         }
+
+        @java.io.Serial
+        private Object readResolve() {
+            return new WithCause(cause);
+        }
     }
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
     private static final CanonicalValueViolation EMPTY = new Regular(null, null);
     private static final Either<?, CanonicalValueViolation> EMPTY_VARIANT = Either.ofSecond(EMPTY);
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     public static CanonicalValueViolation empty() {
         return EMPTY;
     }
 
     public static CanonicalValueViolation of(final Exception cause) {
-        return new WithException(cause);
+        return new WithCause(cause);
     }
 
     public static CanonicalValueViolation of(final @Nullable String appTag, final @Nullable String message) {
