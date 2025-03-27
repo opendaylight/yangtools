@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.concepts;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
@@ -20,9 +19,9 @@ import java.lang.invoke.VarHandle;
 public abstract class AbstractRegistration implements Registration {
     private static final VarHandle CLOSED;
 
-    // All access needs to go through this handle
-    @SuppressWarnings("unused")
-    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
+    // All access needs to go through this handle, really.
+    // NOTE: we really would like to use 'boolean' here, but we may have a Serializable subclass and we do not want
+    //       to risk breakage for little benefit we would get in terms of our code here.
     private volatile byte closed;
 
     static {
@@ -73,5 +72,15 @@ public abstract class AbstractRegistration implements Registration {
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
         return toStringHelper.add("closed", isClosed());
+    }
+
+    /**
+     * Dance around <a href=""https://github.com/spotbugs/spotbugs/issues/2749">underlying issue</a>.
+     */
+    @Deprecated(forRemoval = true)
+    final void spotbugs2749() {
+        if (closed == 2) {
+            closed = 3;
+        }
     }
 }
