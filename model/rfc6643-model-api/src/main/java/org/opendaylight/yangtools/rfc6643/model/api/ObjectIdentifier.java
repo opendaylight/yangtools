@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.WritableObject;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -27,10 +26,9 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 // TODO: this class could also be Comparable<ObjectIdentifier>
 @Beta
 public final class ObjectIdentifier implements Identifier, WritableObject {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
-    @Regex
-    private static final String CHECK_OID_REGEX = "^\\d+(\\.\\d+)*$";
-    private static final Pattern CHECK_OID_PATTERN = Pattern.compile(CHECK_OID_REGEX);
+    private static final Pattern CHECK_OID_PATTERN = Pattern.compile("^\\d+(\\.\\d+)*$");
     private static final Pattern SPLIT_PATTERN = Pattern.compile(".", Pattern.LITERAL);
 
     private final int[] subIdentifiers;
