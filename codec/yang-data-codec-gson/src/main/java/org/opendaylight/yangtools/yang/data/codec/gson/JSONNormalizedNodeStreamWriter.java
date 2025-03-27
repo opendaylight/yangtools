@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import javax.xml.transform.dom.DOMSource;
-import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -81,13 +80,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
 
-    @Regex
-    private static final String NUMBER_STRING = "-?\\d+(\\.\\d+)?";
-    private static final Pattern NUMBER_PATTERN = Pattern.compile(NUMBER_STRING);
-
-    @Regex
-    private static final String NOT_DECIMAL_NUMBER_STRING = "-?\\d+";
-    private static final Pattern NOT_DECIMAL_NUMBER_PATTERN = Pattern.compile(NOT_DECIMAL_NUMBER_STRING);
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?");
+    private static final Pattern NOT_DECIMAL_NUMBER_PATTERN = Pattern.compile("-?\\d+");
 
     private final NormalizedNodeStreamWriterStack tracker;
     private final JSONCodecFactory codecs;

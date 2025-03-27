@@ -26,7 +26,6 @@ module org.opendaylight.yangtools.yang.data.codec.gson {
     requires org.slf4j;
 
     // Annotations
-    requires static org.checkerframework.checker.qual;
     requires static com.github.spotbugs.annotations;
     requires static org.eclipse.jdt.annotation;
     requires static org.osgi.annotation.bundle;
