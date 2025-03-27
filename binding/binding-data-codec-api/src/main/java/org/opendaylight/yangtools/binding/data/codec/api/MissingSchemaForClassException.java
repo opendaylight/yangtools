@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.binding.data.codec.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -21,11 +19,12 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 public final class MissingSchemaForClassException extends MissingSchemaException {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "Documented in API contract")
-    private final transient Class<?> bindingClass;
+    // It's either this or SuppressFBWarnings
+    @SuppressWarnings("checkstyle:mutableException")
+    private transient Class<?> bindingClass;
 
     public MissingSchemaForClassException(final Class<?> clz) {
         super(String.format("Schema is not available for %s", clz));
@@ -34,5 +33,11 @@ public final class MissingSchemaForClassException extends MissingSchemaException
 
     public @Nullable Class<?> getBindingClass() {
         return bindingClass;
+    }
+
+    @java.io.Serial
+    private Object readResolve() {
+        bindingClass = null;
+        return this;
     }
 }
