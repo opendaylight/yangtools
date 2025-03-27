@@ -24,7 +24,6 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <T> First alternative type
  * @param <U> Second alternative type
- * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
@@ -32,16 +31,19 @@ public class Either<T, U> implements Immutable {
     private final @Nullable T first;
     private final @Nullable U second;
 
-    @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
-    protected Either(final T first) {
-        this.first = requireNonNull(first);
-        second = null;
+    @SuppressFBWarnings(value = "NP_STORE_INTO_NONNULL_FIELD", justification = "@NonNullByDefault vs @Nullable field")
+    private Either(final @Nullable T first, final @Nullable U second) {
+        this.first = first;
+        this.second = second;
     }
 
-    @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
+    @SuppressWarnings("null")
+    protected Either(final T first) {
+        this(requireNonNull(first), (U) null);
+    }
+
     protected Either(final U second, final @Nullable Void dummy) {
-        first = null;
-        this.second = requireNonNull(second);
+        this(null, requireNonNull(second));
     }
 
     protected final T first() {

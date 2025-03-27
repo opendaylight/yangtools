@@ -38,9 +38,13 @@ public abstract class CachingDerivedString<T extends CachingDerivedString<T>> ex
     @SuppressWarnings("unused")
     private transient volatile @Nullable String str;
 
-    @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
-    protected CachingDerivedString() {
+    @SuppressFBWarnings(value = "NP_STORE_INTO_NONNULL_FIELD", justification = "@NonNullByDefault vs @Nullable field")
+    private CachingDerivedString(final @Nullable Void dummy) {
         str = null;
+    }
+
+    protected CachingDerivedString() {
+        this((Void) null);
     }
 
     protected CachingDerivedString(final String str) {
