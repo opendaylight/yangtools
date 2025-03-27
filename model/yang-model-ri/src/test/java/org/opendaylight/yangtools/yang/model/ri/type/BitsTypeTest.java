@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 @ExtendWith(MockitoExtension.class)
-public class BitsTypeTest {
+class BitsTypeTest {
     @Mock
-    Bit bit;
+    private Bit bit;
 
     @Test
     void canCreateBitsType() {

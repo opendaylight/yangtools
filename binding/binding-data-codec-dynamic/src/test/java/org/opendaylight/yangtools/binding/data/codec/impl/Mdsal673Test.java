@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
-public class Mdsal673Test extends AbstractBindingCodecTest {
+class Mdsal673Test extends AbstractBindingCodecTest {
     private static final NodeIdentifier FOO = new NodeIdentifier(Foo.QNAME);
     private static final NodeIdentifier BAR = new NodeIdentifier(Bar.QNAME);
 
@@ -66,7 +66,7 @@ public class Mdsal673Test extends AbstractBindingCodecTest {
      * Test when BAR is not empty container the {@code getBar} and {@code nonnullBar} returns the same BAR instance.
      */
     @Test
-    public void testNotEmptyContainer() {
+    void testNotEmptyContainer() {
         // FIXME: YANGTOOLS-1602: these should get translated to YangInstanceIdentifier.of(FOO)
         final var data = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(FOO)

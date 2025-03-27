@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import org.junit.jupiter.api.Test;
 
-public class SchemaContextEmitterTest extends AbstractYinExportTest {
+class SchemaContextEmitterTest extends AbstractYinExportTest {
     @Test
-    public void testSchemaContextEmitter() throws Exception {
+    void testSchemaContextEmitter() throws Exception {
         exportYinModules("/schema-context-emitter-test", "/schema-context-emitter-test");
     }
 }

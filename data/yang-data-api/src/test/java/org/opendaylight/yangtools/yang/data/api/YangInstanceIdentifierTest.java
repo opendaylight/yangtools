@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *
  * @author Thomas Pantelis
  */
-public class YangInstanceIdentifierTest {
+class YangInstanceIdentifierTest {
     private static final QName NODENAME1 = QName.create("test", "2014-05-28", "node1");
     private static final QName NODENAME2 = QName.create("test", "2014-05-28", "node2");
     private static final QName NODENAME3 = QName.create("test", "2014-05-28", "node3");
@@ -47,7 +47,7 @@ public class YangInstanceIdentifierTest {
     private static final QName KEY3 = QName.create("test", "2014-05-28", "key3");
 
     @Test
-    public void testGetLastPathArgument() {
+    void testGetLastPathArgument() {
         YangInstanceIdentifier id1 = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1),
                 new NodeIdentifier(NODENAME2));
         assertEquals(new NodeIdentifier(NODENAME2), id1.getLastPathArgument());
@@ -56,7 +56,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testHashCodeEquals() {
+    void testHashCodeEquals() {
         YangInstanceIdentifier id1 = YangInstanceIdentifier.of(NodeIdentifier.create(NODENAME1),
                 new NodeIdentifier(NODENAME2));
         YangInstanceIdentifier id2 = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1),
@@ -65,7 +65,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         final var id1 = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1), new NodeIdentifier(NODENAME2));
         final var id2 = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1), new NodeIdentifier(NODENAME2));
         final var id3 = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME2), new NodeIdentifier(NODENAME1));
@@ -80,13 +80,13 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         final var id = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1), new NodeIdentifier(NODENAME2));
         assertNotNull(id.toString());
     }
 
     @Test
-    public void testNode() {
+    void testNode() {
         final var id = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1), new NodeIdentifier(NODENAME2));
 
         var newID = id.node(NODENAME3);
@@ -109,7 +109,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testRelativeTo() {
+    void testRelativeTo() {
         final YangInstanceIdentifier id1 = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1),
                 new NodeIdentifier(NODENAME2), new NodeIdentifier(NODENAME3), new NodeIdentifier(NODENAME4));
         final YangInstanceIdentifier id2 = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1),
@@ -134,13 +134,13 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testContainsNull() {
+    void testContainsNull() {
         final var id = YangInstanceIdentifier.of(NODENAME1);
         assertThrows(NullPointerException.class, () -> id.contains(null));
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         final var id1 = YangInstanceIdentifier.of(NODENAME1, NODENAME2, NODENAME3, NODENAME4);
         final var id2 = YangInstanceIdentifier.of(NODENAME1, NODENAME2);
         final var id3 = YangInstanceIdentifier.of(NODENAME1, NODENAME2);
@@ -153,7 +153,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testOf() {
+    void testOf() {
         final var newID = YangInstanceIdentifier.of(NODENAME1);
         assertNotNull(newID);
         assertEquals(1, newID.getPathArguments().size());
@@ -164,7 +164,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testBuilder() {
+    void testBuilder() {
         var newID = YangInstanceIdentifier.builder()
                 .node(NODENAME1)
                 .nodeWithKey(NODENAME2, Map.of(KEY1, "foo"))
@@ -210,7 +210,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testNodeIdentifierWithPredicates() {
+    void testNodeIdentifierWithPredicates() {
 
         NodeIdentifierWithPredicates node1 = NodeIdentifierWithPredicates.of(NODENAME1, KEY1, "foo");
         verifyNodeIdentifierWithPredicates("NodeIdentifierWithPredicates", node1, NODENAME1, KEY1, "foo");
@@ -251,7 +251,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testNodeWithValue() {
+    void testNodeWithValue() {
 
         NodeWithValue<?> node1 = new NodeWithValue<>(NODENAME1, "foo");
         assertEquals(NODENAME1, node1.getNodeType());
@@ -281,7 +281,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testNodeIdentifier() {
+    void testNodeIdentifier() {
 
         final NodeIdentifier node1 = new NodeIdentifier(NODENAME1);
         assertEquals(NODENAME1, node1.getNodeType());
@@ -318,7 +318,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testSerialization() throws IOException, ClassNotFoundException {
+    void testSerialization() throws IOException, ClassNotFoundException {
         final var fixed = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1), new NodeIdentifier(NODENAME2));
         assertEquals(fixed, serdes(fixed));
 
@@ -330,7 +330,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testToOptimized() {
+    void testToOptimized() {
         final var fixed = YangInstanceIdentifier.of(new NodeIdentifier(NODENAME1), new NodeIdentifier(NODENAME2));
         final var stacked = YangInstanceIdentifier.of().node(NodeIdentifier.create(NODENAME1))
                 .node(NodeIdentifier.create(NODENAME2));
@@ -343,7 +343,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testGetParent() {
+    void testGetParent() {
         final var fixed = YangInstanceIdentifier.of(NODENAME1);
         final var stacked = YangInstanceIdentifier.of().node(new NodeIdentifier(NODENAME1));
         final var twoStacked = stacked.node(NODENAME2);
@@ -355,7 +355,7 @@ public class YangInstanceIdentifierTest {
     }
 
     @Test
-    public void testIsEmpty() {
+    void testIsEmpty() {
         final YangInstanceIdentifier fixed = YangInstanceIdentifier.of(NODENAME1);
         final YangInstanceIdentifier stacked = YangInstanceIdentifier.of().node(NODENAME1);
 

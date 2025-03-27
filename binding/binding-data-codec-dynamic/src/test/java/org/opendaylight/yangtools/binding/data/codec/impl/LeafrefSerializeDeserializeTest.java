@@ -21,9 +21,9 @@ import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
-public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
+class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
     @Test
-    public void listReferenceTest() {
+    void listReferenceTest() {
         final var contYII = YangInstanceIdentifier.builder().node(Cont.QNAME).build();
         final var fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
@@ -41,7 +41,7 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void uint32LeafrefTest() {
+    void uint32LeafrefTest() {
         final var contYII = YangInstanceIdentifier.builder().node(ContInt32.QNAME).build();
         final var fromYangInstanceIdentifier = codecContext.fromYangInstanceIdentifier(contYII);
         assertNotNull(fromYangInstanceIdentifier);
@@ -58,4 +58,3 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
         assertEquals(refVal, value.getRefUnionInt32());
     }
 }
-

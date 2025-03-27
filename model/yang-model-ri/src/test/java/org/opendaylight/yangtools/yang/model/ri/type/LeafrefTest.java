@@ -13,24 +13,30 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
+@ExtendWith(MockitoExtension.class)
 class LeafrefTest {
+    @Mock
+    private PathExpression expression;
+    @Mock
+    private PathExpression expression2;
+
     @Test
     void testMethodsOfLeafrefTest() {
         final var qname = QName.create("test", "List1");
-        final var revision = mock(PathExpression.class);
-        final var revision2 = mock(PathExpression.class);
 
-        final var leafref = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
-        final var leafref2 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision2).build();
-        final var leafref3 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
+        final var leafref = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(expression).build();
+        final var leafref2 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(expression2).build();
+        final var leafref3 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(expression).build();
         final var leafref4 = leafref;
 
         assertNotNull(leafref, "Object 'leafref' shouldn't be null.");
@@ -43,12 +49,10 @@ class LeafrefTest {
         assertEquals(Status.CURRENT, leafref.getStatus(), "Status of 'leafref' is current.");
         assertTrue(leafref.getUnknownSchemaNodes().isEmpty(),
                 "Object 'leafref' shouldn't have any unknown schema nodes.");
-        assertEquals(revision,
-                leafref.getPathStatement(),
+        assertEquals(expression, leafref.getPathStatement(),
                 "Revision aware XPath of 'leafref' should be '/test:Cont1/test:List1'.");
         assertNotNull(leafref.toString(), "String representation of 'leafref' shouldn't be null.");
-        assertNotEquals(leafref.hashCode(),
-                leafref2.hashCode(),
+        assertNotEquals(leafref.hashCode(), leafref2.hashCode(),
                 "Hash codes of two different object of type Leafref shouldn't be equal.");
         assertEquals(leafref, leafref3, "Objects of type Leafref should be equal.");
         assertEquals(leafref, leafref4, "Objects of type Leafref should be equal.");
@@ -60,8 +64,7 @@ class LeafrefTest {
     @Test
     void testRequireInstanceSubstatement() {
         final var qname = QName.create("test", "my-leafref");
-        final var path = mock(PathExpression.class);
-        final var leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(path);
+        final var leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(expression);
 
         assertTrue(leafrefTypeBuilder.build().requireInstance());
 

@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import org.junit.jupiter.api.Test;
 
-public class Bug4504Test extends AbstractYinExportTest {
+class Bug4504Test extends AbstractYinExportTest {
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         exportYinModules("/bugs/bug4504", null);
     }
 }

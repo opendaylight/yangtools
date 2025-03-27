@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -26,36 +26,44 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 @ExtendWith(MockitoExtension.class)
-public class NormalizedNodesTest {
+class NormalizedNodesTest {
+    @Mock
+    private ContainerNode mockedDataContainerNode;
+    @Mock
+    private ContainerNode mockedContainerNode;
+    @Mock
+    private LeafNode<?> mockedLeafNode;
+    @Mock
+    private LeafSetEntryNode<?> mockedLeafSetEntryNode;
+    @Mock
+    private SystemMapNode mockedMapNode;
+    @Mock
+    private MapEntryNode mockedMapEntryNode;
+    @Mock
+    private SystemLeafSetNode<?> mockedLeafSetNode;
+
     @Test
-    public void testGetDirectChild() {
+    void testGetDirectChild() {
         final var mockedPathArgument = new NodeIdentifier(QName.create("test", "test"));
 
-        final var mockedLeafNode = mock(LeafNode.class);
         assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedLeafNode, mockedPathArgument));
 
-        final var mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
         assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedLeafSetEntryNode, mockedPathArgument));
 
-        final var mockedDataContainerNode = mock(ContainerNode.class);
-        final var mockedContainerNode = mock(ContainerNode.class);
         doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any());
 
         assertEquals(Optional.of(mockedContainerNode),
             NormalizedNodes.getDirectChild(mockedDataContainerNode, mockedPathArgument));
 
-        final var mockedMapNode = mock(SystemMapNode.class);
         final QName listQName = QName.create("test-ns", "test-list");
         final QName listKeyQName = QName.create("test-ns", "test-list-key");
         final var nodeIdentifierWithPredicates = NodeIdentifierWithPredicates.of(listQName, listKeyQName, "str-value");
-        final var mockedMapEntryNode = mock(MapEntryNode.class);
         doReturn(mockedMapEntryNode).when(mockedMapNode).childByArg(any(NodeIdentifierWithPredicates.class));
 
         assertEquals(Optional.of(mockedMapEntryNode),
             NormalizedNodes.getDirectChild(mockedMapNode, nodeIdentifierWithPredicates));
         assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedMapNode, mockedPathArgument));
 
-        final SystemLeafSetNode<?> mockedLeafSetNode = mock(SystemLeafSetNode.class);
         final QName leafListQName = QName.create("test-ns", "test-leaf-list");
         final NodeWithValue<?> nodeWithValue = new NodeWithValue<>(leafListQName, "str-value");
         doReturn(mockedLeafSetEntryNode).when(mockedLeafSetNode).childByArg(any(NodeWithValue.class));
@@ -64,10 +72,7 @@ public class NormalizedNodesTest {
     }
 
     @Test
-    public void testFindNode() {
-        final DataContainerNode mockedDataContainerNode = mock(ContainerNode.class);
-        final ContainerNode mockedContainerNode = mock(ContainerNode.class);
-        final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
+    void testFindNode() {
         doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any());
         doReturn(mockedLeafNode).when(mockedContainerNode).childByArg(any());
 
@@ -95,8 +100,7 @@ public class NormalizedNodesTest {
     }
 
     @Test
-    public void testToStringTree() {
-        final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
+    void testToStringTree() {
         final QName leafNodeQName = QName.create("test-ns", "2016-09-16", "leaf-node");
         final NodeIdentifier leafNodeId = new NodeIdentifier(leafNodeQName);
         doReturn(leafNodeId).when(mockedLeafNode).name();
@@ -108,11 +112,9 @@ public class NormalizedNodesTest {
 
         final QName listQName = QName.create("test-ns", "2016-09-16", "list-node");
 
-        final SystemMapNode mockedMapNode = mock(SystemMapNode.class);
         final NodeIdentifier listNodeId = new NodeIdentifier(listQName);
         doReturn(listNodeId).when(mockedMapNode).name();
 
-        final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         final NodeIdentifierWithPredicates listEntryNodeId = NodeIdentifierWithPredicates.of(listQName,
                 leafNodeQName, "key-leaf-value");
         doReturn(listEntryNodeId).when(mockedMapEntryNode).name();

@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug6856Test {
+class Bug6856Test {
     @Test
-    public void testImplicitInputAndOutputInRpc() throws Exception {
+    void testImplicitInputAndOutputInRpc() throws Exception {
         final var schemaContext = YangParserTestUtils.parseYang("""
             module foo {
               namespace foo;
@@ -45,7 +45,7 @@ public class Bug6856Test {
     }
 
     @Test
-    public void testExplicitInputAndOutputInRpc() throws Exception {
+    void testExplicitInputAndOutputInRpc() throws Exception {
         final var schemaContext = YangParserTestUtils.parseYang("""
             module bar {
               namespace bar;

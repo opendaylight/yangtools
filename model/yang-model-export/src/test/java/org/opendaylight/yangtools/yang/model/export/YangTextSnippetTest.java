@@ -16,14 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YangTextSnippetTest {
+class YangTextSnippetTest {
     @Test
-    public void testNotification() {
+    void testNotification() {
         assertFormat(YangParserTestUtils.parseYangResource("/bugs/bug2444/yang/notification.yang"));
     }
 
     @Test
-    public void testSubmoduleNamespaces() {
+    void testSubmoduleNamespaces() {
         assertFormat(YangParserTestUtils.parseYang("""
             module module1 {
               yang-version "1.1";

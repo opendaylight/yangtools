@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class YT1313Test {
+class YT1313Test {
     @Test
-    public void testSubmoduleImportPrefixes() {
+    void testSubmoduleImportPrefixes() {
         final var bar = YangParserTestUtils.parseYang("""
             module bar {
               namespace bar;
@@ -60,7 +60,6 @@ public class YT1313Test {
             }""")
             .getModuleStatement(QNameModule.of("bar"));
 
-        final StatementPrefixResolver resolver = StatementPrefixResolver.forModule(bar);
-        assertNotNull(resolver);
+        assertNotNull(StatementPrefixResolver.forModule(bar));
     }
 }

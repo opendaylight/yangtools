@@ -17,33 +17,33 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
 
-public class ByteBufUtilsTest {
+class ByteBufUtilsTest {
     @Test
-    public void testWriteByte() {
+    void testWriteByte() {
         test(Byte.MAX_VALUE);
         test(Byte.MIN_VALUE);
     }
 
     @Test
-    public void testWriteShort() {
+    void testWriteShort() {
         test(Short.MAX_VALUE);
         test(Short.MIN_VALUE);
     }
 
     @Test
-    public void testWriteInt() {
+    void testWriteInt() {
         test(Integer.MAX_VALUE);
         test(Integer.MIN_VALUE);
     }
 
     @Test
-    public void testWriteLong() {
+    void testWriteLong() {
         test(Long.MAX_VALUE);
         test(Long.MIN_VALUE);
     }
 
     @Test
-    public void testWrite8() {
+    void testWrite8() {
         testUint(Uint8.ONE);
         testUint(Uint8.TWO);
         testUint(Uint8.TEN);
@@ -51,7 +51,7 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWrite16() {
+    void testWrite16() {
         testUint(Uint16.ONE);
         testUint(Uint16.TWO);
         testUint(Uint16.TEN);
@@ -59,7 +59,7 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWrite32() {
+    void testWrite32() {
         testUint(Uint32.ONE);
         testUint(Uint32.TWO);
         testUint(Uint32.TEN);
@@ -67,7 +67,7 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWrite64() {
+    void testWrite64() {
         testUint(Uint64.ONE);
         testUint(Uint64.TWO);
         testUint(Uint64.TEN);
@@ -75,8 +75,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteOptionalByte() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteOptionalByte() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOptional(buf, (Byte) null);
         assertEquals(0, buf.readableBytes());
 
@@ -85,8 +85,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteOptionalShort() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteOptionalShort() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOptional(buf, (Short) null);
         assertEquals(0, buf.readableBytes());
 
@@ -95,8 +95,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteOptionalInt() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteOptionalInt() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOptional(buf, (Integer) null);
         assertEquals(0, buf.readableBytes());
 
@@ -105,8 +105,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteOptionalLong() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteOptionalLong() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOptional(buf, (Long) null);
         assertEquals(0, buf.readableBytes());
 
@@ -115,8 +115,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteOptional8() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteOptional8() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOptional(buf, (Uint8) null);
         assertEquals(0, buf.readableBytes());
 
@@ -125,8 +125,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteOptional16() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteOptional16() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOptional(buf, (Uint16) null);
         assertEquals(0, buf.readableBytes());
 
@@ -135,8 +135,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteOptional32() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteOptional32() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOptional(buf, (Uint32) null);
         assertEquals(0, buf.readableBytes());
 
@@ -145,8 +145,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteOptional64() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteOptional64() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOptional(buf, (Uint64) null);
         assertEquals(0, buf.readableBytes());
 
@@ -155,7 +155,7 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteZeroByte() {
+    void testWriteZeroByte() {
         final ByteBuf buf = Unpooled.buffer();
         ByteBufUtils.writeOrZero(buf, (Byte) null);
         assertByte(buf, 0);
@@ -165,8 +165,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteZeroShort() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteZeroShort() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOrZero(buf, (Short) null);
         assertShort(buf, 0);
 
@@ -175,8 +175,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteZeroInt() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteZeroInt() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOrZero(buf, (Integer) null);
         assertInt(buf, 0);
 
@@ -185,8 +185,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteZeroLong() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteZeroLong() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOrZero(buf, (Long) null);
         assertLong(buf, 0);
 
@@ -195,8 +195,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteZero8() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteZero8() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOrZero(buf, (Uint8) null);
         assertUint(buf, Uint8.ZERO);
 
@@ -205,8 +205,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteZero16() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteZero16() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOrZero(buf, (Uint16) null);
         assertUint(buf, Uint16.ZERO);
 
@@ -215,8 +215,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteZero32() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteZero32() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOrZero(buf, (Uint32) null);
         assertUint(buf, Uint32.ZERO);
 
@@ -225,8 +225,8 @@ public class ByteBufUtilsTest {
     }
 
     @Test
-    public void testWriteZero64() {
-        final ByteBuf buf = Unpooled.buffer();
+    void testWriteZero64() {
+        final var buf = Unpooled.buffer();
         ByteBufUtils.writeOrZero(buf, (Uint64) null);
         assertUint(buf, Uint64.ZERO);
 

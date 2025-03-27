@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-public class AbstractIllegalArgumentCodecTest {
+class AbstractIllegalArgumentCodecTest {
     private static final class TestCodec extends AbstractIllegalArgumentCodec<String, String> {
         @Override
         protected String deserializeImpl(final String product) {
@@ -27,12 +27,12 @@ public class AbstractIllegalArgumentCodecTest {
     private final TestCodec codec = new TestCodec();
 
     @Test
-    public void testNullDeserialize() {
+    void testNullDeserialize() {
         assertThrows(NullPointerException.class, () -> codec.deserialize(null));
     }
 
     @Test
-    public void testNullSerialize() {
+    void testNullSerialize() {
         assertThrows(NullPointerException.class, () -> codec.serialize(null));
     }
 }

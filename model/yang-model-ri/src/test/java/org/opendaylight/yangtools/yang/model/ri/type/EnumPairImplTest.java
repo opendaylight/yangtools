@@ -10,20 +10,25 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
+@ExtendWith(MockitoExtension.class)
 class EnumPairImplTest {
+    @Mock
+    private UnknownSchemaNode mockedUnknownSchemaNodeA;
+    @Mock
+    private UnknownSchemaNode mockedUnknownSchemaNodeB;
+
     @Test
     void testEnumPairImpl() {
-        final var mockedUnknownSchemaNodeA = mock(UnknownSchemaNode.class);
-        final var mockedUnknownSchemaNodeB = mock(UnknownSchemaNode.class);
-
         final var unknownSchemaNodes = List.of(mockedUnknownSchemaNodeA, mockedUnknownSchemaNodeB);
 
         final var enumPair = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)

@@ -15,13 +15,12 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 class EmptyTypeTest {
     @Test
     void canCreateEmptyType() {
-        EmptyTypeDefinition emptyType = BaseTypes.emptyType();
+        final var emptyType = BaseTypes.emptyType();
 
         assertEquals(TypeDefinitions.EMPTY, emptyType.getQName(), "QName");
         assertNull(emptyType.getBaseType(), "BaseType");

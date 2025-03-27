@@ -21,8 +21,7 @@ class Int8Test {
         var int8Second = BaseTypes.int8Type();
         assertSame(int8, int8Second, "The method 'getInstance()' has to return the same instance");
         assertNull(int8.getBaseType(), "The method 'getBaseType()' is returning incorrect value");
-        assertEquals(Optional.empty(),
-            int8.getDefaultValue(),
+        assertEquals(Optional.empty(), int8.getDefaultValue(),
             "The method 'getDefaultType()' is returning incorrect value");
     }
 }
