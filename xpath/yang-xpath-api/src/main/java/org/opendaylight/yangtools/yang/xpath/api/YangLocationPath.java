@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -28,6 +27,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 
 public abstract sealed class YangLocationPath implements YangExpr {
     public abstract static sealed class Step implements Serializable, YangPredicateAware {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final YangXPathAxis axis;
@@ -53,7 +53,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
 
         protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
             helper.add("axis", axis);
-            final Set<YangExpr> predicates = getPredicates();
+            final var predicates = getPredicates();
             if (!predicates.isEmpty()) {
                 helper.add("predicates", predicates);
             }
@@ -62,6 +62,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     public static sealed class AxisStep extends Step {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         AxisStep(final YangXPathAxis axis) {
@@ -87,6 +88,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     static final class AxisStepWithPredicates extends AxisStep {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final ImmutableSet<YangExpr> predicates;
@@ -104,6 +106,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
 
     // match a particular namespace
     public static final class NamespaceStep extends Step {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final QNameModule namespace;
@@ -140,6 +143,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
      * @author Robert Varga
      */
     public abstract static sealed class QNameStep extends Step implements QNameReferent {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         QNameStep(final YangXPathAxis axis) {
@@ -148,6 +152,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     private abstract static sealed class AbstractQNameStep<T extends AbstractQName> extends QNameStep {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final T qname;
@@ -168,17 +173,13 @@ public abstract sealed class YangLocationPath implements YangExpr {
         }
 
         @Override
-        @SuppressFBWarnings(value = "EQ_UNUSUAL", justification = "Polymorphic via equalityClass()")
         public final boolean equals(final @Nullable Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            final Class<? extends AbstractQNameStep<?>> eq = equalityClass();
-            if (!equalityClass().isInstance(obj)) {
-                return false;
-            }
+            return this == obj || equalsImpl(obj);
+        }
 
-            final AbstractQNameStep<?> other = eq.cast(obj);
+        abstract boolean equalsImpl(@Nullable Object obj);
+
+        final boolean equalsImpl(final AbstractQNameStep<?> other) {
             return getAxis().equals(other.getAxis()) && qname.equals(other.qname)
                     && getPredicates().equals(other.getPredicates());
         }
@@ -187,11 +188,10 @@ public abstract sealed class YangLocationPath implements YangExpr {
         protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
             return super.addToStringAttributes(helper).add("qname", qname);
         }
-
-        abstract Class<? extends AbstractQNameStep<?>> equalityClass();
     }
 
     public static sealed class ResolvedQNameStep extends AbstractQNameStep<QName> implements ResolvedQNameReferent {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         ResolvedQNameStep(final YangXPathAxis axis, final QName qname) {
@@ -205,12 +205,13 @@ public abstract sealed class YangLocationPath implements YangExpr {
         }
 
         @Override
-        final Class<ResolvedQNameStep> equalityClass() {
-            return ResolvedQNameStep.class;
+        boolean equalsImpl(final @Nullable Object obj) {
+            return obj instanceof ResolvedQNameStep other && equals(other);
         }
     }
 
     private static final class ResolvedQNameStepWithPredicates extends ResolvedQNameStep {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final ImmutableSet<YangExpr> predicates;
@@ -229,6 +230,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
 
     public static sealed class UnresolvedQNameStep extends AbstractQNameStep<UnresolvedQName>
             implements UnresolvedQNameReferent {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         UnresolvedQNameStep(final YangXPathAxis axis, final UnresolvedQName qname) {
@@ -242,12 +244,13 @@ public abstract sealed class YangLocationPath implements YangExpr {
         }
 
         @Override
-        final Class<UnresolvedQNameStep> equalityClass() {
-            return UnresolvedQNameStep.class;
+        boolean equalsImpl(final @Nullable Object obj) {
+            return obj instanceof UnresolvedQNameStep other && equals(other);
         }
     }
 
     private static final class UnresolvedQNameStepWithPredicates extends UnresolvedQNameStep {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final ImmutableSet<YangExpr> predicates;
@@ -265,6 +268,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     public static sealed class NodeTypeStep extends Step {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final YangXPathNodeType nodeType;
@@ -291,7 +295,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
             if (obj == null || !getClass().equals(obj.getClass())) {
                 return false;
             }
-            final NodeTypeStep other = (NodeTypeStep) obj;
+            final var other = (NodeTypeStep) obj;
             return nodeType.equals(other.nodeType) && getAxis().equals(other.getAxis())
                     && getPredicates().equals(other.getPredicates());
         }
@@ -305,6 +309,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS",
             justification = "https://github.com/spotbugs/spotbugs/issues/511")
     static final class NodeTypeStepWithPredicates extends NodeTypeStep {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final ImmutableSet<YangExpr> predicates;
@@ -322,6 +327,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     public static sealed class ProcessingInstructionStep extends NodeTypeStep {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final String name;
@@ -352,6 +358,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     static final class ProcessingInstructionStepWithPredicates extends ProcessingInstructionStep {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final ImmutableSet<YangExpr> predicates;
@@ -369,6 +376,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     public static final class Absolute extends YangLocationPath {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Absolute(final ImmutableList<Step> steps) {
@@ -382,6 +390,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     public static final class Relative extends YangLocationPath {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Relative(final ImmutableList<Step> steps) {
@@ -394,6 +403,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
         }
     }
 
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final Absolute ROOT = new Absolute(ImmutableList.of());
     private static final Relative SELF = new Relative(ImmutableList.of());
@@ -458,7 +468,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
 
     @Override
     public final String toString() {
-        final ToStringHelper helper = MoreObjects.toStringHelper(YangLocationPath.class).add("absolute", isAbsolute());
+        final var helper = MoreObjects.toStringHelper(YangLocationPath.class).add("absolute", isAbsolute());
         if (!steps.isEmpty()) {
             helper.add("steps", steps);
         }
