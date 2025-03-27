@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.concepts;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
@@ -20,10 +19,18 @@ import java.lang.invoke.VarHandle;
 public abstract class AbstractRegistration implements Registration {
     private static final VarHandle CLOSED;
 
-    // All access needs to go through this handle
-    @SuppressWarnings("unused")
-    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
-    private volatile byte closed;
+    /*
+     * All access needs to go through this handle, really. The field is package-private to fool SpotBugs without
+     * requiring {@code @SuppressFBWarnings("UUF_UNUSED_FIELD")}, as that leaks the annotation to all subclasses,
+     * and results in warnings being emitted.
+     *
+     * <p>
+     * Make this field private again once we have SpotBugs with the
+     * <a href=""https://github.com/spotbugs/spotbugs/issues/2749">underlying issue</a> fixed.
+     */
+    // NOTE: we really would like to use 'boolean' here, but we may have a Serializable subclass and we do not want
+    //       to risk breakage for little benefit we would get in terms of our code here.
+    volatile byte closed;
 
     static {
         try {
