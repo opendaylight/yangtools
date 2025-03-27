@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.io.Serializable;
-import org.checkerframework.checker.index.qual.NonNegative;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -20,22 +17,27 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param minor Minor version number
  * @param patch Patch version number
  */
-public record SemVer(@NonNegative int major, @NonNegative int minor, @NonNegative int patch)
-        implements Comparable<SemVer>, Serializable {
+public record SemVer(int major, int minor, int patch) implements Comparable<SemVer>, Serializable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     public SemVer {
-        checkArgument(major >= 0, "Major version has to be non-negative");
-        checkArgument(minor >= 0, "Minor version has to be non-negative");
-        checkArgument(patch >= 0, "Patch version has to be non-negative");
+        if (major < 0) {
+            throw new IllegalArgumentException("Major version has to be non-negative");
+        }
+        if (minor < 0) {
+            throw new IllegalArgumentException("Minor version has to be non-negative");
+        }
+        if (patch < 0) {
+            throw new IllegalArgumentException("Patch version has to be non-negative");
+        }
     }
 
-    public SemVer(final @NonNegative int major) {
+    public SemVer(final int major) {
         this(major, 0);
     }
 
-    public SemVer(final @NonNegative int major, final @NonNegative int minor) {
+    public SemVer(final int major, final int minor) {
         this(major, minor, 0);
     }
 
