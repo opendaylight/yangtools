@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -31,9 +30,7 @@ public final class ArgumentUtils {
     public static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     public static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
 
-    @Regex
-    private static final String PATH_ABS_STR = "/[^/].*";
-    private static final Pattern PATH_ABS = Pattern.compile(PATH_ABS_STR);
+    private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
 
     // these objects are to compare whether range has MAX or MIN value
