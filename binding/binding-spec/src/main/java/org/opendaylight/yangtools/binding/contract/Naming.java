@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
@@ -154,10 +153,8 @@ public final class Naming {
     public static final @NonNull String RPC_OUTPUT_SUFFIX = "Output";
 
     private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
-    @Regex
-    private static final String ROOT_PACKAGE_PATTERN_STRING =
-            "(org.opendaylight.yang.(gen|svc).v1.[a-z0-9_\\.]*?\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
-    private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
+    private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(
+            "(org.opendaylight.yang.(gen|svc).v1.[a-z0-9_\\.]*?\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))");
 
     private Naming() {
         // Hidden on purpose
@@ -228,7 +225,7 @@ public final class Naming {
     public static @NonNull String rootToServicePackageName(final String rootPackageName) {
         final var match = ROOT_PACKAGE_PATTERN.matcher(rootPackageName);
         checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", rootPackageName,
-            ROOT_PACKAGE_PATTERN_STRING);
+            ROOT_PACKAGE_PATTERN);
         return getModelRootPackageName(rootPackageName.replace(Naming.PACKAGE_PREFIX, Naming.SVC_PACKAGE_PREFIX));
     }
 
@@ -397,7 +394,7 @@ public final class Naming {
             "Package name not starting with %s, is: %s", PACKAGE_PREFIX, packageName);
         final var match = ROOT_PACKAGE_PATTERN.matcher(packageName);
         checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", packageName,
-            ROOT_PACKAGE_PATTERN_STRING);
+            ROOT_PACKAGE_PATTERN);
         return match.group(0);
     }
 
