@@ -23,6 +23,8 @@
 
     <properties>
         <maven.javadoc.failOnWarnings>true</maven.javadoc.failOnWarnings>
+        <!-- FIXME: fix dependencies and remove this line -->
+        <odlparent.dependency.enforce>false</odlparent.dependency.enforce>
     </properties>
 
     <dependencies>

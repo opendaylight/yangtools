@@ -23,6 +23,10 @@
     <name>${project.artifactId}</name>
     <description>Bundle parent (bnd-based)</description>
 
+    <properties>
+        <odlparent.dependency.enforce>true</odlparent.dependency.enforce>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
