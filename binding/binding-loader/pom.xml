@@ -43,5 +43,9 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-spec</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>concepts</artifactId>
+        </dependency>
     </dependencies>
 </project>
