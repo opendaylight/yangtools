@@ -24,4 +24,5 @@
  * </li>
  * </ul>
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.binding.model.api;
