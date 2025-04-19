@@ -15,7 +15,6 @@ import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.data.codec.osgi.OSGiBindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecFactory;
@@ -136,7 +135,6 @@ public final class OSGiBindingDOMCodec {
     @Reference(target = "(component.factory=" + OSGiBindingDOMCodecServicesImpl.FACTORY_NAME + ")")
     ComponentFactory<OSGiBindingDOMCodecServices> contextFactory = null;
 
-    @GuardedBy("this")
     private AbstractInstances instances = new InactiveInstances();
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
