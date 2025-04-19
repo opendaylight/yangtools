@@ -5,8 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 /**
  * Provides API necessary for the processing of statement sources.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.parser.spi.source;

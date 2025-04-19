@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 /**
- * Provides essential namespaces which are filled in the parsing process. Currently this package
- * contains interfaces which represent essential namespaces according to Rfc6020
- * and Rfc7950 (for more details see the section 6.2.1. Identifiers and Their Namespaces
- * in Rfc6020 and Rfc7950).
+ * Provides essential namespaces which are filled in the parsing process. Currently this package contains interfaces
+ * which represent essential namespaces according to Rfc6020 and Rfc7950 (for more details see the section 6.2.1.
+ * Identifiers and their namespaces in Rfc6020 and Rfc7950).
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.parser.spi;

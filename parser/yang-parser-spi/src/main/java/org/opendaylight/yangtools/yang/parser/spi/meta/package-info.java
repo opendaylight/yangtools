@@ -5,8 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 /**
  * Provides base abstract classes, interfaces and common implementation used by the statement parser.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.parser.spi.meta;
