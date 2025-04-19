@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ForwardingObject;
 import java.util.Collection;
-import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -34,7 +33,6 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     private final @NonNull T bindingData;
 
     private volatile @Nullable ContainerNode delegate;
-    @GuardedBy("this")
     private @Nullable C context;
 
     protected AbstractBindingLazyContainerNode(final @NonNull NodeIdentifier identifier, final @NonNull T bindingData,
@@ -105,6 +103,10 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
         return local;
     }
 
-    @GuardedBy("this")
+    /**
+     * Compute the underlying {@code ContainerNode}. Guaranteed to be called only once non-concurrently.
+     *
+     * @param context the context from which to compute
+     */
     protected abstract @NonNull ContainerNode computeContainerNode(C context);
 }
