@@ -55,12 +55,6 @@ public final class EffectiveStmtUtils {
             stmt.moduleName().getLocalName(), effectiveStatement.argument(), effectiveStatement.argument());
     }
 
-    public static Optional<ElementCountConstraint> createElementCountConstraint(final EffectiveStatement<?, ?> stmt) {
-        return createElementCountConstraint(
-            stmt.findFirstEffectiveSubstatementArgument(MinElementsEffectiveStatement.class).orElse(null),
-            stmt.findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class).orElse(null));
-    }
-
     public static Optional<ElementCountConstraint> createElementCountConstraint(
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return createElementCountConstraint(
