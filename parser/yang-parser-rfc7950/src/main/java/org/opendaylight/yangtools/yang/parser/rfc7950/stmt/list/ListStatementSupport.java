@@ -185,7 +185,7 @@ public final class ListStatementSupport
 
         try {
             return EffectiveStatements.createList(stmt.declared(), stmt.getArgument(), flags, substatements,
-                keyDefinition, EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null));
+                keyDefinition, EffectiveStmtUtils.createElementCountConstraint(stmt, substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -222,9 +222,10 @@ public final class ListStatementSupport
             final StmtContext<?, ?, ?> ctx = stmt.caerbannog();
             verify(ctx instanceof Mutable, "Unexpected context %s", ctx);
             ((Mutable<?, ?, ?>) ctx).addToNs(ConfigListWarningNamespace.INSTANCE, ref, Boolean.TRUE);
-            LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
-                    + "this is fine with OpenDaylight, it can cause interoperability issues with other systems "
-                    + "[defined at {}]", stmt.argument(), ref);
+            LOG.info("""
+                Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While this is \
+                fine with OpenDaylight, it can cause interoperability issues with other systems [defined at {}]""",
+                stmt.argument(), ref);
         }
     }
 
