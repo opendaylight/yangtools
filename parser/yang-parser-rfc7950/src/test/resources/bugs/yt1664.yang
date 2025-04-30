@@ -1,0 +1,9 @@
+module yt1664 {
+  namespace yt1664;
+  prefix yt1664;
+
+  list foo {
+    max-elements 1;
+    min-elements 2;
+  }
+}
