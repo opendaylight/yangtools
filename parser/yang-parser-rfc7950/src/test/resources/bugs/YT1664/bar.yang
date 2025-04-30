@@ -1,0 +1,10 @@
+module bar {
+  namespace var;
+  prefix bar;
+
+  leaf-list foo {
+    type string;
+    min-elements 2;
+    max-elements 1;
+  }
+}

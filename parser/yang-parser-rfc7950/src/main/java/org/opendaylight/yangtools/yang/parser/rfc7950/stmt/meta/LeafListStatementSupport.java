@@ -131,7 +131,7 @@ public final class LeafListStatementSupport
 
         return EffectiveStatements.createLeafList(stmt.declared(), stmt.getArgument(),
             computeFlags(stmt, substatements), substatements, defaultValues,
-            EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null));
+            EffectiveStmtUtils.createElementCountConstraint(stmt, substatements));
     }
 
     @Override

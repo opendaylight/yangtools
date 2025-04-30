@@ -13,8 +13,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -55,37 +56,46 @@ public final class EffectiveStmtUtils {
             stmt.moduleName().getLocalName(), effectiveStatement.argument(), effectiveStatement.argument());
     }
 
-    public static Optional<ElementCountConstraint> createElementCountConstraint(final EffectiveStatement<?, ?> stmt) {
-        return createElementCountConstraint(
-            stmt.findFirstEffectiveSubstatementArgument(MinElementsEffectiveStatement.class).orElse(null),
-            stmt.findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class).orElse(null));
-    }
-
-    public static Optional<ElementCountConstraint> createElementCountConstraint(
+    @NonNullByDefault
+    public static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createElementCountConstraint(
-            AbstractStatementSupport.findFirstArgument(substatements, MinElementsEffectiveStatement.class, null),
-            AbstractStatementSupport.findFirstArgument(substatements, MaxElementsEffectiveStatement.class, null));
+        return createElementCountConstraint(ctx,
+            AbstractStatementSupport.findFirstStatement(substatements, MinElementsEffectiveStatement.class),
+            AbstractStatementSupport.findFirstStatement(substatements, MaxElementsEffectiveStatement.class));
     }
 
-    private static Optional<ElementCountConstraint> createElementCountConstraint(
-            final @Nullable Integer min, final @Nullable String max) {
+    @NonNullByDefault
+    private static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
+            final @Nullable MinElementsEffectiveStatement minStmt,
+            final @Nullable MaxElementsEffectiveStatement maxStmt) {
         final Integer minElements;
-        if (min != null) {
-            minElements = min > 0 ? min : null;
+        if (minStmt != null) {
+            final var arg = minStmt.argument();
+            minElements = arg > 0 ? arg : null;
         } else {
             minElements = null;
         }
 
         final Integer maxElements;
-        if (max != null && !UNBOUNDED_STR.equals(max)) {
-            final Integer m = Integer.valueOf(max);
+        if (maxStmt != null) {
+            final var arg = maxStmt.argument();
+            final var m = UNBOUNDED_STR.equals(arg) ? Integer.MAX_VALUE : Integer.parseInt(arg);
             maxElements = m < Integer.MAX_VALUE ? m : null;
         } else {
             maxElements = null;
         }
 
-        return ElementCountConstraint.forNullable(minElements, maxElements);
+        if (minElements == null) {
+            return maxElements == null ? null : ElementCountConstraint.atMost(maxElements);
+        }
+        if (maxElements == null) {
+            return ElementCountConstraint.atLeast(minElements);
+        }
+        if (minElements <= maxElements) {
+            return ElementCountConstraint.inRange(minElements, maxElements);
+        }
+        throw new SourceException(ctx, "Conflicting 'min-elements %s' and 'max-elements %s'",
+            minStmt.argument(), maxStmt.argument());
     }
 
     /**
