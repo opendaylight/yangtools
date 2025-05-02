@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyMinElementsEffectiveStatement extends DefaultArgument<Integer, MinElementsStatement>
+public final class EmptyMinElementsEffectiveStatement extends DefaultArgument<MinElementsArgument, MinElementsStatement>
         implements MinElementsEffectiveStatement {
     public EmptyMinElementsEffectiveStatement(final MinElementsStatement declared) {
         super(declared);
