@@ -18,6 +18,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 
 class Bug9244Test extends AbstractYangTest {
     @Test
@@ -31,9 +34,9 @@ class Bug9244Test extends AbstractYangTest {
 
         final var barLeafList = assertInstanceOf(LeafListSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "bar-leaf-list")));
-        final var constraint = barLeafList.getElementCountConstraint().orElseThrow();
-        assertEquals(5, constraint.getMinElements());
-        assertEquals(10, constraint.getMaxElements());
+        final var constraint = assertInstanceOf(ElementCountMatcher.InRange.class, barLeafList.elementCountMatcher());
+        assertEquals(MinElementsArgument.of(5), constraint.atLeast());
+        assertEquals(MaxElementsArgument.of(10), constraint.atMost());
 
         final var barLeaf = assertInstanceOf(LeafSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "bar-leaf")));

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,29 +26,27 @@ class ElementCountConstraintsTest extends AbstractYangTest {
         final var testModule = context.findModule("foo", Revision.of("2016-09-20")).orElseThrow();
         final var constraints1 = assertInstanceOf(LeafListSchemaNode.class,
             testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "constrained-leaf-list-1")))
-            .getElementCountConstraint().orElseThrow();
+            .elementCountMatcher();
+        assertNotNull(constraints1);
+        assertEquals("[10..100]", constraints1.toString());
 
         var constraints2 = assertInstanceOf(LeafListSchemaNode.class,
             testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "constrained-leaf-list-2")))
-            .getElementCountConstraint().orElseThrow();
-
-        assertEquals(constraints1.hashCode(), constraints2.hashCode());
+            .elementCountMatcher();
         assertEquals(constraints1, constraints2);
 
         var constraints3 = assertInstanceOf(LeafListSchemaNode.class,
             testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "constrained-leaf-list-3")))
-            .getElementCountConstraint().orElseThrow();
-
-        assertNotEquals(constraints2.hashCode(), constraints3.hashCode());
+            .elementCountMatcher();
+        assertNotNull(constraints3);
         assertNotEquals(constraints2, constraints3);
+        assertEquals("[50..500]", constraints3.toString());
 
         var constraints4 = assertInstanceOf(LeafListSchemaNode.class,
             testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "constrained-leaf-list-4")))
-            .getElementCountConstraint().orElseThrow();
-
-        assertNotEquals(constraints3.hashCode(), constraints4.hashCode());
+            .elementCountMatcher();
+        assertNotNull(constraints4);
         assertNotEquals(constraints3, constraints4);
-
-        assertEquals("ElementCountConstraint{minElements=50, maxElements=100}", constraints4.toString());
+        assertEquals("[50..100]", constraints4.toString());
     }
 }

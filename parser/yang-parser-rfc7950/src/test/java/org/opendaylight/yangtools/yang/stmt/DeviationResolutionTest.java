@@ -30,6 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
 class DeviationResolutionTest extends AbstractYangTest {
@@ -67,9 +70,9 @@ class DeviationResolutionTest extends AbstractYangTest {
         assertEquals(Optional.of(Boolean.FALSE), myLeafList.effectiveConfig());
         assertEquals(3, myLeafList.getDefaults().size());
 
-        final var constraint = myLeafList.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 10, constraint.getMaxElements());
-        assertEquals((Object) 5, constraint.getMinElements());
+        final var constraint = assertInstanceOf(ElementCountMatcher.InRange.class, myLeafList.elementCountMatcher());
+        assertEquals(MinElementsArgument.of(5), constraint.atLeast());
+        assertEquals(MaxElementsArgument.of(10), constraint.atMost());
         assertNotNull(myLeafList.getType().getUnits());
 
         final var myList = assertInstanceOf(ListSchemaNode.class,
@@ -114,9 +117,9 @@ class DeviationResolutionTest extends AbstractYangTest {
 
         final var myLeafList = assertInstanceOf(LeafListSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf-list-test")));
-        final var constraint = myLeafList.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 6, constraint.getMaxElements());
-        assertEquals((Object) 3, constraint.getMinElements());
+        final var constraint = assertInstanceOf(ElementCountMatcher.InRange.class, myLeafList.elementCountMatcher());
+        assertEquals(MinElementsArgument.of(3), constraint.atLeast());
+        assertEquals(MaxElementsArgument.of(6), constraint.atMost());
         assertEquals(Optional.of(Boolean.TRUE), myLeafList.effectiveConfig());
 
         final var myChoice = assertInstanceOf(ChoiceSchemaNode.class,
