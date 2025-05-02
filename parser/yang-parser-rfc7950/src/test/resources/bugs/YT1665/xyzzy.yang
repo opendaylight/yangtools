@@ -1,0 +1,8 @@
+module xyzzy {
+  namespace xyzzy;
+  prefix xyzzy;
+
+  list xyzzy {
+    min-elements 123456789012345;
+  }
+}
