@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
@@ -26,7 +24,9 @@ public abstract class ElementCountConstraint {
         private final int minElements;
 
         Min(final int minElements) {
-            checkArgument(minElements >= 0);
+            if (minElements < 0) {
+                throw new IllegalArgumentException("minimum elements " + minElements + " is not non-negative");
+            }
             this.minElements = minElements;
         }
 
@@ -45,7 +45,10 @@ public abstract class ElementCountConstraint {
         private final int maxElements;
 
         Max(final int maxElements) {
-            checkArgument(maxElements >= 0);
+            // FIXME: RFC7950 states this needs to be a positive value
+            if (maxElements < 0) {
+                throw new IllegalArgumentException("maximum elements " + maxElements + " is not non-negative");
+            }
             this.maxElements = maxElements;
         }
 
@@ -65,9 +68,17 @@ public abstract class ElementCountConstraint {
         private final int maxElements;
 
         MinMax(final int minElements, final int maxElements) {
-            checkArgument(minElements >= 0);
-            checkArgument(maxElements >= 0);
-            checkArgument(minElements <= maxElements);
+            if (minElements < 0) {
+                throw new IllegalArgumentException("minimum elements " + minElements + " is not non-negative");
+            }
+            // FIXME: RFC7950 states this needs to be a positive value
+            if (maxElements < 0) {
+                throw new IllegalArgumentException("maximum elements " + maxElements + " is not non-negative");
+            }
+            if (minElements > maxElements) {
+                throw new IllegalArgumentException("minimum elements " + minElements
+                    + " is not less than or equal to maximum elements " + maxElements);
+            }
             this.minElements = minElements;
             this.maxElements = maxElements;
         }
@@ -151,6 +162,7 @@ public abstract class ElementCountConstraint {
     public final String toString() {
         return MoreObjects.toStringHelper(ElementCountConstraint.class).omitNullValues()
                 .add("minElements", getMinElements())
-                .add("maxElements", getMaxElements()).toString();
+                .add("maxElements", getMaxElements())
+                .toString();
     }
 }
