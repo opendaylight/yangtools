@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 
 /**
  * Contains method which returns various data constraints for a list-like YANG element
@@ -21,17 +24,14 @@ import org.eclipse.jdt.annotation.Nullable;
 @Beta
 public abstract sealed class ElementCountConstraint {
     private static final class Min extends ElementCountConstraint {
-        private final int minElements;
+        private final MinElementsArgument minElements;
 
-        Min(final int minElements) {
-            if (minElements < 0) {
-                throw new IllegalArgumentException("minimum elements " + minElements + " is not non-negative");
-            }
-            this.minElements = minElements;
+        Min(final MinElementsArgument minElements) {
+            this.minElements = requireNonNull(minElements);
         }
 
         @Override
-        public Integer getMinElements() {
+        public MinElementsArgument getMinElements() {
             return minElements;
         }
 
@@ -53,7 +53,7 @@ public abstract sealed class ElementCountConstraint {
         }
 
         @Override
-        public Integer getMinElements() {
+        public MinElementsArgument getMinElements() {
             return null;
         }
 
@@ -64,27 +64,25 @@ public abstract sealed class ElementCountConstraint {
     }
 
     private static final class MinMax extends ElementCountConstraint {
-        private final int minElements;
+        private final MinElementsArgument minElements;
         private final int maxElements;
 
-        MinMax(final int minElements, final int maxElements) {
-            if (minElements < 0) {
-                throw new IllegalArgumentException("minimum elements " + minElements + " is not non-negative");
-            }
+        MinMax(final MinElementsArgument minElements, final int maxElements) {
             // FIXME: RFC7950 states this needs to be a positive value
             if (maxElements < 0) {
                 throw new IllegalArgumentException("maximum elements " + maxElements + " is not non-negative");
             }
-            if (minElements > maxElements) {
+            if (minElements.matches(maxElements) != null) {
                 throw new IllegalArgumentException("minimum elements " + minElements
                     + " is not less than or equal to maximum elements " + maxElements);
             }
+
             this.minElements = minElements;
             this.maxElements = maxElements;
         }
 
         @Override
-        public Integer getMinElements() {
+        public MinElementsArgument getMinElements() {
             return minElements;
         }
 
@@ -98,7 +96,7 @@ public abstract sealed class ElementCountConstraint {
         // Hidden on purpose
     }
 
-    public static @NonNull ElementCountConstraint atLeast(final int minElements) {
+    public static @NonNull ElementCountConstraint atLeast(final MinElementsArgument minElements) {
         return new Min(minElements);
     }
 
@@ -106,11 +104,12 @@ public abstract sealed class ElementCountConstraint {
         return new Max(maxElements);
     }
 
-    public static @NonNull ElementCountConstraint inRange(final int minElements, final int maxElements) {
+    public static @NonNull ElementCountConstraint inRange(final MinElementsArgument minElements,
+            final int maxElements) {
         return new MinMax(minElements, maxElements);
     }
 
-    public static @NonNull Optional<ElementCountConstraint> forNullable(final @Nullable Integer minElements,
+    public static @NonNull Optional<ElementCountConstraint> forNullable(final @Nullable MinElementsArgument minElements,
             final @Nullable Integer maxElements) {
         if (minElements == null) {
             return maxElements != null ? Optional.of(new Max(maxElements)) : Optional.empty();
@@ -127,7 +126,7 @@ public abstract sealed class ElementCountConstraint {
      *
      * @return integer with minimal number of elements, or null if no minimum is defined
      */
-    public abstract @Nullable Integer getMinElements();
+    public abstract @Nullable MinElementsArgument getMinElements();
 
     /**
      * Returns the maximum admissible number of data elements for node where

@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -232,7 +233,7 @@ class YangParserWithContextTest {
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertEquals(Optional.of(Boolean.FALSE), refineList.effectiveConfig());
         final var constraint = refineList.getElementCountConstraint().orElseThrow();
-        assertEquals(2, constraint.getMinElements());
+        assertEquals(MinElementsArgument.of(2), constraint.getMinElements());
         assertEquals(12, constraint.getMaxElements());
     }
 
