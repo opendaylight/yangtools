@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -60,14 +61,13 @@ public final class EffectiveStmtUtils {
     public static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return createElementCountConstraint(ctx,
-            AbstractStatementSupport.findFirstStatement(substatements, MinElementsEffectiveStatement.class),
+            AbstractStatementSupport.findFirstArgument(substatements, MinElementsEffectiveStatement.class, null),
             AbstractStatementSupport.findFirstStatement(substatements, MaxElementsEffectiveStatement.class));
     }
 
     @NonNullByDefault
     private static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
-            final @Nullable MinElementsEffectiveStatement minStmt,
-            final @Nullable MaxElementsEffectiveStatement maxStmt) {
+            final @Nullable MinElementsArgument minArg, final @Nullable MaxElementsEffectiveStatement maxStmt) {
         final Integer minElements;
         if (minStmt != null) {
             final var arg = minStmt.argument();
