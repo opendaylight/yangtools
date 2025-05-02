@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -43,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -98,9 +98,10 @@ class YangParserTest extends AbstractModelTest {
         // ifEntry should be a context node ?
         // assertNull(constraints.getWhenCondition());
         assertEquals(0, ifEntry.getMustConstraints().size());
-        ElementCountConstraint constraints = ifEntry.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 1, constraints.getMinElements());
-        assertEquals((Object) 11, constraints.getMaxElements());
+        var constraints = ifEntry.elementCountMatcher();
+        assertNotNull(constraints);
+        assertEquals(MinElementsArgument.of(1), constraints.getMinElements());
+        assertEquals(11, constraints.getMaxElements());
         // test AugmentationTarget args
         final Collection<? extends AugmentationSchemaNode> availableAugmentations = ifEntry.getAvailableAugmentations();
         assertEquals(2, availableAugmentations.size());
