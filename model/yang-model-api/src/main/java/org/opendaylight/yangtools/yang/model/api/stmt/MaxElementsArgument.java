@@ -121,6 +121,16 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
     }
 
     /**
+     * {@return this argument saturated to {@code int}}
+     */
+    int asSaturatedInt();
+
+    /**
+     * {@return this argument saturated to {@code long}}
+     */
+    long asSaturatedLong();
+
+    /**
      * {@return the canonical representation of this value}
      */
     @Override String toString();

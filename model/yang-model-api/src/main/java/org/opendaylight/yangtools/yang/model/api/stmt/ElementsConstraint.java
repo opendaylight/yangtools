@@ -17,17 +17,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @since 15.0.0
  */
 @NonNullByDefault
-public sealed interface ElementsConstraint extends Immutable permits MaxElementsArgument {
-    /**
-     * {@return this argument saturated to {@code int}}
-     */
-    int asSaturatedInt();
-
-    /**
-     * {@return this argument saturated to {@code long}}
-     */
-    long asSaturatedLong();
-
+public sealed interface ElementsConstraint extends Immutable permits MaxElementsArgument, MinElementsArgument {
     /**
      * {@return {@code true} if {@code elementCount} matches this constraint}
      * @param elementCount the element count

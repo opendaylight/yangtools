@@ -85,7 +85,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedType
     }
 
     private LengthConstraint findLenghts() {
-        Optional<LengthConstraint> ret = Optional.empty();
+        var ret = Optional.<LengthConstraint>empty();
         var wlk = getBaseType();
         while (wlk != null && ret.isEmpty()) {
             ret = wlk.getLengthConstraint();
