@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
+import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -18,15 +19,19 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class MaxElementsStatementSupport
-        extends AbstractStringStatementSupport<MaxElementsStatement, MaxElementsEffectiveStatement> {
+        extends AbstractStatementSupport<String, MaxElementsStatement, MaxElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.MAX_ELEMENTS).build();
+    private static final String UNBOUNDED_STR = "unbounded";
+    private static final Pattern POSITIVE_INTEGER_VALUE = Pattern.compile("[1-9][0-9]*");
 
     public MaxElementsStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.MAX_ELEMENTS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
@@ -34,7 +39,15 @@ public final class MaxElementsStatementSupport
 
     @Override
     public String internArgument(final String rawArgument) {
-        return "unbounded".equals(rawArgument) ? "unbounded" : rawArgument;
+        return UNBOUNDED_STR.equals(rawArgument) ? UNBOUNDED_STR : rawArgument;
+    }
+
+    @Override
+    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        if (!UNBOUNDED_STR.equals(value) && !POSITIVE_INTEGER_VALUE.matcher(value).matches()) {
+            throw new SourceException(ctx, "Invalid max-elements argument \"%s\"", value);
+        }
+        return value;
     }
 
     @Override
