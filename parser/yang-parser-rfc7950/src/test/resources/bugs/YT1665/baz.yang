@@ -1,0 +1,8 @@
+module baz {
+  namespace baz;
+  prefix baz;
+
+  list baz {
+    min-elements 1a;
+  }
+}

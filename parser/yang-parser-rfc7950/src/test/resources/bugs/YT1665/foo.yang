@@ -1,0 +1,8 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  list foo {
+    min-elements -1;
+  }
+}
