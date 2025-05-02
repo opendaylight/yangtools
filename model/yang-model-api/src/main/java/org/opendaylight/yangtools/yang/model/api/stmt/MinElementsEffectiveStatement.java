@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code min-elements} statement.
  */
-public interface MinElementsEffectiveStatement extends EffectiveStatement<Integer, MinElementsStatement> {
+public interface MinElementsEffectiveStatement extends EffectiveStatement<MinElementsArgument, MinElementsStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.MIN_ELEMENTS;
