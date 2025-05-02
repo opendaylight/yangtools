@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement1;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(lowerInttoExtension.class)
 class ActionStatementAwareDeclaredStatementTest {
     @Mock
     ActionStatementAwareDeclaredStatement<?> stmt;
