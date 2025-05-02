@@ -1,0 +1,8 @@
+module bar {
+  namespace bar;
+  prefix bar;
+
+  list bar {
+    min-elements 01;
+  }
+}
