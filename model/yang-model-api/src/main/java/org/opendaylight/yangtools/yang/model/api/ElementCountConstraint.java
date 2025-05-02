@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * (e.g. min or max number of elements).
  */
 @Beta
-public abstract class ElementCountConstraint {
+public abstract sealed class ElementCountConstraint {
     private static final class Min extends ElementCountConstraint {
         private final int minElements;
 
@@ -94,7 +94,7 @@ public abstract class ElementCountConstraint {
         }
     }
 
-    ElementCountConstraint() {
+    private ElementCountConstraint() {
         // Hidden on purpose
     }
 
@@ -147,15 +147,9 @@ public abstract class ElementCountConstraint {
 
     @Override
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof ElementCountConstraint)) {
-            return false;
-        }
-        final ElementCountConstraint other = (ElementCountConstraint) obj;
-        return Objects.equals(getMinElements(), other.getMinElements())
-                && Objects.equals(getMaxElements(), other.getMaxElements());
+        return this == obj || obj instanceof ElementCountConstraint other
+            && Objects.equals(getMinElements(), other.getMinElements())
+            && Objects.equals(getMaxElements(), other.getMaxElements());
     }
 
     @Override
