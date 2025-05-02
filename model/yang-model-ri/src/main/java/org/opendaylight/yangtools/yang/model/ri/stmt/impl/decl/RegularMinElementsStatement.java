@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
-public final class RegularMinElementsStatement extends WithSubstatements<Integer> implements MinElementsStatement {
-    public RegularMinElementsStatement(final Integer argument,
+public final class RegularMinElementsStatement extends WithSubstatements<MinElementsArgument>
+        implements MinElementsStatement {
+    public RegularMinElementsStatement(final MinElementsArgument argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument, substatements);
     }
