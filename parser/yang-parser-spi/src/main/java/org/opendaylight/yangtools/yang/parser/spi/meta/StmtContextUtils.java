@@ -285,8 +285,8 @@ public final class StmtContextUtils {
                 case LEAF, CHOICE, ANYXML -> Boolean.TRUE.equals(
                     firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
                 case LIST, LEAF_LIST -> {
-                    final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
-                    yield minElements != null && minElements > 0;
+                    final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
+                    yield minElements != null && minElements.lowerInt() > -1;
                 }
                 default -> false;
             };
