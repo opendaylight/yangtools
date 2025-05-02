@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Bounded;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Unbounded;
@@ -145,7 +146,7 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
      * @throws IllegalArgumentException if {@code value} is non-positive
      */
     static MaxElementsArgument.Bounded of(final BigInteger value) {
-        if (value.compareTo(BigInteger.ZERO) < 1) {
+        if (value.compareTo(BigInteger.ONE) < 0) {
             throw new IllegalArgumentException("non-positive value " + value);
         }
         return value.compareTo(MaxElementsArgumentBig.LONG_MAX_VALUE) <= 0
@@ -156,9 +157,9 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
     /**
      * {@return a {@link MaxElementsArgument} value for specified argument string}
      * @param argument the argument string
-     * @throws IllegalArgumentException if {@code argument} does not represent a valid value
+     * @throws ParseException if {@code argument} does not represent a valid value
      */
-    static MaxElementsArgument ofArgument(final String argument) {
+    static MaxElementsArgument parse(final String argument) throws ParseException {
         if (argument.equals("unbounded")) {
             return Unbounded.VALUE;
         }
@@ -166,20 +167,21 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         // parse a positive-integer-value ABNF production
         final var length = argument.length();
         if (length == 0) {
-            throw new IllegalArgumentException("empty max-value-arg");
+            throw new ParseException("empty max-value-arg", 0);
         }
-        final var first = argument.charAt(0);
-        if (first < '1' || first > '9') {
-            throw new IllegalArgumentException("'" + argument + "' is not a valid max-value-arg on position 1: '"
-                + first + "' is not a valid non-zero-digit");
+        var ch = argument.charAt(0);
+        if (ch < '1' || ch > '9') {
+            throw new ParseException("'" + ch + "' is not a valid non-zero-digit", 0);
         }
         for (int i = 1; i < length; i++) {
-            final var ch = argument.charAt(i);
+            ch = argument.charAt(i);
             if (ch < '0' || ch > '9') {
-                throw new IllegalArgumentException("'" + argument + "' is not a valid max-value-arg on position "
-                    + (i + 1) + ": '" + ch + "' is not a valid DIGIT");
+                throw new ParseException(ch + "' is not a valid DIGIT", i);
             }
         }
+
+        // at this point we have established that argument conforms to the ABNF. Any IAEs stemming from code below are
+        // a manifestation of a bug in code above.
 
         // log10(value) == length here, allowing us to use primitive type parse results
         if (length <= 9) {
