@@ -61,6 +61,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
@@ -474,11 +475,11 @@ public final class DeclaredStatements {
             : new RegularMaxElementsStatement(rawArgument, argument, substatements);
     }
 
-    public static MinElementsStatement createMinElements(final Integer argument) {
+    public static MinElementsStatement createMinElements(final MinElementsArgument argument) {
         return new EmptyMinElementsStatement(argument);
     }
 
-    public static MinElementsStatement createMinElements(final Integer argument,
+    public static MinElementsStatement createMinElements(final MinElementsArgument argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? createMinElements(argument)
             : new RegularMinElementsStatement(argument, substatements);
