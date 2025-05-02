@@ -7,74 +7,92 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.RequiredElementCountException;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher.TooFewElements;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher.TooManyElements;
 
 final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountConstraintAware>
         extends AbstractValidation {
-    @FunctionalInterface
-    @NonNullByDefault
-    interface ExceptionSupplier<T extends Exception> {
-        T get(int actual, String message);
-    }
+    private final ElementCountMatcher matcher;
 
-    private final int minElements;
-    private final int maxElements;
-
-    private MinMaxElementsValidation(final SchemaAwareApplyOperation<T> delegate, final Integer minElements,
-            final Integer maxElements) {
+    private MinMaxElementsValidation(final SchemaAwareApplyOperation<T> delegate, final ElementCountMatcher matcher) {
         super(delegate);
-        this.minElements = minElements != null ? minElements : 0;
-        this.maxElements = maxElements != null ? maxElements : Integer.MAX_VALUE;
+        this.matcher = requireNonNull(matcher);
     }
 
     static <T extends DataSchemaNode & ElementCountConstraintAware> ModificationApplyOperation from(
             final SchemaAwareApplyOperation<T> delegate) {
-        final var optConstraint = delegate.getSchema().getElementCountConstraint();
-        if (optConstraint.isEmpty()) {
-            return delegate;
-        }
-
-        final var constraint = optConstraint.orElseThrow();
-        return new MinMaxElementsValidation<>(delegate, constraint.getMinElements(), constraint.getMaxElements());
+        final var matcher = delegate.getSchema().elementCountMatcher();
+        return matcher == null ? delegate : new MinMaxElementsValidation<>(delegate, matcher);
     }
 
     @Override
     void enforceOnData(final NormalizedNode data) {
-        enforceOnData(data, (actual, message) -> new MinMaxElementsValidationFailedException(message, minElements,
-            maxElements, actual));
+        try {
+            enforceOnData(data, null);
+        } catch (RequiredElementCountException e) {
+            throw new MinMaxElementsValidationFailedException(e);
+        }
     }
 
     @Override
     void enforceOnData(final ModificationPath path, final NormalizedNode data) throws RequiredElementCountException {
-        enforceOnData(data, (actual, message) -> new RequiredElementCountException(path.toInstanceIdentifier(),
-            minElements, maxElements, actual, message));
+        enforceOnData(data, requireNonNull(path));
     }
 
-    private <X extends @NonNull Exception> void enforceOnData(final NormalizedNode value,
-            final ExceptionSupplier<X> exceptionSupplier) throws X {
-        checkArgument(value instanceof NormalizedNodeContainer, "Value %s is not a NormalizedNodeContainer", value);
-        final int children = ((NormalizedNodeContainer<?>) value).size();
-        if (minElements > children) {
-            throw exceptionSupplier.get(children, value.name()
-                + " does not have enough elements (" + children + "), needs at least " + minElements);
+    private void enforceOnData(final NormalizedNode value, final @Nullable ModificationPath path)
+            throws RequiredElementCountException {
+        if (!(value instanceof NormalizedNodeContainer<?> container)) {
+            throw new IllegalArgumentException(value + " is not a NormalizedNodeContainer");
         }
-        if (maxElements < children) {
-            throw exceptionSupplier.get(children, value.name()
-                + " has too many elements (" + children + "), can have at most " + maxElements);
+
+        final int count = container.size();
+        switch (matcher.matches(count)) {
+            case null -> {
+                // No-op
+            }
+            case TooFewElements violation -> {
+                throw new RequiredElementCountException(
+                    path == null ? YangInstanceIdentifier.of() : path.toInstanceIdentifier(), violation.errorAppTag(),
+                    value.name() + " does not have enough elements (" + count + "), needs at least "
+                        + violation.atLeast());
+            }
+            case TooManyElements violation -> {
+                throw new RequiredElementCountException(
+                    path == null ? YangInstanceIdentifier.of() : path.toInstanceIdentifier(), violation.errorAppTag(),
+                    value.name() + " has too many elements (" + count + "), can have at most " + violation.atMost());
+            }
         }
     }
 
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper.add("min", minElements).add("max", maxElements));
+        final ElementCountMatcher.AtLeast min;
+        final ElementCountMatcher.AtMost max;
+        switch (matcher) {
+            case ElementCountMatcher.AtLeast atLeast -> {
+                min = atLeast;
+                max = null;
+            }
+            case ElementCountMatcher.AtMost atMost -> {
+                min = null;
+                max = atMost;
+            }
+            case ElementCountMatcher.InRange inRange -> {
+                min = inRange.atLeast();
+                max = inRange.atMost();
+            }
+        }
+        return super.addToStringAttributes(helper.add("min", min).add("max", max));
     }
 }

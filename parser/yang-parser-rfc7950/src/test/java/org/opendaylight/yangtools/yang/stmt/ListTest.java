@@ -18,6 +18,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 
 class ListTest extends AbstractYangTest {
     @Test
@@ -36,9 +39,9 @@ class ListTest extends AbstractYangTest {
         assertEquals("key1", keys.get(0).getLocalName());
         assertEquals("key2", keys.get(1).getLocalName());
 
-        var constraint = list.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 1, constraint.getMinElements());
-        assertEquals((Object) 10, constraint.getMaxElements());
+        var constraint = assertInstanceOf(ElementCountMatcher.InRange.class, list.elementCountMatcher());
+        assertEquals(MinElementsArgument.of(1), constraint.atLeast());
+        assertEquals(MaxElementsArgument.of(10), constraint.atMost());
 
         assertEquals(5, list.getChildNodes().size());
 
@@ -67,9 +70,9 @@ class ListTest extends AbstractYangTest {
             list.getDataChildByName(QName.create(testModule.getQNameModule(), "list-of-leaves")));
         assertTrue(leafList.isUserOrdered());
 
-        constraint = leafList.getElementCountConstraint().orElseThrow();
-        assertEquals(2, constraint.getMinElements().intValue());
-        assertEquals(20, constraint.getMaxElements().intValue());
+        constraint = assertInstanceOf(ElementCountMatcher.InRange.class, leafList.elementCountMatcher());
+        assertEquals(MinElementsArgument.of(2), constraint.atLeast());
+        assertEquals(MaxElementsArgument.of(20), constraint.atMost());
         assertEquals("string", leafList.getType().getQName().getLocalName());
     }
 }
