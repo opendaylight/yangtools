@@ -177,7 +177,7 @@ public final class ListStatementSupport
 
         try {
             return EffectiveStatements.createList(stmt.declared(), stmt.getArgument(), flags, substatements,
-                keyDefinition, EffectiveStmtUtils.createElementCountConstraint(stmt, substatements));
+                keyDefinition, EffectiveStmtUtils.createElementCountMatcher(stmt, substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

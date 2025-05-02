@@ -20,7 +20,10 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
@@ -73,9 +76,10 @@ class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
         assertEquals(Optional.of("original description"), listSchemaNode.getDescription());
         assertEquals(Optional.of(Boolean.FALSE), listSchemaNode.effectiveConfig());
 
-        var listConstraints = listSchemaNode.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 10, listConstraints.getMinElements());
-        assertEquals((Object) 20, listConstraints.getMaxElements());
+        final var listConstraints = assertInstanceOf(ElementCountMatcher.InRange.class,
+            listSchemaNode.elementCountMatcher());
+        assertEquals(MinElementsArgument.of(10), listConstraints.atLeast());
+        assertEquals(MaxElementsArgument.of(20), listConstraints.atMost());
         assertEquals(1, listSchemaNode.getMustConstraints().size());
     }
 
@@ -102,9 +106,10 @@ class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
         assertEquals(Optional.of("new description"), listSchemaNode.getDescription());
         assertEquals(Optional.of(Boolean.TRUE), listSchemaNode.effectiveConfig());
 
-        final var listConstraints = listSchemaNode.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 5, listConstraints.getMinElements());
-        assertEquals((Object) 7, listConstraints.getMaxElements());
+        final var listConstraints = assertInstanceOf(ElementCountMatcher.InRange.class,
+            listSchemaNode.elementCountMatcher());
+        assertEquals(MinElementsArgument.of(5), listConstraints.atLeast());
+        assertEquals(MaxElementsArgument.of(7), listConstraints.atMost());
         assertEquals(2, listSchemaNode.getMustConstraints().size());
     }
 }

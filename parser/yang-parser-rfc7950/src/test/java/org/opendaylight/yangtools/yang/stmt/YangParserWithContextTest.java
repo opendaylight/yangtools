@@ -32,6 +32,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -231,9 +234,9 @@ class YangParserWithContextTest {
         assertEquals(Optional.of("description of addresses defined by refine"), refineList.getDescription());
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertEquals(Optional.of(Boolean.FALSE), refineList.effectiveConfig());
-        final var constraint = refineList.getElementCountConstraint().orElseThrow();
-        assertEquals(2, constraint.getMinElements());
-        assertEquals(12, constraint.getMaxElements());
+        final var constraint = assertInstanceOf(ElementCountMatcher.InRange.class, refineList.elementCountMatcher());
+        assertEquals(MinElementsArgument.of(2), constraint.atLeast());
+        assertEquals(MaxElementsArgument.of(12), constraint.atMost());
     }
 
     @Test
