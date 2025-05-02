@@ -9,9 +9,12 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 
 class YT1665Test extends AbstractYangTest {
     @Test
@@ -31,9 +34,13 @@ class YT1665Test extends AbstractYangTest {
 
     @Test
     void testOutOfRangeMinElements() {
-        final var ex = assertSourceException(startsWith("Invalid min-elements argument \"123456789012345\" [at "),
-            "/bugs/YT1665/xyzzy.yang");
-        final var cause = assertInstanceOf(NumberFormatException.class, ex.getCause());
-        assertEquals("For input string: \"123456789012345\"", cause.getMessage());
+        assertEquals(MinElementsArgument.of(123456789012345L),
+            assertEffectiveModel("/bugs/YT1665/xyzzy.yang")
+            .findModuleStatement(QNameModule.of("xyzzy"))
+            .orElseThrow()
+            .findFirstEffectiveSubstatement(ListEffectiveStatement.class)
+            .orElseThrow()
+            .findFirstEffectiveSubstatementArgument(MinElementsEffectiveStatement.class)
+            .orElseThrow());
     }
 }

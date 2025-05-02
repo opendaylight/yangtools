@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -99,8 +100,8 @@ class YangParserTest extends AbstractModelTest {
         // assertNull(constraints.getWhenCondition());
         assertEquals(0, ifEntry.getMustConstraints().size());
         ElementCountConstraint constraints = ifEntry.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 1, constraints.getMinElements());
-        assertEquals((Object) 11, constraints.getMaxElements());
+        assertEquals(MinElementsArgument.of(1), constraints.getMinElements());
+        assertEquals(11, constraints.getMaxElements());
         // test AugmentationTarget args
         final Collection<? extends AugmentationSchemaNode> availableAugmentations = ifEntry.getAvailableAugmentations();
         assertEquals(2, availableAugmentations.size());
