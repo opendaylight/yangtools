@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
@@ -70,7 +71,7 @@ public final class DeviateEffectiveStatementImpl extends WithSubstatements<Devia
     }
 
     @Override
-    public Integer getDeviatedMinElements() {
+    public MinElementsArgument getDeviatedMinElements() {
         return findFirstEffectiveSubstatementArgument(MinElementsEffectiveStatement.class).orElse(null);
     }
 

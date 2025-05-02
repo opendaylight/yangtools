@@ -14,9 +14,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsValue;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class MaxElementsStatementSupport
-        extends AbstractStatementSupport<MaxElementsValue, MaxElementsStatement, MaxElementsEffectiveStatement> {
+        extends AbstractStatementSupport<MaxElementsArgument, MaxElementsStatement, MaxElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.MAX_ELEMENTS).build();
     private static final String UNBOUNDED_STR = "unbounded";
@@ -53,16 +53,16 @@ public final class MaxElementsStatementSupport
     }
 
     @Override
-    public MaxElementsValue parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public MaxElementsArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return MaxElementsValue.ofArgument(value);
+            return MaxElementsArgument.ofArgument(value);
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid max-elements argument \"%s\"", value);
         }
     }
 
     @Override
-    protected MaxElementsStatement createDeclared(final BoundStmtCtx<MaxElementsValue> ctx,
+    protected MaxElementsStatement createDeclared(final BoundStmtCtx<MaxElementsArgument> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createMaxElements(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
@@ -74,7 +74,8 @@ public final class MaxElementsStatementSupport
     }
 
     @Override
-    protected MaxElementsEffectiveStatement createEffective(final Current<MaxElementsValue, MaxElementsStatement> stmt,
+    protected MaxElementsEffectiveStatement createEffective(
+            final Current<MaxElementsArgument, MaxElementsStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createMaxElements(stmt.declared(), substatements);
     }
