@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,12 +102,12 @@ public final class MandatoryLeafEnforcer implements Immutable {
                 } else {
                     boolean needEnforce = child instanceof MandatoryAware aware && aware.isMandatory();
                     if (!needEnforce && child instanceof ElementCountConstraintAware aware) {
-                        needEnforce = aware.getElementCountConstraint()
-                            .map(constraint -> {
-                                final Integer min = constraint.getMinElements();
-                                return min != null && min > 0;
-                            })
-                            .orElse(Boolean.FALSE);
+                        needEnforce = switch (aware.elementCountMatcher()) {
+                            case null -> false;
+                            case ElementCountMatcher.AtLeast atLeast -> !atLeast.matchesAll();
+                            case ElementCountMatcher.AtMost atMost -> false;
+                            case ElementCountMatcher.InRange inRange -> !inRange.atLeast().matchesAll();
+                        };
                     }
                     if (needEnforce) {
                         final var desc = id.node(NodeIdentifier.create(child.getQName()));

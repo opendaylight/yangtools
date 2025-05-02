@@ -8,19 +8,16 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 
 /**
  * Common interface for list-like nodes, which can optionally have constraints on the number of direct children.
- *
- * @author Robert Varga
  */
 @Beta
 public interface ElementCountConstraintAware {
     /**
-     * Return the constraint on the number of child nodes.
-     *
-     * @return the constraint on the number of child nodes, if applicable.
+     * {@return the {@code ElementCountMatcher}, or {@code null}}
      */
-    Optional<ElementCountConstraint> getElementCountConstraint();
+    @Nullable ElementCountMatcher elementCountMatcher();
 }
