@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -70,7 +71,7 @@ class DeviationStmtTest {
                                 assertEquals(MaxElementsArgument.of(12), deviate.getDeviatedMaxElements());
                             }
                             case REPLACE -> {
-                                assertEquals(5, deviate.getDeviatedMinElements().intValue());
+                                assertEquals(MinElementsArgument.of(5), deviate.getDeviatedMinElements());
                                 assertInstanceOf(Uint32TypeDefinition.class, deviate.getDeviatedType());
                             }
                             default -> {

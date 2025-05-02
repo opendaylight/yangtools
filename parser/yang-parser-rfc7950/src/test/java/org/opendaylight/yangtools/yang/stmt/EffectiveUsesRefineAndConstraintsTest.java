@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
@@ -74,8 +75,8 @@ class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
         assertEquals(Optional.of(Boolean.FALSE), listSchemaNode.effectiveConfig());
 
         var listConstraints = listSchemaNode.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 10, listConstraints.getMinElements());
-        assertEquals((Object) 20, listConstraints.getMaxElements());
+        assertEquals(MinElementsArgument.of(10), listConstraints.getMinElements());
+        assertEquals(20, listConstraints.getMaxElements());
         assertEquals(1, listSchemaNode.getMustConstraints().size());
     }
 
@@ -103,8 +104,8 @@ class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
         assertEquals(Optional.of(Boolean.TRUE), listSchemaNode.effectiveConfig());
 
         final var listConstraints = listSchemaNode.getElementCountConstraint().orElseThrow();
-        assertEquals((Object) 5, listConstraints.getMinElements());
-        assertEquals((Object) 7, listConstraints.getMaxElements());
+        assertEquals(MinElementsArgument.of(5), listConstraints.getMinElements());
+        assertEquals(7, listConstraints.getMaxElements());
         assertEquals(2, listSchemaNode.getMustConstraints().size());
     }
 }

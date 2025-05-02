@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -88,7 +89,7 @@ class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.of(Boolean.FALSE), refineList.effectiveConfig());
 
         final var constraint = refineList.getElementCountConstraint().orElseThrow();
-        assertEquals(2, constraint.getMinElements());
+        assertEquals(MinElementsArgument.of(2), constraint.getMinElements());
         assertNull(constraint.getMaxElements());
 
         // leaf id

@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString;
 
-public final class EmptyMinElementsStatement extends ArgumentToString<Integer> implements MinElementsStatement {
-    public EmptyMinElementsStatement(final Integer argument) {
+public final class EmptyMinElementsStatement extends ArgumentToString<MinElementsArgument>
+        implements MinElementsStatement {
+    public EmptyMinElementsStatement(final MinElementsArgument argument) {
         super(argument);
     }
 }

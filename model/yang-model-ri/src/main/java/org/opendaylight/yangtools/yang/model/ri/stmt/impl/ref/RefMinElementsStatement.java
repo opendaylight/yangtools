@@ -8,10 +8,11 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefMinElementsStatement extends AbstractRefStatement<Integer, MinElementsStatement>
+public final class RefMinElementsStatement extends AbstractRefStatement<MinElementsArgument, MinElementsStatement>
         implements MinElementsStatement {
     public RefMinElementsStatement(final MinElementsStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
