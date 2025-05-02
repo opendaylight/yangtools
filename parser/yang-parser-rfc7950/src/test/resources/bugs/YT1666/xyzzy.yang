@@ -1,0 +1,8 @@
+module xyzzy {
+  namespace xyzzy;
+  prefix xyzzy;
+
+  list xyzzy {
+    max-elements 0;
+  }
+}
