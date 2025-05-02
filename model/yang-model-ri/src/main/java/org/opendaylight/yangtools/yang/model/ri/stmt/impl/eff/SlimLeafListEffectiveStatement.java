@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
 public final class SlimLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffectiveStatement {
     public SlimLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final ElementCountConstraint elementCountConstraint) {
-        super(declared, argument, flags, substatements, elementCountConstraint);
+            final ElementCountMatcher elementCountMatcher) {
+        super(declared, argument, flags, substatements, elementCountMatcher);
     }
 
     public SlimLeafListEffectiveStatement(final SlimLeafListEffectiveStatement originalEffective, final QName argument,

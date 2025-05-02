@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.RequiredElementCountException;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 
 final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountConstraintAware>
         extends AbstractValidation {
@@ -26,13 +27,13 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
         T get(int actual, String message);
     }
 
-    private final int minElements;
+    private final MinElementsArgument minElements;
     private final int maxElements;
 
-    private MinMaxElementsValidation(final SchemaAwareApplyOperation<T> delegate, final Integer minElements,
+    private MinMaxElementsValidation(final SchemaAwareApplyOperation<T> delegate, final MinElementsArgument minElements,
             final Integer maxElements) {
         super(delegate);
-        this.minElements = minElements != null ? minElements : 0;
+        this.minElements = minElements != null && minElements.lowerInt() >= 0 ? minElements : null;
         this.maxElements = maxElements != null ? maxElements : Integer.MAX_VALUE;
     }
 
@@ -49,8 +50,8 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
     @Override
     void enforceOnData(final NormalizedNode data) {
-        enforceOnData(data, (actual, message) -> new MinMaxElementsValidationFailedException(message, minElements,
-            maxElements, actual));
+        enforceOnData(data, (actual, message) ->
+            new MinMaxElementsValidationFailedException(message, minElements, maxElements, actual));
     }
 
     @Override
@@ -63,7 +64,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
             final ExceptionSupplier<X> exceptionSupplier) throws X {
         checkArgument(value instanceof NormalizedNodeContainer, "Value %s is not a NormalizedNodeContainer", value);
         final int children = ((NormalizedNodeContainer<?>) value).size();
-        if (minElements > children) {
+        if (minElements != null && !minElements.matches(children)) {
             throw exceptionSupplier.get(children, value.name()
                 + " does not have enough elements (" + children + "), needs at least " + minElements);
         }
