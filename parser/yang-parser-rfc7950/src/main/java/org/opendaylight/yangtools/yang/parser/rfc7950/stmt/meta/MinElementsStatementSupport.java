@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
+import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class MinElementsStatementSupport
         extends AbstractInternedStatementSupport<Integer, MinElementsStatement, MinElementsEffectiveStatement> {
+    private static final Pattern NON_NEGATIVE_INTEGER_VALUE = Pattern.compile("0|(?:[1-9][0-9]*)");
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.MIN_ELEMENTS).build();
 
@@ -34,6 +36,10 @@ public final class MinElementsStatementSupport
 
     @Override
     public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        if (!NON_NEGATIVE_INTEGER_VALUE.matcher(value).matches()) {
+            throw new SourceException(ctx, "Invalid min-elements argument \"%s\"", value);
+        }
+
         try {
             return Integer.valueOf(value);
         } catch (NumberFormatException e) {
