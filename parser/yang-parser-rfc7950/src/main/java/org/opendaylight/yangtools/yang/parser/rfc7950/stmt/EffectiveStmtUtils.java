@@ -67,14 +67,7 @@ public final class EffectiveStmtUtils {
     private static @Nullable ElementCountConstraint createElementCountConstraint(final @NonNull CommonStmtCtx ctx,
             final @Nullable MinElementsEffectiveStatement minStmt,
             final @Nullable MaxElementsEffectiveStatement maxStmt) {
-        final Integer minElements;
-        if (minStmt != null) {
-            final var arg = minStmt.argument();
-            minElements = arg > 0 ? arg : null;
-        } else {
-            minElements = null;
-        }
-
+        final var minElements = minStmt == null ? null : minStmt.argument();
         final Integer maxElements;
         if (maxStmt != null) {
             final var max = maxStmt.argument().asSaturatedInt();
@@ -89,11 +82,11 @@ public final class EffectiveStmtUtils {
         if (maxElements == null) {
             return ElementCountConstraint.atLeast(minElements);
         }
-        if (minElements <= maxElements) {
+        if (minElements.lowerInt() < maxElements) {
             return ElementCountConstraint.inRange(minElements, maxElements);
         }
-        throw new SourceException(ctx, "Conflicting 'min-elements %s' and 'max-elements %s'",
-            minStmt.argument(), maxStmt.argument());
+
+        throw new SourceException(ctx, "Conflicting 'min-elements %s' and 'max-elements %s'", minElements, maxElements);
     }
 
     /**

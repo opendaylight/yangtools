@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 
 /**
@@ -63,7 +64,7 @@ public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateE
      *
      * @return value of the deviated min-elements statement or null if it is not deviated
      */
-    @Nullable Integer getDeviatedMinElements();
+    @Nullable MinElementsArgument getDeviatedMinElements();
 
     /**
      * Returns deviated must statements.
