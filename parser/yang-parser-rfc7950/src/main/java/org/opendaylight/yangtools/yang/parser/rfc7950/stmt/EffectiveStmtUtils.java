@@ -27,7 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -60,15 +62,14 @@ public final class EffectiveStmtUtils {
     public static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return createElementCountConstraint(ctx,
-            AbstractStatementSupport.findFirstStatement(substatements, MinElementsEffectiveStatement.class),
-            AbstractStatementSupport.findFirstStatement(substatements, MaxElementsEffectiveStatement.class));
+            AbstractStatementSupport.findFirstArgument(substatements, MinElementsEffectiveStatement.class, null),
+            AbstractStatementSupport.findFirstArgument(substatements, MaxElementsEffectiveStatement.class, null));
     }
 
-    private static @Nullable ElementCountConstraint createElementCountConstraint(final @NonNull CommonStmtCtx ctx,
-            final @Nullable MinElementsEffectiveStatement minStmt,
-            final @Nullable MaxElementsEffectiveStatement maxStmt) {
+   private static @Nullable ElementCountConstraint createElementCountConstraint(final @NonNull CommonStmtCtx ctx,
+            final @Nullable MinElementsArgument minArg, final @Nullable MaxElementsArgument maxArg) {
         final Integer minElements;
-        if (minStmt != null) {
+        if (minArg != null) {
             final var arg = minStmt.argument();
             minElements = arg > 0 ? arg : null;
         } else {
@@ -76,8 +77,8 @@ public final class EffectiveStmtUtils {
         }
 
         final Integer maxElements;
-        if (maxStmt != null) {
-            final var max = maxStmt.argument().asSaturatedInt();
+        if (maxArg != null) {
+            final var max = maxArg.asSaturatedInt();
             maxElements = max < Integer.MAX_VALUE ? max : null;
         } else {
             maxElements = null;
