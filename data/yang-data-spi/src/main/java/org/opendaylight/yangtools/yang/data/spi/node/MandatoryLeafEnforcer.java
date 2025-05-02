@@ -103,8 +103,8 @@ public final class MandatoryLeafEnforcer implements Immutable {
                     if (!needEnforce && child instanceof ElementCountConstraintAware aware) {
                         needEnforce = aware.getElementCountConstraint()
                             .map(constraint -> {
-                                final Integer min = constraint.getMinElements();
-                                return min != null && min > 0;
+                                final var min = constraint.getMinElements();
+                                return min != null && min.lowerInt() >= 0;
                             })
                             .orElse(Boolean.FALSE);
                     }
