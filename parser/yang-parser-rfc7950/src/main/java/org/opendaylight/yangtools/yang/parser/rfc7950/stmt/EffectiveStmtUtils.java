@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -28,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -60,16 +60,17 @@ public final class EffectiveStmtUtils {
     public static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return createElementCountConstraint(ctx,
-            AbstractStatementSupport.findFirstStatement(substatements, MinElementsEffectiveStatement.class),
+            AbstractStatementSupport.findFirstArgument(substatements, MinElementsEffectiveStatement.class, null),
             AbstractStatementSupport.findFirstStatement(substatements, MaxElementsEffectiveStatement.class));
     }
 
-    private static @Nullable ElementCountConstraint createElementCountConstraint(final @NonNull CommonStmtCtx ctx,
-            final @Nullable MinElementsEffectiveStatement minStmt,
-            final @Nullable MaxElementsEffectiveStatement maxStmt) {
+    @NonNullByDefault
+    private static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
+            final @Nullable MinElementsArgument minArg, final @Nullable MaxElementsEffectiveStatement maxStmt) {
         final Integer minElements;
-        if (minStmt != null) {
-            final var arg = minStmt.argument();
+        if (minArg != null) {
+            final var min = minArg.intSize();
+            final var arg = min.isEmpty() ? null : min.getAsInt();
             minElements = arg > 0 ? arg : null;
         } else {
             minElements = null;
@@ -92,8 +93,8 @@ public final class EffectiveStmtUtils {
         if (minElements <= maxElements) {
             return ElementCountConstraint.inRange(minElements, maxElements);
         }
-        throw new SourceException(ctx, "Conflicting 'min-elements %s' and 'max-elements %s'",
-            minStmt.argument(), maxStmt.argument());
+        throw new SourceException(ctx, "Conflicting 'min-elements %s' and 'max-elements %s'", minArg,
+            maxStmt.argument());
     }
 
     /**
