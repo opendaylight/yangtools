@@ -29,9 +29,7 @@ record MinElementsArgument31(int value) implements MinElementsArgument {
         // Note: we could do a single instanceof check, but we this provides null-hostility and exhaustiveness
         return switch (other) {
             case MinElementsArgument31(var arg) -> Integer.compare(value, arg);
-            // TODO: use _ when we have Java 22+
-            case MinElementsArgument63 arg -> -1;
-            case MinElementsArgumentStr arg -> -1;
+            case MinElementsArgument63 _, MinElementsArgumentStr _ -> -1;
         };
     }
 

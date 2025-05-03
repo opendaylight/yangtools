@@ -30,9 +30,7 @@ record MinElementsArgumentStr(String value) implements MinElementsArgument {
     public int compareTo(final MinElementsArgument other) {
         // Note: we could do a single instanceof check, but we this provides null-hostility and exhaustiveness
         return switch (other) {
-            // TODO: use _ when we have Java 22+
-            case MinElementsArgument31 arg -> 1;
-            case MinElementsArgument63 arg -> 1;
+            case MinElementsArgument31 _, MinElementsArgument63 _ -> 1;
             case MinElementsArgumentStr(var arg) -> {
                 // compare lengths first, establishing that "12" is greater than "2", for equal lengths lexicographic
                 // order does the rest
