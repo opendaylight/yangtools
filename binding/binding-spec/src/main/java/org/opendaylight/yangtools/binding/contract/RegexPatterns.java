@@ -56,8 +56,8 @@ public final class RegexPatterns {
          *
          * this gets escaped into either "^a|b$" or "^(?:a|b)$". Either format can occur, as the non-capturing group
          * strictly needed only in some cases. From that we want to arrive at:
-         *   "^(?!(?:a|b)$).*$".
          *
+         *   "^(?!(?:a|b)$).*$"
          *           ^^^         original expression
          *        ^^^^^^^^       tail of a grouped expression (without head anchor)
          *    ^^^^        ^^^^   inversion of match
