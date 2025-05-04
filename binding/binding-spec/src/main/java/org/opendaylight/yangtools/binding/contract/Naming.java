@@ -28,14 +28,21 @@ import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
+import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
+import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
+/**
+ * Various things related to naming things in generated classes.
+ */
 @Beta
 public final class Naming {
 
@@ -62,17 +69,61 @@ public final class Naming {
         // https://docs.oracle.com/javase/specs/jls/se16/html/jls-3.html#jls-3.9
         "record");
 
+    /**
+     * The root package hierarchy of all classes generated to capture the semantics of YANG modules. Each module is
+     * assigned a its own sub-hierarchy based on its {@code namespace} and {@code revision}.
+     */
+    public static final @NonNull String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
+
+    /**
+     * The root package hierarchy of all classes generated for the purposes of discovering and loading YANG modules
+     * along with their semantics. Each module is assigned a its own sub-hierarchy based on its {@code namespace} and
+     * {@code revision}.
+     */
+    public static final @NonNull String SVC_PACKAGE_PREFIX = "org.opendaylight.yang.svc.v1";
+
+    // Here we carve up Java Identifiers' namespace based on simple suffixes to different constructs. See
+    // https://docs.oracle.com/javase/specs/jls/se17/html/jls-3.html#jls-3.8 but note we use the allocated identifier
+    // in multiple contexts. like method names.
+
+    /**
+     * Suffix used for all interfaces representing the conceptual data store root of a module, i.e. those extending
+     * {@link DataRoot}.
+     */
     public static final @NonNull String DATA_ROOT_SUFFIX = "Data";
+    /**
+     * Suffix used for classes providing immutable implementation of underlying YANG contract by means of applying
+     * <a href="https://en.wikipedia.org/wiki/Builder_pattern">the builder pattern</a>.
+     */
     public static final @NonNull String BUILDER_SUFFIX = "Builder";
+    /**
+     * Suffix used for all classes capturing all {@code key} properties of a {@code list} statement, i.e. those
+     * implementing {@link Key}.
+     */
     public static final @NonNull String KEY_SUFFIX = "Key";
-    // ietf-restconf:yang-data, i.e. YangDataName
+    /**
+     * Suffix used for all interfaces representing the {@code input} of an {@code rpc} or an {@code action}, i.e. those
+     * extending {@link RpcInput}.
+     */
+    public static final @NonNull String RPC_INPUT_SUFFIX = "Input";
+    /**
+     * Suffix used for all interfaces representing the {@code output} of an {@code rpc} or an {@code action}, i.e. those
+     * extending {@link RpcOutput}.
+     */
+    public static final @NonNull String RPC_OUTPUT_SUFFIX = "Output";
+
+    // Here we carve out some field names.
+
+    /**
+     * The name of the field holding the {@code ietf-restconf:yang-data} argument, present in all {@link YangData}
+     * specializations. The type of the field is requied to be {@link YangDataName}.
+     */
     public static final @NonNull String NAME_STATIC_FIELD_NAME = "NAME";
     // everything that can have a QName (e.g. identifier bound to a namespace)
     public static final @NonNull String QNAME_STATIC_FIELD_NAME = "QNAME";
     // concrete extensible contracts, for example 'feature', 'identity' and similar
     public static final @NonNull String VALUE_STATIC_FIELD_NAME = "VALUE";
-    public static final @NonNull String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
-    public static final @NonNull String SVC_PACKAGE_PREFIX = "org.opendaylight.yang.svc.v1";
+
     public static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-/").precomputed())
@@ -149,8 +200,6 @@ public final class Naming {
      * of leaf objects.
      */
     public static final @NonNull String REQUIRE_PREFIX = "require";
-    public static final @NonNull String RPC_INPUT_SUFFIX = "Input";
-    public static final @NonNull String RPC_OUTPUT_SUFFIX = "Output";
 
     private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(
