@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.binding.codegen
 import static extension org.opendaylight.yangtools.binding.codegen.GeneratorUtil.isNonPresenceContainer;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX
+import static org.opendaylight.yangtools.binding.contract.Naming.HCETS_STATIC_FIELD_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX
 
@@ -190,7 +188,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
                     return hash;
                 }
 
-                final int result = «targetType.importedName».«BINDING_HASHCODE_NAME»(this);
+                final int result = «targetType.importedName».«HCETS_STATIC_FIELD_NAME».hashCode(this);
                 hash = result;
                 hashValid = true;
                 return result;
@@ -207,7 +205,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         «IF !properties.empty || augmentType !== null»
             @«OVERRIDE.importedName»
             public boolean equals(«Types.objectType().importedName» obj) {
-                return «targetType.importedName».«BINDING_EQUALS_NAME»(this, obj);
+                return «targetType.importedName».«HCETS_STATIC_FIELD_NAME».bindingEquals(this, obj);
             }
         «ENDIF»
     '''
@@ -220,7 +218,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     def protected generateToString() '''
         @«OVERRIDE.importedName»
         public «STRING.importedName» toString() {
-            return «targetType.importedName».«BINDING_TO_STRING_NAME»(this);
+            return «targetType.importedName».«HCETS_STATIC_FIELD_NAME».bindingToString(this);
         }
     '''
 

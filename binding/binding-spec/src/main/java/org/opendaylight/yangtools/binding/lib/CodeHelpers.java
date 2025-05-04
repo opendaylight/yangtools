@@ -422,6 +422,7 @@ public final class CodeHelpers {
      * @return Object cast to required class, if its implemented class matches requirement, {@code null} otherwise
      * @throws NullPointerException if {@code requiredClass} is {@code null}
      */
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static <T extends BindingContract<?>> @Nullable T checkCast(final @NonNull Class<T> requiredClass,
             final @Nullable Object obj) {
         return obj instanceof BindingContract<?> contract && requiredClass.equals(contract.implementedInterface())

@@ -9,10 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.classType;
-import static org.opendaylight.yangtools.binding.model.ri.Types.primitiveBooleanType;
-import static org.opendaylight.yangtools.binding.model.ri.Types.primitiveIntType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.wildcardTypeFor;
 
 import com.google.common.base.MoreObjects;
@@ -27,6 +24,7 @@ import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
+import org.opendaylight.yangtools.binding.lib.DataObjectMethods;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -254,25 +252,13 @@ public abstract class Generator implements Iterable<Generator> {
 
     /**
      * Add common methods implemented in a generated type. This includes {@link DataContainer#implementedInterface()} as
-     * well has {@code bindingHashCode()}, {@code bindingEquals()} and {@code bindingToString()}.
+     * well as {@link DataObjectMethods} constant.
      *
      * @param builder Target builder
      */
     static final void addConcreteInterfaceMethods(final GeneratedTypeBuilder builder) {
         defaultImplementedInterace(builder);
-
-        builder.addMethod(Naming.BINDING_HASHCODE_NAME)
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setStatic(true)
-            .setReturnType(primitiveIntType());
-        builder.addMethod(Naming.BINDING_EQUALS_NAME)
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setStatic(true)
-            .setReturnType(primitiveBooleanType());
-        builder.addMethod(Naming.BINDING_TO_STRING_NAME)
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setStatic(true)
-            .setReturnType(STRING);
+        builder.addConstant(null, "HCETS", builder);
     }
 
     static final void annotateDeprecatedIfNecessary(final EffectiveStatement<?, ?> stmt,

@@ -49,12 +49,12 @@ class Mdsal320Test {
         assertTrue(getImplIface.isDefault());
         assertTrue(it.hasNext());
 
-        final var bindingHashCode = it.next();
-        assertEquals(Naming.BINDING_HASHCODE_NAME, bindingHashCode.getName());
-        final var bindingEquals = it.next();
-        assertEquals(Naming.BINDING_EQUALS_NAME, bindingEquals.getName());
-        final var bindingToString = it.next();
-        assertEquals(Naming.BINDING_TO_STRING_NAME, bindingToString.getName());
+//        final var bindingHashCode = it.next();
+//        assertEquals(Naming.BINDING_HASHCODE_NAME, bindingHashCode.getName());
+//        final var bindingEquals = it.next();
+//        assertEquals(Naming.BINDING_EQUALS_NAME, bindingEquals.getName());
+//        final var bindingToString = it.next();
+//        assertEquals(Naming.BINDING_TO_STRING_NAME, bindingToString.getName());
         final var getBar = it.next();
         final var getBarType = assertInstanceOf(GeneratedTransferObject.class, getBar.getReturnType());
         assertTrue(getBarType.isUnionType());

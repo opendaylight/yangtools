@@ -124,6 +124,8 @@ public final class Naming {
     // concrete extensible contracts, for example 'feature', 'identity' and similar
     public static final @NonNull String VALUE_STATIC_FIELD_NAME = "VALUE";
 
+    public static final @NonNull String HCETS_STATIC_FIELD_NAME = "HCETS";
+
     public static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-/").precomputed())
@@ -151,24 +153,6 @@ public final class Naming {
      * Name of {@link BindingContract#implementedInterface()}.
      */
     public static final @NonNull String BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
-
-    /**
-     * Name of default {@link Object#hashCode()} implementation for instantiated DataObjects. Each such generated
-     * interface contains this static method.
-     */
-    public static final @NonNull String BINDING_HASHCODE_NAME = "bindingHashCode";
-
-    /**
-     * Name of default {@link Object#equals(Object)} implementation for instantiated DataObjects. Each such generated
-     * interface contains this static method.
-     */
-    public static final @NonNull String BINDING_EQUALS_NAME = "bindingEquals";
-
-    /**
-     * Name of default {@link Object#toString()} implementation for instantiated DataObjects. Each such generated
-     * interface contains this static method.
-     */
-    public static final @NonNull String BINDING_TO_STRING_NAME = "bindingToString";
 
     /**
      * Name of {@link Action#invoke(DataObjectIdentifier, RpcInput)}.

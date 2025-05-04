@@ -221,12 +221,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     @SuppressModernizer
     def private generateStaticMethod(MethodSignature method) {
-        switch method.name {
-            case BINDING_EQUALS_NAME : generateBindingEquals
-            case BINDING_HASHCODE_NAME : generateBindingHashCode
-            case BINDING_TO_STRING_NAME : generateBindingToString
-            default : ""
-        }
+        ""
     }
 
     def private generateMethod(MethodSignature method) '''

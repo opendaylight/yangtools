@@ -320,6 +320,7 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
                     return «c.name»;
                 }
             };
+        «ELSEIF Naming.HCETS_STATIC_FIELD_NAME.equals(c.name)»
         «ELSE»
             public static final «c.type.importedName» «c.name» = «c.value»;
         «ENDIF»
