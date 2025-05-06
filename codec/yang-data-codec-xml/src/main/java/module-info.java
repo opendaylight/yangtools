@@ -8,13 +8,13 @@
 module org.opendaylight.yangtools.yang.data.codec.xml {
     exports org.opendaylight.yangtools.yang.data.codec.xml;
 
+    requires transitive java.xml;
+    requires transitive org.codehaus.stax2;
     requires transitive org.opendaylight.yangtools.yang.data.api;
     requires transitive org.opendaylight.yangtools.yang.data.util;
     requires transitive org.opendaylight.yangtools.yang.model.api;
 
-    requires java.xml;
     requires com.google.common;
-    requires org.codehaus.stax2;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.impl;
