@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedExcepti
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.api.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
@@ -96,7 +95,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     AbstractNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support,
             final DataTreeConfiguration treeConfig) {
         this.support = requireNonNull(support);
-        verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
+        verifyChildrenStructure = treeConfig.isRecursiveWriteValidationEnabled();
     }
 
     @Override
