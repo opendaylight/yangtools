@@ -11,6 +11,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Utility registration handle. It is a convenience for register-style method which can return an AutoCloseable realized
@@ -70,7 +71,7 @@ public abstract class AbstractRegistration implements Registration {
         return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
     }
 
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+    protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
         return toStringHelper.add("closed", isClosed());
     }
 
