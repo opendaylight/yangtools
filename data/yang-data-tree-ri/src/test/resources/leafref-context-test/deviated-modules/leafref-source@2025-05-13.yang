@@ -1,0 +1,19 @@
+module leafref-source {
+  yang-version 1.1;
+  namespace "leafref:source";
+  prefix src;
+  description "Test model that contains source of leafref for testing openapi";
+
+  grouping leafref-grouping {
+    container conts {
+      list cont {
+        key "name";
+        leaf name {
+          type string;
+        }
+      }
+    }
+  }
+
+  uses leafref-grouping;
+}

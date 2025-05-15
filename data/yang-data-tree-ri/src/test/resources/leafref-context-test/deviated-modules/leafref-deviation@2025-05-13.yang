@@ -1,0 +1,15 @@
+module leafref-deviation {
+  yang-version 1.1;
+  namespace "leafref:deviation";
+  prefix dev;
+
+  import leafref-source {
+    prefix src;
+  }
+
+  deviation "/src:conts" {
+    deviate not-supported;
+    description
+      "Deviate container that used in leafref other model.";
+  }
+}
