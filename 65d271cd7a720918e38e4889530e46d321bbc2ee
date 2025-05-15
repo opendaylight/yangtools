@@ -16,6 +16,24 @@
       "message": "We should resurrect this at some point with ScopedValue",
       "revId": "65d271cd7a720918e38e4889530e46d321bbc2ee",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e416eff0_299720c3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-05-15T09:09:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d3fd024_b260c59f",
+      "revId": "65d271cd7a720918e38e4889530e46d321bbc2ee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
