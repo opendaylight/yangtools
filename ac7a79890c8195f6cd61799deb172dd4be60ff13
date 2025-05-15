@@ -16,6 +16,24 @@
       "message": "this will be related to some yangtools issue which you are going to create",
       "revId": "ac7a79890c8195f6cd61799deb172dd4be60ff13",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f7b8fe9_bcb74d7f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 9063
+      },
+      "writtenOn": "2025-05-15T10:44:14Z",
+      "side": 1,
+      "message": "Ok, I\u0027ll change it when there is a ticket.",
+      "parentUuid": "37db8621_e800282c",
+      "revId": "ac7a79890c8195f6cd61799deb172dd4be60ff13",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
