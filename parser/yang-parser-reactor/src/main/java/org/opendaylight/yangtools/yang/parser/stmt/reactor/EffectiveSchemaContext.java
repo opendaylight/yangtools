@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -38,10 +39,10 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext implements
                 .collect(ImmutableMap.toImmutableMap(ModuleEffectiveStatement::localQNameModule, Function.identity()));
     }
 
-    static EffectiveSchemaContext create(final List<DeclaredStatement<?>> rootDeclaredStatements,
+    static @NonNull EffectiveSchemaContext create(final List<DeclaredStatement<?>> rootDeclaredStatements,
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
-        final Set<Module> modules = new HashSet<>();
-        for (EffectiveStatement<?, ?> stmt : rootEffectiveStatements) {
+        final var modules = new HashSet<Module>();
+        for (var stmt : rootEffectiveStatements) {
             if (stmt.getDeclared() instanceof ModuleStatement) {
                 Verify.verify(stmt instanceof Module);
                 modules.add((Module) stmt);
