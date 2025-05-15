@@ -1,0 +1,19 @@
+module leafref-usage {
+  yang-version 1.1;
+  namespace "leafref:usage";
+  prefix usg;
+
+ import leafref-source {
+    prefix src;
+  }
+
+  container leafref-cont {
+    leaf refleaf {
+      type leafref {
+        path "/src:conts/src:cont/src:name";
+      }
+      description
+        "Leafref to the leaf in different model. Used for testing leafref resolvig of OpenApi.";
+    }
+  }
+}
