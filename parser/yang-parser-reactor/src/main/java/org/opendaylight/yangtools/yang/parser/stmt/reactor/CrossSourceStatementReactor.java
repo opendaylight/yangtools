@@ -214,8 +214,9 @@ public final class CrossSourceStatementReactor {
          * Build the {@link ReactorDeclaredModel} view of this action.
          *
          * @return A declared view of selected models.
+         * @throws ReactorException if the declared model cannot be built
          */
-        public ReactorDeclaredModel build() throws ReactorException {
+        public @NonNull ReactorDeclaredModel build() throws ReactorException {
             return context.build();
         }
 
@@ -223,8 +224,9 @@ public final class CrossSourceStatementReactor {
          * Build the {@link EffectiveSchemaContext} view of this action.
          *
          * @return An effective view of selected models.
+         * @throws ReactorException if the effective model cannot be built
          */
-        public EffectiveSchemaContext buildEffective() throws ReactorException {
+        public @NonNull EffectiveSchemaContext buildEffective() throws ReactorException {
             return context.buildEffective();
         }
     }
