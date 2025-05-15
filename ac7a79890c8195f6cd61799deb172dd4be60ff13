@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37db8621_e800282c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2025-05-15T10:38:31Z",
+      "side": 1,
+      "message": "this will be related to some yangtools issue which you are going to create",
+      "revId": "ac7a79890c8195f6cd61799deb172dd4be60ff13",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
