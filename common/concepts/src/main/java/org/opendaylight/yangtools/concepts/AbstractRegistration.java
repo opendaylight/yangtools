@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Utility registration handle. It is a convenience for register-style method which can return an AutoCloseable realized
  * by a subclass of this class. Invoking the close() method triggers unregistration of the state the method installed.
  */
-public abstract class AbstractRegistration implements Registration {
+public abstract class AbstractRegistration extends BaseRegistration {
     private static final VarHandle CLOSED;
 
     // All access needs to go through this handle, really.
@@ -39,22 +37,14 @@ public abstract class AbstractRegistration implements Registration {
      */
     protected abstract void removeRegistration();
 
-    /**
-     * Query the state of this registration. Returns true if it was closed. Equivalent of {@code !notClosed()}.
-     *
-     * @return true if the registration was closed, false otherwise.
-     */
+    @Override
     public final boolean isClosed() {
-        return (byte) CLOSED.getAcquire(this) != 0;
+        return getAcquire() != 0;
     }
 
-    /**
-     * Query the state of this registration. Returns false if it was closed. Equivalent of {@code !isClosed()}.
-     *
-     * @return false if the registration was closed, true otherwise.
-     */
+    @Override
     public final boolean notClosed() {
-        return (byte) CLOSED.getAcquire(this) == 0;
+        return getAcquire() == 0;
     }
 
     @Override
@@ -67,12 +57,12 @@ public abstract class AbstractRegistration implements Registration {
     }
 
     @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("closed", isClosed());
     }
 
-    protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
-        return toStringHelper.add("closed", isClosed());
+    private byte getAcquire() {
+        return (byte) CLOSED.getAcquire(this);
     }
 
     /**
