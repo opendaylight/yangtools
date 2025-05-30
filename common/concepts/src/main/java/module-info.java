@@ -12,6 +12,7 @@ module org.opendaylight.yangtools.concepts {
     exports org.opendaylight.yangtools.concepts;
 
     requires transitive com.google.common;
+    requires static transitive org.osgi.framework;
     requires org.slf4j;
 
     // Annotations
