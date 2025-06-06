@@ -422,19 +422,22 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
             case DOWN -> 0;
             case CEILING -> Long.signum(trunc) > 0 ? 1 : 0;
             case FLOOR -> Long.signum(trunc) < 0 ? -1 : 0;
-            case HALF_UP -> switch (RemainderSignificance.of(remainder, factor)) {
-                case LT_HALF -> 0;
-                case HALF, GT_HALF -> Long.signum(trunc);
-            };
-            case HALF_DOWN -> switch (RemainderSignificance.of(remainder, factor)) {
-                case LT_HALF, HALF -> 0;
-                case GT_HALF -> Long.signum(trunc);
-            };
-            case HALF_EVEN -> switch (RemainderSignificance.of(remainder, factor)) {
-                case LT_HALF -> 0;
-                case HALF -> (trunc & 0x1) != 0 ? Long.signum(trunc) : 0;
-                case GT_HALF -> Long.signum(trunc);
-            };
+            case HALF_UP ->
+                switch (RemainderSignificance.of(remainder, factor)) {
+                    case LT_HALF -> 0;
+                    case HALF, GT_HALF -> Long.signum(trunc);
+                };
+            case HALF_DOWN ->
+                switch (RemainderSignificance.of(remainder, factor)) {
+                    case LT_HALF, HALF -> 0;
+                    case GT_HALF -> Long.signum(trunc);
+                };
+            case HALF_EVEN ->
+                switch (RemainderSignificance.of(remainder, factor)) {
+                    case LT_HALF -> 0;
+                    case HALF -> (trunc & 0x1) != 0 ? Long.signum(trunc) : 0;
+                    case GT_HALF -> Long.signum(trunc);
+                };
             case UNNECESSARY ->
                 throw new ArithmeticException("Decreasing scale of " + this + " to " + scale + " requires rounding");
         };

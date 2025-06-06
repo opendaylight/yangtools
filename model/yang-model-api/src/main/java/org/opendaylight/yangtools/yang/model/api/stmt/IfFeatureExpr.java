@@ -454,10 +454,11 @@ public abstract sealed class IfFeatureExpr implements Immutable, Predicate<Featu
 
                 // All expressions are either positive or negative, hence we can combine them efficiently
                 final var qnames = exprs.stream()
-                    .map(expr -> switch (expr) {
-                        case Single single -> single.qname;
-                        case AbstractArray<?> array -> throw new VerifyException("Unexpected expression " + array);
-                    })
+                    .map(expr ->
+                        switch (expr) {
+                            case Single single -> single.qname;
+                            case AbstractArray<?> array -> throw new VerifyException("Unexpected expression " + array);
+                        })
                     .collect(ImmutableSet.toImmutableSet())
                     .toArray(new QName[0]);
                 yield positive ? allPresent.apply(qnames) : allAbsent.apply(qnames);
