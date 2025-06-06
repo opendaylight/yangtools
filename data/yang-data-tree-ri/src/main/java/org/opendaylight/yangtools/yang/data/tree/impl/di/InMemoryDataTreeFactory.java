@@ -122,21 +122,25 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         }
 
         return switch (schemaNode) {
-            case ContainerSchemaNode containerSchema -> switch (arg) {
-                case NodeIdentifier nid -> BUILDERS.newContainerBuilder().withNodeIdentifier(nid).build();
-                default -> throw new IllegalArgumentException("Mismatched container " + schemaNode + " path " + path);
-            };
-            case ListSchemaNode listSchema -> switch (arg) {
-                // This can either be a top-level list or its individual entry
-                case NodeIdentifierWithPredicates nip -> BUILDERS.newMapEntryBuilder().withNodeIdentifier(nip).build();
-                case NodeIdentifier nid -> {
-                    final var builder = listSchema.isUserOrdered()
-                        ? BUILDERS.newUserMapBuilder() : BUILDERS.newSystemMapBuilder();
-                    yield builder.withNodeIdentifier(nid).build();
-                }
-                case NodeWithValue<?> var ->
-                    throw new IllegalArgumentException("Mismatched list " + listSchema + " path " + path);
-            };
+            case ContainerSchemaNode containerSchema ->
+                switch (arg) {
+                    case NodeIdentifier nid -> BUILDERS.newContainerBuilder().withNodeIdentifier(nid).build();
+                    default -> throw new IllegalArgumentException(
+                        "Mismatched container " + schemaNode + " path " + path);
+                };
+            case ListSchemaNode listSchema ->
+                switch (arg) {
+                    // This can either be a top-level list or its individual entry
+                    case NodeIdentifierWithPredicates nip ->
+                        BUILDERS.newMapEntryBuilder().withNodeIdentifier(nip).build();
+                    case NodeIdentifier nid -> {
+                        final var builder = listSchema.isUserOrdered()
+                            ? BUILDERS.newUserMapBuilder() : BUILDERS.newSystemMapBuilder();
+                        yield builder.withNodeIdentifier(nid).build();
+                    }
+                    case NodeWithValue<?> var ->
+                        throw new IllegalArgumentException("Mismatched list " + listSchema + " path " + path);
+                };
             case null, default -> throw new IllegalArgumentException("Unsupported root schema " + schemaNode);
         };
     }

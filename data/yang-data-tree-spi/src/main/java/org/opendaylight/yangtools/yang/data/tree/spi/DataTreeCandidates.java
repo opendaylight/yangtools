@@ -253,33 +253,38 @@ public final class DataTreeCandidates {
                 }
                 yield second;
             }
-            case WRITE -> switch (second) {
-                case UNMODIFIED, WRITE, SUBTREE_MODIFIED -> ModificationType.WRITE;
-                case DELETE -> ModificationType.DELETE;
-                case DISAPPEARED -> ModificationType.DISAPPEARED;
-                case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
-            };
-            case DELETE -> switch (second) {
-                case UNMODIFIED -> ModificationType.DELETE;
-                case WRITE, APPEARED -> ModificationType.WRITE;
-                case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> throw illegalModification(second, first);
-            };
-            case APPEARED -> switch (second) {
-                case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.APPEARED;
-                case DELETE, DISAPPEARED -> ModificationType.UNMODIFIED;
-                case WRITE -> ModificationType.WRITE;
-                case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
-            };
-            case DISAPPEARED -> switch (second) {
-                case UNMODIFIED, WRITE -> second;
-                case APPEARED -> ModificationType.SUBTREE_MODIFIED;
-                case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> throw illegalModification(second, first);
-            };
-            case SUBTREE_MODIFIED -> switch (second) {
-                case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.SUBTREE_MODIFIED;
-                case WRITE, DELETE, DISAPPEARED -> second;
-                case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
-            };
+            case WRITE ->
+                switch (second) {
+                    case UNMODIFIED, WRITE, SUBTREE_MODIFIED -> ModificationType.WRITE;
+                    case DELETE -> ModificationType.DELETE;
+                    case DISAPPEARED -> ModificationType.DISAPPEARED;
+                    case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
+                };
+            case DELETE ->
+                switch (second) {
+                    case UNMODIFIED -> ModificationType.DELETE;
+                    case WRITE, APPEARED -> ModificationType.WRITE;
+                    case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> throw illegalModification(second, first);
+                };
+            case APPEARED ->
+                switch (second) {
+                    case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.APPEARED;
+                    case DELETE, DISAPPEARED -> ModificationType.UNMODIFIED;
+                    case WRITE -> ModificationType.WRITE;
+                    case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
+                };
+            case DISAPPEARED ->
+                switch (second) {
+                    case UNMODIFIED, WRITE -> second;
+                    case APPEARED -> ModificationType.SUBTREE_MODIFIED;
+                    case DELETE, DISAPPEARED, SUBTREE_MODIFIED -> throw illegalModification(second, first);
+                };
+            case SUBTREE_MODIFIED ->
+                switch (second) {
+                    case UNMODIFIED, SUBTREE_MODIFIED -> ModificationType.SUBTREE_MODIFIED;
+                    case WRITE, DELETE, DISAPPEARED -> second;
+                    case APPEARED -> throw illegalModification(ModificationType.APPEARED, first);
+                };
         };
     }
 
