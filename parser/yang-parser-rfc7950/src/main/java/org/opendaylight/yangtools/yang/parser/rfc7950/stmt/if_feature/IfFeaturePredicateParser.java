@@ -68,15 +68,16 @@ final class IfFeaturePredicateParser {
         return switch (first) {
             case Identifier_ref_argContext refArg ->
                 IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(stmt, refArg.getText()));
-            case TerminalNode terminal -> switch (terminal.getSymbol().getType()) {
-                case IfFeatureExpressionParser.LP ->
-                    parseIfFeatureExpr(factor.getChild(If_feature_exprContext.class, 0));
-                case IfFeatureExpressionParser.NOT ->
-                    parseIfFeatureFactor(getChild(factor, 2, If_feature_factorContext.class)).negate();
-                default ->
-                    throw new SourceException(stmt, "Unexpected terminal %s in sub-expression at %s",
-                        terminal.getText(), factor.getSourceInterval());
-            };
+            case TerminalNode terminal ->
+                switch (terminal.getSymbol().getType()) {
+                    case IfFeatureExpressionParser.LP ->
+                        parseIfFeatureExpr(factor.getChild(If_feature_exprContext.class, 0));
+                    case IfFeatureExpressionParser.NOT ->
+                        parseIfFeatureFactor(getChild(factor, 2, If_feature_factorContext.class)).negate();
+                    default ->
+                        throw new SourceException(stmt, "Unexpected terminal %s in sub-expression at %s",
+                            terminal.getText(), factor.getSourceInterval());
+                };
             default -> throw new SourceException(stmt, """
                 Unexpected error: sub-expression at %s has context %s. Please file a bug report with the corresponding \
                 model attached.""", factor.getSourceInterval(), first);

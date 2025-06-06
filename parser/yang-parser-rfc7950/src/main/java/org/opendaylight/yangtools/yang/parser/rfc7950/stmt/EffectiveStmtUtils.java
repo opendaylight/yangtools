@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -64,8 +65,7 @@ public final class EffectiveStmtUtils {
             AbstractStatementSupport.findFirstStatement(substatements, MaxElementsEffectiveStatement.class));
     }
 
-    @NonNullByDefault
-    private static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
+    private static @Nullable ElementCountConstraint createElementCountConstraint(final @NonNull CommonStmtCtx ctx,
             final @Nullable MinElementsEffectiveStatement minStmt,
             final @Nullable MaxElementsEffectiveStatement maxStmt) {
         final Integer minElements;

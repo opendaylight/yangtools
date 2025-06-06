@@ -50,12 +50,13 @@ abstract class XMLStreamWriterUtils {
         return switch (type) {
             case IdentityrefTypeDefinition identityref -> encode(writer, identityref, value, parent);
             case InstanceIdentifierTypeDefinition instanceIdentifier -> encode(writer, instanceIdentifier, value);
-            case UnionTypeDefinition union -> switch (value) {
-                // Ugly special-case for unions with identityrefs
-                case QName qname when isIdentityref(union) -> encode(writer, qname, parent);
-                case YangInstanceIdentifier iid when isInstanceIdentifier(union) -> encode(writer, iid);
-                default -> serialize(type, value);
-            };
+            case UnionTypeDefinition union ->
+                switch (value) {
+                    // Ugly special-case for unions with identityrefs
+                    case QName qname when isIdentityref(union) -> encode(writer, qname, parent);
+                    case YangInstanceIdentifier iid when isInstanceIdentifier(union) -> encode(writer, iid);
+                    default -> serialize(type, value);
+                };
             default -> serialize(type, value);
         };
     }
