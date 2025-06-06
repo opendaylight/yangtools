@@ -43,24 +43,27 @@ final class NumberUtil {
     static {
         final ImmutableMap.Builder<Class<? extends Number>, Function<Number, Number>> b = ImmutableMap.builder();
         b.put(Byte.class, input -> input instanceof Byte val ? val : Byte.valueOf(input.toString()));
-        b.put(Short.class, input -> switch (input) {
-            case Short val -> val;
-            case Byte val -> val.shortValue();
-            default -> Short.valueOf(input.toString());
-        });
-        b.put(Integer.class, input -> switch (input) {
-            case Integer val -> val;
-            case Short val -> val.intValue();
-            case Byte val -> val.intValue();
-            default -> Integer.valueOf(input.toString());
-        });
-        b.put(Long.class, input -> switch (input) {
-            case Long val -> val;
-            case Integer val -> val.longValue();
-            case Short val -> val.longValue();
-            case Byte val -> val.longValue();
-            default -> Long.valueOf(input.toString());
-        });
+        b.put(Short.class, input ->
+            switch (input) {
+                case Short val -> val;
+                case Byte val -> val.shortValue();
+                default -> Short.valueOf(input.toString());
+            });
+        b.put(Integer.class, input ->
+            switch (input) {
+                case Integer val -> val;
+                case Short val -> val.intValue();
+                case Byte val -> val.intValue();
+                default -> Integer.valueOf(input.toString());
+            });
+        b.put(Long.class, input ->
+            switch (input) {
+                case Long val -> val;
+                case Integer val -> val.longValue();
+                case Short val -> val.longValue();
+                case Byte val -> val.longValue();
+                default -> Long.valueOf(input.toString());
+            });
         b.put(Decimal64.class, input -> {
             if (input instanceof Decimal64) {
                 return input;

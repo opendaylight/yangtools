@@ -294,8 +294,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
         // Walk the tree from the top, looking for the first node between root and the requested path which has been
         // modified. If no such node exists, we use the node itself.
-        final var terminal = StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path,
-            node -> switch (node.getOperation()) {
+        final var terminal = StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path, node ->
+            switch (node.getOperation()) {
                 case DELETE, MERGE, WRITE -> true;
                 case TOUCH, NONE -> false;
             });
