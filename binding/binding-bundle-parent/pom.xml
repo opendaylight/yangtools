@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>14.0.14</version>
+        <version>14.0.15-SNAPSHOT</version>
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
@@ -72,12 +72,12 @@
                         <plugin>
                             <groupId>org.opendaylight.yangtools</groupId>
                             <artifactId>yang-maven-plugin</artifactId>
-                            <version>14.0.14</version>
+                            <version>14.0.15-SNAPSHOT</version>
                             <dependencies>
                                 <dependency>
                                     <groupId>org.opendaylight.yangtools</groupId>
                                     <artifactId>binding-codegen</artifactId>
-                                    <version>14.0.14</version>
+                                    <version>14.0.15-SNAPSHOT</version>
                                 </dependency>
                             </dependencies>
                             <executions>
