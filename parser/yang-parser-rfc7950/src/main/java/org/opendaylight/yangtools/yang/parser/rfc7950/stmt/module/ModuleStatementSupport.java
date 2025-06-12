@@ -7,23 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
@@ -126,22 +123,22 @@ public final class ModuleStatementSupport
 
     @Override
     public void onPreLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final Unqualified moduleName = stmt.getArgument();
+        final var moduleName = stmt.getArgument();
 
-        final XMLNamespace moduleNs = SourceException.throwIfNull(
+        final var moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", moduleName);
         stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName, moduleNs);
 
-        final String modulePrefix = SourceException.throwIfNull(
+        final var modulePrefix = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
             "Prefix of the module [%s] is missing", moduleName);
         stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, modulePrefix, moduleNs);
 
         stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
 
-        final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
-        final QNameModule qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
+        final var revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
+        final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
 
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
         stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
@@ -149,27 +146,26 @@ public final class ModuleStatementSupport
 
     @Override
     public void onLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final XMLNamespace moduleNs = SourceException.throwIfNull(
+        final var moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", stmt.argument());
 
-        final Revision revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
-        final QNameModule qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
-        final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
-                stmt.namespaceItem(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
+        final var revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
+        final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
+        final var possibleDuplicateModule = stmt.namespaceItem(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
             throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.namespace(),
                 possibleDuplicateModule.sourceReference());
         }
 
-        final Unqualified moduleName = stmt.getArgument();
-        final SourceIdentifier moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
+        final var moduleName = stmt.getArgument();
+        final var moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
 
         stmt.addToNs(ParserNamespaces.MODULE, moduleIdentifier, stmt);
         stmt.addToNs(ParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
         stmt.addToNs(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
 
-        final String modulePrefix = SourceException.throwIfNull(
+        final var modulePrefix = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
             "Prefix of the module [%s] is missing", stmt.argument());
 
@@ -186,17 +182,16 @@ public final class ModuleStatementSupport
     protected ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
             final Current<Unqualified, ModuleStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> substatements) {
-        final ImmutableList<? extends EffectiveStatement<?, ?>> local =
-                super.buildEffectiveSubstatements(stmt, substatements);
-        final Collection<StmtContext<?, ?, ?>> submodules = submoduleContexts(stmt);
+        final var local = super.buildEffectiveSubstatements(stmt, substatements);
+        final var submodules = submoduleContexts(stmt);
         if (submodules.isEmpty()) {
             return local;
         }
 
         // Concatenate statements so they appear as if they were part of target module
-        final List<EffectiveStatement<?, ?>> others = new ArrayList<>();
-        for (StmtContext<?, ?, ?> submoduleCtx : submodules) {
-            for (EffectiveStatement<?, ?> effective : submoduleCtx.buildEffective().effectiveSubstatements()) {
+        final var others = new ArrayList<EffectiveStatement<?, ?>>();
+        for (var submoduleCtx : submodules) {
+            for (var effective : submoduleCtx.buildEffective().effectiveSubstatements()) {
                 if (effective instanceof SchemaNode || effective instanceof DataNodeContainer) {
                     others.add(effective);
                 }
@@ -204,9 +199,9 @@ public final class ModuleStatementSupport
         }
 
         return ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(local.size() + others.size())
-                .addAll(local)
-                .addAll(others)
-                .build();
+            .addAll(local)
+            .addAll(others)
+            .build();
     }
 
     @Override
@@ -231,14 +226,17 @@ public final class ModuleStatementSupport
             throw noNamespace(stmt);
         }
 
-        final List<Submodule> submodules = new ArrayList<>();
-        for (StmtContext<?, ?, ?> submoduleCtx : submoduleContexts(stmt)) {
-            final EffectiveStatement<?, ?> submodule = submoduleCtx.buildEffective();
-            verify(submodule instanceof Submodule, "Submodule statement %s is not a Submodule", submodule);
-            submodules.add((Submodule) submodule);
+        final var submodules = new ArrayList<Submodule>();
+        for (var submoduleCtx : submoduleContexts(stmt)) {
+            final var submodule = submoduleCtx.buildEffective();
+            if (submodule instanceof Submodule legacy) {
+                submodules.add(legacy);
+            } else {
+                throw new VerifyException("Submodule statement " + submodule + " is not a Submodule");
+            }
         }
 
-        final QNameModule qnameModule = verifyNotNull(stmt.namespaceItem(QNameModuleNamespace.INSTANCE, Empty.value()));
+        final var qnameModule = verifyNotNull(stmt.namespaceItem(QNameModuleNamespace.INSTANCE, Empty.value()));
         try {
             return new ModuleEffectiveStatementImpl(stmt, substatements, submodules, qnameModule);
         } catch (SubstatementIndexingException e) {
@@ -247,8 +245,7 @@ public final class ModuleStatementSupport
     }
 
     private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
-        final Map<Unqualified, StmtContext<?, ?, ?>> submodules = stmt.localNamespacePortion(
-            ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
+        final var submodules = stmt.localNamespacePortion(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
         return submodules == null ? List.of() : submodules.values();
     }
 
