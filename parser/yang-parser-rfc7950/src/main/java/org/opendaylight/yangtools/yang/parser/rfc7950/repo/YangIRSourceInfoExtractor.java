@@ -91,8 +91,7 @@ public final class YangIRSourceInfoExtractor {
      * @throws YangSyntaxErrorException If the resource does not pass syntactic analysis
      * @throws IOException When the resource cannot be read
      */
-    public static SourceInfo forYangText(final YangTextSource yangText)
-            throws IOException, YangSyntaxErrorException {
+    public static SourceInfo forYangText(final YangTextSource yangText) throws IOException, YangSyntaxErrorException {
         final var source = YangStatementStreamSource.create(yangText);
         return forIR(source.rootStatement(), source.getIdentifier());
     }
