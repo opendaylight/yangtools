@@ -131,12 +131,10 @@ public final class RequestException extends Exception {
     }
 
     private static ErrorTag errorTagOf(final @Nullable Throwable cause) {
-        if (cause instanceof UnsupportedOperationException) {
-            return ErrorTag.OPERATION_NOT_SUPPORTED;
-        } else if (cause instanceof IllegalArgumentException) {
-            return ErrorTag.INVALID_VALUE;
-        } else {
-            return ErrorTag.OPERATION_FAILED;
-        }
+        return switch (cause) {
+            case IllegalArgumentException iae -> ErrorTag.INVALID_VALUE;
+            case UnsupportedOperationException uoe -> ErrorTag.OPERATION_NOT_SUPPORTED;
+            case null, default -> ErrorTag.OPERATION_FAILED;
+        };
     }
 }
