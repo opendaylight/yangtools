@@ -13,7 +13,7 @@
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>feature-parent</artifactId>
         <version>14.0.15-SNAPSHOT</version>
-        <relativePath>../parent</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>odl-yangtools-export</artifactId>
