@@ -13,11 +13,10 @@
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>bnd-parent</artifactId>
         <version>14.0.15-SNAPSHOT</version>
-        <relativePath>../../bnd-parent</relativePath>
+        <relativePath>../../bnd-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>yang-xpath-api</artifactId>
-    <version>14.0.15-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>YANG XPath ${project.artifactId}</description>

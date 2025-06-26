@@ -13,7 +13,7 @@
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>bnd-parent</artifactId>
         <version>14.0.15-SNAPSHOT</version>
-        <relativePath>../../bnd-parent</relativePath>
+        <relativePath>../../bnd-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>rfc8639-model-api</artifactId>

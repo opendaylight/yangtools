@@ -13,10 +13,8 @@
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>binding-bundle-parent</artifactId>
         <version>14.0.15-SNAPSHOT</version>
-        <relativePath>../binding-bundle-parent</relativePath>
+        <relativePath>../binding-bundle-parent/pom.xml</relativePath>
     </parent>
-
-    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>codegen-extensions</artifactId>
     <name>${project.artifactId}</name>
     <packaging>bundle</packaging>
