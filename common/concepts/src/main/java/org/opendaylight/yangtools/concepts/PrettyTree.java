@@ -47,7 +47,7 @@ public abstract class PrettyTree implements Supplier<String> {
      * @throws NullPointerException if {@code sb} is null
      * @throws IllegalArgumentException if {@code depth} is negative
      */
-    public abstract void appendTo(StringBuilder sb, int depth);
+    public abstract void appendTo(@NonNull StringBuilder sb, int depth);
 
     /**
      * Append a number of spaces equivalent to specified tree nesting depth into the specified {@link StringBuilder}.
@@ -57,7 +57,7 @@ public abstract class PrettyTree implements Supplier<String> {
      * @throws NullPointerException if {@code sb} is null
      * @throws IllegalArgumentException if {@code depth} is negative
      */
-    protected static final void appendIndent(final StringBuilder sb, final int depth) {
+    protected static final void appendIndent(final @NonNull StringBuilder sb, final int depth) {
         checkArgument(depth >= 0, "Invalid depth %s", depth);
         PrettyTreeIndent.indent(sb, depth);
     }
