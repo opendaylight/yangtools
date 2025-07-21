@@ -1,11 +1,88 @@
+#
+# Copyright (c) 2025 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Eclipse Public License v1.0 which accompanies this distribution,
+# and is available at http://www.eclipse.org/legal/epl-v10.html
+#
+
+import logging
+import pathlib
 import pytest
 import subprocess
 
 YANGMODELS_REPO = "https://github.com/YangModels/yang"
-# YANGMODELS_REPO_COMMIT_HASH = "cdd14114cdaf130be2b6bfce92538c05f6d7c07d"
+YANGMODELS_REPO_COMMIT_HASH = "cdd14114cdaf130be2b6bfce92538c05f6d7c07d"
 
 OPENCONFIG_REPO = "https://github.com/openconfig/public"
-# OPENCONFIG_REPO_COMMIT_HASH = "8062b1b45208b952598ad3c3aa9e5ebc4f03cc67"
+OPENCONFIG_REPO_COMMIT_HASH = "8062b1b45208b952598ad3c3aa9e5ebc4f03cc67"
+
+TEST_TOOL_NAME = "yang-model-validator"
+
+# YANG_MODEL_PATHS is needed to explicitly tell which paths to find yang files to build dependencies from to validate
+# the yang file being validated. There is an option (-r) to recursively parse so that you don't have to pass all of these
+# paths with the -p argument, but the recursive option makes the tool so slow that it would not work when testing so
+# many files
+YANG_MODEL_PATHS = {
+    "src/main/yang/experimental/ietf-extracted-YANG-modules",
+    "src/main/yang/standard/ietf/DRAFT",
+    "src/main/yang/experimental/openconfig/release/models",
+    "src/main/yang/standard/ietf/RFC",
+    "src/main/yang/experimental/ieee",
+    "src/main/yang/experimental/ieee/1588",
+    "src/main/yang/experimental/ieee/1906.1",
+    "src/main/yang/experimental/ietf",
+    "src/main/yang/experimental/mano-models",
+    "src/main/yang/experimental/odp",
+    "src/main/yang/experimental/openconfig/release/models/acl",
+    "src/main/yang/experimental/openconfig/release/models/aft",
+    "src/main/yang/experimental/openconfig/release/models/bfd",
+    "src/main/yang/experimental/openconfig/release/models/bgp",
+    "src/main/yang/experimental/openconfig/release/models/catalog",
+    "src/main/yang/experimental/openconfig/release/models/interfaces",
+    "src/main/yang/experimental/openconfig/release/models/isis",
+    "src/main/yang/experimental/openconfig/release/models/lacp",
+    "src/main/yang/experimental/openconfig/release/models/lldp",
+    "src/main/yang/experimental/openconfig/release/models/local-routing",
+    "src/main/yang/experimental/openconfig/release/models/macsec",
+    "src/main/yang/experimental/openconfig/release/models/mpls",
+    "src/main/yang/experimental/openconfig/release/models/multicast",
+    "src/main/yang/experimental/openconfig/release/models/network-instance",
+    "src/main/yang/experimental/openconfig/release/models/openflow",
+    "src/main/yang/experimental/openconfig/release/models/optical-transport",
+    "src/main/yang/experimental/openconfig/release/models/ospf",
+    "src/main/yang/experimental/openconfig/release/models/platform",
+    "src/main/yang/experimental/openconfig/release/models/policy",
+    "src/main/yang/experimental/openconfig/release/models/policy-forwarding",
+    "src/main/yang/experimental/openconfig/release/models/probes",
+    "src/main/yang/experimental/openconfig/release/models/qos",
+    "src/main/yang/experimental/openconfig/release/models/relay-agent",
+    "src/main/yang/experimental/openconfig/release/models/rib",
+    "src/main/yang/experimental/openconfig/release/models/segment-routing",
+    "src/main/yang/experimental/openconfig/release/models/stp",
+    "src/main/yang/experimental/openconfig/release/models/system",
+    "src/main/yang/experimental/openconfig/release/models/telemetry",
+    "src/main/yang/experimental/openconfig/release/models/types",
+    "src/main/yang/experimental/openconfig/release/models/vlan",
+    "src/main/yang/experimental/openconfig/release/models/wifi",
+    "src/main/yang/standard/ieee/draft/802.1/ABcu",
+    "src/main/yang/standard/ieee/draft/802.1/AEdk",
+    "src/main/yang/standard/ieee/draft/802.1/CBcv",
+    "src/main/yang/standard/ieee/draft/802.1/CBdb",
+    "src/main/yang/standard/ieee/draft/802.1/Qcr",
+    "src/main/yang/standard/ieee/draft/802.1/Qcw",
+    "src/main/yang/standard/ieee/draft/802.1/Qcx",
+    "src/main/yang/standard/ieee/draft/802.1/Qcz",
+    "src/main/yang/standard/ieee/draft/1906.1",
+    "src/main/yang/standard/ieee/published/802.1",
+    "src/main/yang/standard/ieee/published/802.3",
+    "src/main/yang/vendor/ciena",
+    "src/main/yang/vendor/fujitsu",
+    "src/main/yang/vendor/huawei",
+    "src/main/yang/vendor/nokia",
+}
+
+log = logging.getLogger(__name__)
 
 
 def shell(command: str | list | tuple, joiner="; ", cwd: str | None = None):
@@ -16,6 +93,7 @@ def shell(command: str | list | tuple, joiner="; ", cwd: str | None = None):
     # print(exec_command, " |--| ", cwd)
 
     try:
+        log.info(exec_command)
         result = subprocess.run(
             exec_command,
             shell=True,
@@ -24,16 +102,16 @@ def shell(command: str | list | tuple, joiner="; ", cwd: str | None = None):
             text=True,
             cwd=cwd,
         )
-        print(
-            f"{exec_command}\n{result.returncode:3d} |--| {result.stdout}", flush=True
-        )
+        log.info(f"{result.returncode:3d} |--| {result.stdout}")
+        return result.returncode, result.stdout
     except subprocess.CalledProcessError as e:
-        print(
-            f"ERROR while command execution '{exec_command}':\n{e.stderr.strip()}",
-            flush=True,
+        log.error(
+            f"ERROR while command execution '{exec_command}':\n{e.stderr.strip()}"
         )
+        return e.returncode, e.stdout
     except FileNotFoundError:
-        print(f"ERROR command not found: {exec_command}", flush=True)
+        log.error(f"ERROR command not found: {exec_command}")
+        return None
 
 
 @pytest.fixture(scope="class")
@@ -54,11 +132,14 @@ def preconditions():
     shell(("rm -rf target src", "mkdir -p ./src/main"))
 
     # # Clone repos
-    shell(f"git clone {YANGMODELS_REPO}", cwd="./src/main")
-    # shell(
-    #     f"git checkout -b ytest {YANGMODELS_REPO_COMMIT_HASH}",
-    #     cwd="./src/main/yang",
-    # )
+    shell(
+        f"git clone --filter=blob:none --no-checkout {YANGMODELS_REPO}",
+        cwd="./src/main",
+    )
+    shell(
+        f"git checkout -b ytest {YANGMODELS_REPO_COMMIT_HASH}",
+        cwd="./src/main/yang",
+    )
     shell(
         (
             "rm -rf openconfig",
@@ -67,10 +148,10 @@ def preconditions():
         ),
         cwd="./src/main/yang/experimental",
     )
-    # shell(
-    #     f"git checkout -b ytest {OPENCONFIG_REPO_COMMIT_HASH}",
-    #     cwd="./src/main/yang/experimental/openconfig",
-    # )
+    shell(
+        f"git checkout -b ytest {OPENCONFIG_REPO_COMMIT_HASH}",
+        cwd="./src/main/yang/experimental/openconfig",
+    )
 
     # # Removing yangmodels which fail ODL
     shell(
@@ -626,8 +707,62 @@ def preconditions():
     )
 
 
+def contains_path_hidden_dir_or_file(path: pathlib.PosixPath) -> bool:
+    """Check if any directory on the provided path is hidden.
+
+    Args:
+        path (pathlib.PosixPath): A PosixPath to be checked.
+
+    Returns:
+        bool: boolean value if the path contains hidden directory
+    """
+    return any(part for part in path.parts if part.startswith("."))
+
+
+def get_yang_files(root: str = ".") -> list[str]:
+    """Lists all yang files found in root directory recursively.
+
+    Args:
+        root (str): Root directory containing yang files
+
+    Returns:
+        list[str]: List of all yang files full paths
+    """
+    root_path = pathlib.Path(root)
+    dirs = list(
+        [
+            str(path.resolve())
+            for path in root_path.rglob("*.yang")
+            if path.is_file() and not contains_path_hidden_dir_or_file(path)
+        ]
+    )
+
+    return dirs
+
+
+def get_yang_model_validator_path_option(yang_paths: set[str]) -> str:
+    """Returns --path argument with all provided yang files used for yang-model-validator tool.
+
+    Args:
+        yang_paths (set[str]): Set of all yang files which should be included in path arg
+
+    Returns:
+        str: Path arugment containing all provided yang files
+    """
+    yang_path_option = "--path " + " ".join(yang_paths)
+
+    return yang_path_option
+
+
 @pytest.mark.usefixtures("preconditions")
 class TestYangModelValidator:
 
-    def test(self):
-        assert True
+    def test_validating_yang_models(self):
+        yangs_files_to_validate = get_yang_files("src/main/yang")
+        validator_path_option = get_yang_model_validator_path_option(YANG_MODEL_PATHS)
+        for yang_file in yangs_files_to_validate:
+            log.info(f"working on: {yang_file}")
+            rc, test_tool_output = shell(
+                f"java -jar yang-model-validator.jar {validator_path_option} -- {yang_file}"
+            )
+            assert rc == 0, f"Test tool exited with {rc=}. Yang model validator output:\n {test_tool_output}"
