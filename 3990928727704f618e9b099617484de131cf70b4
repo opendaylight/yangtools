@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e0c7c1f_2424752e",
+        "filename": "tests/test_yang_model_validator.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2025-07-28T08:41:13Z",
+      "side": 1,
+      "message": "and others",
+      "revId": "3990928727704f618e9b099617484de131cf70b4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}

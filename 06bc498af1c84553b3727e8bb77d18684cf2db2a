@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7f9b879_58e3b1a8",
+        "filename": "tests/test_yarn_model_validator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2025-07-28T08:41:13Z",
+      "side": 1,
+      "message": "copyright",
+      "revId": "06bc498af1c84553b3727e8bb77d18684cf2db2a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
