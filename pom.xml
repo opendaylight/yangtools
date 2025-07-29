@@ -8,7 +8,7 @@
  and is available at http://www.eclipse.org/legal/epl-v10.html
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+    <modelVersion>4.0.0</modelVersion>
     <parent>
       <groupId>org.opendaylight.odlparent</groupId>
       <artifactId>odlparent-lite</artifactId>
@@ -16,7 +16,6 @@
       <relativePath/>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-aggregator</artifactId>
     <version>14.0.15-SNAPSHOT</version>
@@ -27,12 +26,10 @@
         handling data complying to this model and projecting it to generated Java DTOs.
     </description>
 
-    <scm>
-        <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
-        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
-        <url>https://wiki.opendaylight.org/view/YANG_Tools:Main</url>
-        <tag>HEAD</tag>
-    </scm>
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
 
     <modules>
         <module>artifacts</module>
@@ -54,11 +51,6 @@
 
         <module>yang</module>
     </modules>
-
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-        <maven.install.skip>true</maven.install.skip>
-    </properties>
 
     <profiles>
         <profile>
@@ -108,4 +100,11 @@
             </build>
         </profile>
     </profiles>
+
+    <scm>
+        <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
+        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
+        <url>https://wiki.opendaylight.org/view/YANG_Tools:Main</url>
+        <tag>HEAD</tag>
+    </scm>
 </project>
