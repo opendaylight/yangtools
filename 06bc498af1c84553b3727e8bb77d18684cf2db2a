@@ -16,6 +16,24 @@
       "message": "copyright",
       "revId": "06bc498af1c84553b3727e8bb77d18684cf2db2a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b4618bd_2f85a21f",
+        "filename": "tests/test_yarn_model_validator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-08-01T10:21:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7f9b879_58e3b1a8",
+      "revId": "06bc498af1c84553b3727e8bb77d18684cf2db2a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

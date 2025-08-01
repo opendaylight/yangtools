@@ -16,6 +16,24 @@
       "message": "and others",
       "revId": "3990928727704f618e9b099617484de131cf70b4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0821cb04_80b32b5f",
+        "filename": "tests/test_yang_model_validator.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-08-01T10:21:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e0c7c1f_2424752e",
+      "revId": "3990928727704f618e9b099617484de131cf70b4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

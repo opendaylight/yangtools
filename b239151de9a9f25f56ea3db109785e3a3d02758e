@@ -16,6 +16,24 @@
       "message": "No newline at end of right file.",
       "revId": "b239151de9a9f25f56ea3db109785e3a3d02758e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1a52069_c2894c61",
+        "filename": "tests/tox.ini",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-08-01T10:21:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0118a6ed_48299dcc",
+      "revId": "b239151de9a9f25f56ea3db109785e3a3d02758e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
