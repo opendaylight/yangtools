@@ -53,8 +53,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-        ModelProcessingPhase.SOURCE_LINKAGE,
         ModelProcessingPhase.STATEMENT_DEFINITION,
         ModelProcessingPhase.FULL_DECLARATION,
         ModelProcessingPhase.EFFECTIVE_MODEL
@@ -235,9 +233,10 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private void loadPhaseStatementsFor(final List<ResolvedSource> srcs) throws ReactorException {
+        final Map<QNameModule, RootStatementContext<?,?,?>> qNameToRootStmt = new HashMap<>();
         for (var source : srcs) {
             try {
-                source.getContext().loadStatements();
+                source.getContext().loadStatements(source, qNameToRootStmt);
             } catch (RuntimeException e) {
                 throw propagateException(source.getContext(), e);
             }

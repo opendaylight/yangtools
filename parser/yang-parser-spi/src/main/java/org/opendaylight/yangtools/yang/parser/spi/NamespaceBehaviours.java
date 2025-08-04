@@ -40,8 +40,8 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> PRELINKAGE_MODULE =
         NamespaceBehaviour.global(ParserNamespaces.PRELINKAGE_MODULE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> BELONGSTO_PREFIX_TO_MODULECTX =
-        NamespaceBehaviour.sourceLocal(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+    public static final @NonNull NamespaceBehaviour<?, ?> BELONGSTO_PREFIX_TO_QNAME_MODULE =
+        NamespaceBehaviour.sourceLocal(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> BELONGSTO_PREFIX_TO_MODULE_NAME =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME);
@@ -63,6 +63,9 @@ public final class NamespaceBehaviours {
 
     public static final @NonNull NamespaceBehaviour<?, ?> IMP_PREFIX_TO_NAMESPACE =
         NamespaceBehaviour.rootStatementLocal(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
+
+    public static final @NonNull NamespaceBehaviour<?, ?> IMPORT_PREFIX_TO_QNAME_MODULE =
+        NamespaceBehaviour.rootStatementLocal(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> IMPORT_PREFIX_TO_MODULECTX =
         NamespaceBehaviour.rootStatementLocal(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
