@@ -8,7 +8,6 @@
 
 import logging
 import pathlib
-import pytest
 import subprocess
 
 YANGMODELS_REPO = "https://github.com/YangModels/yang"
@@ -114,7 +113,53 @@ def shell(command: str | list | tuple, joiner="; ", cwd: str | None = None):
         return None
 
 
-@pytest.fixture(scope="class")
+def contains_path_hidden_dir_or_file(path: pathlib.PosixPath) -> bool:
+    """Check if any directory on the provided path is hidden.
+
+    Args:
+        path (pathlib.PosixPath): A PosixPath to be checked.
+
+    Returns:
+        bool: boolean value if the path contains hidden directory
+    """
+    return any(part for part in path.parts if part.startswith("."))
+
+
+def get_yang_files(root: str = ".") -> list[str]:
+    """Lists all yang files found in root directory recursively.
+
+    Args:
+        root (str): Root directory containing yang files
+
+    Returns:
+        list[str]: List of all yang files full paths
+    """
+    root_path = pathlib.Path(root)
+    dirs = list(
+        [
+            str(path.resolve())
+            for path in root_path.rglob("*.yang")
+            if path.is_file() and not contains_path_hidden_dir_or_file(path)
+        ]
+    )
+
+    return dirs
+
+
+def validator_path_option() -> str:
+    """Returns --path argument with all provided yang files used for yang-model-validator tool.
+
+    Args:
+        yang_paths (set[str]): Set of all yang files which should be included in path arg
+
+    Returns:
+        str: Path arugment containing all provided yang files
+    """
+    yang_path_option = "--path " + " ".join(YANG_MODEL_PATHS)
+
+    return yang_path_option
+
+
 def preconditions():
     # Kill previous ODL
     shell(
@@ -706,65 +751,24 @@ def preconditions():
         cwd="src/main/yang",
     )
 
-
-def contains_path_hidden_dir_or_file(path: pathlib.PosixPath) -> bool:
-    """Check if any directory on the provided path is hidden.
-
-    Args:
-        path (pathlib.PosixPath): A PosixPath to be checked.
-
-    Returns:
-        bool: boolean value if the path contains hidden directory
-    """
-    return any(part for part in path.parts if part.startswith("."))
+    return {
+        "files": get_yang_files("src/main/yang")
+    }
 
 
-def get_yang_files(root: str = ".") -> list[str]:
-    """Lists all yang files found in root directory recursively.
-
-    Args:
-        root (str): Root directory containing yang files
-
-    Returns:
-        list[str]: List of all yang files full paths
-    """
-    root_path = pathlib.Path(root)
-    dirs = list(
-        [
-            str(path.resolve())
-            for path in root_path.rglob("*.yang")
-            if path.is_file() and not contains_path_hidden_dir_or_file(path)
-        ]
-    )
-
-    return dirs
+def pytest_generate_tests(metafunc):
+    if 'yang_file' in metafunc.fixturenames:
+        test_data = preconditions()
+        metafunc.parametrize("yang_file", test_data['files'])
 
 
-def get_yang_model_validator_path_option(yang_paths: set[str]) -> str:
-    """Returns --path argument with all provided yang files used for yang-model-validator tool.
-
-    Args:
-        yang_paths (set[str]): Set of all yang files which should be included in path arg
-
-    Returns:
-        str: Path arugment containing all provided yang files
-    """
-    yang_path_option = "--path " + " ".join(yang_paths)
-
-    return yang_path_option
-
-
-@pytest.mark.usefixtures("preconditions")
 class TestYangModelValidator:
 
-    def test_validating_yang_models(self):
-        yangs_files_to_validate = get_yang_files("src/main/yang")
-        validator_path_option = get_yang_model_validator_path_option(YANG_MODEL_PATHS)
-        for yang_file in yangs_files_to_validate:
-            log.info(f"working on: {yang_file}")
-            rc, test_tool_output = shell(
-                f"java -jar yang-model-validator.jar {validator_path_option} -- {yang_file}"
-            )
-            assert (
-                rc == 0
-            ), f"Test tool exited with {rc=}. Yang model validator output:\n {test_tool_output}"
+    def test_validating_yang_models(self, yang_file):
+        log.info(f"working on: {yang_file}")
+        rc, test_tool_output = shell(
+            f"java -jar yang-model-validator.jar {validator_path_option()} -- {yang_file}"
+        )
+        assert (
+            rc == 0
+        ), f"Test tool exited with {rc=}. Yang model validator output:\n {test_tool_output}"
