@@ -19,14 +19,14 @@ class YangParserIdentityTest extends AbstractYangTest {
     // base identity name equals identity name
     @Test
     void testParsingIdentityTestModule() {
-        assertInferenceException(startsWith("Unable to resolve identity (urn:test.identitytest?revision="
+        assertInvalidStateException(startsWith("Unable to resolve identity (urn:test.identitytest?revision="
             + "2014-09-17)test and base identity"), "/identity/identitytest.yang");
     }
 
     // same module prefixed base identity name equals identity name
     @Test
     void testParsingPrefixIdentityTestModule() {
-        assertInferenceException(startsWith("Unable to resolve identity (urn:test.prefixidentitytest?revision="
+        assertInvalidStateException(startsWith("Unable to resolve identity (urn:test.prefixidentitytest?revision="
             + "2014-09-24)prefixtest and base identity"), "/identity/prefixidentitytest.yang");
     }
 

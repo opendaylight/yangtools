@@ -77,7 +77,7 @@ public abstract class AbstractYangTest {
         return assertInstanceOf(cause, actual);
     }
 
-    public static <E extends StatementSourceException> @NonNull E assertException(final Class<E> cause,
+    public static <E extends RuntimeException> @NonNull E assertException(final Class<E> cause,
             final Matcher<String> matcher, final String... yangResourceName) {
         final var ret = assertException(cause, yangResourceName);
         assertThat(ret.getMessage(), matcher);
@@ -106,8 +106,13 @@ public abstract class AbstractYangTest {
         return ret;
     }
 
-    public static @NonNull InferenceException assertInferenceException(final Matcher<String> matcher,
+    public static @NonNull IllegalStateException assertInvalidStateException(final Matcher<String> matcher,
             final String... yangResourceName) {
+        return assertException(IllegalStateException.class, matcher, yangResourceName);
+    }
+
+    public static @NonNull InferenceException assertInferenceException(final Matcher<String> matcher,
+        final String... yangResourceName) {
         return assertException(InferenceException.class, matcher, yangResourceName);
     }
 

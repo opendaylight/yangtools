@@ -17,20 +17,20 @@ import org.junit.jupiter.api.Test;
 class YangParserNegativeTest extends AbstractYangTest {
     @Test
     void testInvalidImport() {
-        assertInferenceException(allOf(startsWith("Imported module"), containsString("was not found.")),
+        assertInvalidStateException(allOf(startsWith("Imported module"), containsString("was not found.")),
             "/negative-scenario/testfile1.yang");
     }
 
     @Test
     void testTypeNotFound() {
-        assertInferenceException(
+        assertInvalidStateException(
             startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found."),
             "/negative-scenario/testfile2.yang");
     }
 
     @Test
     void testInvalidAugmentTarget() {
-        assertInferenceException(
+        assertInvalidStateException(
             startsWith("Augment target 'Absolute{qnames=[(urn:simple.container.demo)unknown]}' not found"),
             "/negative-scenario/testfile0.yang", "/negative-scenario/testfile3.yang");
     }
@@ -89,7 +89,7 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testDuplicityInAugmentTarget1() {
-        assertInferenceException(
+        assertInvalidStateException(
             startsWith("An augment cannot add node named 'id' because this name is already used in target"),
             "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang");
     }
@@ -106,14 +106,14 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testMandatoryInAugment() {
-        assertInferenceException(startsWith(
+        assertInvalidStateException(startsWith(
             "An augment cannot add node 'linkleaf' because it is mandatory and in module different than target"),
             "/negative-scenario/testfile8.yang", "/negative-scenario/testfile7.yang");
     }
 
     @Test
     void testInvalidListKeyDefinition() {
-        assertInferenceException(startsWith(
+        assertInvalidStateException(startsWith(
             "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def)application-map'"),
             "/negative-scenario/invalid-list-key-def.yang");
     }
