@@ -16,9 +16,7 @@ class ModelProcessingPhaseTest {
     @Test
     void testSequencing() {
         assertNull(ModelProcessingPhase.INIT.getPreviousPhase());
-        assertEquals(ModelProcessingPhase.INIT, ModelProcessingPhase.SOURCE_PRE_LINKAGE.getPreviousPhase());
-        assertEquals(ModelProcessingPhase.SOURCE_PRE_LINKAGE, ModelProcessingPhase.SOURCE_LINKAGE.getPreviousPhase());
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ModelProcessingPhase.STATEMENT_DEFINITION.getPreviousPhase());
+        assertEquals(ModelProcessingPhase.INIT, ModelProcessingPhase.STATEMENT_DEFINITION.getPreviousPhase());
         assertEquals(ModelProcessingPhase.STATEMENT_DEFINITION,
             ModelProcessingPhase.FULL_DECLARATION.getPreviousPhase());
         assertEquals(ModelProcessingPhase.FULL_DECLARATION,

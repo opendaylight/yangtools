@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -162,8 +164,7 @@ public final class SubstatementValidator {
             final var root = ctx.getRoot();
             return new MissingSubstatementException(ctx,
                 "%s is missing %s. Minimal count is %s. Error in module %s (%s)", currentStatement, cardinality.def,
-                cardinality.minRequired, root.rawArgument(),
-                ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
+                cardinality.minRequired, root.rawArgument(), getQNameModule(root));
         }
         return evaluateMinMax(ctx, cardinality, count);
     }
@@ -174,8 +175,7 @@ public final class SubstatementValidator {
             if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.statementName()) == null) {
                 final var root = ctx.getRoot();
                 return new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", def,
-                    currentStatement, root.rawArgument(),
-                    ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
+                    currentStatement, root.rawArgument(), getQNameModule(root));
             }
             return null;
         }
@@ -189,8 +189,7 @@ public final class SubstatementValidator {
             final var root = ctx.getRoot();
             return new InvalidSubstatementException(ctx,
                 "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", def, currentStatement,
-                cardinality.minRequired(), count, root.rawArgument(),
-                ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
+                cardinality.minRequired(), count, root.rawArgument(), getQNameModule(root));
         }
         return evaluateMax(ctx, def, cardinality, count);
     }
@@ -201,10 +200,14 @@ public final class SubstatementValidator {
             final var root = ctx.getRoot();
             return new InvalidSubstatementException(ctx,
                 "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", def, currentStatement,
-                cardinality.maxAllowed(), count, root.rawArgument(),
-                ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
+                cardinality.maxAllowed(), count, root.rawArgument(), getQNameModule(root));
         }
         return null;
+    }
+
+    private QNameModule getQNameModule(final RootStmtContext<?, ?, ?> root) {
+        final var resolved = root.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value());
+        return resolved != null ? resolved.qnameModule() : null;
     }
 
     /**

@@ -89,8 +89,9 @@ final class ResolvedSourceBuilder {
     public ResolvedSourceBuilder setBelongsTo(final @NonNull String prefix,
             final @NonNull ResolvedSourceBuilder belongsToModule) {
         ensureBuilderOpened();
+        requireNonNull(belongsToModule);
         this.belongsTo = new ResolvedBelongsTo(requireNonNull(prefix),
-            requireNonNull(belongsToModule).resolveQnameModule());
+            belongsToModule.resolveQnameModule(), belongsToModule.context.getRoot());
         return this;
     }
 
@@ -105,7 +106,7 @@ final class ResolvedSourceBuilder {
             ? ((SourceInfo.Module) sourceInfo).prefix().getLocalName() : null;
 
         buildFinished = new ResolvedSourceInfo(sourceInfo.sourceId(), resolveQnameModule(),
-            resolveImports(allResolved), resolveIncludes(), prefix, belongsTo);
+            context.getRoot(), resolveImports(allResolved), resolveIncludes(), prefix, belongsTo);
         return buildFinished;
     }
 
@@ -126,7 +127,8 @@ final class ResolvedSourceBuilder {
     private List<ResolvedInclude> resolveIncludes() {
         return includes.build()
             .stream()
-            .map(builder -> new ResolvedInclude(builder.sourceId(), builder.resolveQnameModule()))
+            .map(builder -> new ResolvedInclude(builder.sourceId(), builder.resolveQnameModule(),
+                builder.context.getRoot()))
             .toList();
     }
 
