@@ -113,7 +113,7 @@ public abstract class AbstractYangTest {
     }
 
     public static @NonNull IllegalStateException assertIllegalStateException(final Matcher<String> matcher,
-        final String... yangResourceName) {
+            final String... yangResourceName) {
         return assertException(IllegalStateException.class, matcher, yangResourceName);
     }
 
