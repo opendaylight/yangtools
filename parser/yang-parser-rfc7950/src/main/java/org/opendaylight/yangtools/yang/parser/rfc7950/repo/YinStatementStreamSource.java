@@ -15,16 +15,29 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.util.HashSet;
+import java.util.Set;
 import javax.xml.transform.TransformerException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Referenced;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -223,6 +236,101 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 processElement(childCounter++, (Element) child, writer, stmtDef);
             }
         }
+    }
+
+    @Override
+    public @NonNull SourceInfo getSourceInfo() {
+        final NodeList childNodes = root.getFirstChild().getChildNodes();
+        SourceIdentifier identifier = getIdentifier();
+        YangVersion yangVersion;
+        XMLNamespace namespace;
+        Unqualified prefix;
+        BelongsTo belongsTo;
+
+        Set<Revision> revisions = new HashSet<>();
+        Set<Import> imports = new HashSet<>();
+        Set<Include> includes = new HashSet<>();
+
+        SourceInfo.Module.builder();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            final Node child = childNodes.item(i);
+            if (child.getLocalName() != null) {
+                switch (child.getLocalName()) {
+                    case "yang-version":
+                        yangVersion = YangVersion.forString(child.getAttributes().item(0).getNodeValue());
+                        break;
+                    case "namespace":
+                        namespace = XMLNamespace.of(child.getAttributes().item(0).getNodeValue());
+                        break;
+                    case "prefix":
+                        Unqualified.of(child.getAttributes().item(0).getNodeValue());
+                        break;
+                    case "revision":
+                        revisions.add(Revision.of(child.getAttributes().item(0).getNodeValue()));
+                        break;
+                    case "import":
+                        Unqualified importName = Unqualified.of(child.getAttributes().item(0).getNodeValue());
+                        Unqualified impPrefix = null;
+                        Revision impRevision = null;
+                        NodeList importChildNodes = child.getChildNodes();
+                        for (int impOffset = 0; impOffset < importChildNodes.getLength(); impOffset++) {
+                            final Node importChild = importChildNodes.item(impOffset);
+                            if (importChild.getLocalName() != null) {
+                                switch (importChild.getLocalName()) {
+                                    case "prefix":
+                                        impPrefix = Unqualified.of(importChild.getAttributes().item(0).getNodeValue());
+                                        break;
+                                    case "revision-date":
+                                        impRevision = Revision.of(importChild.getAttributes().item(0).getNodeValue());
+                                        break;
+                                }
+                            }
+                        }
+                        imports.add(new Import(importName, impPrefix, impRevision));
+                        break;
+                    case "include":
+                        Unqualified includeName = Unqualified.of(child.getAttributes().item(0).getNodeValue());
+                        Revision includeRevision = null;
+                        NodeList includeChildNodes = child.getChildNodes();
+                        for (int childOffset = 0; childOffset < includeChildNodes.getLength(); childOffset++) {
+                            final Node includeChild = includeChildNodes.item(childOffset);
+                            if (includeChild.getLocalName() != null) {
+                                switch (includeChild.getLocalName()) {
+                                    case "revision-date":
+                                        includeRevision = Revision.of(includeChild.getAttributes().item(0).getNodeValue());
+                                        break;
+                                }
+                            }
+                        }
+                        includes.add(new Include(includeName, includeRevision));
+                        break;
+                    case "belongs-to":
+                        Unqualified belongsToName = Unqualified.of(child.getAttributes().item(0).getNodeValue());
+                        Referenced<Unqualified> belongsToPrefix = null;
+                        NodeList belongsToChildNodes = child.getChildNodes();
+                        for (int childOffset = 0; childOffset < belongsToChildNodes.getLength(); childOffset++) {
+                            final Node belongsToChild = belongsToChildNodes.item(childOffset);
+                            if (belongsToChild.getLocalName() != null) {
+                                switch (belongsToChild.getLocalName()) {
+                                    case "prefix":
+                                        belongsToPrefix = new Referenced<>(Unqualified.of(belongsToChild.getAttributes().item(0).getNodeValue()),
+                                            extractRef((Element)belongsToChild));
+
+                                        break;
+                                }
+                            }
+                        }
+                        belongsTo = new BelongsTo(belongsToName, belongsToPrefix);
+                }
+            }
+        }
+
+
+        if (root.getFirstChild().getLocalName().equals("module")) {
+//            return new SourceInfo.Module(IRSupport.createStatement());
+
+        }
+        return null;
     }
 
     @Override

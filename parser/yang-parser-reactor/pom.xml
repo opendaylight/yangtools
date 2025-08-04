@@ -28,6 +28,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-ir</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

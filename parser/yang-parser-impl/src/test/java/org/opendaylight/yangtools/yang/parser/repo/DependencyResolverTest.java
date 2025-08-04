@@ -9,13 +9,17 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableMultimap;
 import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Referenced;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
@@ -45,7 +49,8 @@ class DependencyResolverTest {
             new SourceIdentifier("subfoo", "2013-02-27"));
 
         assertEquals(ImmutableMultimap.of(
-            new SourceIdentifier("subfoo", "2013-02-27"), new BelongsTo(Unqualified.of("foo"), Unqualified.of("f"))),
+            new SourceIdentifier("subfoo", "2013-02-27"), new BelongsTo(Unqualified.of("foo"),
+                new Referenced<>(Unqualified.of("f"), mock(StatementSourceReference.class)))),
             resolved.unsatisfiedImports());
     }
 
