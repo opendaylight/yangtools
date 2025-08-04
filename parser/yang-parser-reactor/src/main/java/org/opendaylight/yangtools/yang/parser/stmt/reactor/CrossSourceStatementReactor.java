@@ -363,7 +363,7 @@ public final class CrossSourceStatementReactor {
          * @throws ReactorException if the declared model cannot be built
          * @throws SourceSyntaxException if a source cannot be analyzed
          */
-        @NonNull ReactorDeclaredModel buildDeclared() throws ReactorException, SourceSyntaxException;
+        @NonNull ReactorDeclaredModel buildDeclared() throws ReactorException, SourceSyntaxException, IOException;
 
         /**
          * Build the {@link EffectiveSchemaContext} view of this action.
@@ -372,6 +372,6 @@ public final class CrossSourceStatementReactor {
          * @throws ReactorException if the effective model cannot be built
          * @throws SourceSyntaxException if a source cannot be analyzed
          */
-        @NonNull EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException;
+        @NonNull EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException, IOException;
     }
 }

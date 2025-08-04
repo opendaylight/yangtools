@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -16,54 +17,63 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * DTO containing all the linkage information which needs to be supplied to a RootStatementContext. This info will be
  * used to construct linkage substatements like imports, includes, belongs-to etc...
  */
 public record ResolvedSourceInfo(
-        @NonNull SourceIdentifier sourceId,
-        @NonNull QNameModule qnameModule,
-        @NonNull List<ResolvedImport> imports,
-        @NonNull List<ResolvedInclude> includes,
-        // FIXME: should never be null
-        @Nullable Unqualified prefix,
-        @Nullable ResolvedBelongsTo belongsTo) {
+    @NonNull SourceIdentifier sourceId,
+    @NonNull QNameModule qnameModule,
+    @NonNull StmtContext<?, ?, ?> root,
+    @NonNull List<ResolvedImport> imports,
+    @NonNull List<ResolvedInclude> includes,
+    // FIXME: should never be null
+    @Nullable Unqualified prefix,
+    @Nullable ResolvedBelongsTo belongsTo) {
 
     @NonNullByDefault
     public ResolvedSourceInfo {
         requireNonNull(sourceId);
         requireNonNull(qnameModule);
-        imports = List.copyOf(imports);
-        includes = List.copyOf(includes);
+        requireNonNull(root);
+        imports = ImmutableList.copyOf(requireNonNull(imports));
+        includes = ImmutableList.copyOf(requireNonNull(includes));
     }
 
     @NonNullByDefault
-    public record ResolvedBelongsTo(Unqualified prefix, QNameModule parentModuleQname) {
+    public record ResolvedBelongsTo(Unqualified prefix, SourceIdentifier sourceId, QNameModule parentModuleQname,
+        StmtContext<?, ?, ?> parentRoot) {
         public ResolvedBelongsTo {
             requireNonNull(prefix);
+            requireNonNull(sourceId);
             requireNonNull(parentModuleQname);
+            requireNonNull(parentRoot);
         }
     }
 
     @NonNullByDefault
-    public record ResolvedInclude(SourceIdentifier sourceId, QNameModule qname) {
+    public record ResolvedInclude(SourceIdentifier sourceId, QNameModule qname, StmtContext<?, ?, ?> root) {
         public ResolvedInclude {
             requireNonNull(sourceId);
             requireNonNull(qname);
+            requireNonNull(root);
         }
     }
 
     @NonNullByDefault
-    public record ResolvedImport(Unqualified prefix, SourceIdentifier sourceId, QNameModule qname) {
+    public record ResolvedImport(Unqualified prefix, SourceIdentifier sourceId, QNameModule qname,
+        StmtContext<?, ?, ?> root) {
         public ResolvedImport {
             requireNonNull(prefix);
             requireNonNull(sourceId);
             requireNonNull(qname);
+            requireNonNull(root);
         }
 
         public ResolvedImport(final Unqualified prefix, final ResolvedSourceInfo importedSource) {
-            this(prefix, importedSource.sourceId, importedSource.qnameModule);
+            this(prefix, importedSource.sourceId, importedSource.qnameModule, importedSource.root);
         }
     }
 }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.text.ParseException;
@@ -108,19 +109,7 @@ class IRStatementVisitor {
             return false;
         }
 
-        final var argumentCtx = stmt.argument();
-        final String argument;
-        if (argumentCtx != null) {
-            try {
-                argument = argumentCtx.asString(escaping);
-            } catch (ParseException e) {
-                throw new SourceException(e.getMessage(), ref, e);
-            }
-        } else {
-            argument = null;
-        }
-
-        writer.startStatement(myOffset, def, argument, ref);
+        writer.startStatement(myOffset, def, getStringArgument(stmt, ref), ref);
         return doProcessStatement(stmt, ref);
     }
 
@@ -136,7 +125,43 @@ class IRStatementVisitor {
         }
 
         writer.storeStatement(childOffset, fullyDefined);
-        writer.endStatement(ref);
+        writer.endStatement();
         return fullyDefined;
+    }
+
+    @NonNullByDefault
+    public void visitRoot(final IRStatement rootStatement) {
+        final var ref = StatementDeclarations.inText(sourceName, rootStatement.startLine(),
+            rootStatement.startColumn() + 1);
+        verify(rootStatement.keyword() instanceof IRKeyword.Unqualified);
+
+        final var defQname = getValidStatementDefinition(rootStatement.keyword(), ref);
+
+        if (defQname == null) {
+            throw new SourceException(ref, "%s is not a YANG Module or Submodule.", sourceName);
+        }
+
+        writer.startStatement(0, defQname, getStringArgument(rootStatement, ref), ref);
+        writer.storeStatement(rootStatement.statements().size(), false);
+    }
+
+    public void skipRootAndVisit(final @NonNull IRStatement rootStatement) {
+        int offset = 0;
+        for (IRStatement statement : rootStatement.statements()) {
+            processStatement(offset++, statement);
+        }
+    }
+
+    private @Nullable String getStringArgument(final @NonNull IRStatement statement,
+            final @NonNull StatementSourceReference ref) {
+        final var argumentCtx = statement.argument();
+        if (argumentCtx != null) {
+            try {
+                return argumentCtx.asString(escaping);
+            } catch (ParseException e) {
+                throw new SourceException(e.getMessage(), ref, e);
+            }
+        }
+        return null;
     }
 }
