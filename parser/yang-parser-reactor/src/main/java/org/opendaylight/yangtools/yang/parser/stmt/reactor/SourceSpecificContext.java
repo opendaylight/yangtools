@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -139,12 +140,21 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         this.source = requireNonNull(source);
     }
 
+    public SourceIdentifier getInternalSourceId() {
+        return source.getIdentifier();
+    }
+
     @NonNull BuildGlobalContext globalContext() {
         return globalContext;
     }
 
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
+    }
+
+    public SourceInfo getSourceInfo() {
+        //TODO:can source be null here?
+        return source.getSourceInfo();
     }
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
@@ -486,7 +496,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return prefixToModuleMap;
     }
 
-    private QNameToStatementDefinition stmtDef() {
+    public QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
         final StatementSupportBundle supportsForPhase = globalContext.getSupportsForPhase(inProgressPhase);
         qnameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());

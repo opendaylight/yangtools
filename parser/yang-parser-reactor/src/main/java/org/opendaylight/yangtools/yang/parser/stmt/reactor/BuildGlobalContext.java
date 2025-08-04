@@ -28,17 +28,25 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.ir.IRArgument;
+import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -47,6 +55,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalSt
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -77,6 +86,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private Set<SourceSpecificContext> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
+    private final SourceLinkageResolver linkageResolver;
 
     BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
@@ -86,6 +96,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         for (var validationBundle : supportedValidation.entrySet()) {
             access.valueTo(this, validationBundle.getKey(), validationBundle.getValue());
         }
+
+        linkageResolver = new SourceLinkageResolver(this);
 
         supportedVersions = ImmutableSet.copyOf(
             verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions());
@@ -165,6 +177,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     private void executePhases() throws ReactorException {
+//        linkageResolver.resolveInvolvedSources(sources, libSources);
         for (var phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
@@ -236,17 +249,57 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         checkState(currentPhase != null);
         loadPhaseStatementsFor(sources);
         loadPhaseStatementsFor(libSources);
+        //TODO: can we utilize RevisionDependencyResolver here? Sounds exactly like what we need
+        addImportLinkages(involvedSources);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private void loadPhaseStatementsFor(final Set<SourceSpecificContext> srcs) throws ReactorException {
-        for (var source : srcs) {
-            try {
-                source.loadStatements();
-            } catch (RuntimeException e) {
-                throw propagateException(source, e);
+        //TODO: we'll just start with STATEMENT_DECLARATION here.
+        if (currentPhase.equals(ModelProcessingPhase.SOURCE_PRE_LINKAGE)) {
+            for (var source : srcs) {
+                try {
+                   linkageResolver.fillSourceFromSourceInfo(source);
+                } catch (RuntimeException e) {
+                    throw propagateException(source, e);
+                }
+            }
+        } else if (currentPhase.equals(ModelProcessingPhase.SOURCE_LINKAGE)) {
+            return;
+        } else {
+            for (var source : srcs) {
+                try {
+                    source.loadStatements();
+                } catch (RuntimeException e) {
+                    throw propagateException(source, e);
+                }
             }
         }
+    }
+
+    // TODO: convenience method - will be probably removed when we get rid of the processing phases them selves
+    StatementDefinitionContext<?,?,?> getStatementDefContext(YangVersion version, QName qName) {
+        StatementDefinitionContext<?,?,?> statementSupport = this.definitions.get(version, qName);
+        if (statementSupport == null) {
+            statementSupport = getSupportFor(ModelProcessingPhase.SOURCE_PRE_LINKAGE, version, qName);
+        }
+
+        if (statementSupport == null) {
+            statementSupport = getSupportFor(ModelProcessingPhase.SOURCE_LINKAGE, version, qName);
+        }
+        return statementSupport;
+    }
+
+    // TODO: convenience method - will be probably removed when we get rid of the processing phases them selves
+    StatementDefinitionContext<?,?,?> getSupportFor(ModelProcessingPhase phase, YangVersion version, QName qName) {
+        StatementSupportBundle supportBundle = supports.get(phase);
+        StatementSupport<?, ?, ?> statementDefRaw = supportBundle.getStatementDefinition(version, qName);
+        if (statementDefRaw != null) {
+            StatementDefinitionContext<?, ?, ?> definitionContext = new StatementDefinitionContext<>(statementDefRaw);
+            definitions.put(version, qName, definitionContext);
+            return definitionContext;
+        }
+        return null;
     }
 
     private SomeModifiersUnresolvedException addSourceExceptions(final List<SourceSpecificContext> sourcesToProgress) {

@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
@@ -32,7 +33,7 @@ public sealed interface SourceDependency extends Serializable
      *
      * @return name of the required source
      */
-    Unqualified name();
+    Referenced<Unqualified> name();
 
     /**
      * Returns required source revision. If specified, this dependency can be satisfied only by the specified revision
@@ -43,7 +44,7 @@ public sealed interface SourceDependency extends Serializable
      *
      * @return required source revision, {@code null} if unspecified
      */
-    @Nullable Revision revision();
+    @Nullable Referenced<Revision> revision();
 
     /**
      * Check if a given {@link SourceIdentifier} satisfies the needs of this dependency.
@@ -55,7 +56,7 @@ public sealed interface SourceDependency extends Serializable
     default boolean isSatisfiedBy(final SourceIdentifier sourceId) {
         if (name().equals(sourceId.name())) {
             final var revision = revision();
-            if (revision == null || revision.equals(sourceId.revision())) {
+            if (revision == null || revision.value().equals(sourceId.revision())) {
                 return true;
             }
         }
@@ -65,7 +66,7 @@ public sealed interface SourceDependency extends Serializable
     /**
      * A dependency created by a {@link BelongsToStatement}.
      */
-    record BelongsTo(Unqualified name, Unqualified prefix) implements SourceDependency {
+    record BelongsTo(Referenced<Unqualified> name, Referenced<Unqualified> prefix) implements SourceDependency {
         @java.io.Serial
         private static final long serialVersionUID = 0L;
 
@@ -75,15 +76,25 @@ public sealed interface SourceDependency extends Serializable
         }
 
         @Override
-        public @Nullable Revision revision() {
+        public @Nullable Referenced<Revision> revision() {
             return null;
+        }
+    }
+
+    record Referenced<F>(F value, StatementSourceReference reference) {
+        public Referenced {
+            requireNonNull(value);
+            //TODO: reference not required only because of the default YANG-VERSION filled up in the builder where we
+            // dont have the reference
+//            requireNonNull(reference);
         }
     }
 
     /**
      * A dependency created by an {@link ImportStatement}.
      */
-    record Import(Unqualified name, Unqualified prefix, @Nullable Revision revision) implements SourceDependency {
+    record Import(Referenced<Unqualified> name, Referenced<Unqualified> prefix, @Nullable Referenced<Revision> revision,
+                  @Nullable Referenced<String> description, @Nullable Referenced<String> reference) implements SourceDependency {
         @java.io.Serial
         private static final long serialVersionUID = 0L;
 
@@ -92,15 +103,16 @@ public sealed interface SourceDependency extends Serializable
             requireNonNull(prefix);
         }
 
-        public Import(final Unqualified name, final Unqualified prefix) {
-            this(name, prefix, null);
+        public Import(final Referenced<Unqualified> name, final Referenced<Unqualified> prefix) {
+            this(name, prefix, null, null, null);
         }
     }
 
     /**
      * A dependency created by an {@link IncludeStatement}.
      */
-    record Include(Unqualified name, @Nullable Revision revision) implements SourceDependency {
+    record Include(Referenced<Unqualified> name, Referenced<Revision> revision, @Nullable Referenced<String> description,
+                   @Nullable Referenced<String> reference) implements SourceDependency {
         @java.io.Serial
         private static final long serialVersionUID = 0L;
 
@@ -108,8 +120,8 @@ public sealed interface SourceDependency extends Serializable
             requireNonNull(name);
         }
 
-        public Include(final Unqualified name) {
-            this(name, null);
+        public Include(final Referenced<Unqualified> name) {
+            this(name, null, null, null);
         }
     }
 }
