@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -194,10 +193,14 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
          * If root is null or root version is other than default,
          * we need to create new root.
          */
+        //TODO: here fill necessary linkage namespaces of the root. It needs to be done before the creation of reference
+        // objects like belongs-to, include, import etc..
+        // example: Belongs-to element needs access to ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX); in
+        // order to be created.
         if (root == null) {
             root = new RootStatementContext<>(this, def, ref, argument);
         } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.yangVersion())
-                && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
+                && inProgressPhase == ModelProcessingPhase.STATEMENT_DEFINITION) {
             root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
                     root.getRootIdentifier());
         } else {
@@ -257,24 +260,24 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         LOG.debug("Source {} started phase {}", source, phase);
     }
 
-    private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
-        if (ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX.equals(type)
-            || ParserNamespaces.IMPORTED_MODULE.equals(type)) {
-            verify(value instanceof RootStatementContext, "Unexpected imported value %s", value);
-
-            if (importedNamespaces.isEmpty()) {
-                importedNamespaces = new ArrayList<>(1);
-            }
-            importedNamespaces.add((RootStatementContext<?, ?, ?>) value);
-        }
-    }
+//    private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
+//        if (ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX.equals(type)
+//            || ParserNamespaces.IMPORTED_MODULE.equals(type)) {
+//            verify(value instanceof RootStatementContext, "Unexpected imported value %s", value);
+//
+//            if (importedNamespaces.isEmpty()) {
+//                importedNamespaces = new ArrayList<>(1);
+//            }
+//            importedNamespaces.add((RootStatementContext<?, ?, ?>) value);
+//        }
+//    }
 
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
         final V ret = root.putToLocalStorage(type, key, value);
         // FIXME: what about duplicates?
-        updateImportedNamespaces(type, value);
+//        updateImportedNamespaces(type, value);
         return ret;
     }
 
@@ -282,9 +285,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
         final V ret = root.putToLocalStorageIfAbsent(type, key, value);
-        if (ret == null) {
-            updateImportedNamespaces(type, value);
-        }
+//        if (ret == null) {
+//            updateImportedNamespaces(type, value);
+//        }
         return ret;
     }
 
@@ -300,12 +303,12 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             return potentialLocal;
         }
 
-        for (final NamespaceStorage importedSource : importedNamespaces) {
-            final V potential = importedSource.getFromLocalStorage(type, key);
-            if (potential != null) {
-                return potential;
-            }
-        }
+//        for (final NamespaceStorage importedSource : importedNamespaces) {
+//            final V potential = importedSource.getFromLocalStorage(type, key);
+//            if (potential != null) {
+//                return potential;
+//            }
+//        }
         return null;
     }
 
@@ -316,13 +319,13 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             return potentialLocal;
         }
 
-        for (final NamespaceStorage importedSource : importedNamespaces) {
-            final Map<K, V> potential = importedSource.getAllFromLocalStorage(type);
-
-            if (potential != null) {
-                return potential;
-            }
-        }
+//        for (final NamespaceStorage importedSource : importedNamespaces) {
+//            final Map<K, V> potential = importedSource.getAllFromLocalStorage(type);
+//
+//            if (potential != null) {
+//                return potential;
+//            }
+//        }
         return null;
     }
 
@@ -440,23 +443,16 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         };
     }
 
-    void loadStatements() {
-        LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
+    void loadStatements(final ResolvedSource resolvedSource) {
+        LOG.trace("Source {} loading statements for phase {}", this.source, inProgressPhase);
 
         switch (inProgressPhase) {
-            case SOURCE_PRE_LINKAGE:
-                source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
-                break;
-            case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
-                    getRootVersion());
-                break;
             case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
-                    prefixes(), getRootVersion());
+                this.source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase, resolvedSource), stmtDef(),
+                    null, getRootVersion());
                 break;
             case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
+                this.source.writeFull(new StatementContextWriter(this, inProgressPhase, resolvedSource), stmtDef(), prefixes(),
                     getRootVersion());
                 break;
             default:
@@ -464,29 +460,15 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
     }
 
-    private PrefixResolver preLinkagePrefixes() {
-        final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
-        final var prefixToNamespaceMap = getAllFromLocalStorage(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
-        if (prefixToNamespaceMap == null) {
-            //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
-            return null;
-        }
-
-        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.of(value)));
-        return preLinkagePrefixes;
-    }
-
     private PrefixResolver prefixes() {
-        final var allImports = root.namespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        final var allImports = root.namespace(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE);
         if (allImports != null) {
-            allImports.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, value)));
+            allImports.forEach(prefixToModuleMap::put);
         }
 
-        final var allBelongsTo = root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+        final var allBelongsTo = root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE);
         if (allBelongsTo != null) {
-            allBelongsTo.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, value)));
+            allBelongsTo.forEach(prefixToModuleMap::put);
         }
 
         return prefixToModuleMap;

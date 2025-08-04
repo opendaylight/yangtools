@@ -323,33 +323,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     }
 
     /**
-     * Invoked when statement is closed during {@link ModelProcessingPhase#SOURCE_PRE_LINKAGE} phase, only substatements
-     * from this and previous phase are available.
-     *
-     * <p>Implementation may use method to perform actions on this event or register modification action using
-     * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
-     *
-     * @param stmt Context of added statement.
-     */
-    public void onPreLinkageDeclared(final @NonNull Mutable<A, D, E> stmt) {
-        // NOOP for most implementations
-    }
-
-    /**
-     * Invoked when statement is closed during {@link ModelProcessingPhase#SOURCE_LINKAGE} phase, only substatements
-     * from this and previous phase are available.
-     *
-     * <p>Implementation may use method to perform actions on this event or register modification action using
-     * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
-     *
-     * @param stmt Context of added statement.
-     * @throws SourceException when an inconsistency is detected.
-     */
-    public void onLinkageDeclared(final @NonNull Mutable<A, D, E> stmt) {
-        // NOOP for most implementations
-    }
-
-    /**
      * Invoked when statement is closed during {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase,
      * only substatements from this phase are available.
      *

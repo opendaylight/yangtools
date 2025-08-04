@@ -124,12 +124,10 @@ public final class ParserNamespaces {
         new ParserNamespace<>("prelinkage-module");
 
     /**
-     * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
-     * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
-     * statement.
+     * Source-specific mapping of belongsTo prefixes to QNameModule.
      */
-    public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
-        new ParserNamespace<>("belongsto-prefix-to-module");
+    public static final @NonNull ParserNamespace<String, QNameModule> BELONGSTO_PREFIX_TO_QNAME_MODULE =
+        new ParserNamespace<>("belongsto-prefix-to-qname-module");
 
     /**
      * Source-specific mapping of prefixes to namespaces.
@@ -155,11 +153,11 @@ public final class ParserNamespaces {
         new ParserNamespace<>("prefix-to-xmlnamespace");
 
     /**
-     * Source-specific mapping of prefix strings to module context.
+     * Source-specific mapping of prefix strings to qname module.
      */
     // FIXME: the context should expose ModuleStatement
-    public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> IMPORT_PREFIX_TO_MODULECTX =
-        new ParserNamespace<>("import-prefix-to-modulectx");
+    public static final @NonNull ParserNamespace<String, QNameModule> IMPORT_PREFIX_TO_QNAME_MODULE =
+        new ParserNamespace<>("import-prefix-to-qname-module");
 
     // FIXME: document this
     public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> IMPORTED_MODULE =
