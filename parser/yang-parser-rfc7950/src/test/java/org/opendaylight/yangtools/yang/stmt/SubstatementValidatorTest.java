@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
@@ -36,8 +38,10 @@ class SubstatementValidatorTest extends AbstractYangTest {
     @Test
     void missingElementException() {
         // FIXME: should be MissingSubstatementException?
-        assertSourceExceptionDir("/substatement-validator/missing-element",
-            startsWith("Missing prefix statement [at "));
+        final var ex = assertThrows(IllegalArgumentException.class,
+            () -> TestUtils.loadModules("/substatement-validator/missing-element"));
+        final var actual = ex.getMessage();
+        assertThat(actual, startsWith("No prefix statement in"));
     }
 
     @Test
