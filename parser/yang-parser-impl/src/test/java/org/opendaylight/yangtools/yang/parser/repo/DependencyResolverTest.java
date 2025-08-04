@@ -45,7 +45,7 @@ class DependencyResolverTest {
             new SourceIdentifier("subfoo", "2013-02-27"));
 
         assertEquals(ImmutableMultimap.of(
-            new SourceIdentifier("subfoo", "2013-02-27"), new BelongsTo(Unqualified.of("foo"), Unqualified.of("f"))),
+                new SourceIdentifier("subfoo", "2013-02-27"), new BelongsTo(Unqualified.of("foo"), Unqualified.of("f"))),
             resolved.unsatisfiedImports());
     }
 

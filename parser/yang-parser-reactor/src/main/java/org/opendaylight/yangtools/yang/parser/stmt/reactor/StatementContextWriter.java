@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
-final class StatementContextWriter implements StatementWriter {
+public final class StatementContextWriter implements StatementWriter {
     private final @NonNull ModelProcessingPhase phase;
     private final SourceSpecificContext ctx;
 

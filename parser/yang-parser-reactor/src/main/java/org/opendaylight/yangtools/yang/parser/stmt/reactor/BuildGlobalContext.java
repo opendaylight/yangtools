@@ -167,6 +167,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         final Set<SourceSpecificContext> resolved = resolvedSources.values().stream().map(ResolvedSource::context)
             .collect(Collectors.toUnmodifiableSet());
 
+        // start with STATEMENT_DECLARATION
         for (var phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase, resolved);
             loadPhaseStatements(resolved);
