@@ -9,13 +9,16 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableMultimap;
 import java.util.HashMap;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Referenced;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
@@ -38,6 +41,7 @@ class DependencyResolverTest {
     void testSubmoduleNoModule() throws Exception {
         // Subfoo does not have parent in reactor
         final var resolved = resolveResources("/model/subfoo.yang", "/model/bar.yang", "/model/baz.yang");
+        final StatementSourceReference mockRef = mock(StatementSourceReference.class);
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("bar", "2013-07-03"),
             new SourceIdentifier("baz", "2013-02-27"));
@@ -45,7 +49,8 @@ class DependencyResolverTest {
             new SourceIdentifier("subfoo", "2013-02-27"));
 
         assertEquals(ImmutableMultimap.of(
-            new SourceIdentifier("subfoo", "2013-02-27"), new BelongsTo(Unqualified.of("foo"), Unqualified.of("f"))),
+            new SourceIdentifier("subfoo", "2013-02-27"), new BelongsTo(new Referenced<>(Unqualified.of("foo"), mockRef),
+                new Referenced<>(Unqualified.of("f"), mock(StatementSourceReference.class)))),
             resolved.unsatisfiedImports());
     }
 
@@ -67,7 +72,7 @@ class DependencyResolverTest {
         for (var resourceName : resourceNames) {
             final var info = YangSourceInfoExtractor.forYangText(
                 new URLYangTextSource(DependencyResolverTest.class.getResource(resourceName)));
-            map.put(info.sourceId(), info);
+            map.put(info.sourceId().value(), info);
         }
         return new RevisionDependencyResolver(map);
     }
