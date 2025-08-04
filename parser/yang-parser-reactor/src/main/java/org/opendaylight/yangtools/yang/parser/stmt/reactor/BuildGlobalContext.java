@@ -28,17 +28,25 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.ir.IRArgument;
+import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -47,6 +55,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalSt
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -236,17 +245,230 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         checkState(currentPhase != null);
         loadPhaseStatementsFor(sources);
         loadPhaseStatementsFor(libSources);
+//        addImportLinkages(involvedSources);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private void loadPhaseStatementsFor(final Set<SourceSpecificContext> srcs) throws ReactorException {
-        for (var source : srcs) {
+        //TODO: we'll just start with STATEMENT_DECLARATION here.
+        if (currentPhase.equals(ModelProcessingPhase.SOURCE_PRE_LINKAGE)) {
+            for (var source : srcs) {
+                fillSourceFromSourceInfo(source);
+            }
+        } else if (currentPhase.equals(ModelProcessingPhase.SOURCE_LINKAGE)) {
+            return;
+        } else {
+            for (var source : srcs) {
+                try {
+                    source.loadStatements();
+                } catch (RuntimeException e) {
+                    throw propagateException(source, e);
+                }
+            }
+        }
+    }
+
+    private void fillSourceFromSourceInfo(SourceSpecificContext source) throws ReactorException {
+
+        final SourceInfo sourceInfo = source.getSourceInfo();
+        if (sourceInfo == null) {
             try {
                 source.loadStatements();
             } catch (RuntimeException e) {
                 throw propagateException(source, e);
             }
+            return;
         }
+        final AtomicInteger childOffset = new AtomicInteger();
+        final RootStatementContext<?,?,?> root = createRootStatement(source, sourceInfo);
+
+        addSimpleStatement(source, root, sourceInfo, "yang-version", childOffset);
+        addSimpleStatement(source, root, sourceInfo, "namespace", childOffset);
+        addSimpleStatement(source, root, sourceInfo, "prefix", childOffset);
+        addSimpleStatement(source, root, sourceInfo, "contact", childOffset);
+        addSimpleStatement(source, root, sourceInfo, "description", childOffset);
+        addSimpleStatement(source, root, sourceInfo, "organization", childOffset);
+        addSimpleStatement(source, root, sourceInfo, "reference", childOffset);
+
+        addRevisions(source, root, sourceInfo, childOffset);
+        addImports(source, root, sourceInfo, childOffset);
+        addIncludes(source, root, sourceInfo, childOffset);
+        addBelongsTo(source, root, sourceInfo, childOffset);
+
+//        fillSimpleNamespaces(source, root, sourceInfo);
+    }
+
+    private String stmtToArgumentString(IRStatement stmt) {
+        return ((IRArgument.Single) stmt.argument()).string();
+    }
+
+    private StatementDeclaration.InText toStmtDef(IRStatement statement, SourceInfo info) {
+        return StatementDeclarations.inText(info.sourceId().toYangFilename(),
+            statement.startLine(), statement.startColumn() + 1);
+    }
+
+    private void addBelongsTo(SourceSpecificContext source, RootStatementContext<?, ?, ?> root, SourceInfo sourceInfo,
+        AtomicInteger childOffset) {
+        if (sourceInfo instanceof SourceInfo.Submodule submoduleInfo) {
+            IRStatement belongsToIR = sourceInfo.rootStatement().statements().stream()
+                .filter(stmt -> stmt.keyword().asStringDeclaration().equals("belongs-to"))
+                .findFirst().get();
+            AbstractResumedStatement<?, ?, ?> belongsToStmt = addSimpleStatement(source, root, sourceInfo, "belongs-to", childOffset);
+            addSubstatement(belongsToStmt, belongsToIR.statements().get(0), source, sourceInfo, 0);
+        }
+    }
+
+    private void addIncludes(SourceSpecificContext source, RootStatementContext<?, ?, ?> root, SourceInfo sourceInfo,
+        AtomicInteger childOffset) {
+        if (sourceInfo.includes().isEmpty()) {
+            return;
+        }
+
+        final QName qNameInclude = QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, "include");
+
+        List<? extends IRStatement> includeIRStatements = sourceInfo.rootStatement().statements().stream()
+            .filter(stmt -> stmt.keyword().asStringDeclaration().equals("include"))
+            .collect(Collectors.toList());
+
+        for (IRStatement includeIR : includeIRStatements) {
+            AbstractResumedStatement<?, ?, ?> includeStatement = source.createDeclaredChild(root,
+                childOffset.getAndIncrement(), qNameInclude, stmtToArgumentString(includeIR), toStmtDef(includeIR, sourceInfo));
+            if (!includeIR.statements().isEmpty()) {
+                Map<String, ? extends IRStatement> collect = includeIR.statements().stream()
+                    .collect(Collectors.toMap(child -> child.keyword().asStringDeclaration(),
+                        child -> child));
+                if (collect.containsKey("revision-date")) {
+                    addSubstatement(includeStatement, collect.get("revision-date"), source, sourceInfo, 0);
+                }
+            }
+        }
+    }
+
+    private void addImports(SourceSpecificContext source, RootStatementContext<?, ?, ?> root, SourceInfo sourceInfo,
+            AtomicInteger childOffset) {
+        if (sourceInfo.imports().isEmpty()) {
+            return;
+        }
+
+        final QName qNameImport = QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, "import");
+
+        List<? extends IRStatement> importIRStatements = sourceInfo.rootStatement().statements().stream()
+            .filter(stmt -> stmt.keyword().asStringDeclaration().equals("import"))
+            .collect(Collectors.toList());
+
+        for (IRStatement importIR : importIRStatements) {
+            AbstractResumedStatement<?, ?, ?> importStatement = source.createDeclaredChild(root,
+                    childOffset.getAndIncrement(), qNameImport, stmtToArgumentString(importIR), toStmtDef(importIR, sourceInfo));
+            if (!importIR.statements().isEmpty()) {
+                Map<String, ? extends IRStatement> collect = importIR.statements().stream()
+                    .collect(Collectors.toMap(child -> child.keyword().asStringDeclaration(),
+                        child -> child));
+                int importChildOffset = 0;
+                if (collect.containsKey("prefix")) {
+                    addSubstatement(importStatement, collect.get("prefix"), source, sourceInfo, importChildOffset++);
+                }
+                if (collect.containsKey("revision-date")) {
+                    addSubstatement(importStatement, collect.get("revision-date"), source, sourceInfo, importChildOffset++);
+                }
+                if (collect.containsKey("description")) {
+                    addSubstatement(importStatement, collect.get("description"), source, sourceInfo, importChildOffset++);
+                }
+                if (collect.containsKey("reference")) {
+                    addSubstatement(importStatement, collect.get("reference"), source, sourceInfo, importChildOffset++);
+                }
+
+            }
+        }
+    }
+
+    private AbstractResumedStatement<?, ?, ?> addSimpleStatement(SourceSpecificContext source, RootStatementContext<?, ?, ?> parent, SourceInfo sourceInfo, String statementName,
+            AtomicInteger childOffset) {
+        final QName qName = QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, statementName);
+        Optional<? extends IRStatement> statement = sourceInfo.rootStatement().statements().stream()
+                                                         .filter(s -> s.keyword().asStringDeclaration()
+                                                                              .equals(statementName)).findFirst();
+        if (!statement.isPresent()) {
+            return null;
+        }
+        getStatementDefContext(sourceInfo.yangVersion(), qName);
+        return source.createDeclaredChild(parent, childOffset.getAndIncrement(), qName,
+            stmtToArgumentString(statement.get()), toStmtDef(statement.get(), sourceInfo));
+    }
+
+    private void addRevisions(SourceSpecificContext source, RootStatementContext<?,?,?> root, SourceInfo sourceInfo,
+            AtomicInteger childOffset) {
+        final ImmutableSet<Revision> revisions = sourceInfo.revisions();
+        if (revisions.isEmpty()) {
+            return;
+        }
+
+        for (IRStatement statement : sourceInfo.rootStatement().statements()) {
+            if (statement.keyword().asStringDeclaration().equals("revision")) {
+                final QName qName = QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, "revision");
+                final String argument = ((IRArgument.Single) statement.argument()).string();
+
+                AbstractResumedStatement<?, ?, ?> revisionRoot = source.createDeclaredChild(root,
+                        childOffset.getAndIncrement(), qName, argument, toStmtDef(statement, sourceInfo));
+                if (!statement.statements().isEmpty()) {
+                    Map<String, ? extends IRStatement> collect = statement.statements().stream()
+                        .collect(Collectors.toMap(child -> child.keyword().asStringDeclaration(),
+                                child -> child));
+                    int revisionChildOffset = 0;
+                    if (collect.containsKey("description")) {
+                        addSubstatement(revisionRoot, collect.get("description"), source, sourceInfo, revisionChildOffset++);
+                    }
+                    if (collect.containsKey("reference")) {
+                        addSubstatement(revisionRoot, collect.get("reference"), source, sourceInfo, revisionChildOffset);
+                    }
+                }
+            }
+        }
+    }
+
+    // TODO: convenience method - will be probably removed when we get rid of the processing phases them selves
+    private StatementDefinitionContext<?,?,?> getStatementDefContext(YangVersion version, QName qName) {
+        StatementDefinitionContext<?,?,?> statementSupport = this.definitions.get(version, qName);
+        if (statementSupport == null) {
+            statementSupport = getSupportFor(ModelProcessingPhase.SOURCE_PRE_LINKAGE, version, qName);
+        }
+
+        if (statementSupport == null) {
+            statementSupport = getSupportFor(ModelProcessingPhase.SOURCE_LINKAGE, version, qName);
+        }
+        return statementSupport;
+    }
+
+    // TODO: convenience method - will be probably removed when we get rid of the processing phases them selves
+    private StatementDefinitionContext<?,?,?> getSupportFor(ModelProcessingPhase phase, YangVersion version, QName qName) {
+        StatementSupportBundle supportBundle = supports.get(phase);
+        StatementSupport<?, ?, ?> statementDefRaw = supportBundle.getStatementDefinition(version, qName);
+        if (statementDefRaw != null) {
+            StatementDefinitionContext<?, ?, ?> definitionContext = new StatementDefinitionContext<>(statementDefRaw);
+            definitions.put(version, qName, definitionContext);
+            return definitionContext;
+        }
+        return null;
+    }
+
+
+
+    private void addSubstatement(AbstractResumedStatement<?, ?, ?> parent, IRStatement substatement,
+            SourceSpecificContext source, SourceInfo sourceInfo, int childOffset) {
+        final QName qName = QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, substatement.keyword().asStringDeclaration());
+        StatementDefinitionContext<?, ?, ?> statementDefContext = getStatementDefContext(sourceInfo.yangVersion(), qName);
+        parent.createSubstatement(childOffset, statementDefContext, toStmtDef(substatement, sourceInfo),
+                ((IRArgument.Single) substatement.argument()).string());
+    }
+
+    private RootStatementContext<?, ?, ?> createRootStatement(SourceSpecificContext source, SourceInfo sourceInfo) {
+        final QName qName = sourceInfo instanceof SourceInfo.Module ?
+                              QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, "module") :
+                              QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, "submodule");
+
+        final AbstractResumedStatement<?, ?, ?> newRoot = source.createDeclaredChild(null, 0, qName,
+                sourceInfo.sourceId().name().getLocalName(), toStmtDef(sourceInfo.rootStatement(), sourceInfo));
+        newRoot.setRootIdentifier(sourceInfo.sourceId());
+        return (RootStatementContext<?, ?, ?>) newRoot;
     }
 
     private SomeModifiersUnresolvedException addSourceExceptions(final List<SourceSpecificContext> sourcesToProgress) {

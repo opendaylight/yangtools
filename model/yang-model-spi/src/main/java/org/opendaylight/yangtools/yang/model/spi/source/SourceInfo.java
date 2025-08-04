@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
@@ -87,10 +88,13 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      */
     ImmutableSet<Include> includes();
 
+    IRStatement rootStatement();
+
     /**
      * A {@link SourceInfo} about a {@link ModuleStatement}-backed source.
      */
     record Module(
+            IRStatement rootStatement,
             SourceIdentifier sourceId,
             YangVersion yangVersion,
             XMLNamespace namespace,
@@ -99,6 +103,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             ImmutableSet<Import> imports,
             ImmutableSet<Include> includes) implements SourceInfo {
         public Module {
+            requireNonNull(rootStatement);
             requireNonNull(sourceId);
             requireNonNull(yangVersion);
             requireNonNull(namespace);
@@ -135,11 +140,11 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             }
 
             @Override
-            Module buildInstance(final SourceIdentifier sourceId, final YangVersion yangVersion,
+            Module buildInstance(final IRStatement root, final SourceIdentifier sourceId, final YangVersion yangVersion,
                     final ImmutableSet<Revision> revisions, final ImmutableSet<Import> imports,
                     final ImmutableSet<Include> includes) {
-                return new Module(sourceId, yangVersion, requireNonNull(namespace), requireNonNull(prefix), revisions,
-                    imports, includes);
+                return new Module(root, sourceId, yangVersion, requireNonNull(namespace), requireNonNull(prefix),
+                        revisions, imports, includes);
             }
         }
     }
@@ -148,6 +153,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      * A {@link SourceInfo} about a {@code submodule}.
      */
     record Submodule(
+            IRStatement rootStatement,
             SourceIdentifier sourceId,
             YangVersion yangVersion,
             BelongsTo belongsTo,
@@ -155,6 +161,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             ImmutableSet<Import> imports,
             ImmutableSet<Include> includes) implements SourceInfo {
         public Submodule {
+            requireNonNull(rootStatement);
             requireNonNull(sourceId);
             requireNonNull(yangVersion);
             requireNonNull(belongsTo);
@@ -183,10 +190,10 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             }
 
             @Override
-            Submodule buildInstance(final SourceIdentifier sourceId, final YangVersion yangVersion,
+            Submodule buildInstance(final IRStatement root, final SourceIdentifier sourceId, final YangVersion yangVersion,
                     final ImmutableSet<Revision> revisions, final ImmutableSet<Import> imports,
                     final ImmutableSet<Include> includes) {
-                return new Submodule(sourceId, yangVersion, requireNonNull(belongsTo), revisions, imports, includes);
+                return new Submodule(root, sourceId, yangVersion, requireNonNull(belongsTo), revisions, imports, includes);
             }
         }
     }
@@ -199,6 +206,12 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
             justification = "https://github.com/spotbugs/spotbugs/issues/743")
         private @Nullable Unqualified name;
+        private IRStatement rootStatement;
+
+        public final B setRootStatement(final IRStatement root) {
+            rootStatement = requireNonNull(root);
+            return thisInstance();
+        }
 
         public final B setName(final Unqualified newName) {
             name = requireNonNull(newName);
@@ -230,12 +243,12 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
                 .sorted(Comparator.reverseOrder())
                 .collect(ImmutableSet.toImmutableSet());
 
-            return buildInstance(
+            return buildInstance(rootStatement,
                 new SourceIdentifier(requireNonNull(name), sorted.isEmpty() ? null : sorted.iterator().next()),
                 yangVersion, sorted, imports.build(), includes.build());
         }
 
-        abstract I buildInstance(SourceIdentifier sourceId, YangVersion yangVersion, ImmutableSet<Revision> revisions,
+        abstract I buildInstance(IRStatement root, SourceIdentifier sourceId, YangVersion yangVersion, ImmutableSet<Revision> revisions,
             ImmutableSet<Import> imports, ImmutableSet<Include> includes);
 
         @SuppressWarnings("unchecked")

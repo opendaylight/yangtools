@@ -107,7 +107,8 @@ public final class YangIRSourceInfoExtractor {
                 .map(XMLNamespace::of)
                 .orElseThrow(() -> new IllegalArgumentException("No namespace statement in " + refOf(sourceId, root))))
             .setPrefix(extractPrefix(root, sourceId))
-            .build();
+           .setRootStatement(root)
+           .build();
     }
 
     private static SourceInfo.@NonNull Submodule submmoduleForIR(final IRStatement root,
@@ -115,6 +116,7 @@ public final class YangIRSourceInfoExtractor {
         final var builder = SourceInfo.Submodule.builder();
         fill(builder, root, sourceId);
         return builder
+                       .setRootStatement(root)
             .setBelongsTo(root.statements().stream()
                 .filter(stmt -> isStatement(stmt, BELONGS_TO))
                 .findFirst()
@@ -151,6 +153,7 @@ public final class YangIRSourceInfoExtractor {
             .map(stmt -> new Include(Unqualified.of(safeStringArgument(sourceId, stmt, "include argument")),
                 extractRevisionDate(stmt, sourceId)))
             .forEach(builder::addInclude);
+        builder.setRootStatement(root);
     }
 
     private static @NonNull Unqualified extractPrefix(final IRStatement root, final SourceIdentifier sourceId) {

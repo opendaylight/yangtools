@@ -16,6 +16,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import javax.xml.transform.TransformerException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -23,6 +24,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -223,6 +225,11 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 processElement(childCounter++, (Element) child, writer, stmtDef);
             }
         }
+    }
+
+    @Override
+    public @NonNull SourceInfo getSourceInfo() {
+        return null;
     }
 
     @Override
