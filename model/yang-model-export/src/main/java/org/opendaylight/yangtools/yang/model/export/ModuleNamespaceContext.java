@@ -50,7 +50,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
             case XMLConstants.XML_NS_PREFIX -> XMLConstants.XML_NS_URI;
             case XMLConstants.XMLNS_ATTRIBUTE -> XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
             default -> module.findReachableModule(prefix)
-                .map(importedModule -> importedModule.localQNameModule().namespace().toString())
+                .map(importedModule -> importedModule.namespace().toString())
                 .orElse(XMLConstants.NULL_NS_URI);
         };
     }
