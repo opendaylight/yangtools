@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -34,14 +35,19 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 /**
@@ -99,43 +105,11 @@ public final class SourceLinkageResolver {
      */
     private final Map<ResolvedSourceBuilder, Set<SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
-    private SourceLinkageResolver(
+    SourceLinkageResolver(
             final @NonNull Collection<SourceSpecificContext> withMainSources,
             final @NonNull Collection<SourceSpecificContext> withLibSources) {
         mainSources.addAll(requireNonNull(withMainSources));
         libSources.addAll(requireNonNull(withLibSources));
-    }
-
-    /**
-     * Creates a SourceLinkageResolver for specified main and library sources.
-     *
-     * @param mainSources sources used as the base for the Schema Context. All of them have to be resolved and included
-     *                    in the output of the {@link SourceLinkageResolver}
-     * @param libSources dependencies of the main sources, as well as other library sources. Unreferenced (unused)
-     *                   sources will be omitted from the output of the {@link SourceLinkageResolver}
-     * @return {@link SourceLinkageResolver} ready to resolve the inter-source linkage.
-     * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
-     * @throws ReactorException if the source files couldn't be loaded or parsed
-     */
-    static @NonNull SourceLinkageResolver create(final @NonNull Collection<BuildSource<?>> mainSources,
-            final @NonNull Collection<BuildSource<?>> libSources) throws ReactorException, SourceSyntaxException {
-        return new SourceLinkageResolver(initializeSources(mainSources), initializeSources(libSources));
-    }
-
-    private static @NonNull Collection<SourceSpecificContext> initializeSources(
-            final @NonNull Collection<BuildSource<?>> sourcesToInitialize)
-                    throws ReactorException, SourceSyntaxException {
-        final var contexts = new HashSet<SourceSpecificContext>();
-        for (final var buildSource : sourcesToInitialize) {
-            final SourceSpecificContext context;
-            try {
-                context = buildSource.getSourceContext();
-            } catch (IOException e) {
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.INIT, buildSource.sourceId(), e);
-            }
-            contexts.add(context);
-        }
-        return contexts;
     }
 
     /**
@@ -180,7 +154,7 @@ public final class SourceLinkageResolver {
                 }
 
                 final var submoduleId = source.getKey();
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, submoduleId,
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.STATEMENT_DEFINITION, submoduleId,
                     new InferenceException(refOf(submoduleId, belongsTo.sourceRef()),
                         "Module %s from belongs-to was not found", parentName.getLocalName()));
             }
@@ -281,13 +255,13 @@ public final class SourceLinkageResolver {
                 if (match == null) {
                     // Dependency is missing
                     if (dependency instanceof Import) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.STATEMENT_DEFINITION, current,
                             new InferenceException(refOf(current, dependency.sourceRef()),
                                 "Imported module %s was not found", dependencyName.getLocalName()));
                     }
 
                     // FIXME: also handling of BelongsTo?
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
+                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.STATEMENT_DEFINITION, current,
                         new InferenceException(refOf(current, dependency.sourceRef()),
                             "Included submodule %s was not found", dependencyName.getLocalName()));
                 }
@@ -327,8 +301,8 @@ public final class SourceLinkageResolver {
                         // Version 1 sources must not import-by-revision Version 1.1 modules
                         if (importedDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
                             if (dependencyVersion != YangVersion.VERSION_1) {
-                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                    new YangVersionLinkageException(refOf(current, importedDep.sourceRef()),
+                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.STATEMENT_DEFINITION,
+                                    current, new YangVersionLinkageException(refOf(current, importedDep.sourceRef()),
                                         "Cannot import by revision version %s module %s", dependencyVersion,
                                             resolvedDep.getValue().getLocalName()));
                             }
@@ -336,8 +310,8 @@ public final class SourceLinkageResolver {
                         newResolved.addImport(importedDep.prefix().getLocalName(), depModule);
                     } else {
                         if (currentVersion != dependencyVersion) {
-                            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                new YangVersionLinkageException(refOf(current, dep.sourceRef()),
+                            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.STATEMENT_DEFINITION,
+                                current, new YangVersionLinkageException(refOf(current, dep.sourceRef()),
                                     "Cannot include a version %s submodule %s in a version %s module %s",
                                     dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
                                     current.name().getLocalName()));
@@ -362,7 +336,7 @@ public final class SourceLinkageResolver {
                 for (var dep : unresolvedDependencies) {
                     // Check circular dependency
                     if (inProgress.contains(dep)) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.STATEMENT_DEFINITION, current,
                             new InferenceException(new SourceStatementDeclaration(current),
                                 "Found circular dependency between modules %s and %s",
                                 current.name().getLocalName(), dep.name().getLocalName()));
@@ -444,7 +418,7 @@ public final class SourceLinkageResolver {
         if (involvedSourcesMap.containsKey(id)) {
             return involvedSourcesMap.get(id);
         }
-        final var newResolvedBuilder = new ResolvedSourceBuilder(allContexts.get(id), allSources.get(id));
+        final var newResolvedBuilder = new ResolvedSourceBuilder(allContexts.get(id));
         involvedSourcesMap.put(id, newResolvedBuilder);
         final var potentials = involvedSourcesGrouped.get(id.name());
         if (potentials != null) {
@@ -522,5 +496,82 @@ public final class SourceLinkageResolver {
     private static StatementSourceReference refOf(final SourceIdentifier sourceId,
             final @Nullable StatementSourceReference sourceRef) {
         return sourceRef != null ? sourceRef : new SourceStatementDeclaration(sourceId);
+    }
+
+    public static void fillNamespaces(final ResolvedSourceInfo resolvedSource) {
+        final RootStatementContext<?, ?, ?> rootStmt = (RootStatementContext<?, ?, ?>)resolvedSource.root();
+        populateRootNamespaces(rootStmt, resolvedSource);
+    }
+
+    private static void populateRootNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+
+        fillCommonNamespaces(root, resolvedSource);
+        fillImportedNamespaces(root, resolvedSource);
+
+        if (resolvedSource.belongsTo() != null) {
+            fillSubmoduleNamespaces(root, resolvedSource);
+        } else {
+            fillModuleNamespaces(root, resolvedSource);
+        }
+    }
+
+    private static void fillCommonNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        root.addToNamespace(ParserNamespaces.MODULECTX_TO_QNAME, root, resolvedSource.qnameModule());
+        fillImportedNamespaces(root, resolvedSource);
+        fillIncludedNamespaces(root, resolvedSource);
+    }
+
+    private static void fillIncludedNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        for (var anInclude : resolvedSource.includes()) {
+            root.addToNs(ParserNamespaces.INCLUDED_MODULE, anInclude.sourceId(), anInclude.root());
+            root.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX,
+                anInclude.sourceId().name(), anInclude.root());
+        }
+    }
+
+    private static void fillImportedNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        for (var anImport : resolvedSource.imports()) {
+            final String prefix = anImport.prefix();
+            final QNameModule qnameModule = anImport.qname();
+            final SourceIdentifier sourceId = anImport.sourceId();
+            final var importContext = anImport.root();
+
+            verifyNotNull(importContext, "Root context of imported module %s (imported by %s) was not resolved",
+                qnameModule, resolvedSource.qnameModule());
+
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE, prefix, qnameModule);
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix, importContext);
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_SOURCE_ID, prefix, sourceId);
+            root.addToNamespace(ParserNamespaces.IMPORTED_MODULE, sourceId, importContext);
+        }
+    }
+
+    private static void fillSubmoduleNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        root.addToNs(ParserNamespaces.SUBMODULE, resolvedSource.sourceId(),
+            (StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>) root);
+
+        final var belongsTo = resolvedSource.belongsTo();
+        root.addToNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE, belongsTo.prefix(),
+            belongsTo.parentModuleQname());
+        root.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, belongsTo.prefix(), belongsTo.parentRoot());
+        root.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, belongsTo.prefix(), belongsTo.sourceId().name());
+    }
+
+    private static void fillModuleNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        root.addToNs(ParserNamespaces.MODULE, resolvedSource.sourceId(),
+            (StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>) root);
+
+        root.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE, resolvedSource.prefix(),
+            resolvedSource.qnameModule());
+        root.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, resolvedSource.prefix(), root);
+
+        root.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, resolvedSource.sourceId().name(),
+            resolvedSource.qnameModule());
     }
 }

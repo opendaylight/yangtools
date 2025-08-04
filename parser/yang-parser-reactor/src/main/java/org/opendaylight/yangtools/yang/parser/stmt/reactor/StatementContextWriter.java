@@ -74,7 +74,7 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     @Override
-    public void endStatement(final StatementSourceReference ref) {
+    public void endStatement() {
         checkState(current != null);
         current = current.exitStatement(phase);
     }

@@ -52,6 +52,64 @@ record YinDOMSourceWalker(
         }
     }
 
+    public static void visitRoot(final @NonNull YinDOMSource source, final @NonNull StatementWriter writer,
+            final @NonNull StatementDefinitionResolver resolver) {
+        new YinDOMSourceWalker(source.refProvider(), writer, resolver)
+            .visitRoot(source.domSource().getNode().getChildNodes());
+    }
+
+    private void visitRoot(final NodeList rootNodes) {
+        for (int i = 0, len = rootNodes.getLength(); i < len; ++i) {
+            if (rootNodes.item(i) instanceof Element child) {
+                final var ref = refProvider.getRefOf(child);
+                final var def = getValidDefinition(child, ref);
+                final var argDef = def.getArgumentDefinition();
+
+                if (argDef != null) {
+                    final QName argName = argDef.argumentName();
+                    final String argument = getArgValue(child, argName, false);
+
+                    writer.startStatement(0, def.getStatementName(), argument, ref);
+                    writer.storeStatement(getSubstatementsCount(child), false);
+                    return;
+                }
+            }
+        }
+    }
+
+    public static void skipRootAndWalkSource(final @NonNull YinDOMSource source, final @NonNull StatementWriter writer,
+        final @NonNull StatementDefinitionResolver resolver) {
+        new YinDOMSourceWalker(source.refProvider(), writer, resolver)
+            .skipRootAndWalkSource(source.domSource().getNode().getChildNodes());
+    }
+
+    private void skipRootAndWalkSource(final NodeList rootNodes) {
+        int childCounter = 0;
+        for (int i = 0, len = rootNodes.getLength(); i < len; ++i) {
+            final Node rootNode = rootNodes.item(i);
+            if (rootNode.getNodeType() == Node.ELEMENT_NODE) {
+                final NodeList rootChildren = rootNode.getChildNodes();
+                for (int childOffset = 0; childOffset < rootChildren.getLength(); childOffset++) {
+                    final Node child = rootChildren.item(childOffset);
+                    if (child.getNodeType() == Node.ELEMENT_NODE) {
+                        processElement(childCounter++, (Element) child);
+                    }
+                }
+            }
+        }
+    }
+
+    private int getSubstatementsCount(final Node parent) {
+        int count = 0;
+        for (int i = 0, len = parent.getChildNodes().getLength(); i < len; ++i) {
+            Node child = parent.getChildNodes().item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private boolean processElement(final int childId, final Element element) {
         final var resumed = writer.resumeStatement(childId);
         final StatementSourceReference ref;
@@ -130,7 +188,7 @@ record YinDOMSourceWalker(
         }
 
         writer.storeStatement(childCounter, fullyDefined);
-        writer.endStatement(ref);
+        writer.endStatement();
         return fullyDefined;
     }
 
@@ -149,7 +207,7 @@ record YinDOMSourceWalker(
         final var value = attr.getValue();
         writer.startStatement(childId, def.statementName(), value.isEmpty() ? null : value, ref);
         writer.storeStatement(0, true);
-        writer.endStatement(ref);
+        writer.endStatement();
         return true;
     }
 

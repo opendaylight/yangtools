@@ -82,7 +82,7 @@ public abstract class AbstractYangTest {
         return ret;
     }
 
-    public static <E extends StatementSourceException> @NonNull E assertExceptionDir(final String yangResourceName,
+    public static <E extends RuntimeException> @NonNull E assertExceptionDir(final String yangResourceName,
             final Class<E> cause) {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.loadModules(yangResourceName));
@@ -90,7 +90,7 @@ public abstract class AbstractYangTest {
         return assertInstanceOf(cause, actual);
     }
 
-    public static <E extends StatementSourceException> @NonNull E assertExceptionDir(final String yangResourceName,
+    public static <E extends RuntimeException> @NonNull E assertExceptionDir(final String yangResourceName,
             final Class<E> cause, final Matcher<String> matcher) {
         final var ret = assertExceptionDir(yangResourceName, cause);
         assertThat(ret.getMessage(), matcher);
@@ -104,6 +104,11 @@ public abstract class AbstractYangTest {
     public static @NonNull InferenceException assertInferenceException(final Matcher<String> matcher,
             final String... yangResourceName) {
         return assertException(InferenceException.class, matcher, yangResourceName);
+    }
+
+    public static @NonNull IllegalStateException assertIllegalStateExceptionDir(final Matcher<String> matcher,
+            final String dir) {
+        return assertExceptionDir(dir, IllegalStateException.class, matcher);
     }
 
     public static @NonNull InferenceException assertInferenceExceptionDir(final String yangResourceName,

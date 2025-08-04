@@ -127,6 +127,8 @@ final class DefaultYangParser implements YangParser {
             throw decodeReactorException(e);
         } catch (SourceSyntaxException e) {
             throw newSyntaxError(null, e.sourceRef(), e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -138,6 +140,8 @@ final class DefaultYangParser implements YangParser {
             throw decodeReactorException(e);
         } catch (SourceSyntaxException e) {
             throw newSyntaxError(null, e.sourceRef(), e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

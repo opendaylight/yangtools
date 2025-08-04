@@ -27,20 +27,14 @@ record YinDOMStatementStreamSource(@NonNull YinDOMSource source) implements Stat
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
-        YinDOMSourceWalker.walkSource(source, writer, resolver);
-    }
-
-    @Override
-    public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver,
-            final PrefixResolver preLinkagePrefixes) {
-        YinDOMSourceWalker.walkSource(source, writer, resolver);
+    public void writeRoot(StatementWriter writer, StatementDefinitionResolver resolver) {
+        YinDOMSourceWalker.visitRoot(source, writer, resolver);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final StatementDefinitionResolver resolver, final PrefixResolver prefixes) {
-        YinDOMSourceWalker.walkSource(source, writer, resolver);
+        YinDOMSourceWalker.skipRootAndWalkSource(source, writer, resolver);
     }
 
     @Override

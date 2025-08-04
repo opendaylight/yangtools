@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -57,18 +58,15 @@ public final class DeviationStatementSupport
         super.onFullDefinitionDeclared(ctx);
 
         StmtContext<?, ?, ?> root = ctx.getRoot();
-        if (root.produces(SubmoduleStatement.DEF)) {
-            // root is submodule, we need to find the module we belong to. We can rely on there being exactly one
-            // belongs-to statement, enforced SubmoduleStatementSupport's validator.
-            root = Iterables.getOnlyElement(root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX).values());
-        }
 
-        final var currentModule = verifyNotNull(ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root),
-            "Failed to find QName for %s", root);
+        final QNameModule currentModule = root.producesDeclared(SubmoduleStatement.class)
+            ? getBelongsToModule(root)
+            : getModuleQName(ctx, root);
+
         final var targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
         if (currentModule.equals(targetModule)) {
             throw new InferenceException(ctx,
-                    "Deviation must not target the same module as the one it is defined in: %s", currentModule);
+                "Deviation must not target the same module as the one it is defined in: %s", currentModule);
         }
     }
 
@@ -88,5 +86,19 @@ public final class DeviationStatementSupport
     protected DeviationEffectiveStatement createEffective(final Current<Absolute, DeviationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDeviation(stmt.declared(), substatements);
+    }
+
+    private static QNameModule getBelongsToModule(StmtContext<?, ?, ?> root) {
+        // Submodule must have exactly one belongs-to statement - enforced by SubmoduleStatementSupport
+        return Iterables.getOnlyElement(
+            root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE).values()
+        );
+    }
+
+    private static QNameModule getModuleQName(StmtContext<?, ?, ?> ctx, StmtContext<?, ?, ?> root) {
+        return verifyNotNull(
+            ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root),
+            "Failed to find QName for %s", root
+        );
     }
 }
