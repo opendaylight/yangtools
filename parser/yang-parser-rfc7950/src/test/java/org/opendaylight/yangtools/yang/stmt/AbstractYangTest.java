@@ -107,14 +107,14 @@ public abstract class AbstractYangTest {
         return ret;
     }
 
-    public static @NonNull InferenceException assertInferenceException(final Matcher<String> matcher,
+    public static @NonNull IllegalStateException assertIllegalStateException(final Matcher<String> matcher,
             final String... yangResourceName) {
-        return assertException(InferenceException.class, matcher, yangResourceName);
+        return assertException(IllegalStateException.class, matcher, yangResourceName);
     }
 
-    public static @NonNull IllegalStateException assertIllegalStateException(final Matcher<String> matcher,
+    public static @NonNull InferenceException assertInferenceException(final Matcher<String> matcher,
         final String... yangResourceName) {
-        return assertException(IllegalStateException.class, matcher, yangResourceName);
+        return assertException(InferenceException.class, matcher, yangResourceName);
     }
 
     public static @NonNull InferenceException assertInferenceExceptionDir(final String yangResourceName,

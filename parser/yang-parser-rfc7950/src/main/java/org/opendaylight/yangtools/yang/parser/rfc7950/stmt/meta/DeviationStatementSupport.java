@@ -11,6 +11,8 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -56,14 +58,11 @@ public final class DeviationStatementSupport
         super.onFullDefinitionDeclared(ctx);
 
         StmtContext<?, ?, ?> root = ctx.getRoot();
-        if (root.producesDeclared(SubmoduleStatement.class)) {
-            // root is submodule, we need to find the module we belong to. We can rely on there being exactly one
-            // belongs-to statement, enforced SubmoduleStatementSupport's validator.
-            root = Iterables.getOnlyElement(root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX).values());
-        }
 
-        final var currentModule = verifyNotNull(ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root),
-            "Failed to find QName for %s", root);
+        final QNameModule currentModule = root.producesDeclared(SubmoduleStatement.class)
+            ? getBelongsToModule(root)
+            : getModuleQName(ctx, root);
+
         final var targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
         if (currentModule.equals(targetModule)) {
             throw new InferenceException(ctx,
@@ -87,5 +86,17 @@ public final class DeviationStatementSupport
     protected DeviationEffectiveStatement createEffective(final Current<Absolute, DeviationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDeviation(stmt.declared(), substatements);
+    }
+
+    private static QNameModule getBelongsToModule(StmtContext<?, ?, ?> root) {
+        // Submodule must have exactly one belongs-to statement - enforced by SubmoduleStatementSupport
+        final var resolvedInfo = verifyNotNull(root.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()));
+        return resolvedInfo.belongsTo() != null ? resolvedInfo.belongsTo().parentModuleQname() : null;
+    }
+
+    private static QNameModule getModuleQName(StmtContext<?, ?, ?> ctx, StmtContext<?, ?, ?> root) {
+        return verifyNotNull(
+            root.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()),
+            "Failed to find QName for %s", root).qnameModule();
     }
 }

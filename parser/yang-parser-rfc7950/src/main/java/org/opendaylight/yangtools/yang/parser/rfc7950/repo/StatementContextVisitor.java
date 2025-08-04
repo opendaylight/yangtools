@@ -53,6 +53,13 @@ class StatementContextVisitor {
         processStatement(0, stmt);
     }
 
+    void skipRootAndVisit(final IRStatement rootStmt) {
+        int offset = 0;
+        for (IRStatement statement : rootStmt.statements()) {
+            processStatement(offset++, statement);
+        }
+    }
+
     /**
      * Based on identifier read from source and collections of relevant prefixes and statement definitions mappings
      * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
@@ -101,7 +108,7 @@ class StatementContextVisitor {
         final var optResumed = writer.resumeStatement(myOffset);
         if (optResumed.isPresent()) {
             final var resumed = optResumed.orElseThrow();
-            return resumed.isFullyDefined() || doProcessStatement(stmt, resumed.getSourceReference());
+            return resumed.isFullyDefined() || doProcessStatement(stmt);
         }
         return processNewStatement(myOffset, stmt);
     }
@@ -127,12 +134,12 @@ class StatementContextVisitor {
         }
 
         writer.startStatement(myOffset, def, argument, ref);
-        return doProcessStatement(stmt, ref);
+        return doProcessStatement(stmt);
     }
 
     // Actual processing
     @NonNullByDefault
-    private boolean doProcessStatement(final IRStatement stmt, final StatementSourceReference ref) {
+    private boolean doProcessStatement(final IRStatement stmt) {
         int childOffset = 0;
         boolean fullyDefined = true;
         for (var substatement : stmt.statements()) {
@@ -142,7 +149,7 @@ class StatementContextVisitor {
         }
 
         writer.storeStatement(childOffset, fullyDefined);
-        writer.endStatement(ref);
+        writer.endStatement();
         return fullyDefined;
     }
 }

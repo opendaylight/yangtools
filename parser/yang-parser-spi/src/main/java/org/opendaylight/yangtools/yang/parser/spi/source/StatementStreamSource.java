@@ -24,18 +24,11 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
  *
  * <p>Steps (in order of invocation) are:
  * <ol>
- * <li>{@link #writePreLinkage(StatementWriter, QNameToStatementDefinition)} -
- * Source MUST emit only statements related in pre-linkage, which are present in
- * supplied statement definition map. This step is used as preparatory cross-source
- * relationship resolution phase which collects available module names and namespaces.
- * It is necessary in order to correct resolution of unknown statements used by linkage
- * phase (e.g. semantic version of yang modules).
- * </li>
- * <li>{@link #writeLinkage(StatementWriter, QNameToStatementDefinition, PrefixResolver, YangVersion)} -
- * Source MUST emit only statements related in linkage, which are present in
- * supplied statement definition map. This step is used to build cross-source
- * linkage and visibility relationship, and to determine XMl namespaces and
- * prefixes.</li>
+ * <li>
+ * {@link #writeRoot(StatementWriter, QNameToStatementDefinition, YangVersion)} -
+ * Source MUST emit only root statement - MODULE, or SUBMODULE.
+ * This step is used to prepare root statements for the Linkage Resolution process done
+ * by {@code SourceLinkageResolver} and before the next step.</li>
  * <li>
  * {@link #writeLinkageAndStatementDefinitions(StatementWriter, QNameToStatementDefinition, PrefixResolver,
  * YangVersion)}
@@ -52,43 +45,19 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 // FIXME: 7.0.0: this is a push parser, essentially traversing the same tree multiple times. Perhaps we should create
 //               a visitor/filter or perform some explicit argument binding?
 public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
-    /**
-     * Emits only pre-linkage-related statements to supplied {@code writer}.
-     *
-     * @param writer
-     *            {@link StatementWriter} which should be used to emit
-     *            statements.
-     * @param stmtDef
-     *            Map of available statement definitions. Only these statements
-     *            may be written to statement writer, source MUST ignore and MUST NOT
-     *            emit any other statements.
-     * @throws SourceException
-     *             If source was is not valid, or provided statement writer
-     *             failed to write statements.
-     */
-    void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef);
 
     /**
-     * Emits only linkage-related statements to supplied {@code writer} based on specified YANG version.
-     * Default implementation does not make any differences between versions.
+     * Creates only the Root statement via the supplied {@link StatementWriter}.
      *
      * @param writer
-     *            {@link StatementWriter} which should be used to emit
-     *            statements.
+     *              {@link StatementWriter} which should be used to create the Root statement.
      * @param stmtDef
-     *            Map of available statement definitions. Only these statements
-     *            may be written to statement writer, source MUST ignore and
-     *            MUST NOT emit any other statements.
-     * @param preLinkagePrefixes
-     *            Pre-linkage map of source-specific prefixes to namespaces
-     * @param yangVersion
-     *            yang version.
-     * @throws SourceException
-     *             If source was is not valid, or provided statement writer
-     *             failed to write statements.
+     *              Map of available statement definitions. The only necessary definitions here are MODULE and
+     *              SUBMODULE.
+     * @param version
+     *              YANG version for argument-parsing.
      */
-    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef,
-        PrefixResolver preLinkagePrefixes, YangVersion yangVersion);
+    void writeRoot(StatementWriter writer, QNameToStatementDefinition stmtDef, YangVersion version);
 
     /**
      * Emits only linkage and language extension statements to supplied
@@ -136,7 +105,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
         YangVersion yangVersion);
 
     /**
-     * Get the SourceInfo from this source.
+     * Get the SourceInfo from this source. It is used during linkage resolution.
      */
     @NonNull SourceInfo getSourceInfo();
 }

@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 final class StatementContextWriter implements StatementWriter {
     private final @NonNull ModelProcessingPhase phase;
-    private final SourceSpecificContext ctx;
+    private final @NonNull SourceSpecificContext ctx;
 
     private AbstractResumedStatement<?, ?, ?> current;
 
@@ -67,20 +67,27 @@ final class StatementContextWriter implements StatementWriter {
 
     @Override
     public void startStatement(final int childId, final QName name, final String argument,
-            final StatementSourceReference ref) {
+        final StatementSourceReference ref) {
         final AbstractResumedStatement<?, ?, ?> existing = lookupDeclaredChild(current, childId);
-        current = existing != null ? existing
-                : verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
+        if (existing != null) {
+            current = existing;
+            return;
+        }
+
+        final var newStmt = verifyNotNull(
+            ctx.createDeclaredChild(current, childId, name, argument, ref));
+
+        current = newStmt;
     }
 
     @Override
-    public void endStatement(final StatementSourceReference ref) {
+    public void endStatement() {
         checkState(current != null);
         current = current.exitStatement(phase);
     }
 
     private static @Nullable AbstractResumedStatement<?, ?, ?> lookupDeclaredChild(
-            final AbstractResumedStatement<?, ?, ?> current, final int childId) {
+        final AbstractResumedStatement<?, ?, ?> current, final int childId) {
         return current == null ? null : current.enterSubstatement(childId);
     }
 }
