@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -52,6 +53,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqualified>,
@@ -211,13 +213,14 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     // Alright. this is quite ugly
     protected final void appendPrefixes(final Current<?, ?> stmt,
             final Builder<String, ModuleEffectiveStatement> builder) {
+        final ResolvedSourceInfo resolvedInfo =
+            verifyNotNull(stmt.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()));
         streamEffectiveSubstatements(ImportEffectiveStatement.class)
             .map(imp -> imp.prefix().argument())
             .forEach(pfx -> {
-                final var importedCtx =
-                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),
-                        "Failed to resolve prefix %s", pfx);
-                builder.put(pfx, (ModuleEffectiveStatement) importedCtx.buildEffective());
+                final var resolvedImport = verifyNotNull(resolvedInfo.imports().get(pfx),
+                    "Failed to resolve prefix %s", pfx);
+                builder.put(pfx, (ModuleEffectiveStatement) resolvedImport.root().buildEffective());
             });
     }
 

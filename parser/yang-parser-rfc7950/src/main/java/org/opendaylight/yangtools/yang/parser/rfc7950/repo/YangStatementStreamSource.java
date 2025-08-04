@@ -7,21 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
+import java.text.ParseException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.ir.StringEscaping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
@@ -38,12 +41,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
  */
 @Beta
 public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<SourceIdentifier>
-        implements StatementStreamSource {
+    implements StatementStreamSource {
     private final IRStatement rootStatement;
     private final String sourceName;
 
     private YangStatementStreamSource(final SourceIdentifier sourceId, final IRStatement rootStatement,
-            final String sourceName) {
+        final String sourceName) {
         super(sourceId);
         this.rootStatement = requireNonNull(rootStatement);
         this.sourceName = sourceName;
@@ -58,7 +61,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
      * @throws YangSyntaxErrorException If the source fails basic parsing
      */
     public static YangStatementStreamSource create(final YangTextSource source)
-            throws IOException, YangSyntaxErrorException {
+        throws IOException, YangSyntaxErrorException {
         return new YangStatementStreamSource(source.sourceId(), YangTextParser.parseToIR(source),
             source.symbolicName());
     }
@@ -75,35 +78,55 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     }
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final IRStatement rootStatement,
-            final String symbolicName) {
+        final String symbolicName) {
         return new YangStatementStreamSource(identifier, rootStatement, symbolicName);
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, null, YangVersion.VERSION_1).visit(rootStatement);
-    }
+    public void writeRoot(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+        final YangVersion version) {
+        final var ref = StatementDeclarations.inText(sourceName, rootStatement.startLine(),
+            rootStatement.startColumn() + 1);
+        verify(rootStatement.keyword() instanceof IRKeyword.Unqualified);
 
-    @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
-            @Override
-            StatementDefinition resolveStatement(final QNameModule module, final String localName) {
-                return stmtDef.getByNamespaceAndLocalName(module.namespace(), localName);
+        final var def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE,
+            rootStatement.keyword().identifier()));
+        if (def == null) {
+            throw new SourceException(ref, "%s is not a YANG Module or Submodule.", getIdentifier());
+        }
+        final QName defQname = def.getStatementName();
+
+        final var argumentCtx = rootStatement.argument();
+        final String argument;
+        if (argumentCtx != null) {
+            final var escaping = switch (version) {
+                case VERSION_1 -> StringEscaping.RFC6020;
+                case VERSION_1_1 -> StringEscaping.RFC7950;
+            };
+
+            try {
+                argument = argumentCtx.asString(escaping);
+            } catch (ParseException e) {
+                throw new SourceException(e.getMessage(), ref, e);
             }
-        }.visit(rootStatement);
+        } else {
+            argument = null;
+        }
+
+        writer.startStatement(0, defQname, argument, ref);
+        writer.storeStatement(rootStatement.statements().size(), false);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion).visit(rootStatement);
+        final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
+        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion)
+            .skipRootAndVisit(rootStatement);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixResolver prefixes, final YangVersion yangVersion) {
+        final PrefixResolver prefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion) {
             @Override
             QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {

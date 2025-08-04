@@ -25,8 +25,8 @@ import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -55,6 +55,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class SourceSpecificContext implements NamespaceStorage, Mutable {
+
+    //TODO: ideally rework in a way where we don't need to store it like this
+    private StatementContextWriter rootWriter;
+
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -90,7 +94,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
         @Override
         Entry<QName, StatementSupport<?, ?, ?>> entryFrom(final NamespaceStorage storage,
-                final NamespaceKeyCriterion<QName> criterion) {
+            final NamespaceKeyCriterion<QName> criterion) {
             throw uoe();
         }
 
@@ -121,6 +125,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
     private StatementStreamSource source;
 
+    // Cache the SourceInfo so we can use it multiple times without reading it repeatedly from the actual source
+    private SourceInfo sourceInfo;
+
     /*
      * "imported" namespaces in this source -- this points to RootStatementContexts of
      * - modules imported via 'import' statement
@@ -148,8 +155,20 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return inProgressPhase;
     }
 
+    /**
+     * Reads the SourceInfo from the StatementStreamSource and caches it.
+     * @return SourceInfo extracted from StatementStreamSource
+     */
+    public SourceInfo getSourceInfo() {
+        if (this.sourceInfo == null) {
+            this.sourceInfo = source.getSourceInfo();
+        }
+        return this.sourceInfo;
+    }
+
+
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
-            final int childId, final QName name, final String argument, final StatementSourceReference ref) {
+        final int childId, final QName name, final String argument, final StatementSourceReference ref) {
         StatementDefinitionContext<?, ?, ?> def = globalContext.getStatementDefinition(getRootVersion(), name);
         if (def == null) {
             def = globalContext.getModelDefinedStatementDefinition(name);
@@ -191,10 +210,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
          */
         if (root == null) {
             root = new RootStatementContext<>(this, def, ref, argument);
-        } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.yangVersion())
-                && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
-            root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
-                    root.getRootIdentifier());
         } else {
             final QName rootStatement = root.definition().getStatementName();
             final String rootArgument = root.rawArgument();
@@ -203,10 +218,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
                 "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
         }
         return root;
-    }
-
-    public SourceInfo getSourceInfo() {
-        return source.getSourceInfo();
     }
 
     @NonNull SourceIdentifier identifySource() {
@@ -233,13 +244,20 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return root.buildEffective();
     }
 
+    public RootStatementContext<?, ?, ?> getRoot() {
+        return root;
+    }
+
     /**
      * Return version of root statement context.
      *
      * @return version of root statement context
      */
     private YangVersion getRootVersion() {
-        return root != null ? root.yangVersion() : RootStatementContext.DEFAULT_VERSION;
+        if (root != null) {
+            return root.yangVersion();
+        }
+        return getSourceInfo().yangVersion();
     }
 
     void startPhase(final ModelProcessingPhase phase) {
@@ -345,7 +363,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
         boolean hasProgressed = tryToProgress(currentPhaseModifiers);
         final boolean phaseCompleted = requireNonNull(root, "Malformed source. Valid root element is missing.")
-                .tryToCompletePhase(executionOrder);
+            .tryToCompletePhase(executionOrder);
 
         hasProgressed |= tryToProgress(currentPhaseModifiers);
 
@@ -414,7 +432,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     @Override
     public String toString() {
         return "SourceSpecificContext [source=" + source + ", current=" + inProgressPhase + ", finished="
-                + finishedPhase + "]";
+            + finishedPhase + "]";
     }
 
     Optional<StatementSourceException> failModifiers(final ModelProcessingPhase identifier) {
@@ -439,53 +457,49 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         };
     }
 
+    /**
+     * Creates just the RootStatementContext so it can be used during linkage. It's substatements
+     * will be processed later.
+     */
+    void loadRootStatement() {
+        final YangVersion rootVersion = getRootVersion();
+        this.rootWriter = new StatementContextWriter(this, inProgressPhase);
+        this.source.writeRoot(rootWriter, stmtDef(), rootVersion);
+        root.setRootVersionImpl(rootVersion);
+    }
+
     void loadStatements() {
-        LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
+        LOG.trace("Source {} loading statements for phase {}", this.source, inProgressPhase);
 
         switch (inProgressPhase) {
-            case SOURCE_PRE_LINKAGE:
-                source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
-                break;
-            case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
-                    getRootVersion());
-                break;
             case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
-                    prefixes(), getRootVersion());
+                // Utilize the fact that RootStatement was already created by reusing the same writer
+                // that created them.
+                this.source.writeLinkageAndStatementDefinitions(requireNonNull(rootWriter,
+                        "Missing root statement in source " + source.getIdentifier()), stmtDef(),
+                    null, getRootVersion());
+                rootWriter.endStatement();
                 break;
             case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
-                    getRootVersion());
+                this.source.writeFull(
+                    new StatementContextWriter(this, inProgressPhase), stmtDef(),
+                    prefixes(), getRootVersion());
                 break;
             default:
                 break;
         }
     }
 
-    private PrefixResolver preLinkagePrefixes() {
-        final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
-        final var prefixToNamespaceMap = getAllFromLocalStorage(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
-        if (prefixToNamespaceMap == null) {
-            //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
-            return null;
-        }
-
-        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.of(value)));
-        return preLinkagePrefixes;
-    }
-
     private PrefixResolver prefixes() {
-        final var allImports = root.namespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        final var resolvedInfo = verifyNotNull(root.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()));
+        final var allImports = resolvedInfo.getImportsPrefixToQNameIncludingSelf();
         if (allImports != null) {
-            allImports.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, value)));
+            allImports.forEach(prefixToModuleMap::put);
         }
 
-        final var allBelongsTo = root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+        final var allBelongsTo = root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE);
         if (allBelongsTo != null) {
-            allBelongsTo.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, value)));
+            allBelongsTo.forEach(prefixToModuleMap::put);
         }
 
         return prefixToModuleMap;
@@ -517,13 +531,5 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
 
         return qnameToStmtDefMap;
-    }
-
-    Collection<SourceIdentifier> getRequiredSources() {
-        return root.getRequiredSources();
-    }
-
-    SourceIdentifier getRootIdentifier() {
-        return root.getRootIdentifier();
     }
 }
