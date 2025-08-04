@@ -266,7 +266,7 @@ public final class SourceLinkageResolver {
             inProgress.add(current);
 
             final Set<SourceDependency> dependencies = getDependenciesOf(current);
-            final Map<SourceDependency, SourceIdentifier> resolvedDependencies = new HashMap<>();
+            final Map<SourceDependency, Unqualified> resolvedDependencies = new HashMap<>();
             final List<SourceIdentifier> unresolvedDependencies = new ArrayList<>();
             final List<SourceIdentifier> includedSiblings = new LinkedList<>();
             boolean allResolved = true;
@@ -274,16 +274,8 @@ public final class SourceLinkageResolver {
             for (SourceDependency dependency : dependencies) {
                 final Unqualified dependencyName = dependency.name();
 
-                // Check among resolved modules first
-                SourceIdentifier match = findSatisfied(findAmongResolved(dependencyName), dependency);
-
-                if (match != null) {
-                    resolvedDependencies.put(dependency, match);
-                    continue;
-                }
-
-                // Check among all modules
-                match = findSatisfied(findAmongAll(dependencyName), dependency);
+                // Find the best match (by revision) among all modules
+                final SourceIdentifier match = findSatisfied(findAmongAll(dependencyName), dependency);
                 if (match == null) {
                     // Dependency is missing
                     if (dependency instanceof Import) {
@@ -295,6 +287,12 @@ public final class SourceLinkageResolver {
                     }
                 }
 
+                // if the match was already resolved, just move on
+                if (involvedSourcesMap.containsKey(match)) {
+                    resolvedDependencies.put(dependency, dependencyName);
+                    continue;
+                }
+
                 if (isIncludedSibling(current, dependency, match)) {
                     // If this is an include of a sibling submodule, don't add it as unresolved dependency.
                     // It will be resolved later in a different way.
@@ -302,7 +300,7 @@ public final class SourceLinkageResolver {
                     continue;
                 }
 
-                // Dependency exists but was not fully resolved yet
+                // Match was found but was not fully resolved yet
                 unresolvedDependencies.add(match);
                 allResolved = false;
             }
@@ -310,11 +308,15 @@ public final class SourceLinkageResolver {
             if (allResolved) {
                 final ResolvedSource.Builder newResolved = addResolvedSource(current);
 
+                for (Map.Entry<SourceDependency, Unqualified> resolvedDep : resolvedDependencies.entrySet()) {
+                    // Find the best match for this dependency among the resolved modules
+                    final SourceIdentifier satisfiedDepId = requireNonNull(findSatisfied(
+                        findAmongResolved(resolvedDep.getValue()), resolvedDep.getKey()));
+                    final ResolvedSource.Builder depModule = involvedSourcesMap.get(satisfiedDepId);
 
-                for (Map.Entry<SourceDependency, SourceIdentifier> resolvedDep : resolvedDependencies.entrySet()) {
-                    final ResolvedSource.Builder depModule = involvedSourcesMap.get(resolvedDep.getValue());
                     final YangVersion currentVersion = newResolved.getYangVersion();
                     final YangVersion dependencyVersion = depModule.getYangVersion();
+
                     if (resolvedDep.getKey() instanceof Import importedDep) {
                         // Version 1 sources must not import-by-revision Version 1.1 modules
                         if (importedDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
@@ -322,7 +324,7 @@ public final class SourceLinkageResolver {
                                 throwUnresolvedException(current,
                                     "Cannot import by revision version %s module %s at %s",
                                     depModule.getYangVersion().toString(),
-                                    resolvedDep.getValue().name().getLocalName(), current.name().getLocalName());
+                                    resolvedDep.getValue().getLocalName(), current.name().getLocalName());
                             }
                         }
                         newResolved.addImport(importedDep.prefix().getLocalName(), depModule);
@@ -330,7 +332,7 @@ public final class SourceLinkageResolver {
                         if (currentVersion != dependencyVersion) {
                             throwUnresolvedException(current,
                                 "Cannot include a version %s submodule %s in a version %s module %s",
-                                depModule.getYangVersion().toString(), resolvedDep.getValue().name().getLocalName(),
+                                depModule.getYangVersion().toString(), resolvedDep.getValue().getLocalName(),
                                 newResolved.getYangVersion().toString(), current.name().getLocalName());
                         }
                         newResolved.addInclude(depModule);
