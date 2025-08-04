@@ -11,13 +11,14 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -66,11 +67,15 @@ final class ModuleEffectiveStatementImpl
         }
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
-        final var includedSubmodules =
-                stmt.localNamespacePortion(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
-        nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,
-                    submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
+        final var resolvedInfo = stmt.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value());
+
+        nameToSubmodule = resolvedInfo == null ? ImmutableMap.of()
+            : ImmutableMap.copyOf(resolvedInfo.includes()
+            .stream()
+            .map(include -> Map.entry(
+                include.sourceId().name(),
+                (SubmoduleEffectiveStatement) include.root().buildEffective()))
+            .collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue)));
 
         qnameToExtension = substatements.stream()
             .filter(ExtensionEffectiveStatement.class::isInstance)
