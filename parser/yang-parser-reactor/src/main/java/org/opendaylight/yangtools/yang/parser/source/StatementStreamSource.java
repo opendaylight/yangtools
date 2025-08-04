@@ -27,18 +27,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  *
  * <p>Steps (in order of invocation) are:
  * <ol>
- * <li>{@link #writePreLinkage(StatementWriter, StatementDefinitionResolver)} -
- * Source MUST emit only statements related in pre-linkage, which are present in
- * supplied statement definition map. This step is used as preparatory cross-source
- * relationship resolution phase which collects available module names and namespaces.
- * It is necessary in order to correct resolution of unknown statements used by linkage
- * phase (e.g. semantic version of yang modules).
- * </li>
- * <li>{@link #writeLinkage(StatementWriter, StatementDefinitionResolver, PrefixResolver)} -
- * Source MUST emit only statements related in linkage, which are present in
- * supplied statement definition map. This step is used to build cross-source
- * linkage and visibility relationship, and to determine XMl namespaces and
- * prefixes.</li>
+ * <li>
+ * {@link #writeRoot(StatementWriter writer, StatementDefinitionResolver resolver)} -
+ * Source MUST emit only root statement - MODULE, or SUBMODULE.
+ * This step is used to prepare root statements for the Linkage Resolution process done
+ * by {@code SourceLinkageResolver} and before the next step.</li>
  * <li>
  * {@link #writeLinkageAndStatementDefinitions(StatementWriter, StatementDefinitionResolver, PrefixResolver)}
  * - Source MUST emit only statements related to linkage and language extensions
@@ -87,40 +80,15 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     }
 
     /**
-     * Emits only pre-linkage-related statements to supplied {@code writer}.
+     * Creates only the Root statement via the supplied {@link StatementWriter}.
      *
      * @param writer
-     *            {@link StatementWriter} which should be used to emit
-     *            statements.
+     *              {@link StatementWriter} which should be used to create the Root statement.
      * @param resolver
-     *            Map of available statement definitions. Only these statements
-     *            may be written to statement writer, source MUST ignore and MUST NOT
-     *            emit any other statements.
-     * @throws SourceException
-     *             If source was is not valid, or provided statement writer
-     *             failed to write statements.
+     *              Map of available statement definitions. The only necessary definitions here are MODULE and
+     *              SUBMODULE.
      */
-    void writePreLinkage(StatementWriter writer, StatementDefinitionResolver resolver);
-
-    /**
-     * Emits only linkage-related statements to supplied {@code writer} based on specified YANG version.
-     * Default implementation does not make any differences between versions.
-     *
-     * @param writer
-     *            {@link StatementWriter} which should be used to emit
-     *            statements.
-     * @param resolver
-     *            Map of available statement definitions. Only these statements
-     *            may be written to statement writer, source MUST ignore and
-     *            MUST NOT emit any other statements.
-     * @param preLinkagePrefixes
-     *            Pre-linkage map of source-specific prefixes to namespaces
-     * @throws SourceException
-     *             If source was is not valid, or provided statement writer
-     *             failed to write statements.
-     */
-    void writeLinkage(StatementWriter writer, StatementDefinitionResolver resolver,
-        PrefixResolver preLinkagePrefixes);
+    void writeRoot(StatementWriter writer, StatementDefinitionResolver resolver);
 
     /**
      * Emits only linkage and language extension statements to supplied

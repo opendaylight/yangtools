@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * DTO containing all the linkage information which needs to be supplied to a RootStatementContext. This info will be
@@ -23,43 +24,51 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 public record ResolvedSourceInfo(
         @NonNull SourceIdentifier sourceId,
         @NonNull QNameModule qnameModule,
+        @NonNull StmtContext<?, ?, ?> root,
         @NonNull List<ResolvedImport> imports,
         @NonNull List<ResolvedInclude> includes,
         @Nullable String prefix,
         @Nullable ResolvedBelongsTo belongsTo) {
 
-    public record ResolvedBelongsTo(@NonNull String prefix, @NonNull QNameModule parentModuleQname) {
+    public record ResolvedBelongsTo(@NonNull String prefix, @NonNull SourceIdentifier sourceId,
+            @NonNull QNameModule parentModuleQname, @NonNull StmtContext<?, ?, ?> parentRoot) {
         public ResolvedBelongsTo {
             requireNonNull(prefix);
+            requireNonNull(sourceId);
             requireNonNull(parentModuleQname);
+            requireNonNull(parentRoot);
         }
     }
 
-    public record ResolvedInclude(@NonNull SourceIdentifier sourceId, @NonNull QNameModule qname) {
+    public record ResolvedInclude(@NonNull SourceIdentifier sourceId, @NonNull QNameModule qname,
+            @NonNull StmtContext<?, ?, ?> root) {
         public ResolvedInclude {
             requireNonNull(sourceId);
             requireNonNull(qname);
+            requireNonNull(root);
         }
     }
 
     public record ResolvedImport(@NonNull String prefix, @NonNull SourceIdentifier sourceId,
-            @NonNull QNameModule qname) {
+            @NonNull QNameModule qname, @NonNull StmtContext<?, ?, ?> root) {
         public ResolvedImport {
             requireNonNull(prefix);
             requireNonNull(sourceId);
             requireNonNull(qname);
+            requireNonNull(root);
         }
 
         public static ResolvedImport of(final @NonNull String prefix,
                 final @NonNull ResolvedSourceInfo importedSource) {
             final var imported = requireNonNull(importedSource);
-            return new ResolvedImport(requireNonNull(prefix), imported.sourceId, imported.qnameModule);
+            return new ResolvedImport(requireNonNull(prefix), imported.sourceId, imported.qnameModule, imported.root);
         }
     }
 
     public ResolvedSourceInfo {
         requireNonNull(sourceId);
         requireNonNull(qnameModule);
+        requireNonNull(root);
         imports = ImmutableList.copyOf(requireNonNull(imports));
         includes = ImmutableList.copyOf(requireNonNull(includes));
     }

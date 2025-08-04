@@ -34,7 +34,7 @@ class IncludeRevisionsTest {
             .addSource(sourceForResource("/revisions/unequal-rev.yang"))
             .addSource(sourceForResource("/revisions/unequal-root.yang"))
             .buildDeclared());
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        assertEquals(ModelProcessingPhase.STATEMENT_DEFINITION, ex.getPhase());
         final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
         assertEquals("Included submodule unequal-rev was not found [at unequal-root:5:5]", cause.getMessage());
     }
@@ -52,7 +52,7 @@ class IncludeRevisionsTest {
         var ex = assertThrows(SomeModifiersUnresolvedException.class, () -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/revisions/mod-only-rev.yang"))
             .addSource(sourceForResource("/revisions/mod-only-root.yang")).buildDeclared());
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        assertEquals(ModelProcessingPhase.STATEMENT_DEFINITION, ex.getPhase());
         final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
         assertEquals("Included submodule mod-only-rev was not found [at mod-only-root:5:5]", cause.getMessage());
     }

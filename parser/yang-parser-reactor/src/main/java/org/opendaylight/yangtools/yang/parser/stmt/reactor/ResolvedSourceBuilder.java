@@ -39,9 +39,9 @@ final class ResolvedSourceBuilder {
     private ResolvedBelongsTo belongsTo;
     private ResolvedSourceInfo buildFinished;
 
-    ResolvedSourceBuilder(final @NonNull SourceSpecificContext sourceContext, final @NonNull SourceInfo sourceInfo) {
-        context = requireNonNull(sourceContext);
-        this.sourceInfo = requireNonNull(sourceInfo);
+    ResolvedSourceBuilder(final @NonNull SourceSpecificContext sourceContext) {
+        this.context = requireNonNull(sourceContext);
+        this.sourceInfo = sourceContext.getSourceInfo();
     }
 
     SourceSpecificContext context() {
@@ -88,8 +88,9 @@ final class ResolvedSourceBuilder {
     ResolvedSourceBuilder setBelongsTo(final @NonNull String prefix,
             final @NonNull ResolvedSourceBuilder belongsToModule) {
         ensureBuilderOpened();
-        belongsTo = new ResolvedBelongsTo(requireNonNull(prefix),
-            requireNonNull(belongsToModule).resolveQnameModule());
+        requireNonNull(belongsToModule);
+        this.belongsTo = new ResolvedBelongsTo(requireNonNull(prefix), belongsToModule.sourceId(),
+            belongsToModule.resolveQnameModule(), belongsToModule.context.getRoot());
         return this;
     }
 
@@ -109,7 +110,7 @@ final class ResolvedSourceBuilder {
         final var prefix = sourceInfo instanceof SourceInfo.Module module ? module.prefix().getLocalName() : null;
 
         buildFinished = new ResolvedSourceInfo(sourceInfo.sourceId(), resolveQnameModule(),
-            resolveImports(allResolved), resolveIncludes(), prefix, belongsTo);
+            context.getRoot(), resolveImports(allResolved), resolveIncludes(), prefix, belongsTo);
         return buildFinished;
     }
 
@@ -118,10 +119,10 @@ final class ResolvedSourceBuilder {
     }
 
     private List<ResolvedImport> resolveImports(
-            final Map<SourceSpecificContext, ResolvedSourceInfo> allResolved) {
+        final Map<SourceSpecificContext, ResolvedSourceInfo> allResolved) {
         return imports.build().entrySet().stream()
             .map(prefixedImport -> {
-                final var impContext = prefixedImport.getValue().context();
+                final SourceSpecificContext impContext = prefixedImport.getValue().context();
                 if (!allResolved.containsKey(impContext)) {
                     throw new IllegalStateException(String.format("Unresolved import %s of module %s",
                         prefixedImport.getValue().sourceId(), sourceId()));
@@ -134,7 +135,8 @@ final class ResolvedSourceBuilder {
     private List<ResolvedInclude> resolveIncludes() {
         return includes.build()
             .stream()
-            .map(builder -> new ResolvedInclude(builder.sourceId(), builder.resolveQnameModule()))
+            .map(builder -> new ResolvedInclude(builder.sourceId(), builder.resolveQnameModule(),
+                builder.context.getRoot()))
             .toList();
     }
 

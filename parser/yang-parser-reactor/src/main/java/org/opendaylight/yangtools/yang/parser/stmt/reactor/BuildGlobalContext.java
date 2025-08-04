@@ -59,8 +59,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-        ModelProcessingPhase.SOURCE_LINKAGE,
         ModelProcessingPhase.STATEMENT_DEFINITION,
         ModelProcessingPhase.FULL_DECLARATION,
         ModelProcessingPhase.EFFECTIVE_MODEL
@@ -168,18 +166,50 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         modelDefinedStmtDefs.put(name, def);
     }
 
-    @NonNull
-    ReactorDeclaredModel build() throws ReactorException, SourceSyntaxException {
-        final var resolvedSources = SourceLinkageResolver.create(sources, libSources).resolveInvolvedSources();
-        executePhases(resolvedSources);
-        return transform(resolvedSources);
+    @NonNull ReactorDeclaredModel build() throws ReactorException, SourceSyntaxException, IOException {
+        final List<ResolvedSourceContext> resolvedSourceContexts = resolveSources();
+        executePhases(resolvedSourceContexts);
+        return transform(resolvedSourceContexts);
     }
 
-    @NonNull
-    EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException {
-        final var resolvedSources = SourceLinkageResolver.create(sources, libSources).resolveInvolvedSources();
-        executePhases(resolvedSources);
-        return transformEffective(resolvedSources);
+    @NonNull EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException, IOException {
+        final List<ResolvedSourceContext> resolvedSourceContexts = resolveSources();
+        executePhases(resolvedSourceContexts);
+        return transformEffective(resolvedSourceContexts);
+    }
+
+    private @NonNull Collection<SourceSpecificContext> initializeContexts(
+            final @NonNull Collection<BuildSource<?>> sourcesToInit) throws SourceSyntaxException, IOException {
+        final var contexts = new HashSet<SourceSpecificContext>();
+        for (var buildSource : sourcesToInit) {
+            contexts.add(buildSource.getSourceContext());
+        }
+        return contexts;
+    }
+
+    private List<ResolvedSourceContext> resolveSources() throws ReactorException, SourceSyntaxException, IOException {
+        this.currentPhase = ModelProcessingPhase.STATEMENT_DEFINITION;
+
+        final var mainContexts = initializeContexts(sources);
+        final var libContexts = initializeContexts(libSources);
+
+        for (var source : mainContexts) {
+            source.startPhase(ModelProcessingPhase.STATEMENT_DEFINITION);
+            source.loadRootStatement();
+        }
+
+        for (var libSource : libContexts) {
+            libSource.startPhase(ModelProcessingPhase.STATEMENT_DEFINITION);
+            libSource.loadRootStatement();
+        }
+
+        final var linkageResolver = new SourceLinkageResolver(mainContexts, libContexts);
+        final List<ResolvedSourceContext> resolvedSourceContexts = linkageResolver.resolveInvolvedSources();
+
+        for (ResolvedSourceContext resolvedContext : resolvedSourceContexts) {
+            SourceLinkageResolver.fillNamespaces(resolvedContext.resolvedSourceInfo());
+        }
+        return resolvedSourceContexts;
     }
 
     private void executePhases(final @NonNull List<ResolvedSourceContext> resolvedSources) throws ReactorException {
@@ -354,14 +384,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         checkState(currentPhase == phase);
         finishedPhase = currentPhase;
         LOG.debug("Global phase {} finished", phase);
-    }
-
-    Set<BuildSource<?>> getSources() {
-        return sources;
-    }
-
-    public Set<YangVersion> getSupportedVersions() {
-        return supportedVersions;
     }
 
     void addMutableStmtToSeal(final MutableStatement mutableStatement) {
