@@ -27,7 +27,8 @@ final class RevisionDependencyResolver extends DependencyResolver {
     @Override
     boolean isKnown(final Collection<SourceIdentifier> haystack, final SourceDependency dependency) {
         // Quick lookup
-        return haystack.contains(new SourceIdentifier(dependency.name(), dependency.revision()))
+        return haystack.contains(new SourceIdentifier(dependency.name().value(), dependency.revision().value()
+            .revision()))
             // Slow revision-less walk
             || dependency.revision() == null && haystack.stream().anyMatch(dependency::isSatisfiedBy);
     }

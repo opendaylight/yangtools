@@ -21,9 +21,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Referenced;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.DetailedRevision;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -42,6 +44,13 @@ public final class YangIRSourceInfoExtractor {
     private static final String REVISION_DATE = YangStmtMapping.REVISION_DATE.getStatementName().getLocalName();
     private static final String SUBMODULE = YangStmtMapping.SUBMODULE.getStatementName().getLocalName();
     private static final String YANG_VERSION = YangStmtMapping.YANG_VERSION.getStatementName().getLocalName();
+
+    //TODO: add handling for the additional statements below and make sure to fully populate the once above.
+    // They might have some additional optional substatements which are currently getting ignored.
+    private static final String CONTACT = YangStmtMapping.CONTACT.getStatementName().getLocalName();
+    private static final String ORGANIZATION = YangStmtMapping.ORGANIZATION.getStatementName().getLocalName();
+    private static final String DESCRIPTION = YangStmtMapping.DESCRIPTION.getStatementName().getLocalName();
+    private static final String REFERENCE = YangStmtMapping.REFERENCE.getStatementName().getLocalName();
 
     private YangIRSourceInfoExtractor() {
         // Hidden on purpose
@@ -99,73 +108,94 @@ public final class YangIRSourceInfoExtractor {
     private static SourceInfo.@NonNull Module moduleForIR(final IRStatement root, final SourceIdentifier sourceId) {
         final var builder = SourceInfo.Module.builder();
         fill(builder, root, sourceId);
+        final Referenced<XMLNamespace> namespace = root.statements().stream()
+            .filter(stmt -> isStatement(stmt, NAMESPACE))
+            .findFirst()
+            .map(stmt -> new Referenced<>(safeStringArgument(sourceId, stmt, "namespace argument"),
+                refOf(sourceId, stmt)))
+            .map(referenced -> new Referenced<>(XMLNamespace.of(referenced.value()), referenced.reference()))
+            .orElseThrow(() -> new IllegalArgumentException("No namespace statement in " + refOf(sourceId, root)));
         return builder
-            .setNamespace(root.statements().stream()
-                .filter(stmt -> isStatement(stmt, NAMESPACE))
-                .findFirst()
-                .map(stmt -> safeStringArgument(sourceId, stmt, "namespace argument"))
-                .map(XMLNamespace::of)
-                .orElseThrow(() -> new IllegalArgumentException("No namespace statement in " + refOf(sourceId, root))))
+            .setNamespace(namespace.value(), namespace.reference())
             .setPrefix(extractPrefix(root, sourceId))
-            .build();
+           .build();
     }
 
     private static SourceInfo.@NonNull Submodule submmoduleForIR(final IRStatement root,
             final SourceIdentifier sourceId) {
         final var builder = SourceInfo.Submodule.builder();
         fill(builder, root, sourceId);
-        return builder
-            .setBelongsTo(root.statements().stream()
-                .filter(stmt -> isStatement(stmt, BELONGS_TO))
-                .findFirst()
-                .map(stmt -> new BelongsTo(Unqualified.of(safeStringArgument(sourceId, stmt, "belongs-to module name")),
-                    extractPrefix(stmt, sourceId)))
-                .orElseThrow(() -> new IllegalArgumentException("No belongs-to statement in " + refOf(sourceId, root))))
-            .build();
+        final BelongsTo belongsTo = root.statements().stream()
+            .filter(stmt -> isStatement(stmt, BELONGS_TO))
+            .findFirst()
+            .map(stmt -> new BelongsTo(new Referenced<>(Unqualified.of(safeStringArgument(sourceId, stmt, "belongs-to module name")), refOf(sourceId, stmt)),
+                extractPrefix(stmt, sourceId)))
+            .orElseThrow(() -> new IllegalArgumentException("No belongs-to statement in " + refOf(sourceId, root)));
+        return builder.setBelongsTo(belongsTo).build();
     }
 
     private static void fill(final SourceInfo.Builder<?, ?> builder, final IRStatement root,
             final SourceIdentifier sourceId) {
-        builder.setName(Unqualified.of(safeStringArgument(sourceId, root, "module/submodule argument")));
+        builder.setName(Unqualified.of(safeStringArgument(sourceId, root, "module/submodule argument")), refOf(sourceId, root));
 
         root.statements().stream()
             .filter(stmt -> isStatement(stmt, YANG_VERSION))
             .findFirst()
-            .map(stmt -> safeStringArgument(sourceId, stmt, "yang-version argument"))
-            .map(YangVersion::forString)
-            .ifPresent(builder::setYangVersion);
+            .map(stmt -> new Referenced<>(safeStringArgument(sourceId, stmt, "yang-version argument"),
+                refOf(sourceId, stmt)))
+            .map(referenced -> new Referenced<>(YangVersion.forString(referenced.value()), referenced.reference()))
+            .ifPresent(version -> builder.setYangVersion(version.value(), version.reference()));
 
         root.statements().stream()
             .filter(stmt -> isStatement(stmt, REVISION))
-            .map(stmt -> Revision.of(safeStringArgument(sourceId, stmt, "revision argument")))
+            .map(stmt -> new DetailedRevision(
+                new Referenced<>(Revision.of(safeStringArgument(sourceId, stmt, "revision argument")), refOf(sourceId, stmt)),
+                extractSimple(stmt, sourceId, "description"),
+                extractSimple(stmt, sourceId, "reference")))
             .forEach(builder::addRevision);
 
         root.statements().stream()
             .filter(stmt -> isStatement(stmt, IMPORT))
-            .map(stmt -> new Import(Unqualified.of(safeStringArgument(sourceId, stmt, "import argument")),
-                extractPrefix(stmt, sourceId), extractRevisionDate(stmt, sourceId)))
+            .map(stmt -> new Import(
+                new Referenced<>(Unqualified.of(safeStringArgument(sourceId, stmt, "import argument")), refOf(sourceId, stmt)),
+                extractPrefix(stmt, sourceId),
+                extractRevisionDate(stmt, sourceId),
+                extractSimple(stmt, sourceId, "description"),
+                extractSimple(stmt, sourceId, "reference")))
             .forEach(builder::addImport);
 
         root.statements().stream()
             .filter(stmt -> isStatement(stmt, INCLUDE))
-            .map(stmt -> new Include(Unqualified.of(safeStringArgument(sourceId, stmt, "include argument")),
-                extractRevisionDate(stmt, sourceId)))
+            .map(stmt -> new Include(
+                new Referenced<>(Unqualified.of(safeStringArgument(sourceId, stmt, "include argument")), refOf(sourceId, stmt)),
+                extractRevisionDate(stmt, sourceId),
+                extractSimple(stmt, sourceId, "description"),
+                extractSimple(stmt, sourceId, "reference") ))
             .forEach(builder::addInclude);
     }
 
-    private static @NonNull Unqualified extractPrefix(final IRStatement root, final SourceIdentifier sourceId) {
+    private static @Nullable Referenced<String> extractSimple(final IRStatement root, final SourceIdentifier sourceId,
+        final String nodeName) {
+        return root.statements().stream()
+            .filter(stmt -> isStatement(stmt, nodeName))
+            .findFirst()
+            .map(stmt -> new Referenced<>(safeStringArgument(sourceId, stmt, nodeName), refOf(sourceId, stmt)))
+            .orElse(null);
+    }
+
+    private static @NonNull Referenced<Unqualified> extractPrefix(final IRStatement root, final SourceIdentifier sourceId) {
         return root.statements().stream()
             .filter(stmt -> isStatement(stmt, PREFIX))
             .findFirst()
-            .map(stmt -> Unqualified.of(safeStringArgument(sourceId, stmt, "prefix argument")))
+            .map(stmt -> new Referenced<>(Unqualified.of(safeStringArgument(sourceId, stmt, "prefix argument")), refOf(sourceId, stmt)))
             .orElseThrow(() -> new IllegalArgumentException("No prefix statement in " + refOf(sourceId, root)));
     }
 
-    private static @Nullable Revision extractRevisionDate(final IRStatement root, final SourceIdentifier sourceId) {
+    private static @Nullable Referenced<Revision> extractRevisionDate(final IRStatement root, final SourceIdentifier sourceId) {
         return root.statements().stream()
             .filter(stmt -> isStatement(stmt, REVISION_DATE))
             .findFirst()
-            .map(stmt -> Revision.of(safeStringArgument(sourceId, stmt, "revision date argument")))
+            .map(stmt -> new Referenced<>(Revision.of(safeStringArgument(sourceId, stmt, "revision date argument")), refOf(sourceId, stmt)))
             .orElse(null);
     }
 

@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalSt
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -77,6 +78,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private Set<SourceSpecificContext> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
+    private SourceLinkageResolver linkageResolver;
 
     BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
@@ -165,6 +167,10 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     private void executePhases() throws ReactorException {
+        this.linkageResolver = new SourceLinkageResolver(this, sources, libSources);
+        final Map<SourceIdentifier, SourceLinkageResolver.ResolvedSource> resolvedSources =
+            linkageResolver.resolveInvolvedSources();
+
         for (var phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
@@ -236,17 +242,50 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         checkState(currentPhase != null);
         loadPhaseStatementsFor(sources);
         loadPhaseStatementsFor(libSources);
+        //TODO: can we utilize RevisionDependencyResolver here? Sounds exactly like what we need
+//        addImportLinkages(involvedSources);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private void loadPhaseStatementsFor(final Set<SourceSpecificContext> srcs) throws ReactorException {
-        for (var source : srcs) {
-            try {
-                source.loadStatements();
-            } catch (RuntimeException e) {
-                throw propagateException(source, e);
+        //TODO: we'll just start with STATEMENT_DECLARATION here.
+        if (currentPhase.equals(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
+            || currentPhase.equals(ModelProcessingPhase.SOURCE_LINKAGE)) {
+            return;
+        } else {
+            for (var source : srcs) {
+                try {
+                    source.loadStatements();
+                } catch (RuntimeException e) {
+                    throw propagateException(source, e);
+                }
             }
         }
+    }
+
+    // TODO: convenience method - will be probably removed when we get rid of the processing phases them selves
+    StatementDefinitionContext<?,?,?> getStatementDefContext(YangVersion version, QName qName) {
+        StatementDefinitionContext<?,?,?> statementSupport = this.definitions.get(version, qName);
+        if (statementSupport == null) {
+            statementSupport = getSupportFor(ModelProcessingPhase.SOURCE_PRE_LINKAGE, version, qName);
+        }
+
+        if (statementSupport == null) {
+            statementSupport = getSupportFor(ModelProcessingPhase.SOURCE_LINKAGE, version, qName);
+        }
+        return statementSupport;
+    }
+
+    // TODO: convenience method - will be probably removed when we get rid of the processing phases them selves
+    StatementDefinitionContext<?,?,?> getSupportFor(ModelProcessingPhase phase, YangVersion version, QName qName) {
+        StatementSupportBundle supportBundle = supports.get(phase);
+        StatementSupport<?, ?, ?> statementDefRaw = supportBundle.getStatementDefinition(version, qName);
+        if (statementDefRaw != null) {
+            StatementDefinitionContext<?, ?, ?> definitionContext = new StatementDefinitionContext<>(statementDefRaw);
+            definitions.put(version, qName, definitionContext);
+            return definitionContext;
+        }
+        return null;
     }
 
     private SomeModifiersUnresolvedException addSourceExceptions(final List<SourceSpecificContext> sourcesToProgress) {

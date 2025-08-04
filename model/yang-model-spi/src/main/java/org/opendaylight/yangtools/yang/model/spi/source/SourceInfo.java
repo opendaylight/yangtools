@@ -12,16 +12,16 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
-import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Referenced;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
@@ -55,7 +55,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      *
      * @return name of this source.
      */
-    SourceIdentifier sourceId();
+    Referenced<SourceIdentifier> sourceId();
 
     /**
      * Return {@link YangVersion} of the source. If no {@link YangVersionStatement} is present, this method will return
@@ -63,7 +63,17 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      *
      * @return {@link YangVersion} of the source
      */
-    YangVersion yangVersion();
+    Referenced<YangVersion> yangVersion();
+
+    Referenced<String> contact();
+
+    Referenced<String> organization();
+
+    Referenced<String> description();
+
+    Referenced<String> reference();
+
+
 
     /**
      * The set of all {@link RevisionDateStatement} mentioned in {@link RevisionStatement}s. The returned set is ordered
@@ -71,7 +81,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      *
      * @return all revisions known by this source
      */
-    ImmutableSet<Revision> revisions();
+    ImmutableSet<DetailedRevision> revisions();
 
     /**
      * Return all {@link Import} dependencies.
@@ -87,17 +97,22 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      */
     ImmutableSet<Include> includes();
 
+
     /**
      * A {@link SourceInfo} about a {@link ModuleStatement}-backed source.
      */
     record Module(
-            SourceIdentifier sourceId,
-            YangVersion yangVersion,
-            XMLNamespace namespace,
-            Unqualified prefix,
-            ImmutableSet<Revision> revisions,
-            ImmutableSet<Import> imports,
-            ImmutableSet<Include> includes) implements SourceInfo {
+        Referenced<SourceIdentifier> sourceId,
+        Referenced<YangVersion> yangVersion,
+        Referenced<XMLNamespace> namespace,
+        Referenced<Unqualified> prefix,
+        ImmutableSet<DetailedRevision> revisions,
+        ImmutableSet<Import> imports,
+        ImmutableSet<Include> includes,
+        Referenced<String> contact,
+        Referenced<String> organization,
+        Referenced<String> description,
+        Referenced<String> reference) implements SourceInfo {
         public Module {
             requireNonNull(sourceId);
             requireNonNull(yangVersion);
@@ -115,31 +130,42 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         public static final class Builder extends SourceInfo.Builder<Builder, Module> {
             @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
                 justification = "https://github.com/spotbugs/spotbugs/issues/743")
-            private @Nullable XMLNamespace namespace;
+            private @Nullable Referenced<XMLNamespace> namespace;
             @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
                 justification = "https://github.com/spotbugs/spotbugs/issues/743")
-            private @Nullable Unqualified prefix;
+            private @Nullable Referenced<Unqualified> prefix;
 
             Builder() {
                 // Hidden on purpose
             }
 
-            public Builder setNamespace(final XMLNamespace namespace) {
-                this.namespace = requireNonNull(namespace);
+            public Builder setNamespace(final XMLNamespace namespace, final StatementSourceReference ref) {
+                this.namespace = new Referenced<>(requireNonNull(namespace), requireNonNull(ref));
                 return this;
             }
 
-            public Builder setPrefix(final Unqualified prefix) {
-                this.prefix = requireNonNull(prefix);
+            public Builder setNamespace(final Referenced<XMLNamespace> referencedNamespace) {
+                this.namespace = referencedNamespace;
+                return this;
+            }
+
+            public Builder setPrefix(final Unqualified prefix, final StatementSourceReference ref) {
+                this.prefix = new Referenced<>(requireNonNull(prefix), requireNonNull(ref));
+                return this;
+            }
+
+            public Builder setPrefix(final Referenced<Unqualified> prefix) {
+                this.prefix = prefix;
                 return this;
             }
 
             @Override
-            Module buildInstance(final SourceIdentifier sourceId, final YangVersion yangVersion,
-                    final ImmutableSet<Revision> revisions, final ImmutableSet<Import> imports,
-                    final ImmutableSet<Include> includes) {
+            Module buildInstance(Referenced<SourceIdentifier> sourceId, Referenced<YangVersion> yangVersion,
+                ImmutableSet<DetailedRevision> revisions, ImmutableSet<Import> imports,
+                ImmutableSet<Include> includes, Referenced<String> contact, Referenced<String> organization,
+                Referenced<String> description, Referenced<String> reference) {
                 return new Module(sourceId, yangVersion, requireNonNull(namespace), requireNonNull(prefix), revisions,
-                    imports, includes);
+                    imports, includes, contact, organization, description, reference);
             }
         }
     }
@@ -148,12 +174,16 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      * A {@link SourceInfo} about a {@code submodule}.
      */
     record Submodule(
-            SourceIdentifier sourceId,
-            YangVersion yangVersion,
-            BelongsTo belongsTo,
-            ImmutableSet<Revision> revisions,
-            ImmutableSet<Import> imports,
-            ImmutableSet<Include> includes) implements SourceInfo {
+        Referenced<SourceIdentifier> sourceId,
+        Referenced<YangVersion> yangVersion,
+        BelongsTo belongsTo,
+        ImmutableSet<DetailedRevision> revisions,
+        ImmutableSet<Import> imports,
+        ImmutableSet<Include> includes,
+        Referenced<String> contact,
+        Referenced<String> organization,
+        Referenced<String> description,
+        Referenced<String> reference) implements SourceInfo {
         public Submodule {
             requireNonNull(sourceId);
             requireNonNull(yangVersion);
@@ -183,10 +213,12 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             }
 
             @Override
-            Submodule buildInstance(final SourceIdentifier sourceId, final YangVersion yangVersion,
-                    final ImmutableSet<Revision> revisions, final ImmutableSet<Import> imports,
-                    final ImmutableSet<Include> includes) {
-                return new Submodule(sourceId, yangVersion, requireNonNull(belongsTo), revisions, imports, includes);
+            Submodule buildInstance(Referenced<SourceIdentifier> sourceId, Referenced<YangVersion> yangVersion,
+                ImmutableSet<DetailedRevision> revisions, ImmutableSet<Import> imports, ImmutableSet<Include> includes,
+                Referenced<String> contact, Referenced<String> organization, Referenced<String> description,
+                Referenced<String> reference) {
+                return new Submodule(sourceId, yangVersion, requireNonNull(belongsTo), revisions, imports, includes,
+                    contact, organization, description, reference);
             }
         }
     }
@@ -194,19 +226,68 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
     abstract sealed class Builder<B extends Builder<B, I>, I extends SourceInfo> {
         private final ImmutableSet.Builder<Import> imports = ImmutableSet.builder();
         private final ImmutableSet.Builder<Include> includes = ImmutableSet.builder();
-        private final ArrayList<Revision> revisions = new ArrayList<>();
-        private YangVersion yangVersion = YangVersion.VERSION_1;
+        private final ArrayList<DetailedRevision> revisions = new ArrayList<>();
+        private Referenced<YangVersion> yangVersion = new Referenced<>(YangVersion.VERSION_1, null);
         @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
             justification = "https://github.com/spotbugs/spotbugs/issues/743")
-        private @Nullable Unqualified name;
+        private @Nullable Referenced<Unqualified> name;
+        private @Nullable Referenced<String> contact;
+        private @Nullable Referenced<String> organization;
+        private @Nullable Referenced<String> description;
+        private @Nullable Referenced<String> reference;
 
-        public final B setName(final Unqualified newName) {
-            name = requireNonNull(newName);
+        public final B setName(final Unqualified newName, StatementSourceReference ref) {
+            name = new Referenced<>(requireNonNull(newName), requireNonNull(ref));
             return thisInstance();
         }
 
-        public final B setYangVersion(final YangVersion newYangVersion) {
+        public final B setYangVersion(final YangVersion newYangVersion, StatementSourceReference ref) {
+            yangVersion = new Referenced<>(requireNonNull(newYangVersion), requireNonNull(ref));
+            return thisInstance();
+        }
+
+        public final B setYangVersion(final Referenced<YangVersion> newYangVersion) {
             yangVersion = requireNonNull(newYangVersion);
+            return thisInstance();
+        }
+
+        public final B setContact(final String newContact, StatementSourceReference ref) {
+            contact = new Referenced<>(requireNonNull(newContact), requireNonNull(ref));
+            return thisInstance();
+        }
+
+        public final B setContact(final Referenced<String> newContact) {
+            contact = newContact;
+            return thisInstance();
+        }
+
+        public final B setOrganization(final Referenced<String> newOrganization) {
+            organization = newOrganization;
+            return thisInstance();
+        }
+
+//        public final B setOrganization(final String newOrganization, StatementSourceReference ref) {
+//            organization = new Referenced<>(requireNonNull(newOrganization), requireNonNull(ref));
+//            return thisInstance();
+//        }
+
+        public final B setDescription(final String newDescription, StatementSourceReference ref) {
+            description = new Referenced<>(requireNonNull(newDescription), requireNonNull(ref));
+            return thisInstance();
+        }
+
+        public final B setDescription(final Referenced<String> newDescription) {
+            description = newDescription;
+            return thisInstance();
+        }
+
+        public final B setReference(final String newReference, StatementSourceReference ref) {
+            reference = new Referenced<>(requireNonNull(newReference), requireNonNull(ref));
+            return thisInstance();
+        }
+
+        public final B setReference(final Referenced<String> newReference) {
+            reference = newReference;
             return thisInstance();
         }
 
@@ -220,23 +301,24 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             return thisInstance();
         }
 
-        public final B addRevision(final Revision revision) {
+        public final B addRevision(final DetailedRevision revision) {
             revisions.add(revision);
             return thisInstance();
         }
 
         public final I build() {
             final var sorted = revisions.stream()
-                .sorted(Comparator.reverseOrder())
+                .sorted((first, second) -> second.getRevision().value().compareTo(first.getRevision().value()))
                 .collect(ImmutableSet.toImmutableSet());
-
-            return buildInstance(
-                new SourceIdentifier(requireNonNull(name), sorted.isEmpty() ? null : sorted.iterator().next()),
-                yangVersion, sorted, imports.build(), includes.build());
+            return buildInstance(new Referenced<>(new SourceIdentifier(name.value(), sorted.isEmpty() ? null :
+                    sorted.iterator().next().getRevision().value()), name.reference()),
+                yangVersion, sorted, imports.build(), includes.build(), contact, organization, description, reference);
         }
 
-        abstract I buildInstance(SourceIdentifier sourceId, YangVersion yangVersion, ImmutableSet<Revision> revisions,
-            ImmutableSet<Import> imports, ImmutableSet<Include> includes);
+        abstract I buildInstance(Referenced<SourceIdentifier> sourceId, Referenced<YangVersion> yangVersion,
+            ImmutableSet<DetailedRevision> revisions, ImmutableSet<Import> imports,
+            ImmutableSet<Include> includes, Referenced<String> contact, Referenced<String> organization, Referenced<String> description,
+            Referenced<String> reference);
 
         @SuppressWarnings("unchecked")
         private B thisInstance() {
