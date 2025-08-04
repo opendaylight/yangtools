@@ -19,24 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 public enum ModelProcessingPhase {
     INIT(),
 
-    /**
-     * Preliminary cross-source relationship resolution phase which collects available module names and module
-     * namespaces. It is necessary in order to correct resolution of unknown statements used in linkage phase (e.g.
-     * semantic version of YANG modules).
-     */
-    SOURCE_PRE_LINKAGE(INIT, ExecutionOrder.SOURCE_PRE_LINKAGE),
-
-    /**
-     * Cross-source relationship resolution phase.
-     *
-     * <p>In this phase of processing only statements which affects cross-source relationship (e.g. imports / includes)
-     * are processed.
-     *
-     * <p>At end of this phase all source related contexts should be bind to their imports and includes to allow
-     * visibility of custom defined statements in subsequent phases.
-     */
-    SOURCE_LINKAGE(SOURCE_PRE_LINKAGE, ExecutionOrder.SOURCE_LINKAGE),
-    STATEMENT_DEFINITION(SOURCE_LINKAGE, ExecutionOrder.STATEMENT_DEFINITION),
+    STATEMENT_DEFINITION(INIT, ExecutionOrder.STATEMENT_DEFINITION),
     FULL_DECLARATION(STATEMENT_DEFINITION, ExecutionOrder.FULL_DECLARATION),
     EFFECTIVE_MODEL(FULL_DECLARATION, ExecutionOrder.EFFECTIVE_MODEL);
 
@@ -53,25 +36,17 @@ public enum ModelProcessingPhase {
          */
         public static final byte INIT                 = 1;
         /**
-         * Corresponds to {@link ModelProcessingPhase#SOURCE_PRE_LINKAGE}.
-         */
-        public static final byte SOURCE_PRE_LINKAGE   = 2;
-        /**
-         * Corresponds to {@link ModelProcessingPhase#SOURCE_LINKAGE}.
-         */
-        public static final byte SOURCE_LINKAGE       = 3;
-        /**
          * Corresponds to {@link ModelProcessingPhase#STATEMENT_DEFINITION}.
          */
-        public static final byte STATEMENT_DEFINITION = 4;
+        public static final byte STATEMENT_DEFINITION = 2;
         /**
          * Corresponds to {@link ModelProcessingPhase#FULL_DECLARATION}.
          */
-        public static final byte FULL_DECLARATION     = 5;
+        public static final byte FULL_DECLARATION     = 3;
         /**
          * Corresponds to {@link ModelProcessingPhase#EFFECTIVE_MODEL}.
          */
-        public static final byte EFFECTIVE_MODEL      = 6;
+        public static final byte EFFECTIVE_MODEL      = 4;
 
         private ExecutionOrder() {
             // Hidden on purpose
