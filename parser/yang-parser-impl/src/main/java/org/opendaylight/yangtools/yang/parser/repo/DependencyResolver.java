@@ -53,7 +53,7 @@ abstract class DependencyResolver {
                 if (tryResolve(resolved, dep)) {
                     final var sourceId = dep.sourceId();
                     LOG.debug("Resolved source {}", sourceId);
-                    resolved.add(sourceId);
+                    resolved.add(sourceId.value());
                     it.remove();
                     progress = true;
 
@@ -72,8 +72,8 @@ abstract class DependencyResolver {
                 // belongs-to check failed, move the source back to pending
                 final var sourceId = submodule.sourceId();
                 LOG.debug("Source {} is missing belongs-to {}", sourceId, belongsTo);
-                pending.put(sourceId, submodule);
-                resolved.remove(sourceId);
+                pending.put(sourceId.value(), submodule);
+                resolved.remove(sourceId.value());
             }
         }
 
@@ -84,18 +84,18 @@ abstract class DependencyResolver {
         for (var info : pending.values()) {
             for (var dep : info.imports()) {
                 if (!isKnown(depInfo.keySet(), dep)) {
-                    unstatisfied.put(info.sourceId(), dep);
+                    unstatisfied.put(info.sourceId().value(), dep);
                 }
             }
             for (var dep : info.includes()) {
                 if (!isKnown(depInfo.keySet(), dep)) {
-                    unstatisfied.put(info.sourceId(), dep);
+                    unstatisfied.put(info.sourceId().value(), dep);
                 }
             }
             if (info instanceof Submodule submodule) {
                 final var dep = submodule.belongsTo();
                 if (!isKnown(depInfo.keySet(), dep)) {
-                    unstatisfied.put(info.sourceId(), dep);
+                    unstatisfied.put(info.sourceId().value(), dep);
                 }
             }
         }
