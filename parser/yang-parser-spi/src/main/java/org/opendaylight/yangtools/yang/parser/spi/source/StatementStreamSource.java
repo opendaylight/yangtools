@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 
 /**
  * Statement stream source, which is used for inference of effective model.
@@ -50,6 +52,9 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 // FIXME: 7.0.0: this is a push parser, essentially traversing the same tree multiple times. Perhaps we should create
 //               a visitor/filter or perform some explicit argument binding?
 public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
+    @NonNull
+    SourceInfo getSourceInfo();
+
     /**
      * Emits only pre-linkage-related statements to supplied {@code writer}.
      *

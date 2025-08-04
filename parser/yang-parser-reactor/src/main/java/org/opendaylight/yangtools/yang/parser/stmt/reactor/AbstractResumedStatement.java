@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+public abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends OriginalStmtCtx<A, D, E> implements ResumedStatement {
     private final String rawArgument;
 

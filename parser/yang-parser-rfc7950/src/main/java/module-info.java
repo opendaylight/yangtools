@@ -35,4 +35,5 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires java.sql;
 }

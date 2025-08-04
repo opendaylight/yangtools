@@ -15,14 +15,26 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
+import java.util.HashSet;
+import java.util.Set;
 import javax.xml.transform.TransformerException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Referenced;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.DetailedRevision;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -224,6 +236,200 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             }
         }
     }
+
+    @Override
+    public @NonNull SourceInfo getSourceInfo() {
+        final NodeList childNodes = root.getFirstChild().getChildNodes();
+        final Referenced<SourceIdentifier> sourceId = new Referenced<>(getIdentifier(),
+            extractRef(((Element) root.getFirstChild())));
+        Referenced<YangVersion> yangVersion = new Referenced<>(YangVersion.VERSION_1, null);
+        Referenced<XMLNamespace> namespace = null;
+        Referenced<Unqualified> prefix = null;
+        BelongsTo belongsTo = null;
+        Referenced<String> contact = null;
+        Referenced<String> organization = null;
+        Referenced<String> description = null;
+        Referenced<String> reference = null;
+
+        Set<DetailedRevision> revisions = new HashSet<>();
+        Set<Import> imports = new HashSet<>();
+        Set<Include> includes = new HashSet<>();
+
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            final Node child = childNodes.item(i);
+            if (child.getNodeType() != Node.ELEMENT_NODE) {
+                switch (child.getLocalName()) {
+                    case "yang-version":
+                        yangVersion = getYangVersion(child);
+                        break;
+                    case "namespace":
+                        namespace = getNamespace(child);
+                        break;
+                    case "prefix":
+                        prefix = getPrefix(child);
+                        break;
+                    case "revision":
+                        revisions.add(getRevision(child));
+                        break;
+                    case "import":
+                        imports.add(getImport(child));
+                        break;
+                    case "include":
+                        includes.add(getInclude(child));
+                        break;
+                    case "belongs-to":
+                        belongsTo = getBelongsTo(child);
+                        break;
+                    case "contact":
+                        contact = getSimpleAttribute(child);
+                        break;
+                    case "organization":
+                        organization = getSimpleAttribute(child);
+                        break;
+                    case "description":
+                        description = getSimpleAttribute(child);
+                        break;
+                    case "reference":
+                        reference = getSimpleAttribute(child);
+                        break;
+                }
+            }
+        }
+
+
+        if (root.getFirstChild().getLocalName().equals("module")) {
+            return new SourceInfo.Module(sourceId, yangVersion, namespace, prefix,
+                ImmutableSet.copyOf(revisions), ImmutableSet.copyOf(imports), ImmutableSet.copyOf(includes),
+                contact, organization, description, reference);
+
+        } else {
+            return new SourceInfo.Submodule(sourceId, yangVersion, belongsTo,
+                ImmutableSet.copyOf(revisions), ImmutableSet.copyOf(imports), ImmutableSet.copyOf(includes),
+                contact, organization, description, reference);
+        }
+    }
+
+    private Referenced<Unqualified> getPrefix(final Node node) {
+        return new Referenced<>(Unqualified.of(node.getAttributes().item(0).getNodeValue()),
+            extractRef((Element)node));
+    }
+
+    private Referenced<String> getSimpleAttribute(final Node node) {
+        return new Referenced<>(node.getAttributes().item(0).getNodeValue(),
+            extractRef((Element)node));
+    }
+
+    private DetailedRevision getRevision(final Node node) {
+        final Referenced<Revision> revision = new Referenced<>(Revision.of(node.getAttributes().item(0)
+            .getNodeValue()), extractRef((Element) node));
+        Referenced<String> description = null;
+        Referenced<String> reference = null;
+        final NodeList childNodes = node.getChildNodes();
+        for (int childOffset = 0; childOffset < childNodes.getLength(); childOffset++) {
+            final Node child = childNodes.item(childOffset);
+            if (child.getNodeType() != Node.ELEMENT_NODE) {
+                switch (child.getLocalName()) {
+                    case "description":
+                        description = getSimpleAttribute(child);
+                        break;
+                    case "reference":
+                        reference = getSimpleAttribute(child);
+                        break;
+                }
+            }
+        }
+        return new DetailedRevision(revision, description, reference);
+    }
+
+    private Referenced<YangVersion> getYangVersion(final Node node) {
+        return new Referenced<>(YangVersion.forString(node.getAttributes().item(0).getNodeValue()),
+            extractRef((Element)node));
+    }
+
+    private Referenced<XMLNamespace> getNamespace(final Node node) {
+        return new Referenced<>(XMLNamespace.of(node.getAttributes().item(0).getNodeValue()),
+            extractRef((Element)node));
+    }
+
+    private Import getImport(final Node node) {
+        final Referenced<Unqualified> name = new Referenced<>(Unqualified.of(node.getAttributes().item(0)
+            .getNodeValue()), extractRef((Element) node));
+        Referenced<Unqualified> prefix = null;
+        Referenced<Revision> revision = null;
+        Referenced<String> description = null;
+        Referenced<String> reference = null;
+        final NodeList importChildNodes = node.getChildNodes();
+        for (int impOffset = 0; impOffset < importChildNodes.getLength(); impOffset++) {
+            final Node importChild = importChildNodes.item(impOffset);
+            if (importChild.getNodeType() != Node.ELEMENT_NODE) {
+                switch (importChild.getLocalName()) {
+                    case "prefix":
+                        prefix = getPrefix(importChild);
+                        break;
+                    case "revision-date":
+                        revision = getRevisionDate(importChild);
+                        break;
+                    case "description":
+                        description = getSimpleAttribute(importChild);
+                        break;
+                    case "reference":
+                        reference = getSimpleAttribute(importChild);
+                        break;
+                }
+            }
+        }
+        return new Import(name, prefix, revision, description, reference );
+    }
+
+    private Referenced<Revision> getRevisionDate(Node node) {
+        return new Referenced<>(Revision.of(node.getAttributes().item(0).getNodeValue()),
+            extractRef((Element)node));
+    }
+
+    private Include getInclude(final Node node) {
+        final Referenced<Unqualified> name = new Referenced<>(Unqualified.of(node.getAttributes().item(0)
+            .getNodeValue()), extractRef((Element) node));
+        Referenced<Revision> revision = null;
+        Referenced<String> description = null;
+        Referenced<String> reference = null;
+        final NodeList childNodes = node.getChildNodes();
+        for (int childOffset = 0; childOffset < childNodes.getLength(); childOffset++) {
+            final Node child = childNodes.item(childOffset);
+            if (child.getNodeType() != Node.ELEMENT_NODE) {
+                switch (child.getLocalName()) {
+                    case "revision-date":
+                        revision = getRevisionDate(child);
+                        break;
+                    case "description":
+                        description = getSimpleAttribute(child);
+                        break;
+                    case "reference":
+                        reference = getSimpleAttribute(child);
+                        break;
+                }
+            }
+        }
+        return new Include(name, revision, description, reference);
+    }
+
+    private BelongsTo getBelongsTo(final Node node) {
+        final Referenced<Unqualified> name = new Referenced<>(Unqualified.of(node.getAttributes().item(0)
+            .getNodeValue()), extractRef((Element) node));
+        Referenced<Unqualified> prefix = null;
+        final NodeList belongsToChildNodes = node.getChildNodes();
+        for (int childOffset = 0; childOffset < belongsToChildNodes.getLength(); childOffset++) {
+            final Node belongsToChild = belongsToChildNodes.item(childOffset);
+            if (belongsToChild.getNodeType() != Node.ELEMENT_NODE) {
+                switch (belongsToChild.getLocalName()) {
+                    case "prefix":
+                        prefix = getPrefix(belongsToChild);
+                        break;
+                }
+            }
+        }
+        return new BelongsTo(name, prefix);
+    }
+
 
     @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
