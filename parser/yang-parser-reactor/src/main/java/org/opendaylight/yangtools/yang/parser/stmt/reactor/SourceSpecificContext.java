@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ExtendedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -54,6 +55,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class SourceSpecificContext implements NamespaceStorage, Mutable {
+    public ExtendedSourceInfo getSourceInfo() {
+        //TODO: fix in cases Source is null
+        return source != null ? source.getSourceInfo() : null;
+    }
+
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -137,6 +143,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
         this.globalContext = requireNonNull(globalContext);
         this.source = requireNonNull(source);
+    }
+
+    public SourceIdentifier getInternalSourceId() {
+        return source.getIdentifier();
     }
 
     @NonNull BuildGlobalContext globalContext() {
@@ -233,7 +243,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
      *
      * @return version of root statement context
      */
-    private YangVersion getRootVersion() {
+    YangVersion getRootVersion() {
         return root != null ? root.yangVersion() : RootStatementContext.DEFAULT_VERSION;
     }
 
@@ -458,6 +468,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
     }
 
+    public RootStatementContext<?, ?, ?> getRoot() {
+        return root;
+    }
+
     private PrefixResolver preLinkagePrefixes() {
         final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
         final var prefixToNamespaceMap = getAllFromLocalStorage(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
@@ -486,7 +500,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return prefixToModuleMap;
     }
 
-    private QNameToStatementDefinition stmtDef() {
+    public QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
         final StatementSupportBundle supportsForPhase = globalContext.getSupportsForPhase(inProgressPhase);
         qnameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());

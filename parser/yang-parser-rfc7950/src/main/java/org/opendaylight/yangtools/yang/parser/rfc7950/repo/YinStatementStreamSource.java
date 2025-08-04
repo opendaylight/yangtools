@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ExtendedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -246,5 +247,11 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixResolver prefixes, final YangVersion yangVersion) {
         walkTree(writer, stmtDef);
+    }
+
+    @Override
+    public ExtendedSourceInfo getSourceInfo() {
+        //TODO: implement extraction of SourceInfo from YIN
+        return null;
     }
 }

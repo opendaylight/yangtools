@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.Statemen
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.CompactYangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ExtendedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -109,6 +110,11 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     }
 
     @Override
+    public ExtendedSourceInfo getSourceInfo() {
+        return new ExtendedSourceInfo(YangIRSourceInfoExtractor.forIR(asYangIRSource()), asYangIRSource());
+    }
+
+    @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixResolver prefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion) {
@@ -122,6 +128,10 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
                 return ret;
             }
         }.visit(rootStatement);
+    }
+
+    public YangIRSource asYangIRSource() {
+        return new YangIRSource(getIdentifier(), rootStatement, sourceName);
     }
 
     IRStatement rootStatement() {

@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -18,8 +19,10 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,12 +37,22 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.ir.IRArgument;
+import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ExtendedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
@@ -48,6 +61,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
@@ -59,8 +74,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-        ModelProcessingPhase.SOURCE_LINKAGE,
+//        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+//        ModelProcessingPhase.SOURCE_LINKAGE,
         ModelProcessingPhase.STATEMENT_DEFINITION,
         ModelProcessingPhase.FULL_DECLARATION,
         ModelProcessingPhase.EFFECTIVE_MODEL
@@ -165,12 +180,105 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     private void executePhases() throws ReactorException {
+        // select only the sources and libs which should be involved in the next steps. Ignore libs which were
+        // not referenced by anyone
+        final Map<Unqualified, InvolvedSource> involvedSources = resolveInvolvedSources();
+
+        // populate their PRE-LINKAGE and LINKAGE namespaces so that we can jump into STATEMENT-DEFINITION phase
+        // seamlessly
+        linkInvolvedSources(involvedSources);
+
         for (var phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
             completePhaseActions();
             endPhase(phase);
         }
+    }
+
+    record InvolvedSource(
+            SourceSpecificContext sourceContext,
+            ExtendedSourceInfo sourceInfo) {
+        public InvolvedSource {
+            requireNonNull(sourceContext);
+            requireNonNull(sourceInfo);
+        }
+    }
+
+    private void linkInvolvedSources(final Map<Unqualified, InvolvedSource> involvedSources) {
+        QNameToStatementDefinitionMap stmtDefs = new QNameToStatementDefinitionMap();
+        stmtDefs.putAll(getSupportsForPhase(ModelProcessingPhase.SOURCE_LINKAGE).getCommonDefinitions());
+        stmtDefs.putAll(getSupportsForPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE).getCommonDefinitions());
+
+        for (Map.Entry<Unqualified, InvolvedSource> involvedSource : involvedSources.entrySet()) {
+            stmtDefs.putAll(getSupportsForPhase(ModelProcessingPhase.SOURCE_LINKAGE)
+                                             .getDefinitionsSpecificForVersion(involvedSource.getValue().sourceInfo.getSourceInfo().yangVersion()));
+            stmtDefs.putAll(getSupportsForPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
+                                             .getDefinitionsSpecificForVersion(involvedSource.getValue().sourceInfo.getSourceInfo().yangVersion()));
+            involvedSource.getValue().sourceContext.startPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE);
+            StmtContext.Mutable<Unqualified, ?, ?> rootStatement =
+                    createRootStatement(involvedSource.getValue(), stmtDefs);
+
+            //TODO: fill the pre-linkage and linkage namespaces of each root statement
+        }
+    }
+
+    private StmtContext.Mutable<Unqualified, ?, ?> createRootStatement(final InvolvedSource source,
+            QNameToStatementDefinitionMap qnameToStmtDefMap) {
+        final YangIRSource irSource = source.sourceInfo.getIRSource();
+        final IRArgument argumentCtx = irSource.statement().argument();
+        //TODO: is ArgumentContextUtils necessary here? utils.stringFromStringContext(argumentCtx, ref);
+        final String argument = argumentCtx == null ? null : ((IRArgument.Identifier) argumentCtx).string();
+        final IRKeyword keyword = irSource.statement().keyword();
+        final var ref = StatementDeclarations.inText(irSource.symbolicName(), irSource.statement().startLine(),
+                irSource.statement().startColumn() + 1);
+        final StatementDefinition moduleDef = qnameToStmtDefMap.get(QName.unsafeOf(
+                YangConstants.RFC6020_YIN_MODULE, keyword.identifier()));
+        QName moduleQname = moduleDef != null ? moduleDef.getStatementName() : null;
+        //TODO: try assembling the components of the sourceContext.createDeclaredChild without the YangIRSource
+        //TODO: add processing of Submodule as well.
+        StmtContext.Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> moduleStatement = (StmtContext.Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement>)source.sourceContext.createDeclaredChild(null, 0,
+                moduleQname, argument.toString(), ref);
+        return moduleStatement;
+    }
+
+    private Map<Unqualified, InvolvedSource> resolveInvolvedSources() {
+        //TODO: should probably map by SourceIdentifier, not just Qname..
+        final Map<Unqualified, InvolvedSource> involvedSources = new HashMap<>();
+        final Map<Unqualified, SourceSpecificContext> namedLibSources = new HashMap<>();
+        final Deque<Map.Entry<Unqualified, SourceSpecificContext>> importedToResolve = new ArrayDeque<>();
+
+        for (SourceSpecificContext libSource : libSources) {
+            namedLibSources.put(libSource.getInternalSourceId().name(), libSource);
+        }
+
+        for (SourceSpecificContext source : sources) {
+            final ExtendedSourceInfo sourceInfo = source.getSourceInfo();
+            involvedSources.put(sourceInfo.getSourceInfo().sourceId().name(), new InvolvedSource(source, sourceInfo));
+            for (SourceDependency.Import anImport : sourceInfo.getSourceInfo().imports()) {
+                final Unqualified importName = anImport.name();
+                if (!involvedSources.containsKey(importName)) {
+                    final SourceSpecificContext importedLibSource = namedLibSources.get(importName);
+                    Verify.verifyNotNull(importedLibSource, "Imported source [%s] not found", importName.toString());
+                    importedToResolve.add(Map.entry(importName, importedLibSource));
+                }
+            }
+        }
+
+        while (!importedToResolve.isEmpty()) {
+            final Map.Entry<Unqualified, SourceSpecificContext> toResolve = importedToResolve.removeFirst();
+            final ExtendedSourceInfo sourceInfo = toResolve.getValue().getSourceInfo();
+            involvedSources.put(toResolve.getKey(), new InvolvedSource(toResolve.getValue(), sourceInfo));
+            for (SourceDependency.Import anImport : sourceInfo.getSourceInfo().imports()) {
+                final Unqualified importName = anImport.name();
+                if (!involvedSources.containsKey(importName)) {
+                    final SourceSpecificContext importedLibSource = namedLibSources.get(importName);
+                    Verify.verifyNotNull(importedLibSource, "Imported source [%s] not found", importName.toString());
+                    importedToResolve.add(Map.entry(importName, importedLibSource));
+                }
+            }
+        }
+        return involvedSources;
     }
 
     private @NonNull ReactorDeclaredModel transform() {
