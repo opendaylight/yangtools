@@ -235,7 +235,8 @@ public final class UsesStatementSupport
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
         if (targetCtx.getParentContext() == null) {
-            return targetCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
+            final var resolved = targetCtx.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value());
+            return resolved != null ? resolved.qnameModule() : null;
         }
         if (targetCtx.publicDefinition() == YangStmtMapping.AUGMENT) {
             return StmtContextUtils.getModuleQName(targetCtx);

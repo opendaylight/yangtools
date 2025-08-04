@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -19,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
@@ -51,8 +54,10 @@ final class SubmoduleEffectiveStatementImpl
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements, findSubmodulePrefix(stmt, substatements));
 
-        final QNameModule belongsToModuleQName = stmt.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
-            findBelongsTo(stmt, substatements).argument());
+        final var resolvedSource = verifyNotNull(stmt.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()));
+        final var belongsTo = verifyNotNull(resolvedSource.belongsTo());
+        verify(findBelongsTo(stmt, substatements).prefix().argument().equals(belongsTo.prefix()));
+        final QNameModule belongsToModuleQName = belongsTo.parentModuleQname();
 
         final var prefixToModuleBuilder = ImmutableMap.<String, ModuleEffectiveStatement>builder();
         appendPrefixes(stmt, prefixToModuleBuilder);
@@ -73,14 +78,13 @@ final class SubmoduleEffectiveStatementImpl
          * collect only submodule contexts here and then build them during
          * sealing of this statement.
          */
-        final var includedSubmodulesMap = stmt.localNamespacePortion(
-            ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
-        if (includedSubmodulesMap != null) {
+        final var includedSubmodules = resolvedSource.includes();
+        if (!includedSubmodules.isEmpty()) {
             final var submoduleContextsInit =
                 new HashSet<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>>();
-            for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
+            for (final var submoduleCtx : includedSubmodules) {
                 submoduleContextsInit.add(
-                    (StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>)submoduleCtx);
+                    (StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>)submoduleCtx.rootContext());
             }
             submoduleContexts = ImmutableSet.copyOf(submoduleContextsInit);
         } else {
