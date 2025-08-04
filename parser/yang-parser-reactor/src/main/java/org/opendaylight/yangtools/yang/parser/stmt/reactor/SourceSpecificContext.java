@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -51,6 +50,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceLinkageResolver.ResolvedSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,10 +194,14 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
          * If root is null or root version is other than default,
          * we need to create new root.
          */
+        //TODO: here fill necessary linkage namespaces of the root. It needs to be done before the creation of reference
+        // objects like belongs-to, include, import etc..
+        // example: Belongs-to element needs access to ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX); in
+        // order to be created.
         if (root == null) {
             root = new RootStatementContext<>(this, def, ref, argument);
         } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.yangVersion())
-                && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
+                && inProgressPhase == ModelProcessingPhase.STATEMENT_DEFINITION) {
             root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
                     root.getRootIdentifier());
         } else {
@@ -440,40 +444,21 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         };
     }
 
-    void loadStatements() {
-        LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
+    void loadStatements(final ResolvedSource resolvedSource) {
+        LOG.trace("Source {} loading statements for phase {}", this.source, inProgressPhase);
 
         switch (inProgressPhase) {
-            case SOURCE_PRE_LINKAGE:
-                source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
-                break;
-            case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
-                    getRootVersion());
-                break;
             case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
-                    prefixes(), getRootVersion());
+                this.source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase, resolvedSource), stmtDef(),
+                    null, getRootVersion());
                 break;
             case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
+                this.source.writeFull(new StatementContextWriter(this, inProgressPhase, resolvedSource), stmtDef(), prefixes(),
                     getRootVersion());
                 break;
             default:
                 break;
         }
-    }
-
-    private PrefixResolver preLinkagePrefixes() {
-        final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
-        final var prefixToNamespaceMap = getAllFromLocalStorage(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
-        if (prefixToNamespaceMap == null) {
-            //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
-            return null;
-        }
-
-        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.of(value)));
-        return preLinkagePrefixes;
     }
 
     private PrefixResolver prefixes() {

@@ -553,11 +553,11 @@ public final class StmtContextUtils {
         if (ctx.producesDeclared(ModuleStatement.class)) {
             return lookupModuleQName(ctx, ctx);
         } else if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+            final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE);
             if (belongsTo == null || belongsTo.isEmpty()) {
                 throw new IllegalArgumentException(ctx + " does not have belongs-to linkage resolved");
             }
-            return lookupModuleQName(ctx, belongsTo.values().iterator().next());
+            return belongsTo.values().iterator().next();
         } else {
             throw new IllegalArgumentException("Unsupported root " + ctx);
         }

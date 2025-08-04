@@ -122,63 +122,6 @@ public final class ModuleStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final var moduleName = stmt.getArgument();
-
-        final var moduleNs = SourceException.throwIfNull(
-            firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
-            "Namespace of the module [%s] is missing", moduleName);
-        stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName, moduleNs);
-
-        final var modulePrefix = SourceException.throwIfNull(
-            firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
-            "Prefix of the module [%s] is missing", moduleName);
-        stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, modulePrefix, moduleNs);
-
-        stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
-
-        final var revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
-        final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
-
-        stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
-        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
-    }
-
-    @Override
-    public void onLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final var moduleNs = SourceException.throwIfNull(
-            firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
-            "Namespace of the module [%s] is missing", stmt.argument());
-
-        final var revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
-        final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
-        final var possibleDuplicateModule = stmt.namespaceItem(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
-        if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
-            throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.namespace(),
-                possibleDuplicateModule.sourceReference());
-        }
-
-        final var moduleName = stmt.getArgument();
-        final var moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
-
-        stmt.addToNs(ParserNamespaces.MODULE, moduleIdentifier, stmt);
-        stmt.addToNs(ParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
-        stmt.addToNs(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
-
-        final var modulePrefix = SourceException.throwIfNull(
-            firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
-            "Prefix of the module [%s] is missing", stmt.argument());
-
-        stmt.addToNs(QNameModuleNamespace.INSTANCE, Empty.value(), qNameModule);
-        stmt.addToNs(ParserNamespaces.PREFIX_TO_MODULE, modulePrefix, qNameModule);
-        stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
-        stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
-        stmt.addToNs(ParserNamespaces.MODULECTX_TO_SOURCE, stmt, moduleIdentifier);
-        stmt.addToNs(ParserNamespaces.MODULE_NAMESPACE_TO_NAME, qNameModule, moduleName);
-        stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, modulePrefix, stmt);
-    }
-
-    @Override
     protected ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
             final Current<Unqualified, ModuleStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> substatements) {

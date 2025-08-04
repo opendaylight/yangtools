@@ -47,37 +47,6 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> ctx) {
-        ctx.addRequiredSource(new SourceIdentifier(ctx.getArgument()));
-    }
-
-    @Override
-    public void onLinkageDeclared(
-            final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
-        ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
-
-        final var belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx, ParserNamespaces.MODULE_FOR_BELONGSTO,
-            belongsToCtx.getArgument(), ModelProcessingPhase.SOURCE_LINKAGE);
-
-        belongsToAction.apply(new InferenceAction() {
-            @Override
-            public void apply(final InferenceContext ctx) {
-                belongsToCtx.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX,
-                    findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).getArgument(),
-                    belongsToPrereq.resolve(ctx));
-            }
-
-            @Override
-            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                if (failed.contains(belongsToPrereq)) {
-                    throw new InferenceException(belongsToCtx, "Module '%s' from belongs-to was not found",
-                        belongsToCtx.argument());
-                }
-            }
-        });
-    }
-
-    @Override
     protected BelongsToStatement createDeclared(final BoundStmtCtx<Unqualified> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createBelongsTo(ctx.getArgument(), substatements);

@@ -17,18 +17,23 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceLinkageResolver.ResolvedSource;
 
 final class StatementContextWriter implements StatementWriter {
     private final @NonNull ModelProcessingPhase phase;
+    private final ResolvedSource resolvedsource;
     private final SourceSpecificContext ctx;
 
     private AbstractResumedStatement<?, ?, ?> current;
 
-    StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase) {
+    StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase,
+        final ResolvedSource resolvedsource) {
         this.ctx = requireNonNull(ctx);
         this.phase = requireNonNull(phase);
+        this.resolvedsource = resolvedsource;
     }
 
     @Override
@@ -69,8 +74,22 @@ final class StatementContextWriter implements StatementWriter {
     public void startStatement(final int childId, final QName name, final String argument,
             final StatementSourceReference ref) {
         final AbstractResumedStatement<?, ?, ?> existing = lookupDeclaredChild(current, childId);
+        if (existing == null) {
+            var newStatement = verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
+            if (newStatement instanceof RootStatementContext rootStatement) {
+                fillNamespaces(rootStatement);
+            }
+
+        }
         current = existing != null ? existing
                 : verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
+
+    }
+
+    private void fillNamespaces(final RootStatementContext<?,?,?> rootContext) {
+        rootContext.addToNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE,
+            resolvedsource.getBelongsTo().getKey(), resolvedsource.getBelongsTo().getValue());
+        // TODO: fill the rest of the namespaces
     }
 
     @Override

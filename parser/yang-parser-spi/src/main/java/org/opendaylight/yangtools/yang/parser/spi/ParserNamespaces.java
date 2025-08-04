@@ -131,6 +131,9 @@ public final class ParserNamespaces {
     public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
         new ParserNamespace<>("belongsto-prefix-to-module");
 
+    public static final @NonNull ParserNamespace<String, QNameModule> BELONGSTO_PREFIX_TO_QNAME_MODULE =
+        new ParserNamespace<>("belongsto-prefix-to-qname-module");
+
     /**
      * Source-specific mapping of prefixes to namespaces.
      */

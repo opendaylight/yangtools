@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -56,8 +55,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-        ModelProcessingPhase.SOURCE_LINKAGE,
         ModelProcessingPhase.STATEMENT_DEFINITION,
         ModelProcessingPhase.FULL_DECLARATION,
         ModelProcessingPhase.EFFECTIVE_MODEL
@@ -162,11 +159,10 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     private void executePhases() throws ReactorException {
         final var linkageResolver = new SourceLinkageResolver(sources, libSources);
-        final Map<SourceIdentifier, ResolvedSource> resolvedSources =
+        final Map<SourceIdentifier, ResolvedSource> resolved =
             linkageResolver.resolveInvolvedSources();
-        final Set<SourceSpecificContext> resolved = resolvedSources.values().stream().map(ResolvedSource::context)
-            .collect(Collectors.toUnmodifiableSet());
 
+        // start with STATEMENT_DECLARATION
         for (var phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase, resolved);
             loadPhaseStatements(resolved);
@@ -219,7 +215,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return EffectiveSchemaContext.create(rootStatements, rootEffectiveStatements);
     }
 
-    private void startPhase(final ModelProcessingPhase phase, final Set<SourceSpecificContext> resolved) {
+    private void startPhase(final ModelProcessingPhase phase, final Map<SourceIdentifier, ResolvedSource> resolved) {
         checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
         startPhaseFor(phase, resolved);
 
@@ -227,24 +223,24 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         LOG.debug("Global phase {} started", phase);
     }
 
-    private static void startPhaseFor(final ModelProcessingPhase phase, final Set<SourceSpecificContext> sources) {
-        for (var source : sources) {
-            source.startPhase(phase);
+    private static void startPhaseFor(final ModelProcessingPhase phase, final Map<SourceIdentifier, ResolvedSource> sources) {
+        for (var source : sources.values()) {
+            source.context().startPhase(phase);
         }
     }
 
-    private void loadPhaseStatements(final Set<SourceSpecificContext> resolved) throws ReactorException {
+    private void loadPhaseStatements(final Map<SourceIdentifier, ResolvedSource> resolved) throws ReactorException {
         checkState(currentPhase != null);
         loadPhaseStatementsFor(resolved);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void loadPhaseStatementsFor(final Set<SourceSpecificContext> srcs) throws ReactorException {
-        for (var source : srcs) {
+    private void loadPhaseStatementsFor(final Map<SourceIdentifier, ResolvedSource> srcs) throws ReactorException {
+        for (var source : srcs.values()) {
             try {
-                source.loadStatements();
+                source.context().loadStatements(source);
             } catch (RuntimeException e) {
-                throw propagateException(source, e);
+                throw propagateException(source.context(), e);
             }
         }
     }
@@ -291,7 +287,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void completePhaseActions(final Set<SourceSpecificContext> resolved) throws ReactorException {
+    private void completePhaseActions(final Map<SourceIdentifier, ResolvedSource> resolved) throws ReactorException {
         checkState(currentPhase != null);
         final var sourcesToProgress = new ArrayList<>(resolved);
 

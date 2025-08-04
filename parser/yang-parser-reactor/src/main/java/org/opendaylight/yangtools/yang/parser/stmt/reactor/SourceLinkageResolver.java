@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
@@ -43,14 +44,18 @@ public final class SourceLinkageResolver {
     private final Map<Unqualified, List<SourceIdentifier>> resolvedSourcesGrouped = new HashMap<>();
     private final Map<SourceIdentifier, ResolvedSource> resolvedSources = new HashMap<>();
 
+    /**
+     * Contains the resolved information about a source. Such as the linkage details about imports, includes, belongsTo.
+     */
     static final class ResolvedSource {
         private final SourceSpecificContext context;
         private final List<SourceIdentifier> imports;
         private final List<SourceIdentifier> includes;
-        private SourceIdentifier belongsTo;
+        // TODO: consider a way to store this info. Map.Entry works for now.
+        private Map.Entry<String, QNameModule> belongsTo;
 
         ResolvedSource(final SourceSpecificContext context, final List<SourceIdentifier> imports,
-            final List<SourceIdentifier> includes, final SourceIdentifier belongsTo) {
+            final List<SourceIdentifier> includes, final Map.Entry<String, QNameModule> belongsTo) {
             this.context = requireNonNull(context);
             this.imports = imports;
             this.includes = includes;
@@ -65,7 +70,7 @@ public final class SourceLinkageResolver {
             return context;
         }
 
-        public SourceIdentifier getBelongsTo() {
+        public Map.Entry<String, QNameModule> getBelongsTo() {
             return belongsTo;
         }
 
@@ -77,8 +82,16 @@ public final class SourceLinkageResolver {
             includes.add(includedSourceId);
         }
 
-        public void setBelongsTo(SourceIdentifier sourceIdentifier) {
-            belongsTo = sourceIdentifier;
+        public void setBelongsTo(final Map.Entry<String, QNameModule> moduleQname) {
+            belongsTo = moduleQname;
+        }
+
+        public QNameModule getModuleQname() {
+            // find latest revision
+
+            // find namespace
+
+            return QNameModule.ofRevision(moduleNs, revisionDate).intern();
         }
     }
 
@@ -127,9 +140,11 @@ public final class SourceLinkageResolver {
             resolvedSources.keySet().stream()
                 .filter(submodule.belongsTo()::isSatisfiedBy)
                 .findFirst()
-                .ifPresentOrElse(resolvedSource::setBelongsTo, () -> {
-                    throw new IllegalStateException(String.format(
-                    "Missing belongs-to dependency %s of source %s", submodule.belongsTo().name(), id));
+                .ifPresentOrElse(found ->
+                        resolvedSource.setBelongsTo(Map.entry(submodule.belongsTo().prefix().getPrefix(),
+                            resolvedSources.get(found).getModuleQname())),
+                    () -> { throw new IllegalStateException(String.format(
+                        "Missing belongs-to dependency %s of source %s", submodule.belongsTo().name(), id));
                 });
         }
     }
