@@ -21,10 +21,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -53,8 +55,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-        ModelProcessingPhase.SOURCE_LINKAGE,
         ModelProcessingPhase.STATEMENT_DEFINITION,
         ModelProcessingPhase.FULL_DECLARATION,
         ModelProcessingPhase.EFFECTIVE_MODEL
@@ -148,17 +148,20 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @NonNull ReactorDeclaredModel build() throws ReactorException {
-        final var linkageResolver = new SourceLinkageResolver(sources, libSources);
-        final List<ResolvedSource> resolvedSources = linkageResolver.resolveInvolvedSources();
+        final List<ResolvedSource> resolvedSources = resolveSources();
         executePhases(resolvedSources);
         return transform(resolvedSources);
     }
 
     @NonNull EffectiveSchemaContext buildEffective() throws ReactorException {
-        final var linkageResolver = new SourceLinkageResolver(sources, libSources);
-        final List<ResolvedSource> resolvedSources = linkageResolver.resolveInvolvedSources();
+        final List<ResolvedSource> resolvedSources = resolveSources();
         executePhases(resolvedSources);
         return transformEffective(resolvedSources);
+    }
+
+    private List<ResolvedSource> resolveSources() throws SomeModifiersUnresolvedException {
+        final var linkageResolver = new SourceLinkageResolver(sources, libSources);
+        return linkageResolver.resolveInvolvedSources();
     }
 
     private void executePhases(final List<ResolvedSource> resolvedSources) throws ReactorException {
@@ -238,13 +241,47 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private void loadPhaseStatementsFor(final List<ResolvedSource> srcs) throws ReactorException {
+        final Map<ResolvedSource, RootStatementContext<?,?,?>> resolvedRootContexts = new LinkedHashMap<>();
         for (var source : srcs) {
             try {
-                source.getContext().loadStatements();
+                source.getContext().loadStatements(source, resolvedRootContexts);
             } catch (RuntimeException e) {
                 throw propagateException(source.getContext(), e);
             }
         }
+
+        //TODO: refactoring needed - this needs to be done only once - during STATEMENT_DECLARATION.
+        final Map<RootStatementContext<?, ?, ?>, Map.Entry<String, QNameModule>> submoduleCtxToItsBelongsToQnameModule =
+            resolvedRootContexts.entrySet()
+            .stream()
+            .filter(e -> e.getKey().getBelongsTo() != null)
+            .collect(Collectors.toMap(Map.Entry::getValue,
+                e -> e.getKey().getBelongsTo()));
+
+        final Map<QNameModule, RootStatementContext<?, ?, ?>> moduleQNameToCtx =
+            resolvedRootContexts.entrySet()
+                .stream()
+                .filter(e -> e.getKey().getBelongsTo() == null)
+                .collect(Collectors.toMap(e -> e.getKey().getQNameModule(),
+                    Map.Entry::getValue));
+
+        for (Map.Entry<RootStatementContext<?, ?, ?>, Map.Entry<String, QNameModule>> submodule :
+            submoduleCtxToItsBelongsToQnameModule.entrySet()) {
+            RootStatementContext<?, ?, ?> submoduleCtx = submodule.getKey();
+            Map.Entry<String, QNameModule> belongsTo = submodule.getValue();
+            RootStatementContext<?, ?, ?> parentModule = moduleQNameToCtx.get(belongsTo.getValue());
+            if (parentModule == null) {
+                throw new SomeModifiersUnresolvedException(
+                    ModelProcessingPhase.STATEMENT_DEFINITION, submoduleCtx.getRootIdentifier(),
+                    new IllegalStateException(
+                        String.format("Belongs-to module [%s] was not found for submodule [%s]",
+                            belongsTo.getValue(), submoduleCtx.argument())
+                    ));
+            }
+            submodule.getKey().addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, belongsTo.getKey(),
+                parentModule);
+        }
+
     }
 
     private SomeModifiersUnresolvedException addSourceExceptions(final List<SourceSpecificContext> sourcesToProgress) {

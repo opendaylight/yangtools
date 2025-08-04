@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 import org.junit.jupiter.api.Test;
@@ -54,9 +53,8 @@ class ImportResolutionBasicTest extends AbstractYangTest {
     }
 
     private static void assertFailedPreLinkage(final String name, final String... sources) {
-        assertInferenceException(allOf(
-            startsWith("Imported module [" + name),
-            containsString("] was not found. [at ")),
+        assertIllegalStateException(allOf(
+            startsWith("Imported module [" + name + "] was not found.")),
             sources);
     }
 }
