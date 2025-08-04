@@ -69,7 +69,7 @@ class IncludeResolutionTest {
 
     private static InferenceException assertFailedSourceLinkage(final Callable<?> callable, final String startStr) {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class, callable::call);
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        assertEquals(ModelProcessingPhase.STATEMENT_DEFINITION, ex.getPhase());
         var cause = assertInstanceOf(InferenceException.class, ex.getCause());
         assertThat(cause.getMessage()).startsWith(startStr);
         return cause;
