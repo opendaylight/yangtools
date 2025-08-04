@@ -12,23 +12,39 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 final class StatementContextWriter implements StatementWriter {
     private final @NonNull ModelProcessingPhase phase;
-    private final SourceSpecificContext ctx;
+    private final @NonNull ResolvedSource resolvedSource;
+    private final @NonNull Map<ResolvedSource, RootStatementContext<?, ?, ?>> resolvedRootContexts;
+    private final @NonNull SourceSpecificContext ctx;
 
     private AbstractResumedStatement<?, ?, ?> current;
 
-    StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase) {
+    StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase,
+        final ResolvedSource resolvedSource,
+        final Map<ResolvedSource, RootStatementContext<?, ?, ?>> resolvedRootContexts) {
         this.ctx = requireNonNull(ctx);
         this.phase = requireNonNull(phase);
+        this.resolvedSource = requireNonNull(resolvedSource);
+        this.resolvedRootContexts = requireNonNull(resolvedRootContexts);
     }
 
     @Override
@@ -67,10 +83,100 @@ final class StatementContextWriter implements StatementWriter {
 
     @Override
     public void startStatement(final int childId, final QName name, final String argument,
-            final StatementSourceReference ref) {
+        final StatementSourceReference ref) {
         final AbstractResumedStatement<?, ?, ?> existing = lookupDeclaredChild(current, childId);
-        current = existing != null ? existing
-                : verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
+        if (existing != null) {
+            current = existing;
+            return;
+        }
+
+        final var newStmt = verifyNotNull(
+            ctx.createDeclaredChild(current, childId, name, argument, ref));
+
+        if (newStmt instanceof RootStatementContext<?, ?, ?> root) {
+            updateRootVersionIfNeeded(root);
+            populateRootNamespaces(root);
+            resolvedRootContexts.put(resolvedSource, root);
+        }
+
+        current = newStmt;
+    }
+
+    private void updateRootVersionIfNeeded(final RootStatementContext<?, ?, ?> root) {
+        if (!root.yangVersion().equals(resolvedSource.getYangVersion())) {
+            root.setRootVersionImpl(resolvedSource.getYangVersion());
+        }
+    }
+
+    /**
+     * Populates namespace mappings for the root module/submodule.
+     */
+    private void populateRootNamespaces(final RootStatementContext<?, ?, ?> root) {
+        fillModuleNamespace(root);
+        fillImportedNamespaces(root);
+        fillIncludedNamespaces(root);
+
+        if (resolvedSource.getBelongsTo() != null) {
+            fillSubmoduleNamespaces(root);
+        } else {
+            fillModuleRootNamespaces(root);
+        }
+    }
+
+    private void fillModuleNamespace(final RootStatementContext<?, ?, ?> root) {
+        root.addToNamespace(ParserNamespaces.MODULECTX_TO_QNAME, root, resolvedSource.getQNameModule());
+    }
+
+    private void fillImportedNamespaces(final RootStatementContext<?, ?, ?> root) {
+        for (var entry : resolvedSource.getImports().entrySet()) {
+            final String prefix = entry.getKey();
+            final ResolvedSource imported = entry.getValue();
+            final QNameModule qnameModule = imported.getQNameModule();
+            final SourceIdentifier sourceId = imported.getSourceId();
+
+            final var importedContext = verifyNotNull(resolvedRootContexts.get(imported),
+                "Root context of imported module %s (imported by %s) was not resolved",
+                qnameModule, resolvedSource.getQNameModule());
+
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE, prefix, qnameModule);
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix, importedContext);
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_SOURCE_ID, prefix, sourceId);
+            root.addToNamespace(ParserNamespaces.IMPORTED_MODULE, sourceId, importedContext);
+        }
+    }
+
+    private void fillIncludedNamespaces(final RootStatementContext<?, ?, ?> root) {
+        for (var entry : resolvedSource.getIncludes().entrySet()) {
+            final ResolvedSource include = entry.getKey();
+            final Unqualified submoduleName = entry.getValue();
+            final QNameModule qnameModule = include.getQNameModule();
+            final var includedContext = verifyNotNull(resolvedRootContexts.get(include),
+                "Root context of included module %s (included by %s) was not resolved",
+                qnameModule, resolvedSource.getQNameModule());
+
+            root.addToNs(ParserNamespaces.INCLUDED_MODULE,
+                include.getContext().getRootIdentifier(), includedContext);
+
+            root.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX,
+                submoduleName, includedContext);
+        }
+    }
+
+    private void fillSubmoduleNamespaces(final RootStatementContext<?, ?, ?> root) {
+        root.addToNs(ParserNamespaces.SUBMODULE, root.getRootIdentifier(),
+            (StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>) root);
+
+        final var belongsTo = resolvedSource.getBelongsTo();
+        root.addToNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE, belongsTo.getKey(),
+            belongsTo.getValue());
+    }
+
+    private void fillModuleRootNamespaces(final RootStatementContext<?, ?, ?> root) {
+        root.addToNs(ParserNamespaces.MODULE, root.getRootIdentifier(),
+            (StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>) root);
+
+        root.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE, resolvedSource.getPrefix(),
+            resolvedSource.getQNameModule());
     }
 
     @Override
@@ -80,7 +186,7 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     private static @Nullable AbstractResumedStatement<?, ?, ?> lookupDeclaredChild(
-            final AbstractResumedStatement<?, ?, ?> current, final int childId) {
+        final AbstractResumedStatement<?, ?, ?> current, final int childId) {
         return current == null ? null : current.enterSubstatement(childId);
     }
 }
