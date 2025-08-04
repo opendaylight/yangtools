@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceLinkageResolver.ResolvedSourceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +54,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-        ModelProcessingPhase.SOURCE_LINKAGE,
         ModelProcessingPhase.STATEMENT_DEFINITION,
         ModelProcessingPhase.FULL_DECLARATION,
         ModelProcessingPhase.EFFECTIVE_MODEL
@@ -148,33 +147,55 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @NonNull ReactorDeclaredModel build() throws ReactorException {
-        final List<ResolvedSource> resolvedSources =
-            new SourceLinkageResolver(sources, libSources).resolveInvolvedSources();
-        executePhases(resolvedSources);
-        return transform(resolvedSources);
+        final List<ResolvedSourceContext> resolvedSourceContexts = resolveSources();
+        executePhases(resolvedSourceContexts);
+        return transform(resolvedSourceContexts);
     }
 
     @NonNull EffectiveSchemaContext buildEffective() throws ReactorException {
-        final List<ResolvedSource> resolvedSources =
-            new SourceLinkageResolver(sources, libSources).resolveInvolvedSources();
-        executePhases(resolvedSources);
-        return transformEffective(resolvedSources);
+        final List<ResolvedSourceContext> resolvedSourceContexts = resolveSources();
+        executePhases(resolvedSourceContexts);
+        return transformEffective(resolvedSourceContexts);
     }
 
-    private void executePhases(final List<ResolvedSource> resolvedSources) throws ReactorException {
+    private List<ResolvedSourceContext> resolveSources() throws SomeModifiersUnresolvedException {
+        this.currentPhase = ModelProcessingPhase.STATEMENT_DEFINITION;
+
+        for (SourceSpecificContext source : sources) {
+            source.startPhase(ModelProcessingPhase.STATEMENT_DEFINITION);
+            source.loadRootStatement();
+        }
+
+        for (SourceSpecificContext libSource : libSources) {
+            libSource.startPhase(ModelProcessingPhase.STATEMENT_DEFINITION);
+            libSource.loadRootStatement();
+        }
+
+        final var linkageResolver = new SourceLinkageResolver(sources, libSources);
+        final List<ResolvedSourceContext> resolvedSourceContexts = linkageResolver.resolveInvolvedSources();
+        for (ResolvedSourceContext resolvedContext : resolvedSourceContexts) {
+            SourceLinkageResolver.fillNamespaces(resolvedContext.resolvedSourceInfo());
+            final var root = (RootStatementContext<?, ?, ?>) resolvedContext.resolvedSourceInfo().root();
+            root.addToNamespace(ParserNamespaces.MODULECTX_TO_RESOLVED_INFO, Empty.value(),
+                resolvedContext.resolvedSourceInfo());
+        }
+        return resolvedSourceContexts;
+    }
+
+    private void executePhases(final List<ResolvedSourceContext> resolvedSourceContexts) throws ReactorException {
         for (var phase : PHASE_EXECUTION_ORDER) {
-            startPhase(phase, resolvedSources);
-            loadPhaseStatements(resolvedSources);
-            completePhaseActions(resolvedSources);
+            startPhase(phase, resolvedSourceContexts);
+            loadPhaseStatements(resolvedSourceContexts);
+            completePhaseActions(resolvedSourceContexts);
             endPhase(phase);
         }
     }
 
-    private @NonNull ReactorDeclaredModel transform(final List<ResolvedSource> resolvedSources) {
+    private @NonNull ReactorDeclaredModel transform(final List<ResolvedSourceContext> resolvedSources) {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final var rootStatements = new ArrayList<DeclaredStatement<?>>(resolvedSources.size());
         for (var source : resolvedSources) {
-            rootStatements.add(source.getContext().declaredRoot());
+            rootStatements.add(source.context().declaredRoot());
         }
         return new ReactorDeclaredModel(rootStatements);
     }
@@ -196,14 +217,14 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private @NonNull EffectiveSchemaContext transformEffective(final List<ResolvedSource> resolvedSources)
+    private @NonNull EffectiveSchemaContext transformEffective(final List<ResolvedSourceContext> resolvedSources)
         throws ReactorException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final var rootStatements = new ArrayList<DeclaredStatement<?>>(resolvedSources.size());
         final var rootEffectiveStatements = new ArrayList<EffectiveStatement<?, ?>>(resolvedSources.size());
 
         for (var source : resolvedSources) {
-            final SourceSpecificContext resolvedCtx = source.getContext();
+            final SourceSpecificContext resolvedCtx = source.context();
             try {
                 rootStatements.add(resolvedCtx.declaredRoot());
                 rootEffectiveStatements.add(resolvedCtx.effectiveRoot());
@@ -216,7 +237,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return EffectiveSchemaContext.create(rootStatements, rootEffectiveStatements);
     }
 
-    private void startPhase(final ModelProcessingPhase phase, final List<ResolvedSource> resolved) {
+    private void startPhase(final ModelProcessingPhase phase, final List<ResolvedSourceContext> resolved) {
         checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
         startPhaseFor(phase, resolved);
 
@@ -224,24 +245,24 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         LOG.debug("Global phase {} started", phase);
     }
 
-    private static void startPhaseFor(final ModelProcessingPhase phase, final List<ResolvedSource> sources) {
+    private static void startPhaseFor(final ModelProcessingPhase phase, final List<ResolvedSourceContext> sources) {
         for (var source : sources) {
-            source.getContext().startPhase(phase);
+            source.context().startPhase(phase);
         }
     }
 
-    private void loadPhaseStatements(final List<ResolvedSource> resolved) throws ReactorException {
+    private void loadPhaseStatements(final List<ResolvedSourceContext> resolved) throws ReactorException {
         checkState(currentPhase != null);
         loadPhaseStatementsFor(resolved);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void loadPhaseStatementsFor(final List<ResolvedSource> srcs) throws ReactorException {
+    private void loadPhaseStatementsFor(final List<ResolvedSourceContext> srcs) throws ReactorException {
         for (var source : srcs) {
             try {
-                source.getContext().loadStatements();
+                source.context().loadStatements();
             } catch (RuntimeException e) {
-                throw propagateException(source.getContext(), e);
+                throw propagateException(source.context(), e);
             }
         }
     }
@@ -288,9 +309,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void completePhaseActions(final List<ResolvedSource> resolved) throws ReactorException {
+    private void completePhaseActions(final List<ResolvedSourceContext> resolved) throws ReactorException {
         checkState(currentPhase != null);
-        final var sourcesToProgress = new ArrayList<>(resolved.stream().map(ResolvedSource::getContext).toList());
+        final var sourcesToProgress = new ArrayList<>(resolved.stream().map(ResolvedSourceContext::context).toList());
 
         boolean progressing = true;
         while (progressing) {
@@ -331,10 +352,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         checkState(currentPhase == phase);
         finishedPhase = currentPhase;
         LOG.debug("Global phase {} finished", phase);
-    }
-
-    Set<SourceSpecificContext> getSources() {
-        return sources;
     }
 
     public Set<YangVersion> getSupportedVersions() {
