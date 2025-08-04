@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -542,16 +544,16 @@ public final class StmtContextUtils {
     // FIXME: 15.0.0: hide/relocate this method?
     public static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull RootStmtContext<?, ?, ?> ctx,
             final String prefix) {
-        final var importedModule = ctx.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
-        final var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
-        if (qnameModule != null) {
-            return qnameModule;
+        final var resolvedInfo = verifyNotNull(ctx.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()));
+        final var imported = resolvedInfo.getImportsPrefixToQNameIncludingSelf().get(prefix);
+        if (imported != null) {
+            return imported;
         }
 
         // This is a submodule, so we also need consult 'belongs-to' mapping
         if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            return ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
-                ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
+            verify(resolvedInfo.belongsTo().prefix().equals(prefix));
+            return resolvedInfo.belongsTo().parentModuleQname();
         }
 
         return null;
