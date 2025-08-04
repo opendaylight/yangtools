@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ResolvedSourceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,12 +119,14 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        if (ParserNamespaces.INCLUDED_MODULE.equals(type)) {
+        if (ParserNamespaces.RESOLVED_INFO.equals(type)) {
             if (includedContexts.isEmpty()) {
                 includedContexts = new ArrayList<>(1);
             }
-            verify(value instanceof RootStatementContext);
-            includedContexts.add((RootStatementContext<?, ?, ?>) value);
+            verify(value instanceof ResolvedSourceInfo);
+            final ResolvedSourceInfo resolved = (ResolvedSourceInfo) value;
+            resolved.includes().forEach(include ->
+                includedContexts.add((RootStatementContext<?, ?, ?>) include.rootContext()));
         }
         return super.putToLocalStorage(type, key, value);
     }
@@ -242,8 +245,8 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     void addRequiredSourceImpl(final SourceIdentifier dependency) {
-        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
+        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.STATEMENT_DEFINITION,
+                "Add required module is allowed only in ModelProcessingPhase.STATEMENT_DEFINITION phase");
         if (requiredSources.isEmpty()) {
             requiredSources = new HashSet<>();
         }
