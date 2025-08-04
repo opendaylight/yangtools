@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import static org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
@@ -29,15 +30,23 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ResolvedSourceInfo;
 
 /**
  * Identifies and organizes the main sources and library sources used to build the SchemaContext.
@@ -45,6 +54,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * and linked together according to their dependencies (includes, imports, belongs-to)
  */
 public final class SourceLinkageResolver {
+
+    record ResolvedSourceContext(SourceSpecificContext context, ResolvedSourceInfo resolvedSourceInfo) {
+        ResolvedSourceContext {
+            requireNonNull(context);
+            requireNonNull(resolvedSourceInfo);
+        }
+    }
 
     /**
      * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
@@ -73,14 +89,14 @@ public final class SourceLinkageResolver {
     /**
      * Map of involved sources ordered according to the resolution order (LinkedHashMap keeps the insertion order).
      */
-    private final Map<SourceIdentifier, ResolvedSource.Builder> involvedSourcesMap = new LinkedHashMap<>();
+    private final Map<SourceIdentifier, ResolvedSourceBuilder> involvedSourcesMap = new LinkedHashMap<>();
 
     private final Map<SourceIdentifier, SourceIdentifier> submoduleToParentMap = new HashMap<>();
 
     /**
      * Map of submodules which include other submodules of the same parent module.
      */
-    private final Map<ResolvedSource.Builder, Set<SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
+    private final Map<ResolvedSourceBuilder, Set<SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     SourceLinkageResolver(
         final @NonNull Collection<SourceSpecificContext> withMainSources,
@@ -94,7 +110,7 @@ public final class SourceLinkageResolver {
      * between them.
      * @return list of resolved sources
      */
-    List<ResolvedSource> resolveInvolvedSources() throws SomeModifiersUnresolvedException {
+    List<ResolvedSourceContext> resolveInvolvedSources() throws SomeModifiersUnresolvedException {
         if (mainSources.isEmpty()) {
             return List.of();
         }
@@ -108,13 +124,18 @@ public final class SourceLinkageResolver {
         tryResolveBelongsTo();
         tryResolveSiblings();
 
-        final Map<SourceSpecificContext, ResolvedSource> allResolved = new LinkedHashMap<>(involvedSourcesMap.size());
-        for (Map.Entry<SourceIdentifier, ResolvedSource.Builder> involvedSource : involvedSourcesMap.entrySet()) {
-            final ResolvedSource fullyResolved = involvedSource.getValue().build(allResolved);
-            allResolved.put(fullyResolved.getContext(), fullyResolved);
+        final Map<SourceSpecificContext, ResolvedSourceInfo> allResolved =
+            new LinkedHashMap<>(involvedSourcesMap.size());
+        for (Map.Entry<SourceIdentifier, ResolvedSourceBuilder> involvedSource : involvedSourcesMap.entrySet()) {
+            final ResolvedSourceInfo fullyResolved = involvedSource.getValue().build(allResolved);
+            allResolved.put(involvedSource.getValue().getContext(), fullyResolved);
         }
 
-        return allResolved.values().stream().toList();
+        return allResolved
+            .entrySet()
+            .stream()
+            .map(entry -> new ResolvedSourceContext(entry.getKey(), entry.getValue()))
+            .toList();
     }
 
     private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {
@@ -194,13 +215,13 @@ public final class SourceLinkageResolver {
             return;
         }
 
-        // Nodes already fully resolved
+        // Sources already fully resolved
         final Set<SourceIdentifier> visitedSources = new HashSet<>();
 
-        // Nodes currently being resolved (active dependency path)
+        // Sources currently being resolved (active dependency path)
         final Set<SourceIdentifier> inProgress = new HashSet<>();
 
-        // Modules that need resolution attempts
+        // Sources that need processing
         final Deque<SourceIdentifier> workChain = new ArrayDeque<>();
         workChain.add(rootId);
 
@@ -247,19 +268,19 @@ public final class SourceLinkageResolver {
                     continue;
                 }
 
-                // Match was found but was not fully resolved yet
+                // Dependency exists but was not fully resolved yet - mark as unresolved
                 unresolvedDependencies.add(match);
                 allResolved = false;
             }
 
             if (allResolved) {
-                final ResolvedSource.Builder newResolved = addResolvedSource(current);
+                final ResolvedSourceBuilder newResolved = addResolvedSource(current);
 
                 for (Map.Entry<SourceDependency, Unqualified> resolvedDep : resolvedDependencies.entrySet()) {
                     // Find the best match for this dependency among the resolved modules
                     final SourceIdentifier satisfiedDepId = requireNonNull(findSatisfied(
                         findAmongResolved(resolvedDep.getValue()), resolvedDep.getKey()));
-                    final ResolvedSource.Builder depModule = involvedSourcesMap.get(satisfiedDepId);
+                    final ResolvedSourceBuilder depModule = involvedSourcesMap.get(satisfiedDepId);
 
                     final YangVersion currentVersion = newResolved.getYangVersion();
                     final YangVersion dependencyVersion = depModule.getYangVersion();
@@ -287,6 +308,7 @@ public final class SourceLinkageResolver {
                 }
 
                 if (!includedSiblings.isEmpty()) {
+                    // map all the included siblings of this submodule
                     mapSiblings(newResolved, includedSiblings);
                 }
                 // Current was fully processed
@@ -323,10 +345,10 @@ public final class SourceLinkageResolver {
             final SourceIdentifier submoduleId = mapping.getKey();
             final SourceIdentifier parentId = mapping.getValue();
 
-            final ResolvedSource.Builder resolvedSubmodule = requireNonNull(involvedSourcesMap.get(submoduleId),
+            final ResolvedSourceBuilder resolvedSubmodule = requireNonNull(involvedSourcesMap.get(submoduleId),
                 String.format("Submodule %s was not resolved", submoduleId));
             final SourceInfo.Submodule submoduleInfo = (Submodule) resolvedSubmodule.getContext().getSourceInfo();
-            final ResolvedSource.Builder resolvedParent = requireNonNull(involvedSourcesMap.get(parentId),
+            final ResolvedSourceBuilder resolvedParent = requireNonNull(involvedSourcesMap.get(parentId),
                 String.format("Parent module %s of submodule %s was not resolved", parentId, submoduleId));
 
             //double-check that the parent does satisfy this belongs-to
@@ -341,16 +363,16 @@ public final class SourceLinkageResolver {
      * to process them differently - after all other dependencies have been resolved.
      */
     private void tryResolveSiblings() {
-        final Iterator<Map.Entry<ResolvedSource.Builder, Set<SourceIdentifier>>> iterator =
+        final Iterator<Map.Entry<ResolvedSourceBuilder, Set<SourceIdentifier>>> iterator =
             unresolvedSiblingsMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            final Map.Entry<ResolvedSource.Builder, Set<SourceIdentifier>> entry = iterator.next();
-            final ResolvedSource.Builder resolvedSource = entry.getKey();
+            final Map.Entry<ResolvedSourceBuilder, Set<SourceIdentifier>> entry = iterator.next();
+            final ResolvedSourceBuilder resolvedSource = entry.getKey();
             final Set<SourceIdentifier> siblings = entry.getValue();
 
             for (final SourceIdentifier sibling : siblings) {
-                final ResolvedSource.Builder resolvedSibling = requireNonNull(involvedSourcesMap.get(sibling),
+                final ResolvedSourceBuilder resolvedSibling = requireNonNull(involvedSourcesMap.get(sibling),
                     String.format("Included module %s of module %s was not resolved", sibling,
                         resolvedSource.getContext().getSourceInfo().sourceId()));
                 resolvedSource.addInclude(resolvedSibling);
@@ -366,11 +388,11 @@ public final class SourceLinkageResolver {
      * @param id of the resolved Source
      * @return ResolvedSource.Builder of the Source.
      */
-    private ResolvedSource.Builder addResolvedSource(final SourceIdentifier id) {
+    private ResolvedSourceBuilder addResolvedSource(final SourceIdentifier id) {
         if (involvedSourcesMap.containsKey(id)) {
             return involvedSourcesMap.get(id);
         }
-        final ResolvedSource.Builder newResolvedBuilder = ResolvedSource.builder(allContexts.get(id));
+        final ResolvedSourceBuilder newResolvedBuilder = new ResolvedSourceBuilder(allContexts.get(id));
         involvedSourcesMap.put(id, newResolvedBuilder);
         final Set<SourceIdentifier> potentials = involvedSourcesGrouped.get(id.name());
         if (potentials != null) {
@@ -381,7 +403,7 @@ public final class SourceLinkageResolver {
         return newResolvedBuilder;
     }
 
-    private void mapSiblings(final ResolvedSource.Builder newResolved, final List<SourceIdentifier> includedSiblings) {
+    private void mapSiblings(final ResolvedSourceBuilder newResolved, final List<SourceIdentifier> includedSiblings) {
         final Set<SourceIdentifier> siblings = unresolvedSiblingsMap.computeIfAbsent(newResolved,
             k -> new HashSet<>());
         siblings.addAll(includedSiblings);
@@ -477,5 +499,67 @@ public final class SourceLinkageResolver {
             throwingSource,
             new IllegalStateException(message)
         );
+    }
+
+    public static void fillNamespaces(final ResolvedSourceInfo resolvedSource) {
+        final RootStatementContext<?, ?, ?> rootStmt = (RootStatementContext<?, ?, ?>)resolvedSource.root();
+        populateRootNamespaces(rootStmt, resolvedSource);
+    }
+
+    private static void populateRootNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+
+        fillCommonNamespaces(root, resolvedSource);
+        fillImportedNamespaces(root, resolvedSource);
+
+        if (resolvedSource.belongsTo() != null) {
+            fillSubmoduleNamespaces(root, resolvedSource);
+        } else {
+            fillModuleNamespaces(root, resolvedSource);
+        }
+    }
+
+    private static void fillCommonNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        fillImportedNamespaces(root, resolvedSource);
+        fillIncludedNamespaces(root, resolvedSource);
+    }
+
+    private static void fillIncludedNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        for (var anInclude : resolvedSource.includes()) {
+            root.addToNs(ParserNamespaces.INCLUDED_MODULE, anInclude.includeId(), anInclude.rootContext());
+        }
+    }
+
+    private static void fillImportedNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        for (var entry : resolvedSource.imports().entrySet()) {
+
+            final ResolvedSourceInfo imported = entry.getValue();
+            final QNameModule qnameModule = imported.qnameModule();
+            final SourceIdentifier sourceId = imported.sourceId();
+            final var importContext = imported.root();
+
+            verifyNotNull(importContext, "Root context of imported module %s (imported by %s) was not resolved",
+                qnameModule, resolvedSource.qnameModule());
+
+            root.addToNamespace(ParserNamespaces.IMPORTED_MODULE, sourceId, importContext);
+        }
+    }
+
+    private static void fillSubmoduleNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        root.addToNs(ParserNamespaces.SUBMODULE, resolvedSource.sourceId(),
+            (StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>) root);
+
+        final var belongsTo = resolvedSource.belongsTo();
+        root.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, belongsTo.prefix(), belongsTo.parentRoot());
+    }
+
+    private static void fillModuleNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSourceInfo resolvedSource) {
+        root.addToNs(ParserNamespaces.MODULE, resolvedSource.sourceId(),
+            (StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>) root);
     }
 }
