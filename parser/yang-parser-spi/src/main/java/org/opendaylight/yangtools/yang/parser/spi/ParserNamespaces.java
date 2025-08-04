@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
@@ -40,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 
 /**
  * Baseline {@link ParserNamespace}s mostly derived from YANG specification.
@@ -109,19 +107,10 @@ public final class ParserNamespaces {
         StmtContext<QName, TypedefStatement, TypedefEffectiveStatement>> TYPE = new ParserNamespace<>("typedef");
 
     /**
-     * A derived namespace allowing lookup of modules based on their {@link QNameModule}.
+     * Source-specific mapping of belongsTo prefixes to QNameModule.
      */
-    public static final @NonNull ParserNamespace<QNameModule,
-        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> NAMESPACE_TO_MODULE =
-        new ParserNamespace<>("namespace-to-module");
-
-    /**
-     * Intermediate-stage namespace equivalent to {@link #MODULE} except it is keyed by module names. This namespace is
-     * used to resolve inter-module references before actual linkage occurs.
-     */
-    public static final @NonNull ParserNamespace<Unqualified,
-        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> PRELINKAGE_MODULE =
-        new ParserNamespace<>("prelinkage-module");
+    public static final @NonNull ParserNamespace<String, QNameModule> BELONGSTO_PREFIX_TO_QNAME_MODULE =
+        new ParserNamespace<>("belongsto-prefix-to-qname-module");
 
     /**
      * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
@@ -130,29 +119,6 @@ public final class ParserNamespaces {
      */
     public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
         new ParserNamespace<>("belongsto-prefix-to-module");
-
-    /**
-     * Source-specific mapping of prefixes to namespaces.
-     */
-    // FIXME: bad javadoc
-    public static final @NonNull ParserNamespace<String, Unqualified> BELONGSTO_PREFIX_TO_MODULE_NAME =
-        new ParserNamespace<>("belongsto-prefix-to-name");
-
-    /**
-     * Namespace similar to {@link ParserNamespaces#MODULE} for storing modules into Yang model storage but keyed by
-     * plain name.
-     */
-    // FIXME: Better name?
-    public static final @NonNull ParserNamespace<Unqualified,
-        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE_FOR_BELONGSTO =
-        new ParserNamespace<>("module-belongsto");
-
-    /**
-     * Pre-linkage source-specific mapping of prefixes to module namespaces.
-     */
-    // FIXME: a better name?
-    public static final @NonNull ParserNamespace<String, XMLNamespace> IMP_PREFIX_TO_NAMESPACE =
-        new ParserNamespace<>("prefix-to-xmlnamespace");
 
     /**
      * Source-specific mapping of prefix strings to module context.
@@ -164,6 +130,20 @@ public final class ParserNamespaces {
     // FIXME: document this
     public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> IMPORTED_MODULE =
         new ParserNamespace<>("imported-module");
+
+    /**
+     * Source-specific mapping of prefix strings to module context.
+     */
+    // FIXME: the context should expose ModuleStatement
+    public static final @NonNull ParserNamespace<String, SourceIdentifier> IMPORT_PREFIX_TO_SOURCE_ID =
+        new ParserNamespace<>("import-prefix-to-source-id");
+
+    /**
+     * Source-specific mapping of prefix strings to qname module.
+     */
+    // FIXME: the context should expose ModuleStatement
+    public static final @NonNull ParserNamespace<String, QNameModule> IMPORT_PREFIX_TO_QNAME_MODULE =
+        new ParserNamespace<>("import-prefix-to-qname-module");
 
     // FIXME: document this
     // FIXME: is this 'included submodule' instead?
@@ -179,13 +159,6 @@ public final class ParserNamespaces {
         = new ParserNamespace<>("included-submodule-to-modulectx");
 
     /**
-     * Source-specific mapping of prefixes to namespaces.
-     */
-    // FIXME: bad javadoc
-    public static final @NonNull ParserNamespace<Unqualified, QNameModule> MODULE_NAME_TO_QNAME =
-        new ParserNamespace<>("module-name-to-qnamemodule");
-
-    /**
      * Global mapping of modules to QNameModules.
      */
     public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, QNameModule> MODULECTX_TO_QNAME =
@@ -195,40 +168,11 @@ public final class ParserNamespaces {
         new ParserNamespace<>("supportedFeatures");
 
     /**
-     * Source-specific mapping of prefixes to namespaces. This namespace is populated by all statements which have
-     * impact on the XML namespace, for example {@code import}, {@code belongs-to} and really anywhere a {@code prefix}
-     * statement is present.
-     *
-     * @see PrefixResolver
-     */
-    public static final @NonNull ParserNamespace<String, QNameModule> PREFIX_TO_MODULE =
-        new ParserNamespace<>("prefix-to-qnamemodule");
-
-    /**
      * Namespace used for storing information about modules that support deviation resolution.
      * Map key (QNameModule) denotes a module which can be deviated by the modules specified in the Map value.
      */
     public static final @NonNull ParserNamespace<Empty, SetMultimap<QNameModule, QNameModule>> MODULES_DEVIATED_BY =
         new ParserNamespace<>("moduleDeviations");
-
-    /**
-     * Source-specific mapping of prefixes to namespaces.
-     */
-    // FIXME: bad javadoc
-    public static final @NonNull ParserNamespace<QNameModule, Unqualified> MODULE_NAMESPACE_TO_NAME =
-        new ParserNamespace<>("qnamemodule-to-name");
-
-    /**
-     * Pre-linkage global mapping of module names to namespaces.
-     */
-    public static final @NonNull ParserNamespace<Unqualified, XMLNamespace> MODULE_NAME_TO_NAMESPACE =
-        new ParserNamespace<>("module-name-to-xmlnamespace");
-
-    /**
-     * Global mapping of modules to source identifier.
-     */
-    public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> MODULECTX_TO_SOURCE =
-        new ParserNamespace<>("modulectx-to-source");
 
     private static final @NonNull ParserNamespace<?, ?> SCHEMA_TREE = new ParserNamespace<>("schemaTree");
 
