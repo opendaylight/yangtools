@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -18,8 +19,10 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,18 +31,30 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.ir.IRArgument;
+import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ExtendedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
@@ -48,6 +63,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
@@ -59,7 +76,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
-        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+//        ModelProcessingPhase.SOURCE_PRE_LINKAGE,
         ModelProcessingPhase.SOURCE_LINKAGE,
         ModelProcessingPhase.STATEMENT_DEFINITION,
         ModelProcessingPhase.FULL_DECLARATION,
@@ -165,12 +182,127 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     private void executePhases() throws ReactorException {
+
+        // select only the sources and libs which should be involved in the next steps. Ignore libs which were
+        // not referenced by anyone
+        final Map<Unqualified, InvolvedSource> involvedSources = resolveInvolvedSources();
+
+        // populate their PRE-LINKAGE and LINKAGE namespaces so that we can jump into STATEMENT-DEFINITION phase
+        // seamlessly
+        linkInvolvedSources(involvedSources);
+        final Collection<InvolvedSource> involvedContexts = involvedSources.values();
+
+        //TODO: remove the enum entry and rewire the remaining phases
+        startPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE, involvedContexts);
+        endPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE);
+
+
         for (var phase : PHASE_EXECUTION_ORDER) {
-            startPhase(phase);
-            loadPhaseStatements();
-            completePhaseActions();
+            startPhase(phase, involvedContexts);
+            loadPhaseStatements(involvedContexts);
+            completePhaseActions(involvedContexts);
             endPhase(phase);
         }
+    }
+
+    record InvolvedSource(
+            SourceSpecificContext sourceContext,
+            ExtendedSourceInfo sourceInfo) {
+        public InvolvedSource {
+            requireNonNull(sourceContext);
+            requireNonNull(sourceInfo);
+        }
+    }
+
+    private void linkInvolvedSources(final Map<Unqualified, InvolvedSource> involvedSources) {
+        QNameToStatementDefinitionMap stmtDefs = new QNameToStatementDefinitionMap();
+//        stmtDefs.putAll(getSupportsForPhase(ModelProcessingPhase.SOURCE_LINKAGE).getCommonDefinitions());
+        stmtDefs.putAll(getSupportsForPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE).getCommonDefinitions());
+
+        for (Map.Entry<Unqualified, InvolvedSource> involvedSource : involvedSources.entrySet()) {
+//            involvedSource.getValue().sourceContext.startPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE);
+//            involvedSource.getValue().sourceContext.end(ModelProcessingPhase.SOURCE_PRE_LINKAGE);
+
+            // add linkage as well
+//            stmtDefs.putAll(getSupportsForPhase(ModelProcessingPhase.SOURCE_LINKAGE)
+//                .getDefinitionsSpecificForVersion(involvedSource.getValue().sourceInfo.getSourceInfo().yangVersion()));
+            stmtDefs.putAll(getSupportsForPhase(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
+                .getDefinitionsSpecificForVersion(involvedSource.getValue().sourceInfo.getSourceInfo().yangVersion()));
+            involvedSource.getValue().sourceContext.startPhase(ModelProcessingPhase.SOURCE_LINKAGE);
+            StmtContext.Mutable<Unqualified, ?, ?> rootStatement =
+                    createRootStatement(involvedSource.getValue(), stmtDefs);
+
+            //TODO: fill the pre-linkage and linkage namespaces of each root statement
+
+            if (involvedSource.getValue().sourceInfo.getSourceInfo() instanceof SourceInfo.Module moduleInfo) {
+                rootStatement.addToNs(ParserNamespaces.MODULE_NAME_TO_NAMESPACE, involvedSource.getKey(), moduleInfo.namespace());
+                rootStatement.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, moduleInfo.prefix().getPrefix(), moduleInfo.namespace());
+                rootStatement.addToNs(ParserNamespaces.PRELINKAGE_MODULE, rootStatement.argument(),
+                        (StmtContext.Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement>)rootStatement);
+
+                final var revisionDate = moduleInfo.revisions().iterator().next();
+                final var qNameModule = QNameModule.ofRevision(moduleInfo.namespace(), revisionDate).intern();
+                rootStatement.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, rootStatement, qNameModule);
+            }
+        }
+    }
+
+    private StmtContext.Mutable<Unqualified, ?, ?> createRootStatement(final InvolvedSource source,
+            QNameToStatementDefinitionMap qnameToStmtDefMap) {
+        final YangIRSource irSource = source.sourceInfo.getIRSource();
+        final IRArgument argumentCtx = irSource.statement().argument();
+        //TODO: is ArgumentContextUtils necessary here? utils.stringFromStringContext(argumentCtx, ref);
+        final String argument = argumentCtx == null ? null : ((IRArgument.Identifier) argumentCtx).string();
+        final IRKeyword keyword = irSource.statement().keyword();
+        final var ref = StatementDeclarations.inText(irSource.symbolicName(), irSource.statement().startLine(),
+                irSource.statement().startColumn() + 1);
+        final StatementDefinition moduleDef = qnameToStmtDefMap.get(QName.unsafeOf(
+                YangConstants.RFC6020_YIN_MODULE, keyword.identifier()));
+        QName moduleQname = moduleDef != null ? moduleDef.getStatementName() : null;
+        //TODO: try assembling the components of the sourceContext.createDeclaredChild without the YangIRSource
+        //TODO: add processing of Submodule as well.
+        final var moduleStatement = (StmtContext.Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement>)
+                source.sourceContext.createDeclaredChild(null, 0, moduleQname, argument.toString(), ref);
+        return moduleStatement;
+    }
+
+    private Map<Unqualified, InvolvedSource> resolveInvolvedSources() {
+        //TODO: should probably map by SourceIdentifier, not just Qname..
+        final Map<Unqualified, InvolvedSource> involvedSources = new HashMap<>();
+        final Map<Unqualified, SourceSpecificContext> namedLibSources = new HashMap<>();
+        final Deque<Map.Entry<Unqualified, SourceSpecificContext>> importedToResolve = new ArrayDeque<>();
+
+        for (SourceSpecificContext libSource : libSources) {
+            namedLibSources.put(libSource.getInternalSourceId().name(), libSource);
+        }
+
+        for (SourceSpecificContext source : sources) {
+            final ExtendedSourceInfo sourceInfo = source.getSourceInfo();
+            involvedSources.put(sourceInfo.getSourceInfo().sourceId().name(), new InvolvedSource(source, sourceInfo));
+            for (SourceDependency.Import anImport : sourceInfo.getSourceInfo().imports()) {
+                final Unqualified importName = anImport.name();
+                if (!involvedSources.containsKey(importName)) {
+                    final SourceSpecificContext importedLibSource = namedLibSources.get(importName);
+                    Verify.verifyNotNull(importedLibSource, "Imported source [%s] not found", importName.toString());
+                    importedToResolve.add(Map.entry(importName, importedLibSource));
+                }
+            }
+        }
+
+        while (!importedToResolve.isEmpty()) {
+            final Map.Entry<Unqualified, SourceSpecificContext> toResolve = importedToResolve.removeFirst();
+            final ExtendedSourceInfo sourceInfo = toResolve.getValue().getSourceInfo();
+            involvedSources.put(toResolve.getKey(), new InvolvedSource(toResolve.getValue(), sourceInfo));
+            for (SourceDependency.Import anImport : sourceInfo.getSourceInfo().imports()) {
+                final Unqualified importName = anImport.name();
+                if (!involvedSources.containsKey(importName)) {
+                    final SourceSpecificContext importedLibSource = namedLibSources.get(importName);
+                    Verify.verifyNotNull(importedLibSource, "Imported source [%s] not found", importName.toString());
+                    importedToResolve.add(Map.entry(importName, importedLibSource));
+                }
+            }
+        }
+        return involvedSources;
     }
 
     private @NonNull ReactorDeclaredModel transform() {
@@ -217,34 +349,32 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return EffectiveSchemaContext.create(rootStatements, rootEffectiveStatements);
     }
 
-    private void startPhase(final ModelProcessingPhase phase) {
+    private void startPhase(final ModelProcessingPhase phase, final Collection<InvolvedSource> involvedSources) {
         checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
-        startPhaseFor(phase, sources);
-        startPhaseFor(phase, libSources);
+        startPhaseFor(phase, involvedSources);
 
         currentPhase = phase;
         LOG.debug("Global phase {} started", phase);
     }
 
-    private static void startPhaseFor(final ModelProcessingPhase phase, final Set<SourceSpecificContext> sources) {
+    private static void startPhaseFor(final ModelProcessingPhase phase, final Collection<InvolvedSource> sources) {
         for (var source : sources) {
-            source.startPhase(phase);
+            source.sourceContext().startPhase(phase);
         }
     }
 
-    private void loadPhaseStatements() throws ReactorException {
+    private void loadPhaseStatements(Collection<InvolvedSource> involvedSources) throws ReactorException {
         checkState(currentPhase != null);
-        loadPhaseStatementsFor(sources);
-        loadPhaseStatementsFor(libSources);
+        loadPhaseStatementsFor(involvedSources);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void loadPhaseStatementsFor(final Set<SourceSpecificContext> srcs) throws ReactorException {
+    private void loadPhaseStatementsFor(final Collection<InvolvedSource> srcs) throws ReactorException {
         for (var source : srcs) {
             try {
-                source.loadStatements();
+                source.sourceContext().loadStatements();
             } catch (RuntimeException e) {
-                throw propagateException(source, e);
+                throw propagateException(source.sourceContext(), e);
             }
         }
     }
@@ -291,15 +421,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void completePhaseActions() throws ReactorException {
+    private void completePhaseActions(Collection<InvolvedSource> involvedSources) throws ReactorException {
         checkState(currentPhase != null);
-        final var sourcesToProgress = new ArrayList<>(sources);
-        if (!libSources.isEmpty()) {
-            checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                    "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, "
-                            + "but current phase was %s", currentPhase);
-            sourcesToProgress.addAll(libSources);
-        }
+        final var sourcesToProgress = new ArrayList<>(involvedSources);
 
         boolean progressing = true;
         while (progressing) {
@@ -309,7 +433,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
             while (currentSource.hasNext()) {
                 final var nextSourceCtx = currentSource.next();
                 try {
-                    final var sourceProgress = nextSourceCtx.tryToCompletePhase(currentPhase.executionOrder());
+                    final var sourceProgress = nextSourceCtx.sourceContext().tryToCompletePhase(currentPhase.executionOrder());
                     switch (sourceProgress) {
                         case null -> throw new NullPointerException();
                         case FINISHED -> {
@@ -323,7 +447,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
                         }
                     }
                 } catch (RuntimeException e) {
-                    throw propagateException(nextSourceCtx, e);
+                    throw propagateException(nextSourceCtx.sourceContext(), e);
                 }
             }
         }
@@ -340,7 +464,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         }
 
         if (!sourcesToProgress.isEmpty()) {
-            final var buildFailure = addSourceExceptions(sourcesToProgress);
+            //TODO: refactor
+            final var buildFailure = addSourceExceptions(sourcesToProgress.stream().map(InvolvedSource::sourceContext)
+                                                                 .collect(Collectors.toList()));
             if (buildFailure != null) {
                 throw buildFailure;
             }
