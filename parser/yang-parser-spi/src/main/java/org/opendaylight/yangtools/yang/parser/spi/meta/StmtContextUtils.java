@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
@@ -553,11 +554,11 @@ public final class StmtContextUtils {
         if (ctx.producesDeclared(ModuleStatement.class)) {
             return lookupModuleQName(ctx, ctx);
         } else if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+            final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE);
             if (belongsTo == null || belongsTo.isEmpty()) {
                 throw new IllegalArgumentException(ctx + " does not have belongs-to linkage resolved");
             }
-            return lookupModuleQName(ctx, belongsTo.values().iterator().next());
+            return belongsTo.values().iterator().next();
         } else {
             throw new IllegalArgumentException("Unsupported root " + ctx);
         }
@@ -574,15 +575,14 @@ public final class StmtContextUtils {
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
         final var root = ctx.getRoot();
-        final var importedModule = root.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
-        final var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
-        if (qnameModule != null) {
-            return qnameModule;
+        final var resolvedInfo = verifyNotNull(root.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()));
+        final var imported = resolvedInfo.getImportsPrefixToQNameIncludingSelf().get(prefix);
+        if (imported != null) {
+            return imported;
         }
 
         if (root.producesDeclared(SubmoduleStatement.class)) {
-            return ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
-                root.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
+            return ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE, prefix);
         }
 
         return null;

@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
+import java.util.Map;
 import javax.xml.namespace.NamespaceContext;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -29,6 +32,7 @@ final class StmtNamespaceContext implements YangNamespaceContext {
     private final ImmutableBiMap<QNameModule, String> moduleToPrefix;
     private final ImmutableMap<String, QNameModule> prefixToModule;
 
+    //TODO: revisit and consider if this class is even necessary anymore
     StmtNamespaceContext(final StmtContext<?, ?, ?> ctx) {
         // QNameModule -> prefix mappings
         final var qnameToPrefix = ctx.namespace(ModuleQNameToPrefix.INSTANCE);
@@ -36,29 +40,24 @@ final class StmtNamespaceContext implements YangNamespaceContext {
 
         // Additional mappings
         final var additional = new HashMap<String, QNameModule>();
-        final var imports = ctx.namespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
-        if (imports != null) {
-            for (var entry : imports.entrySet()) {
-                if (!moduleToPrefix.containsValue(entry.getKey())) {
-                    var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, entry.getValue());
-                    if (qnameModule == null && ctx.producesDeclared(SubmoduleStatement.class)) {
-                        qnameModule = ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
-                            ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, entry.getKey()));
-                    }
+        final var resolvedInfo = verifyNotNull(ctx.namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()));
+        final Map<String, QNameModule> imports = resolvedInfo.getImportsPrefixToQNameIncludingSelf();
 
-                    if (qnameModule != null) {
-                        additional.put(entry.getKey(), qnameModule);
-                    }
+        for (var entry : imports.entrySet()) {
+            if (!moduleToPrefix.containsValue(entry.getKey())) {
+                var qnameModule = entry.getValue();
+                if (qnameModule != null) {
+                    additional.put(entry.getKey(), qnameModule);
                 }
             }
         }
+
         if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME);
+            final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE);
             if (belongsTo != null) {
                 for (var entry : belongsTo.entrySet()) {
-                    final var module = ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME, entry.getValue());
-                    if (module != null && !additional.containsKey(entry.getKey())) {
-                        additional.put(entry.getKey(), module);
+                    if (!additional.containsValue(entry.getValue())) {
+                        additional.put(entry.getKey(), entry.getValue());
                     }
                 }
             }
