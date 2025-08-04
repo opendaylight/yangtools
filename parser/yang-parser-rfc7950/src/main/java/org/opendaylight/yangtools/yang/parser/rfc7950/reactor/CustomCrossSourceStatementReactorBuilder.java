@@ -45,8 +45,6 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
     CustomCrossSourceStatementReactorBuilder(final Set<YangVersion> supportedVersions) {
         reactorSupportBundles = ImmutableMap.<ModelProcessingPhase, StatementSupportBundle.Builder>builder()
                 .put(ModelProcessingPhase.INIT, StatementSupportBundle.builder(supportedVersions))
-                .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
-                .put(ModelProcessingPhase.SOURCE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
                 .put(ModelProcessingPhase.STATEMENT_DEFINITION, StatementSupportBundle.builder(supportedVersions))
                 .put(ModelProcessingPhase.FULL_DECLARATION, StatementSupportBundle.builder(supportedVersions))
                 .put(ModelProcessingPhase.EFFECTIVE_MODEL, StatementSupportBundle.builder(supportedVersions)).build();
@@ -119,12 +117,8 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
      */
     public @NonNull CrossSourceStatementReactor build() {
         final StatementSupportBundle initBundle = getBuilder(ModelProcessingPhase.INIT).build();
-        final StatementSupportBundle preLinkageBundle = getBuilder(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
-            .setParent(initBundle).build();
-        final StatementSupportBundle linkageBundle = getBuilder(ModelProcessingPhase.SOURCE_LINKAGE)
-            .setParent(preLinkageBundle).build();
         final StatementSupportBundle stmtDefBundle = getBuilder(ModelProcessingPhase.STATEMENT_DEFINITION)
-            .setParent(linkageBundle).build();
+            .setParent(initBundle).build();
         final StatementSupportBundle fullDeclBundle = getBuilder(ModelProcessingPhase.FULL_DECLARATION)
             .setParent(stmtDefBundle).build();
         final StatementSupportBundle effectiveBundle = getBuilder(ModelProcessingPhase.EFFECTIVE_MODEL)
@@ -132,8 +126,6 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
 
         final CrossSourceStatementReactor.Builder reactorBuilder = CrossSourceStatementReactor.builder()
                 .setBundle(ModelProcessingPhase.INIT, initBundle)
-                .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, preLinkageBundle)
-                .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle)
                 .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, stmtDefBundle)
                 .setBundle(ModelProcessingPhase.FULL_DECLARATION, fullDeclBundle)
                 .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, effectiveBundle);

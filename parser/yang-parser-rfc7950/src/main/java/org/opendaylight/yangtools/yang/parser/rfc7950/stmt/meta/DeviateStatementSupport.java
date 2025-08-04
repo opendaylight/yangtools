@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -260,8 +261,9 @@ public final class DeviateStatementSupport
             return true;
         }
 
-        final var currentModule = deviateStmtCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME,
-                deviateStmtCtx.getRoot());
+        final var currentResolved = deviateStmtCtx.getRoot().namespaceItem(ParserNamespaces.RESOLVED_INFO,
+            Empty.value());
+        final QNameModule currentModule = currentResolved != null ? currentResolved.qnameModule() : null;
         final var targetModule = deviationTarget.getNodeIdentifiers().getLast().getModule();
         final var deviationModulesSupportedByTargetModule = modulesDeviatedByModules.get(targetModule);
         if (deviationModulesSupportedByTargetModule != null) {
