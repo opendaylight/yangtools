@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -31,11 +32,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatem
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
+@Beta
 public final class SubmoduleStatementSupport
         extends AbstractUnqualifiedStatementSupport<SubmoduleStatement, SubmoduleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
@@ -106,34 +109,6 @@ public final class SubmoduleStatementSupport
 
     public static @NonNull SubmoduleStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new SubmoduleStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(),
-            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null)));
-    }
-
-    @Override
-    public void onLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        final var submoduleIdentifier = new SourceIdentifier(stmt.getArgument(),
-            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null));
-
-        final var possibleDuplicateSubmodule = stmt.namespaceItem(ParserNamespaces.SUBMODULE, submoduleIdentifier);
-        if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
-            throw new SourceException(stmt, "Submodule name collision: %s. At %s", stmt.rawArgument(),
-                possibleDuplicateSubmodule.sourceReference());
-        }
-
-        stmt.addToNs(ParserNamespaces.SUBMODULE, submoduleIdentifier, stmt);
-
-        final var belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
-        final var prefixSubStmtCtx = SourceException.throwIfNull(
-            findFirstDeclaredSubstatement(stmt, 0, BelongsToStatement.class, PrefixStatement.class), stmt,
-            "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawArgument());
-
-        final var prefix = prefixSubStmtCtx.rawArgument();
-        stmt.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix, belongsToModuleName);
     }
 
     @Override
