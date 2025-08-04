@@ -204,7 +204,7 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviationTarget() {
-        assertInferenceException(startsWith("(bar?revision=2017-01-20)my-cont is not a valid deviation "
+        assertInvalidStateException(startsWith("(bar?revision=2017-01-20)my-cont is not a valid deviation "
             + "target for substatement (urn:ietf:params:xml:ns:yang:yin:1)max-elements."),
             "/deviation-resolution-test/foo-invalid-deviation-target.yang",
             "/deviation-resolution-test/bar.yang");
@@ -212,7 +212,7 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviationPath() {
-        assertInferenceException(startsWith(
+        assertInvalidStateException(startsWith(
             "Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)invalid, path]}' not found"),
             "/deviation-resolution-test/foo-invalid-deviation-path.yang",
             "/deviation-resolution-test/bar.yang");
@@ -220,7 +220,7 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviateAdd() {
-        assertInferenceException(startsWith("""
+        assertInvalidStateException(startsWith("""
             Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)config to target node \
             (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once."""),
             "/deviation-resolution-test/deviation-add/foo-invalid.yang",
@@ -229,7 +229,7 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviateAdd2() {
-        assertInferenceException(startsWith("""
+        assertInvalidStateException(startsWith("""
             Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
             (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once."""),
             "/deviation-resolution-test/deviation-add/foo-invalid-2.yang",
@@ -238,7 +238,7 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviateAdd3() {
-        assertInferenceException(startsWith("""
+        assertInvalidStateException(startsWith("""
             Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
             (bar?revision=2017-02-01)my-used-leaf because it is already defined in target and can appear only once."""),
             "/deviation-resolution-test/deviation-add/foo-invalid-4.yang",
@@ -247,7 +247,7 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviateReplace() {
-        assertInferenceException(startsWith("""
+        assertInvalidStateException(startsWith("""
             Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)units in target node \
             (bar?revision=2017-01-20)my-leaf because it does not exist in target node."""),
             "/deviation-resolution-test/deviation-replace/foo-invalid.yang",

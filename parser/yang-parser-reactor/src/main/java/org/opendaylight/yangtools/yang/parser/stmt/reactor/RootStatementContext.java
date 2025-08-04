@@ -242,8 +242,8 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     void addRequiredSourceImpl(final SourceIdentifier dependency) {
-        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
+        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.STATEMENT_DEFINITION,
+                "Add required module is allowed only in ModelProcessingPhase.STATEMENT_DEFINITION phase");
         if (requiredSources.isEmpty()) {
             requiredSources = new HashSet<>();
         }

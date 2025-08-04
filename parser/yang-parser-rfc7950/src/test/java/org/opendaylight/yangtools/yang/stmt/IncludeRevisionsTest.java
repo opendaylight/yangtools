@@ -42,7 +42,7 @@ class IncludeRevisionsTest {
     void revsUnequalTest() {
         var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(UNEQUAL_REV, UNEQUAL_ROOT);
         var ex = assertThrows(SomeModifiersUnresolvedException.class, reactor::build);
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        assertEquals(ModelProcessingPhase.STATEMENT_DEFINITION, ex.getPhase());
     }
 
     @Test
@@ -57,7 +57,7 @@ class IncludeRevisionsTest {
     void revInModuleOnly() {
         var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
         var ex = assertThrows(SomeModifiersUnresolvedException.class, reactor::build);
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        assertEquals(ModelProcessingPhase.STATEMENT_DEFINITION, ex.getPhase());
     }
 
     @Test

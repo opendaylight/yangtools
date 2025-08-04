@@ -54,7 +54,7 @@ class ImportResolutionBasicTest extends AbstractYangTest {
     }
 
     private static void assertFailedPreLinkage(final String name, final String... sources) {
-        assertInferenceException(allOf(
+        assertInvalidStateException(allOf(
             startsWith("Imported module [" + name),
             containsString("] was not found. [at ")),
             sources);
