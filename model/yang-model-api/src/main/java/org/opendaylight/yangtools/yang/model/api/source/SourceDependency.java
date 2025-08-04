@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
  */
 @NonNullByDefault
 public sealed interface SourceDependency extends Serializable
-        permits SourceDependency.Import, SourceDependency.Include, SourceDependency.BelongsTo {
+    permits SourceDependency.Import, SourceDependency.Include, SourceDependency.BelongsTo {
     /**
      * The name of the required source.
      *

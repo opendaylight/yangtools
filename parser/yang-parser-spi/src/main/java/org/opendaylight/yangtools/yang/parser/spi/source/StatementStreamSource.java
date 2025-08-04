@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 // FIXME: 7.0.0: this is a push parser, essentially traversing the same tree multiple times. Perhaps we should create
 //               a visitor/filter or perform some explicit argument binding?
 public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
+
     /**
      * Emits only pre-linkage-related statements to supplied {@code writer}.
      *
