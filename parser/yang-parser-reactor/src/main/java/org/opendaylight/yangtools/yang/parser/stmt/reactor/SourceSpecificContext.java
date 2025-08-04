@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -121,6 +120,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
     private StatementStreamSource source;
 
+    // Cache the SourceInfo so we can use it multiple times without reading it repeatedly from the actual source
+    private SourceInfo sourceInfo;
+
     /*
      * "imported" namespaces in this source -- this points to RootStatementContexts of
      * - modules imported via 'import' statement
@@ -147,6 +149,18 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
     }
+
+    /**
+     * Reads the SourceInfo from the StatementStreamSource and caches it.
+     * @return SourceInfo extracted from StatementStreamSource
+     */
+    public SourceInfo getSourceInfo() {
+        if (this.sourceInfo == null) {
+            this.sourceInfo = source.getSourceInfo();
+        }
+        return this.sourceInfo;
+    }
+
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
             final int childId, final QName name, final String argument, final StatementSourceReference ref) {
@@ -192,7 +206,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         if (root == null) {
             root = new RootStatementContext<>(this, def, ref, argument);
         } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.yangVersion())
-                && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
+                && inProgressPhase == ModelProcessingPhase.STATEMENT_DEFINITION) {
             root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
                     root.getRootIdentifier());
         } else {
@@ -203,10 +217,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
                 "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
         }
         return root;
-    }
-
-    public SourceInfo getSourceInfo() {
-        return source.getSourceInfo();
     }
 
     @NonNull SourceIdentifier identifySource() {
@@ -239,7 +249,13 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
      * @return version of root statement context
      */
     private YangVersion getRootVersion() {
-        return root != null ? root.yangVersion() : RootStatementContext.DEFAULT_VERSION;
+        if (root != null) {
+            return root.yangVersion();
+        }
+        if (sourceInfo != null) {
+            return sourceInfo.yangVersion();
+        }
+        return RootStatementContext.DEFAULT_VERSION;
     }
 
     void startPhase(final ModelProcessingPhase phase) {
@@ -439,53 +455,35 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         };
     }
 
-    void loadStatements() {
-        LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
+    void loadStatements(final ResolvedSource resolvedSource,
+        final Map<SourceIdentifier, Entry<RootStatementContext<?, ?, ?>, ResolvedSource>> resolvedRootContexts) {
+        LOG.trace("Source {} loading statements for phase {}", this.source, inProgressPhase);
 
         switch (inProgressPhase) {
-            case SOURCE_PRE_LINKAGE:
-                source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
-                break;
-            case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
-                    getRootVersion());
-                break;
             case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
-                    prefixes(), getRootVersion());
+                this.source.writeLinkageAndStatementDefinitions(
+                    new StatementContextWriter(this, inProgressPhase, resolvedSource, resolvedRootContexts), stmtDef(),
+                    null, getRootVersion());
                 break;
             case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
-                    getRootVersion());
+                this.source.writeFull(
+                    new StatementContextWriter(this, inProgressPhase, resolvedSource, resolvedRootContexts), stmtDef(),
+                    prefixes(), getRootVersion());
                 break;
             default:
                 break;
         }
     }
 
-    private PrefixResolver preLinkagePrefixes() {
-        final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
-        final var prefixToNamespaceMap = getAllFromLocalStorage(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
-        if (prefixToNamespaceMap == null) {
-            //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
-            return null;
-        }
-
-        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.of(value)));
-        return preLinkagePrefixes;
-    }
-
     private PrefixResolver prefixes() {
-        final var allImports = root.namespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        final var allImports = root.namespace(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE);
         if (allImports != null) {
-            allImports.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, value)));
+            allImports.forEach(prefixToModuleMap::put);
         }
 
-        final var allBelongsTo = root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+        final var allBelongsTo = root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE);
         if (allBelongsTo != null) {
-            allBelongsTo.forEach((key, value) ->
-                prefixToModuleMap.put(key, root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, value)));
+            allBelongsTo.forEach(prefixToModuleMap::put);
         }
 
         return prefixToModuleMap;
