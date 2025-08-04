@@ -199,8 +199,9 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
     }
 
-    private static final class Identifier extends Single {
-        private Identifier(final String string) {
+    //TODO: switch back to private when we're done with YangIRSource
+    public static final class Identifier extends Single {
+        public Identifier(final String string) {
             super(string);
         }
     }
