@@ -54,12 +54,20 @@ class StatementContextVisitor {
     }
 
     /**
+     * Root statement was created separately. Skip over it and process only substatements.
+     */
+    void skipRootAndVisit(final IRStatement rootStmt) {
+        int offset = 0;
+        for (IRStatement statement : rootStmt.statements()) {
+            processStatement(offset++, statement);
+        }
+    }
+
+    /**
      * Based on identifier read from source and collections of relevant prefixes and statement definitions mappings
      * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
      * This applies to any declared statement, including unknown statements.
      *
-     * @param prefixes collection of all relevant prefix mappings supplied for actual parsing phase
-     * @param stmtDef collection of all relevant statement definition mappings provided for actual parsing phase
      * @param keyword statement keyword text to parse from source
      * @param ref Source reference
      * @return valid QName for declared statement to be written, or null
@@ -100,7 +108,7 @@ class StatementContextVisitor {
     private boolean processStatement(final int myOffset, final IRStatement stmt) {
         final var resumed = writer.resumeStatement(myOffset);
         if (resumed != null) {
-            return resumed.isFullyDefined() || doProcessStatement(stmt, resumed.getSourceReference());
+            return resumed.isFullyDefined() || doProcessStatement(stmt);
         }
         return processNewStatement(myOffset, stmt);
     }
@@ -126,12 +134,12 @@ class StatementContextVisitor {
         }
 
         writer.startStatement(myOffset, def, argument, ref);
-        return doProcessStatement(stmt, ref);
+        return doProcessStatement(stmt);
     }
 
     // Actual processing
     @NonNullByDefault
-    private boolean doProcessStatement(final IRStatement stmt, final StatementSourceReference ref) {
+    private boolean doProcessStatement(final IRStatement stmt) {
         int childOffset = 0;
         boolean fullyDefined = true;
         for (var substatement : stmt.statements()) {
@@ -141,7 +149,7 @@ class StatementContextVisitor {
         }
 
         writer.storeStatement(childOffset, fullyDefined);
-        writer.endStatement(ref);
+        writer.endStatement();
         return fullyDefined;
     }
 }

@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A {@link StatementStreamSource} based on a {@link YinXmlSource}. Internal implementation works on top
@@ -110,7 +111,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         final String value = attr.getValue();
         writer.startStatement(childId, def.statementName(), value.isEmpty() ? null : value, ref);
         writer.storeStatement(0, true);
-        writer.endStatement(ref);
+        writer.endStatement();
         return true;
     }
 
@@ -213,7 +214,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         }
 
         writer.storeStatement(childCounter, fullyDefined);
-        writer.endStatement(ref);
+        writer.endStatement();
         return fullyDefined;
     }
 
@@ -232,21 +233,64 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         }
     }
 
-    @Override
-    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        walkTree(writer, stmtDef);
+    /**
+     * Root statement was created separately. Skip over it and process only substatements.
+     */
+    private void skipRootAndWalkTree(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
+        final NodeList rootNodes = root.getChildNodes();
+        int childCounter = 0;
+        for (int i = 0, len = rootNodes.getLength(); i < len; ++i) {
+            final Node rootNode = rootNodes.item(i);
+            if (rootNode.getNodeType() == Node.ELEMENT_NODE) {
+                final NodeList rootChildren = rootNode.getChildNodes();
+                for (int childOffset = 0; childOffset < rootChildren.getLength(); childOffset++) {
+                    final Node child = rootChildren.item(childOffset);
+                    if (child.getNodeType() == Node.ELEMENT_NODE) {
+                        processElement(childCounter++, (Element) child, writer, stmtDef);
+                    }
+                }
+            }
+        }
+    }
+
+    private int getSubstatementsCount(final Node parent) {
+        int count = 0;
+        for (int i = 0, len = parent.getChildNodes().getLength(); i < len; ++i) {
+            final Node child = parent.getChildNodes().item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        walkTree(writer, stmtDef);
+    public void writeRoot(StatementWriter writer, QNameToStatementDefinition stmtDefs, YangVersion version) {
+        final NodeList children = root.getChildNodes();
+        for (int i = 0, len = children.getLength(); i < len; ++i) {
+            final Node child = children.item(i);
+
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                final var ref = refProvider.getRefOf((Element) child);
+                final var def = getValidDefinition(child, writer, stmtDefs, ref);
+                final var argDef = def.getArgumentDefinition();
+
+                final QName argName = argDef.argumentName();
+                final String argument = getArgValue((Element) child, argName, false);
+
+                writer.startStatement(0, def.statementName(), argument, ref);
+                writer.storeStatement(getSubstatementsCount(child), false);
+                return;
+
+            }
+        }
+        throw new IllegalStateException("Could not create root statement for " + this.getIdentifier());
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
-        walkTree(writer, stmtDef);
+        final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
+        skipRootAndWalkTree(writer, stmtDef);
     }
 
     @Override

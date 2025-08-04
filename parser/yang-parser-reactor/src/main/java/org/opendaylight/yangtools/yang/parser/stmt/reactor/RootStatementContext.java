@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -39,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ResolvedSourceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,14 +80,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         argument = def.parseArgumentValue(this, rawArgument());
     }
 
-    RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
-            final StatementSourceReference ref, final String rawArgument, final YangVersion version,
-            final SourceIdentifier identifier) {
-        this(sourceContext, def, ref, rawArgument);
-        setRootVersion(version);
-        setRootIdentifier(identifier);
-    }
-
     @Override
     public StatementContextBase<?, ?, ?> getParentContext() {
         // null as root cannot have parent
@@ -106,24 +100,20 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     @Override
     public QNameModule definingModule() {
         final var declaredRepr = publicDefinition().getDeclaredRepresentationClass();
-        final StmtContext<?, ?, ?> module;
+        final var resolvedInfo = verifyNotNull(namespaceItem(ParserNamespaces.RESOLVED_INFO, Empty.value()));
+
         if (ModuleStatement.class.isAssignableFrom(declaredRepr)) {
-            module = this;
+            return resolvedInfo.qnameModule();
         } else if (SubmoduleStatement.class.isAssignableFrom(declaredRepr)) {
-            final var belongsTo = namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
-            if (belongsTo == null || belongsTo.isEmpty()) {
+
+            final var belongsTo = resolvedInfo.belongsTo();
+            if (belongsTo == null) {
                 throw new VerifyException(this + " does not have belongs-to linkage resolved");
             }
-            module = belongsTo.values().iterator().next();
+            return belongsTo.parentModuleQname();
         } else {
             throw new VerifyException("Unsupported root " + this);
         }
-
-        final var ret = namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, module);
-        if (ret == null) {
-            throw new VerifyException("Failed to look up QNameModule for " + module + " in " + this);
-        }
-        return ret;
     }
 
     @Override
@@ -157,12 +147,14 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        if (ParserNamespaces.INCLUDED_MODULE.equals(type)) {
+        if (ParserNamespaces.RESOLVED_INFO.equals(type)) {
             if (includedContexts.isEmpty()) {
                 includedContexts = new ArrayList<>(1);
             }
-            verify(value instanceof RootStatementContext);
-            includedContexts.add((RootStatementContext<?, ?, ?>) value);
+            verify(value instanceof ResolvedSourceInfo);
+            final ResolvedSourceInfo resolved = (ResolvedSourceInfo) value;
+            resolved.includes().forEach(include ->
+                includedContexts.add((RootStatementContext<?, ?, ?>) include.rootContext()));
         }
         return super.putToLocalStorage(type, key, value);
     }
@@ -281,8 +273,8 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     void addRequiredSourceImpl(final SourceIdentifier dependency) {
-        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
+        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.STATEMENT_DEFINITION,
+                "Add required module is allowed only in ModelProcessingPhase.STATEMENT_DEFINITION phase");
         if (requiredSources.isEmpty()) {
             requiredSources = new HashSet<>();
         }
