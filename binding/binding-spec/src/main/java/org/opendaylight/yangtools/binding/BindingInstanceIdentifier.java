@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 /**
  * Binding representation of a {@code instance-identifier}.
  */
-public sealed interface BindingInstanceIdentifier extends Immutable, Serializable
+public sealed interface BindingInstanceIdentifier extends Immutable, PathLike, Serializable
         permits DataObjectIdentifier, PropertyIdentifier {
     /**
      * A single step in a {@link BindingInstanceIdentifier}.
