@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.NoSuchElementException;
@@ -37,6 +38,20 @@ class DataObjectIdentifierTest {
         assertEquals(new NodeChildKey(10), nodes.firstKeyOf(NodeChild.class));
         final var fooRoot = DataObjectIdentifier.builder(FooRoot.class).build();
         assertNull(fooRoot.firstKeyOf(Node.class));
+    }
+
+    @Test
+    @SuppressWarnings("removal")
+    void plainToIdentifierReturnsSelf() {
+        final var nodes = DataObjectIdentifier.builder(Nodes.class).build();
+        assertSame(nodes, nodes.toIdentifier());
+    }
+
+    @Test
+    @SuppressWarnings("removal")
+    void withKeyToIdentifierReturnsSelf() {
+        final var nodes = DataObjectIdentifier.builder(Nodes.class).child(Node.class, new NodeKey(5)).build();
+        assertSame(nodes, nodes.toIdentifier());
     }
 
     @Test
