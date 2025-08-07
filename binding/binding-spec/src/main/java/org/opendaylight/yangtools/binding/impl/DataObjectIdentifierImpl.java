@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.binding.impl;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -52,6 +54,26 @@ public sealed class DataObjectIdentifierImpl<T extends DataObject>
     @Override
     public AbstractDataObjectIdentifierBuilder<T> toBuilder() {
         return new DataObjectIdentifierBuilder<>(this);
+    }
+
+    @Override
+    public final <I extends DataObject> DataObjectIdentifier<I> tryTrimTo(final Class<@NonNull I> type) {
+        requireNonNull(type);
+        final var steps = steps();
+
+        int count = 1;
+        for (var step : steps) {
+            if (type.equals(step.type())) {
+                @SuppressWarnings("unchecked")
+                final var ret = (DataObjectIdentifier<I>) DataObjectIdentifier.ofUnsafeSteps(
+                    Iterables.limit(steps, count));
+                return ret;
+            }
+
+            ++count;
+        }
+
+        return null;
     }
 
     @Override
