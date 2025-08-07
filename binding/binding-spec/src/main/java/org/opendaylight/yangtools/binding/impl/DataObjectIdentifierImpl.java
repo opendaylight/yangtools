@@ -55,11 +55,6 @@ public sealed class DataObjectIdentifierImpl<T extends DataObject>
     }
 
     @Override
-    public DataObjectIdentifierImpl<T> toIdentifier() {
-        return this;
-    }
-
-    @Override
     protected final Class<?> contract() {
         return DataObjectIdentifier.class;
     }
