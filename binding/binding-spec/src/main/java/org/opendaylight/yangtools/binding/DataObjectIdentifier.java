@@ -11,7 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.impl.AbstractDataObjectIdentifierBuilder;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierBuilder;
 import org.opendaylight.yangtools.binding.impl.DataObjectIdentifierBuilderWithKey;
@@ -201,4 +203,37 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
     default boolean isWildcarded() {
         return false;
     }
+
+    /**
+     * Returns this identifier's topmost (closest to the root) ancestor of specified type, throwing
+     * {@link NoSuchElementException} if no such ancestor exists.
+     *
+     * @param <I> type of {@link DataObject} held in the ancestor's last step
+     * @param type type class
+     * @return ancestor {@link DataObjectIdentifier}
+     * @throws ClassCastException if {@code type} does not represent a {@link DataObject} class
+     * @throws NullPointerException if {@code type} is {@code null}
+     * @throws NoSuchElementException if this identifier does not have an ancestor of specified type
+     * @since 14.0.15
+     */
+    default <I extends DataObject> @NonNull DataObjectIdentifier<I> trimTo(final @NonNull Class<@NonNull I> type) {
+        final var trimmed = tryTrimTo(type);
+        if (trimmed != null) {
+            return trimmed;
+        }
+        throw new NoSuchElementException("No step matching " + type.getName() + " found in " + this);
+    }
+
+    /**
+     * Returns this identifier's topmost (closest to the root) ancestor of specified type.
+     *
+     * @param <I> type of {@link DataObject} held in the ancestor's last step
+     * @param type type class
+     * @return ancestor {@link DataObjectIdentifier}, or {@code null} if {@link #steps()} does not contain a step of
+     *         specified type.
+     * @throws ClassCastException if {@code type} does not represent a {@link DataObject} class
+     * @throws NullPointerException if {@code type} is {@code null}
+     * @since 14.0.15
+     */
+    <I extends DataObject> @Nullable DataObjectIdentifier<I> tryTrimTo(@NonNull Class<@NonNull I> type);
 }
