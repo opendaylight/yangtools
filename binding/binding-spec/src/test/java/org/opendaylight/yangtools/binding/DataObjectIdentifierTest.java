@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.binding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.test.mock.FooRoot;
 import org.opendaylight.yangtools.binding.test.mock.Node;
@@ -27,11 +29,55 @@ class DataObjectIdentifierTest {
 
     @Test
     void firstKeyOfTest() {
-        final var nodes = DataObjectIdentifier.builder(Nodes.class).child(Node.class, new NodeKey(5))
-                .child(NodeChild.class, new NodeChildKey(10)).build();
+        final var nodes = DataObjectIdentifier.builder(Nodes.class)
+            .child(Node.class, new NodeKey(5))
+            .child(NodeChild.class, new NodeChildKey(10))
+            .build();
         assertEquals(new NodeKey(5), nodes.firstKeyOf(Node.class));
         assertEquals(new NodeChildKey(10), nodes.firstKeyOf(NodeChild.class));
         final var fooRoot = DataObjectIdentifier.builder(FooRoot.class).build();
         assertNull(fooRoot.firstKeyOf(Node.class));
+    }
+
+    @Test
+    void trimToNullThrows() {
+        final var nodes = DataObjectIdentifier.builder(Nodes.class).build();
+        assertThrows(NullPointerException.class, () -> nodes.trimTo(null));
+    }
+
+    @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    void trimToBadClassThrows() {
+        final var nodes = DataObjectIdentifier.builder(Nodes.class).build();
+        assertThrows(ClassCastException.class, () -> nodes.trimTo((Class) String.class));
+    }
+
+    @Test
+    void trimToWorks() {
+        final var nodes = DataObjectIdentifier.builder(Nodes.class)
+            .child(Node.class, new NodeKey(5))
+            .child(NodeChild.class, new NodeChildKey(10))
+            .build();
+
+        assertEquals(DataObjectIdentifier.builder(Nodes.class).build(), nodes.trimTo(Nodes.class));
+        assertEquals(DataObjectIdentifier.builder(Nodes.class).child(Node.class, new NodeKey(5)).build(),
+            nodes.trimTo(Node.class));
+        assertEquals(nodes, nodes.trimTo(NodeChild.class));
+    }
+
+    @Test
+    void trimToNotFound() {
+        final var nodes = DataObjectIdentifier.builder(Nodes.class).build();
+        final var ex = assertThrows(NoSuchElementException.class, () -> nodes.trimTo(Node.class));
+        assertEquals("""
+            No step matching org.opendaylight.yangtools.binding.test.mock.Node found in DataObjectIdentifier[
+              org.opendaylight.yangtools.binding.test.mock.Nodes
+            ]""", ex.getMessage());
+    }
+
+    @Test
+    void tryTrimToNotFound() {
+        final var nodes = DataObjectIdentifier.builder(Nodes.class).build();
+        assertNull(nodes.tryTrimTo(Node.class));
     }
 }
