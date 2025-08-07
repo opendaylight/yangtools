@@ -94,6 +94,18 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
 
         @Override
         DataObjectIdentifier.Builder.WithKey<T, K> toBuilder();
+
+        /**
+         * Returns this instance.
+         *
+         * @return this instance
+         * @deprecated This method should not be directly invoked.
+         */
+        @Override
+        @Deprecated(since = "14.0.15", forRemoval = true)
+        default DataObjectIdentifier.WithKey<T, K> toIdentifier() {
+            return this;
+        }
     }
 
     static @NonNull DataObjectIdentifier<?> ofUnsafeSteps(
@@ -171,6 +183,18 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
 
     @Override
     Builder<T> toBuilder();
+
+    /**
+     * Returns this instance.
+     *
+     * @return this instance
+     * @deprecated This method should not be directly invoked.
+     */
+    @Override
+    @Deprecated(since = "14.0.15", forRemoval = true)
+    default DataObjectIdentifier<T> toIdentifier() {
+        return this;
+    }
 
     @Override
     @Deprecated(since = "14.0.0")

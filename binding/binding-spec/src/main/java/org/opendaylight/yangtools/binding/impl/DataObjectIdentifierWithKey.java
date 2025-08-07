@@ -42,11 +42,6 @@ public final class DataObjectIdentifierWithKey<T extends EntryObject<T, K>, K ex
         return new DataObjectIdentifierBuilderWithKey<>(this);
     }
 
-    @Override
-    public DataObjectIdentifierWithKey<T, K> toIdentifier() {
-        return this;
-    }
-
     @java.io.Serial
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
         throwNSE();
