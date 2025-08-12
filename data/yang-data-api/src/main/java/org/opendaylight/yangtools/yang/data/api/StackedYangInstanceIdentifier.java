@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -139,7 +138,8 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     @Override
     YangInstanceIdentifier createRelativeIdentifier(final int skipFromRoot) {
         // TODO: can we optimize this one?
-        return YangInstanceIdentifier.of(Iterables.skip(getPathArguments(), skipFromRoot));
+        final var args = getPathArguments();
+        return YangInstanceIdentifier.of(args.subList(skipFromRoot, args.size()));
     }
 
     @Override
