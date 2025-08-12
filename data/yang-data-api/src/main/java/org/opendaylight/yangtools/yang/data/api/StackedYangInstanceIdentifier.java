@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
-import com.google.common.collect.Lists;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,8 +90,8 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     }
 
     @Override
-    public List<PathArgument> getPathArguments() {
-        StackedPathArguments ret = tryPathArguments();
+    public StackedPathArguments getPathArguments() {
+        var ret = tryPathArguments();
         if (ret == null) {
             final var stack = new ArrayList<PathArgument>();
             YangInstanceIdentifier current = this;
@@ -104,15 +103,15 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
                 current = stacked.getParent();
             } while (current.tryPathArguments() == null);
 
-            pathArguments = ret = new StackedPathArguments(current, Lists.reverse(stack));
+            pathArguments = ret = new StackedPathArguments(current, List.copyOf(stack.reversed()));
         }
 
         return ret;
     }
 
     @Override
-    public List<PathArgument> getReversePathArguments() {
-        StackedReversePathArguments ret = tryReversePathArguments();
+    public StackedReversePathArguments getReversePathArguments() {
+        var ret = tryReversePathArguments();
         if (ret == null) {
             ret = new StackedReversePathArguments(this);
             reversePathArguments = ret;
