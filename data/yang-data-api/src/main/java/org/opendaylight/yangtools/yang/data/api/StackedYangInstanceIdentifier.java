@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import java.io.Serial;
@@ -98,8 +98,9 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
             final var stack = new ArrayList<PathArgument>();
             YangInstanceIdentifier current = this;
             do {
-                verify(current instanceof StackedYangInstanceIdentifier);
-                final StackedYangInstanceIdentifier stacked = (StackedYangInstanceIdentifier) current;
+                if (!(current instanceof StackedYangInstanceIdentifier stacked)) {
+                    throw new VerifyException("Unexpected parent " + current);
+                }
                 stack.add(stacked.getLastPathArgument());
                 current = stacked.getParent();
             } while (current.tryPathArguments() == null);
