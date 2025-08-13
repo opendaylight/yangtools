@@ -22,14 +22,20 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.ScalarTypeObject;
+import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
+import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
@@ -37,6 +43,15 @@ import org.opendaylight.yangtools.yang.common.Empty;
  * general API stability requirements of the Binding Specification.
  */
 public final class CodeHelpers {
+    private static final boolean VERIFY_UNSAFE;
+
+    static {
+        VERIFY_UNSAFE = Boolean.getBoolean("org.opendaylight.yangtools.yang.binding.verify-unsafe");
+        if (VERIFY_UNSAFE) {
+            LoggerFactory.getLogger(CodeHelpers.class).info("Unsafe instantiation is disabled");
+        }
+    }
+
     private CodeHelpers() {
         // Hidden
     }
@@ -497,5 +512,21 @@ public final class CodeHelpers {
             return Empty.value();
         }
         throw new IllegalArgumentException("Invalid value " + str);
+    }
+
+    /**
+     * Utility method guarding unsafe {@link ScalarTypeObject} instantiation.
+     *
+     * @param <V> native value type
+     * @param <T> {@link ScalarTypeObject} type
+     * @param value the value
+     * @param safeCtor the safe constructor
+     * @param unsafeCtor the unsafe constructor
+     * @return a new {@link ScalarTypeObject}
+     */
+    public static <V, T extends ScalarTypeObject<V>> @NonNull T newUnsafeScalar(final @NonNull V value,
+            final @NonNull Function<@NonNull V, @NonNull T> safeCtor,
+            final @NonNull BiFunction<@NonNull UnsafeSecret, @NonNull V, @NonNull T> unsafeCtor) {
+        return VERIFY_UNSAFE ? safeCtor.apply(value) : unsafeCtor.apply(TheUnsafeSecret.INSTANCE, value);
     }
 }

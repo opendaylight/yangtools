@@ -6,8 +6,6 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * Internal implementation details. This package exists only for the use with
- * {@link org.opendaylight.yangtools.yang.binding.InstanceIdentifier}, so the dance we are doing with class hierarchy
- * is not (entirely) visible.
+ * Internal implementation details, which should never be exposed to external code.
  */
 package org.opendaylight.yangtools.binding.impl;

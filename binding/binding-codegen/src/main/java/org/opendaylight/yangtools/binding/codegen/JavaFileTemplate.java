@@ -37,6 +37,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -160,6 +161,11 @@ class JavaFileTemplate {
      * {@code org.opendaylight.yangtools.binding.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
+
+    /**
+     * {@code org.opendaylight.yangtools.binding.UnsafeSecret} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName UNSAFE_SECRET = JavaTypeName.create(UnsafeSecret.class);
 
     /**
      * {@code com.google.common.base.MoreObjects} as a JavaTypeName.

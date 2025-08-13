@@ -333,7 +333,19 @@ class ClassTemplate extends BaseTemplate {
          */»
         «genPatternEnforcer(fieldName)»
     }
+    «IF needUnsafe()»
+
+    protected «type.name»(«UNSAFE_SECRET.importedName» secret, «allProperties.asArgumentsDeclaration») {
+        «IF !parentProperties.empty»
+            super(«parentProperties.asArguments»);
+        «ELSE»
+        «ENDIF»
+    «ENDIF»
     '''
+
+    def private boolean needUnsafe() {
+        return true;
+    }
 
     def private GeneratedProperty valueProperty(List<GeneratedProperty> props) {
         if (props.empty) {
