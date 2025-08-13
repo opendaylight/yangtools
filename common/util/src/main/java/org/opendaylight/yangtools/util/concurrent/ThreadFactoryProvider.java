@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
@@ -16,16 +15,18 @@ import org.immutables.value.Value;
 import org.slf4j.Logger;
 
 /**
- * Builder for {@link ThreadFactory}. Easier to use than the
- * {@link ThreadFactoryBuilder}, because it enforces setting all required
- * properties through a staged builder.
+ * Builder for {@link ThreadFactory}. Easier to use than Guava's {@code ThreadFactoryBuilder}, because it enforces
+ * setting all required properties through a staged builder.
  *
+ * @deprecated Java provides more powerful ways of creating {@link ThreadFactory} via {@link Thread#ofPlatform()} and
+ *             {@link Thread#ofVirtual()} builders, please use those instead.
  * @author Michael Vorburger.ch
  */
 @Value.Immutable
 @Value.Style(stagedBuilder = true, allowedClasspathAnnotations = {
     SuppressWarnings.class, Generated.class, SuppressFBWarnings.class,
 })
+@Deprecated(since = "14.0.16", forRemoval = true)
 public abstract class ThreadFactoryProvider {
 
     // This class is also available in infrautils (but yangtools cannot depend on infrautils)
@@ -61,13 +62,14 @@ public abstract class ThreadFactoryProvider {
     }
 
     public ThreadFactory get() {
-        ThreadFactoryBuilder guavaBuilder = new ThreadFactoryBuilder()
-                .setNameFormat(namePrefix() + "-%d")
-                .setUncaughtExceptionHandler((thread, exception)
-                    -> logger().error("Thread terminated due to uncaught exception: {}", thread.getName(), exception))
-                .setDaemon(daemon());
-        priority().ifPresent(guavaBuilder::setPriority);
+        final var builder = Thread.ofPlatform()
+            .name(namePrefix() + "-", 0)
+            .uncaughtExceptionHandler((thread, exception)
+                -> logger().error("Thread terminated due to uncaught exception: {}", thread.getName(), exception))
+            .daemon(daemon());
+
+        priority().ifPresent(builder::priority);
         logger().info("ThreadFactory created: {}", namePrefix());
-        return guavaBuilder.build();
+        return builder.factory();
     }
 }
