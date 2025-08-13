@@ -73,8 +73,13 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         this.threadPrefix = requireNonNull(threadPrefix);
         this.maximumQueueSize = maximumQueueSize;
 
-        setThreadFactory(ThreadFactoryProvider.builder().namePrefix(threadPrefix)
-                .logger(LoggerFactory.getLogger(loggerIdentity)).build().get());
+        final var logger = LoggerFactory.getLogger(loggerIdentity);
+
+        setThreadFactory(Thread.ofPlatform()
+            .name(threadPrefix + "-", 0)
+            .uncaughtExceptionHandler((thread, exception)
+                -> logger.error("Thread terminated due to uncaught exception: {}", thread.getName(), exception))
+            .factory());
 
         executorQueue = (ExecutorQueue)super.getQueue();
 
