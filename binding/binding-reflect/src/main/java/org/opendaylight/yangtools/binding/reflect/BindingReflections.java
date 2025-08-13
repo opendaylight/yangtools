@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "14.0.16", forRemoval = true)
 public final class BindingReflections {
     private static final Logger LOG = LoggerFactory.getLogger(BindingReflections.class);
     private static final LoadingCache<Class<?>, Optional<QName>> CLASS_TO_QNAME = CacheBuilder.newBuilder()
@@ -184,7 +185,8 @@ public final class BindingReflections {
             final QName module = getModuleInfo(key).getName();
             if (Augmentation.class.isAssignableFrom(key)) {
                 return module;
-            } else if (isRpcType(key)) {
+            }
+            if (isRpcType(key)) {
                 final String className = key.getSimpleName();
                 if (className.endsWith(Naming.RPC_OUTPUT_SUFFIX)) {
                     return YangConstants.operationOutputQName(module.getModule()).intern();
