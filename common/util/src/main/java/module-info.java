@@ -23,6 +23,5 @@ module org.opendaylight.yangtools.util {
     requires static com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
     requires static org.gaul.modernizer_maven_annotations;
-    requires static org.immutables.value.annotations;
     requires static org.osgi.annotation.bundle;
 }

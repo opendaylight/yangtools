@@ -57,12 +57,6 @@
             <groupId>org.gaul</groupId>
             <artifactId>modernizer-maven-annotations</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.immutables</groupId>
-            <artifactId>value</artifactId>
-            <classifier>annotations</classifier>
-            <optional>true</optional>
-        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
