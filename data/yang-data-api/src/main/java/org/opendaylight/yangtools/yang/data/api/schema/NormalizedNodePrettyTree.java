@@ -79,7 +79,6 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
                     default -> sb.append("= (").append(data.bodyObjectModel().getName()).append(')');
                 }
             }
-            default -> throw new IllegalStateException("Unhandled node " + node);
         }
     }
 
