@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.ir;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.IOException;
 import org.opendaylight.yangtools.concepts.PrettyTree;
 
 /**
@@ -22,7 +23,7 @@ final class IRStatementPrettyTree extends PrettyTree {
     }
 
     @Override
-    public void appendTo(final StringBuilder sb, final int depth) {
-        statement.toYangFragment(sb);
+    public Appendable appendTo(final Appendable appendable, final int depth) throws IOException {
+        return statement.toYangFragment(appendable);
     }
 }

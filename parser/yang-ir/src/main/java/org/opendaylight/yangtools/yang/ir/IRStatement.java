@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
@@ -209,22 +210,22 @@ public abstract sealed class IRStatement extends AbstractIRObject implements Pre
     }
 
     @Override
-    final StringBuilder toYangFragment(final StringBuilder sb) {
-        keyword.toYangFragment(sb);
+    final Appendable toYangFragment(final Appendable appendable) throws IOException {
+        keyword.toYangFragment(appendable);
         if (argument != null) {
-            argument.toYangFragment(sb.append(' '));
+            argument.toYangFragment(appendable.append(' '));
         }
 
         final var statements = statements();
         if (statements.isEmpty()) {
-            return sb.append(';');
+            return appendable.append(';');
         }
 
-        sb.append(" {\n");
+        appendable.append(" {\n");
         for (var stmt : statements) {
-            stmt.toYangFragment(sb).append('\n');
+            stmt.toYangFragment(appendable).append('\n');
         }
-        return sb.append('}');
+        return appendable.append('}');
     }
 
     @Override

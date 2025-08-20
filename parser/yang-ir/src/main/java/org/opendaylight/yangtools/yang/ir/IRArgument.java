@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -82,13 +83,13 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
 
         @Override
-        StringBuilder toYangFragment(final StringBuilder sb) {
+        Appendable toYangFragment(final Appendable appendable) throws IOException {
             final var it = parts.iterator();
-            it.next().toYangFragment(sb);
+            it.next().toYangFragment(appendable);
             while (it.hasNext()) {
-                it.next().toYangFragment(sb.append(" + "));
+                it.next().toYangFragment(appendable.append(" + "));
             }
-            return sb;
+            return appendable;
         }
     }
 
@@ -187,8 +188,8 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
 
         @Override
-        StringBuilder toYangFragment(final StringBuilder sb) {
-            return sb.append(string);
+        Appendable toYangFragment(final Appendable appendable) throws IOException {
+            return appendable.append(string);
         }
     }
 
@@ -198,10 +199,10 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
 
         @Override
-        StringBuilder toYangFragment(final StringBuilder sb) {
+        Appendable toYangFragment(final Appendable appendable) throws IOException {
             // Note this is just an approximation. We do not have enough state knowledge to restore any whitespace we
             // may have trimmed.
-            return super.toYangFragment(sb.append('"')).append('"');
+            return super.toYangFragment(appendable.append('"')).append('"');
         }
     }
 
@@ -213,8 +214,8 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
 
         @Override
-        StringBuilder toYangFragment(final StringBuilder sb) {
-            return super.toYangFragment(sb.append('\'')).append('\'');
+        Appendable toYangFragment(final Appendable appendable) throws IOException {
+            return super.toYangFragment(appendable.append('\'')).append('\'');
         }
     }
 

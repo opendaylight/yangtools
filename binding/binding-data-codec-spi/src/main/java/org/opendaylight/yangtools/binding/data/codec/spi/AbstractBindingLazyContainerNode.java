@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.data.codec.spi;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ForwardingObject;
+import java.io.IOException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -72,8 +73,8 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
         // Do not touch delegate() until we really need to
         return new PrettyTree() {
             @Override
-            public void appendTo(final StringBuilder sb, final int depth) {
-                delegate().prettyTree().appendTo(sb, depth);
+            public Appendable appendTo(final Appendable appendable, final int depth) throws IOException {
+                return delegate().prettyTree().appendTo(appendable, depth);
             }
         };
     }

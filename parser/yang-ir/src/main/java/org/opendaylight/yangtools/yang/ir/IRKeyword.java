@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.ir;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.io.IOException;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -49,8 +50,8 @@ public abstract sealed class IRKeyword extends AbstractIRObject {
         }
 
         @Override
-        StringBuilder toYangFragment(final StringBuilder sb) {
-            return sb.append(prefix).append(':').append(identifier());
+        Appendable toYangFragment(final Appendable appendable) throws IOException {
+            return appendable.append(prefix).append(':').append(identifier());
         }
     }
 
@@ -74,8 +75,8 @@ public abstract sealed class IRKeyword extends AbstractIRObject {
         }
 
         @Override
-        StringBuilder toYangFragment(final StringBuilder sb) {
-            return sb.append(identifier());
+        Appendable toYangFragment(final Appendable appendable) throws IOException {
+            return appendable.append(identifier());
         }
     }
 

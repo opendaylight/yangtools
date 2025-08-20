@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,5 +58,14 @@ final class PrettyTreeIndent {
             remaining -= INDENT_STRINGS_SIZE;
         }
         sb.append(INDENT_STRINGS[remaining]);
+    }
+
+    static void indent(final Appendable appendable, final int depth) throws IOException {
+        int remaining = depth;
+        while (remaining >= INDENT_STRINGS_SIZE) {
+            appendable.append(INDENT_STRINGS[INDENT_STRINGS_SIZE - 1]);
+            remaining -= INDENT_STRINGS_SIZE;
+        }
+        appendable.append(INDENT_STRINGS[remaining]);
     }
 }

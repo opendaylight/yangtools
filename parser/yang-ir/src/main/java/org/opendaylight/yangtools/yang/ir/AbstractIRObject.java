@@ -8,19 +8,33 @@
 package org.opendaylight.yangtools.yang.ir;
 
 import com.google.common.base.MoreObjects;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
+@NonNullByDefault
 abstract sealed class AbstractIRObject implements Immutable permits IRArgument, IRKeyword, IRStatement {
     @Override
     public abstract int hashCode();
 
     @Override
-    public abstract boolean equals(Object obj);
+    public abstract boolean equals(@Nullable Object obj);
 
     @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("fragment", toYangFragment(new StringBuilder())).toString();
     }
 
-    abstract StringBuilder toYangFragment(StringBuilder sb);
+    final StringBuilder toYangFragment(final StringBuilder sb) {
+        try {
+            toYangFragment((Appendable) sb);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return sb;
+    }
+
+    abstract Appendable toYangFragment(Appendable appendable) throws IOException;
 }
