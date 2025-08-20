@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.concepts;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.io.IOException;
 import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -50,6 +51,26 @@ public abstract class PrettyTree implements Supplier<String> {
     public abstract void appendTo(@NonNull StringBuilder sb, int depth);
 
     /**
+     * Format this object into specified {@link Appendable} starting at specified initial depth.
+     *
+     * @param appendable Target {@link Appendable}
+     * @param depth Initial nesting depth
+     * @throws NullPointerException if {@code appendable} is null
+     * @throws IllegalArgumentException if {@code depth} is negative
+     * @throws IOException if an I/O error occurs
+     */
+    public void appendTo(@NonNull Appendable appendable, int depth) throws IOException {
+        switch (appendable) {
+            case StringBuilder sb -> appendTo(sb, depth);
+            default -> {
+                final var sb = new StringBuilder();
+                appendTo(sb, depth);
+                appendable.append(sb);
+            }
+        }
+    }
+
+    /**
      * Append a number of spaces equivalent to specified tree nesting depth into the specified {@link StringBuilder}.
      *
      * @param sb Target {@link StringBuilder}
@@ -60,5 +81,19 @@ public abstract class PrettyTree implements Supplier<String> {
     protected static final void appendIndent(final @NonNull StringBuilder sb, final int depth) {
         checkArgument(depth >= 0, "Invalid depth %s", depth);
         PrettyTreeIndent.indent(sb, depth);
+    }
+
+    /**
+     * Append a number of spaces equivalent to specified tree nesting depth into the specified {@link Appendable}.
+     *
+     * @param appendable Target {@link Appendable}
+     * @param depth Nesting depth
+     * @throws NullPointerException if {@code appendable} is null
+     * @throws IllegalArgumentException if {@code depth} is negative
+     * @throws IOException if an I/O error occurs
+     */
+    protected static final void appendIndent(final @NonNull Appendable appendable, final int depth) throws IOException {
+        checkArgument(depth >= 0, "Invalid depth %s", depth);
+        PrettyTreeIndent.indent(appendable, depth);
     }
 }

@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Base64;
 import java.util.Locale;
 import org.eclipse.jdt.annotation.NonNull;
@@ -28,11 +30,20 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
 
     @Override
     public void appendTo(final StringBuilder sb, final int depth) {
+        try {
+            appendNode(sb, depth, null, node);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
+    public void appendTo(final Appendable sb, final int depth) throws IOException {
         appendNode(sb, depth, null, node);
     }
 
-    private static void appendNode(final StringBuilder sb, final int depth, final QNameModule parentNamespace,
-            final NormalizedNode node) {
+    private static void appendNode(final Appendable sb, final int depth, final QNameModule parentNamespace,
+            final NormalizedNode node) throws IOException {
         final String simpleName = node.contract().getSimpleName();
         appendIndent(sb, depth);
         sb.append(simpleName.toLowerCase(Locale.ROOT).charAt(0)).append(simpleName, 1, simpleName.length()).append(' ');
@@ -65,7 +76,8 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
                 switch (value) {
                     case byte[] bytes -> sb.append("(byte[])").append(Base64.getEncoder().encodeToString(bytes));
                     case String str -> appendString(sb, str);
-                    default -> sb.append(value);
+                    case CharSequence csq -> sb.append(csq);
+                    default -> sb.append(value.toString());
                 }
             }
             case ForeignDataNode<?> data -> {
@@ -82,13 +94,13 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
         }
     }
 
-    private static boolean appendNamespace(final StringBuilder sb, final QNameModule parent,
-            final QNameModule current) {
+    private static boolean appendNamespace(final Appendable sb, final QNameModule parent,
+            final QNameModule current) throws IOException {
         if (!current.equals(parent)) {
-            sb.append('(').append(current.namespace());
+            sb.append('(').append(current.namespace().toString());
             final var rev = current.revision();
             if (rev != null) {
-                sb.append('@').append(rev);
+                sb.append('@').append(rev.toString());
             }
             sb.append(')');
             return true;
@@ -96,7 +108,7 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
         return false;
     }
 
-    private static void appendString(final StringBuilder sb, final String str) {
+    private static void appendString(final Appendable sb, final String str) throws IOException {
         // TODO: do some escaping: '\r' '\n' '"' '\\' to make things even more zazzy
         sb.append('"').append(str).append('"');
     }
