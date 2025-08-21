@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.ri.stmt;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -581,7 +580,6 @@ public final class EffectiveStatements {
         return sbCopyLeafList(original, argument, flags);
     }
 
-    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Ungrokked pattern cast")
     private static LeafListEffectiveStatement sbCopyLeafList(final LeafListEffectiveStatement original,
             final QName argument, final int flags) {
         return switch (original) {
