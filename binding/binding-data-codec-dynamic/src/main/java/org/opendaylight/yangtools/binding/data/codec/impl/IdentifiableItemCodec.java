@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -164,6 +165,8 @@ abstract sealed class IdentifiableItemCodec {
     }
 
     @SuppressWarnings("checkstyle:illegalThrows")
+    @SuppressFBWarnings(value = "THROWS_METHOD_THROWS_CLAUSE_THROWABLE",
+        justification = "https://github.com/spotbugs/spotbugs/issues/3644")
     abstract @NonNull Key<?> deserializeIdentifierImpl(@NonNull NodeIdentifierWithPredicates nip) throws Throwable;
 
     abstract @NonNull NodeIdentifierWithPredicates serializeIdentifier(QName qname, Key<?> key);
