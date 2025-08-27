@@ -7,10 +7,8 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
-import javax.annotation.processing.Generated;
 import org.immutables.value.Value;
 import org.slf4j.Logger;
 
@@ -23,9 +21,7 @@ import org.slf4j.Logger;
  * @author Michael Vorburger.ch
  */
 @Value.Immutable
-@Value.Style(stagedBuilder = true, allowedClasspathAnnotations = {
-    SuppressWarnings.class, Generated.class, SuppressFBWarnings.class,
-})
+@Value.Style(stagedBuilder = true, allowedClasspathAnnotations = { SuppressWarnings.class })
 @Deprecated(since = "14.0.16", forRemoval = true)
 public abstract class ThreadFactoryProvider {
 

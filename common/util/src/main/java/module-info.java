@@ -17,7 +17,6 @@ module org.opendaylight.yangtools.util {
     requires tech.pantheon.triemap;
 
     // Annotations
-    requires static transitive java.compiler;
     requires static transitive java.management;
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
