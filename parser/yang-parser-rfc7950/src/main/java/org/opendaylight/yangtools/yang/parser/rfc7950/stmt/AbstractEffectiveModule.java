@@ -15,11 +15,9 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -52,6 +50,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -65,34 +64,38 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
 
-    // FIXME: these should be detected in inference
-    @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Legacy namespace indexing")
     protected AbstractEffectiveModule(final Current<Unqualified, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final String prefix) {
         super(stmt.declared(), substatements);
-
         this.prefix = requireNonNull(prefix);
 
-        final Set<GroupingDefinition> mutableGroupings = new LinkedHashSet<>();
-        final Set<UsesNode> mutableUses = new LinkedHashSet<>();
-        final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        final var mutableGroupings = new LinkedHashSet<GroupingDefinition>();
+        final var mutableUses = new LinkedHashSet<UsesNode>();
+        final var mutableTypeDefinitions = new LinkedHashSet<TypeDefinition<?>>();
 
+        // FIXME: collisions reported here should be detected in inference
         for (var effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UsesNode usesNode && !mutableUses.add(usesNode)) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
+                throwSourceException(stmt, effectiveStatement);
             }
             if (effectiveStatement instanceof TypedefEffectiveStatement typedef
                     && !mutableTypeDefinitions.add(typedef.getTypeDefinition())) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
+                throwSourceException(stmt, effectiveStatement);
             }
             if (effectiveStatement instanceof GroupingDefinition grouping && !mutableGroupings.add(grouping)) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
+                throwSourceException(stmt, effectiveStatement);
             }
         }
 
         groupings = ImmutableSet.copyOf(mutableGroupings);
         typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         uses = ImmutableSet.copyOf(mutableUses);
+    }
+
+    // Split out to fool SpotBugs
+    private static void throwSourceException(final EffectiveStmtCtx.Current<?, ?> stmt,
+            final EffectiveStatement<?, ?> effectiveStatement) {
+        throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
     }
 
     @Override
