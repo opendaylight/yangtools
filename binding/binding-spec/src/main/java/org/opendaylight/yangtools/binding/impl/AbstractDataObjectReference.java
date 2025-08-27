@@ -85,7 +85,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
 
     @Override
     public final boolean equals(final Object obj) {
-        return this == obj || obj instanceof AbstractDataObjectReference other
+        return this == obj || obj instanceof AbstractDataObjectReference<?, ?> other
             && Iterables.elementsEqual(steps, other.steps);
     }
 
