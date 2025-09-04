@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import com.google.common.annotations.Beta;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -54,7 +53,6 @@ public final class ConcreteTypes {
         return typeBuilderOf(baseType, qname);
     }
 
-    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Ungrokked pattern match cast")
     private static ConcreteTypeBuilder<?> typeBuilderOf(final TypeDefinition<?> baseType, final QName qname) {
         return switch (baseType) {
             case BinaryTypeDefinition binary -> concreteBinaryBuilder(binary, qname);
