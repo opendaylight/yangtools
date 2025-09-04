@@ -191,17 +191,13 @@ public abstract class DurationStatisticsTracker {
     }
 
     private static TimeUnit chooseUnit(final long nanos) {
-        // TODO: this could be inlined, as we are doing needless divisions
-        if (NANOSECONDS.toSeconds(nanos) > 0) {
+        if (nanos > 1_000_000_000) {
             return SECONDS;
         }
-        if (NANOSECONDS.toMillis(nanos) > 0) {
+        if (nanos > 1_000_000) {
             return MILLISECONDS;
         }
-        if (NANOSECONDS.toMicros(nanos) > 0) {
-            return MICROSECONDS;
-        }
-        return NANOSECONDS;
+        return nanos > 1_000 ? MICROSECONDS : NANOSECONDS;
     }
 
     private static String abbreviate(final TimeUnit unit) {
