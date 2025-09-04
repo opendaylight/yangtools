@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -168,7 +167,6 @@ public final class CaseStatementSupport
                 .toFlags();
     }
 
-    @SuppressFBWarnings(value = "NP_BOOLEAN_RETURN_NULL", justification = "Internal use tagged with @Nullable")
     private static @Nullable Boolean substatementEffectiveConfig(
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         for (EffectiveStatement<?, ?> stmt : substatements) {
