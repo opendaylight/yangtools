@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -113,8 +112,6 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
 
     private final @NonNull InstanceIdentifierJSONCodec iidCodec;
 
-    @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
-        justification = "https://github.com/spotbugs/spotbugs/issues/1867")
     private JSONCodecFactory(final @NonNull EffectiveModelContext context,
             final @NonNull CodecCache<JSONCodec<?>> cache,
             final BiFunction<EffectiveModelContext, JSONCodecFactory, @NonNull InstanceIdentifierJSONCodec> iidCodec) {
