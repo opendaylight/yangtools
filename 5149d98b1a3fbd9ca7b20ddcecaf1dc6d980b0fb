@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "782992a5_01ba695a",
+        "filename": "tests/test_yang_model_validator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-09-16T22:00:11Z",
+      "side": 0,
+      "message": "we have not dealt with everything, just OpenConfig\nthe rest should be left here for follow-up patches",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 16
+      },
+      "revId": "5149d98b1a3fbd9ca7b20ddcecaf1dc6d980b0fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
