@@ -63,6 +63,24 @@
       "message": "Do we still need this file? I guess is there as a reference to all original yang files.",
       "revId": "5149d98b1a3fbd9ca7b20ddcecaf1dc6d980b0fb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3261981d_b31b9d3d",
+        "filename": "tests/yang_model_validator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-09-18T06:31:41Z",
+      "side": 0,
+      "message": "will be kept for future work",
+      "parentUuid": "82e01069_2b617479",
+      "revId": "5149d98b1a3fbd9ca7b20ddcecaf1dc6d980b0fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
