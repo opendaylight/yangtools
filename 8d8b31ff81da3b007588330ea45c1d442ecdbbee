@@ -94,6 +94,30 @@
       },
       "revId": "8d8b31ff81da3b007588330ea45c1d442ecdbbee",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bf0b8e8_48bb784e",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-09-18T05:58:24Z",
+      "side": 1,
+      "message": "you\u0027re right. I lost it between the patches. added back. check 13 please",
+      "parentUuid": "e60de973_ad855fdc",
+      "range": {
+        "startLine": 103,
+        "startChar": 13,
+        "endLine": 103,
+        "endChar": 38
+      },
+      "revId": "8d8b31ff81da3b007588330ea45c1d442ecdbbee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
