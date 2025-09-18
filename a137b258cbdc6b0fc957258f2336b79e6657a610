@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e2cda7e_d20de04e",
+        "filename": "tests/.gitignore",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-09-18T05:15:31Z",
+      "side": 1,
+      "message": "As we will be using only single final directory for allure report, we probably do not need two to specify in `.gitignore` (`allure-report` and `allure-results`)",
+      "revId": "a137b258cbdc6b0fc957258f2336b79e6657a610",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
