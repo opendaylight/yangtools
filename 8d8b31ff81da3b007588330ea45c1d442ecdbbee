@@ -70,6 +70,30 @@
       },
       "revId": "8d8b31ff81da3b007588330ea45c1d442ecdbbee",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e60de973_ad855fdc",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-09-18T05:22:59Z",
+      "side": 1,
+      "message": "It is also possible to specify `activeByDefault` to `false` it explicitly by using something like here https://git.opendaylight.org/gerrit/c/bgpcep/+/117341/22/pom.xml#153",
+      "parentUuid": "50720d42_c1e205e6",
+      "range": {
+        "startLine": 103,
+        "startChar": 13,
+        "endLine": 103,
+        "endChar": 38
+      },
+      "revId": "8d8b31ff81da3b007588330ea45c1d442ecdbbee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
