@@ -16,6 +16,24 @@
       "message": "As we will be using only single final directory for allure report, we probably do not need two to specify in `.gitignore` (`allure-report` and `allure-results`)",
       "revId": "a137b258cbdc6b0fc957258f2336b79e6657a610",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec85ccc8_b3f9ab9c",
+        "filename": "tests/.gitignore",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-09-18T05:58:08Z",
+      "side": 1,
+      "message": "we need both. allure-results stores collected results from testing execution. allure-report holds HTML generated report after \"allure generate\" command",
+      "parentUuid": "1e2cda7e_d20de04e",
+      "revId": "a137b258cbdc6b0fc957258f2336b79e6657a610",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

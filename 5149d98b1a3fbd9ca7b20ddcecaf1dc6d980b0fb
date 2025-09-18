@@ -22,6 +22,30 @@
       },
       "revId": "5149d98b1a3fbd9ca7b20ddcecaf1dc6d980b0fb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4098b814_e31ad05f",
+        "filename": "tests/test_yang_model_validator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-09-18T05:58:08Z",
+      "side": 0,
+      "message": "Done, canceled removal",
+      "parentUuid": "782992a5_01ba695a",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 16
+      },
+      "revId": "5149d98b1a3fbd9ca7b20ddcecaf1dc6d980b0fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
