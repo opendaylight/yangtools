@@ -34,6 +34,24 @@
       "parentUuid": "8b4c9099_dbb4da4a",
       "revId": "4bbe2bed3e17bdd057d032b877df4bb9e09de96e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dff608bb_5241e40a",
+        "filename": "tests/.gitignore",
+        "patchSetId": 4
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-09-19T07:20:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e773f005_225c3a6e",
+      "revId": "4bbe2bed3e17bdd057d032b877df4bb9e09de96e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

@@ -81,6 +81,24 @@
       "parentUuid": "82e01069_2b617479",
       "revId": "5149d98b1a3fbd9ca7b20ddcecaf1dc6d980b0fb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b4f0f50_34bf0641",
+        "filename": "tests/yang_model_validator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-09-19T07:20:19Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "3261981d_b31b9d3d",
+      "revId": "5149d98b1a3fbd9ca7b20ddcecaf1dc6d980b0fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
