@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffe91fec_6eb92f80",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-09-29T12:36:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "701a1edf_cc17fef7",
+      "revId": "4bbe2bed3e17bdd057d032b877df4bb9e09de96e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a3f668bf_d33a7a6e",
@@ -31,6 +49,24 @@
       "writtenOn": "2025-09-26T07:30:01Z",
       "side": 1,
       "message": "ignore src?",
+      "revId": "4bbe2bed3e17bdd057d032b877df4bb9e09de96e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "876f2c34_4041d70f",
+        "filename": "tests/.gitignore",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-09-29T12:36:28Z",
+      "side": 1,
+      "message": "yes. this folder is where yangfiles stored for tests. If I understand correctly that path is needed for validator to run properly. we remove and recreate it during the test.",
+      "parentUuid": "a3f668bf_d33a7a6e",
       "revId": "4bbe2bed3e17bdd057d032b877df4bb9e09de96e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
