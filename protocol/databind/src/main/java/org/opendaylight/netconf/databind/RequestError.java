@@ -45,12 +45,25 @@ public record RequestError(
         this(type, tag, new ErrorMessage(message), null, null, null);
     }
 
+    /**
+     * {@return a RequestError equivalent of specified {@link RpcError}}
+     * @param rpcError the {@link RpcError}
+     */
     public static RequestError ofRpcError(final RpcError rpcError) {
+        return ofRpcError(rpcError, null);
+    }
+
+    /**
+     * {@return a RequestError equivalent of specified {@link RpcError} with an optional {@link ErrorPath}}
+     * @param rpcError the {@link RpcError}
+     * @param path the {@link ErrorPath}
+     */
+    public static RequestError ofRpcError(final RpcError rpcError, final @Nullable ErrorPath path) {
         final var tag = rpcError.getTag();
         final var errorTag = tag != null ? tag : ErrorTag.OPERATION_FAILED;
         final var errorMessage = rpcError.getMessage();
         return new RequestError(rpcError.getErrorType(), errorTag,
-            errorMessage != null ? new ErrorMessage(errorMessage) : null, rpcError.getApplicationTag(), null,
+            errorMessage != null ? new ErrorMessage(errorMessage) : null, rpcError.getApplicationTag(), path,
             extractErrorInfo(rpcError));
     }
 
