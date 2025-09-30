@@ -73,7 +73,7 @@ public abstract class AbstractRequest<R> implements Request<R> {
     }
 
     @Override
-    public final void completeWith(final RequestException failure) {
+    public final void failWith(final RequestException failure) {
         onFailure(requireNonNull(failure));
     }
 

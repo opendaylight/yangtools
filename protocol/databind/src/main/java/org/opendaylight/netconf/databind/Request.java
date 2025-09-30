@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A request which can be completed either {@link #completeWith(Object) successfully} or
- * {@link #completeWith(RequestException) unsuccessfully}. Each request has two invariants:
+ * {@link #failWith(RequestException) unsuccessfully}. Each request has two invariants:
  * <ol>
  *   <li>it has a unique identifier, {@link #uuid()}</li>
  *   <li>it has a {@link #principal()}, potentially unknown, which on behalf of whom the request is being made</li>
@@ -31,7 +31,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * {@link Futures#transform(ListenableFuture, com.google.common.base.Function, Executor)} would do.
  *
  * <p>Completion is always signalled in the calling thread. Callers of {@link #completeWith(Object)} and
- * {@link #completeWith(RequestException)} need to ensure that all side effects of the request have been completed. It
+ * {@link #failWith(RequestException)} need to ensure that all side effects of the request have been completed. It
  * is recommended that callers do not perform any further operations and just unwind the stack.
  *
  * @param <R> type of reported result
@@ -46,9 +46,7 @@ public interface Request<R> {
     UUID uuid();
 
     /**
-     * Returns the {@link Principal} making this request.
-     *
-     * @return the Principal making this request, {@code null} if unauthenticated
+     * {@return the Principal making this request, {@code null} if unauthenticated}
      */
     @Nullable Principal principal();
 
@@ -64,7 +62,17 @@ public interface Request<R> {
     @Beta
     <I> Request<I> transform(Function<I, R> function);
 
+    /**
+     * Complete this request with specified result.
+     *
+     * @param result the result
+     */
     void completeWith(R result);
 
-    void completeWith(RequestException failure);
+    /**
+     * Fail this request with specified {@link RequestException}.
+     *
+     * @param failure the {@link RequestException}
+     */
+    void failWith(RequestException failure);
 }
