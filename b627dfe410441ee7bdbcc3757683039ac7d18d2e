@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "229bf0cc_811acc32",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2025-10-08T08:13:19Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9816cfb3_ba188fd0",
+      "revId": "b627dfe410441ee7bdbcc3757683039ac7d18d2e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8c248830_2b5fa924",
@@ -48,6 +66,24 @@
       "writtenOn": "2025-07-04T06:29:55Z",
       "side": 1,
       "message": "copyright",
+      "revId": "b627dfe410441ee7bdbcc3757683039ac7d18d2e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "813deb5d_fe791bd6",
+        "filename": "tests/tox.ini",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2025-10-08T08:13:19Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "d74b2a82_3a8c051b",
       "revId": "b627dfe410441ee7bdbcc3757683039ac7d18d2e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
