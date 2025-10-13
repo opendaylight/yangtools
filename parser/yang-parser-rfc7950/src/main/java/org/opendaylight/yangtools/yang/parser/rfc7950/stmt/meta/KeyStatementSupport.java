@@ -45,8 +45,8 @@ public final class KeyStatementSupport
     private static final CharMatcher SEP = CharMatcher.anyOf(" \n\r\t").precomputed();
 
     /**
-     * Splitter corresponding to {@code key-arg} ABNF as defined
-     * in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-12">RFC6020, section 12</a>:
+     * Splitter corresponding to {@code key-arg}'s ABNF as defined
+     * in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-12">RFC6020, section 12</a>.
      *
      * <p>{@code key-arg             = node-identifier *(sep node-identifier)}
      *

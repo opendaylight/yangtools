@@ -306,7 +306,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
     }
 
     /**
-     * Formats {@link Revision} representing revision to format {@code YYYY-mm-dd}
+     * Formats {@link Revision} representing revision to format {@code YYYY-mm-dd}.
      *
      * <p>YANG Specification defines format for {@code revision<} as YYYY-mm-dd. This format for revision is reused
      * across multiple places such as capabilities URI, YANG modules, etc.

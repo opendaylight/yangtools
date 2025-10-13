@@ -170,7 +170,7 @@ import org.slf4j.LoggerFactory;
  *     {@code identityref}, but have an additional twist: a {@leafref} can target a relative path, which may only be
  *     resolved at a particular instantiation.
  *
- *     Take the example of the following model:
+ *     <p>Take the example of the following model:
  *     <pre>
  *       <code>
  *         grouping grp {

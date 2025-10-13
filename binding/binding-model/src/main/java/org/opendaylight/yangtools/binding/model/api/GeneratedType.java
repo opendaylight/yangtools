@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Every Java interface has to be specified with:
+ * A generated type. Every Java interface has to be specified with:
  * <ul>
  * <li><code>package</code> that belongs into</li>
  * <li><code>interface</code> name (with commentary that <b>SHOULD</b> be present to proper define interface and base
