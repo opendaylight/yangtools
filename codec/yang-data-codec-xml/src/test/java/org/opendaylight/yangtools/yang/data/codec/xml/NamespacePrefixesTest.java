@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -52,9 +50,9 @@ class NamespacePrefixesTest {
         // We are generating MAX_COUNTER_VALUE + 27 prefixes total, so we should encounter a reset in prefix a start
         // from 0 at some point. At the end, there should be only 27 values in RandomPrefix cache
         assertEquals(MAX_COUNTER, a.emittedPrefixes().size());
-        assertThat(allGenerated, not(hasItem("xml")));
-        assertThat(allGenerated, not(hasItem("xmla")));
-        assertThat(allGenerated, not(hasItem("xmlz")));
+        assertThat(allGenerated).doesNotContain("xml");
+        assertThat(allGenerated).doesNotContain("xmla");
+        assertThat(allGenerated).doesNotContain("xmlz");
 
         assertEquals(1, Iterables.frequency(allGenerated, "a"));
     }
