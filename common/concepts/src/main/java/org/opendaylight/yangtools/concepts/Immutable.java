@@ -7,24 +7,44 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
- * Immutable Object - object does not change its externally-observable state during its lifetime.
+ * Marker interface for all classes which their {@code effective immutability} with regards to their
+ * externally-observable state. This is a weaker version of
+ * <a href="https://errorprone.info/bugpattern/Immutable">Error Prone's @Immutable</a>, where the contract cannot be
+ * statically expressed.
  *
- * <p>Marker interface for objects which are immutable. This interface should be used directly on objects, preferably
- * final, which are eligible for the JSR-305 {@code javax.annotation.concurrent.Immutable} annotation and objects
- * implementing this interface are required to abide to interface contract specified by {@code @Immutable}.
+ * <p>As a direct consequence, this object is safe to use from multiple threads concurrently, without any unreasonable
+ * overhead (such as {@code synchronized}).
  *
- * <p>The reason for the existence of this interface is twofold: unlike {@code @Immutable}, it is visible at runtime and
- * objects can be quickly checked for compliance using an 'instanceof' check. This is useful for code which needs to
- * capture a point-in-time snapshot of otherwise unknown objects -- a typical example being logging/tracing systems.
- * Such systems would normally have to rely on serializing the object to get a stable checkpoint. Objects marked with
- * this interface are guaranteed to remain stable, thus already being a checkpoint for all intents and purposes, so
- * aside from retaining a reference no further action on them is necessary.
+ * <p>The design as an explicit interface has further benefits in that objects can be efficiently queried for this
+ * contract via a simple {@code instanceof} rather than having to do reflection. This is important for infrastructure
+ * tasks such as formatting objects for logging purposes: {@link Immutable} objects can be retained and their
+ * {@link Object#toString()} invoked at some later point in time, possibly in a completely different thread. This is,
+ * by definition, guaranteed to be safe, as {@link #toString()} is part of an object's observable state.
  *
- * <p>Implementations of this interface must not change any public state during their entire lifetime.
+ * {@apiNote}
+ *     This interface uses an internal modeling trick to make it impossible to implement {@link Immutable}
+ *     and {@link Mutable} at the same time. Violations are expected to be flagged by {@code javac}, but we have not
+ *     ascertained JVM would reject such classes.
  *
- * <p>This interface is mutually exclusive with {@link Mutable} and other {@link MutationBehaviour}s.
+ * {@implSpec}
+ *     Implementing class must abide the {@code @Immutable} contract just as if they were annotated as such, but may
+ *     be implemented with deferred materialization. When implementing such a strategy, implementations should prefer
+ *     concurrent computation and with first-wins memoization with {@code getAcuire()} and {@code setRelease()} memory
+ *     effects.
  */
+// FIXME: add a bytecode generator test which would attempt to load an interface that 'extends Mutable, Immutable' and
+//        clarify above apiNote to provide exact (JVMS-rooted) semantics. If it becomes an absolute guarantee, promote
+//        the apiNode to full API contract.
+@NonNullByDefault
 public non-sealed interface Immutable extends MutationBehaviour<Immutable> {
-    // Marker interface only
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Any two invocations of this method are guaranteed to return a non-null {@link String#equals(Object)} value.
+     */
+    @Override
+    String toString();
 }
