@@ -20,6 +20,27 @@ serialization and deserialization as defined in IETF drafts and standards.
 * Integration of YANG model parsing into Maven build lifecycle and
   support for third-party generators processing  YANG models.
 
+
+## The gory details
+There are sorts of things here:
+* basic project infrastructure, including
+  * [the BOM](artifacts)
+  * [bnd-based parent](bnd-parent)
+  * [bundle-based parent](bnd-parent)
+  * [our documentation subproject](docs)
+  * [Karaf features](features)
+  * [Karaf distribution](karaf) meant for local testing
+* a few [baseline libraries](common) useful without much other context
+* a YANG-opinionated [XSD XPath library](xpath)
+* our take on a [YANG metamodel](model) supporting both as-declared and as-effective views on a set of YANG/YIN files
+* corresponding [YANG parser](parser), which really is a compiler, capable of turning a set of YANG/YIN file sources
+  into a YANG metamodel instance
+* our take on a model of [YANG-normalized data](data) and its streaming format
+* corresponding [serialization codecs](codec) to and from various serialization formats
+* our take on type-safe [Java Bindings for YANG](binding) with split compile-time and run-time parts
+* a [Maven plugin](plugin) for packaging YANG files with derived code and resources
+
+
 [RFC6020]:https://tools.ietf.org/html/rfc6020
 [RFC7950]:https://tools.ietf.org/html/rfc7950
 [RFC7951]:https://tools.ietf.org/html/rfc7951
