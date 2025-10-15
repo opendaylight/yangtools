@@ -100,9 +100,9 @@
             </build>
         </profile>
         <profile>
-            <id>integration-tests</id>
+            <id>it</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
