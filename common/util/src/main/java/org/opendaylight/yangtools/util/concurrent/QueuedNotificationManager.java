@@ -12,13 +12,11 @@ import java.util.concurrent.Executor;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
- * {@inheritDoc}
- *
- * <p>This class is pessimistic about listener type and uses identity mapping for comparing them. This is defensive
- * versus reused objects, maintaining semantics. This may not always be intended, for example if {@code L} is a
- * {@code String} which is being dynamically determined. In that case we do not want to use identity, but equality, as
- * otherwise the caller is forced to use {@link String#intern()} -- leading to interning in lookup, which is absolutely
- * unnecessary. In such use cases, use {@link EqualityQueuedNotificationManager} instead.
+ * A {@link NotificationManager} that is pessimistic about listener type and uses identity mapping for comparing them.
+ * This is defensive versus reused objects, maintaining semantics. This may not always be intended, for example if
+ * {@code L} is a {@code String} which is being dynamically determined. In that case we do not want to use identity, but
+ * equality, as otherwise the caller is forced to use {@link String#intern()} -- leading to interning in lookup, which
+ * is absolutely unnecessary. In such use cases, use {@link EqualityQueuedNotificationManager} instead.
  *
  * @author Thomas Pantelis
  */
