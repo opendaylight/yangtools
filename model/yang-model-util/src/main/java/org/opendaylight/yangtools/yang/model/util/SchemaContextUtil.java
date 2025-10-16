@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.model.util;
 import java.util.HashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
@@ -34,12 +32,12 @@ public final class SchemaContextUtil {
      */
     // FIXME: rehost to yang-repo-spi (or -api?)
     public static Set<SourceIdentifier> getConstituentModuleIdentifiers(final SchemaContext context) {
-        final Set<SourceIdentifier> ret = new HashSet<>();
+        final var ret = new HashSet<SourceIdentifier>();
 
-        for (Module module : context.getModules()) {
+        for (var module : context.getModules()) {
             ret.add(moduleToIdentifier(module));
 
-            for (Submodule submodule : module.getSubmodules()) {
+            for (var submodule : module.getSubmodules()) {
                 ret.add(moduleToIdentifier(submodule));
             }
         }
@@ -48,6 +46,6 @@ public final class SchemaContextUtil {
     }
 
     private static SourceIdentifier moduleToIdentifier(final ModuleLike module) {
-        return new SourceIdentifier(Unqualified.of(module.getName()), module.getRevision().orElse(null));
+        return new SourceIdentifier(Unqualified.of(module.getName()), module.getQNameModule().revision());
     }
 }
