@@ -12,6 +12,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 /**
  * This interface contains the methods for getting the data from the YANG module.
  */
-public interface Module extends ModuleLike, EffectiveStatementEquivalent<ModuleEffectiveStatement> {
+public non-sealed interface Module extends ModuleLike, EffectiveStatementEquivalent<ModuleEffectiveStatement> {
 
 }

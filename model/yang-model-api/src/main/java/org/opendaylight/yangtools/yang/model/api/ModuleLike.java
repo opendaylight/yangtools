@@ -18,8 +18,9 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  * This interface contains common methods for getting the schema contents from a YANG module or submodule.
  */
 @Beta
-public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable, NotificationNodeContainer,
-        QNameModuleAware {
+public sealed interface ModuleLike
+        extends DataNodeContainer, DocumentedNode, Immutable, NotificationNodeContainer, QNameModuleAware
+        permits Module, Submodule {
     /**
      * Returns the name of the module which is specified as argument of YANG {@code module} statement.
      *
