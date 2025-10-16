@@ -16,7 +16,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
@@ -40,7 +39,7 @@ final class ContextHolder implements Immutable, ModuleResourceResolver {
             final Class<? extends SourceRepresentation> representation) {
         checkArgument(YangTextSource.class.equals(requireNonNull(representation)),
             "Unsupported representation %s", representation);
-        final var id = ContextHolder.moduleToIdentifier(module);
+        final var id = module.getSourceIdentifier();
         return sources.contains(id)
                 ? Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/" + id.toYangFilename())
                         : Optional.empty();
@@ -52,9 +51,5 @@ final class ContextHolder implements Immutable, ModuleResourceResolver {
 
     @NonNull ImmutableSet<Module> getYangModules() {
         return modules;
-    }
-
-    static @NonNull SourceIdentifier moduleToIdentifier(final ModuleLike module) {
-        return new SourceIdentifier(Unqualified.of(module.getName()), module.getQNameModule().revision());
     }
 }

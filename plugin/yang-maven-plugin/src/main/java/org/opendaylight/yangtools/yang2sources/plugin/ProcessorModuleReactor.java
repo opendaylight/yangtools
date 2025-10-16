@@ -61,14 +61,14 @@ final class ProcessorModuleReactor {
 
         final var modules = new HashSet<Module>();
         for (var module : modelContext.getModules()) {
-            final var modId = ContextHolder.moduleToIdentifier(module);
+            final var modId = module.getSourceIdentifier();
             LOG.debug("Looking for source {}", modId);
             if (modelsInProject.containsKey(modId)) {
                 LOG.debug("Module {} belongs to current project", module);
                 modules.add(module);
 
                 for (var sub : module.getSubmodules()) {
-                    final var subId = ContextHolder.moduleToIdentifier(sub);
+                    final var subId = sub.getSourceIdentifier();
                     if (!modelsInProject.containsKey(subId)) {
                         LOG.warn("Submodule {} not found in input files", sub);
                     }

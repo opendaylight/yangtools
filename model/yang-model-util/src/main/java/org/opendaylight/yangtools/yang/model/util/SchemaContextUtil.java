@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
@@ -35,17 +33,13 @@ public final class SchemaContextUtil {
         final var ret = new HashSet<SourceIdentifier>();
 
         for (var module : context.getModules()) {
-            ret.add(moduleToIdentifier(module));
+            ret.add(module.getSourceIdentifier());
 
             for (var submodule : module.getSubmodules()) {
-                ret.add(moduleToIdentifier(submodule));
+                ret.add(submodule.getSourceIdentifier());
             }
         }
 
         return ret;
-    }
-
-    private static SourceIdentifier moduleToIdentifier(final ModuleLike module) {
-        return new SourceIdentifier(Unqualified.of(module.getName()), module.getQNameModule().revision());
     }
 }
