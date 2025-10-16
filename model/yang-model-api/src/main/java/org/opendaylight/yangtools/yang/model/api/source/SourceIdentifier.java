@@ -74,25 +74,6 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
         this(Unqualified.of(name), revision);
     }
 
-    public static @NonNull SourceIdentifier ofYinFileName(final String fileName) {
-        if (fileName.endsWith(RFC6020_YIN_FILE_EXTENSION)) {
-            return ofFileName(fileName.substring(0, fileName.length() - RFC6020_YIN_FILE_EXTENSION.length()));
-        }
-        throw new IllegalArgumentException("Filename " + fileName + " does not end with '.yin'");
-    }
-
-    public static @NonNull SourceIdentifier ofYangFileName(final String fileName) {
-        if (fileName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
-            return ofFileName(fileName.substring(0, fileName.length() - RFC6020_YANG_FILE_EXTENSION.length()));
-        }
-        throw new IllegalArgumentException("Filename '" + fileName + "' does not end with '.yang'");
-    }
-
-    private static @NonNull SourceIdentifier ofFileName(final String fileName) {
-        final var parsed = YangNames.parseFilename(fileName);
-        return new SourceIdentifier(parsed.getKey(), parsed.getValue());
-    }
-
     /**
      * Creates new YANG Schema source identifier for sources with or without a revision.
      *
@@ -104,6 +85,25 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      */
     public SourceIdentifier(final @NonNull String name, final @Nullable String revision) {
         this(name, revision != null ? Revision.of(revision) : null);
+    }
+
+    public static @NonNull SourceIdentifier ofYangFileName(final String fileName) {
+        if (fileName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
+            return ofFileName(fileName.substring(0, fileName.length() - RFC6020_YANG_FILE_EXTENSION.length()));
+        }
+        throw new IllegalArgumentException("Filename '" + fileName + "' does not end with '.yang'");
+    }
+
+    public static @NonNull SourceIdentifier ofYinFileName(final String fileName) {
+        if (fileName.endsWith(RFC6020_YIN_FILE_EXTENSION)) {
+            return ofFileName(fileName.substring(0, fileName.length() - RFC6020_YIN_FILE_EXTENSION.length()));
+        }
+        throw new IllegalArgumentException("Filename " + fileName + " does not end with '.yin'");
+    }
+
+    private static @NonNull SourceIdentifier ofFileName(final String fileName) {
+        final var parsed = YangNames.parseFilename(fileName);
+        return new SourceIdentifier(parsed.getKey(), parsed.getValue());
     }
 
     /**
