@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
@@ -59,7 +60,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
         E extends DataTreeAwareEffectiveStatement<Unqualified, D>>
         extends WithTypedefNamespace<Unqualified, D>
         implements ModuleLike, DocumentedNodeMixin<Unqualified, D>, NotificationNodeContainerCompat<Unqualified, D, E> {
-    private final String prefix;
+    private final @NonNull String prefix;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
@@ -99,17 +100,22 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     }
 
     @Override
-    public Unqualified argument() {
+    public final Unqualified argument() {
         return getDeclared().argument();
     }
 
     @Override
-    public String getName() {
+    public final @NonNull SourceIdentifier getSourceIdentifier() {
+        return new SourceIdentifier(argument(), getQNameModule().revision());
+    }
+
+    @Override
+    public final String getName() {
         return argument().getLocalName();
     }
 
     @Override
-    public String getPrefix() {
+    public final String getPrefix() {
         return prefix;
     }
 

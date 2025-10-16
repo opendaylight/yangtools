@@ -13,33 +13,42 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
  * This interface contains common methods for getting the schema contents from a YANG module or submodule.
  */
 @Beta
-public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable, NotificationNodeContainer,
-        QNameModuleAware {
+public interface ModuleLike
+        extends DataNodeContainer, DocumentedNode, Immutable, NotificationNodeContainer, QNameModuleAware {
+    /**
+     * {@return the {@code SourceIdentifier} of the file associated with this module or submodule}
+     */
+    // FIXME: 15.0.0: not default
+    default @NonNull SourceIdentifier getSourceIdentifier() {
+        return new SourceIdentifier(getName(), getQNameModule().revision());
+    }
+
     /**
      * Returns the name of the module which is specified as argument of YANG {@code module} statement.
      *
      * @return string with the name of the module
      */
-    String getName();
+    @NonNull String getName();
 
     /**
      * Returns the prefix of the module.
      *
      * @return string with the module prefix which is specified as argument of YANG {@code prefix} statement
      */
-    String getPrefix();
+    @NonNull String getPrefix();
 
     /**
      * Returns the YANG version.
      *
      * @return YANG version of this module.
      */
-    YangVersion getYangVersion();
+    @NonNull YangVersion getYangVersion();
 
     /**
      * Returns the module organization.
