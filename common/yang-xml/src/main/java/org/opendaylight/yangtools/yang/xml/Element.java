@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * A single XML element. This interface should not be implemented directly, but rather indirectly through its
  * {@link ContainerElement} and {@link TextElement} specializations.
  */
-public sealed interface Element extends Node permits ContainerElement, TextElement, ImmutableElement {
+public sealed interface Element extends Node permits ContainerElement, TextElement, ImmutableElement, W3CElement {
     /**
      * This element's {@link Attribute attribute}s.
      *

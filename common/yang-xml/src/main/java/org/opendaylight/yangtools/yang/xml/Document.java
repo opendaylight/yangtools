@@ -90,6 +90,16 @@ public interface Document {
     }
 
     /**
+     * Create a {@link Document} by wrapping a {@link org.w3c.dom.Document W3C document}.
+     *
+     * @param document backing {@link org.w3c.dom.Document}
+     * @return A {@link Document}
+     */
+    static @NonNull Document wrap(final org.w3c.dom.@NonNull Document document) {
+        return new W3CDocument(document);
+    }
+
+    /**
      * Return a new {@link Builder}.
      *
      * @return a new {@link Builder}

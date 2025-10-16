@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * that while XML applies namespace inheritance differently, both XML attributes and XML elements have the notion of
  * being identified by a {@link #namespace()} and a {@link #localName()}
  */
-public sealed interface Node permits Attribute, Element, ImmutableNode {
+public sealed interface Node permits Attribute, Element, ImmutableNode, W3CNode {
     /**
      * Return this node local name.
      *
