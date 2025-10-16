@@ -14,17 +14,12 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.common.io.CharStreams;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
@@ -61,19 +56,19 @@ final class ProcessorModuleReactor {
             parser.addLibSource(source);
         }
 
-        final EffectiveModelContext schemaContext = verifyNotNull(parser.buildEffectiveModel());
+        final var modelContext = verifyNotNull(parser.buildEffectiveModel());
         parser = null;
 
-        final Set<Module> modules = new HashSet<>();
-        for (Module module : schemaContext.getModules()) {
-            final SourceIdentifier modId = Util.moduleToIdentifier(module);
+        final var modules = new HashSet<Module>();
+        for (var module : modelContext.getModules()) {
+            final var modId = ContextHolder.moduleToIdentifier(module);
             LOG.debug("Looking for source {}", modId);
             if (modelsInProject.containsKey(modId)) {
                 LOG.debug("Module {} belongs to current project", module);
                 modules.add(module);
 
-                for (Submodule sub : module.getSubmodules()) {
-                    final SourceIdentifier subId = Util.moduleToIdentifier(sub);
+                for (var sub : module.getSubmodules()) {
+                    final var subId = ContextHolder.moduleToIdentifier(sub);
                     if (!modelsInProject.containsKey(subId)) {
                         LOG.warn("Submodule {} not found in input files", sub);
                     }
@@ -81,7 +76,7 @@ final class ProcessorModuleReactor {
             }
         }
 
-        return new ContextHolder(schemaContext, modules, modelsInProject.keySet());
+        return new ContextHolder(modelContext, modules, modelsInProject.keySet());
     }
 
     Collection<YangTextSource> getModelsInProject() {
@@ -90,14 +85,11 @@ final class ProcessorModuleReactor {
 
     private static Collection<YangTextSource> toUniqueSources(final Collection<ScannedDependency> dependencies)
             throws IOException {
-        final Map<String, YangTextSource> byContent = new HashMap<>();
+        final var byContent = new HashMap<String, YangTextSource>();
 
-        for (ScannedDependency dependency : dependencies) {
-            for (YangTextSource s : dependency.sources()) {
-                try (Reader reader = s.openStream()) {
-                    final String contents = CharStreams.toString(reader);
-                    byContent.putIfAbsent(contents, s);
-                }
+        for (var dependency : dependencies) {
+            for (var source : dependency.sources()) {
+                byContent.putIfAbsent(source.read(), source);
             }
         }
         return byContent.values();
