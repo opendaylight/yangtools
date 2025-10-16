@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
  * nodes via Schema Path or Revision Aware XPath. The Schema Context Util is designed as mixin, so it is not
  * instantiable.
  */
+@Deprecated(since = "14.0.19", forRemoval = true)
 public final class SchemaContextUtil {
     private SchemaContextUtil() {
         // Hidden on purpose

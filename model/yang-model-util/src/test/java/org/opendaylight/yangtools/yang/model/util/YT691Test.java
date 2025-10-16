@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
+@Deprecated(since = "14.0.19", forRemoval = true)
 class YT691Test {
     @Test
     void testGetAllModuleIdentifiers() {
