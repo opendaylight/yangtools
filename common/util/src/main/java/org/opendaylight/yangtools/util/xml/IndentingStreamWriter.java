@@ -23,19 +23,15 @@ final class IndentingStreamWriter implements XMLStreamWriter {
     private static final byte MARKUP  = 2;
 
     /**
-     * Maximum stack depth allowed by {@link #MAX_NESTED_ELEMENTS}.
+     * Backend writer. We keep a reference to it even if we are closed to keep things simple for methods that do not
+     * throw XMLStreamException
      */
-    // FIXME: we only need this constant because we keep current state on stack. We should keep it in a field:
-    //
-    //           private byte current;
-    //
-    //        and push/pop when appropriate. That should improve performance by removing a memory access indirection
-    //        to a shifting location.
-    private static final int MAX_STACK_DEPTH = IndentedXML.MAX_NESTED_ELEMENTS + 1;
-
-    // Backend writer. We keep a reference to it even if we are closed to keep things simple for methods that do not
-    // throw XMLStreamException
     private final @NonNull XMLStreamWriter delegate;
+
+    /**
+     * Maximum stack depth.
+     */
+    private final int maxStackDepth;
 
     // TODO: we probably want to encapsulate at least stack + depth into a separate class: this would allow us to define
     //       stack operations and simplify the code here.
@@ -48,9 +44,11 @@ final class IndentingStreamWriter implements XMLStreamWriter {
     private int depth;
 
     @NonNullByDefault
-    IndentingStreamWriter(final IndentedXML indent, final XMLStreamWriter delegate) {
+    IndentingStreamWriter(final IndentedXML indent, final XMLStreamWriter delegate, final int maxNestedElements) {
         this.indent = requireNonNull(indent);
         this.delegate = requireNonNull(delegate);
+        // Note: expected to be checked by caller
+        maxStackDepth = maxNestedElements + 1;
     }
 
     // Pass-through delegated
@@ -337,12 +335,12 @@ final class IndentingStreamWriter implements XMLStreamWriter {
 
     private void growStack() throws XMLStreamException {
         final var size = stack.length;
-        if (size == MAX_STACK_DEPTH) {
+        if (size == maxStackDepth) {
             throw new XMLStreamException(
-                "More than " + IndentedXML.MAX_NESTED_ELEMENTS + " nested elenents are not supported");
+                "More than " + (maxStackDepth - 1) + " nested elenents are not supported");
         }
 
-        final var resized = new byte[Math.min(size << 1, MAX_STACK_DEPTH)];
+        final var resized = new byte[Math.min(size << 1, maxStackDepth)];
         System.arraycopy(stack, 0, resized, 0, size);
         stack = resized;
     }
