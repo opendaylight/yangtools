@@ -231,8 +231,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     }
 
     private static SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
-        final var name = moduleInfo.getName();
-        return new SourceIdentifier(name.getLocalName(), name.getRevision().orElse(null));
+        return SourceIdentifier.ofQName(moduleInfo.getName());
     }
 
     private static @NonNull List<@NonNull YangModuleInfo> flatDependencies(final YangModuleInfo moduleInfo) {

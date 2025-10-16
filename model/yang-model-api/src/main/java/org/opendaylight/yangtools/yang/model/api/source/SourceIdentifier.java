@@ -13,10 +13,13 @@ import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YIN_F
 
 import java.time.format.DateTimeParseException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangNames;
 
 /**
@@ -104,6 +107,22 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
     private static @NonNull SourceIdentifier ofFileName(final String fileName) {
         final var parsed = YangNames.parseFilename(fileName);
         return new SourceIdentifier(parsed.getKey(), parsed.getValue());
+    }
+
+    /**
+     * Construct a new {@link SourceIdentifier} from a {@link QName} by using its {@code localName} as our {@code name}
+     * and its {@code revision} as our revision.
+     *
+     * <p>This is useful in intra-domain conversion, where {@link QName} was chosen as the representation of basic
+     * YANG module/submodule metadata. Such representation has the benefit in that it also carries the corresponding
+     * {@link XMLNamespace}, which {@link SourceIdentifier} does not.
+     *
+     * @param qname the {@link QName}
+     * @return the {@link SourceIdentifier}
+     */
+    @NonNullByDefault
+    public static SourceIdentifier ofQName(final QName qname) {
+        return new SourceIdentifier(qname.unbind(), qname.getModule().revision());
     }
 
     /**
