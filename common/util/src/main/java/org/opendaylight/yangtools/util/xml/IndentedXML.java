@@ -60,18 +60,19 @@ public final class IndentedXML implements Immutable {
      * <p>We currently cap the depth to 1 million nested elements, which should incur less than a MiB of memory per
      * active instance.
      *
-     * <p>This limit is expected to be between 1 and 2147483647, so that doubling it is guaranteed
+     * <p>This limit is expected to be between 1 and 1_073_741_823, so that doubling it is guaranteed
      * to result in a positive {@code int} value without needing to check for overflow.
      */
-    // TODO: allow control with a property?
-    static final int MAX_NESTED_ELEMENTS = 1_000_000;
+    private static final int MAX_NESTED_ELEMENTS;
+
+    private static final int NESTED_ELEMENTS_LIMIT = Integer.MAX_VALUE / 2;
+    private static final int DEFAULT_MAX_NESTED_ELEMENTS = 1_000_000;
+    private static final String MAX_NESTED_ELEMENTS_PROPERTY =
+        "org.opendaylight.yangtools.util.xml.IndentedXML.nesting.max";
 
     static {
-        // This assertion should compile down (almost) nothing
-        final long doubleMaxNestedElements = MAX_NESTED_ELEMENTS << 1;
-        if (doubleMaxNestedElements > Integer.MAX_VALUE) {
-            throw new ExceptionInInitializerError("MAX_NESTED_ELEMENTS doubles to " + doubleMaxNestedElements);
-        }
+        final int prop = Integer.getInteger(MAX_NESTED_ELEMENTS_PROPERTY, DEFAULT_MAX_NESTED_ELEMENTS);
+        MAX_NESTED_ELEMENTS = prop >= 1 ? Math.min(prop, NESTED_ELEMENTS_LIMIT) : DEFAULT_MAX_NESTED_ELEMENTS;
     }
 
     /**
@@ -127,7 +128,24 @@ public final class IndentedXML implements Immutable {
      * @return an indenting {@link XMLStreamWriter}
      */
     public XMLStreamWriter wrapStreamWriter(final XMLStreamWriter delegate) {
-        return new IndentingStreamWriter(this, delegate);
+        return new IndentingStreamWriter(this, delegate, MAX_NESTED_ELEMENTS);
+    }
+
+    /**
+     * Wrap a {@link XMLStreamWriter} to produce intended XML. Returned {@link XMLStreamWriter} will not support writing
+     * more than specified number of nested elements.
+     *
+     * @param delegate the delegate
+     * @return an indenting {@link XMLStreamWriter}
+     */
+    public XMLStreamWriter wrapStreamWriter(final XMLStreamWriter delegate, final int maxNestedElements) {
+        if (maxNestedElements < 1) {
+            throw new IllegalArgumentException("maxNestedElements must be positive");
+        }
+        if (maxNestedElements > NESTED_ELEMENTS_LIMIT) {
+            throw new IllegalArgumentException("maxNestedElements cannot exceed " + NESTED_ELEMENTS_LIMIT);
+        }
+        return new IndentingStreamWriter(this, delegate, maxNestedElements);
     }
 
     void writeIndent(final XMLStreamWriter out, final int count) throws XMLStreamException {
