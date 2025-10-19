@@ -39,7 +39,7 @@ public final class AnydataNodeDataWithSchema extends SimpleNodeDataWithSchema<An
     @Override
     public void setValue(final Object value) {
         final Class<?> clazz = getObjectModel();
-        checkArgument(clazz.isInstance(value), "Value %s is not compatible with %s", clazz);
+        checkArgument(clazz.isInstance(value), "Value %s is not compatible with %s", value, clazz);
         super.setValue(value);
     }
 
