@@ -40,7 +40,7 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
      * @throws VerifyException if the child does not exist
      */
     default @NonNull C getChildByArg(final @NonNull PathArgument arg) {
-        return verifyNotNull(childByArg(arg), "Child %s does not exist");
+        return verifyNotNull(childByArg(arg), "Child %s does not exist", arg);
     }
 
     /**
