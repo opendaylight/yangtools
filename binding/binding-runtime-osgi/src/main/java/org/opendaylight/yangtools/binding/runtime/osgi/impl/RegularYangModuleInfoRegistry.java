@@ -37,12 +37,9 @@ final class RegularYangModuleInfoRegistry extends YangModuleInfoRegistry {
     private final ComponentFactory<OSGiModuleInfoSnapshotImpl> contextFactory;
     private final ModuleInfoSnapshotResolver resolver;
 
-    @GuardedBy("this")
-    private ComponentInstance<OSGiModuleInfoSnapshotImpl> currentInstance;
-    @GuardedBy("this")
-    private ModuleInfoSnapshot currentSnapshot;
-    @GuardedBy("this")
-    private int generation;
+    private @GuardedBy("this") ComponentInstance<OSGiModuleInfoSnapshotImpl> currentInstance;
+    private @GuardedBy("this") ModuleInfoSnapshot currentSnapshot;
+    private @GuardedBy("this") int generation;
 
     private volatile boolean ignoreScanner = true;
 
