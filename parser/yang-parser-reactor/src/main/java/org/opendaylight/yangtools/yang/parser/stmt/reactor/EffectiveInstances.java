@@ -41,7 +41,7 @@ final class EffectiveInstances<E extends EffectiveStatement<?, ?>> implements Mu
         return obj instanceof EffectiveInstances ? ((EffectiveInstances<E>) obj).local : requireNonNull((E) obj);
     }
 
-    @NonNull E attachCopy(final @NonNull EffectiveStatementState key, @NonNull final E copy) {
+    @NonNull E attachCopy(final @NonNull EffectiveStatementState key, final @NonNull E copy) {
         final E prev = copies.putIfAbsent(requireNonNull(key), requireNonNull(copy));
         if (prev == null) {
             // Nothing matching state

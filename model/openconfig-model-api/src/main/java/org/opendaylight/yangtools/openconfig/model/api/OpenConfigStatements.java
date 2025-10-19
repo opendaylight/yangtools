@@ -37,7 +37,7 @@ public enum OpenConfigStatements implements StatementDefinition {
     private final @NonNull QName statementName;
     private final @Nullable QName argumentName;
 
-    OpenConfigStatements(final QName statementName, @Nullable final String argumentName,
+    OpenConfigStatements(final QName statementName, final @Nullable String argumentName,
             final Class<? extends DeclaredStatement<?>> declaredRepresentation,
             final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();

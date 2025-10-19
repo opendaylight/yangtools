@@ -77,8 +77,8 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      *             If null, no executor is used.
      */
     public DeadlockDetectingListeningExecutorService(final @NonNull ExecutorService delegate,
-            @NonNull final Supplier<Exception> deadlockExceptionSupplier,
-            @Nullable final Executor listenableFutureExecutor) {
+            final @NonNull Supplier<Exception> deadlockExceptionSupplier,
+            final @Nullable Executor listenableFutureExecutor) {
         super(delegate, listenableFutureExecutor);
         this.deadlockExceptionFunction = requireNonNull(deadlockExceptionSupplier);
     }

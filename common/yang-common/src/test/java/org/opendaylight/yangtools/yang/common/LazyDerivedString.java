@@ -38,7 +38,7 @@ public class LazyDerivedString extends CachingDerivedString<LazyDerivedString> {
     }
 
     @Override
-    public final boolean equals(@Nullable final Object obj) {
+    public final boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         }
