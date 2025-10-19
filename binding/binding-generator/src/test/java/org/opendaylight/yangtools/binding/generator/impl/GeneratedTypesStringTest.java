@@ -75,7 +75,7 @@ class GeneratedTypesStringTest {
                         }
 
                         for (var e : mapValue.entrySet()) {
-                            if (!(e.getKey() instanceof String) || !(e.getKey() instanceof String)) {
+                            if (!(e.getKey() instanceof String) || !(e.getValue() instanceof String)) {
                                 noStringInReqExListFound = true;
                                 break;
                             }
