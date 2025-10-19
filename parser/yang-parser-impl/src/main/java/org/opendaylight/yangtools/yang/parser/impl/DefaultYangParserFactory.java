@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
@@ -51,7 +52,7 @@ public final class DefaultYangParserFactory implements YangParserFactory {
     public DefaultYangParserFactory() {
         reactorFactory = config -> DefaultReactors.defaultReactorBuilder(config).build();
         // Make sure default reactor is available
-        reactorFactory.apply(YangParserConfiguration.DEFAULT);
+        verifyNotNull(reactorFactory.apply(YangParserConfiguration.DEFAULT));
     }
 
     @Inject
