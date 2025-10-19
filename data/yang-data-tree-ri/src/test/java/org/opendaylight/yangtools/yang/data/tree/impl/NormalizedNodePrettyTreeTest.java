@@ -14,47 +14,47 @@ import org.junit.jupiter.api.Test;
 class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
     @Test
     void testMapNodePrettyTree() {
-        assertEquals(String.join("\n",
-            "systemMapNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)list-a = {",
-            "    mapEntryNode list-a = {",
-            "        leafNode leaf-a = \"bar\"",
-            "        systemMapNode list-b = {",
-            "            mapEntryNode list-b = {",
-            "                leafNode leaf-b = \"two\"",
-            "            }",
-            "            mapEntryNode list-b = {",
-            "                leafNode leaf-b = \"one\"",
-            "            }",
-            "        }",
-            "    }",
-            "    mapEntryNode list-a = {",
-            "        leafNode leaf-a = \"foo\"",
-            "    }",
-            "}"), createMapNode().prettyTree().get());
+        assertEquals("""
+            systemMapNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)list-a = {
+                mapEntryNode list-a = {
+                    leafNode leaf-a = "bar"
+                    systemMapNode list-b = {
+                        mapEntryNode list-b = {
+                            leafNode leaf-b = "two"
+                        }
+                        mapEntryNode list-b = {
+                            leafNode leaf-b = "one"
+                        }
+                    }
+                }
+                mapEntryNode list-a = {
+                    leafNode leaf-a = "foo"
+                }
+            }""", createMapNode().prettyTree().get());
     }
 
     @Test
     void testMapEntryPrettyTree() {
-        assertEquals(String.join("\n",
-            "mapEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)list-a = {",
-            "    leafNode leaf-a = \"bar\"",
-            "    systemMapNode list-b = {",
-            "        mapEntryNode list-b = {",
-            "            leafNode leaf-b = \"two\"",
-            "        }",
-            "        mapEntryNode list-b = {",
-            "            leafNode leaf-b = \"one\"",
-            "        }",
-            "    }",
-            "}"), createMapEntryNode().prettyTree().get());
+        assertEquals("""
+            mapEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)list-a = {
+                leafNode leaf-a = "bar"
+                systemMapNode list-b = {
+                    mapEntryNode list-b = {
+                        leafNode leaf-b = "two"
+                    }
+                    mapEntryNode list-b = {
+                        leafNode leaf-b = "one"
+                    }
+                }
+            }""", createMapEntryNode().prettyTree().get());
     }
 
     @Test
     void testChoicePrettyTree() {
-        assertEquals(String.join("\n",
-            "choiceNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)choice = {",
-            "    leafNode augment = \"Augmented leaf value\"",
-            "}"), createChoiceNode().prettyTree().get());
+        assertEquals("""
+            choiceNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)choice = {
+                leafNode augment = "Augmented leaf value"
+            }""", createChoiceNode().prettyTree().get());
     }
 
     @Test
@@ -65,111 +65,111 @@ class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
 
     @Test
     void testLeafSetPrettyTree() {
-        assertEquals(String.join("\n",
-            "systemLeafSetNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)leaf-set = {",
-            "    leafSetEntryNode leaf-set = \"Leaf set value\"",
-            "}"), createLeafSetNode().prettyTree().get());
+        assertEquals("""
+            systemLeafSetNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)leaf-set = {
+                leafSetEntryNode leaf-set = "Leaf set value"
+            }""", createLeafSetNode().prettyTree().get());
     }
 
     @Test
     void testUserLeafSetPrettyTree() {
-        assertEquals(String.join("\n",
-            "userLeafSetNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-leaf-set = {",
-            "    leafSetEntryNode user-leaf-set = \"User leaf set value\"",
-            "}"), createUserLeafSetNode().prettyTree().get());
+        assertEquals("""
+            userLeafSetNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-leaf-set = {
+                leafSetEntryNode user-leaf-set = "User leaf set value"
+            }""", createUserLeafSetNode().prettyTree().get());
     }
 
     @Test
     void testUserMapPrettyTree() {
-        assertEquals(String.join("\n",
-            "userMapNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-map = {",
-            "    mapEntryNode user-map = {",
-            "        leafNode user-map-entry = \"User map entry value\"",
-            "    }",
-            "}"), createUserMapNode().prettyTree().get());
+        assertEquals("""
+            userMapNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-map = {
+                mapEntryNode user-map = {
+                    leafNode user-map-entry = "User map entry value"
+                }
+            }""", createUserMapNode().prettyTree().get());
     }
 
     @Test
     void testUserMapEntryPrettyTree() {
-        assertEquals(String.join("\n",
-            "mapEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-map = {",
-            "    leafNode user-map-entry = \"User map entry value\"",
-            "}"), createUserMapEntryNode().prettyTree().get());
+        assertEquals("""
+            mapEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)user-map = {
+                leafNode user-map-entry = "User map entry value"
+            }""", createUserMapEntryNode().prettyTree().get());
     }
 
     @Test
     void testUnkeyedListPrettyTree() {
-        assertEquals(String.join("\n",
-            "unkeyedListNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)unkeyed-list = {",
-            "    unkeyedListEntryNode unkeyed-list-entry = {",
-            "        leafNode unkeyed-list-leaf = \"Unkeyed list leaf value\"",
-            "    }",
-            "}"), createUnkeyedListNode().prettyTree().get());
+        assertEquals("""
+            unkeyedListNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)unkeyed-list = {
+                unkeyedListEntryNode unkeyed-list-entry = {
+                    leafNode unkeyed-list-leaf = "Unkeyed list leaf value"
+                }
+            }""", createUnkeyedListNode().prettyTree().get());
     }
 
     @Test
     void testUnkeyedListEntryPrettyTree() {
-        assertEquals(String.join("\n",
-            "unkeyedListEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)unkeyed-list-entry = {",
-            "    leafNode unkeyed-list-leaf = \"Unkeyed list leaf value\"",
-            "}"), createUnkeyedListEntryNode().prettyTree().get());
+        assertEquals("""
+            unkeyedListEntryNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)unkeyed-list-entry = {
+                leafNode unkeyed-list-leaf = "Unkeyed list leaf value"
+            }""", createUnkeyedListEntryNode().prettyTree().get());
     }
 
     @Test
     void testAnyDataPrettyTree() {
-        assertEquals(String.join("\n",
-            "anydataNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)any-data = (java.lang.String)"),
+        assertEquals(
+            "anydataNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)any-data = (java.lang.String)",
             createAnyDataNode().prettyTree().get());
     }
 
     @Test
     void testContainerPrettyTree() {
-        assertEquals(String.join("\n",
-            "containerNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)root = {",
-            "    userMapNode user-map = {",
-            "        mapEntryNode user-map = {",
-            "            leafNode user-map-entry = \"User map entry value\"",
-            "        }",
-            "    }",
-            "    userLeafSetNode user-leaf-set = {",
-            "        leafSetEntryNode user-leaf-set = \"User leaf set value\"",
-            "    }",
-            "    systemMapNode list-a = {",
-            "        mapEntryNode list-a = {",
-            "            leafNode leaf-a = \"bar\"",
-            "            systemMapNode list-b = {",
-            "                mapEntryNode list-b = {",
-            "                    leafNode leaf-b = \"two\"",
-            "                }",
-            "                mapEntryNode list-b = {",
-            "                    leafNode leaf-b = \"one\"",
-            "                }",
-            "            }",
-            "        }",
-            "        mapEntryNode list-a = {",
-            "            leafNode leaf-a = \"foo\"",
-            "        }",
-            "    }",
-            "    containerNode (urn:opendaylight:controller:sal:dom:store:another)another = {",
-            "        systemMapNode list-from-another-namespace = {",
-            "            mapEntryNode list-from-another-namespace = {",
-            "                leafNode leaf-from-another-namespace = \"Leaf from another namespace value\"",
-            "            }",
-            "        }",
-            "    }",
-            "    choiceNode choice = {",
-            "        leafNode augment = \"Augmented leaf value\"",
-            "    }",
-            "    anydataNode any-data = (java.lang.String)",
-            "    unkeyedListNode unkeyed-list = {",
-            "        unkeyedListEntryNode unkeyed-list-entry = {",
-            "            leafNode unkeyed-list-leaf = \"Unkeyed list leaf value\"",
-            "        }",
-            "    }",
-            "    leafNode leaf = \"Leaf value\"",
-            "    systemLeafSetNode leaf-set = {",
-            "        leafSetEntryNode leaf-set = \"Leaf set value\"",
-            "    }",
-            "}"), createContainerNode().prettyTree().get());
+        assertEquals("""
+            containerNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)root = {
+                userMapNode user-map = {
+                    mapEntryNode user-map = {
+                        leafNode user-map-entry = "User map entry value"
+                    }
+                }
+                userLeafSetNode user-leaf-set = {
+                    leafSetEntryNode user-leaf-set = "User leaf set value"
+                }
+                systemMapNode list-a = {
+                    mapEntryNode list-a = {
+                        leafNode leaf-a = "bar"
+                        systemMapNode list-b = {
+                            mapEntryNode list-b = {
+                                leafNode leaf-b = "two"
+                            }
+                            mapEntryNode list-b = {
+                                leafNode leaf-b = "one"
+                            }
+                        }
+                    }
+                    mapEntryNode list-a = {
+                        leafNode leaf-a = "foo"
+                    }
+                }
+                containerNode (urn:opendaylight:controller:sal:dom:store:another)another = {
+                    systemMapNode list-from-another-namespace = {
+                        mapEntryNode list-from-another-namespace = {
+                            leafNode leaf-from-another-namespace = "Leaf from another namespace value"
+                        }
+                    }
+                }
+                choiceNode choice = {
+                    leafNode augment = "Augmented leaf value"
+                }
+                anydataNode any-data = (java.lang.String)
+                unkeyedListNode unkeyed-list = {
+                    unkeyedListEntryNode unkeyed-list-entry = {
+                        leafNode unkeyed-list-leaf = "Unkeyed list leaf value"
+                    }
+                }
+                leafNode leaf = "Leaf value"
+                systemLeafSetNode leaf-set = {
+                    leafSetEntryNode leaf-set = "Leaf set value"
+                }
+            }""", createContainerNode().prettyTree().get());
     }
 }
