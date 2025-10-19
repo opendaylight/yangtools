@@ -130,7 +130,7 @@ public abstract sealed class BindingClassLoader extends ClassLoader
     }
 
     private static final ClassLoadingStrategy<BindingClassLoader> STRATEGY = (classLoader, types) -> {
-        verify(types.size() == 1, "Unexpected multiple types", types);
+        verify(types.size() == 1, "Unexpected multiple types %s", types);
         final var entry = types.entrySet().iterator().next();
         return ImmutableMap.of(entry.getKey(), classLoader.loadClass(entry.getKey().getName(), entry.getValue()));
     };
