@@ -45,6 +45,7 @@ class ConstantArrayCollectionTest {
     }
 
     @Test
+    @SuppressWarnings("CollectionIncompatibleType")
     void testSimpleOperations() {
         final var c = create();
 
