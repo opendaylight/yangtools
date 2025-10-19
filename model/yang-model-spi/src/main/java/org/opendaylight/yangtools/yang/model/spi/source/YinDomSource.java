@@ -73,7 +73,7 @@ public abstract sealed class YinDomSource implements YinXmlSource {
         final Element element = (Element)root;
 
         final Attr nameAttr = element.getAttributeNode(MODULE_ARG);
-        checkArgument(nameAttr != null, "No %s name argument found in %s", element.getLocalName());
+        checkArgument(nameAttr != null, "No %s name argument found in %s", MODULE_ARG, element.getLocalName());
 
         final NodeList revisions = element.getElementsByTagNameNS(REVISION_STMT.getNamespace().toString(),
             REVISION_STMT.getLocalName());
