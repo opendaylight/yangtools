@@ -36,6 +36,7 @@ sealed class IIv4<T extends DataObject> implements Externalizable permits KIIv4 
     }
 
     @Override
+    @SuppressWarnings("ReturnValueIgnored")
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         Class.class.cast(in.readObject());
         in.readBoolean();
