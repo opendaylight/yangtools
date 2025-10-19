@@ -63,6 +63,7 @@ class XmlStreamUtilsTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantPatternCompile")
     void testWriteIdentityRef() throws Exception {
         final QNameModule parent = QNameModule.of("parent:uri", "2000-01-01");
 

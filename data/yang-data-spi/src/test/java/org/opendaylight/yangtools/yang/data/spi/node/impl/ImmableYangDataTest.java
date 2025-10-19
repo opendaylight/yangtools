@@ -22,6 +22,7 @@ class ImmableYangDataTest {
     private static final QName BAR = QName.create("foo", "bar");
 
     @Test
+    @SuppressWarnings("SelfAssertion")
     void simpleOperations() {
         final var first = ImmutableNodes.newYangDataBuilder(new YangDataName(FOO.getModule(), "a string"))
             .setChild(ImmutableNodes.newContainerBuilder()
