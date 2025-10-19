@@ -106,12 +106,10 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     @Override
     public void scalarValue(final Object value) throws IOException {
         final NodeType type = nodeTypeStack.peek();
-        if (type == NodeType.SCALAR) {
-            writeValue(value, null);
-        } else if (type == NodeType.ANYDATA) {
-            anydataValue(value);
-        } else {
-            throw new IllegalStateException("Unexpected scalar " + value + " in type " + type);
+        switch (type) {
+            case ANYDATA -> anydataValue(value);
+            case SCALAR -> writeValue(value, null);
+            default -> throw new IllegalStateException("Unexpected scalar " + value + " in type " + type);
         }
     }
 
