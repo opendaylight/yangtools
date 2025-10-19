@@ -44,6 +44,7 @@ class Uint16Test {
     }
 
     @Test
+    @SuppressWarnings("SelfComparison")
     void testCompareTo() {
         final var five = Uint16.valueOf(5);
         final var zero = Uint16.valueOf(0);
