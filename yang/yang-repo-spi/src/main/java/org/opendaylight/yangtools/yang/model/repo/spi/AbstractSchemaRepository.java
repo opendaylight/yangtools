@@ -48,15 +48,13 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
      * Source identifier -> representation -> provider map. We usually are looking for
      * a specific representation of a source.
      */
-    @GuardedBy("this")
-    private final Map<SourceIdentifier, ListMultimap<Class<? extends SourceRepresentation>,
+    private final @GuardedBy("this") Map<SourceIdentifier, ListMultimap<Class<? extends SourceRepresentation>,
             SchemaSourceRegistration>> sources = new HashMap<>();
 
     /*
      * Schema source listeners.
      */
-    @GuardedBy("this")
-    private final List<SchemaListenerRegistration> listeners = new ArrayList<>();
+    private final @GuardedBy("this") List<SchemaListenerRegistration> listeners = new ArrayList<>();
 
     private static <T extends SourceRepresentation> ListenableFuture<T> fetchSource(
             final SourceIdentifier sourceId, final Iterator<SchemaSourceRegistration> it) {

@@ -23,6 +23,7 @@ final class KeyedInstanceIdentifierV2<T extends EntryObject<T, K>, K extends Key
     }
 
     @Override
+    @SuppressWarnings("ReturnValueIgnored")
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         super.readExternal(in);
         Key.class.cast(in.readObject());
