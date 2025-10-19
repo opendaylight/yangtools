@@ -44,6 +44,7 @@ class Uint32Test {
     }
 
     @Test
+    @SuppressWarnings("SelfComparison")
     void testCompareTo() {
         final var five = Uint32.valueOf(5);
         final var zero = Uint32.valueOf(0);

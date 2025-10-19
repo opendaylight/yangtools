@@ -43,7 +43,9 @@ class DeadlockDetectingListeningExecutorServiceTest {
         void invokeExecutor(ListeningExecutorService executor, Runnable task);
     }
 
-    static final InitialInvoker SUBMIT = ListeningExecutorService::submit;
+    static final InitialInvoker SUBMIT = (executor, task) -> {
+        assertNotNull(executor.submit(task));
+    };
 
     static final InitialInvoker EXECUTE = Executor::execute;
 
