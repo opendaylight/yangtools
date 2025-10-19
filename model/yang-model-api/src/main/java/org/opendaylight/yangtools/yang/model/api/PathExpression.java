@@ -120,7 +120,7 @@ public interface PathExpression extends Immutable {
         }
 
         @Override
-        public boolean equals(@Nullable final Object obj) {
+        public boolean equals(final @Nullable Object obj) {
             return this == obj || obj instanceof DerefSteps other
                 && derefArgument.equals(other.derefArgument) && relativePath.equals(other.relativePath);
         }

@@ -60,7 +60,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
             this.listenerExecutor = requireNonNull(listenerExecutor);
         }
 
-        private DelegatingAsyncNotifyingListenableFutureTask(final Runnable runnable, @Nullable final V result,
+        private DelegatingAsyncNotifyingListenableFutureTask(final Runnable runnable, final @Nullable V result,
                 final @NonNull Executor listenerExecutor) {
             super(runnable, result);
             this.listenerExecutor = requireNonNull(listenerExecutor);
@@ -135,7 +135,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
      *                         If null, no executor is used.
      */
     public static <V> @NonNull AsyncNotifyingListenableFutureTask<V> create(final @NonNull Callable<V> callable,
-            @Nullable final Executor listenerExecutor) {
+            final @Nullable Executor listenerExecutor) {
         if (listenerExecutor == null) {
             return new AsyncNotifyingListenableFutureTask<>(callable);
         }
@@ -153,7 +153,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
      *                         If null, no executor is used.
      */
     public static <V> @NonNull AsyncNotifyingListenableFutureTask<V> create(final @NonNull Runnable runnable,
-            @Nullable final V result, @Nullable final Executor listenerExecutor) {
+            final @Nullable V result, final @Nullable Executor listenerExecutor) {
         if (listenerExecutor == null) {
             return new AsyncNotifyingListenableFutureTask<>(runnable, result);
         }

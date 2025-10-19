@@ -42,7 +42,7 @@ public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>>
     };
     private static final ClassValue<Boolean> VALUES = new AbstractCanonicalValueImplementationValidator() {
         @Override
-        void checkCompareTo(@NonNull final Class<?> type) {
+        void checkCompareTo(final @NonNull Class<?> type) {
             checkFinalMethod(type, "compareTo", type);
         }
     };
