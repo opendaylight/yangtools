@@ -165,6 +165,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return new JsonParserStream(writer, codecFactory, SchemaInferenceStack.ofInference(parentNode), true);
     }
 
+    @SuppressWarnings("CheckReturnValue")
     public JsonParserStream parse(final JsonReader reader) {
         // code copied from gson's JsonParser and Stream classes
 
