@@ -82,7 +82,7 @@ public non-sealed interface DeclaredStatement<A> extends ModelStatement<A> {
      */
     @Beta
     default <T extends DeclaredStatement<?>> @NonNull Optional<T> findFirstDeclaredSubstatement(
-            @NonNull final Class<T> type) {
+            final @NonNull Class<T> type) {
         requireNonNull(type);
         return streamDeclaredSubstatements(type).filter(type::isInstance).findFirst().map(type::cast);
     }
@@ -98,7 +98,7 @@ public non-sealed interface DeclaredStatement<A> extends ModelStatement<A> {
      */
     @Beta
     default <V, T extends DeclaredStatement<V>> @NonNull Optional<V> findFirstDeclaredSubstatementArgument(
-            @NonNull final Class<T> type) {
+            final @NonNull Class<T> type) {
         return findFirstDeclaredSubstatement(type).map(DeclaredStatement::argument);
     }
 
@@ -112,7 +112,7 @@ public non-sealed interface DeclaredStatement<A> extends ModelStatement<A> {
      */
     @Beta
     default <T extends DeclaredStatement<?>> @NonNull Stream<T> streamDeclaredSubstatements(
-            @NonNull final Class<T> type) {
+            final @NonNull Class<T> type) {
         requireNonNull(type);
         return declaredSubstatements().stream().filter(type::isInstance).map(type::cast);
     }
