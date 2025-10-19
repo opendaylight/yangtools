@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -56,7 +55,7 @@ public final class ValueStatementSupport
     }
 
     @Override
-    protected ValueStatement createEmptyDeclared(@NonNull final Integer argument) {
+    protected ValueStatement createEmptyDeclared(final Integer argument) {
         return DeclaredStatements.createValue(argument);
     }
 
@@ -67,7 +66,7 @@ public final class ValueStatementSupport
     }
 
     @Override
-    protected ValueEffectiveStatement createEmptyEffective(@NonNull final ValueStatement declared) {
+    protected ValueEffectiveStatement createEmptyEffective(final ValueStatement declared) {
         return EffectiveStatements.createValue(declared);
     }
 }
