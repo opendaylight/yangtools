@@ -166,10 +166,8 @@ abstract class AbstractBatchingExecutor<K, T> extends AbstractSimpleIdentifiable
         private final Condition notFull = lock.newCondition();
         private final @NonNull K key;
 
-        @GuardedBy("lock")
-        private final Queue<T> queue = new ArrayDeque<>();
-        @GuardedBy("lock")
-        private boolean exiting;
+        private final @GuardedBy("lock") Queue<T> queue = new ArrayDeque<>();
+        private @GuardedBy("lock") boolean exiting;
 
         DispatcherTask(final @NonNull K key, final @NonNull Iterator<T> tasks) {
             this.key = requireNonNull(key);
