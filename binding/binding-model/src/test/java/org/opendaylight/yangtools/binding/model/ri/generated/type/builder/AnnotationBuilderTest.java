@@ -241,6 +241,7 @@ class AnnotationBuilderTest {
 
     }
 
+    @Test
     void annotationTypeBuilderEqualsTest() {
         final var annotationTypeBuilder = new AnnotationTypeBuilderImpl(JavaTypeName.create("my.package", "MyName"));
         final var annotationTypeBuilder2 = new AnnotationTypeBuilderImpl(JavaTypeName.create("my.package2", "MyName"));
