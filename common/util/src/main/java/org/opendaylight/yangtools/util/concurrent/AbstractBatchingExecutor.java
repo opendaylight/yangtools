@@ -24,6 +24,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 import org.checkerframework.checker.lock.qual.GuardedBy;
+import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.slf4j.Logger;
@@ -245,7 +246,7 @@ abstract class AbstractBatchingExecutor<K, T> extends AbstractSimpleIdentifiable
             }
         }
 
-        @GuardedBy("lock")
+        @Holding("lock")
         private boolean waitForQueue() {
             long timeout = TASK_WAIT_NANOS;
 
