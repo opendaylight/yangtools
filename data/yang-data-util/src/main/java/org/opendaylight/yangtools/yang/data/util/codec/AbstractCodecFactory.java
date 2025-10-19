@@ -241,7 +241,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
                 }
             }
 
-            codecs.add(verifyNotNull(codec, "Type %s has no codec", schema, type));
+            codecs.add(verifyNotNull(codec, "Type %s has no codec with %s", type, schema));
         }
 
         return unionCodec(union, codecs);
