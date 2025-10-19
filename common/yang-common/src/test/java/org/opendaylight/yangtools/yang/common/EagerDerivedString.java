@@ -36,7 +36,7 @@ public class EagerDerivedString extends CachingDerivedString<EagerDerivedString>
     }
 
     @Override
-    public final boolean equals(@Nullable final Object obj) {
+    public final boolean equals(final @Nullable Object obj) {
         if (obj == this) {
             return true;
         }
