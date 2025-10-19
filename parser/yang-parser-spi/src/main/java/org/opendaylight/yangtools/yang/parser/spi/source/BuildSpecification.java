@@ -78,8 +78,8 @@ public record BuildSpecification(
          */
         record Submodule(SourceInfo.Submodule info, StatementStreamSource stream) implements SourceSpec {
             public Submodule {
-                info = requireNonNull(info);
-                stream = requireNonNull(stream);
+                requireNonNull(info);
+                requireNonNull(stream);
             }
         }
     }
