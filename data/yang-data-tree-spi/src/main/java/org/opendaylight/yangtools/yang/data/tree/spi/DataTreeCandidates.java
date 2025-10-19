@@ -97,7 +97,7 @@ public final class DataTreeCandidates {
      * @throws IllegalArgumentException if candidates is empty, or contains candidates with mismatched root path
      * @throws NullPointerException     if {@code candidates} is null or contains a null entry
      */
-    public static @NonNull DataTreeCandidate aggregate(@NonNull final List<? extends DataTreeCandidate> candidates) {
+    public static @NonNull DataTreeCandidate aggregate(final @NonNull List<? extends DataTreeCandidate> candidates) {
         final var it = candidates.iterator();
         checkArgument(it.hasNext(), "Input must not be empty");
         final var first = requireNonNull(it.next(), "Input must not contain null entries");

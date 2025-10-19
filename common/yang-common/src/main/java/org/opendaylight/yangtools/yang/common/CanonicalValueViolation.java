@@ -154,7 +154,7 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
 
     abstract ToStringHelper addToString(ToStringHelper helper);
 
-    private static Optional<String> nullableString(@Nullable final String str) {
+    private static Optional<String> nullableString(final @Nullable String str) {
         return str != null ? Optional.of(str) : Optional.empty();
     }
 }

@@ -50,7 +50,7 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
      * @return Optional with node if the child exists, {@link Optional#empty()} otherwise.
      * @throws NullPointerException when {@code child} is null
      */
-    @NonNull default Optional<C> findChildByArg(final @NonNull PathArgument arg) {
+    default @NonNull Optional<C> findChildByArg(final @NonNull PathArgument arg) {
         return Optional.ofNullable(childByArg(arg));
     }
 }

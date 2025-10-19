@@ -38,9 +38,9 @@ public interface BindingRuntimeContext extends Immutable {
 
     @NonNull BindingRuntimeTypes getTypes();
 
-    @NonNull <T> Class<T> loadClass(JavaTypeName type) throws ClassNotFoundException;
+    <T> @NonNull Class<T> loadClass(JavaTypeName type) throws ClassNotFoundException;
 
-    default @NonNull <T> Class<T> loadClass(final Type type) throws ClassNotFoundException {
+    default <T> @NonNull Class<T> loadClass(final Type type) throws ClassNotFoundException {
         return loadClass(type.getIdentifier());
     }
 
