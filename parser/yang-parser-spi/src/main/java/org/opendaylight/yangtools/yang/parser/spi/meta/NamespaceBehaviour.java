@@ -133,8 +133,8 @@ public abstract class NamespaceBehaviour<K, V> {
                         continue;
                     }
 
-                    verify(selected == key, "Criterion %s selected invalid key %s from candidates [%s %s]", selected,
-                        match.getKey(), key);
+                    verify(selected == key, "Criterion %s selected invalid key %s from candidates [%s %s]", criterion,
+                        selected, match.getKey(), key);
                 }
 
                 match = entry;
