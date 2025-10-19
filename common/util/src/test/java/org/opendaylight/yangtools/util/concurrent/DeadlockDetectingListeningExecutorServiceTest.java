@@ -43,6 +43,7 @@ class DeadlockDetectingListeningExecutorServiceTest {
         void invokeExecutor(ListeningExecutorService executor, Runnable task);
     }
 
+    @SuppressWarnings("CheckReturnValue")
     static final InitialInvoker SUBMIT = ListeningExecutorService::submit;
 
     static final InitialInvoker EXECUTE = Executor::execute;
