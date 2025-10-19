@@ -36,6 +36,7 @@ class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
     }
 
     @Override
+    @SuppressWarnings("ReturnValueIgnored")
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         Class.class.cast(in.readObject());
         in.readBoolean();

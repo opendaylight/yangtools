@@ -23,6 +23,7 @@ final class DoNotLeakSpotbugs {
         // Hidden on purpose
     }
 
+    @SuppressWarnings("ReturnValueIgnored")
     @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION", justification = "Internal NPE->IAE conversion")
     static void checkCollectionField(final @NonNull Class<?> requiredClass, final @NonNull String fieldName,
             final @Nullable Collection<?> collection) {
