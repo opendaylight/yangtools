@@ -92,14 +92,11 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
 
     private final YangTextSchemaContextResolver ctxResolver;
 
-    @GuardedBy("this")
-    private final ListMultimap<SourceIdentifier, RegisteredModuleInfo> sourceToInfoReg =
-            MultimapBuilder.hashKeys().arrayListValues().build();
-    @GuardedBy("this")
-    private final ListMultimap<Class<? extends DataRoot<?>>, ImmutableSet<YangFeature<?, ?>>> moduleToFeatures =
-            MultimapBuilder.hashKeys().arrayListValues().build();
-    @GuardedBy("this")
-    private @Nullable ModuleInfoSnapshot currentSnapshot;
+    private final @GuardedBy("this") ListMultimap<SourceIdentifier, RegisteredModuleInfo> sourceToInfoReg =
+        MultimapBuilder.hashKeys().arrayListValues().build();
+    private final @GuardedBy("this") ListMultimap<Class<? extends DataRoot<?>>,
+            ImmutableSet<YangFeature<?, ?>>> moduleToFeatures = MultimapBuilder.hashKeys().arrayListValues().build();
+    private @GuardedBy("this") @Nullable ModuleInfoSnapshot currentSnapshot;
 
     public ModuleInfoSnapshotResolver(final String name, final YangParserFactory parserFactory) {
         ctxResolver = YangTextSchemaContextResolver.create(name, parserFactory);
