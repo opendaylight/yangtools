@@ -28,6 +28,7 @@ class SemVerTest {
         01:00:00:00:02:00:00:00:03""";
 
     @Test
+    @SuppressWarnings("SelfComparison")
     void testSemVer() {
         final var semVer = new SemVer(5);
         assertNotNull(semVer);
