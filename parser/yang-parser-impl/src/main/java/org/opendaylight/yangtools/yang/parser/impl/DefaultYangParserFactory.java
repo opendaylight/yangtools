@@ -56,7 +56,7 @@ public final class DefaultYangParserFactory implements YangParserFactory {
 
     @Inject
     @Activate
-    public DefaultYangParserFactory(final @Reference YangXPathParserFactory xpathFactory) {
+    public DefaultYangParserFactory(@Reference final YangXPathParserFactory xpathFactory) {
         reactorFactory = config -> DefaultReactors.defaultReactorBuilder(xpathFactory, config).build();
     }
 
