@@ -33,7 +33,7 @@ final class OperationsValidateModuleAction implements InferenceAction {
         this.prereq = requireNonNull(prereq);
     }
 
-    static void applyTo(@NonNull final Mutable<?, ?, ?> module) {
+    static void applyTo(final @NonNull Mutable<?, ?, ?> module) {
         // Quick checks we can
         if (module.producesDeclared(ModuleStatement.class) && YangDataConstants.MODULE_NAME.equals(module.argument())) {
             // This is 'yang-api' definition within a 'ietf-restconf' module, but we are not certain about revisions

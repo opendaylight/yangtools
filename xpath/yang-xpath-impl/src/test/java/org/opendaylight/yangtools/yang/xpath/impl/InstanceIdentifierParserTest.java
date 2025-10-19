@@ -98,7 +98,7 @@ class InstanceIdentifierParserTest {
     @ParameterizedTest(name = "Base parsing: {0}")
     @MethodSource("baseParsingArgs")
     void baseParsing(final String input, final AbstractQName expectedQName,
-            @Nullable final YangExpr expectedLeft, @Nullable final YangExpr expectedRight) throws Exception {
+            final @Nullable YangExpr expectedLeft, final @Nullable YangExpr expectedRight) throws Exception {
         assertParsed(parseBase(input), expectedQName, expectedLeft, expectedRight);
     }
 

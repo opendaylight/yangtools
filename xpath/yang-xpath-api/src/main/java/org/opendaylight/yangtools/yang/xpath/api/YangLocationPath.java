@@ -74,7 +74,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
         }
 
         @Override
-        public final boolean equals(@Nullable final Object obj) {
+        public final boolean equals(final @Nullable Object obj) {
             return this == obj || obj instanceof AxisStep other && getAxis().equals(other.getAxis())
                 && getPredicates().equals(other.getPredicates());
         }
@@ -128,7 +128,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
         }
 
         @Override
-        public boolean equals(@Nullable final Object obj) {
+        public boolean equals(final @Nullable Object obj) {
             return this == obj || obj instanceof NamespaceStep other && getAxis().equals(other.getAxis())
                 && namespace.equals(other.namespace) && getPredicates().equals(other.getPredicates());
         }
@@ -290,7 +290,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
         }
 
         @Override
-        public boolean equals(@Nullable final Object obj) {
+        public boolean equals(final @Nullable Object obj) {
             if (this == obj) {
                 return true;
             }

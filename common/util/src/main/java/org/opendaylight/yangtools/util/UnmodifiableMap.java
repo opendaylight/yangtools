@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 public final class UnmodifiableMap<K, V> implements Map<K, V>, Immutable {
     private final @NonNull Map<K, V> delegate;
 
-    private UnmodifiableMap(@NonNull final Map<K, V> delegate) {
+    private UnmodifiableMap(final @NonNull Map<K, V> delegate) {
         this.delegate = requireNonNull(delegate);
     }
 
