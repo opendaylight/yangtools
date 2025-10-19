@@ -54,7 +54,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
      *     If null, no executor is used.
      */
     public AsyncNotifyingListeningExecutorService(final @NonNull ExecutorService delegate,
-            @Nullable final Executor listenableFutureExecutor) {
+            final @Nullable Executor listenableFutureExecutor) {
         this.delegate = requireNonNull(delegate);
         this.listenableFutureExecutor = listenableFutureExecutor;
     }
