@@ -459,7 +459,7 @@
                         <link>https://www.slf4j.org/apidocs/</link>
                         <link>https://guava.dev/releases/33.4.0-jre/api/docs/</link>
 
-                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.1.4/</link>
+                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.1.5-SNAPSHOT/</link>
                     </links>
                     <groups>
                         <group>
