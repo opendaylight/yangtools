@@ -144,6 +144,7 @@ class Decimal64Test {
     }
 
     @Test
+    @SuppressWarnings("SelfComparison")
     void testCompare() {
         final var one = Decimal64.valueOf("1");
         final var two = Decimal64.valueOf("2");

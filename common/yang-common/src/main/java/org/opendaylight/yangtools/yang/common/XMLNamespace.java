@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Interner;
@@ -47,7 +46,7 @@ public final class XMLNamespace implements Comparable<XMLNamespace>, Immutable, 
     public static XMLNamespace of(final String namespace) {
         try {
             // FIXME: we want this validation, can we get it without the object allocation?
-            verifyNotNull(new URI(namespace));
+            new URI(namespace);
         } catch (final URISyntaxException e) {
             throw new IllegalArgumentException("Namespace '" + namespace + "' is not a valid URI", e);
         }
