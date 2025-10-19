@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.util.concurrent.ForwardingListenableFuture.SimpleForwardingListenableFuture;
@@ -114,7 +113,9 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
 
     private @NonNull SettableBoolean primeDetector() {
         final SettableBoolean b = deadlockDetector.get();
-        checkState(!b.isSet(), "Detector for {} has already been primed", this);
+        if (b.isSet()) {
+            throw new IllegalStateException("Detector for " + this + " has already been primed");
+        }
         b.set();
         return b;
     }
