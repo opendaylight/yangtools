@@ -117,8 +117,8 @@ class NormalizedNodePrettyTreeTest extends AbstractPrettyTreeTest {
 
     @Test
     void testAnyDataPrettyTree() {
-        assertEquals(String.join("\n",
-            "anydataNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)any-data = (java.lang.String)"),
+        assertEquals(
+            "anydataNode (urn:opendaylight:controller:sal:dom:store:test@2014-03-13)any-data = (java.lang.String)",
             createAnyDataNode().prettyTree().get());
     }
 
