@@ -66,8 +66,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
     private final Multimap<SourceIdentifier, YangTextSource> texts = ArrayListMultimap.create();
-    @GuardedBy("this")
-    private final Map<QNameModule, List<ImmutableSet<String>>> registeredFeatures = new HashMap<>();
+    private final @GuardedBy("this") Map<QNameModule, List<ImmutableSet<String>>> registeredFeatures = new HashMap<>();
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
     private final GuavaSchemaSourceCache<YangIRSource> cache;
@@ -77,8 +76,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     private volatile Object version = new Object();
     private volatile Object contextVersion = version;
-    @GuardedBy("this")
-    private FeatureSet supportedFeatures = null;
+    private @GuardedBy("this") FeatureSet supportedFeatures = null;
 
     private YangTextSchemaContextResolver(final SchemaRepository repository, final SchemaSourceRegistry registry) {
         this.repository = requireNonNull(repository);
