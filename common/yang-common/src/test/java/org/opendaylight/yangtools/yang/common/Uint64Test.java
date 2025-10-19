@@ -48,6 +48,7 @@ class Uint64Test {
     }
 
     @Test
+    @SuppressWarnings("SelfComparison")
     void testCompareTo() {
         final var five = Uint64.valueOf(5);
         final var zero = Uint64.valueOf(0);

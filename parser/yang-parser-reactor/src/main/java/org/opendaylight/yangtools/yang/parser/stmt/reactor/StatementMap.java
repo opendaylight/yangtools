@@ -85,6 +85,7 @@ abstract class StatementMap extends AbstractCollection<OriginalStmtCtx<?, ?, ?>>
             this(index + 1, index, object);
         }
 
+        @SuppressWarnings("ChainingConstructorIgnoresParameter")
         Regular(final OriginalStmtCtx<?, ?, ?> object0, final int index, final OriginalStmtCtx<?, ?, ?> object) {
             this(index + 1, 0, object0);
             elements[index] = requireNonNull(object);
