@@ -14,12 +14,12 @@ from utils.validator import get_yang_files, validator_path_option
 # paths with the -p argument, but the recursive option makes the tool so slow that it would not work when testing so
 # many files
 YANG_MODEL_PATHS = {
-    "src/main/yang/experimental/openconfig/third_party/ietf",
+    "src/main/yang/standard/ietf/RFC",
 }
 
 
-def test_validate_openconfig_yangs(fixture_models_repos):  # noqa: F811
-    yang_files = get_yang_files("./src/main/yang/experimental/openconfig/release/models/")
+def test_validate_iana_yang_models(fixture_models_repos):  # noqa: F811
+    yang_files = get_yang_files("./src/main/yang/standard/iana")
     yang_files_str = " ".join([f"'{f}'" for f in yang_files])
 
     rc, test_tool_output = shell(
