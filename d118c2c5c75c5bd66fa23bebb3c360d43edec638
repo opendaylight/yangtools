@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7539a01_d8494ffb",
+        "filename": "tests/test_openconfig_yangs.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-23T08:46:14Z",
+      "side": 1,
+      "message": "I believe `get_yang_files` already returns `yang_files` as list of strings, so probably no need to convert it using f-string.",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2954a73_466e14cd",
+        "filename": "tests/test_openconfig_yangs.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-23T08:46:14Z",
+      "side": 1,
+      "message": "also in here if we need the f-string, `test_tool_output` is not str already?",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "69008809_0638692e",
+        "filename": "tests/test_yangmodels_iana.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-23T08:46:14Z",
+      "side": 1,
+      "message": "same as openconfig tests, probably does not need to convert it using f-string",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3c851277_1bc48dad",
+        "filename": "tests/test_yangmodels_iana.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-23T08:46:14Z",
+      "side": 1,
+      "message": "same as openconfig tests, probably does not need to convert it using f-string",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
