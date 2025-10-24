@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8c40a2cf_e944a132",
+        "filename": "tests/test_openconfig_yangs.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-10-24T07:04:26Z",
+      "side": 1,
+      "message": "this part is needed as we need 1 string where every item will be in \u0027quotes\u0027 divided by space to properly pass it as command agruments",
+      "parentUuid": "c7539a01_d8494ffb",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e2954a73_466e14cd",
         "filename": "tests/test_openconfig_yangs.py",
         "patchSetId": 2
@@ -31,6 +49,24 @@
       "writtenOn": "2025-10-23T08:46:14Z",
       "side": 1,
       "message": "also in here if we need the f-string, `test_tool_output` is not str already?",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18b20624_3818bca9",
+        "filename": "tests/test_openconfig_yangs.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-10-24T07:04:26Z",
+      "side": 1,
+      "message": "shell\u0027s stdout may not be a string in case of empty output. by this we guarantee it will be formatted to \"\" and there won\u0027t be an error in assertion",
+      "parentUuid": "e2954a73_466e14cd",
       "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
