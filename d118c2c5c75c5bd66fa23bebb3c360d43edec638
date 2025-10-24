@@ -36,6 +36,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a5ad084_986968e4",
+        "filename": "tests/test_openconfig_yangs.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-24T08:00:32Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8c40a2cf_e944a132",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e2954a73_466e14cd",
@@ -67,6 +85,24 @@
       "side": 1,
       "message": "shell\u0027s stdout may not be a string in case of empty output. by this we guarantee it will be formatted to \"\" and there won\u0027t be an error in assertion",
       "parentUuid": "e2954a73_466e14cd",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "abebfb05_5433fc69",
+        "filename": "tests/test_openconfig_yangs.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-24T08:00:32Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "18b20624_3818bca9",
       "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
