@@ -109,6 +109,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "82096b36_ac9cc986",
+        "filename": "tests/test_yangmodels_iana.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-24T08:10:05Z",
+      "side": 1,
+      "message": "maybe there could a simpler name for tests like `test_validate_iana_yang_models`",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "69008809_0638692e",
         "filename": "tests/test_yangmodels_iana.py",
         "patchSetId": 2
