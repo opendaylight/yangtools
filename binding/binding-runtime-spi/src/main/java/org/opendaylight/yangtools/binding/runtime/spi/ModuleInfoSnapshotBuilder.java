@@ -101,7 +101,7 @@ public final class ModuleInfoSnapshotBuilder {
         final var parser = parserFactory.createParser();
 
         final var mappedInfos = new HashMap<SourceIdentifier, YangModuleInfo>();
-        final var classLoaders = new HashMap<String, ClassLoader>();
+        final var modules = new HashMap<String, Module>();
         final var namespaces = new HashMap<String, QNameModule>();
 
         for (var info : moduleInfos) {
@@ -109,7 +109,7 @@ public final class ModuleInfoSnapshotBuilder {
             mappedInfos.put(source.sourceId(), info);
 
             final String infoRoot = Naming.getRootPackageName(info.getName().getModule());
-            classLoaders.put(infoRoot, info.getClass().getClassLoader());
+            modules.put(infoRoot, info.getClass().getModule());
             namespaces.put(infoRoot, info.getName().getModule());
 
             try {
@@ -138,6 +138,6 @@ public final class ModuleInfoSnapshotBuilder {
             parser.setSupportedFeatures(featuresByModule.build());
         }
 
-        return new DefaultModuleInfoSnapshot(parser.buildEffectiveModel(), mappedInfos, classLoaders);
+        return new DefaultModuleInfoSnapshot(parser.buildEffectiveModel(), mappedInfos, modules);
     }
 }

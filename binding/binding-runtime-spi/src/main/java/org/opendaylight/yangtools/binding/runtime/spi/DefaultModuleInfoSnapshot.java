@@ -23,14 +23,14 @@ import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 
 final class DefaultModuleInfoSnapshot implements ModuleInfoSnapshot {
     private final ImmutableMap<SourceIdentifier, YangModuleInfo> moduleInfos;
-    private final ImmutableMap<String, ClassLoader> classLoaders;
+    private final ImmutableMap<String, Module> modules;
     private final @NonNull EffectiveModelContext modelContext;
 
     DefaultModuleInfoSnapshot(final EffectiveModelContext modelContext,
-            final Map<SourceIdentifier, YangModuleInfo> moduleInfos, final Map<String, ClassLoader> classLoaders) {
+            final Map<SourceIdentifier, YangModuleInfo> moduleInfos, final Map<String, Module> modules) {
         this.modelContext = requireNonNull(modelContext);
         this.moduleInfos = ImmutableMap.copyOf(moduleInfos);
-        this.classLoaders = ImmutableMap.copyOf(classLoaders);
+        this.modules = ImmutableMap.copyOf(modules);
     }
 
     @Override
@@ -56,12 +56,13 @@ final class DefaultModuleInfoSnapshot implements ModuleInfoSnapshot {
     @Override
     public <T> Class<T> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
         final var packageName = Naming.getModelRootPackageName(fullyQualifiedName);
-        final var loader = classLoaders.get(packageName);
-        if (loader == null) {
+        final var module = modules.get(packageName);
+        if (module == null) {
             throw new ClassNotFoundException("Package " + packageName + " not found");
         }
+
         @SuppressWarnings("unchecked")
-        final var loaded = (Class<T>) loader.loadClass(fullyQualifiedName);
+        final var loaded = (Class<T>) module.getClassLoader().loadClass(fullyQualifiedName);
         return loaded;
     }
 }

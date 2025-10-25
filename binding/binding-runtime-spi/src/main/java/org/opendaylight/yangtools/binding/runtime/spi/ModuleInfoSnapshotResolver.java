@@ -186,7 +186,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         }
 
         final var moduleInfos = new HashMap<SourceIdentifier, YangModuleInfo>();
-        final var classLoaders = new HashMap<String, ClassLoader>();
+        final var modules = new HashMap<String, Module>();
         for (var source : sources) {
             final var regs = sourceToInfoReg.get(source);
             checkState(!regs.isEmpty(), "No registration for %s", source);
@@ -194,10 +194,10 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
             final var reg = regs.getFirst();
             final var info = reg.info;
             moduleInfos.put(source, info);
-            classLoaders.put(Naming.getRootPackageName(info.getName().getModule()), info.getClass().getClassLoader());
+            modules.put(Naming.getRootPackageName(info.getName().getModule()), info.getClass().getModule());
         }
 
-        final var next = new DefaultModuleInfoSnapshot(modelContext, moduleInfos, classLoaders);
+        final var next = new DefaultModuleInfoSnapshot(modelContext, moduleInfos, modules);
         currentSnapshot = next;
         return next;
     }
