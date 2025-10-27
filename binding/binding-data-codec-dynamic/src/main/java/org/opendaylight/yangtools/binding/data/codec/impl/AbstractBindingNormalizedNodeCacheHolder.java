@@ -26,15 +26,14 @@ abstract class AbstractBindingNormalizedNodeCacheHolder {
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public AbstractBindingNormalizedNodeCache load(final CodecContext key) {
-                // FIXME: Use a switch expression once we have https://openjdk.org/jeps/441
-                if (key instanceof DataContainerCodecContext<?, ?, ?> dataContainer) {
-                    return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this,
-                        dataContainer);
-                }
-                if (key instanceof LeafNodeCodecContext.OfTypeObject typeObject) {
-                    return new TypeObjectNormalizedNodeCache<>(typeObject);
-                }
-                throw new IllegalStateException("Unhandled context " + key);
+                return switch (key) {
+                    case DataContainerCodecContext<?, ?, ?> dataContainer ->
+                        new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this,
+                            dataContainer);
+                    case LeafNodeCodecContext.OfTypeObject typeObject ->
+                        new TypeObjectNormalizedNodeCache<>(typeObject);
+                    default -> throw new IllegalStateException("Unhandled context " + key);
+                };
             }
         });
 
