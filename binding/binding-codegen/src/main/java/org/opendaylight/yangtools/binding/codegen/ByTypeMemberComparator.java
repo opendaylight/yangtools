@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -119,22 +118,23 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
     }
 
     private static Type getConcreteType(final Type type) {
-        if (type instanceof ConcreteType) {
-            return type;
-        } else if (type instanceof ParameterizedType generated) {
-            return generated.getRawType();
-        } else if (type instanceof GeneratedTransferObject gto) {
-            GeneratedTransferObject rootGto = gto;
-            while (rootGto.getSuperType() != null) {
-                rootGto = rootGto.getSuperType();
-            }
-            for (GeneratedProperty s : rootGto.getProperties()) {
-                if (TypeConstants.VALUE_PROP.equals(s.getName())) {
-                    return s.getReturnType();
+        return switch (type) {
+            case ConcreteType concrete -> concrete;
+            case ParameterizedType generated -> generated.getRawType();
+            case GeneratedTransferObject gto -> {
+                var rootGto = gto;
+                while (rootGto.getSuperType() != null) {
+                    rootGto = rootGto.getSuperType();
                 }
+                for (var s : rootGto.getProperties()) {
+                    if (TypeConstants.VALUE_PROP.equals(s.getName())) {
+                        yield s.getReturnType();
+                    }
+                }
+                yield type;
             }
-        }
-        return type;
+            default -> type;
+        };
     }
 
     private static int rankOf(final Type type) {
