@@ -18,13 +18,15 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <D> Deserialized (internal) type
  */
 @Beta
-// FIXME: sealed when we have JDK17+
 // FIXME: This interface ignores a number of complications when dealing with external forms. For one, it assumes
 //        a serdes operation does not have further context than the input -- and this is seldom the case. The other
 //        failing is that it actively discourages use of checked exceptions to deal with errors at the appropriate
 //        level. Based on these, this interface is deprecated for removal without a replacement. Users are
 //        encouraged to define similar interface fitting their needs.
-public interface IllegalArgumentCodec<S, D> {
+public sealed interface IllegalArgumentCodec<S, D>
+        permits AbstractIllegalArgumentCodec, BinaryCodec, BitsCodec, BooleanCodec, DecimalCodec, EmptyCodec, EnumCodec,
+                IdentityrefCodec, InstanceIdentifierCodec, Int8Codec, Int16Codec, Int32Codec, Int64Codec, LeafrefCodec,
+                StringCodec, Uint8Codec, Uint16Codec, Uint32Codec, Uint64Codec, UnionCodec {
     /**
      * Produce an internal object based on an external object.
      *

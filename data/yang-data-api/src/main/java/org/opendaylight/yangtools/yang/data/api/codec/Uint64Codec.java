@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.common.Uint64;
  *
  * @param <T> Output type of serialization.
  */
-public interface Uint64Codec<T> extends IllegalArgumentCodec<T, Uint64> {
+public non-sealed interface Uint64Codec<T> extends IllegalArgumentCodec<T, Uint64> {
 
 }

@@ -7,6 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-public interface Int64Codec<T> extends IllegalArgumentCodec<T, Long> {
+public non-sealed interface Int64Codec<T> extends IllegalArgumentCodec<T, Long> {
 
 }

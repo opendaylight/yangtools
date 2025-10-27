@@ -7,6 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-public interface EnumCodec<T> extends IllegalArgumentCodec<T, String> {
+public non-sealed interface EnumCodec<T> extends IllegalArgumentCodec<T, String> {
 
 }

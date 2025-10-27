@@ -7,6 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-public interface UnionCodec<T> extends IllegalArgumentCodec<T,Object> {
+public non-sealed interface UnionCodec<T> extends IllegalArgumentCodec<T,Object> {
 
 }

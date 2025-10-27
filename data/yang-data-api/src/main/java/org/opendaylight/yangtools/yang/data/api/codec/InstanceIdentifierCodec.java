@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  *
  * @param <T> Target type
  */
-public interface InstanceIdentifierCodec<T> extends IllegalArgumentCodec<T, YangInstanceIdentifier> {
+public non-sealed interface InstanceIdentifierCodec<T> extends IllegalArgumentCodec<T, YangInstanceIdentifier> {
 
 }

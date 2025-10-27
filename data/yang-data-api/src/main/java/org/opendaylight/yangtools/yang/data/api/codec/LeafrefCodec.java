@@ -7,6 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-public interface LeafrefCodec<T> extends IllegalArgumentCodec<T, Object> {
+public non-sealed interface LeafrefCodec<T> extends IllegalArgumentCodec<T, Object> {
 
 }

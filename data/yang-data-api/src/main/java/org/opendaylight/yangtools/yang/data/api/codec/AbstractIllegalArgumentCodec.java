@@ -21,7 +21,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <D> Deserialized (internal) type
  */
 @Beta
-public abstract class AbstractIllegalArgumentCodec<S, D> implements IllegalArgumentCodec<S, D> {
+public abstract non-sealed class AbstractIllegalArgumentCodec<S, D> implements IllegalArgumentCodec<S, D> {
     @Override
     public final D deserialize(final S input) {
         return verifyResult(deserializeImpl(requireNonNull(input)), input);

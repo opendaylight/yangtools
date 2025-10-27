@@ -9,6 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
-public interface DecimalCodec<T> extends IllegalArgumentCodec<T, Decimal64> {
+public non-sealed interface DecimalCodec<T> extends IllegalArgumentCodec<T, Decimal64> {
 
 }

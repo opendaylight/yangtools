@@ -7,6 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-public interface Int8Codec<T> extends IllegalArgumentCodec<T, Byte> {
+public non-sealed interface Int8Codec<T> extends IllegalArgumentCodec<T, Byte> {
 
 }

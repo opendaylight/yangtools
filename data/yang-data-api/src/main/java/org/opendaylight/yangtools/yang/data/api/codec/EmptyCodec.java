@@ -9,6 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.yang.common.Empty;
 
-public interface EmptyCodec<T> extends IllegalArgumentCodec<T, Empty> {
+public non-sealed interface EmptyCodec<T> extends IllegalArgumentCodec<T, Empty> {
 
 }
