@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
 import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSortedSet;
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -37,7 +37,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -52,7 +51,6 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -192,9 +190,10 @@ class JavaFileTemplate {
     }
 
     final String generateImportBlock() {
-        verify(javaType instanceof TopLevelJavaGeneratedType);
-        return ((TopLevelJavaGeneratedType) javaType).imports().map(name -> "import " + name + ";\n")
-                .collect(Collectors.joining());
+        if (javaType instanceof TopLevelJavaGeneratedType topLevel) {
+            return topLevel.imports().map(name -> "import " + name + ";\n").collect(Collectors.joining());
+        }
+        throw new VerifyException("Unexpected type " + javaType);
     }
 
     final @NonNull String importedJavadocName(final @NonNull Type intype) {
@@ -280,10 +279,9 @@ class JavaFileTemplate {
      * to the type, expressed as properties.
      */
     static Map.Entry<Type, Set<BuilderGeneratedProperty>> analyzeTypeHierarchy(final GeneratedType type) {
-        final Set<MethodSignature> methods = new LinkedHashSet<>();
-        final Type augmentType = createMethods(type, methods);
-        final Set<MethodSignature> sortedMethods = ImmutableSortedSet.orderedBy(METHOD_COMPARATOR).addAll(methods)
-                .build();
+        final var methods = new LinkedHashSet<MethodSignature>();
+        final var augmentType = createMethods(type, methods);
+        final var sortedMethods = ImmutableSortedSet.orderedBy(METHOD_COMPARATOR).addAll(methods).build();
 
         return new AbstractMap.SimpleImmutableEntry<>(augmentType, propertiesFromMethods(sortedMethods));
     }
@@ -293,13 +291,11 @@ class JavaFileTemplate {
     }
 
     static final Restrictions getRestrictions(final Type type) {
-        if (type instanceof ConcreteType) {
-            return ((ConcreteType) type).getRestrictions();
-        }
-        if (type instanceof GeneratedTransferObject) {
-            return ((GeneratedTransferObject) type).getRestrictions();
-        }
-        return null;
+        return switch (type) {
+            case ConcreteType concrete -> concrete.getRestrictions();
+            case GeneratedTransferObject gto -> gto.getRestrictions();
+            case null, default -> null;
+        };
     }
 
     /**
@@ -357,14 +353,12 @@ class JavaFileTemplate {
     }
 
     private static void addImplMethods(final Set<MethodSignature> methods, final GeneratedType implType) {
-        for (final MethodSignature implMethod : implType.getMethodDefinitions()) {
+        for (var implMethod : implType.getMethodDefinitions()) {
             if (hasOverrideAnnotation(implMethod)) {
                 methods.add(implMethod);
             } else {
                 final String implMethodName = implMethod.getName();
-                if (Naming.isGetterMethodName(implMethodName)
-                        && getterByName(methods, implMethodName).isEmpty()) {
-
+                if (Naming.isGetterMethodName(implMethodName) && getterByName(methods, implMethodName).isEmpty()) {
                     methods.add(implMethod);
                 }
             }
@@ -373,7 +367,7 @@ class JavaFileTemplate {
 
     protected static Optional<MethodSignature> getterByName(final Iterable<MethodSignature> methods,
             final String implMethodName) {
-        for (MethodSignature method : methods) {
+        for (var method : methods) {
             final String methodName = method.getName();
             if (Naming.isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {
                 return Optional.of(method);
@@ -407,7 +401,7 @@ class JavaFileTemplate {
      * @return True if there is an override annotation
      */
     static boolean hasOverrideAnnotation(final MethodSignature method) {
-        for (final AnnotationType annotation : method.getAnnotations()) {
+        for (var annotation : method.getAnnotations()) {
             if (OVERRIDE.equals(annotation.getIdentifier())) {
                 return true;
             }
@@ -420,7 +414,7 @@ class JavaFileTemplate {
             sb.append('\n');
 
             if (def instanceof Single single) {
-                final DocumentedNode node = single.getNode();
+                final var node = single.getNode();
 
                 sb.append("<p>\n")
                     .append("This class represents the following YANG schema fragment defined in module <b>")
@@ -466,7 +460,7 @@ class JavaFileTemplate {
                 }
             } else if (def instanceof Multiple multiple) {
                 sb.append("<pre>\n");
-                for (SchemaNode node : multiple.getNodes()) {
+                for (var node : multiple.getNodes()) {
                     appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).getDeclared());
                 }
                 sb.append("</pre>\n");
