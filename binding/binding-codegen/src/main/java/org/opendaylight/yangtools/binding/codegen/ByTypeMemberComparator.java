@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 /**
@@ -148,8 +147,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
             return RANK_INSTANCE_IDENTIFIER;
         }
         if (type instanceof GeneratedTransferObject gto) {
-            final TypeDefinition<?> typedef = topParentTransportObject(gto).getBaseType();
-            if (typedef instanceof BitsTypeDefinition) {
+            if (topParentTransportObject(gto).getBaseType() instanceof BitsTypeDefinition) {
                 return RANK_VARIABLE_ARRAY;
             }
         }
