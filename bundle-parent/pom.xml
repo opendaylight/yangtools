@@ -23,6 +23,11 @@
     <name>${project.artifactId}</name>
     <description>Bundle parent (felix-based)</description>
 
+    <properties>
+        <!-- we have .mvn/jvm.config in this project -->
+        <odl.ep.fork>false</odl.ep.fork>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

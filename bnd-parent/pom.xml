@@ -25,6 +25,8 @@
 
     <properties>
         <odlparent.dependency.enforce>true</odlparent.dependency.enforce>
+        <!-- we have .mvn/jvm.config in this project -->
+        <odl.ep.fork>false</odl.ep.fork>
     </properties>
 
     <dependencyManagement>

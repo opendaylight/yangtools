@@ -23,6 +23,8 @@
         <spotbugs.onlyAnalyze>!org.opendaylight.yang.gen.-,!org.opendaylight.yang.svc.-</spotbugs.onlyAnalyze>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
+        <!-- Do not assume downstreams have .mvn/jvm.config -->
+        <odl.ep.fork>true</odl.ep.fork>
     </properties>
 
     <build>
