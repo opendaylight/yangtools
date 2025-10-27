@@ -160,14 +160,13 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
 
     private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
         final SimpleNodeDataWithSchema<?> newChild;
-        if (schema instanceof LeafSchemaNode leaf) {
-            newChild = new LeafNodeDataWithSchema(leaf);
-        } else if (schema instanceof AnyxmlSchemaNode anyxml) {
-            newChild = new AnyXmlNodeDataWithSchema(anyxml);
-        } else if (schema instanceof AnydataSchemaNode anydata) {
-            newChild = new AnydataNodeDataWithSchema(anydata);
-        } else {
-            return null;
+        switch (schema) {
+            case LeafSchemaNode leaf -> newChild = new LeafNodeDataWithSchema(leaf);
+            case AnyxmlSchemaNode anyxml -> newChild = new AnyXmlNodeDataWithSchema(anyxml);
+            case AnydataSchemaNode anydata -> newChild = new AnydataNodeDataWithSchema(anydata);
+            default -> {
+                return null;
+            }
         }
 
         // FIXME: 7.0.0: use policy to determine if we should reuse or replace the child
