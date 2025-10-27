@@ -19,8 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Link to the original definition of an {@link AbstractExplicitGenerator}.
  */
-// FIXME: sealed when we have JDK17+
-abstract class OriginalLink<T extends EffectiveStatement<?, ?>, R extends RuntimeType> {
+abstract sealed class OriginalLink<T extends EffectiveStatement<?, ?>, R extends RuntimeType> {
     private static final class Complete<T extends EffectiveStatement<?, ?>, R extends RuntimeType>
             extends OriginalLink<T, R> {
         private final @NonNull AbstractExplicitGenerator<T, R> original;
