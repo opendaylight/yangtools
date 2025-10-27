@@ -67,15 +67,13 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T extends PathArgument> T enter(final Class<?> name, final Class<T> identifier) {
         final var current = current();
-        final CodecContext next;
-        if (current == null) {
+        final var next = switch (current) {
             // Entry of first node
-            next = rootContext;
-        } else if (current instanceof DataContainerCodecContext<?, ?, ?> currentContainer) {
-            next = currentContainer.getStreamChild((Class) name);
-        } else {
-            throw new IllegalArgumentException("Could not start node " + name + " in non-container " + current);
-        }
+            case null -> rootContext;
+            case DataContainerCodecContext<?, ?, ?> currentContainer -> currentContainer.getStreamChild((Class) name);
+            default -> throw new IllegalArgumentException(
+                "Could not start node " + name + " in non-container " + current);
+        };
         schema.push(next);
         return identifier.cast(next.getDomPathArgument());
     }
