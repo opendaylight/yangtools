@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.gson.stream.JsonWriter;
@@ -393,19 +392,19 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void scalarValue(final Object value) throws IOException {
         final var current = tracker.currentStatement();
-        if (current instanceof TypedDataSchemaNode typed) {
-            writeValue(value, codecs.codecFor(typed, tracker));
-        } else if (current instanceof AnydataEffectiveStatement) {
-            writeAnydataValue(value);
-        } else {
-            throw new IllegalStateException(String.format("Cannot emit scalar %s for %s", value, current));
+        switch (current) {
+            case TypedDataSchemaNode typed -> writeValue(value, codecs.codecFor(typed, tracker));
+            case AnydataEffectiveStatement anydata -> writeAnydataValue(value);
+            case null, default -> throw new IllegalStateException("Cannot emit scalar " + value + " for " + current);
         }
     }
 
     @Override
     public void domSourceValue(final DOMSource value) throws IOException {
         final var current = tracker.currentStatement();
-        checkState(current instanceof AnyxmlEffectiveStatement, "Cannot emit DOMSource %s for %s", value, current);
+        if (!(current instanceof AnyxmlEffectiveStatement)) {
+            throw new IllegalStateException("Cannot emit DOMSource " + value + " for " + current);
+        }
         // FIXME: should have a codec based on this :)
         writeAnyXmlValue(value);
     }
@@ -416,11 +415,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private void writeAnydataValue(final Object value) throws IOException {
-        if (value instanceof NormalizedAnydata normalized) {
-            writeNormalizedAnydata(normalized);
-        } else {
+        if (!(value instanceof NormalizedAnydata normalized)) {
             throw new IllegalStateException("Unexpected anydata value " + value);
         }
+        writeNormalizedAnydata(normalized);
     }
 
     private void writeNormalizedAnydata(final NormalizedAnydata anydata) throws IOException {
