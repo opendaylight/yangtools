@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.runtime.spi;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -45,17 +44,8 @@ public final class ModuleInfoSnapshotBuilder {
         this.parserFactory = requireNonNull(parserFactory);
     }
 
-    @SuppressWarnings("checkstyle:illegalCatch")
     public @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject> clazz) {
-        final YangModuleInfo moduleInfo;
-        try {
-            moduleInfo = BindingRuntimeHelpers.getYangModuleInfo(clazz);
-        } catch (Exception e) {
-            Throwables.throwIfUnchecked(e);
-            throw new IllegalStateException("Failed to introspect " + clazz, e);
-        }
-
-        return add(moduleInfo);
+        return add(BindingRuntimeHelpers.getYangModuleInfo(clazz));
     }
 
     @SafeVarargs
