@@ -106,7 +106,7 @@ class SchemaSourceTransformerTest {
             src = PotentialSchemaSource.create(sourceIdentifier, representation, cost.getValue());
         }
 
-        public PotentialSchemaSource<T> getPotentialSchemSource() {
+        PotentialSchemaSource<T> getPotentialSchemSource() {
             return src;
         }
     }
