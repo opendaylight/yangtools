@@ -117,7 +117,7 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
 
     @NonNull StatementDefinitionContext<?, ?, ?> overrideDefinition(
             final @NonNull StatementDefinitionContext<?, ?, ?> def) {
-        if (!(support instanceof OverrideChildStatementSupport)) {
+        if (!(support instanceof OverrideChildStatementSupport overrideSupport)) {
             return def;
         }
 
@@ -130,8 +130,7 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
             unknownStmtDefsOfYangStmts = new HashMap<>(4);
         }
 
-        final StatementSupport<?, ?, ?> override =
-            ((OverrideChildStatementSupport) support).statementDefinitionOverrideOf(def.getPublicView());
+        final var override = overrideSupport.statementDefinitionOverrideOf(def.getPublicView());
         final StatementDefinitionContext<?, ?, ?> ret;
         if (override != null) {
             ret = new StatementDefinitionContext<>(override);
