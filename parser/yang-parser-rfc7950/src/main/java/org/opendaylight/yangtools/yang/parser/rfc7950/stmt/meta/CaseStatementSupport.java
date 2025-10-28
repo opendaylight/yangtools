@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -129,8 +127,9 @@ public final class CaseStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final CaseEffectiveStatement stmt) {
-        verify(stmt instanceof CaseSchemaNode, "Unexpected statement %s", stmt);
-        final var schema = (CaseSchemaNode) stmt;
+        if (!(stmt instanceof CaseSchemaNode schema)) {
+            throw new VerifyException("Unexpected statement " + stmt);
+        }
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)
             .setStatus(schema.getStatus())
@@ -142,23 +141,16 @@ public final class CaseStatementSupport
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         final Boolean config;
         final EffectiveConfig effective = stmt.effectiveConfig();
-        switch (effective) {
-            case FALSE:
-                config = Boolean.FALSE;
-                break;
-            case IGNORED:
-                config = null;
-                break;
-            case TRUE:
+        config = switch (effective) {
+            case FALSE -> Boolean.FALSE;
+            case IGNORED -> null;
+            case TRUE -> {
                 final Boolean sub = substatementEffectiveConfig(substatements);
-                config = sub != null ? sub : Boolean.TRUE;
-                break;
-            case UNDETERMINED:
-                config = substatementEffectiveConfig(substatements);
-                break;
-            default:
-                throw new IllegalStateException("Unhandled effective config " + effective);
-        }
+                yield sub != null ? sub : Boolean.TRUE;
+            }
+            case UNDETERMINED -> substatementEffectiveConfig(substatements);
+            default -> throw new IllegalStateException("Unhandled effective config " + effective);
+        };
 
         return new FlagsBuilder()
                 .setHistory(stmt.history())
@@ -169,9 +161,9 @@ public final class CaseStatementSupport
 
     private static @Nullable Boolean substatementEffectiveConfig(
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof DataSchemaNode) {
-                final Optional<Boolean> opt = ((DataSchemaNode) stmt).effectiveConfig();
+        for (var stmt : substatements) {
+            if (stmt instanceof DataSchemaNode dsn) {
+                final var opt = dsn.effectiveConfig();
                 if (opt.isPresent()) {
                     return opt.orElseThrow();
                 }

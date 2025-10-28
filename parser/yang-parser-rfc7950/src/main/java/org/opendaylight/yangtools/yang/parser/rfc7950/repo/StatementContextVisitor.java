@@ -56,11 +56,10 @@ class StatementContextVisitor {
      * @return valid QName for declared statement to be written, or null
      */
     QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
-        if (keyword instanceof Qualified) {
-            return getValidStatementDefinition((Qualified) keyword, ref);
+        if (keyword instanceof Qualified qual) {
+            return getValidStatementDefinition(qual, ref);
         }
-        final StatementDefinition def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE,
-            keyword.identifier()));
+        final var def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, keyword.identifier()));
         return def != null ? def.getStatementName() : null;
     }
 
@@ -76,7 +75,7 @@ class StatementContextVisitor {
             return null;
         }
 
-        final StatementDefinition foundStmtDef = resolveStatement(qNameModule, keyword.identifier());
+        final var foundStmtDef = resolveStatement(qNameModule, keyword.identifier());
         return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
     }
 

@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -106,16 +105,18 @@ public final class IdentityStatementSupport
             return EffectiveStatements.createIdentity(stmt.declared());
         }
 
-        final List<IdentitySchemaNode> identities = new ArrayList<>();
-        for (EffectiveStatement<?, ?> substatement : substatements) {
-            if (substatement instanceof BaseEffectiveStatement) {
-                final QName qname = ((BaseEffectiveStatement) substatement).argument();
-                final IdentityEffectiveStatement identity =
-                        verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, qname),
-                            "Failed to find identity %s", qname)
-                        .buildEffective();
-                verify(identity instanceof IdentitySchemaNode, "%s is not a IdentitySchemaNode", identity);
-                identities.add((IdentitySchemaNode) identity);
+        final var identities = new ArrayList<IdentitySchemaNode>();
+        for (var substatement : substatements) {
+            if (substatement instanceof BaseEffectiveStatement base) {
+                final var qname = base.argument();
+                final var identity =
+                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, qname),
+                        "Failed to find identity %s", qname)
+                    .buildEffective();
+                if (!(identity instanceof IdentitySchemaNode schema)) {
+                    throw new VerifyException(identity + " is not a IdentitySchemaNode");
+                }
+                identities.add(schema);
             }
         }
 
