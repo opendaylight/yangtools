@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f733efc4_714150bd",
+        "filename": "tests/test_yangmodels_iana.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-28T09:01:07Z",
+      "side": 1,
+      "message": "Also it could be updated here, the test name.",
+      "revId": "57afd5849bda9bd5b1819ea1fb8a833f0b423b21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
