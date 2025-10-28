@@ -90,18 +90,20 @@ final class IncrementalBuildSupport {
             for (var directory : TRANSIENT_DIRECTORIES) {
                 final var dirPath = pluginSubdirectory(projectBuildDirectory, pluginName, directory);
                 if (Files.isDirectory(dirPath)) {
-                    final var mismatch = Files.walk(dirPath)
-                        .filter(Files::isRegularFile)
-                        .map(Path::toString)
-                        .allMatch(path -> {
-                            if (outputFiles.containsKey(path)) {
-                                return true;
-                            }
-                            LOG.info("{}: unexpected output file {}", YangToSourcesProcessor.LOG_PREFIX, path);
-                            return false;
-                        });
-                    if (!mismatch) {
-                        return true;
+                    try (var stream = Files.walk(dirPath)) {
+                        final var mismatch = stream
+                            .filter(Files::isRegularFile)
+                            .map(Path::toString)
+                            .allMatch(path -> {
+                                if (outputFiles.containsKey(path)) {
+                                    return true;
+                                }
+                                LOG.info("{}: unexpected output file {}", YangToSourcesProcessor.LOG_PREFIX, path);
+                                return false;
+                            });
+                        if (!mismatch) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -151,16 +153,17 @@ final class IncrementalBuildSupport {
             for (var directory : TRANSIENT_DIRECTORIES) {
                 final var dirPath = pluginSubdirectory(projectBuildDirectory, plugin, directory);
                 if (Files.isDirectory(dirPath)) {
-                    Files.walk(dirPath)
-                        .filter(Files::isRegularFile)
-                        .filter(path -> !outputFiles.containsKey(path.toString()))
-                        .map(Path::toFile)
-                        .forEach(file -> {
-                            if (file.delete()) {
-                                // Notify BuildContext of the deleted file
-                                buildContext.refresh(file);
-                            }
-                        });
+                    try (var stream = Files.walk(dirPath)) {
+                        stream.filter(Files::isRegularFile)
+                            .filter(path -> !outputFiles.containsKey(path.toString()))
+                            .map(Path::toFile)
+                            .forEach(file -> {
+                                if (file.delete()) {
+                                    // Notify BuildContext of the deleted file
+                                    buildContext.refresh(file);
+                                }
+                            });
+                    }
                 }
             }
         }
@@ -175,12 +178,14 @@ final class IncrementalBuildSupport {
 
     private static void deleteRecursively(final BuildContext buildContext, final Path path) throws IOException {
         if (Files.isDirectory(path)) {
-            Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(file -> {
-                if (file.delete()) {
-                    // Notify BuildContext of the deleted file
-                    buildContext.refresh(file);
-                }
-            });
+            try (var stream = Files.walk(path)) {
+                stream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(file -> {
+                    if (file.delete()) {
+                        // Notify BuildContext of the deleted file
+                        buildContext.refresh(file);
+                    }
+                });
+            }
         }
     }
 }

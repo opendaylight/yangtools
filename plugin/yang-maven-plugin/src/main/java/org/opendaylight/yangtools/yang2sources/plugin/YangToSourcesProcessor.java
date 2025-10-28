@@ -426,18 +426,20 @@ class YangToSourcesProcessor {
             return ImmutableList.of();
         }
 
-        return Files.walk(root.toPath())
-            .map(Path::toFile)
-            .filter(File::isFile)
-            .filter(f -> {
-                if (excludedFiles.contains(f)) {
-                    LOG.info("{} YANG file excluded {}", LOG_PREFIX, f);
-                    return false;
-                }
-                return true;
-            })
-            .filter(f -> f.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION))
-            .collect(ImmutableList.toImmutableList());
+        try (var stream = Files.walk(root.toPath())) {
+            return stream
+                .map(Path::toFile)
+                .filter(File::isFile)
+                .filter(f -> {
+                    if (excludedFiles.contains(f)) {
+                        LOG.info("{} YANG file excluded {}", LOG_PREFIX, f);
+                        return false;
+                    }
+                    return true;
+                })
+                .filter(f -> f.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION))
+                .collect(ImmutableList.toImmutableList());
+        }
     }
 
     @VisibleForTesting
