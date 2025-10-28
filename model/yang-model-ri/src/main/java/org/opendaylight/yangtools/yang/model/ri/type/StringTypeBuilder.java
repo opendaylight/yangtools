@@ -32,15 +32,13 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
 
     @Override
     LengthConstraint typeLengthConstraints() {
-        /**
-         * Length constraint imposed on YANG string type by our implementation. {@link String#length()} is an integer,
-         * capping our ability to support strings up to 18446744073709551615 as defined in
-         * http://www.rfc-editor.org/rfc/rfc6020#section-9.4.4.
-         *
-         * FIXME: We could bump this number up to allow such models, but that could lead to unexpected run-time errors.
-         *        In order to do that, the parser would need another pass on the effective statements, which would cap
-         *        the constraints to the run-time environment.
-         */
+        // Length constraint imposed on YANG string type by our implementation. {@link String#length()} is an integer,
+        // capping our ability to support strings up to 18446744073709551615 as defined in
+        // http://www.rfc-editor.org/rfc/rfc6020#section-9.4.4.
+        //
+        // FIXME: We could bump this number up to allow such models, but that could lead to unexpected run-time errors.
+        //        In order to do that, the parser would need another pass on the effective statements, which would cap
+        //        the constraints to the run-time environment.
         return JavaLengthConstraints.INTEGER_SIZE_CONSTRAINTS;
     }
 

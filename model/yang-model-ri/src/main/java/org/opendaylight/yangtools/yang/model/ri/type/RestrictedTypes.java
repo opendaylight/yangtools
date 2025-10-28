@@ -85,10 +85,8 @@ public final class RestrictedTypes {
 
             @Override
             LengthConstraint typeLengthConstraints() {
-                /**
-                 * Length constraint imposed on YANG binary type by our implementation. byte[].length is an integer,
-                 * capping our ability to support arbitrary binary data.
-                 */
+                // Length constraint imposed on YANG binary type by our implementation. byte[].length is an integer,
+                // capping our ability to support arbitrary binary data.
                 return JavaLengthConstraints.INTEGER_SIZE_CONSTRAINTS;
             }
         };
