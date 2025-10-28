@@ -13,7 +13,6 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,8 +28,6 @@ class EffectiveStatementTest {
     private EffectiveStatement1 stmt1;
     @Mock
     private Effectivestatement2 stmt2;
-    @Mock
-    private Map<?, ?> mockNamespace;
 
     @BeforeEach
     void before() {
