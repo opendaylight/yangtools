@@ -32,9 +32,9 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  * </li>
  * <li>Namespace-bound Expressions, where all node identifier references are resolved to {@link QName}s. This level
  *     corresponds to how far a YANG parser can interpret XPath expressions at their place of instantiation, either in
- *     the data tree or an {@code action}/@{code rpc}/{@code notification} or similar context.
+ *     the data tree or an {@code action}/{@code rpc}/{@code notification} or similar context.
  * </li>
- * <li>Context-bound Expressions, where the expression is bound to a {code context node}, i.e. {@code current()}
+ * <li>Context-bound Expressions, where the expression is bound to a {@code context node}, i.e. {@code current()}
  *     function result is know. This API does not handle this state, as it is inherently bound to a particular data
  *     object model.
  * </li>
