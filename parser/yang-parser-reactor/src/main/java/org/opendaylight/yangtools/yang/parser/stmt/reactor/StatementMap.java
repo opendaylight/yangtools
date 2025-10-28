@@ -221,7 +221,7 @@ abstract class StatementMap extends AbstractCollection<OriginalStmtCtx<?, ?, ?>>
     abstract @NonNull StatementMap put(int index, @NonNull OriginalStmtCtx<?, ?, ?> obj);
 
     /**
-     * Ensure storage space for at least {@code explectedLimit} substatements.
+     * Ensure storage space for at least {@code expectedLimit} substatements.
      *
      * @param expectedLimit Expected number of substatements
      * @return New statement map
