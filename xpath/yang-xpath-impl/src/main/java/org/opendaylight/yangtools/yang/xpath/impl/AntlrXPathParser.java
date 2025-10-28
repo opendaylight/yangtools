@@ -273,7 +273,6 @@ abstract class AntlrXPathParser implements YangXPathParser {
     /**
      * Parse and simplify an XPath expression in {@link ExprContext} representation.
      *
-     * @param ctx Current parsing context
      * @param expr ANTLR ExprContext
      * @return A {@link YangExpr}
      * @throws NullPointerException if {@code expr} is null
