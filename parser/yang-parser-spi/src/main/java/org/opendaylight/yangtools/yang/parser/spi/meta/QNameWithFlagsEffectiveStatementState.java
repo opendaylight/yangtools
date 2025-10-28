@@ -35,14 +35,8 @@ public final class QNameWithFlagsEffectiveStatementState extends EffectiveStatem
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (!(obj instanceof QNameWithFlagsEffectiveStatementState)) {
-            return false;
-        }
-        final var other = (QNameWithFlagsEffectiveStatementState) obj;
-        return flags == other.flags && qname.equals(other.qname);
+        return obj == this || obj instanceof QNameWithFlagsEffectiveStatementState other
+            && flags == other.flags && qname.equals(other.qname);
     }
 
     @Override
