@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -50,7 +46,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -153,14 +148,14 @@ public final class ListStatementSupport
         final ImmutableList<QName> keyDefinition;
         final KeyEffectiveStatement keyStmt = findFirstStatement(substatements, KeyEffectiveStatement.class);
         if (keyStmt != null) {
-            final List<QName> keyDefinitionInit = new ArrayList<>(keyStmt.argument().size());
-            final Set<QName> possibleLeafQNamesForKey = new HashSet<>();
-            for (final EffectiveStatement<?, ?> effectiveStatement : substatements) {
-                if (effectiveStatement instanceof LeafSchemaNode) {
-                    possibleLeafQNamesForKey.add(((LeafSchemaNode) effectiveStatement).getQName());
+            final var keyDefinitionInit = new ArrayList<QName>(keyStmt.argument().size());
+            final var possibleLeafQNamesForKey = new HashSet<QName>();
+            for (var effectiveStatement : substatements) {
+                if (effectiveStatement instanceof LeafSchemaNode leaf) {
+                    possibleLeafQNamesForKey.add(leaf.getQName());
                 }
             }
-            for (final QName keyQName : keyStmt.argument()) {
+            for (var keyQName : keyStmt.argument()) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
                     throw new InferenceException(stmt, "Key '%s' misses node '%s' in list '%s'",
                         keyStmt.getDeclared().rawArgument(), keyQName.getLocalName(), stmt.argument());
@@ -193,8 +188,9 @@ public final class ListStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final ListEffectiveStatement stmt) {
-        verify(stmt instanceof ListSchemaNode, "Unexpected statement %s", stmt);
-        final var schema = (ListSchemaNode) stmt;
+        if (!(stmt instanceof ListSchemaNode schema)) {
+            throw new VerifyException("Unexpected statement " + stmt);
+        }
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)
             .setStatus(schema.getStatus())
@@ -219,9 +215,12 @@ public final class ListStatementSupport
         final Boolean warned = stmt.namespaceItem(ConfigListWarningNamespace.INSTANCE, ref);
         // Hacky check if we have issued a warning for the original statement
         if (warned == null) {
-            final StmtContext<?, ?, ?> ctx = stmt.caerbannog();
-            verify(ctx instanceof Mutable, "Unexpected context %s", ctx);
-            ((Mutable<?, ?, ?>) ctx).addToNs(ConfigListWarningNamespace.INSTANCE, ref, Boolean.TRUE);
+            final var ctx = stmt.caerbannog();
+            if (!(ctx instanceof Mutable<?, ?, ?> mutable)) {
+                throw new VerifyException("Unexpected context " + ctx);
+            }
+
+            mutable.addToNs(ConfigListWarningNamespace.INSTANCE, ref, Boolean.TRUE);
             LOG.info("""
                 Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While this is \
                 fine with OpenDaylight, it can cause interoperability issues with other systems [defined at {}]""",
@@ -232,16 +231,16 @@ public final class ListStatementSupport
     private static boolean isInstantied(final EffectiveStmtCtx ctx) {
         Parent parent = ctx.effectiveParent();
         while (parent != null) {
-            final StatementDefinition parentDef = parent.publicDefinition();
+            final var parentDef = parent.publicDefinition();
             if (UNINSTANTIATED_DATATREE_STATEMENTS.contains(parentDef)) {
                 return false;
             }
 
-            final Parent grandParent = parent.effectiveParent();
+            final var grandParent = parent.effectiveParent();
             if (YangStmtMapping.AUGMENT == parentDef && grandParent != null) {
                 // If this is an augment statement and its parent is either a 'module' or 'submodule' statement, we are
                 // dealing with an uninstantiated context.
-                final StatementDefinition grandParentDef = grandParent.publicDefinition();
+                final var grandParentDef = grandParent.publicDefinition();
                 if (YangStmtMapping.MODULE == grandParentDef || YangStmtMapping.SUBMODULE == grandParentDef) {
                     return false;
                 }
