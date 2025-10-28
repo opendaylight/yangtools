@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -80,18 +79,9 @@ final class EnumPairImpl implements EnumPair, Immutable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof EnumPair)) {
-            return false;
-        }
-        EnumPair other = (EnumPair) obj;
-        if (!Objects.equals(name, other.getName())) {
-            return false;
-        }
-
-        return value == other.getValue() && Objects.equals(unknownSchemaNodes, other.getUnknownSchemaNodes());
+        return this == obj || obj instanceof EnumPair other
+            && name.equals(other.getName()) && value == other.getValue()
+            && unknownSchemaNodes.equals(other.getUnknownSchemaNodes());
     }
 
     @Override
