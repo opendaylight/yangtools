@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.DOUBLE_TAB;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.TAB;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.TRIPLE_TAB;
@@ -274,7 +275,9 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private String getFileContent(final String fileName) throws Exception {
         final var file = files.get(getJavaFileName(fileName));
-        assertNotNull(Files.lines(file).findFirst());
+        try (var stream = Files.lines(file)) {
+            assertTrue(stream.findFirst().isPresent());
+        }
         final var content = Files.readString(file.toAbsolutePath());
         assertNotNull(content);
         return content;
