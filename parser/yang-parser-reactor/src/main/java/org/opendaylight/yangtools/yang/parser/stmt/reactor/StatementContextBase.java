@@ -497,7 +497,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
      * Occurs on end of {@link ModelProcessingPhase} of source parsing. This method must not be called with
      * {@code executionOrder} equal to {@link ExecutionOrder#NULL}.
      *
-     * @param phase that was to be completed (finished)
+     * @param completedOrder phase order that was to be completed (finished)
      * @throws SourceException when an error occurred in source parsing
      */
     private void onPhaseCompleted(final byte completedOrder) {
