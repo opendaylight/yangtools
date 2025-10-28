@@ -38,12 +38,11 @@ public final class YangIRSource implements YangSourceRepresentation {
         }
         final var rootName = rootKeyword.identifier();
         switch (rootName) {
-            case "module":
-            case "submodule":
-                break;
-            default:
-                throw new StatementSourceException(refOf(sourceId, statement),
-                    "Invalid root statement keyword " + rootName);
+            case "module", "submodule" -> {
+                // Okay
+            }
+            default -> throw new StatementSourceException(refOf(sourceId, statement),
+                "Invalid root statement keyword " + rootName);
         }
         if (statement.argument() == null) {
             throw new StatementSourceException(refOf(sourceId, statement), "Root statement does not have an argument");
