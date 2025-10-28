@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce8332ce_1bf1f227",
+        "filename": "tests/test_yangmodels_etsi.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-10-28T09:01:25Z",
+      "side": 1,
+      "message": "Also it could be updated here, the test name.",
+      "revId": "ac8e9dcebfa3de75cba2ad01724c80b6ad01aef7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
