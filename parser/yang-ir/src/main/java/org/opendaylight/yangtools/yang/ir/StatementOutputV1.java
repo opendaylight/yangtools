@@ -95,20 +95,14 @@ final class StatementOutputV1 extends StatementOutput {
         }
 
         switch (sizeBits) {
-            case IOConstantsV1.HDR_SIZE_0:
+            case IOConstantsV1.HDR_SIZE_0 -> {
                 // All done
                 return;
-            case IOConstantsV1.HDR_SIZE_U8:
-                out.writeByte(statements.size());
-                break;
-            case IOConstantsV1.HDR_SIZE_U16:
-                out.writeShort(size);
-                break;
-            case IOConstantsV1.HDR_SIZE_S32:
-                out.writeInt(size);
-                break;
-            default:
-                throw new IllegalStateException("Unhandled size bits " + sizeBits);
+            }
+            case IOConstantsV1.HDR_SIZE_U8 -> out.writeByte(statements.size());
+            case IOConstantsV1.HDR_SIZE_U16 -> out.writeShort(size);
+            case IOConstantsV1.HDR_SIZE_S32 -> out.writeInt(size);
+            default -> throw new IllegalStateException("Unhandled size bits " + sizeBits);
         }
 
         for (var child : statements) {
