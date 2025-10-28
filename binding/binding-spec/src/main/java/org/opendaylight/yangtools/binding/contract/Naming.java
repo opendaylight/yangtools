@@ -497,7 +497,7 @@ public final class Naming {
      * @param templateName template name
      * @return Java class name
      * @throws NullPointerException if {@code templateName} is {@code null}
-     * @throws IllegalArgumentException if (@code templateName} is empty
+     * @throws IllegalArgumentException if {@code templateName} is empty
      */
     // TODO: take YangDataName once we have it readily available
     public static String mapYangDataName(final YangDataName templateName) {
