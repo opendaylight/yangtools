@@ -161,17 +161,13 @@ final class FunctionSupport {
 
     private static YangExpr booleanExpr(final List<YangExpr> args) {
         checkArgument(args.size() == 1, "boolean(object) takes one argument");
-        final YangExpr arg = args.getFirst();
-        if (arg instanceof YangBooleanConstantExpr) {
-            return arg;
-        }
-        if (arg instanceof YangLiteralExpr) {
-            return YangBooleanConstantExpr.of(!((YangLiteralExpr) arg).getLiteral().isEmpty());
-        }
-
-        // TODO: handling YangNumberExpr requires math support
-
-        return YangFunctionCallExpr.of(YangFunction.BOOLEAN.getIdentifier(), args);
+        return switch (args.getFirst()) {
+            case YangBooleanConstantExpr constant -> constant;
+            case YangLiteralExpr literal -> YangBooleanConstantExpr.of(!literal.getLiteral().isEmpty());
+            default ->
+                // TODO: handling YangNumberExpr requires math support
+                YangFunctionCallExpr.of(YangFunction.BOOLEAN.getIdentifier(), args);
+        };
     }
 
     private static YangExpr concatExpr(final List<YangExpr> args) {
@@ -184,13 +180,8 @@ final class FunctionSupport {
 
     private static YangExpr containsExpr(final List<YangExpr> args) {
         checkArgument(args.size() == 2, "contains(string, string) takes two arguments");
-        final YangExpr first = args.getFirst();
-        if (first instanceof YangLiteralExpr) {
-            final YangExpr second = args.get(1);
-            if (second instanceof YangLiteralExpr) {
-                return YangBooleanConstantExpr.of(
-                    ((YangLiteralExpr) first).getLiteral().contains(((YangLiteralExpr) second).getLiteral()));
-            }
+        if (args.getFirst() instanceof YangLiteralExpr first && args.get(1) instanceof YangLiteralExpr second) {
+            return YangBooleanConstantExpr.of(first.getLiteral().contains(second.getLiteral()));
         }
 
         // TODO: handling YangNumberExpr requires math support
@@ -211,9 +202,8 @@ final class FunctionSupport {
 
     private static YangExpr notExpr(final List<YangExpr> args) {
         checkArgument(args.size() == 1, "not(boolean) takes one argument");
-        final YangExpr arg = args.getFirst();
-        if (arg instanceof YangBooleanConstantExpr) {
-            return YangBooleanConstantExpr.of(((YangBooleanConstantExpr) arg).getValue());
+        if (args.getFirst() instanceof YangBooleanConstantExpr arg) {
+            return YangBooleanConstantExpr.of(arg.getValue());
         }
 
         return YangFunctionCallExpr.of(YangFunction.NOT.getIdentifier(), args);
@@ -238,19 +228,12 @@ final class FunctionSupport {
             return NUMBER;
         }
 
-        final YangExpr arg = args.getFirst();
-        if (arg instanceof YangNumberExpr) {
-            return arg;
-        }
-        if (arg instanceof YangLiteralExpr) {
-            return mathSupport.createNumber(((YangLiteralExpr) arg).getLiteral());
-        }
-        if (arg instanceof YangBooleanConstantExpr) {
-            final boolean value = ((YangBooleanConstantExpr) arg).getValue();
-            return mathSupport.createNumber(value ? 1 : 0);
-        }
-
-        return YangFunctionCallExpr.of(YangFunction.NUMBER.getIdentifier(), args);
+        return switch (args.getFirst()) {
+            case YangNumberExpr number -> number;
+            case YangLiteralExpr literal -> mathSupport.createNumber(literal.getLiteral());
+            case YangBooleanConstantExpr constant ->  mathSupport.createNumber(constant.getValue() ? 1 : 0);
+            default -> YangFunctionCallExpr.of(YangFunction.NUMBER.getIdentifier(), args);
+        };
     }
 
     private static YangExpr startsWithExpr(final List<YangExpr> args) {
@@ -292,16 +275,13 @@ final class FunctionSupport {
             return STRING;
         }
 
-        final YangExpr arg = args.getFirst();
-        if (arg instanceof YangLiteralExpr) {
-            return arg;
-        }
-        if (arg instanceof YangBooleanConstantExpr) {
-            return ((YangBooleanConstantExpr) arg).asStringLiteral();
-        }
-
-        // TODO: handling YangNumberExpr requires math support
-        return YangFunctionCallExpr.of(YangFunction.STRING.getIdentifier(), args);
+        return switch (args.getFirst()) {
+            case YangLiteralExpr literal -> literal;
+            case YangBooleanConstantExpr constant ->constant.asStringLiteral();
+            default ->
+                // TODO: handling YangNumberExpr requires math support
+                YangFunctionCallExpr.of(YangFunction.STRING.getIdentifier(), args);
+        };
     }
 
     private YangExpr stringLengthExpr(final List<YangExpr> args) {
@@ -311,11 +291,11 @@ final class FunctionSupport {
         }
 
         YangExpr first = args.getFirst();
-        if (first instanceof YangBooleanConstantExpr) {
-            first = ((YangBooleanConstantExpr) first).asStringLiteral();
+        if (first instanceof YangBooleanConstantExpr constant) {
+            first = constant.asStringLiteral();
         }
-        if (first instanceof YangLiteralExpr) {
-            return mathSupport.createNumber(((YangLiteralExpr) first).getLiteral().length());
+        if (first instanceof YangLiteralExpr literal) {
+            return mathSupport.createNumber(literal.getLiteral().length());
         }
 
         return YangFunctionCallExpr.of(YangFunction.STRING_LENGTH.getIdentifier(), args);
