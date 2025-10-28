@@ -97,7 +97,7 @@ public final class CrossSourceStatementReactor {
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if @{code source} is null
+         * @throws NullPointerException if {@code source} is null
          */
         public @NonNull BuildAction addSource(final StatementStreamSource source) {
             context.addSource(source);
@@ -109,7 +109,7 @@ public final class CrossSourceStatementReactor {
          *
          * @param sources which should be added into main sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if @{code sources} is null or contains a null element
+         * @throws NullPointerException if {@code sources} is null or contains a null element
          */
         public @NonNull BuildAction addSources(final StatementStreamSource... sources) {
             addSources(Arrays.asList(sources));
@@ -121,7 +121,7 @@ public final class CrossSourceStatementReactor {
          *
          * @param sources which should be added into main sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if @{code sources} is null or contains a null element
+         * @throws NullPointerException if {@code sources} is null or contains a null element
          */
         public @NonNull BuildAction addSources(final @NonNull Collection<? extends StatementStreamSource> sources) {
             for (final StatementStreamSource source : sources) {
@@ -138,7 +138,7 @@ public final class CrossSourceStatementReactor {
          *
          * @param libSource source which should be added into library sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if @{code libSource} is null
+         * @throws NullPointerException if {@code libSource} is null
          */
         public @NonNull BuildAction addLibSource(final StatementStreamSource libSource) {
             context.addLibSource(libSource);
@@ -153,7 +153,7 @@ public final class CrossSourceStatementReactor {
          *
          * @param libSources sources which should be added into library sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if @{code libSources} is null or contains a null element
+         * @throws NullPointerException if {@code libSources} is null or contains a null element
          */
         public @NonNull BuildAction addLibSources(final StatementStreamSource... libSources) {
             addLibSources(Arrays.asList(libSources));
@@ -168,7 +168,7 @@ public final class CrossSourceStatementReactor {
          *
          * @param libSources sources which should be added into library sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if @{code libSources} is null or contains a null element
+         * @throws NullPointerException if {@code libSources} is null or contains a null element
          */
         public @NonNull BuildAction addLibSources(final Collection<StatementStreamSource> libSources) {
             for (final StatementStreamSource libSource : libSources) {
