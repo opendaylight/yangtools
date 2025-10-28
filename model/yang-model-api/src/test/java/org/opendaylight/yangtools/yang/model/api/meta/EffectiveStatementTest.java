@@ -29,8 +29,6 @@ class EffectiveStatementTest {
     private EffectiveStatement1 stmt1;
     @Mock
     private Effectivestatement2 stmt2;
-    @Mock
-    private Map<?, ?> mockNamespace;
 
     @BeforeEach
     void before() {
