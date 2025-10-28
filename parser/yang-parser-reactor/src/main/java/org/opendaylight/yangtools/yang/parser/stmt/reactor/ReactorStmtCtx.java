@@ -438,7 +438,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,
      * this method does nothing. This must not be called with {@link ExecutionOrder#NULL}.
      *
-     * @param phase to be executed (completed)
+     * @param executionOrder phase order to be executed (completed)
      * @return true if phase was successfully completed
      * @throws SourceException when an error occurred in source parsing
      */
