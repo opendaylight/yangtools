@@ -471,7 +471,7 @@ public final class CodeHelpers {
      * @param fieldName name of the field being filled
      * @param set Set, which items should be checked
      * @return Type-checked Set
-     * @throws IllegalArgumentException if a set item is not instance of {@code requiredItemClass}
+     * @throws IllegalArgumentException if a set item is not instance of {@code requiredClass}
      * @throws NullPointerException if {@code requiredClass} or {@code fieldName} is {@code null}
      */
     @SuppressWarnings("unchecked")
