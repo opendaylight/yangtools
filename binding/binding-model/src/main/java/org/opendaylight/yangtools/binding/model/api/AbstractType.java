@@ -32,6 +32,6 @@ public abstract class AbstractType extends AbstractSimpleIdentifiable<JavaTypeNa
 
     @Override
     public final boolean equals(final Object obj) {
-        return this == obj || obj instanceof Type && getIdentifier().equals(((Type) obj).getIdentifier());
+        return this == obj || obj instanceof Type type && getIdentifier().equals(type.getIdentifier());
     }
 }
