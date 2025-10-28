@@ -251,7 +251,7 @@ public final class ModuleDependencySort {
             return "Module [name=" + name + ", revision=" + formatRevDate(getRevision()) + "]";
         }
 
-        public Module getReference() {
+        Module getReference() {
             return originalObject;
         }
     }
