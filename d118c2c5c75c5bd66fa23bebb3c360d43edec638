@@ -124,6 +124,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d6f6829b_46f85879",
+        "filename": "tests/test_yangmodels_iana.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-10-28T08:45:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82096b36_ac9cc986",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "69008809_0638692e",
@@ -141,6 +159,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a59fad3_d85e39d3",
+        "filename": "tests/test_yangmodels_iana.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-10-28T08:45:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "69008809_0638692e",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3c851277_1bc48dad",
@@ -154,6 +190,24 @@
       "writtenOn": "2025-10-23T08:46:14Z",
       "side": 1,
       "message": "same as openconfig tests, probably does not need to convert it using f-string",
+      "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7951031_97c2b332",
+        "filename": "tests/test_yangmodels_iana.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-10-28T08:45:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3c851277_1bc48dad",
       "revId": "d118c2c5c75c5bd66fa23bebb3c360d43edec638",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
