@@ -386,7 +386,7 @@ class TypeTest {
     void constraintTypeBuilderTest() throws InvalidLengthConstraintException {
         final var baseBinaryType = assertInstanceOf(BaseBinaryType.class, BaseTypes.binaryType());
         final var lengthRestrictedTypeBuilder = RestrictedTypes.newBinaryBuilder(baseBinaryType, Q_NAME);
-        final Long min = (long) 0;
+        final Long min = 0L;
         final var max = UnresolvedNumber.max();
         final var lengthArrayList = List.of(ValueRange.of(min, max));
         lengthRestrictedTypeBuilder.setLengthConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
