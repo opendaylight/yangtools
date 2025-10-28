@@ -549,12 +549,13 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
                 }
 
                 switch (stmt.definition().support().copyPolicy()) {
-                    case CONTEXT_INDEPENDENT:
-                    case EXACT_REPLICA:
-                    case IGNORE:
-                        break;
-                    default:
+                    case null -> throw new NullPointerException();
+                    case CONTEXT_INDEPENDENT, EXACT_REPLICA, IGNORE -> {
+                        // No-op
+                    }
+                    case DECLARED_COPY, REJECT -> {
                         return false;
+                    }
                 }
             }
         }
