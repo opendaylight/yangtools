@@ -75,14 +75,8 @@ final class BitImpl implements Bit, Immutable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Bit)) {
-            return false;
-        }
-        final Bit other = (Bit) obj;
-        return name.equals(other.getName()) && position == other.getPosition();
+        return this == obj || obj instanceof Bit other
+            && name.equals(other.getName()) && position == other.getPosition();
     }
 
     @Override
