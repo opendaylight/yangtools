@@ -102,8 +102,8 @@ public final class ObjectIdentifier implements Identifier, WritableObject {
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof ObjectIdentifier
-                && Arrays.equals(subIdentifiers, ((ObjectIdentifier) obj).subIdentifiers);
+        return this == obj || obj instanceof ObjectIdentifier other
+            && Arrays.equals(subIdentifiers, other.subIdentifiers);
     }
 
     @Override
