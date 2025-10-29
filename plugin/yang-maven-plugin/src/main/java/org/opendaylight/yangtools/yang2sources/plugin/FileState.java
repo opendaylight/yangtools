@@ -56,10 +56,10 @@ record FileState(@NonNull String path, long size, int crc32) {
         }
     }
 
-    static @NonNull FileState ofWrittenFile(final File file, final FileContent content) throws IOException {
-        try (var out = new CapturingOutputStream(Files.newOutputStream(file.toPath()))) {
+    static @NonNull FileState ofWrittenFile(final Path file, final FileContent content) throws IOException {
+        try (var out = new CapturingOutputStream(Files.newOutputStream(file))) {
             content.writeTo(out);
-            return new FileState(file.getPath(), out.size(), out.crc32c());
+            return new FileState(file.toString(), out.size(), out.crc32c());
         }
     }
 }
