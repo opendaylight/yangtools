@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A consistent set of {@link StatementSupport}s and {@link ParserNamespace} {@link NamespaceBehaviour}s.
  */
-public final class StatementSupportBundle implements Immutable, StatementSupportBundleABI {
+public final class StatementSupportBundle implements Immutable {
     private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, ImmutableSet.of(),
             ImmutableMap.of(), ImmutableMap.of(), ImmutableTable.of());
 
@@ -130,8 +130,7 @@ public final class StatementSupportBundle implements Immutable, StatementSupport
     /**
      * {@return the set of all {@link YangVersion}s supported by this bundle}
      */
-    @Override
-    public ImmutableSet<YangVersion> getSupportedVersions() {
+    public @NonNull ImmutableSet<YangVersion> getSupportedVersions() {
         return supportedVersions;
     }
 
