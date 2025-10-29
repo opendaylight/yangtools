@@ -294,16 +294,16 @@ public final class Types {
     }
 
     /**
-     * Represents concrete JAVA type.
+     * Represents a concrete Java type.
      */
     private static final class ConcreteTypeImpl extends AbstractType implements ConcreteType {
         private final Restrictions restrictions;
 
         /**
-         * Creates instance of this class with package <code>pkName</code> and with the type name <code>name</code>.
+         * Default constructor.
          *
-         * @param pkName string with package name
-         * @param name string with the name of the type
+         * @param identifier type identifier
+         * @param restrictions optional {@link Restrictions}
          */
         ConcreteTypeImpl(final JavaTypeName identifier, final Restrictions restrictions) {
             super(identifier);
@@ -317,17 +317,17 @@ public final class Types {
     }
 
     /**
-     * Represents concrete JAVA type with changed restriction values.
+     * Represents a concrete Java type with changed restriction values.
      */
     private static final class BaseTypeWithRestrictionsImpl extends AbstractType implements
             BaseTypeWithRestrictions {
         private final Restrictions restrictions;
 
         /**
-         * Creates instance of this class with package <code>pkName</code> and with the type name <code>name</code>.
+         * Default constructor.
          *
-         * @param pkName string with package name
-         * @param name string with the name of the type
+         * @param identifier type identifier
+         * @param restrictions optional {@link Restrictions}
          */
         BaseTypeWithRestrictionsImpl(final JavaTypeName identifier, final Restrictions restrictions) {
             super(identifier);
@@ -341,7 +341,7 @@ public final class Types {
     }
 
     /**
-     * Represents parametrized JAVA type.
+     * Represents a parameterized Java type.
      */
     private static class ParametrizedTypeImpl extends AbstractType implements ParameterizedType {
         /**
@@ -357,7 +357,7 @@ public final class Types {
         /**
          * Creates instance of this class with concrete rawType and array of actual parameters.
          *
-         * @param rawType JAVA <code>Type</code> for raw type
+         * @param rawType Java {@link Type} for raw type
          * @param actTypes array of actual parameters
          */
         ParametrizedTypeImpl(final Type rawType, final Type[] actTypes) {
@@ -382,14 +382,13 @@ public final class Types {
     }
 
     /**
-     * Represents JAVA bounded wildcard type.
+     * Represents a Java bounded wildcard type.
      */
     private static class WildcardTypeImpl extends AbstractType implements WildcardType {
         /**
-         * Creates instance of this class with concrete package and type name.
+         * Default constructor.
          *
-         * @param packageName string with the package name
-         * @param typeName string with the name of type
+         * @param identifier type identifier
          */
         WildcardTypeImpl(final JavaTypeName identifier) {
             super(identifier);
