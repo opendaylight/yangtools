@@ -11,10 +11,7 @@ import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1;
 import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
@@ -109,18 +106,15 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Utility class holding entrypoints for assembling RFC6020/RFC7950 statement {@link CrossSourceStatementReactor}s.
- *
- * @author Robert Varga
  */
 @Beta
 public final class RFC7950Reactors {
-    private static final ImmutableSet<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
-
-    private static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle.builder(SUPPORTED_VERSIONS)
-        .addSupport(ValidationBundles.BEHAVIOUR)
-        .addSupport(NamespaceBehaviours.SUPPORTED_FEATURES)
-        .addSupport(NamespaceBehaviours.MODULES_DEVIATED_BY)
-        .build();
+    private static final StatementSupportBundle INIT_BUNDLE =
+        StatementSupportBundle.builder(StatementSupportBundle.VERSIONS_RFC7950)
+            .addSupport(ValidationBundles.BEHAVIOUR)
+            .addSupport(NamespaceBehaviours.SUPPORTED_FEATURES)
+            .addSupport(NamespaceBehaviours.MODULES_DEVIATED_BY)
+            .build();
 
     private RFC7950Reactors() {
         // Hidden on purpose
