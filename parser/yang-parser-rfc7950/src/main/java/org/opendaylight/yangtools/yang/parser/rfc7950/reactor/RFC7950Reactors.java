@@ -121,7 +121,7 @@ public final class RFC7950Reactors {
     }
 
     private static StatementSupportBundle preLinkageBundle(final YangParserConfiguration config) {
-        return StatementSupportBundle.derivedFrom(INIT_BUNDLE)
+        return StatementSupportBundle.builderDerivedFrom(INIT_BUNDLE)
             .addVersionSpecificSupport(VERSION_1, ModuleStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, ModuleStatementSupport.rfc7950Instance(config))
             .addVersionSpecificSupport(VERSION_1, SubmoduleStatementSupport.rfc6020Instance(config))
@@ -147,7 +147,7 @@ public final class RFC7950Reactors {
 
     private static StatementSupportBundle linkageBundle(final StatementSupportBundle preLinkageBundle,
             final YangParserConfiguration config) {
-        return StatementSupportBundle.derivedFrom(preLinkageBundle)
+        return StatementSupportBundle.builderDerivedFrom(preLinkageBundle)
             .addSupport(new DescriptionStatementSupport(config))
             .addSupport(new ReferenceStatementSupport(config))
             .addSupport(new ContactStatementSupport(config))
@@ -172,7 +172,7 @@ public final class RFC7950Reactors {
 
     private static StatementSupportBundle stmtDefBundle(final StatementSupportBundle linkageBundle,
             final YangParserConfiguration config) {
-        return StatementSupportBundle.derivedFrom(linkageBundle)
+        return StatementSupportBundle.builderDerivedFrom(linkageBundle)
             .addSupport(new YinElementStatementSupport(config))
             .addSupport(new ArgumentStatementSupport(config))
             .addSupport(new ExtensionStatementSupport(config))
@@ -326,7 +326,7 @@ public final class RFC7950Reactors {
 
     private static @NonNull StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle stmtDefBundle,
             final XPathSupport xpathSupport, final YangParserConfiguration config) {
-        return StatementSupportBundle.derivedFrom(stmtDefBundle)
+        return StatementSupportBundle.builderDerivedFrom(stmtDefBundle)
             .addSupport(new LeafStatementSupport(config))
             .addSupport(new ConfigStatementSupport(config))
             .addSupport(new DeviationStatementSupport(config))
