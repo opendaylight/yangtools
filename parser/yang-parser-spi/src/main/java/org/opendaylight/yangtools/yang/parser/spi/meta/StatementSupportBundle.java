@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A consistent set of {@link StatementSupport}s and {@link ParserNamespace} {@link NamespaceBehaviour}s.
  */
-public final class StatementSupportBundle implements Immutable, StatementSupportBundleABI {
+public final class StatementSupportBundle implements Immutable {
     /**
      * The set of versions including all versions known as of RFC7950, e.g. {@link YangVersion#VERSION_1}
      * and {@link YangVersion#VERSION_1_1}.
@@ -167,8 +167,7 @@ public final class StatementSupportBundle implements Immutable, StatementSupport
     /**
      * {@return the set of all {@link YangVersion}s supported by this bundle}
      */
-    @Override
-    public ImmutableSet<YangVersion> getSupportedVersions() {
+    public @NonNull ImmutableSet<YangVersion> getSupportedVersions() {
         return supportedVersions;
     }
 
