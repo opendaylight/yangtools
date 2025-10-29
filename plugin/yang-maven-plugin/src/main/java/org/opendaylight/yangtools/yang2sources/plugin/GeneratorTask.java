@@ -84,27 +84,29 @@ final class GeneratorTask implements Identifiable<String> {
 
         // Step two: create generation tasks for each target file and group them by parent directory
         sw.reset().start();
-        final var dirs = MultimapBuilder.hashKeys().arrayListValues().<File, WriteTask>build();
+        final var dirs = MultimapBuilder.hashKeys().arrayListValues().<Path, WriteTask>build();
         for (var cell : generatedFiles.cellSet()) {
             final GeneratedFile file = cell.getValue();
             final String relativePath = cell.getColumnKey().getPath();
-            final File target;
+            final Path targetDir;
+            final Path target;
             switch (file.getLifecycle()) {
-                case PERSISTENT:
-                    target = new File(access.persistentPath(cell.getRowKey()), relativePath);
-                    if (target.exists()) {
+                case null -> throw new NullPointerException();
+                case PERSISTENT -> {
+                    targetDir = access.persistentPath(cell.getRowKey());
+                    target = targetDir.resolve(relativePath);
+                    if (Files.exists(target)) {
                         LOG.debug("Skipping existing persistent {}", target);
                         continue;
                     }
-                    break;
-                case TRANSIENT:
-                    target = new File(access.transientPath(cell.getRowKey()), relativePath);
-                    break;
-                default:
-                    throw new FileGeneratorException("Unsupported file type in " + file);
+                }
+                case TRANSIENT -> {
+                    targetDir = access.transientPath(cell.getRowKey());
+                    target = targetDir.resolve(relativePath);
+                }
             }
 
-            dirs.put(target.getParentFile(), new WriteTask(target, cell.getValue()));
+            dirs.put(targetDir, new WriteTask(target, cell.getValue()));
         }
         LOG.info("Sorted {} files into {} directories in {}", dirs.size(), dirs.keySet().size(), sw);
 
@@ -112,7 +114,7 @@ final class GeneratorTask implements Identifiable<String> {
         sw.reset().start();
         dirs.keySet().parallelStream().forEach(path -> {
             try {
-                Files.createDirectories(path.toPath());
+                Files.createDirectories(path);
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to create " + path, e);
             }
@@ -164,15 +166,15 @@ final class GeneratorTask implements Identifiable<String> {
 
     private static final class WriteTask {
         private final GeneratedFile file;
-        private final File target;
+        private final Path target;
 
-        WriteTask(final File target, final GeneratedFile file) {
+        WriteTask(final Path target, final GeneratedFile file) {
             this.target = requireNonNull(target);
             this.file = requireNonNull(file);
         }
 
         OutputFile generateFile() throws IOException {
-            if (!target.isFile()) {
+            if (!Files.isRegularFile(target)) {
                 // Target file does not exist: just output body
                 return new OutputFile(FileState.ofWrittenFile(target, file::writeBody), true);
             }
@@ -181,7 +183,7 @@ final class GeneratorTask implements Identifiable<String> {
             final var existingFile = FileState.ofFile(target);
 
             // Write out the new output into a temporary file
-            final var tmpFile = FileState.ofWrittenFile(File.createTempFile("gen", null, target.getParentFile()),
+            final var tmpFile = FileState.ofWrittenFile(Files.createTempDirectory(target.getParent(), "gen", null),
                 file::writeBody);
 
             // If file size and checksum matches just delete our output
@@ -192,7 +194,7 @@ final class GeneratorTask implements Identifiable<String> {
             }
 
             // Mismatch: move the temp file into place
-            Files.move(tmpPath, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(tmpPath, target, StandardCopyOption.REPLACE_EXISTING);
             return new OutputFile(new FileState(existingFile.path(), tmpFile.size(), tmpFile.crc32()), true);
         }
     }
