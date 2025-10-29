@@ -24,8 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -148,28 +150,33 @@ public final class EffectiveStmtUtils {
             final Set<String> defaultValues) {
         final var iter = typeStmt.effectiveSubstatements().iterator();
         while (iter.hasNext() && !defaultValues.isEmpty()) {
-            final var effectiveSubstatement = iter.next();
-            if (YangStmtMapping.BIT.equals(effectiveSubstatement.statementDefinition())) {
-                final var bitName = (String) effectiveSubstatement.argument();
-                if (defaultValues.remove(bitName) && containsIfFeature(effectiveSubstatement)) {
-                    return true;
+            switch (iter.next()) {
+                case BitEffectiveStatement bes -> {
+                    if (defaultValues.remove(bes.argument()) && containsIfFeature(bes)) {
+                        return true;
+                    }
                 }
-            } else if (YangStmtMapping.ENUM.equals(effectiveSubstatement.statementDefinition())
-                    && defaultValues.remove(effectiveSubstatement.argument())
-                    && containsIfFeature(effectiveSubstatement)) {
-                return true;
-            } else if (effectiveSubstatement instanceof TypeEffectiveStatement<?> tes
-                && isAnyDefaultValueMarkedWithIfFeature(tes, defaultValues)) {
-                return true;
+                case EnumEffectiveStatement ees -> {
+                    if (defaultValues.remove(ees.argument()) && containsIfFeature(ees)) {
+                        return true;
+                    }
+                }
+                case TypeEffectiveStatement<?> tes -> {
+                    if (isAnyDefaultValueMarkedWithIfFeature(tes, defaultValues)) {
+                        return true;
+                    }
+                }
+                default -> {
+                    // No-op
+                }
             }
         }
-
         return false;
     }
 
     private static boolean containsIfFeature(final EffectiveStatement<?, ?> effectiveStatement) {
-        for (var effectiveSubstatement : effectiveStatement.effectiveSubstatements()) {
-            if (YangStmtMapping.IF_FEATURE.equals(effectiveSubstatement.statementDefinition())) {
+        for (var substatement : effectiveStatement.effectiveSubstatements()) {
+            if (substatement instanceof IfFeatureEffectiveStatement) {
                 return true;
             }
         }
