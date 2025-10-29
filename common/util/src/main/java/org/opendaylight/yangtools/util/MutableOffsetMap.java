@@ -675,7 +675,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             currentKey = null;
         }
 
-        protected final K nextKey() {
+        final K nextKey() {
             if (nextKey == null) {
                 throw new NoSuchElementException();
             }
