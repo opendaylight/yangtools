@@ -15,9 +15,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Table;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -28,15 +26,18 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A consistent set of {@link StatementSupport}s and {@link ParserNamespace} {@link NamespaceBehaviour}s.
+ */
 public final class StatementSupportBundle implements Immutable {
-    private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, null, ImmutableMap.of(),
-            ImmutableMap.of(), ImmutableTable.of());
+    private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, ImmutableSet.of(),
+            ImmutableMap.of(), ImmutableMap.of(), ImmutableTable.of());
 
     private final StatementSupportBundle parent;
-    private final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions;
-    private final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions;
-    private final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaceDefinitions;
-    private final ImmutableSet<YangVersion> supportedVersions;
+    private final @NonNull ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions;
+    private final @NonNull ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions;
+    private final @NonNull ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaceDefinitions;
+    private final @NonNull ImmutableSet<YangVersion> supportedVersions;
 
     private StatementSupportBundle(final StatementSupportBundle parent,
             final ImmutableSet<YangVersion> supportedVersions,
@@ -44,19 +45,49 @@ public final class StatementSupportBundle implements Immutable {
             final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaceDefinitions,
             final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions) {
         this.parent = parent;
-        // FIXME: should requireNonNull()
-        this.supportedVersions = supportedVersions;
+        this.supportedVersions = requireNonNull(supportedVersions);
         this.commonDefinitions = requireNonNull(commonDefinitions);
         this.namespaceDefinitions = requireNonNull(namespaceDefinitions);
         this.versionSpecificDefinitions = requireNonNull(versionSpecificDefinitions);
     }
 
     /**
-     * Returns statement definitions common for all versions.
+     * Return a new {@link Builder} working with specified supported {@link YangVersion}s.
      *
-     * @return map of common statement definitions
+     * @param supportedVersions supported versions
+     * @return A new {@link Builder}
      */
-    public ImmutableMap<QName, StatementSupport<?, ?, ?>> getCommonDefinitions() {
+    public static @NonNull Builder builder(final Set<YangVersion> supportedVersions) {
+        return new Builder(supportedVersions, EMPTY);
+    }
+
+    /**
+     * Return a new {@link Builder} for a {@link StatementSupportBundle} derived from specific parent.
+     *
+     * @param parent the parent
+     * @return A new {@link Builder}
+     * @since 14.0.20
+     */
+    public static @NonNull Builder builderDerivedFrom(final StatementSupportBundle parent) {
+        return new Builder(parent.getSupportedVersions(), parent);
+    }
+
+    /**
+     * Return a new {@link Builder} for a {@link StatementSupportBundle} derived from specific parent.
+     *
+     * @param parent the parent
+     * @return A new {@link Builder}
+     * @deprecated Use {@link #builderDerivedFrom(StatementSupportBundle)} instead.
+     */
+    @Deprecated(since = "14.0.20", forRemoval = true)
+    public static @NonNull Builder derivedFrom(final StatementSupportBundle parent) {
+        return builderDerivedFrom(parent);
+    }
+
+    /**
+     * {@return statement definitions common for all versions}
+     */
+    public @NonNull ImmutableMap<QName, StatementSupport<?, ?, ?>> getCommonDefinitions() {
         return commonDefinitions;
     }
 
@@ -64,10 +95,9 @@ public final class StatementSupportBundle implements Immutable {
      * Returns statement definitions specific for requested version. Result of this method does nit include common
      * statement definitions.
      *
-     * @param version
-     *            requested version
-     * @return map of statement definitions specific for requested version, it
-     *         doesn't include common statement definitions.
+     * @param version requested version
+     * @return map of statement definitions specific for requested version, it does not include common statement
+     *         definitions
      */
     public ImmutableMap<QName, StatementSupport<?, ?, ?>> getDefinitionsSpecificForVersion(final YangVersion version) {
         return versionSpecificDefinitions.row(version);
@@ -77,26 +107,17 @@ public final class StatementSupportBundle implements Immutable {
      * Returns all version specific statement definitions. Result of this method does not include common statement
      * definitions.
      *
-     * @return table of all version specific statement definitions, it doesn't
-     *         include common statement definitions.
+     * @return table of all version specific statement definitions, it does not include common statement definitions
      */
-    public ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> getAllVersionSpecificDefinitions() {
+    public @NonNull ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> getAllVersionSpecificDefinitions() {
         return versionSpecificDefinitions;
     }
 
-    public ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> getNamespaceDefinitions() {
+    public @NonNull ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> getNamespaceDefinitions() {
         return namespaceDefinitions;
     }
 
-    public static Builder builder(final Set<YangVersion> supportedVersions) {
-        return new Builder(supportedVersions, EMPTY);
-    }
-
-    public static Builder derivedFrom(final StatementSupportBundle parent) {
-        return new Builder(parent.getSupportedVersions(), parent);
-    }
-
-    public Set<YangVersion> getSupportedVersions() {
+    public @NonNull Set<YangVersion> getSupportedVersions() {
         return supportedVersions;
     }
 
@@ -117,54 +138,43 @@ public final class StatementSupportBundle implements Immutable {
         if (namespaceDefinitions.containsKey(namespace)) {
             return true;
         }
-        if (parent != null) {
-            return parent.hasNamespaceBehaviour(namespace);
-        }
-        return false;
+        return parent == null ? false : parent.hasNamespaceBehaviour(namespace);
     }
 
-    public StatementSupport<?, ?, ?> getStatementDefinition(final YangVersion version, final QName stmtName) {
-        StatementSupport<?, ?, ?> result = getVersionSpecificStatementDefinition(version, stmtName);
-        if (result == null) {
-            result = getCommonStatementDefinition(stmtName);
-        }
-
-        return result;
+    public @Nullable StatementSupport<?, ?, ?> getStatementDefinition(final YangVersion version, final QName stmtName) {
+        final var versionSpecific = getVersionSpecificStatementDefinition(version, stmtName);
+        return versionSpecific != null ? versionSpecific : getCommonStatementDefinition(stmtName);
     }
 
-    private StatementSupport<?, ?, ?> getCommonStatementDefinition(final QName stmtName) {
-        final StatementSupport<?, ?, ?> potential = commonDefinitions.get(stmtName);
+    private @Nullable StatementSupport<?, ?, ?> getCommonStatementDefinition(final QName stmtName) {
+        final var potential = commonDefinitions.get(stmtName);
         if (potential != null) {
             return potential;
         }
-        if (parent != null) {
-            return parent.getCommonStatementDefinition(stmtName);
-        }
-        return null;
+        return parent == null ? null : parent.getCommonStatementDefinition(stmtName);
     }
 
-    private StatementSupport<?, ?, ?> getVersionSpecificStatementDefinition(final YangVersion version,
+    private @Nullable StatementSupport<?, ?, ?> getVersionSpecificStatementDefinition(final YangVersion version,
             final QName stmtName) {
-        final StatementSupport<?, ?, ?> potential = versionSpecificDefinitions.get(version, stmtName);
+        final var potential = versionSpecificDefinitions.get(version, stmtName);
         if (potential != null) {
             return potential;
         }
-
-        if (parent != null) {
-            return parent.getVersionSpecificStatementDefinition(version, stmtName);
-        }
-        return null;
+        return parent == null ? null : parent.getVersionSpecificStatementDefinition(version, stmtName);
     }
 
+    /**
+     * A builder for {@link StatementSupportBundle}s.
+     */
     public static final class Builder implements Mutable {
         private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
 
-        private final Map<QName, StatementSupport<?, ?, ?>> commonStatements = new HashMap<>();
-        private final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements =
+        private final HashMap<QName, StatementSupport<?, ?, ?>> commonStatements = new HashMap<>();
+        private final HashBasedTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements =
             HashBasedTable.create();
-        private final Map<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaces = new HashMap<>();
+        private final HashMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaces = new HashMap<>();
+        private final @NonNull ImmutableSet<YangVersion> supportedVersions;
 
-        private final ImmutableSet<YangVersion> supportedVersions;
         private StatementSupportBundle parent;
 
         Builder(final Set<YangVersion> supportedVersions, final StatementSupportBundle parent) {
@@ -194,7 +204,7 @@ public final class StatementSupportBundle implements Immutable {
                 final StatementSupport<?, ?, ?> support) {
             checkArgument(supportedVersions.contains(requireNonNull(version)));
 
-            final QName identifier = support.statementName();
+            final var identifier = support.statementName();
             checkState(!commonStatements.containsKey(identifier),
                     "Statement %s already defined in common statement bundle.", identifier);
             checkState(!versionSpecificStatements.contains(version, identifier),
@@ -206,7 +216,7 @@ public final class StatementSupportBundle implements Immutable {
             return this;
         }
 
-        public Set<YangVersion> getSupportedVersions() {
+        public @NonNull Set<YangVersion> getSupportedVersions() {
             return supportedVersions;
         }
 
@@ -216,10 +226,10 @@ public final class StatementSupportBundle implements Immutable {
         }
 
         public @NonNull Builder overrideSupport(final StatementSupport<?, ?, ?> support) {
-            final QName identifier = support.statementName();
+            final var identifier = support.statementName();
             checkNoParentDefinition(identifier);
 
-            final StatementSupport<?, ?, ?> previousSupport = commonStatements.replace(identifier, support);
+            final var previousSupport = commonStatements.replace(identifier, support);
             checkState(previousSupport != null, "Statement %s was not previously defined", identifier);
             LOG.debug("Changed statement {} support from {} to {}", identifier, previousSupport, support);
             return this;
