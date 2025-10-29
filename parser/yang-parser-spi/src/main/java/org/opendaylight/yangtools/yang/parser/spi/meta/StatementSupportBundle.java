@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A consistent set of {@link StatementSupport}s and {@link ParserNamespace} {@link NamespaceBehaviour}s.
  */
-public final class StatementSupportBundle implements Immutable {
+public final class StatementSupportBundle implements Immutable, StatementSupportBundleABI {
     private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, ImmutableSet.of(),
             ImmutableMap.of(), ImmutableMap.of(), ImmutableTable.of());
 
@@ -58,6 +58,16 @@ public final class StatementSupportBundle implements Immutable {
      * @return A new {@link Builder}
      */
     public static @NonNull Builder builder(final Set<YangVersion> supportedVersions) {
+        return builder(ImmutableSet.copyOf(supportedVersions));
+    }
+
+    /**
+     * Return a new {@link Builder} working with specified supported {@link YangVersion}s.
+     *
+     * @param supportedVersions supported versions
+     * @return A new {@link Builder}
+     */
+    public static @NonNull Builder builder(final ImmutableSet<YangVersion> supportedVersions) {
         return new Builder(supportedVersions, EMPTY);
     }
 
@@ -117,7 +127,11 @@ public final class StatementSupportBundle implements Immutable {
         return namespaceDefinitions;
     }
 
-    public @NonNull Set<YangVersion> getSupportedVersions() {
+    /**
+     * {@return the set of all {@link YangVersion}s supported by this bundle}
+     */
+    @Override
+    public ImmutableSet<YangVersion> getSupportedVersions() {
         return supportedVersions;
     }
 
@@ -177,9 +191,9 @@ public final class StatementSupportBundle implements Immutable {
 
         private StatementSupportBundle parent;
 
-        Builder(final Set<YangVersion> supportedVersions, final StatementSupportBundle parent) {
+        Builder(final ImmutableSet<YangVersion> supportedVersions, final StatementSupportBundle parent) {
             this.parent = requireNonNull(parent);
-            this.supportedVersions = ImmutableSet.copyOf(supportedVersions);
+            this.supportedVersions = requireNonNull(supportedVersions);
         }
 
         public @NonNull Builder addSupport(final StatementSupport<?, ?, ?> support) {
