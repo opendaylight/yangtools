@@ -12,7 +12,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 final class MethodParameterImpl implements Parameter {
-
     private final String name;
     private final Type type;
 
@@ -23,60 +22,34 @@ final class MethodParameterImpl implements Parameter {
 
     @Override
     public String getName() {
-        return this.name;
+        return name;
     }
 
     @Override
     public Type getType() {
-        return this.type;
+        return type;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(this.name);
-        result = prime * result + Objects.hashCode(this.type);
+        result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(type);
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final MethodParameterImpl other = (MethodParameterImpl) obj;
-        return Objects.equals(this.name, other.name) && Objects.equals(this.type, other.type);
+        return this == obj || obj instanceof MethodParameterImpl other
+            && Objects.equals(name, other.name) && Objects.equals(type, other.type);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("MethodParameter [name=");
-        builder.append(this.name);
-        builder.append(", type=");
-        builder.append(this.type.getPackageName());
-        builder.append(".");
-        builder.append(this.type.getName());
-        builder.append("]");
-        return builder.toString();
+        return new StringBuilder()
+            .append("MethodParameter [name=").append(name)
+            .append(", type=").append(type.getPackageName()).append('.').append(type.getName())
+            .append(']').toString();
     }
 }
