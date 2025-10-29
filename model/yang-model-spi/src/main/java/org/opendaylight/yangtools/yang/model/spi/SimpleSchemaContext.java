@@ -13,14 +13,12 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -54,7 +52,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
          * Note we are performing two sort operations: the dependency sort takes care of detecting multiple imports,
          * performing sorting as a side-effect, but we really want the modules sorted to comply with getModules().
          */
-        final List<Module> sortedModules = new ArrayList<>(ModuleDependencySort.sort(modules));
+        final var sortedModules = new ArrayList<>(ModuleDependencySort.sort(modules));
         sortedModules.sort(NAME_REVISION_COMPARATOR);
         this.modules = ImmutableSet.copyOf(sortedModules);
 
@@ -66,15 +64,15 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
          *
          * Invest some quality time in building up lookup tables for both.
          */
-        final SetMultimap<XMLNamespace, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
+        final var nsMap = Multimaps.<XMLNamespace, Module>newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
-        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
+        final var nameMap = Multimaps.<String, Module>newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
-        final Builder<QNameModule, Module> moduleMapBuilder = ImmutableMap.builder();
-        for (Module m : modules) {
-            nameMap.put(m.getName(), m);
-            nsMap.put(m.getNamespace(), m);
-            moduleMapBuilder.put(m.getQNameModule(), m);
+        final var moduleMapBuilder = ImmutableMap.<QNameModule, Module>builder();
+        for (var module : modules) {
+            nameMap.put(module.getName(), module);
+            nsMap.put(module.getNamespace(), module);
+            moduleMapBuilder.put(module.getQNameModule(), module);
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
