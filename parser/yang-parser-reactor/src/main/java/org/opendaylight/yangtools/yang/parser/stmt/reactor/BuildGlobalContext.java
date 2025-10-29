@@ -87,8 +87,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
             access.valueTo(this, validationBundle.getKey(), validationBundle.getValue());
         }
 
-        supportedVersions = ImmutableSet.copyOf(
-            verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions());
+        supportedVersions = verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions();
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
