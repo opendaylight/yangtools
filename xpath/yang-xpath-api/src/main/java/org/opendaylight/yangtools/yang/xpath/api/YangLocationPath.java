@@ -378,6 +378,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     public static final class Absolute extends YangLocationPath {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
+        private static final Absolute EMPTY = new Absolute(ImmutableList.of());
 
         Absolute(final ImmutableList<Step> steps) {
             super(steps);
@@ -392,6 +393,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     public static final class Relative extends YangLocationPath {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
+        private static final Relative EMPTY = new Relative(ImmutableList.of());
 
         Relative(final ImmutableList<Step> steps) {
             super(steps);
@@ -405,8 +407,6 @@ public abstract sealed class YangLocationPath implements YangExpr {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
-    private static final Absolute ROOT = new Absolute(ImmutableList.of());
-    private static final Relative SELF = new Relative(ImmutableList.of());
 
     private final ImmutableList<Step> steps;
 
@@ -419,7 +419,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     public static final Absolute absolute(final Collection<Step> steps) {
-        return steps.isEmpty() ? ROOT : new Absolute(ImmutableList.copyOf(steps));
+        return steps.isEmpty() ? Absolute.EMPTY : new Absolute(ImmutableList.copyOf(steps));
     }
 
     public static final Relative relative(final Step... steps) {
@@ -427,7 +427,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     public static final Relative relative(final Collection<Step> steps) {
-        return steps.isEmpty() ? SELF : new Relative(ImmutableList.copyOf(steps));
+        return steps.isEmpty() ? Relative.EMPTY : new Relative(ImmutableList.copyOf(steps));
     }
 
     /**
@@ -436,7 +436,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
      * @return Empty absolute {@link YangLocationPath}
      */
     public static final Absolute root() {
-        return ROOT;
+        return Absolute.EMPTY;
     }
 
     /**
@@ -446,7 +446,7 @@ public abstract sealed class YangLocationPath implements YangExpr {
      * @return Empty relative {@link YangLocationPath}
      */
     public static final Relative self() {
-        return SELF;
+        return Relative.EMPTY;
     }
 
     public final ImmutableList<Step> getSteps() {
@@ -476,6 +476,6 @@ public abstract sealed class YangLocationPath implements YangExpr {
     }
 
     final Object readSolve() {
-        return steps.isEmpty() ? isAbsolute() ? ROOT : SELF : this;
+        return steps.isEmpty() ? isAbsolute() ? Absolute.EMPTY : Relative.EMPTY : this;
     }
 }
