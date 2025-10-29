@@ -16,6 +16,29 @@
       "message": "this is doing way too many things at once and needs to be broken up",
       "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cef9035_ac3de4a5",
+        "filename": "model/yang-model-spi/src/main/java/module-info.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-10-29T18:28:20Z",
+      "side": 1,
+      "message": "certainly not",
+      "range": {
+        "startLine": 27,
+        "startChar": 4,
+        "endLine": 27,
+        "endChar": 22
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
