@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.HashBasedTable;
@@ -18,6 +19,7 @@ import com.google.common.collect.ImmutableTable;
 import java.util.HashMap;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -30,6 +32,33 @@ import org.slf4j.LoggerFactory;
  * A consistent set of {@link StatementSupport}s and {@link ParserNamespace} {@link NamespaceBehaviour}s.
  */
 public final class StatementSupportBundle implements Immutable, StatementSupportBundleABI {
+    /**
+     * The set of versions including all versions known as of RFC7950, e.g. {@link YangVersion#VERSION_1}
+     * and {@link YangVersion#VERSION_1_1}.
+     *
+     * @since 14.0.20
+     */
+    @NonNullByDefault
+    public static final ImmutableSet<YangVersion> VERSIONS_RFC7950 =
+        // Note: we could do Sets.immutableEnumSet(), but we really have only 2 versions, so going through EnumSet is
+        //       wasteful. We have the same iteration order anyway.
+        ImmutableSet.of(YangVersion.VERSION_1, YangVersion.VERSION_1_1);
+
+    /**
+     * The set of versions including all {@link YangVersion}s.
+     *
+     * @since 14.0.20
+     */
+    @NonNullByDefault
+    public static final ImmutableSet<YangVersion> VERSIONS_ALL = VERSIONS_RFC7950;
+
+    static {
+        // Consistency check for when YangVersion expands
+        for (var version : YangVersion.values()) {
+            verify(VERSIONS_ALL.contains(version), "VERSIONS_ALL does not include %s", version);
+        }
+    }
+
     private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, ImmutableSet.of(),
             ImmutableMap.of(), ImmutableMap.of(), ImmutableTable.of());
 
