@@ -9,13 +9,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
+import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
@@ -55,32 +58,35 @@ class StatementContextVisitor {
      * @param ref Source reference
      * @return valid QName for declared statement to be written, or null
      */
-    QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
-        if (keyword instanceof Qualified) {
-            return getValidStatementDefinition((Qualified) keyword, ref);
-        }
-        final StatementDefinition def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE,
-            keyword.identifier()));
-        return def != null ? def.getStatementName() : null;
+    @Nullable QName getValidStatementDefinition(final @NonNull IRKeyword keyword,
+            final @NonNull StatementSourceReference ref) {
+        return switch (keyword) {
+            case Qualified qualified -> getValidStatementDefinition(qualified, ref);
+            case Unqualified unqualified -> {
+                final var def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, unqualified.identifier()));
+                yield def != null ? def.getStatementName() : null;
+            }
+        };
     }
 
-    private QName getValidStatementDefinition(final Qualified keyword, final StatementSourceReference ref) {
+    private @Nullable QName getValidStatementDefinition(final @NonNull Qualified keyword,
+            final @NonNull StatementSourceReference ref) {
         if (prefixes == null) {
             // No prefixes to look up from
             return null;
         }
 
-        final QNameModule qNameModule = prefixes.resolvePrefix(keyword.prefix());
-        if (qNameModule == null) {
+        final var module = prefixes.resolvePrefix(keyword.prefix());
+        if (module == null) {
             // Failed to look the namespace
             return null;
         }
 
-        final StatementDefinition foundStmtDef = resolveStatement(qNameModule, keyword.identifier());
+        final var foundStmtDef = resolveStatement(module, keyword.identifier());
         return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
     }
 
-    StatementDefinition resolveStatement(final QNameModule module, final String localName) {
+    StatementDefinition resolveStatement(final @NonNull QNameModule module, final @NonNull String localName) {
         return stmtDef.get(QName.unsafeOf(module, localName));
     }
 
@@ -97,22 +103,23 @@ class StatementContextVisitor {
     // Slow-path allocation of a new statement
     private boolean processNewStatement(final int myOffset, final IRStatement stmt) {
         final var ref = StatementDeclarations.inText(sourceName, stmt.startLine(), stmt.startColumn() + 1);
-        final QName def = getValidStatementDefinition(stmt.keyword(), ref);
+        final var def = getValidStatementDefinition(stmt.keyword(), ref);
         if (def == null) {
             return false;
         }
 
-        final IRArgument argumentCtx = stmt.argument();
-        final String argument = argumentCtx == null ? null : utils.stringFromStringContext(argumentCtx, ref);
+        final var argumentCtx = stmt.argument();
+        final var argument = argumentCtx == null ? null : utils.stringFromStringContext(argumentCtx, ref);
         writer.startStatement(myOffset, def, argument, ref);
         return doProcessStatement(stmt, ref);
     }
 
     // Actual processing
+    @NonNullByDefault
     private boolean doProcessStatement(final IRStatement stmt, final StatementSourceReference ref) {
         int childOffset = 0;
         boolean fullyDefined = true;
-        for (IRStatement substatement : stmt.statements()) {
+        for (var substatement : stmt.statements()) {
             if (!processStatement(childOffset++, substatement)) {
                 fullyDefined = false;
             }
