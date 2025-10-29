@@ -15,11 +15,9 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,31 +68,28 @@ final class OffsetMapCache {
     }
 
     static <T> ImmutableMap<T, Integer> unorderedOffsets(final Collection<T> args) {
-        return unorderedOffsets(args instanceof Set ? (Set<T>)args : ImmutableSet.copyOf(args));
+        return unorderedOffsets(args instanceof Set ? (Set<T>) args : ImmutableSet.copyOf(args));
     }
 
     @SuppressWarnings("unchecked")
     private static <T> ImmutableMap<T, Integer> unorderedOffsets(final Set<T> args) {
-        final ImmutableMap<T, Integer> existing = (ImmutableMap<T, Integer>) UNORDERED_CACHE.getIfPresent(args);
+        final var existing = (ImmutableMap<T, Integer>) UNORDERED_CACHE.getIfPresent(args);
         if (existing != null) {
             return existing;
         }
 
-        final ImmutableMap<T, Integer> newMap = createMap(args);
-        final ImmutableMap<?, Integer> raced = UNORDERED_CACHE.asMap().putIfAbsent(newMap.keySet(), newMap);
+        final var newMap = createMap(args);
+        final var raced = UNORDERED_CACHE.asMap().putIfAbsent(newMap.keySet(), newMap);
         return raced == null ? newMap : (ImmutableMap<T, Integer>)raced;
     }
 
     static <K, V> V[] adjustedArray(final Map<K, Integer> offsets, final List<K> keys, final V[] array) {
         Verify.verify(offsets.size() == keys.size(), "Offsets %s do not match keys %s", offsets, keys);
 
-        // This relies on the fact that offsets has an ascending iterator
-        final Iterator<K> oi = offsets.keySet().iterator();
-        final Iterator<K> ki = keys.iterator();
+        final var ki = keys.iterator();
 
-        while (oi.hasNext()) {
-            final K o = oi.next();
-            final K k = ki.next();
+        for (K o : offsets.keySet()) {
+            final var k = ki.next();
             if (!k.equals(o)) {
                 return adjustArray(offsets, keys, array);
             }
@@ -104,10 +99,10 @@ final class OffsetMapCache {
     }
 
     private static <T> ImmutableMap<T, Integer> createMap(final Collection<T> keys) {
-        final Builder<T, Integer> b = ImmutableMap.builder();
+        final var b = ImmutableMap.<T, Integer>builder();
         int counter = 0;
 
-        for (T arg : keys) {
+        for (var arg : keys) {
             b.put(arg, counter++);
         }
 
@@ -116,11 +111,11 @@ final class OffsetMapCache {
 
     private static <K, V> V[] adjustArray(final Map<K, Integer> offsets, final List<K> keys, final V[] array) {
         @SuppressWarnings("unchecked")
-        final V[] ret = (V[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+        final var ret = (V[]) Array.newInstance(array.getClass().getComponentType(), array.length);
 
         int offset = 0;
-        for (final K k : keys) {
-            final Integer o = Verify.verifyNotNull(offsets.get(k), "Key %s not present in offsets %s", k, offsets);
+        for (var k : keys) {
+            final int o = Verify.verifyNotNull(offsets.get(k), "Key %s not present in offsets %s", k, offsets);
             ret[o] = array[offset++];
         }
 
