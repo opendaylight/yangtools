@@ -54,8 +54,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
 // FIXME: rename to Execution
-// FIXME: final
-class YangToSourcesProcessor {
+final class YangToSourcesProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesProcessor.class);
     private static final YangParserFactory DEFAULT_PARSER_FACTORY;
 
@@ -78,25 +77,25 @@ class YangToSourcesProcessor {
     private static final YangProvider YANG_PROVIDER = (project, modelsInProject) -> {
         final var generatedYangDir =
             // FIXME: why are we generating these in "generated-sources"? At the end of the day YANG files are more
-            //        resources (except we do not them to be subject to filtering)
-            new File(new File(project.getBuild().getDirectory(), "generated-sources"), "yang");
+            //        resources (except we do not want them to be subject to filtering)
+            Path.of(project.getBuild().getDirectory(), "generated-sources", "yang");
         LOG.debug("Generated dir {}", generatedYangDir);
 
         // copy project's src/main/yang/*.yang to ${project.builddir}/generated-sources/yang/META-INF/yang/
         // This honors setups like a Eclipse-profile derived one
-        final var withMetaInf = new File(generatedYangDir, YangToSourcesProcessor.META_INF_YANG_STRING);
-        Files.createDirectories(withMetaInf.toPath());
+        final var withMetaInf = generatedYangDir.resolve(META_INF_STR).resolve(YANG_STR);
+        Files.createDirectories(withMetaInf);
 
         final var stateListBuilder = ImmutableList.<FileState>builderWithExpectedSize(modelsInProject.size());
         for (var source : modelsInProject) {
-            final File file = new File(withMetaInf, source.sourceId().toYangFilename());
+            final var file = withMetaInf.resolve(source.sourceId().toYangFilename());
             stateListBuilder.add(FileState.ofWrittenFile(file,
                 out -> source.asByteSource(StandardCharsets.UTF_8).copyTo(out)));
             LOG.debug("Created file {} for {}", file, source.sourceId());
         }
 
         ProjectFileAccess.addResourceDir(project, generatedYangDir);
-        LOG.debug("{} YANG files marked as resources: {}", YangToSourcesProcessor.LOG_PREFIX, generatedYangDir);
+        LOG.debug("{} YANG files marked as resources: {}", LOG_PREFIX, generatedYangDir);
 
         return stateListBuilder.build();
     };
@@ -307,7 +306,7 @@ class YangToSourcesProcessor {
         }
 
         // add META_INF/services
-        File generatedServicesDir = new File(new File(projectBuildDirectory, "generated-sources"), "spi");
+        final var generatedServicesDir = Path.of(projectBuildDirectory, "generated-sources", "spi");
         ProjectFileAccess.addResourceDir(project, generatedServicesDir);
         LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
             META_INF_YANG_SERVICES_STRING_JAR);
