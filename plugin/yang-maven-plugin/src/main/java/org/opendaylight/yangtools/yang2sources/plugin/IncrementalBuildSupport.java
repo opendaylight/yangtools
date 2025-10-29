@@ -49,7 +49,7 @@ final class IncrementalBuildSupport {
     }
 
     /**
-     * Compare previous state against current inputs and return {@core true} if any of the parameters changed.
+     * Compare previous state against current inputs and return {@code true} if any of the parameters changed.
      *
      * @return {@code true} if restored state is different from currently-observed state
      */

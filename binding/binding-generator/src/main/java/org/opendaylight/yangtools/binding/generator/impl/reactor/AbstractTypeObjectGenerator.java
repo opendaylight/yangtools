@@ -167,8 +167,8 @@ import org.slf4j.LoggerFactory;
  *   </li>
  *   <li>
  *     {@code leafref} definitions never result in a type definition being emitted. The reasons for this are similar to
- *     {@code identityref}, but have an additional twist: a {@leafref} can target a relative path, which may only be
- *     resolved at a particular instantiation.
+ *     {@code identityref}, but have an additional twist: a {@code leafref} can target a relative path, which may only
+ *     be resolved at a particular instantiation.
  *
  *     <p>Take the example of the following model:
  *     <pre>

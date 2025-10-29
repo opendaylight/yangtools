@@ -127,7 +127,7 @@ public final class DataTreeCandidateNodes {
     }
 
     /**
-     * Applies the {@code node} to the {@code cursor}, note that if the top node of (@code node} is RootNode
+     * Applies the {@code node} to the {@code cursor}, note that if the top node of {@code node} is RootNode
      * you need to use {@link #applyRootedNodeToCursor(DataTreeModificationCursor, YangInstanceIdentifier,
      * DataTreeCandidateNode) applyRootedNodeToCursor} method that works with rooted node candidates.
      *
