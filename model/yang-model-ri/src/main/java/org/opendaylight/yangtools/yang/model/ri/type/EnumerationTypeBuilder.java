@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import java.util.HashMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -16,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<EnumTypeDefinition> {
-    private final Builder<String, EnumPair> builder = ImmutableMap.builder();
+    private final ImmutableMap.Builder<String, EnumPair> builder = ImmutableMap.builder();
 
     EnumerationTypeBuilder(final QName qname) {
         super(null, qname);
@@ -28,7 +27,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
 
     public EnumerationTypeBuilder addEnum(final @NonNull EnumPair item) {
         // in case we are dealing with a restricted enumeration type, validate if the enum is a subset of its base type
-        final EnumTypeDefinition base = getBaseType();
+        final var base = getBaseType();
         if (base != null) {
             validateRestrictedEnum(item, base);
         }
@@ -40,7 +39,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
 
     private static void validateRestrictedEnum(final @NonNull EnumPair item, final @NonNull EnumTypeDefinition base) {
         boolean isASubsetOfBaseEnums = false;
-        for (EnumPair baseTypeEnumPair : base.getValues()) {
+        for (var baseTypeEnumPair : base.getValues()) {
             if (item.getName().equals(baseTypeEnumPair.getName())) {
                 if (item.getValue() != baseTypeEnumPair.getValue()) {
                     throw new InvalidEnumDefinitionException(item, "Value of enum '%s' must be the same as the value"
