@@ -12,7 +12,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -103,16 +102,11 @@ public final class EffectiveStmtUtils {
      * with an if-feature. This method creates mutable copy of supplied set of
      * default values.
      *
-     * @param yangVersion
-     *            yang version
-     * @param typeStmt
-     *            type statement which should be checked
-     * @param defaultValues
-     *            set of default values which should be checked. The method
-     *            creates mutable copy of this set
+     * @param yangVersion YANG version
+     * @param typeStmt type statement which should be checked
+     * @param defaultValues set of default values which should be checked. The method creates mutable copy of this set
      *
-     * @return true if any of specified default values is marked with an
-     *         if-feature, otherwise false
+     * @return true if any of specified default values is marked with an if-feature, otherwise false
      */
     public static boolean hasDefaultValueMarkedWithIfFeature(final YangVersion yangVersion,
             final TypeEffectiveStatement<?> typeStmt, final Set<String> defaultValues) {
@@ -137,7 +131,7 @@ public final class EffectiveStmtUtils {
      */
     public static boolean hasDefaultValueMarkedWithIfFeature(final YangVersion yangVersion,
             final TypeEffectiveStatement<?> typeStmt, final String defaultValue) {
-        final HashSet<String> defaultValues = new HashSet<>();
+        final var defaultValues = new HashSet<String>();
         defaultValues.add(defaultValue);
         return !Strings.isNullOrEmpty(defaultValue) && yangVersion == YangVersion.VERSION_1_1
                 && isRelevantForIfFeatureCheck(typeStmt)
@@ -145,18 +139,18 @@ public final class EffectiveStmtUtils {
     }
 
     private static boolean isRelevantForIfFeatureCheck(final TypeEffectiveStatement<?> typeStmt) {
-        final TypeDefinition<?> typeDefinition = typeStmt.getTypeDefinition();
+        final var typeDefinition = typeStmt.getTypeDefinition();
         return typeDefinition instanceof EnumTypeDefinition || typeDefinition instanceof BitsTypeDefinition
                 || typeDefinition instanceof UnionTypeDefinition;
     }
 
     private static boolean isAnyDefaultValueMarkedWithIfFeature(final TypeEffectiveStatement<?> typeStmt,
             final Set<String> defaultValues) {
-        final Iterator<? extends EffectiveStatement<?, ?>> iter = typeStmt.effectiveSubstatements().iterator();
+        final var iter = typeStmt.effectiveSubstatements().iterator();
         while (iter.hasNext() && !defaultValues.isEmpty()) {
-            final EffectiveStatement<?, ?> effectiveSubstatement = iter.next();
+            final var effectiveSubstatement = iter.next();
             if (YangStmtMapping.BIT.equals(effectiveSubstatement.statementDefinition())) {
-                final String bitName = (String) effectiveSubstatement.argument();
+                final var bitName = (String) effectiveSubstatement.argument();
                 if (defaultValues.remove(bitName) && containsIfFeature(effectiveSubstatement)) {
                     return true;
                 }
@@ -174,7 +168,7 @@ public final class EffectiveStmtUtils {
     }
 
     private static boolean containsIfFeature(final EffectiveStatement<?, ?> effectiveStatement) {
-        for (final EffectiveStatement<?, ?> effectiveSubstatement : effectiveStatement.effectiveSubstatements()) {
+        for (var effectiveSubstatement : effectiveStatement.effectiveSubstatements()) {
             if (YangStmtMapping.IF_FEATURE.equals(effectiveSubstatement.statementDefinition())) {
                 return true;
             }
@@ -189,10 +183,9 @@ public final class EffectiveStmtUtils {
 
     public static void checkUniqueTypedefs(final EffectiveStmtCtx.Current<?, ?> stmt,
             final Collection<? extends EffectiveStatement<?, ?>> statements) {
-        final Set<Object> typedefs = new HashSet<>();
-        for (EffectiveStatement<?, ?> statement : statements) {
-            if (statement instanceof TypedefEffectiveStatement
-                    && !typedefs.add(((TypedefEffectiveStatement) statement).getTypeDefinition())) {
+        final var typedefs = new HashSet<TypeDefinition<?>>();
+        for (var statement : statements) {
+            if (statement instanceof TypedefEffectiveStatement tes && !typedefs.add(tes.getTypeDefinition())) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, statement);
             }
         }
@@ -205,8 +198,8 @@ public final class EffectiveStmtUtils {
 
     private static void checkUniqueNodes(final EffectiveStmtCtx.Current<?, ?> stmt,
             final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<?> type) {
-        final Set<Object> nodes = new HashSet<>();
-        for (EffectiveStatement<?, ?> statement : statements) {
+        final var nodes = new HashSet<EffectiveStatement<?, ?>>();
+        for (var statement : statements) {
             if (type.isInstance(statement) && !nodes.add(statement)) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, statement);
             }
