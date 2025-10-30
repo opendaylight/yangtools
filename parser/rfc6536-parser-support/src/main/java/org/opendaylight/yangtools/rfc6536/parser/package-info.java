@@ -11,5 +11,6 @@
  * {@link org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport} to your reactor to add support
  * for this extension.
  */
+// FIXME: 15.0.0: do not export this package
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc6536.parser;
