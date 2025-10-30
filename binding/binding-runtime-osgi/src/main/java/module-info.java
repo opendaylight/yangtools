@@ -16,10 +16,11 @@ module org.opendaylight.yangtools.binding.runtime.osgi {
     requires org.osgi.service.component;
     requires org.osgi.util.tracker;
     requires org.slf4j;
+    requires static org.apache.karaf.features.core;
 
     // Annotations
     requires static org.checkerframework.checker.qual;
-    requires static org.apache.karaf.features.core;
     requires static org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
 }
