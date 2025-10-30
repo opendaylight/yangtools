@@ -14,4 +14,5 @@
  * {@link org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport} and
  * {@link org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport}.
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.openconfig.parser;
