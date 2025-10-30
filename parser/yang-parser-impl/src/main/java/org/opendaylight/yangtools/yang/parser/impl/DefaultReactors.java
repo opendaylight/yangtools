@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.odlext.parser.ContextInstanceStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.ContextReferenceStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.LegacyAugmentIdentifierStatementSupport;
+import org.opendaylight.yangtools.odlext.parser.MountStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
@@ -129,6 +130,7 @@ public final class DefaultReactors {
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new InstanceTargetStatementSupport(config))
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                 new LegacyAugmentIdentifierStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new MountStatementSupport(config))
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new RpcContextReferenceStatementSupport(config))
 
             // RFC6241 get-filter-element-attributes support
