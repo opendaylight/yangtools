@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.odlext.model.api.MountEffectiveStatement;
+import org.opendaylight.yangtools.odlext.parser.inject.InjectYangExtParserExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
@@ -25,8 +26,8 @@ class MountTest {
     @Test
     void test() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new MountStatementSupport(YangParserConfiguration.DEFAULT))
+            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+                new InjectYangExtParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var foo = reactor.newBuild()
             .addSource(YangStatementStreamSource.create(new URLYangTextSource(
