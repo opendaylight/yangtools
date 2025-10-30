@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.DecimalTypeBuilder;
 
 /**
  * Contains the methods for converting strings to valid JAVA language strings
@@ -54,9 +53,9 @@ public final class BindingGeneratorUtil {
             // FIXME: looking at the generated code it looks as though we need to pass the restrictions without
             //        comparison
             if (type instanceof DecimalTypeDefinition decimal) {
-                final DecimalTypeBuilder tmpBuilder = BaseTypes.decimalTypeBuilder(decimal.getQName());
-                tmpBuilder.setFractionDigits(decimal.getFractionDigits());
-                final DecimalTypeDefinition tmp = tmpBuilder.build();
+                final var tmp = BaseTypes.decimalTypeBuilder(decimal.getQName())
+                    .setFractionDigits(decimal.getFractionDigits())
+                    .build();
 
                 if (!tmp.getRangeConstraint().equals(decimal.getRangeConstraint())) {
                     return Restrictions.of(decimal.getRangeConstraint().orElse(null));
@@ -81,7 +80,7 @@ public final class BindingGeneratorUtil {
          * FIXME: this probably not the best solution and needs further analysis.
          */
         if (type instanceof BinaryTypeDefinition binary) {
-            final BinaryTypeDefinition base = binary.getBaseType();
+            final var base = binary.getBaseType();
             final Optional<LengthConstraint> length;
             if (base != null && base.getBaseType() != null) {
                 length = currentOrEmpty(binary.getLengthConstraint(), base.getLengthConstraint());
@@ -90,7 +89,7 @@ public final class BindingGeneratorUtil {
             }
             return Restrictions.of(length.orElse(null));
         } else if (type instanceof DecimalTypeDefinition decimal) {
-            final DecimalTypeDefinition base = decimal.getBaseType();
+            final var base = decimal.getBaseType();
             final Optional<? extends RangeConstraint<?>> range;
             if (base != null && base.getBaseType() != null) {
                 range = currentOrEmpty(decimal.getRangeConstraint(), base.getRangeConstraint());
@@ -102,7 +101,7 @@ public final class BindingGeneratorUtil {
             // Integer-like types
             return Restrictions.of(extractRangeConstraint((RangeRestrictedTypeDefinition<?, ?>) type).orElse(null));
         } else if (type instanceof StringTypeDefinition string) {
-            final StringTypeDefinition base = string.getBaseType();
+            final var base = string.getBaseType();
             final Optional<LengthConstraint> length;
             if (base != null && base.getBaseType() != null) {
                 length = currentOrEmpty(string.getLengthConstraint(), base.getLengthConstraint());
@@ -130,7 +129,7 @@ public final class BindingGeneratorUtil {
     }
 
     private static boolean containsConstraint(final StringTypeDefinition type, final PatternConstraint constraint) {
-        for (StringTypeDefinition wlk = type; wlk != null; wlk = wlk.getBaseType()) {
+        for (var wlk = type; wlk != null; wlk = wlk.getBaseType()) {
             if (wlk.getPatternConstraints().contains(constraint)) {
                 return true;
             }
@@ -140,7 +139,7 @@ public final class BindingGeneratorUtil {
     }
 
     private static List<PatternConstraint> uniquePatterns(final StringTypeDefinition type) {
-        final List<PatternConstraint> constraints = type.getPatternConstraints();
+        final var constraints = type.getPatternConstraints();
         if (constraints.isEmpty()) {
             return constraints;
         }
@@ -189,7 +188,7 @@ public final class BindingGeneratorUtil {
     private static String defangUnicodeEscapes(final String str) {
         // TODO: we should be able to receive the first offset from the non-deprecated method and perform a manual
         //       check for eligibility and escape -- that would be faster I think.
-        final String ret = UNICODE_CHAR_PATTERN.matcher(str).replaceAll("\\\\\\\\u");
+        final var ret = UNICODE_CHAR_PATTERN.matcher(str).replaceAll("\\\\\\\\u");
         return ret.isEmpty() ? "" : ret;
     }
 }
