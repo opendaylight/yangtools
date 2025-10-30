@@ -5,8 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+import org.opendaylight.yangtools.odlext.parser.impl.YangExtExtension;
+import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
+
 module org.opendaylight.yangtools.odlext.parser.support {
+    // FIXME: do not export this package
     exports org.opendaylight.yangtools.odlext.parser;
+    exports org.opendaylight.yangtools.odlext.parser.inject;
+
+    provides ParserExtension with YangExtExtension;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
@@ -18,6 +25,9 @@ module org.opendaylight.yangtools.odlext.parser.support {
     requires org.slf4j;
 
     // Annotations
+    requires static transitive javax.inject;
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
+    requires static org.osgi.service.component.annotations;
 }
