@@ -43,8 +43,8 @@ public final class ArgumentUtils {
     }
 
     public static int compareNumbers(final Number n1, final Number n2) {
-        final BigDecimal num1 = yangConstraintToBigDecimal(n1);
-        final BigDecimal num2 = yangConstraintToBigDecimal(n2);
+        final var num1 = yangConstraintToBigDecimal(n1);
+        final var num2 = yangConstraintToBigDecimal(n2);
         return new BigDecimal(num1.toString()).compareTo(new BigDecimal(num2.toString()));
     }
 
@@ -63,18 +63,18 @@ public final class ArgumentUtils {
     }
 
     public static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        final List<QName> qnames = parseNodeIdentifiers(ctx, path);
+        final var qnames = parseNodeIdentifiers(ctx, path);
         return PATH_ABS.matcher(path).matches() ? Absolute.of(qnames) : Descendant.of(qnames);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private static  List<QName> parseNodeIdentifiers(final StmtContext<?, ?, ?> ctx, final String path) {
+    private static List<QName> parseNodeIdentifiers(final StmtContext<?, ?, ?> ctx, final String path) {
         // FIXME: is the path trimming really necessary??
-        final List<QName> qnames = new ArrayList<>();
-        for (final String nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
+        final var qnames = new ArrayList<QName>();
+        for (var nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
             try {
                 qnames.add(StmtContextUtils.parseNodeIdentifier(ctx, nodeName));
-            } catch (final RuntimeException e) {
+            } catch (RuntimeException e) {
                 throw new SourceException(ctx, e, "Failed to parse node '%s' in path '%s'", nodeName, path);
             }
         }
@@ -94,7 +94,6 @@ public final class ArgumentUtils {
         if (UnresolvedNumber.min().equals(number)) {
             return YANG_MIN_NUM;
         }
-
         return new BigDecimal(number.toString());
     }
 }
