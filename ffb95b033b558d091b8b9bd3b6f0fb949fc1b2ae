@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a509bfaa_4094ab59",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/DefaultReactors.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-10-30T11:22:37Z",
+      "side": 1,
+      "message": "this will not work in OSGi, as demonstrated by Jenkins",
+      "range": {
+        "startLine": 21,
+        "startChar": 49,
+        "endLine": 21,
+        "endChar": 78
+      },
+      "revId": "ffb95b033b558d091b8b9bd3b6f0fb949fc1b2ae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
