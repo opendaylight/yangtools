@@ -18,20 +18,17 @@ import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 class DataTreeConfigurationTest {
     @Test
     void testDataTreeConfiguration() {
-        var builder = new DataTreeConfiguration.Builder(TreeType.CONFIGURATION);
-        builder.setUniqueIndexes(true);
-        builder.setMandatoryNodesValidation(true);
-
-        var dataTreeConfiguration = builder.build();
+        var dataTreeConfiguration = DataTreeConfiguration.builder(TreeType.CONFIGURATION)
+            .setUniqueIndexes(true)
+            .setMandatoryNodesValidation(true)
+            .build();
         assertEquals(TreeType.CONFIGURATION, dataTreeConfiguration.getTreeType());
         assertTrue(dataTreeConfiguration.isUniqueIndexEnabled());
         assertTrue(dataTreeConfiguration.isMandatoryNodesValidationEnabled());
 
-        builder = new DataTreeConfiguration.Builder(TreeType.OPERATIONAL);
-        builder.setUniqueIndexes(false);
-        builder.setMandatoryNodesValidation(false);
-
-        dataTreeConfiguration = builder.build();
+        dataTreeConfiguration = DataTreeConfiguration.builder(TreeType.OPERATIONAL)
+            .setUniqueIndexes(false)
+            .setMandatoryNodesValidation(false).build();
         assertEquals(TreeType.OPERATIONAL, dataTreeConfiguration.getTreeType());
         assertFalse(dataTreeConfiguration.isUniqueIndexEnabled());
         assertFalse(dataTreeConfiguration.isMandatoryNodesValidationEnabled());
