@@ -67,10 +67,5 @@
             <artifactId>yang-xpath-impl</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>openconfig-parser-support</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
