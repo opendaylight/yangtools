@@ -31,7 +31,7 @@ There are sorts of things here:
   * [Karaf features](features)
   * [Karaf distribution](karaf) meant for local testing
 * a few [baseline libraries](common) useful without much other context
-* a YANG-opinionated [XSD XPath library](xpath)
+* a YANG-opinionated view of [XML components](xml)
 * our take on a [YANG metamodel](model) supporting both as-declared and as-effective views on a set of YANG/YIN files
 * corresponding [YANG parser](parser), which really is a compiler, capable of turning a set of YANG/YIN file sources
   into a YANG metamodel instance

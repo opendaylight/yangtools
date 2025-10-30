@@ -18,7 +18,7 @@
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
-    <artifactId>xpath-aggregator</artifactId>
+    <artifactId>xml-aggregator</artifactId>
     <version>14.0.20-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -29,8 +29,9 @@
 
     <modules>
         <!-- YANG XPath API and implementation -->
+        <!-- FIXME; rename to xpath-api -->
         <module>yang-xpath-api</module>
-        <!-- FIXME: rename to yang-xpath-ri -->
+        <!-- FIXME: rename to xpath-ri -->
         <module>yang-xpath-impl</module>
     </modules>
 </project>
