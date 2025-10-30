@@ -8,7 +8,6 @@
 /**
  * Base RFC7950 reactor and supporting classes. This package is not intended to be consumed by most applications, but
  * rather by tests in artifacts providing parser extensions.
- *
- * @author Robert Varga
  */
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
