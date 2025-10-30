@@ -81,6 +81,14 @@ public final class StatementSupportBundle implements Immutable, StatementSupport
     }
 
     /**
+     * {@return a new {@link Builder} working with {@link #VERSIONS_ALL}}
+     * @since 14.0.20
+     */
+    public static @NonNull Builder builder() {
+        return builder(VERSIONS_ALL);
+    }
+
+    /**
      * Return a new {@link Builder} working with specified supported {@link YangVersion}s.
      *
      * @param supportedVersions supported versions
