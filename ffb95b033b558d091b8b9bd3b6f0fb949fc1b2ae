@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3cd144a9_15537f36",
+        "filename": "parser/rfc6241-parser-support/src/main/java/org/opendaylight/yangtools/rfc6241/parser/impl/Rfc6241Extension.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-10-30T12:35:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e29bde1d_8373390f",
+      "range": {
+        "startLine": 22,
+        "startChar": 3,
+        "endLine": 22,
+        "endChar": 43
+      },
+      "revId": "ffb95b033b558d091b8b9bd3b6f0fb949fc1b2ae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1f0c285b_0911b94a",
