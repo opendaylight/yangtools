@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscribedNotificationsConstants;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificationEffectiveStatement;
+import org.opendaylight.yangtools.rfc8639.parser.inject.InjectRfc8639ParserExtension;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -24,8 +25,8 @@ class SubscribedNotificationsTest {
     @Test
     void testSubscribedNotifications() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                        new SubscriptionStateNotificationStatementSupport(YangParserConfiguration.DEFAULT))
+                .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+                    new InjectRfc8639ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
                 .build();
 
         final var context = reactor.newBuild()
