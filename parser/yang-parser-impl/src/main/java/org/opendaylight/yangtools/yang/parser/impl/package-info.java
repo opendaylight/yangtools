@@ -9,5 +9,4 @@
  * This package holds the 'parser implementation', which really is just glue code holding together the statement
  * reactor, base RFC6020/RFC7950 support bundles and supported semantic extensions.
  */
-@org.osgi.service.component.annotations.RequireServiceComponentRuntime
 package org.opendaylight.yangtools.yang.parser.impl;
