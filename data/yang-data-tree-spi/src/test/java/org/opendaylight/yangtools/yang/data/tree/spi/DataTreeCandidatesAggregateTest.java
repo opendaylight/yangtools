@@ -1065,7 +1065,7 @@ class DataTreeCandidatesAggregateTest {
     }
 
     private static LeafNode<String> normalizedNode(final String value) {
-        final var node = mock(LeafNode.class);
+        final LeafNode<String> node = mock();
         doReturn(value).when(node).body();
         return node;
     }
