@@ -47,6 +47,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "501da68c_5812200f",
+        "filename": "parser/rfc6241-parser-support/src/main/java/org/opendaylight/yangtools/rfc6241/parser/impl/Rfc6241Extension.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-10-30T11:52:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f0c285b_0911b94a",
+      "range": {
+        "startLine": 29,
+        "startChar": 27,
+        "endLine": 29,
+        "endChar": 36
+      },
+      "revId": "ffb95b033b558d091b8b9bd3b6f0fb949fc1b2ae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a509bfaa_4094ab59",
@@ -60,6 +84,30 @@
       "writtenOn": "2025-10-30T11:22:37Z",
       "side": 1,
       "message": "this will not work in OSGi, as demonstrated by Jenkins",
+      "range": {
+        "startLine": 21,
+        "startChar": 49,
+        "endLine": 21,
+        "endChar": 78
+      },
+      "revId": "ffb95b033b558d091b8b9bd3b6f0fb949fc1b2ae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b13e2a4_959befbe",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/DefaultReactors.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-10-30T11:52:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a509bfaa_4094ab59",
       "range": {
         "startLine": 21,
         "startChar": 49,
