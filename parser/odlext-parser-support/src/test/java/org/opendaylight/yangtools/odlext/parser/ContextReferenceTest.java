@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
+import org.opendaylight.yangtools.odlext.parser.inject.InjectYangExtParserExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -34,10 +35,8 @@ class ContextReferenceTest {
     @Test
     void test() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new ContextInstanceStatementSupport(YangParserConfiguration.DEFAULT))
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new ContextReferenceStatementSupport(YangParserConfiguration.DEFAULT))
+            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+                new InjectYangExtParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
 
         final var foo = reactor.newBuild()
