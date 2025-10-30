@@ -117,12 +117,6 @@
                     <listener>false</listener>
                 </configuration>
             </plugin>
-            <plugin>
-                <!-- FIXME: why is this needed? -->
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
-
 </project>
