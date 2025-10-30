@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.rfc8040.parser;
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.opendaylight.yangtools.rfc8040.parser.inject.InjectRfc8040ParserExtension;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -28,10 +29,9 @@ abstract class AbstractYangDataTest {
     @BeforeAll
     static void createReactor() {
         REACTOR = RFC7950Reactors.vanillaReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new YangDataStatementSupport(YangParserConfiguration.DEFAULT))
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.BEHAVIOUR)
-                .build();
+            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+                new InjectRfc8040ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
+            .build();
     }
 
     @AfterAll
