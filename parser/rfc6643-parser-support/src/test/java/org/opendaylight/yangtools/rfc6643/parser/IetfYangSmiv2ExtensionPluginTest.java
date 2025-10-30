@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdSchemaNode;
+import org.opendaylight.yangtools.rfc6643.parser.inject.InjectRfc6643ParserExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -37,20 +38,8 @@ class IetfYangSmiv2ExtensionPluginTest {
     @Test
     void testExtensions() throws Exception {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new DisplayHintStatementSupport(YangParserConfiguration.DEFAULT))
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new MaxAccessStatementSupport(YangParserConfiguration.DEFAULT))
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new DefValStatementSupport(YangParserConfiguration.DEFAULT))
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new ImpliedStatementSupport(YangParserConfiguration.DEFAULT))
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new AliasStatementSupport(YangParserConfiguration.DEFAULT))
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new OidStatementSupport(YangParserConfiguration.DEFAULT))
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new SubIdStatementSupport(YangParserConfiguration.DEFAULT))
+            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+                new InjectRfc6643ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var schema = reactor.newBuild()
             .addSources(
