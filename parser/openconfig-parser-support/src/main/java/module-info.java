@@ -5,8 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
+
+/**
+ * A {@link ParserExtension} providing support for extensions defined in
+ * <a href="https://github.com/openconfig/public/blob/master/release/models/openconfig-extensions.yang">OpenConfig</a>.
+ *
+* @provides ParserExtension
+ */
 module org.opendaylight.yangtools.openconfig.parser.support {
+    // FIXME: do not export this package
     exports org.opendaylight.yangtools.openconfig.parser;
+    exports org.opendaylight.yangtools.openconfig.parser.inject;
+
+    provides ParserExtension with org.opendaylight.yangtools.openconfig.parser.impl.OpenConfigParserExtension;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
@@ -18,7 +30,10 @@ module org.opendaylight.yangtools.openconfig.parser.support {
     requires org.slf4j;
 
     // Annotations
+    requires static transitive javax.inject;
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
+    requires static org.osgi.service.component.annotations;
 }
 
