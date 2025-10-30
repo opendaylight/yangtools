@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.Function;
 import org.opendaylight.yangtools.yang.common.QName;
 
-class QNameReplacementFunction implements Function<QName, QName> {
+final class QNameReplacementFunction implements Function<QName, QName> {
     private final Map<QName, QName> mapping;
 
     QNameReplacementFunction(final Map<QName, QName> mapping) {
@@ -22,7 +22,7 @@ class QNameReplacementFunction implements Function<QName, QName> {
 
     @Override
     public QName apply(final QName input) {
-        QName potential = mapping.get(input);
+        final var potential = mapping.get(input);
         return potential != null ? potential : input;
     }
 }

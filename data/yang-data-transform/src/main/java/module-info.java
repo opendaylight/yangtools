@@ -16,4 +16,5 @@ module org.opendaylight.yangtools.yang.data.transform {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.osgi.annotation.bundle;
 }
