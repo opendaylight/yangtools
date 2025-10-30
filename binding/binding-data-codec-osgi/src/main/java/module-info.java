@@ -20,5 +20,6 @@ module org.opendaylight.yangtools.binding.data.codec.osgi {
     requires org.slf4j;
 
     // Annotations
+    requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
 }
