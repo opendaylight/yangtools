@@ -33,7 +33,8 @@ module org.opendaylight.yangtools.binding.generator {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
-    requires static javax.inject;
+    requires static transitive javax.inject;
     requires static org.kohsuke.metainf_services;
+    requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
 }

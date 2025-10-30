@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import org.kohsuke.MetaInfServices;
+import org.opendaylight.yangtools.binding.generator.impl.di.SingletonBindingRuntimeGenerator;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeGenerator;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -22,7 +23,8 @@ import org.slf4j.LoggerFactory;
  */
 @MetaInfServices
 @Component(immediate = true)
-public class DefaultBindingRuntimeGenerator implements BindingRuntimeGenerator {
+public sealed class DefaultBindingRuntimeGenerator implements BindingRuntimeGenerator
+        permits SingletonBindingRuntimeGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBindingRuntimeGenerator.class);
 
     @Override
