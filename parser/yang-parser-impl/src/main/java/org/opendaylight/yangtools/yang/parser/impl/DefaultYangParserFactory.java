@@ -7,17 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
@@ -28,7 +24,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.RequireServiceComponentRuntime;
 
 /**
  * Reference {@link YangParserFactory} implementation.
@@ -37,11 +32,10 @@ import org.osgi.service.component.annotations.RequireServiceComponentRuntime;
 @Component
 @Singleton
 @MetaInfServices
-@RequireServiceComponentRuntime
 public final class DefaultYangParserFactory implements YangParserFactory {
     private static final List<ImportResolutionMode> SUPPORTED_MODES = List.of(ImportResolutionMode.DEFAULT);
 
-    private final ConcurrentMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
+    private final ConcurrentHashMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
         new ConcurrentHashMap<>(2);
     private final Function<YangParserConfiguration, CrossSourceStatementReactor> reactorFactory;
 
@@ -66,9 +60,11 @@ public final class DefaultYangParserFactory implements YangParserFactory {
     }
 
     @Override
-    public @NonNull YangParser createParser(final YangParserConfiguration configuration) {
-        final ImportResolutionMode importMode = configuration.importResolutionMode();
-        checkArgument(SUPPORTED_MODES.contains(importMode), "Unsupported import resolution mode %s", importMode);
+    public YangParser createParser(final YangParserConfiguration configuration) {
+        final var importMode = configuration.importResolutionMode();
+        if (!SUPPORTED_MODES.contains(importMode)) {
+            throw new IllegalArgumentException("Unsupported import resolution mode " + importMode);
+        }
         return new DefaultYangParser(reactors.computeIfAbsent(configuration, reactorFactory).newBuild());
     }
 }
