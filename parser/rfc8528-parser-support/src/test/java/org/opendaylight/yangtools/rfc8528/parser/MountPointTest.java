@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
+import org.opendaylight.yangtools.rfc8528.parser.inject.InjectRfc8528ParserExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -32,8 +33,8 @@ class MountPointTest {
     @Test
     void testMountPointResolution() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                new MountPointStatementSupport(YangParserConfiguration.DEFAULT))
+            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+                new InjectRfc8528ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
 
         final var context = reactor.newBuild()
