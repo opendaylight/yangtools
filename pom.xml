@@ -47,7 +47,7 @@
         <module>parser</module>
         <module>plugin</module>
         <module>tools</module>
-        <module>xpath</module>
+        <module>xml</module>
 
         <module>yang</module>
     </modules>
