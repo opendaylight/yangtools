@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 
-public class YangTextSchemaContextResolverTest {
+class YangTextSchemaContextResolverTest {
     @Test
-    public void testYangTextSchemaContextResolver() throws Exception {
+    void testYangTextSchemaContextResolver() throws Exception {
         final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("test-bundle");
         assertNotNull(yangTextSchemaContextResolver);
 
@@ -87,7 +87,7 @@ public class YangTextSchemaContextResolverTest {
     }
 
     @Test
-    public void testFeatureRegistration() throws Exception {
+    void testFeatureRegistration() throws Exception {
         final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("feature-test-bundle");
         assertNotNull(yangTextSchemaContextResolver);
         final var yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo-feature.yang");
