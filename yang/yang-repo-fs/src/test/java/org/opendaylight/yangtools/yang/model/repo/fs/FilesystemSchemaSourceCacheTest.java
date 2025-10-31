@@ -41,8 +41,6 @@ import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 
@@ -59,8 +57,7 @@ class FilesystemSchemaSourceCacheTest {
     @BeforeEach
     void setUp() throws Exception {
         storageDir = Files.createTempDirectory(null);
-        doReturn(registration).when(registry).registerSchemaSource(any(SchemaSourceProvider.class),
-            any(PotentialSchemaSource.class));
+        doReturn(registration).when(registry).registerSchemaSource(any(), any());
     }
 
     @Test
@@ -86,14 +83,12 @@ class FilesystemSchemaSourceCacheTest {
         assertThat(Files.readString(storedFiles.get(1).toPath()),
             either(containsString(content)).or(containsString(content2)));
 
-        verify(registry, times(2)).registerSchemaSource(any(SchemaSourceProvider.class),
-            any(PotentialSchemaSource.class));
+        verify(registry, times(2)).registerSchemaSource(any(), any());
 
         // Create new cache from stored sources
         new FilesystemSchemaSourceCache<>(registry, YangTextSource.class, storageDir);
 
-        verify(registry, times(4)).registerSchemaSource(any(SchemaSourceProvider.class),
-            any(PotentialSchemaSource.class));
+        verify(registry, times(4)).registerSchemaSource(any(), any());
 
         final var storedFilesAfterNewCache = getFilesFromCache();
         assertEquals(2, storedFilesAfterNewCache.size());
@@ -119,7 +114,7 @@ class FilesystemSchemaSourceCacheTest {
 
         final var storedFiles = getFilesFromCache();
         assertEquals(1, storedFiles.size());
-        verify(registry).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        verify(registry).registerSchemaSource(any(), any());
     }
 
     @Test
@@ -140,8 +135,7 @@ class FilesystemSchemaSourceCacheTest {
         assertThat(filesToFilenamesWithoutRevision(storedFiles), both(hasItem("test"))
             .and(hasItem("test@2012-12-12")).and(hasItem("test@2013-12-12")));
 
-        verify(registry, times(3)).registerSchemaSource(any(SchemaSourceProvider.class),
-            any(PotentialSchemaSource.class));
+        verify(registry, times(3)).registerSchemaSource(any(), any());
     }
 
     @Test
