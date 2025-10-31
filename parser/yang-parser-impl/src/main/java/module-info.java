@@ -42,5 +42,6 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires static org.checkerframework.checker.qual;
     requires static org.gaul.modernizer_maven_annotations;
     requires static org.kohsuke.metainf_services;
+    requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
 }
