@@ -12,13 +12,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.inject.InjectYangParserFactory;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.osgi.service.component.annotations.Activate;
@@ -30,9 +29,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Beta
 @Component
-@Singleton
 @MetaInfServices
-public final class DefaultYangParserFactory implements YangParserFactory {
+public sealed class DefaultYangParserFactory implements YangParserFactory permits InjectYangParserFactory {
     private static final List<ImportResolutionMode> SUPPORTED_MODES = List.of(ImportResolutionMode.DEFAULT);
 
     private final ConcurrentHashMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
@@ -48,7 +46,6 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         reactorFactory.apply(YangParserConfiguration.DEFAULT);
     }
 
-    @Inject
     @Activate
     public DefaultYangParserFactory(@Reference final YangXPathParserFactory xpathFactory) {
         reactorFactory = config -> DefaultReactors.defaultReactorBuilder(xpathFactory, config).build();
