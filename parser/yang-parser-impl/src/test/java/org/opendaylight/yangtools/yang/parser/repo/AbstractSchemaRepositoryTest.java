@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
-public abstract class AbstractSchemaRepositoryTest {
+abstract class AbstractSchemaRepositoryTest {
     static @NonNull EffectiveModelContext assertModelContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
         final var future = createModelContext(modulesWithSupportedDeviations, resources);
