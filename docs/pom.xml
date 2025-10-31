@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-docs</artifactId>
-    <version>14.0.20</version>
+    <version>14.0.21-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>YANG Tools documentation</description>
@@ -472,7 +472,7 @@
                         <link>https://www.slf4j.org/apidocs/</link>
                         <link>https://guava.dev/releases/33.4.0-jre/api/docs/</link>
 
-                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.1.6/</link>
+                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.1.6-SNAPSHOT/</link>
                     </links>
                     <groups>
                         <group>
