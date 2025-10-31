@@ -26,7 +26,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
@@ -42,14 +41,13 @@ import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
 @ExtendWith(MockitoExtension.class)
-public class PathExpressionParserTest {
+class PathExpressionParserTest {
     @Mock
     public StmtContext<?, ?, ?> ctx;
     @Mock
     public StatementSourceReference ref;
 
-    @SuppressWarnings("exports")
-    public final PathExpressionParser parser = new PathExpressionParser();
+    private final PathExpressionParser parser = new PathExpressionParser();
 
     @BeforeEach
     void before() {
@@ -59,9 +57,9 @@ public class PathExpressionParserTest {
     @Test
     void testDerefPath() {
         // deref() is not valid as per RFC7950, but we tolarate it.
-        final PathExpression deref = parser.parseExpression(ctx, "deref(../id)/../type");
+        final var deref = parser.parseExpression(ctx, "deref(../id)/../type");
 
-        final DerefSteps derefSteps = assertInstanceOf(DerefSteps.class, deref.getSteps());
+        final var derefSteps = assertInstanceOf(DerefSteps.class, deref.getSteps());
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
             YangXPathAxis.CHILD.asStep(Unqualified.of("type"))), derefSteps.getRelativePath());
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
@@ -95,11 +93,11 @@ public class PathExpressionParserTest {
 
     @Test
     void testCurrentPredicateParsing() {
-        final YangLocationPath path = ((LocationPathSteps) parser.parseExpression(ctx,
-            "/device_types/device_type[type = current()/../type_text]/desc").getSteps()).getLocationPath();
+        final var steps = assertInstanceOf(LocationPathSteps.class,
+            parser.parseExpression(ctx, "/device_types/device_type[type = current()/../type_text]/desc").getSteps());
+        final var path = steps.getLocationPath();
         assertTrue(path.isAbsolute());
 
-        path.getSteps();
         assertEquals(ImmutableList.of(
             YangXPathAxis.CHILD.asStep(Unqualified.of("device_types")),
             YangXPathAxis.CHILD.asStep(Unqualified.of("device_type"),
