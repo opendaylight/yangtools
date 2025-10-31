@@ -10,13 +10,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>bundle-parent</artifactId>
-        <version>14.0.20-SNAPSHOT</version>
-        <relativePath>../bundle-parent/pom.xml</relativePath>
+        <groupId>org.opendaylight.odlparent</groupId>
+        <artifactId>odlparent</artifactId>
+        <version>14.1.5</version>
+        <relativePath/>
     </parent>
 
+    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-docs</artifactId>
+    <version>14.0.20-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>YANG Tools documentation</description>
@@ -25,6 +27,18 @@
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>bnd-parent</artifactId>
+                <version>${project.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -502,4 +516,11 @@
             </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
+        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://wiki.opendaylight.org/display/ODL/YANG+Tools</url>
+    </scm>
 </project>
