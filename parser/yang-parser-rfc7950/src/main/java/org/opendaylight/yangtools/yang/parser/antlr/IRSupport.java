@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.Keywor
 import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.UnquotedStringContext;
 
-public final class IRSupport {
+final class IRSupport {
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
 
     private final Map<String, Single> dquotArguments = new HashMap<>();
@@ -58,19 +58,8 @@ public final class IRSupport {
      * @return A new IRStatement
      * @throws NullPointerException if {@code file} is null or it does not contain a root statement
      */
-    public static @NonNull IRStatement createStatement(final FileContext file) {
-        return createStatement(file.statement());
-    }
-
-    /**
-     * Create an {@link IRStatement} from a parsed {@link StatementContext}.
-     *
-     * @param stmt ANTLR statement context
-     * @return A new IRStatement
-     * @throws NullPointerException if {@code stmt} is null
-     */
-    public static @NonNull IRStatement createStatement(final StatementContext stmt) {
-        return new IRSupport().statementOf(stmt);
+    static @NonNull IRStatement createStatement(final FileContext file) {
+        return new IRSupport().statementOf(file.statement());
     }
 
     private @NonNull IRStatement statementOf(final StatementContext stmt) {

@@ -7,14 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
-import java.io.Reader;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -26,13 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.parser.antlr.CompactYangStatementLexer;
-import org.opendaylight.yangtools.yang.parser.antlr.IRSupport;
+import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementLexer;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.FileContext;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -66,8 +57,8 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
      */
     public static YangStatementStreamSource create(final YangTextSource source)
             throws IOException, YangSyntaxErrorException {
-        return new YangStatementStreamSource(source.sourceId(),
-            IRSupport.createStatement(parseYangSource(source)), source.symbolicName());
+        return new YangStatementStreamSource(source.sourceId(), YangTextParser.parseToIR(source),
+            source.symbolicName());
     }
 
     /**
@@ -126,29 +117,5 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
 
     IRStatement rootStatement() {
         return rootStatement;
-    }
-
-    static StatementContext parseYangSource(final YangTextSource source)
-            throws IOException, YangSyntaxErrorException {
-        try (var reader = source.openStream()) {
-            return parseYangSource(source.sourceId(), reader);
-        }
-    }
-
-    private static StatementContext parseYangSource(final SourceIdentifier sourceId, final Reader stream)
-            throws IOException, YangSyntaxErrorException {
-        final YangStatementLexer lexer = new CompactYangStatementLexer(CharStreams.fromReader(stream));
-        final YangStatementParser parser = new YangStatementParser(new CommonTokenStream(lexer));
-        // disconnect from console error output
-        lexer.removeErrorListeners();
-        parser.removeErrorListeners();
-
-        final YangErrorListener errorListener = new YangErrorListener(sourceId);
-        lexer.addErrorListener(errorListener);
-        parser.addErrorListener(errorListener);
-
-        final FileContext result = parser.file();
-        errorListener.validate();
-        return verifyNotNull(result.statement());
     }
 }
