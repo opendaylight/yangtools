@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Collection;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -21,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.parser.inject.InjectYangLibResolver;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
@@ -31,17 +30,15 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * Reference {@link YangLibResolver} implementation.
  */
-@Singleton
 @Component
 @MetaInfServices
-public final class DefaultYangLibResolver implements YangLibResolver {
+public sealed class DefaultYangLibResolver implements YangLibResolver permits InjectYangLibResolver {
     private final CrossSourceStatementReactor reactor;
 
     public DefaultYangLibResolver() {
         reactor = DefaultReactors.defaultReactorBuilder().build();
     }
 
-    @Inject
     @Activate
     public DefaultYangLibResolver(@Reference final YangXPathParserFactory xpathFactory) {
         reactor = DefaultReactors.defaultReactorBuilder(xpathFactory).build();

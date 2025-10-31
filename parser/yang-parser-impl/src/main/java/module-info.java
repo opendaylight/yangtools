@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 module org.opendaylight.yangtools.yang.parser.impl {
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.yang.parser.impl;
+    exports org.opendaylight.yangtools.yang.parser.inject;
     exports org.opendaylight.yangtools.yang.parser.repo;
 
     provides SchemaRepository with org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
@@ -38,9 +39,9 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires org.slf4j;
 
     // Annotations
-    requires static transitive javax.inject;
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
+    requires static javax.inject;
     requires static org.checkerframework.checker.qual;
     requires static org.gaul.modernizer_maven_annotations;
     requires static org.kohsuke.metainf_services;
