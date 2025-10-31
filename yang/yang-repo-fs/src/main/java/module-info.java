@@ -15,4 +15,7 @@ module org.opendaylight.yangtools.yang.model.repo.fs {
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.spi;
     requires org.slf4j;
+
+    // Annotations
+    requires static org.osgi.annotation.bundle;
 }
