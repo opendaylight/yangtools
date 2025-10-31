@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -36,11 +34,9 @@ final class IfFeaturePredicateParser {
     }
 
     static IfFeatureExpr parseIfFeatureExpression(final StmtContext<?, ?, ?> stmt, final String value) {
-        final var lexer = new IfFeatureExpressionLexer(CharStreams.fromString(value));
-        final var parser = new IfFeatureExpressionParser(new CommonTokenStream(lexer));
-        final var ifFeatureExprContext =
-                SourceExceptionParser.parse(lexer, parser, parser::if_feature_expr, stmt.sourceReference());
-        return new IfFeaturePredicateParser(stmt).parseIfFeatureExpr(ifFeatureExprContext);
+        final var expr = SourceExceptionParser.parseString(IfFeatureExpressionLexer::new,
+            IfFeatureExpressionParser::new, IfFeatureExpressionParser::if_feature_expr, stmt.sourceReference(), value);
+        return new IfFeaturePredicateParser(stmt).parseIfFeatureExpr(expr);
     }
 
     private IfFeatureExpr parseIfFeatureExpr(final If_feature_exprContext expr) {

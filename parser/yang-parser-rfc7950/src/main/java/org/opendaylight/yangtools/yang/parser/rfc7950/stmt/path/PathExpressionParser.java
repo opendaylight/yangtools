@@ -13,8 +13,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
@@ -73,9 +71,8 @@ class PathExpressionParser {
         YangFunction.CURRENT.getIdentifier());
 
     PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
-        final var lexer = new LeafRefPathLexer(CharStreams.fromString(pathArg));
-        final var parser = new LeafRefPathParser(new CommonTokenStream(lexer));
-        final var path = SourceExceptionParser.parse(lexer, parser, parser::path_arg, ctx.sourceReference());
+        final var path = SourceExceptionParser.parseString(LeafRefPathLexer::new, LeafRefPathParser::new,
+            LeafRefPathParser::path_arg, ctx.sourceReference(), pathArg);
 
         final var childPath = path.getChild(0);
         final var steps = switch (childPath) {
