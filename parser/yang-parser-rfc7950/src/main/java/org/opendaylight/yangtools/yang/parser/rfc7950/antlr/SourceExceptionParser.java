@@ -9,23 +9,24 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-import java.util.function.Supplier;
+import java.util.function.Function;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.TokenStream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
- * Utility class for converting ANTLRErrorListener errors to SourceExceptions. This class is NOT thread-safe.
- *
- * @author Robert Varga
+ * Utility class for converting ANTLRErrorListener errors to {@link SourceException}s.
  */
-@Beta
 @NonNullByDefault
 public final class SourceExceptionParser {
     private static final class Listener extends AbstractParserErrorListener<SourceException> {
@@ -48,47 +49,34 @@ public final class SourceExceptionParser {
     }
 
     /**
-     * Parse a Recognizer extracting its root item.
+     * Parse some content using a {@link Lexer} and a {@link Parser}, extracting a the parser's root.
      *
-     * @param recognizer Recognizer to use
-     * @param parseMethod Root item extractor method
-     * @param ref Source reference
-     * @return Parsed item
-     * @throws NullPointerException if any argument is null
+     * @param <L> Lexer type
+     * @param <P> Parser type
+     * @param <R> Parser root type
+     * @param lexerCtor Lexec constructor, typically {@code L::new}
+     * @param parserCtor Parser constructor, typically {@code P::new}
+     * @param parseMethod Parser's method extracting the root rule
+     * @param ref reference to the statement
+     * @param str the String to parse
+     * @return the root
+     * @throws NullPointerException if any argument is {@code null}
      * @throws SourceException if a parser error occurs
      */
-    public static <T> T parse(final Recognizer<?, ?> recognizer, final Supplier<T> parseMethod,
-            final StatementSourceReference ref) {
+    public static <L extends Lexer, P extends Parser, @NonNull R> R parseString(final Function<CharStream, L> lexerCtor,
+            final Function<TokenStream, P> parserCtor, Function<P, R> parseMethod, final StatementSourceReference ref,
+            final String str) {
         final var listener = new Listener(ref);
-        recognizer.removeErrorListeners();
-        recognizer.addErrorListener(listener);
-
-        final var ret = parseMethod.get();
-        listener.validate();
-        return ret;
-    }
-
-    /**
-     * Use a Lexer/Parser pair extracting the parser's root item.
-     *
-     * @param lexer lexer to use
-     * @param parser parser to use
-     * @param parseMethod Root item extractor method
-     * @param ref Source reference
-     * @return Parsed item
-     * @throws NullPointerException if any argument is null
-     * @throws SourceException if a parser error occurs
-     */
-    public static <T> T parse(final Lexer lexer, final Parser parser, final Supplier<T> parseMethod,
-            final StatementSourceReference ref) {
-        final Listener listener = new Listener(ref);
+        final var lexer = lexerCtor.apply(requireNonNull(CharStreams.fromString(str)));
         lexer.removeErrorListeners();
         lexer.addErrorListener(listener);
+
+        final var parser = parserCtor.apply(new CommonTokenStream(lexer));
         parser.removeErrorListeners();
         parser.addErrorListener(listener);
 
-        final T ret = parseMethod.get();
+        final var ret = parseMethod.apply(parser);
         listener.validate();
-        return ret;
+        return SourceException.throwIfNull(ret, ref, "No root extracted");
     }
 }
