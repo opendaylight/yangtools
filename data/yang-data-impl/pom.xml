@@ -8,13 +8,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>bundle-parent</artifactId>
+        <artifactId>bnd-parent</artifactId>
         <version>14.0.20-SNAPSHOT</version>
-        <relativePath>../../bundle-parent/pom.xml</relativePath>
+        <relativePath>../../bnd-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>yang-data-impl</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
@@ -90,20 +90,17 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <!-- FIXME: do not export data.impl -->
-                        <!-- FIXME: use OSGi annotations when we have R7 -->
-                        <Export-Package>
-                            {local-packages},
-                            org.opendaylight.yangtools.yang.data.impl.*,
-                            ;-split-package:=error
-                        </Export-Package>
-                    </instructions>
-                </configuration>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze-declarations</id>
+                        <configuration>
+                            <ignoredNonTestScopedDependencies>
+                                <ignoredNonTestScopedDependencies>org.opendaylight.yangtools:util</ignoredNonTestScopedDependencies>
+                            </ignoredNonTestScopedDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
