@@ -166,16 +166,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.yang.parser.impl</Automatic-Module-Name>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -190,5 +180,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
