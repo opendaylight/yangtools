@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
+import org.opendaylight.yangtools.yang.parser.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathLexer;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Absolute_pathContext;
@@ -33,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_key
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_predicateContext;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_strContext;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Relative_pathContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;

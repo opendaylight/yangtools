@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.parser.antlr.IRSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport;
 
 @Beta
 public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextSource, YangIRSource> {
