@@ -12,13 +12,13 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bnd-parent</artifactId>
-        <version>14.1.6-SNAPSHOT</version>
+        <version>14.1.6</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>bnd-parent</artifactId>
-    <version>14.0.20-SNAPSHOT</version>
+    <version>14.0.20</version>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>Bundle parent (bnd-based)</description>
@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>14.0.20-SNAPSHOT</version>
+                <version>14.0.20</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

@@ -12,13 +12,13 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>14.1.6-SNAPSHOT</version>
+        <version>14.1.6</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-validation-tool</artifactId>
-    <version>14.0.20-SNAPSHOT</version>
+    <version>14.0.20</version>
 
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
@@ -30,7 +30,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>14.0.20-SNAPSHOT</version>
+                <version>14.0.20</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

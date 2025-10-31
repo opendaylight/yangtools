@@ -12,14 +12,14 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>14.1.6-SNAPSHOT</version>
+        <version>14.1.6</version>
         <relativePath/>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-maven-plugin-it</artifactId>
-    <version>14.0.20-SNAPSHOT</version>
+    <version>14.0.20</version>
 
     <properties>
         <!-- We are doing abhorrent things here unpacking our dependencies, which confuses analysis, just skip it -->

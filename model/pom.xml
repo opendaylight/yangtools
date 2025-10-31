@@ -13,13 +13,13 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent-lite</artifactId>
-        <version>14.1.6-SNAPSHOT</version>
+        <version>14.1.6</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>model-aggregator</artifactId>
-    <version>14.0.20-SNAPSHOT</version>
+    <version>14.0.20</version>
     <packaging>pom</packaging>
 
     <properties>
