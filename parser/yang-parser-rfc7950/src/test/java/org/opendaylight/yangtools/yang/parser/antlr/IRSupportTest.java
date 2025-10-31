@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
+package org.opendaylight.yangtools.yang.parser.antlr;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opendaylight.yangtools.yang.parser.rfc7950.antlr.IRSupport.trimWhitespace;
+import static org.opendaylight.yangtools.yang.parser.antlr.IRSupport.trimWhitespace;
 
 import org.junit.jupiter.api.Test;
 
