@@ -48,15 +48,9 @@ public final class YangParserTestUtils {
         return name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
     };
 
-    private static final @NonNull YangParserFactory PARSER_FACTORY;
-
-    static {
-        final var it = ServiceLoader.load(YangParserFactory.class).iterator();
-        if (!it.hasNext()) {
-            throw new IllegalStateException("No YangParserFactory found");
-        }
-        PARSER_FACTORY = it.next();
-    }
+    private static final @NonNull YangParserFactory PARSER_FACTORY = ServiceLoader.load(YangParserFactory.class)
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException("No YangParserFactory found"));
 
     private YangParserTestUtils() {
         // Hidden on purpose
