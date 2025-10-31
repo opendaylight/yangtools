@@ -29,12 +29,12 @@ import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.FileContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.KeywordContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.UnquotedStringContext;
+import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser;
+import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.ArgumentContext;
+import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.FileContext;
+import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.KeywordContext;
+import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.StatementContext;
+import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.UnquotedStringContext;
 
 public final class IRSupport {
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();

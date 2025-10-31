@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 
 import com.google.common.annotations.Beta;
 import org.antlr.v4.runtime.CharStream;
-import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
+import org.opendaylight.yangtools.yang.parser.grammar.YangStatementLexer;
 
 /**
  * A {@link YangStatementLexer} backed by more efficient token factory. Exact details are explicitly outside of
