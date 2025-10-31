@@ -7,6 +7,6 @@
  */
 /**
  * ANTLR grammars for parsing RFC7950 constructs. This package is considered an implementation detail and does not
- * fall under API stability contract. Use at your own risk.
+ * fall under API stability contract.
  */
-package org.opendaylight.yangtools.yang.parser.antlr;
+package org.opendaylight.yangtools.yang.parser.grammar;
