@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.antlr;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -20,32 +21,24 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.TokenStream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for converting ANTLRErrorListener errors to {@link SourceException}s.
  */
-@NonNullByDefault
-public final class SourceExceptionParser {
-    private static final class Listener extends AbstractParserErrorListener<SourceException> {
-        private final StatementSourceReference ref;
+public final class SourceExceptionParser extends BaseErrorListener {
+    private static final Logger LOG = LoggerFactory.getLogger(SourceExceptionParser.class);
 
-        private Listener(final StatementSourceReference ref) {
-            this.ref = requireNonNull(ref);
-        }
+    private final @NonNull StatementSourceReference ref;
 
-        @Override
-        protected SourceException createException(final Recognizer<?, ?> recognizer,
-                final @Nullable Object offendingSymbol, final int line, final int charPositionInLine,
-                final String msg, final @Nullable RecognitionException cause) {
-            return new SourceException(ref, cause, "%s at %s:%s", msg, line, charPositionInLine);
-        }
-    }
+    private SourceException exception;
 
-    private SourceExceptionParser() {
-        // Hidden on purpose
+    @NonNullByDefault
+    private SourceExceptionParser(final StatementSourceReference ref) {
+        this.ref = requireNonNull(ref);
     }
 
     /**
@@ -63,20 +56,41 @@ public final class SourceExceptionParser {
      * @throws NullPointerException if any argument is {@code null}
      * @throws SourceException if a parser error occurs
      */
+    @NonNullByDefault
     public static <L extends Lexer, P extends Parser, @NonNull R> R parseString(final Function<CharStream, L> lexerCtor,
             final Function<TokenStream, P> parserCtor, Function<P, R> parseMethod, final StatementSourceReference ref,
             final String str) {
-        final var listener = new Listener(ref);
-        final var lexer = lexerCtor.apply(requireNonNull(CharStreams.fromString(str)));
+        return new SourceExceptionParser(ref)
+            .parse(lexerCtor, parserCtor, parseMethod, requireNonNull(CharStreams.fromString(str)));
+    }
+
+    @NonNullByDefault
+    private <L extends Lexer, P extends Parser, @NonNull R> R parse(final Function<CharStream, L> lexerCtor,
+            final Function<TokenStream, P> parserCtor, Function<P, R> parseMethod, final CharStream stream) {
+        final var lexer = lexerCtor.apply(stream);
         lexer.removeErrorListeners();
-        lexer.addErrorListener(listener);
+        lexer.addErrorListener(this);
 
         final var parser = parserCtor.apply(new CommonTokenStream(lexer));
         parser.removeErrorListeners();
-        parser.addErrorListener(listener);
+        parser.addErrorListener(this);
 
         final var ret = parseMethod.apply(parser);
-        listener.validate();
+        if (exception != null) {
+            throw exception;
+        }
         return SourceException.throwIfNull(ret, ref, "No root extracted");
+    }
+
+    @Override
+    public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
+            final int charPositionInLine, final String msg, final RecognitionException cause) {
+        LOG.debug("Syntax error at {}:{}: {}", line, charPositionInLine, msg, cause);
+        final var ex = new SourceException(ref, cause, "%s at %s:%s", msg, line, charPositionInLine);
+        if (exception != null) {
+            exception.addSuppressed(ex);
+        } else {
+            exception = ex;
+        }
     }
 }
