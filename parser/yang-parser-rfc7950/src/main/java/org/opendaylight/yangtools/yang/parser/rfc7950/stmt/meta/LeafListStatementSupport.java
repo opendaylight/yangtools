@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verify;
-
-import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
@@ -42,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveSt
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class LeafListStatementSupport
         extends AbstractSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
@@ -111,15 +108,15 @@ public final class LeafListStatementSupport
     @Override
     protected LeafListEffectiveStatement createEffective(final Current<QName, LeafListStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
+        final var typeStmt = SourceException.throwIfNull(
                 findFirstStatement(substatements, TypeEffectiveStatement.class), stmt,
                 "Leaf-list is missing a 'type' statement");
 
-        final ImmutableSet<String> defaultValues = substatements.stream()
-                .filter(DefaultEffectiveStatement.class::isInstance)
-                .map(DefaultEffectiveStatement.class::cast)
-                .map(DefaultEffectiveStatement::argument)
-                .collect(ImmutableSet.toImmutableSet());
+        final var defaultValues = substatements.stream()
+            .filter(DefaultEffectiveStatement.class::isInstance)
+            .map(DefaultEffectiveStatement.class::cast)
+            .map(DefaultEffectiveStatement::argument)
+            .collect(ImmutableSet.toImmutableSet());
 
         // FIXME: We need to interpret the default value in terms of supplied element type
         SourceException.throwIf(
@@ -136,8 +133,10 @@ public final class LeafListStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final LeafListEffectiveStatement stmt) {
-        verify(stmt instanceof LeafListSchemaNode, "Unexpected statement %s", stmt);
-        final var schema = (LeafListSchemaNode) stmt;
+        if (!(stmt instanceof LeafListSchemaNode schema)) {
+            throw new VerifyException("Unexpected statement " + stmt);
+        }
+
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)
             .setStatus(schema.getStatus())

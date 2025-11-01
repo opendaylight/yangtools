@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class PatternStatementSupport
         extends AbstractStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
@@ -63,7 +61,7 @@ public final class PatternStatementSupport
 
     @Override
     public PatternExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final String pattern = RegexUtils.getJavaRegexFromXSD(value);
+        final var pattern = RegexUtils.getJavaRegexFromXSD(value);
         try {
             Pattern.compile(pattern);
         } catch (final PatternSyntaxException e) {

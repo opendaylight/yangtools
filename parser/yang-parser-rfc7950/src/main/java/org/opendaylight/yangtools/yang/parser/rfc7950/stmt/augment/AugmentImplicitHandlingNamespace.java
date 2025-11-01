@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -18,9 +17,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * Helper namespace for attaching target information to augmentation statements. This is then used to ensure that
  * the effective augment has correct implicit statements created.
  */
-@Beta
 public final class AugmentImplicitHandlingNamespace {
-    public static final @NonNull ParserNamespace<Empty, Mutable<?, ?, ?>> INSTANCE =
+    static final @NonNull ParserNamespace<Empty, Mutable<?, ?, ?>> INSTANCE =
         new ParserNamespace<>("augment-implicit-handling");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 

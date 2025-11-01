@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -17,9 +16,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 /**
  * Statement-local namespace carrying the versioning information about how the import was satisfied.
  */
-@Beta
 public final class ImportedVersionNamespace {
-    public static final @NonNull ParserNamespace<Empty, SourceIdentifier> INSTANCE =
+    static final @NonNull ParserNamespace<Empty, SourceIdentifier> INSTANCE =
         new ParserNamespace<>("imported-version");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 

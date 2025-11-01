@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -47,21 +46,18 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
-@Beta
 public final class ImportStatementSupport
         extends AbstractUnqualifiedStatementSupport<ImportStatement, ImportEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.IMPORT)
-            .addMandatory(YangStmtMapping.PREFIX)
-            .addOptional(YangStmtMapping.REVISION_DATE)
-            .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.IMPORT)
-            .addMandatory(YangStmtMapping.PREFIX)
-            .addOptional(YangStmtMapping.REVISION_DATE)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .build();
+    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.IMPORT)
+        .addMandatory(YangStmtMapping.PREFIX)
+        .addOptional(YangStmtMapping.REVISION_DATE)
+        .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.IMPORT)
+        .addMandatory(YangStmtMapping.PREFIX)
+        .addOptional(YangStmtMapping.REVISION_DATE)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .build();
 
     private ImportStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.IMPORT, StatementPolicy.reject(), config, validator);
