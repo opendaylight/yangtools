@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -26,40 +26,58 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
+import org.opendaylight.yangtools.yang.parser.antlr.IfFeatureArgumentParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractIfFeatureStatementSupport
+public final class IfFeatureStatementSupport
         extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractIfFeatureStatementSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IfFeatureStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.IF_FEATURE).build();
 
-    AbstractIfFeatureStatementSupport(final YangParserConfiguration config) {
+    private final @NonNull IfFeatureArgumentParser argumentParser;
+
+    private IfFeatureStatementSupport(final YangParserConfiguration config,
+            final IfFeatureArgumentParser argumentParser) {
         super(YangStmtMapping.IF_FEATURE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        this.argumentParser = requireNonNull(argumentParser);
+    }
+
+    public static @NonNull IfFeatureStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new IfFeatureStatementSupport(config, IfFeatureArgumentParser.RFC6020);
+    }
+
+    public static @NonNull IfFeatureStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new IfFeatureStatementSupport(config, IfFeatureArgumentParser.RFC7950);
     }
 
     @Override
-    public final void onFullDefinitionDeclared(
+    public IfFeatureExpr parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return argumentParser.parseArgument(ctx, value);
+    }
+
+    @Override
+    public void onFullDefinitionDeclared(
             final Mutable<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        final ModelActionBuilder verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Map<Prerequisite<?>, QName> backRef = new HashMap<>();
-        for (QName feature : stmt.getArgument().getReferencedFeatures()) {
+        final var verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var backRef = new HashMap<Prerequisite<?>, QName>();
+        for (var feature : stmt.getArgument().getReferencedFeatures()) {
             backRef.put(verifyFeatures.requiresCtx(stmt, ParserNamespaces.FEATURE, feature,
                 ModelProcessingPhase.EFFECTIVE_MODEL), feature);
         }
@@ -72,8 +90,8 @@ abstract class AbstractIfFeatureStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                final Set<QName> unresolvedFeatures = new HashSet<>();
-                for (Prerequisite<?> prereq : failed) {
+                final var unresolvedFeatures = new HashSet<QName>();
+                for (var prereq : failed) {
                     unresolvedFeatures.add(verifyNotNull(backRef.get(prereq)));
                 }
 
@@ -84,19 +102,19 @@ abstract class AbstractIfFeatureStatementSupport
     }
 
     @Override
-    protected final IfFeatureStatement createDeclared(final BoundStmtCtx<IfFeatureExpr> ctx,
+    protected IfFeatureStatement createDeclared(final BoundStmtCtx<IfFeatureExpr> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createIfFeature(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final IfFeatureStatement attachDeclarationReference(final IfFeatureStatement stmt,
+    protected IfFeatureStatement attachDeclarationReference(final IfFeatureStatement stmt,
             final DeclarationReference reference) {
         return DeclaredStatementDecorators.decorateIfFeature(stmt, reference);
     }
 
     @Override
-    protected final IfFeatureEffectiveStatement createEffective(final Current<IfFeatureExpr, IfFeatureStatement> stmt,
+    protected IfFeatureEffectiveStatement createEffective(final Current<IfFeatureExpr, IfFeatureStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createIfFeature(stmt.declared(), substatements);
     }
