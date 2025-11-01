@@ -21,8 +21,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatem
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate.DeviateStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate.DeviateStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureStatementRFC6020Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportedVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ConfigListWarningNamespace;
@@ -49,6 +47,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.FeatureStatement
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.FractionDigitsStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.GroupingStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IdentityStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IfFeatureStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IncludeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.KeyStatementSupport;
@@ -341,8 +340,8 @@ public final class RFC7950Reactors {
             .addSupport(new AnyxmlStatementSupport(config))
             .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementSupport(config))
             .addSupport(NamespaceBehaviours.FEATURE)
-            .addVersionSpecificSupport(VERSION_1, new IfFeatureStatementRFC6020Support(config))
-            .addVersionSpecificSupport(VERSION_1_1, new IfFeatureStatementRFC7950Support(config))
+            .addVersionSpecificSupport(VERSION_1, IfFeatureStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, IfFeatureStatementSupport.rfc7950Instance(config))
             .addSupport(NamespaceBehaviours.GROUPING)
             .addSupport(SourceGroupingNamespace.BEHAVIOUR)
             .addSupport(new UsesStatementSupport(config))
