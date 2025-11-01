@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.antlr;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -25,7 +22,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
-import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
@@ -39,13 +35,13 @@ import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.Unquot
 final class IRSupport {
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
 
-    private final Map<String, Single> dquotArguments = new HashMap<>();
-    private final Map<String, Single> squotArguments = new HashMap<>();
-    private final Map<String, Single> uquotArguments = new HashMap<>();
-    private final Map<String, Single> idenArguments = new HashMap<>();
-    private final Map<String, Unqualified> uqualKeywords = new HashMap<>();
-    private final Map<Entry<String, String>, Qualified> qualKeywords = new HashMap<>();
-    private final Map<String, String> strings = new HashMap<>();
+    private final HashMap<String, Single> dquotArguments = new HashMap<>();
+    private final HashMap<String, Single> squotArguments = new HashMap<>();
+    private final HashMap<String, Single> uquotArguments = new HashMap<>();
+    private final HashMap<String, Single> idenArguments = new HashMap<>();
+    private final HashMap<String, Unqualified> uqualKeywords = new HashMap<>();
+    private final HashMap<Entry<String, String>, Qualified> qualKeywords = new HashMap<>();
+    private final HashMap<String, String> strings = new HashMap<>();
 
     private IRSupport() {
         // Hidden on purpose
@@ -63,21 +59,19 @@ final class IRSupport {
     }
 
     private @NonNull IRStatement statementOf(final StatementContext stmt) {
-        final ParseTree firstChild = stmt.getChild(0);
-        verify(firstChild instanceof KeywordContext, "Unexpected shape of %s", stmt);
+        if (!(stmt.getChild(0) instanceof KeywordContext firstChild)) {
+            throw new VerifyException("Unexpected shape of " + stmt);
+        }
 
-        final ParseTree keywordStart = firstChild.getChild(0);
-        verify(keywordStart instanceof TerminalNode, "Unexpected keyword start %s", keywordStart);
-        final Token keywordToken = ((TerminalNode) keywordStart).getSymbol();
-
-        final IRKeyword keyword = switch (firstChild.getChildCount()) {
+        final var keywordToken = verifyTerminal("keyword start", firstChild.getChild(0));
+        final var keyword = switch (firstChild.getChildCount()) {
             case 1 -> uqualKeywords.computeIfAbsent(strOf(keywordToken), Unqualified::of);
             case 3 -> qualKeywords.computeIfAbsent(Map.entry(strOf(keywordToken), strOf(firstChild.getChild(2))),
                 entry -> Qualified.of(entry.getKey(), entry.getValue()));
             default -> throw new VerifyException("Unexpected keyword " + firstChild);
         };
-        final IRArgument argument = createArgument(stmt);
-        final ImmutableList<IRStatement> statements = createStatements(stmt);
+        final var argument = createArgument(stmt);
+        final var statements = createStatements(stmt);
         final int line = keywordToken.getLine();
         final int column = keywordToken.getCharPositionInLine();
 
@@ -85,7 +79,7 @@ final class IRSupport {
     }
 
     private IRArgument createArgument(final StatementContext stmt) {
-        final ArgumentContext argument = stmt.argument();
+        final var argument = stmt.argument();
         if (argument == null) {
             return null;
         }
@@ -101,8 +95,7 @@ final class IRSupport {
         final var parts = new ArrayList<Single>();
 
         for (var child : argument.children) {
-            verify(child instanceof TerminalNode, "Unexpected argument component %s", child);
-            final var token = ((TerminalNode) child).getSymbol();
+            final var token = verifyTerminal("argument component", child);
             switch (token.getType()) {
                 case YangStatementParser.SEP:
                     // Separator, just skip it over
@@ -128,9 +121,7 @@ final class IRSupport {
     }
 
     private Single createQuoted(final ArgumentContext argument) {
-        final var child = argument.getChild(0);
-        verify(child instanceof TerminalNode, "Unexpected literal %s", child);
-        final var token = ((TerminalNode) child).getSymbol();
+        final var token = verifyTerminal("liternal", argument.getChild(0));
         return switch (token.getType()) {
             case YangStatementParser.DQUOT_STRING -> createDoubleQuoted(token);
             case YangStatementParser.SQUOT_STRING -> createSingleQuoted(token);
@@ -151,24 +142,26 @@ final class IRSupport {
     }
 
     private Single createSimple(final ArgumentContext argument) {
-        final ParseTree child = argument.getChild(0);
-        if (child instanceof TerminalNode terminal) {
-            final var token = terminal.getSymbol();
-            return switch (token.getType()) {
-                // This is as simple as it gets: we are dealing with an identifier here.
-                case YangStatementParser.IDENTIFIER -> idenArguments.computeIfAbsent(strOf(token),
-                    IRArgument::identifier);
-                // This is an empty string, the difference between double and single quotes does not exist. Single
-                // quotes have more stringent semantics, hence use those.
-                case YangStatementParser.DQUOT_END, YangStatementParser.SQUOT_END -> IRArgument.empty();
-                default -> throw unexpectedToken(token);
-            };
-        }
-
-        verify(child instanceof UnquotedStringContext, "Unexpected shape of %s", argument);
-        // TODO: check non-presence of quotes and create a different subclass, so that ends up treated as if it
-        //       was single-quoted, i.e. bypass the check implied by IRArgument.Single#needQuoteCheck().
-        return uquotArguments.computeIfAbsent(strOf(child), IRArgument::unquoted);
+        return switch (argument.getChild(0)) {
+            case TerminalNode terminal -> {
+                final var token = terminal.getSymbol();
+                yield switch (token.getType()) {
+                        // This is as simple as it gets: we are dealing with an identifier here.
+                        case YangStatementParser.IDENTIFIER ->
+                            idenArguments.computeIfAbsent(strOf(token), IRArgument::identifier);
+                        // This is an empty string, the difference between double and single quotes does not exist.
+                        // Single quotes have more stringent semantics, hence use those.
+                        case YangStatementParser.DQUOT_END, YangStatementParser.SQUOT_END -> IRArgument.empty();
+                        default -> throw unexpectedToken(token);
+                    };
+            }
+            case UnquotedStringContext unquoted -> {
+                // TODO: check non-presence of quotes and create a different subclass, so that ends up treated as if it
+                //       was single-quoted, i.e. bypass the check implied by IRArgument.Single#needQuoteCheck().
+                yield uquotArguments.computeIfAbsent(strOf(unquoted), IRArgument::unquoted);
+            }
+            default -> throw new VerifyException("Unexpected shape of " + argument);
+        };
     }
 
     private Single createSingleQuoted(final Token token) {
@@ -176,9 +169,9 @@ final class IRSupport {
     }
 
     private ImmutableList<IRStatement> createStatements(final StatementContext stmt) {
-        final List<StatementContext> statements = stmt.statement();
+        final var statements = stmt.statement();
         return statements.isEmpty() ? ImmutableList.of()
-                : statements.stream().map(this::statementOf).collect(ImmutableList.toImmutableList());
+            : statements.stream().map(this::statementOf).collect(ImmutableList.toImmutableList());
     }
 
     private String strOf(final ParseTree tree) {
@@ -202,7 +195,7 @@ final class IRSupport {
 
         // Okay, we may need to do some trimming, set up a builder and append the first segment
         final int length = str.length();
-        final StringBuilder sb = new StringBuilder(length);
+        final var sb = new StringBuilder(length);
 
         // Append first segment, which needs only tail-trimming
         sb.append(str, 0, trimTrailing(str, 0, firstBrk)).append('\n');
@@ -270,5 +263,12 @@ final class IRSupport {
 
     private static VerifyException unexpectedToken(final Token token) {
         return new VerifyException("Unexpected token " + token);
+    }
+
+    private static Token verifyTerminal(final String what, final ParseTree tree) {
+        if (tree instanceof TerminalNode terminal) {
+            return terminal.getSymbol();
+        }
+        throw new VerifyException("Unexpected " + what + " " + tree);
     }
 }
