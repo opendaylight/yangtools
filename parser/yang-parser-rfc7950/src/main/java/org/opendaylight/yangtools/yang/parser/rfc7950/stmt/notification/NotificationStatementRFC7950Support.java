@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * Class providing necessary support for processing YANG 1.1 Notification
  * statement.
  */
-@Beta
 public final class NotificationStatementRFC7950Support extends AbstractNotificationStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.NOTIFICATION)
@@ -54,7 +52,7 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
 
     @Override
     public void onStatementAdded(final Mutable<QName, NotificationStatement, NotificationEffectiveStatement> stmt) {
-        final QName argument = stmt.argument();
+        final var argument = stmt.argument();
         SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), stmt,
             "Notification %s is defined within an rpc, action, or another notification", argument);
         SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), stmt,

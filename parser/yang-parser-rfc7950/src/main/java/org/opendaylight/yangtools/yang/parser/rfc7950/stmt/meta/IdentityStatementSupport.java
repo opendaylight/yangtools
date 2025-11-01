@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -42,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class IdentityStatementSupport
         extends AbstractQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
@@ -81,8 +78,8 @@ public final class IdentityStatementSupport
     @Override
     public void onStatementDefinitionDeclared(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
-        final QName qname = stmt.getArgument();
-        final StmtContext<?, ?, ?> prev = stmt.namespaceItem(ParserNamespaces.IDENTITY, qname);
+        final var qname = stmt.getArgument();
+        final var prev = stmt.namespaceItem(ParserNamespaces.IDENTITY, qname);
         SourceException.throwIf(prev != null, stmt, "Duplicate identity definition %s", qname);
         stmt.addToNs(ParserNamespaces.IDENTITY, qname, stmt);
     }
@@ -106,16 +103,17 @@ public final class IdentityStatementSupport
             return EffectiveStatements.createIdentity(stmt.declared());
         }
 
-        final List<IdentitySchemaNode> identities = new ArrayList<>();
-        for (EffectiveStatement<?, ?> substatement : substatements) {
-            if (substatement instanceof BaseEffectiveStatement) {
-                final QName qname = ((BaseEffectiveStatement) substatement).argument();
-                final IdentityEffectiveStatement identity =
-                        verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, qname),
-                            "Failed to find identity %s", qname)
-                        .buildEffective();
-                verify(identity instanceof IdentitySchemaNode, "%s is not a IdentitySchemaNode", identity);
-                identities.add((IdentitySchemaNode) identity);
+        final var identities = new ArrayList<IdentitySchemaNode>();
+        for (var substatement : substatements) {
+            if (substatement instanceof BaseEffectiveStatement base) {
+                final var qname = base.argument();
+                final var identity = verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, qname),
+                    "Failed to find identity %s", qname)
+                    .buildEffective();
+                if (!(identity instanceof IdentitySchemaNode schema)) {
+                    throw new VerifyException(identity + " is not a IdentitySchemaNode");
+                }
+                identities.add(schema);
             }
         }
 

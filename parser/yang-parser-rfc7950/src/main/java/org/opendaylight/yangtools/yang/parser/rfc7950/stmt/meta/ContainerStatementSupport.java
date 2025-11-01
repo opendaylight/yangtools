@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verify;
-
-import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -39,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveSt
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class ContainerStatementSupport
         extends AbstractSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
@@ -135,8 +132,10 @@ public final class ContainerStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final ContainerEffectiveStatement stmt) {
-        verify(stmt instanceof ContainerSchemaNode, "Unexpected statement %s", stmt);
-        final var schema = (ContainerSchemaNode) stmt;
+        if (!(stmt instanceof ContainerSchemaNode schema)) {
+            throw new VerifyException("Unexpected statement " + stmt);
+        }
+
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)
             .setStatus(schema.getStatus())

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 import static com.google.common.base.Verify.verifyNotNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -48,7 +47,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class ModuleStatementSupport
         extends AbstractUnqualifiedStatementSupport<ModuleStatement, ModuleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
@@ -229,11 +227,10 @@ public final class ModuleStatementSupport
         final var submodules = new ArrayList<Submodule>();
         for (var submoduleCtx : submoduleContexts(stmt)) {
             final var submodule = submoduleCtx.buildEffective();
-            if (submodule instanceof Submodule legacy) {
-                submodules.add(legacy);
-            } else {
+            if (!(submodule instanceof Submodule legacy)) {
                 throw new VerifyException("Submodule statement " + submodule + " is not a Submodule");
             }
+            submodules.add(legacy);
         }
 
         final var qnameModule = verifyNotNull(stmt.namespaceItem(QNameModuleNamespace.INSTANCE, Empty.value()));
