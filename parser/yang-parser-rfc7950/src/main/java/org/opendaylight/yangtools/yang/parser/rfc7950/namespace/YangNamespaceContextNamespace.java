@@ -7,20 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
-import static com.google.common.base.Verify.verify;
-
-import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
-@Beta
 public final class YangNamespaceContextNamespace {
-    public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> INSTANCE =
+    private static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> INSTANCE =
         new ParserNamespace<>("yangNamespaceContext");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(INSTANCE);
 
@@ -29,12 +25,14 @@ public final class YangNamespaceContextNamespace {
     }
 
     public static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
-        final RootStmtContext<?, ?, ?> root = ctx.getRoot();
+        final var root = ctx.getRoot();
         YangNamespaceContext ret = ctx.namespaceItem(INSTANCE, root);
         if (ret == null) {
-            verify(ctx instanceof Mutable, "Cannot populate namespace context to %s", ctx);
+            if (!(ctx instanceof Mutable<?, ?, ?> mutable)) {
+                throw new VerifyException("Cannot populate namespace context to " + ctx);
+            }
             ret = new StmtNamespaceContext(root);
-            ((Mutable<?, ?, ?>)ctx).addToNs(INSTANCE, root, ret);
+            mutable.addToNs(INSTANCE, root, ret);
         }
         return ret;
     }
