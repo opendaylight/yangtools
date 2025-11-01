@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static com.google.common.base.Verify.verify;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,44 +34,42 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class CaseStatementSupport
         extends AbstractImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CASE)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
-            .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.IF_FEATURE)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addOptional(YangStmtMapping.STATUS)
-            .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.WHEN)
-            .build();
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.CHOICE)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addAny(YangStmtMapping.IF_FEATURE)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(YangStmtMapping.STATUS)
+        .addAny(YangStmtMapping.USES)
+        .addOptional(YangStmtMapping.WHEN)
+        .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CASE)
-            .addAny(YangStmtMapping.ANYDATA)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
-            .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.IF_FEATURE)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addOptional(YangStmtMapping.STATUS)
-            .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.WHEN)
-            .build();
+        .addAny(YangStmtMapping.ANYDATA)
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.CHOICE)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addAny(YangStmtMapping.IF_FEATURE)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(YangStmtMapping.STATUS)
+        .addAny(YangStmtMapping.USES)
+        .addOptional(YangStmtMapping.WHEN)
+        .build();
 
     private CaseStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.CASE, instantiatedPolicy(), config, validator);
@@ -140,38 +136,26 @@ public final class CaseStatementSupport
 
     private static int computeFlags(final Current<?, ?> stmt,
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        final Boolean config;
-        final EffectiveConfig effective = stmt.effectiveConfig();
-        switch (effective) {
-            case FALSE:
-                config = Boolean.FALSE;
-                break;
-            case IGNORED:
-                config = null;
-                break;
-            case TRUE:
-                final Boolean sub = substatementEffectiveConfig(substatements);
-                config = sub != null ? sub : Boolean.TRUE;
-                break;
-            case UNDETERMINED:
-                config = substatementEffectiveConfig(substatements);
-                break;
-            default:
-                throw new IllegalStateException("Unhandled effective config " + effective);
-        }
-
         return new FlagsBuilder()
-                .setHistory(stmt.history())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(config)
-                .toFlags();
+            .setHistory(stmt.history())
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .setConfiguration(switch (stmt.effectiveConfig()) {
+                case FALSE -> Boolean.FALSE;
+                case IGNORED -> null;
+                case TRUE -> {
+                    final var sub = substatementEffectiveConfig(substatements);
+                    yield sub != null ? sub : Boolean.TRUE;
+                }
+                case UNDETERMINED -> substatementEffectiveConfig(substatements);
+            })
+            .toFlags();
     }
 
     private static @Nullable Boolean substatementEffectiveConfig(
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof DataSchemaNode) {
-                final Optional<Boolean> opt = ((DataSchemaNode) stmt).effectiveConfig();
+        for (var stmt : substatements) {
+            if (stmt instanceof DataSchemaNode dataSchemaNode) {
+                final var opt = dataSchemaNode.effectiveConfig();
                 if (opt.isPresent()) {
                     return opt.orElseThrow();
                 }
