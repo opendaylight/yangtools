@@ -5,18 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
+
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.SetMultimap;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -38,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -51,86 +49,119 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractDeviateStatementSupport
+public final class DeviateStatementSupport
         extends AbstractStatementSupport<DeviateKind, DeviateStatement, DeviateEffectiveStatement> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractDeviateStatementSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DeviateStatementSupport.class);
 
-    private static final SubstatementValidator DEVIATE_NOT_SUPPORTED_SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.DEVIATE).build();
+    // Shared by both
+    private static final SubstatementValidator NOT_SUPPORTED_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEVIATE).build();
+    private static final SubstatementValidator REPLACE_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(YangStmtMapping.TYPE)
+            .addOptional(YangStmtMapping.UNITS)
+            .build();
 
-    private static final SubstatementValidator DEVIATE_ADD_SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.DEVIATE)
-                .addOptional(YangStmtMapping.CONFIG)
-                .addOptional(YangStmtMapping.DEFAULT)
-                .addOptional(YangStmtMapping.MANDATORY)
-                .addOptional(YangStmtMapping.MAX_ELEMENTS)
-                .addOptional(YangStmtMapping.MIN_ELEMENTS)
-                .addAny(YangStmtMapping.MUST)
-                .addAny(YangStmtMapping.UNIQUE)
-                .addOptional(YangStmtMapping.UNITS)
-                .build();
+    // RFC6020
+    private static final SubstatementValidator RFC6020_ADD_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addAny(YangStmtMapping.UNIQUE)
+            .addOptional(YangStmtMapping.UNITS)
+            .build();
+    private static final SubstatementValidator RFC6020_DELETE_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addAny(YangStmtMapping.MUST)
+            .addAny(YangStmtMapping.UNIQUE)
+            .addOptional(YangStmtMapping.UNITS)
+            .build();
 
-    private static final SubstatementValidator DEVIATE_REPLACE_SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.DEVIATE)
-                .addOptional(YangStmtMapping.CONFIG)
-                .addOptional(YangStmtMapping.DEFAULT)
-                .addOptional(YangStmtMapping.MANDATORY)
-                .addOptional(YangStmtMapping.MAX_ELEMENTS)
-                .addOptional(YangStmtMapping.MIN_ELEMENTS)
-                .addOptional(YangStmtMapping.TYPE)
-                .addOptional(YangStmtMapping.UNITS)
-                .build();
+    // RFC7950
+    private static final SubstatementValidator RFC7950_ADD_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addAny(YangStmtMapping.UNIQUE)
+            .addOptional(YangStmtMapping.UNITS)
+            .build();
+    private static final SubstatementValidator RFC7950_DELETE_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+            .addAny(YangStmtMapping.DEFAULT)
+            .addAny(YangStmtMapping.MUST)
+            .addAny(YangStmtMapping.UNIQUE)
+            .addOptional(YangStmtMapping.UNITS)
+            .build();
 
-    private static final SubstatementValidator DEVIATE_DELETE_SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.DEVIATE)
-                .addOptional(YangStmtMapping.DEFAULT)
-                .addAny(YangStmtMapping.MUST)
-                .addAny(YangStmtMapping.UNIQUE)
-                .addOptional(YangStmtMapping.UNITS)
-                .build();
-
+    private static final ImmutableSet<YangStmtMapping> IMPLICIT_STATEMENTS = ImmutableSet.of(
+        YangStmtMapping.CONFIG,
+        YangStmtMapping.MANDATORY,
+        YangStmtMapping.MAX_ELEMENTS,
+        YangStmtMapping.MIN_ELEMENTS);
     private static final ImmutableSet<YangStmtMapping> SINGLETON_STATEMENTS = ImmutableSet.of(
-            YangStmtMapping.UNITS, YangStmtMapping.CONFIG, YangStmtMapping.MANDATORY,
-            YangStmtMapping.MIN_ELEMENTS, YangStmtMapping.MAX_ELEMENTS);
+        YangStmtMapping.CONFIG,
+        YangStmtMapping.MANDATORY,
+        YangStmtMapping.MIN_ELEMENTS,
+        YangStmtMapping.MAX_ELEMENTS,
+        YangStmtMapping.UNITS);
 
-    private static final ImmutableSet<YangStmtMapping> IMPLICIT_STATEMENTS = ImmutableSet.of(YangStmtMapping.CONFIG,
-            YangStmtMapping.MANDATORY, YangStmtMapping.MAX_ELEMENTS, YangStmtMapping.MIN_ELEMENTS);
+    private final SubstatementValidator addValidator;
+    private final SubstatementValidator deleteValidator;
 
-    AbstractDeviateStatementSupport(final YangParserConfiguration config) {
+    private DeviateStatementSupport(final YangParserConfiguration config,
+            final SubstatementValidator addValidator, final SubstatementValidator deleteValidator) {
         // Note: we are performing our own validation based on deviate kind.
         // TODO: perhaps we should do argumentSpecificSupport?
         super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent(), config, null);
+        this.addValidator = requireNonNull(addValidator);
+        this.deleteValidator = requireNonNull(deleteValidator);
+    }
+
+    public static @NonNull DeviateStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new DeviateStatementSupport(config, RFC6020_ADD_VALIDATOR, RFC6020_DELETE_VALIDATOR);
+    }
+
+    public static @NonNull DeviateStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new DeviateStatementSupport(config, RFC7950_ADD_VALIDATOR, RFC7950_DELETE_VALIDATOR);
     }
 
     @Override
-    public final DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return SourceException.throwIfNull(DeviateKind.forArgument(value), ctx,
             "String '%s' is not valid deviate argument", value);
     }
 
     @Override
-    public final void onFullDefinitionDeclared(
+    public void onFullDefinitionDeclared(
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx) {
-        final DeviateKind deviateKind = deviateStmtCtx.argument();
+        final var deviateKind = deviateStmtCtx.argument();
         getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
 
-        final SchemaNodeIdentifier deviationTarget =
-                (SchemaNodeIdentifier) deviateStmtCtx.coerceParentContext().argument();
-
+        final var deviationTarget = (SchemaNodeIdentifier) deviateStmtCtx.coerceParentContext().argument();
         if (!isDeviationSupported(deviateStmtCtx, deviationTarget)) {
             return;
         }
 
-        final ModelActionBuilder deviateAction = deviateStmtCtx.newInferenceAction(
-                ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var deviateAction = deviateStmtCtx.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
 
-        final Prerequisite<StmtContext<DeviateKind, DeviateStatement,
-            DeviateEffectiveStatement>> sourceCtxPrerequisite =
-                deviateAction.requiresCtx(deviateStmtCtx, ModelProcessingPhase.EFFECTIVE_MODEL);
-
-        final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
-                deviateAction.mutatesEffectiveCtxPath(deviateStmtCtx.getRoot(), ParserNamespaces.schemaTree(),
-                    deviationTarget.getNodeIdentifiers());
+        final var sourceCtxPrerequisite = deviateAction.requiresCtx(deviateStmtCtx,
+            ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var targetCtxPrerequisite = deviateAction.mutatesEffectiveCtxPath(deviateStmtCtx.getRoot(),
+            ParserNamespaces.schemaTree(), deviationTarget.getNodeIdentifiers());
 
         deviateAction.apply(new InferenceAction() {
             @Override
@@ -144,21 +175,13 @@ abstract class AbstractDeviateStatementSupport
                 final var targetNodeStmtCtx = targetCtxPrerequisite.resolve(ctx);
 
                 switch (deviateKind) {
-                    case NOT_SUPPORTED:
+                    case null -> throw new NullPointerException();
+                    case NOT_SUPPORTED ->
                         // FIXME: this can be short-circuited without an inference action
                         targetNodeStmtCtx.setUnsupported();
-                        break;
-                    case ADD:
-                        performDeviateAdd(sourceNodeStmtCtx, targetNodeStmtCtx);
-                        break;
-                    case REPLACE:
-                        performDeviateReplace(sourceNodeStmtCtx, targetNodeStmtCtx);
-                        break;
-                    case DELETE:
-                        performDeviateDelete(sourceNodeStmtCtx, targetNodeStmtCtx);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unsupported deviate " + deviateKind);
+                    case ADD -> performDeviateAdd(sourceNodeStmtCtx, targetNodeStmtCtx);
+                    case REPLACE -> performDeviateReplace(sourceNodeStmtCtx, targetNodeStmtCtx);
+                    case DELETE -> performDeviateDelete(sourceNodeStmtCtx, targetNodeStmtCtx);
                 }
             }
 
@@ -181,60 +204,55 @@ abstract class AbstractDeviateStatementSupport
 
     @Override
     public String internArgument(final String rawArgument) {
-        if ("add".equals(rawArgument)) {
-            return "add";
-        } else if ("delete".equals(rawArgument)) {
-            return "delete";
-        } else if ("replace".equals(rawArgument)) {
-            return "replace";
-        } else if ("not-supported".equals(rawArgument)) {
-            return "not-supported";
-        } else {
-            return rawArgument;
-        }
+        return switch (rawArgument) {
+            case "add" -> "add";
+            case "delete" -> "delete";
+            case "replace" -> "replace";
+            case "not-supported" -> "not-supported";
+            case null, default -> rawArgument;
+        };
     }
 
     @Override
-    protected final DeviateStatement createDeclared(final BoundStmtCtx<DeviateKind> ctx,
+    protected DeviateStatement createDeclared(final BoundStmtCtx<DeviateKind> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createDeviate(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final DeviateStatement attachDeclarationReference(final DeviateStatement stmt,
+    protected DeviateStatement attachDeclarationReference(final DeviateStatement stmt,
             final DeclarationReference reference) {
         return DeclaredStatementDecorators.decorateDeviate(stmt, reference);
     }
 
     @Override
-    protected final DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
+    protected DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDeviate(stmt.declared(), substatements);
     }
 
     protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {
         return switch (deviateKind) {
-            case NOT_SUPPORTED -> DEVIATE_NOT_SUPPORTED_SUBSTATEMENT_VALIDATOR;
-            case ADD -> DEVIATE_ADD_SUBSTATEMENT_VALIDATOR;
-            case REPLACE -> DEVIATE_REPLACE_SUBSTATEMENT_VALIDATOR;
-            case DELETE -> DEVIATE_DELETE_SUBSTATEMENT_VALIDATOR;
+            case ADD -> addValidator;
+            case DELETE -> deleteValidator;
+            case NOT_SUPPORTED -> NOT_SUPPORTED_VALIDATOR;
+            case REPLACE -> REPLACE_VALIDATOR;
         };
     }
 
     private static boolean isDeviationSupported(
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
-        final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.namespaceItem(
-                ParserNamespaces.MODULES_DEVIATED_BY, Empty.value());
+        final var modulesDeviatedByModules = deviateStmtCtx.namespaceItem(ParserNamespaces.MODULES_DEVIATED_BY,
+            Empty.value());
         if (modulesDeviatedByModules == null) {
             return true;
         }
 
-        final QNameModule currentModule = deviateStmtCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME,
+        final var currentModule = deviateStmtCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME,
                 deviateStmtCtx.getRoot());
-        final QNameModule targetModule = Iterables.getLast(deviationTarget.getNodeIdentifiers()).getModule();
-
-        final Set<QNameModule> deviationModulesSupportedByTargetModule = modulesDeviatedByModules.get(targetModule);
+        final var targetModule = deviationTarget.getNodeIdentifiers().getLast().getModule();
+        final var deviationModulesSupportedByTargetModule = modulesDeviatedByModules.get(targetModule);
         if (deviationModulesSupportedByTargetModule != null) {
             return deviationModulesSupportedByTargetModule.contains(currentModule);
         }
@@ -244,7 +262,7 @@ abstract class AbstractDeviateStatementSupport
 
     private static void performDeviateAdd(final StmtContext<?, ?, ?> deviateStmtCtx,
             final Mutable<?, ?, ?> targetCtx) {
-        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+        for (var originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             addStatement(originalStmtCtx, targetCtx);
         }
@@ -252,10 +270,10 @@ abstract class AbstractDeviateStatementSupport
 
     private static void addStatement(final StmtContext<?, ?, ?> stmtCtxToBeAdded, final Mutable<?, ?, ?> targetCtx) {
         if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
-            final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
+            final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
                     && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
-                for (StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
+                for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
                         stmtCtxToBeAdded,
                         "Deviation cannot add substatement %s to target node %s because it is already defined "
@@ -270,7 +288,7 @@ abstract class AbstractDeviateStatementSupport
 
     private static void performDeviateReplace(final StmtContext<?, ?, ?> deviateStmtCtx,
             final Mutable<?, ?, ?> targetCtx) {
-        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+        for (var originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             replaceStatement(originalStmtCtx, targetCtx);
         }
@@ -278,7 +296,7 @@ abstract class AbstractDeviateStatementSupport
 
     private static void replaceStatement(final StmtContext<?, ?, ?> stmtCtxToBeReplaced,
             final Mutable<?, ?, ?> targetCtx) {
-        final StatementDefinition stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
+        final var stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
 
         if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
                 && YangStmtMapping.LEAF_LIST.equals(targetCtx.publicDefinition())) {
@@ -288,7 +306,7 @@ abstract class AbstractDeviateStatementSupport
             return;
         }
 
-        for (StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
+        for (var targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
             if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeReplaced);
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
@@ -296,7 +314,7 @@ abstract class AbstractDeviateStatementSupport
             }
         }
 
-        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
+        for (var targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
             if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
                 targetCtxSubstatement.setUnsupported();
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
@@ -318,8 +336,8 @@ abstract class AbstractDeviateStatementSupport
     }
 
     private static void performDeviateDelete(final StmtContext<?, ?, ?> deviateStmtCtx,
-                final Mutable<?, ?, ?> targetCtx) {
-        for (StmtContext<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+            final Mutable<?, ?, ?> targetCtx) {
+        for (var originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             deleteStatement(originalStmtCtx, targetCtx);
         }
@@ -327,10 +345,10 @@ abstract class AbstractDeviateStatementSupport
 
     private static void deleteStatement(final StmtContext<?, ?, ?> stmtCtxToBeDeleted,
             final Mutable<?, ?, ?> targetCtx) {
-        final StatementDefinition stmtToBeDeleted = stmtCtxToBeDeleted.publicDefinition();
-        final String stmtArgument = stmtCtxToBeDeleted.rawArgument();
+        final var stmtToBeDeleted = stmtCtxToBeDeleted.publicDefinition();
+        final var stmtArgument = stmtCtxToBeDeleted.rawArgument();
 
-        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableEffectiveSubstatements()) {
+        for (var targetCtxSubstatement : targetCtx.mutableEffectiveSubstatements()) {
             if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
                     targetCtxSubstatement.rawArgument())) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeDeleted, stmtArgument);
@@ -338,7 +356,7 @@ abstract class AbstractDeviateStatementSupport
             }
         }
 
-        for (Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
+        for (var targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
             if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
                     targetCtxSubstatement.rawArgument())) {
                 targetCtxSubstatement.setUnsupported();
@@ -377,9 +395,8 @@ abstract class AbstractDeviateStatementSupport
 
     private static boolean isSupportedDeviationTarget(final StmtContext<?, ?, ?> deviateSubstatementCtx,
             final StmtContext<?, ?, ?> deviateTargetCtx, final YangVersion yangVersion) {
-        Set<StatementDefinition> supportedDeviationTargets =
-                YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(yangVersion,
-                        deviateSubstatementCtx.publicDefinition());
+        var supportedDeviationTargets = YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(yangVersion,
+            deviateSubstatementCtx.publicDefinition());
 
         if (supportedDeviationTargets == null) {
             supportedDeviationTargets = YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(YangVersion.VERSION_1,

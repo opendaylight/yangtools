@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceCon
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplicitHandlingNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC7950Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate.DeviateStatementRFC6020Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate.DeviateStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportedVersionNamespace;
@@ -39,6 +37,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ContactStatement
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ContainerStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.DefaultStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.DescriptionStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.DeviateStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.DeviationStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.EnumStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ErrorAppTagStatementSupport;
@@ -329,8 +328,8 @@ public final class RFC7950Reactors {
             .addSupport(new LeafStatementSupport(config))
             .addSupport(new ConfigStatementSupport(config))
             .addSupport(new DeviationStatementSupport(config))
-            .addVersionSpecificSupport(VERSION_1, new DeviateStatementRFC6020Support(config))
-            .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRFC7950Support(config))
+            .addVersionSpecificSupport(VERSION_1, DeviateStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, DeviateStatementSupport.rfc7950Instance(config))
             .addVersionSpecificSupport(VERSION_1, ChoiceStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementSupport.rfc7950Instance(config))
             .addVersionSpecificSupport(VERSION_1, CaseStatementSupport.rfc6020Instance(config))
