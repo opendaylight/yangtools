@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-@Beta
 public final class ConfigListWarningNamespace {
-    public static final @NonNull ParserNamespace<StatementSourceReference, Boolean> INSTANCE =
+    static final @NonNull ParserNamespace<StatementSourceReference, Boolean> INSTANCE =
         new ParserNamespace<>("configListWarning");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(INSTANCE);
 
