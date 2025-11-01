@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 /**
  * Class providing necessary support for processing YANG 1.1 Type statement.
  */
-@Beta
 public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupport {
     private final ImmutableMap<String, StatementSupport<?, ?, ?>> argumentSpecificSupports;
 
@@ -44,7 +42,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
 
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
-        final StatementSupport<?, ?, ?> potential = argumentSpecificSupports.get(argument);
+        final var potential = argumentSpecificSupports.get(argument);
         return potential != null ? potential : super.getSupportSpecificForArgument(argument);
     }
 
@@ -52,12 +50,8 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     Bit addRestrictedBit(final EffectiveStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
         // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
         final var declaredPosition = bit.findDeclaredPosition();
-        final Uint32 effectivePos;
-        if (declaredPosition.isEmpty()) {
-            effectivePos = getBaseTypeBitPosition(bit.argument(), base, stmt);
-        } else {
-            effectivePos = declaredPosition.orElseThrow();
-        }
+        final var effectivePos = declaredPosition.isEmpty() ? getBaseTypeBitPosition(bit.argument(), base, stmt)
+            : declaredPosition.orElseThrow();
 
         return EffectiveTypeUtil.buildBit(bit, effectivePos);
     }
@@ -78,7 +72,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
 
     private static Uint32 getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
             final EffectiveStmtCtx stmt) {
-        for (Bit baseTypeBit : baseType.getBits()) {
+        for (var baseTypeBit : baseType.getBits()) {
             if (bitName.equals(baseTypeBit.getName())) {
                 return baseTypeBit.getPosition();
             }
@@ -90,7 +84,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
 
     private static int getBaseTypeEnumValue(final String enumName, final EnumTypeDefinition baseType,
             final EffectiveStmtCtx ctx) {
-        for (EnumPair baseTypeEnumPair : baseType.getValues()) {
+        for (var baseTypeEnumPair : baseType.getValues()) {
             if (enumName.equals(baseTypeEnumPair.getName())) {
                 return baseTypeEnumPair.getValue();
             }

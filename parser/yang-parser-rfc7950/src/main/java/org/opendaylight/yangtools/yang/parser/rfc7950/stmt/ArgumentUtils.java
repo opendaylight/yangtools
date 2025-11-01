@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 /**
  * Utility class for dealing with arguments encountered by StatementSupport classes.
  */
-@Beta
 public final class ArgumentUtils {
     public static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     public static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();

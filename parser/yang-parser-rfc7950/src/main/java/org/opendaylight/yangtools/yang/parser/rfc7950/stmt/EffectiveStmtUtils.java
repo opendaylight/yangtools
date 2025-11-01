@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -42,7 +41,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class EffectiveStmtUtils {
     // FIXME: this should reside somewhere in max_elements
     private static final String UNBOUNDED_STR = "unbounded";
@@ -136,8 +134,7 @@ public final class EffectiveStmtUtils {
         final var defaultValues = new HashSet<String>();
         defaultValues.add(defaultValue);
         return !Strings.isNullOrEmpty(defaultValue) && yangVersion == YangVersion.VERSION_1_1
-                && isRelevantForIfFeatureCheck(typeStmt)
-                && isAnyDefaultValueMarkedWithIfFeature(typeStmt, defaultValues);
+            && isRelevantForIfFeatureCheck(typeStmt) && isAnyDefaultValueMarkedWithIfFeature(typeStmt, defaultValues);
     }
 
     private static boolean isRelevantForIfFeatureCheck(final TypeEffectiveStatement<?> typeStmt) {
@@ -216,13 +213,13 @@ public final class EffectiveStmtUtils {
     public static int historyAndStatusFlags(final CopyableNode history,
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-                .setHistory(history)
-                .setStatus(substatements.stream()
-                    .filter(StatusEffectiveStatement.class::isInstance)
-                    .findAny()
-                    .map(stmt -> ((StatusEffectiveStatement) stmt).argument())
-                    .orElse(Status.CURRENT))
-                .toFlags();
+            .setHistory(history)
+            .setStatus(substatements.stream()
+                .filter(StatusEffectiveStatement.class::isInstance)
+                .findAny()
+                .map(stmt -> ((StatusEffectiveStatement) stmt).argument())
+                .orElse(Status.CURRENT))
+            .toFlags();
     }
 
     public static <T extends CopyableNode & DocumentedNode.WithStatus> int historyAndStatusFlags(final T stmt) {

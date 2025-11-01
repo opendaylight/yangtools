@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-@Beta
 public final class BaseTypeNamespace {
-    public static final @NonNull ParserNamespace<Empty, Object> INSTANCE = new ParserNamespace<>("baseType");
+    static final @NonNull ParserNamespace<Empty, Object> INSTANCE = new ParserNamespace<>("baseType");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private BaseTypeNamespace() {

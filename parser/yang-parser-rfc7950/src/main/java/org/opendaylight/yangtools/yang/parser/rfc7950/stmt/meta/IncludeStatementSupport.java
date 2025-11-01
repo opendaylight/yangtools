@@ -10,13 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -36,7 +33,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatem
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -46,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
-@Beta
 public final class IncludeStatementSupport
         extends AbstractUnqualifiedStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
@@ -81,10 +76,10 @@ public final class IncludeStatementSupport
 
     @Override
     public void onLinkageDeclared(final Mutable<Unqualified, IncludeStatement, IncludeEffectiveStatement> stmt) {
-        final Unqualified submoduleName = stmt.getArgument();
-        final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
+        final var submoduleName = stmt.getArgument();
+        final var revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
 
-        final ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
+        final var includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
             requiresCtxPrerequisite;
         if (revision == null) {
@@ -98,9 +93,9 @@ public final class IncludeStatementSupport
         includeAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                final StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.resolve(ctx);
-                final YangVersion modVersion = stmt.getRoot().yangVersion();
-                final YangVersion subVersion = includedSubModuleContext.yangVersion();
+                final var includedSubModuleContext = requiresCtxPrerequisite.resolve(ctx);
+                final var modVersion = stmt.getRoot().yangVersion();
+                final var subVersion = includedSubModuleContext.yangVersion();
                 if (subVersion != modVersion) {
                     throw new YangVersionLinkageException(stmt,
                         "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);

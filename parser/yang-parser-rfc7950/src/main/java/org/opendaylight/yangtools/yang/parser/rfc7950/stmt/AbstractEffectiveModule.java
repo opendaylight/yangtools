@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -55,7 +54,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqualified>,
         E extends DataTreeAwareEffectiveStatement<Unqualified, D>>
         extends WithTypedefNamespace<Unqualified, D>
