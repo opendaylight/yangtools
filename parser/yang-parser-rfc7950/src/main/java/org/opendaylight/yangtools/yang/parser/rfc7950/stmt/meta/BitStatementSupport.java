@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -29,23 +28,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@Beta
 public final class BitStatementSupport extends AbstractStatementSupport<String, BitStatement, BitEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.BIT)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addOptional(YangStmtMapping.STATUS)
-            .addOptional(YangStmtMapping.POSITION)
-            .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.BIT)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.IF_FEATURE)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addOptional(YangStmtMapping.STATUS)
-            .addOptional(YangStmtMapping.POSITION)
-            .build();
+    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.BIT)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(YangStmtMapping.POSITION)
+        .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.BIT)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addAny(YangStmtMapping.IF_FEATURE)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(YangStmtMapping.POSITION)
+        .build();
 
     private BitStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.BIT, StatementPolicy.contextIndependent(), config, requireNonNull(validator));

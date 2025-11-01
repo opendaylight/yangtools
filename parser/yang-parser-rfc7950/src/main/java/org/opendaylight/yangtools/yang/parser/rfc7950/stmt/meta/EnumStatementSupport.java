@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@Beta
 public final class EnumStatementSupport
         extends AbstractStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.ENUM)

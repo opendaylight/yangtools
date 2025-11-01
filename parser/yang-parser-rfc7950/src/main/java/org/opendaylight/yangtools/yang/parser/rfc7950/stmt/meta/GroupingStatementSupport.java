@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -39,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class GroupingStatementSupport
         extends AbstractQNameStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
@@ -101,32 +98,35 @@ public final class GroupingStatementSupport
             final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        final Mutable<?, ?, ?> parent = stmt.getParentContext();
-        if (parent != null) {
-            // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
-            // declarations and parent declarations which have already been declared.
-            checkConflict(parent, stmt);
-            parent.addToNs(ParserNamespaces.GROUPING, stmt.getArgument(), stmt);
+        final var parent = stmt.getParentContext();
+        if (parent == null) {
+            // No parent ... which is weird, but there is nothing more to do
+            return;
+        }
 
-            final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
-            if (grandParent != null) {
-                // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
-                // ensure that a grouping in child scope does not shadow a grouping in parent scope which occurs later
-                // in the text. For that check we need the full declaration of our model.
-                final ModelActionBuilder action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
-                action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
-                action.apply(new InferenceAction() {
-                    @Override
-                    public void apply(final InferenceContext ctx) {
-                        checkConflict(grandParent, stmt);
-                    }
+        // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
+        // declarations and parent declarations which have already been declared.
+        checkConflict(parent, stmt);
+        parent.addToNs(ParserNamespaces.GROUPING, stmt.getArgument(), stmt);
 
-                    @Override
-                    public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                        // No-op
-                    }
-                });
-            }
+        final var grandParent = parent.getParentContext();
+        if (grandParent != null) {
+            // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
+            // ensure that a grouping in child scope does not shadow a grouping in parent scope which occurs later
+            // in the text. For that check we need the full declaration of our model.
+            final var action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
+            action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
+            action.apply(new InferenceAction() {
+                @Override
+                public void apply(final InferenceContext ctx) {
+                    checkConflict(grandParent, stmt);
+                }
+
+                @Override
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    // No-op
+                }
+            });
         }
     }
 
@@ -154,8 +154,8 @@ public final class GroupingStatementSupport
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
-        final QName arg = stmt.getArgument();
-        final StmtContext<?, ?, ?> existing = parent.namespaceItem(ParserNamespaces.GROUPING, arg);
+        final var arg = stmt.getArgument();
+        final var existing = parent.namespaceItem(ParserNamespaces.GROUPING, arg);
         SourceException.throwIf(existing != null, stmt, "Duplicate name for grouping %s", arg);
     }
 }
