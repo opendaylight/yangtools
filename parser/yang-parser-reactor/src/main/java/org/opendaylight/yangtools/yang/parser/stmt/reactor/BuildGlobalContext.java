@@ -17,28 +17,22 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Table;
-import com.google.common.collect.TreeBasedTable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
@@ -56,6 +50,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceLinkageResolver.ResolvedSourceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,9 +71,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     private final ArrayList<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final HashSet<BuildSource<?>> sources = new HashSet<>();
+    private final Set<BuildSource<?>> libSources = new HashSet<>();
     private final ImmutableSet<YangVersion> supportedVersions;
 
-    private Set<BuildSource<?>> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
@@ -165,30 +160,36 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         modelDefinedStmtDefs.put(name, def);
     }
 
-    @NonNull ReactorDeclaredModel build() throws ReactorException, SourceSyntaxException {
-        executePhases();
-        return transform();
+    @NonNull
+    ReactorDeclaredModel build() throws ReactorException, SourceSyntaxException {
+        final List<ResolvedSourceContext> resolvedSources = SourceLinkageResolver.create(sources, libSources)
+            .resolveInvolvedSources();
+        executePhases(resolvedSources);
+        return transform(resolvedSources);
     }
 
-    @NonNull EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException {
-        executePhases();
-        return transformEffective();
+    @NonNull
+    EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException {
+        final List<ResolvedSourceContext> resolvedSources = SourceLinkageResolver.create(sources, libSources)
+            .resolveInvolvedSources();
+        executePhases(resolvedSources);
+        return transformEffective(resolvedSources);
     }
 
-    private void executePhases() throws ReactorException, SourceSyntaxException {
+    private void executePhases(final @NonNull List<ResolvedSourceContext> resolvedSources) throws ReactorException {
         for (var phase : PHASE_EXECUTION_ORDER) {
-            startPhase(phase);
-            loadPhaseStatements();
-            completePhaseActions();
+            startPhase(phase, resolvedSources);
+            loadPhaseStatements(resolvedSources);
+            completePhaseActions(resolvedSources);
             endPhase(phase);
         }
     }
 
-    private @NonNull ReactorDeclaredModel transform() throws SourceSyntaxException {
+    private @NonNull ReactorDeclaredModel transform(final @NonNull List<ResolvedSourceContext> resolvedSources) {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        final var rootStatements = new ArrayList<DeclaredStatement<?>>(sources.size());
-        for (var source : sources) {
-            rootStatements.add(source.getSourceContext().declaredRoot());
+        final var rootStatements = new ArrayList<DeclaredStatement<?>>(resolvedSources.size());
+        for (var source : resolvedSources) {
+            rootStatements.add(source.context().declaredRoot());
         }
         return new ReactorDeclaredModel(rootStatements);
     }
@@ -210,13 +211,14 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private @NonNull EffectiveSchemaContext transformEffective() throws ReactorException, SourceSyntaxException {
+    private @NonNull EffectiveSchemaContext transformEffective(
+            final @NonNull List<ResolvedSourceContext> resolvedSources) throws ReactorException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        final var rootStatements = new ArrayList<DeclaredStatement<?>>(sources.size());
-        final var rootEffectiveStatements = new ArrayList<EffectiveStatement<?, ?>>(sources.size());
+        final var rootStatements = new ArrayList<DeclaredStatement<?>>(resolvedSources.size());
+        final var rootEffectiveStatements = new ArrayList<EffectiveStatement<?, ?>>(resolvedSources.size());
 
-        for (var source : sources) {
-            final var context = source.getSourceContext();
+        for (var source : resolvedSources) {
+            final var context = source.context();
             try {
                 rootStatements.add(context.declaredRoot());
                 rootEffectiveStatements.add(context.effectiveRoot());
@@ -229,46 +231,42 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return EffectiveSchemaContext.create(rootStatements, rootEffectiveStatements);
     }
 
-    private void startPhase(final ModelProcessingPhase phase) throws SourceSyntaxException {
+    private void startPhase(final ModelProcessingPhase phase, final @NonNull List<ResolvedSourceContext> resolved) {
         checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
-        startPhaseFor(phase, sources);
-        startPhaseFor(phase, libSources);
+        startPhaseFor(phase, resolved);
 
         currentPhase = phase;
         LOG.debug("Global phase {} started", phase);
     }
 
-    private static void startPhaseFor(final ModelProcessingPhase phase, final Set<BuildSource<?>> sources)
-            throws SourceSyntaxException {
+    private static void startPhaseFor(final ModelProcessingPhase phase,
+            final @NonNull List<ResolvedSourceContext> sources) {
         for (var source : sources) {
-            source.getSourceContext().startPhase(phase);
+            source.context().startPhase(phase);
         }
     }
 
-    private void loadPhaseStatements() throws ReactorException, SourceSyntaxException {
+    private void loadPhaseStatements(final @NonNull List<ResolvedSourceContext> resolved) throws ReactorException {
         checkState(currentPhase != null);
-        loadPhaseStatementsFor(sources);
-        loadPhaseStatementsFor(libSources);
+        loadPhaseStatementsFor(resolved);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void loadPhaseStatementsFor(final Set<BuildSource<?>> srcs) throws ReactorException, SourceSyntaxException {
+    private void loadPhaseStatementsFor(final @NonNull List<ResolvedSourceContext> srcs) throws ReactorException {
         for (var source : srcs) {
-            final var context = source.getSourceContext();
             try {
-                context.loadStatements();
+                source.context().loadStatements();
             } catch (RuntimeException e) {
-                throw propagateException(context, e);
+                throw propagateException(source.context(), e);
             }
         }
     }
 
-    private SomeModifiersUnresolvedException addSourceExceptions(final List<BuildSource<?>> sourcesToProgress)
-            throws SourceSyntaxException {
+    private SomeModifiersUnresolvedException addSourceExceptions(
+            final @NonNull List<SourceSpecificContext> sourcesToProgress) {
         boolean addedCause = false;
         SomeModifiersUnresolvedException buildFailure = null;
-        for (var buildSource : sourcesToProgress) {
-            final var failedSource = buildSource.getSourceContext();
+        for (var failedSource : sourcesToProgress) {
             final var optSourceEx = failedSource.failModifiers(currentPhase);
             if (optSourceEx.isEmpty()) {
                 continue;
@@ -307,15 +305,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void completePhaseActions() throws ReactorException, SourceSyntaxException {
+    private void completePhaseActions(final @NonNull List<ResolvedSourceContext> resolved) throws ReactorException {
         checkState(currentPhase != null);
-        final var sourcesToProgress = new ArrayList<>(sources);
-        if (!libSources.isEmpty()) {
-            checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                    "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, "
-                            + "but current phase was %s", currentPhase);
-            sourcesToProgress.addAll(libSources);
-        }
+        final var sourcesToProgress = new ArrayList<>(resolved.stream().map(ResolvedSourceContext::context).toList());
 
         boolean progressing = true;
         while (progressing) {
@@ -323,7 +315,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
             progressing = false;
             final var currentSource = sourcesToProgress.iterator();
             while (currentSource.hasNext()) {
-                final var nextSourceCtx = currentSource.next().getSourceContext();
+                final var nextSourceCtx = currentSource.next();
                 try {
                     final var sourceProgress = nextSourceCtx.tryToCompletePhase(currentPhase.executionOrder());
                     switch (sourceProgress) {
@@ -344,81 +336,10 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
             }
         }
 
-        if (!libSources.isEmpty()) {
-            final var requiredLibs = getRequiredSourcesFromLib();
-            sources.addAll(requiredLibs);
-            libSources = ImmutableSet.of();
-            /*
-             * We want to report errors of relevant sources only, so any others can
-             * be removed.
-             */
-            sourcesToProgress.retainAll(sources);
-        }
-
         if (!sourcesToProgress.isEmpty()) {
             final var buildFailure = addSourceExceptions(sourcesToProgress);
             if (buildFailure != null) {
                 throw buildFailure;
-            }
-        }
-    }
-
-    private Set<BuildSource<?>> getRequiredSourcesFromLib() throws SourceSyntaxException {
-        checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
-                        + " but current phase was %s", currentPhase);
-        final var libSourcesTable = TreeBasedTable.<Unqualified, Optional<Revision>, BuildSource<?>>create(
-            Unqualified::compareTo, Revision::compare);
-        for (var libSource : libSources) {
-            final var context = libSource.getSourceContext();
-            final var libSourceIdentifier = requireNonNull(context.getRootIdentifier());
-            libSourcesTable.put(libSourceIdentifier.name(),
-                Optional.ofNullable(libSourceIdentifier.revision()), libSource);
-        }
-
-        final var requiredLibs = new HashSet<BuildSource<?>>();
-        for (var source : sources) {
-            final var context = source.getSourceContext();
-            collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, context);
-            removeConflictingLibSources(context, requiredLibs);
-        }
-        return requiredLibs;
-    }
-
-    private void collectRequiredSourcesFromLib(
-            final TreeBasedTable<Unqualified, Optional<Revision>, BuildSource<?>> libSourcesTable,
-            final Set<BuildSource<?>> requiredLibs, final SourceSpecificContext source) throws SourceSyntaxException {
-        for (var requiredSource : source.getRequiredSources()) {
-            final var libSource = getRequiredLibSource(requiredSource, libSourcesTable);
-            if (libSource != null && requiredLibs.add(libSource)) {
-                collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, libSource.getSourceContext());
-            }
-        }
-    }
-
-    private static BuildSource<?> getRequiredLibSource(final SourceIdentifier requiredSource,
-            final TreeBasedTable<Unqualified, Optional<Revision>, BuildSource<?>> libSourcesTable) {
-        final var revision = requiredSource.revision();
-        return revision != null ? libSourcesTable.get(requiredSource.name(), Optional.of(revision))
-            : getLatestRevision(libSourcesTable.row(requiredSource.name()));
-    }
-
-    private static BuildSource<?> getLatestRevision(final SortedMap<Optional<Revision>, BuildSource<?>> sourceMap) {
-        return sourceMap != null && !sourceMap.isEmpty() ? sourceMap.get(sourceMap.lastKey()) : null;
-    }
-
-    // removes required library sources which would cause namespace/name conflict with one of the main sources
-    // later in the parsing process. this can happen if we add a parent module or a submodule as a main source
-    // and the same parent module or submodule is added as one of the library sources.
-    // such situation may occur when using the yang-system-test artifact - if a parent module/submodule is specified
-    // as its argument and the same dir is specified as one of the library dirs through -p option).
-    private static void removeConflictingLibSources(final SourceSpecificContext source,
-            final Set<BuildSource<?>> requiredLibs) throws SourceSyntaxException {
-        final var requiredLibsIter = requiredLibs.iterator();
-        while (requiredLibsIter.hasNext()) {
-            final var currentReqSource = requiredLibsIter.next().getSourceContext();
-            if (source.getRootIdentifier().equals(currentReqSource.getRootIdentifier())) {
-                requiredLibsIter.remove();
             }
         }
     }

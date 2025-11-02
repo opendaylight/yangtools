@@ -45,7 +45,7 @@ final class BuildSource<S extends SourceRepresentation & SourceInfo.Extractor> {
 
         SourceSpecificContext initialize() throws SourceSyntaxException {
             final var sourceInfo = source.extractSourceInfo();
-            return new SourceSpecificContext(global, sourceInfo.yangVersion(), streamFactory.apply(source));
+            return new SourceSpecificContext(global, sourceInfo, streamFactory.apply(source));
         }
     }
 
