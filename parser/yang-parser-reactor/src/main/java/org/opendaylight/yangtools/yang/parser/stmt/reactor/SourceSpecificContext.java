@@ -28,12 +28,12 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -115,8 +115,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
     private final @NonNull SupportedStatements statementSupports = new SupportedStatements(statementResolver);
     private final HashMapPrefixResolver prefixToModuleMap = new HashMapPrefixResolver();
     private final @NonNull BuildGlobalContext globalContext;
-    private final @NonNull SourceIdentifier sourceId;
-    private final @NonNull YangVersion yangVersion;
+    private final @NonNull SourceInfo sourceInfo;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
     private StatementStreamSource streamSource;
@@ -135,34 +134,33 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
     // If not null, do not add anything to modifiers, but record it here.
     private List<Entry<ModelProcessingPhase, ModifierImpl>> delayedModifiers;
 
-    SourceSpecificContext(final BuildGlobalContext globalContext, final SourceIdentifier sourceId,
-            final YangVersion yangVersion, final StatementStreamSource streamSource) {
+    SourceSpecificContext(final @NonNull BuildGlobalContext globalContext, final @NonNull SourceInfo sourceInfo,
+            final @NonNull StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
-        this.sourceId = requireNonNull(sourceId);
-        this.yangVersion = requireNonNull(yangVersion);
+        this.sourceInfo = requireNonNull(sourceInfo);
         this.streamSource = requireNonNull(streamSource);
     }
 
     @Override
     public SourceIdentifier sourceId() {
-        return sourceId;
+        return sourceInfo.sourceId();
     }
 
     @NonNull BuildGlobalContext globalContext() {
         return globalContext;
     }
 
-    @NonNull YangVersion yangVersion() {
-        return yangVersion;
-    }
-
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
     }
 
+    @NonNull public SourceInfo getSourceInfo() {
+        return this.sourceInfo;
+    }
+
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
             final int childId, final QName name, final String argument, final StatementSourceReference ref) {
-        var def = globalContext.getStatementDefinition(yangVersion, name);
+        var def = globalContext.getStatementDefinition(sourceInfo.yangVersion(), name);
         if (def == null) {
             def = globalContext.getModelDefinedStatementDefinition(name);
             if (def == null) {
@@ -492,7 +490,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
         // regular YANG statements and extension supports added
         final var supportsForPhase = globalContext.getSupportsForPhase(inProgressPhase);
         statementResolver.addSupports(supportsForPhase.getCommonDefinitions());
-        statementResolver.addSupports(supportsForPhase.getDefinitionsSpecificForVersion(yangVersion));
+        statementResolver.addSupports(supportsForPhase.getDefinitionsSpecificForVersion(sourceInfo.yangVersion()));
 
         // No further actions needed
         if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
@@ -513,13 +511,5 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
         }
 
         return statementResolver;
-    }
-
-    Collection<SourceIdentifier> getRequiredSources() {
-        return root.getRequiredSources();
-    }
-
-    SourceIdentifier getRootIdentifier() {
-        return root.getRootIdentifier();
     }
 }
