@@ -123,8 +123,8 @@ final class DefaultYangParser implements YangParser {
     public List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException {
         try {
             return buildAction.buildDeclared().getRootStatements();
-        } catch (ReactorException e) {
-            throw decodeReactorException(e);
+        } catch (ReactorException | IOException e) {
+            throw decodeException(e);
         } catch (SourceSyntaxException e) {
             throw newSyntaxError(null, e.sourceRef(), e);
         }
@@ -134,14 +134,14 @@ final class DefaultYangParser implements YangParser {
     public EffectiveModelContext buildEffectiveModel() throws YangParserException {
         try {
             return buildAction.buildEffective();
-        } catch (ReactorException e) {
-            throw decodeReactorException(e);
+        } catch (ReactorException | IOException e) {
+            throw decodeException(e);
         } catch (SourceSyntaxException e) {
             throw newSyntaxError(null, e.sourceRef(), e);
         }
     }
 
-    static YangParserException decodeReactorException(final ReactorException reported) {
+    static YangParserException decodeException(final Exception reported) {
         // FIXME: map exception in some reasonable manner
         return new YangParserException("Failed to assemble sources", reported);
     }
