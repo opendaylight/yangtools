@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
@@ -55,12 +57,14 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         });
     private final @NonNull Node root;
     private final @NonNull SourceRefProvider refProvider;
+    private final @NonNull SourceInfo sourceInfo;
 
     private YinStatementStreamSource(final SourceIdentifier sourceId, final Node root,
-            final SourceRefProvider refProvider) {
+            final SourceRefProvider refProvider, final SourceInfo sourceInfo) {
         super(sourceId);
         this.root = requireNonNull(root);
         this.refProvider = requireNonNull(refProvider);
+        this.sourceInfo = requireNonNull(sourceInfo);
     }
 
     public static StatementStreamSource create(final YinXmlSource source) throws TransformerException {
@@ -68,7 +72,16 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     }
 
     public static StatementStreamSource create(final YinDomSource source) {
-        return new YinStatementStreamSource(source.sourceId(), source.getSource().getNode(), source.refProvider());
+        final SourceInfo sourceInfo;
+        try {
+            sourceInfo = source.extractSourceInfo();
+        } catch (ExtractorException e) {
+            // FIXME: propagate exception
+            throw new IllegalStateException(e);
+        }
+
+        return new YinStatementStreamSource(source.sourceId(), source.getSource().getNode(), source.refProvider(),
+            sourceInfo);
     }
 
     private static StatementDefinition getValidDefinition(final Node node, final StatementWriter writer,
@@ -240,5 +253,10 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixResolver prefixes, final YangVersion yangVersion) {
         walkTree(writer, stmtDef);
+    }
+
+    @Override
+    public @NonNull SourceInfo sourceInfo() {
+        return sourceInfo;
     }
 }
