@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -115,9 +116,18 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             requireNonNull(includes);
         }
 
+        public QNameModule resolveModuleQName() {
+            final Revision latestRevision = revisions.isEmpty() ? null : revisions
+                .stream()
+                .max(Comparator.naturalOrder())
+                .orElseThrow();
+            return QNameModule.ofRevision(namespace, latestRevision);
+        }
+
         public static Builder builder() {
             return new Builder();
         }
+
 
         public static final class Builder extends SourceInfo.Builder<Builder, Module> {
             @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
