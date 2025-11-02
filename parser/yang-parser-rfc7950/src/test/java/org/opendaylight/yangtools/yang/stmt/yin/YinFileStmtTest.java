@@ -36,7 +36,7 @@ class YinFileStmtTest {
     // parsing yin file whose import statement references a module which does not exist
     @Test
     void readAndParseInvalidYinFileTest() {
-        assertEquals("Imported module [baar] was not found. [at <UNKNOWN>:8:27]",
+        assertEquals("Imported module baar was not found [at <UNKNOWN>:8:27]",
             assertInstanceOf(InferenceException.class, assertThrows(SomeModifiersUnresolvedException.class,
                 () -> RFC7950Reactors.defaultReactor().newBuild()
                     .addSource(createSource("incorrect-foo.yin"))
