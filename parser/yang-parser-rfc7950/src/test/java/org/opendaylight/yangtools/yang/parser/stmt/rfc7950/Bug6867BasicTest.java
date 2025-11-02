@@ -54,7 +54,7 @@ class Bug6867BasicTest extends AbstractYangTest {
 
     @Test
     void unsupportedVersionTest() {
-        assertSourceException(startsWith("Unsupported YANG version 2.3"),
+        assertExtractorException(startsWith("Invalid YANG version 2.3"),
             "/rfc7950/basic-test/unsupported-version.yang");
     }
 }
