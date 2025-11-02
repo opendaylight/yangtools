@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-class YangIRSourceInfoExtractorTest {
+class YangSourceInfoExtractorTest {
     @Test
     void testModuleWithNoImports() {
         final var info = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
@@ -98,7 +98,7 @@ class YangIRSourceInfoExtractorTest {
     // Utility
     private static SourceInfo forResource(final String resourceName) {
         final var source = StmtTestUtils.sourceForResource(resourceName);
-        final var info = YangIRSourceInfoExtractor.forIR(source.rootStatement(), source.getIdentifier());
+        final var info = YangSourceInfoExtractor.forIR(source.rootStatement(), source.getIdentifier());
         assertNotNull(info);
         return info;
     }
