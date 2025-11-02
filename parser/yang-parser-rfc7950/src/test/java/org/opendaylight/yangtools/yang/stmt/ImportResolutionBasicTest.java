@@ -35,14 +35,14 @@ class ImportResolutionBasicTest extends AbstractYangTest {
 
     @Test
     void circularImportsTest() {
-        assertFailedPreLinkage("cycle-",
+        assertIllegalStateException(startsWith("Found circular dependency"),
             "/semantic-statement-parser/import-arg-parsing/cycle-yin.yang",
             "/semantic-statement-parser/import-arg-parsing/cycle-yang.yang");
     }
 
     @Test
     void selfImportTest() {
-        assertFailedPreLinkage("egocentric",
+        assertIllegalStateException(startsWith("Found circular dependency"),
             "/semantic-statement-parser/import-arg-parsing/egocentric.yang", IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
     }
 
@@ -54,7 +54,7 @@ class ImportResolutionBasicTest extends AbstractYangTest {
     }
 
     private static void assertFailedPreLinkage(final String name, final String... sources) {
-        assertInferenceException(allOf(
+        assertIllegalStateException(allOf(
             startsWith("Imported module [" + name),
             containsString("] was not found. [at ")),
             sources);
