@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,20 +29,27 @@ class ImportResolutionBasicTest extends AbstractYangTest {
 
     @Test
     void missingImportedSourceTest() {
-        assertFailedPreLinkage("mammal", IMPORT_DERIVED, ROOT_WITHOUT_IMPORT);
+        assertEquals("Imported module mammal was not found [at human:5:5]",
+            assertInferenceException(IMPORT_DERIVED, ROOT_WITHOUT_IMPORT).getMessage());
     }
 
     @Test
     void circularImportsTest() {
-        assertFailedPreLinkage("cycle-",
+        assertThat(assertInferenceException(
             "/semantic-statement-parser/import-arg-parsing/cycle-yin.yang",
-            "/semantic-statement-parser/import-arg-parsing/cycle-yang.yang");
+            "/semantic-statement-parser/import-arg-parsing/cycle-yang.yang").getMessage())
+            .startsWith("Found circular dependency between modules ")
+            .contains("cycle-yang")
+            .contains("cycle-yin");
     }
 
     @Test
     void selfImportTest() {
-        assertFailedPreLinkage("egocentric",
+        final var ex = assertInferenceException(
             "/semantic-statement-parser/import-arg-parsing/egocentric.yang", IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
+        assertEquals(
+            "Found circular dependency between modules egocentric and egocentric [at somewhere in egocentric.yang]",
+            ex.getMessage());
     }
 
     @Test
@@ -51,12 +57,5 @@ class ImportResolutionBasicTest extends AbstractYangTest {
         assertEffectiveModel(
             "/semantic-statement-parser/bug2649/foo.yang",
             "/semantic-statement-parser/bug2649/import-module.yang");
-    }
-
-    private static void assertFailedPreLinkage(final String name, final String... sources) {
-        assertInferenceException(allOf(
-            startsWith("Imported module [" + name),
-            containsString("] was not found. [at ")),
-            sources);
     }
 }

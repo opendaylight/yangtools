@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,18 +21,20 @@ class ImportRevisionsTest extends AbstractYangTest {
 
     @Test
     void unequalRevisionDatesTest() {
-        assertInferenceException(
-            startsWith("Imported module [imported-module-with-unequal-revision-date] was not found. [at "),
+        assertEquals("""
+            Imported module imported-module-with-unequal-revision-date was not found [at \
+            root-with-unequal-revision-date:5:5]""", assertInferenceException(
             "/import-revision-date-test/root-with-unequal-revision-date.yang",
-            "/import-revision-date-test/imported-module-with-unequal-revision-date.yang");
+            "/import-revision-date-test/imported-module-with-unequal-revision-date.yang").getMessage());
     }
 
     @Test
     void revisionDatesInRootOnlyTest() {
-        assertInferenceException(
-            startsWith("Imported module [imported-module-without-revision-date] was not found. [at "),
-            "/import-revision-date-test/root-with-revision-date.yang",
-            "/import-revision-date-test/imported-module-without-revision-date.yang");
+        assertEquals("""
+            Imported module imported-module-without-revision-date was not found [at root-with-revision-date:5:5]""",
+            assertInferenceException(
+                "/import-revision-date-test/root-with-revision-date.yang",
+                "/import-revision-date-test/imported-module-without-revision-date.yang").getMessage());
     }
 
     @Test

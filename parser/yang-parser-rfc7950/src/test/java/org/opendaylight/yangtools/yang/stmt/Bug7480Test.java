@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,43 +49,36 @@ class Bug7480Test {
     void missingRelevantImportTest() {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
-        final var message = ex.getSuppressed().length > 0 ? ex.getSuppressed()[0].getMessage()
-            : ex.getCause().getMessage();
-        assertThat(message).startsWith("Imported module [missing-lib] was not found.");
+        assertEquals("Imported module missing-lib was not found [at foo-imp-1:7:5]",
+            ex.getSuppressed().length > 0 ? ex.getSuppressed()[0].getMessage() : ex.getCause().getMessage());
     }
 
     @Test
     void testHandlingOfMainSourceConflictingWithLibSource() throws Exception {
         // parent module as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid module namespace collision
-        final var schemaContext =  RFC7950Reactors.defaultReactor().newBuild()
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(StmtTestUtils.sourceForResource(
                 "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
-            .addLibSource(
-                StmtTestUtils.sourceForResource(
-                    "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
-            .addLibSource(
-                StmtTestUtils.sourceForResource(
-                    "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
-            .buildEffective();
-        assertNotNull(schemaContext);
+            .addLibSource(StmtTestUtils.sourceForResource(
+                "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
+            .addLibSource(StmtTestUtils.sourceForResource(
+                "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
+            .buildEffective());
     }
 
     @Test
     void testHandlingOfMainSourceConflictingWithLibSource2() throws Exception {
         // submodule as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid submodule name collision
-        final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(StmtTestUtils.sourceForResource(
                 "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
-            .addLibSource(
-                StmtTestUtils.sourceForResource(
-                    "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
-            .addLibSource(
-                StmtTestUtils.sourceForResource(
-                    "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
-            .buildEffective();
-        assertNotNull(schemaContext);
+            .addLibSource(StmtTestUtils.sourceForResource(
+                "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
+            .addLibSource(StmtTestUtils.sourceForResource(
+                "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
+            .buildEffective());
     }
 
     private static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
