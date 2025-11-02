@@ -373,14 +373,6 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
 
         void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
 
-        /**
-         * Set identifier of current root context.
-         *
-         * @param identifier
-         *            of current root context, must not be null
-         */
-        void setRootIdentifier(SourceIdentifier identifier);
-
         void setUnsupported();
     }
 }

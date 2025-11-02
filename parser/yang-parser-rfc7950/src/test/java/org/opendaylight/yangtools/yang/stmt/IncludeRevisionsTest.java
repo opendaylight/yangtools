@@ -32,7 +32,7 @@ class IncludeRevisionsTest {
             .addSource(sourceForResource("/revisions/unequal-rev.yang"))
             .addSource(sourceForResource("/revisions/unequal-root.yang"))
             .buildDeclared());
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        assertEquals(ModelProcessingPhase.INIT, ex.getPhase());
     }
 
     @Test
@@ -48,7 +48,7 @@ class IncludeRevisionsTest {
         var ex = assertThrows(SomeModifiersUnresolvedException.class, () -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/revisions/mod-only-rev.yang"))
             .addSource(sourceForResource("/revisions/mod-only-root.yang")).buildDeclared());
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        assertEquals(ModelProcessingPhase.INIT, ex.getPhase());
     }
 
     @Test

@@ -18,7 +18,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import java.util.concurrent.Callable;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
@@ -36,7 +35,7 @@ class IncludeResolutionTest {
     void missingIncludedSourceTest() {
         assertNull(assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-module.yang"))
-            .buildDeclared(), "Included submodule 'foo' was not found [at ")
+            .buildDeclared(), "Included submodule 'foo' was not found. [at ")
             .getCause());
     }
 
@@ -45,7 +44,7 @@ class IncludeResolutionTest {
         var cause = assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule.yang"))
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule-root.yang"))
-            .buildDeclared(), "Included submodule 'foo' was not found [at ");
+            .buildDeclared(), "Included submodule 'foo' was not found. [at ");
         assertNull(cause.getCause());
     }
 
@@ -57,10 +56,10 @@ class IncludeResolutionTest {
             .getCause());
     }
 
-    private static InferenceException assertFailedSourceLinkage(final Callable<?> callable, final String startStr) {
+    private static IllegalStateException assertFailedSourceLinkage(final Callable<?> callable, final String startStr) {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class, callable::call);
-        assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
-        var cause = assertInstanceOf(InferenceException.class, ex.getCause());
+        assertEquals(ModelProcessingPhase.INIT, ex.getPhase());
+        var cause = assertInstanceOf(IllegalStateException.class, ex.getCause());
         assertThat(cause.getMessage()).startsWith(startStr);
         return cause;
     }

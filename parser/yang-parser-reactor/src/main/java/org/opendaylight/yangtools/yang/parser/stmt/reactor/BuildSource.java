@@ -90,8 +90,7 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
         SourceSpecificContext toSourceContext() throws SourceSyntaxException {
             final var sourceInfo = source.extractSourceInfo();
             final var yangVersion = source.extractSourceInfo().yangVersion();
-            return new SourceSpecificContext(global, sourceInfo.sourceId(), yangVersion,
-                streamFactory.newStreamSource(source, yangVersion));
+            return new SourceSpecificContext(global, sourceInfo, streamFactory.newStreamSource(source, yangVersion));
         }
     }
 
