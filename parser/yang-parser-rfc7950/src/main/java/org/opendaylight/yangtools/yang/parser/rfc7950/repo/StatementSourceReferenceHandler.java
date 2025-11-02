@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
         this.file = file;
     }
 
-    static StatementSourceReference extractRef(final Element element) {
+    static @Nullable StatementSourceReference extractRef(final Element element) {
         final Object value = element.getUserData(USER_DATA_KEY);
         if (value instanceof StatementSourceReference sourceRef) {
             return sourceRef;
