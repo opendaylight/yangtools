@@ -9,17 +9,17 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
 class YangParserNegativeTest extends AbstractYangTest {
     @Test
     void testInvalidImport() {
-        assertInferenceException(allOf(startsWith("Imported module"), containsString("was not found.")),
-            "/negative-scenario/testfile1.yang");
+        assertEquals("Imported module [some-module] was not found [at testfile1:6:5]",
+            assertInferenceException("/negative-scenario/testfile1.yang").getMessage());
     }
 
     @Test
