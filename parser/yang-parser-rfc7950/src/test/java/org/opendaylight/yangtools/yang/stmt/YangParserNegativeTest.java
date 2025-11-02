@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 class YangParserNegativeTest extends AbstractYangTest {
     @Test
     void testInvalidImport() {
-        assertInferenceException(allOf(startsWith("Imported module"), containsString("was not found.")),
+        assertIllegalStateException(allOf(startsWith("Imported module"), containsString("was not found.")),
             "/negative-scenario/testfile1.yang");
     }
 
