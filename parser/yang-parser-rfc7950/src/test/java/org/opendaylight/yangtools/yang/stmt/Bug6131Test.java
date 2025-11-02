@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 class Bug6131Test extends AbstractYangTest {
     @Test
     void test() {
-        // FIXME: better exception?
-        assertThrows(NullPointerException.class, () -> TestUtils.loadModules("/bugs/bug6131"));
+        assertThrows(IllegalArgumentException.class, () -> TestUtils.loadModules("/bugs/bug6131"));
     }
 }
