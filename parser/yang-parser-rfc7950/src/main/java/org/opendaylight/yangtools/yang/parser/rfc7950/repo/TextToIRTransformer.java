@@ -34,7 +34,7 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
     public static @NonNull YangIRSource transformText(final YangTextSource text)
             throws YangSyntaxErrorException, IOException {
         final var rootStatement = YangTextParser.parseToIR(text);
-        final var info = YangIRSourceInfoExtractor.forIR(rootStatement, text.sourceId());
+        final var info = YangSourceInfoExtractor.forIR(rootStatement, text.sourceId());
         return new YangIRSource(info.sourceId(), rootStatement, text.symbolicName());
     }
 }
