@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
@@ -33,6 +35,8 @@ class IncludeRevisionsTest {
             .addSource(sourceForResource("/revisions/unequal-root.yang"))
             .buildDeclared());
         assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
+        assertEquals("Included submodule unequal-rev was not found [at unequal-root:5:5]", cause.getMessage());
     }
 
     @Test
@@ -49,6 +53,8 @@ class IncludeRevisionsTest {
             .addSource(sourceForResource("/revisions/mod-only-rev.yang"))
             .addSource(sourceForResource("/revisions/mod-only-root.yang")).buildDeclared());
         assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
+        final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
+        assertEquals("Included submodule mod-only-rev was not found [at mod-only-root:5:5]", cause.getMessage());
     }
 
     @Test

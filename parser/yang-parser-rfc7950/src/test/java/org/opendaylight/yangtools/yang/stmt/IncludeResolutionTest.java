@@ -36,7 +36,7 @@ class IncludeResolutionTest {
     void missingIncludedSourceTest() {
         assertNull(assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-module.yang"))
-            .buildDeclared(), "Included submodule 'foo' was not found [at ")
+            .buildDeclared(), "Included submodule foo was not found [at error-module:5:5]")
             .getCause());
     }
 
@@ -45,7 +45,7 @@ class IncludeResolutionTest {
         var cause = assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule.yang"))
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule-root.yang"))
-            .buildDeclared(), "Included submodule 'foo' was not found [at ");
+            .buildDeclared(), "Included submodule foo was not found [at error-submodule:6:5]");
         assertNull(cause.getCause());
     }
 
@@ -53,8 +53,7 @@ class IncludeResolutionTest {
     void missingIncludedSourceTest3() {
         assertNull(assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/missing-parent.yang"))
-            .buildDeclared(), "Module 'Unqualified{localName=foo}' from belongs-to was not found [at ")
-            .getCause());
+            .buildDeclared(), "Module foo from belongs-to was not found [at missing-parent:2:5]").getCause());
     }
 
     private static InferenceException assertFailedSourceLinkage(final Callable<?> callable, final String startStr) {

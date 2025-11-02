@@ -51,8 +51,8 @@ class YT1339Test extends AbstractYangTest {
     }
 
     private static void assertFailedInclude(final String subdir, final YangVersion subVer, final YangVersion modVer) {
-        assertThat(assertYangVersionLinkageException(subdir))
-            .startsWith("Cannot include a version " + subVer + " submodule in a version " + modVer + " module [at ");
+        assertThat(assertYangVersionLinkageException(subdir)).startsWith(
+            "Cannot include a version " + subVer + " submodule sub in a version " + modVer + " module mod");
     }
 
     private static String assertYangVersionLinkageException(final String subdir) {
