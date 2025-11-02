@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -202,6 +203,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
                 "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
         }
         return root;
+    }
+
+    public SourceInfo getSourceInfo() {
+        return source.getSourceInfo();
     }
 
     @NonNull SourceIdentifier identifySource() {
