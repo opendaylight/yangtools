@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -120,6 +121,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
     private StatementStreamSource source;
 
+    // Cache the SourceInfo so we can use it multiple times without reading it repeatedly from the actual source
+    private SourceInfo sourceInfo;
+
     /*
      * "imported" namespaces in this source -- this points to RootStatementContexts of
      * - modules imported via 'import' statement
@@ -145,6 +149,17 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
+    }
+
+    /**
+     * Reads the SourceInfo from the StatementStreamSource and caches it.
+     * @return SourceInfo extracted from StatementStreamSource
+     */
+    @NonNull public SourceInfo getSourceInfo() {
+        if (this.sourceInfo == null) {
+            this.sourceInfo = source.sourceInfo();
+        }
+        return this.sourceInfo;
     }
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
@@ -233,12 +248,16 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     /**
-     * Return version of root statement context.
+     * Returns version of the {@link RootStatementContext}. If the root doesn't yet exist, returns version from
+     * the {@link SourceInfo}.
      *
-     * @return version of root statement context
+     * @return version of RootStatementContext or the SourceInfo.
      */
-    private YangVersion getRootVersion() {
-        return root != null ? root.yangVersion() : RootStatementContext.DEFAULT_VERSION;
+    @NonNull private YangVersion getRootVersion() {
+        if (root != null) {
+            return root.yangVersion();
+        }
+        return getSourceInfo().yangVersion();
     }
 
     void startPhase(final ModelProcessingPhase phase) {
@@ -516,13 +535,5 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
 
         return qnameToStmtDefMap;
-    }
-
-    Collection<SourceIdentifier> getRequiredSources() {
-        return root.getRequiredSources();
-    }
-
-    SourceIdentifier getRootIdentifier() {
-        return root.getRootIdentifier();
     }
 }
