@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -65,7 +64,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     private final A argument;
 
     private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
-    private SourceIdentifier rootIdentifier;
     private IdentifierBinding identifierBinding;
 
     /**
@@ -268,30 +266,13 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         return null;
     }
 
-    /**
-     * Return the set of required sources.
-     *
-     * @return Required sources.
-     */
-    Collection<SourceIdentifier> getRequiredSources() {
-        return ImmutableSet.copyOf(requiredSources);
-    }
-
-    SourceIdentifier getRootIdentifier() {
-        return rootIdentifier;
-    }
-
     @Override
     protected boolean isParentSupportedByFeatures() {
         return true;
     }
 
-    void setRootIdentifierImpl(final SourceIdentifier identifier) {
-        rootIdentifier = requireNonNull(identifier);
-    }
-
     @NonNull YangVersion getRootVersionImpl() {
-        return sourceContext.yangVersion();
+        return sourceContext.getSourceInfo().yangVersion();
     }
 
     /**
