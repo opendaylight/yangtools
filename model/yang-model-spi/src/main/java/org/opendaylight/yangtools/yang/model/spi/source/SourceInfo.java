@@ -209,7 +209,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         }
 
         public final B setYangVersion(final YangVersion newYangVersion) {
-            yangVersion = requireNonNull(newYangVersion);
+            yangVersion = newYangVersion != null ? newYangVersion : YangVersion.VERSION_1;
             return thisInstance();
         }
 
