@@ -100,12 +100,12 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public final ReactorDeclaredModel buildDeclared() throws ReactorException, SourceSyntaxException {
+    public final ReactorDeclaredModel buildDeclared() throws ReactorException, SourceSyntaxException, IOException {
         return context.build();
     }
 
     @Override
-    public final EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException {
+    public final EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException, IOException {
         return context.buildEffective();
     }
 }

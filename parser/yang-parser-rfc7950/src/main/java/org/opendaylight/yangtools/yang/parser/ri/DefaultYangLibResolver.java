@@ -126,7 +126,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
         try {
             return act.setSupportedFeatures(FeatureSet.of(features.build())).buildEffective();
         } catch (ReactorException e) {
-            throw DefaultYangParser.decodeReactorException(e);
+            throw DefaultYangParser.decodeException(e);
         } catch (SourceSyntaxException e) {
             throw DefaultYangParser.newSyntaxError(null, e.sourceRef(), e);
         }
