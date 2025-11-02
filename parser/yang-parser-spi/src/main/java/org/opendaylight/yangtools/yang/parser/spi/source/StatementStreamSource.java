@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 
 /**
  * Statement stream source, which is used for inference of effective model.
@@ -132,4 +134,9 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      */
     void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixResolver prefixes,
         YangVersion yangVersion);
+
+    /**
+     * Get the SourceInfo from this source. It is used during linkage resolution.
+     */
+    @NonNull SourceInfo getSourceInfo();
 }
