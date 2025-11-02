@@ -11,7 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 /**
  * Tests for {@code MUST NOT} statements around include/import interop of RFC6020 and RFC7950, as per
@@ -47,15 +46,16 @@ class YT1339Test extends AbstractYangTest {
 
     private static void assertFailedImport(final String subdir) {
         assertThat(assertYangVersionLinkageException(subdir))
-            .startsWith("Cannot import by revision version 1.1 module new [at ");
+            .startsWith("Cannot import by revision version [1.1] module [new] at");
     }
 
     private static void assertFailedInclude(final String subdir, final YangVersion subVer, final YangVersion modVer) {
         assertThat(assertYangVersionLinkageException(subdir))
-            .startsWith("Cannot include a version " + subVer + " submodule in a version " + modVer + " module [at ");
+            .startsWith("Cannot include a version [" + subVer + "] submodule")
+            .contains("in a version [" + modVer + "] module");
     }
 
     private static String assertYangVersionLinkageException(final String subdir) {
-        return assertExceptionDir("/bugs/YT1339/" + subdir, YangVersionLinkageException.class).getMessage();
+        return assertExceptionDir("/bugs/YT1339/" + subdir, IllegalStateException.class).getMessage();
     }
 }

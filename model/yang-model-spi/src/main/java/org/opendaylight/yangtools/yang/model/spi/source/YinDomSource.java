@@ -313,7 +313,7 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
 
     @Override
     public final SourceInfo extractSourceInfo() throws ExtractorException {
-        final var root = getSource().getNode();
+        final var root = getSource().getNode().getFirstChild();
         if (!(root instanceof Element element)) {
             throw new ExtractorException("Root node is not an element");
         }
