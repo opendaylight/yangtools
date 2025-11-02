@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
@@ -36,8 +35,8 @@ class YinFileStmtTest {
     // parsing yin file whose import statement references a module which does not exist
     @Test
     void readAndParseInvalidYinFileTest() {
-        assertEquals("Imported module [baar] was not found. [at <UNKNOWN>:8:27]",
-            assertInstanceOf(InferenceException.class, assertThrows(SomeModifiersUnresolvedException.class,
+        assertEquals("Imported module 'baar' was not found. [at 'foo']",
+            assertInstanceOf(IllegalStateException.class, assertThrows(SomeModifiersUnresolvedException.class,
                 () -> RFC7950Reactors.defaultReactor().newBuild()
                     .addSource(createSource("incorrect-foo.yin"))
                     .buildEffective())

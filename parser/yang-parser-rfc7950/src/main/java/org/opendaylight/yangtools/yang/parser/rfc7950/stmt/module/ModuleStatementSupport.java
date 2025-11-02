@@ -165,7 +165,6 @@ public final class ModuleStatementSupport
         final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
 
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
-        stmt.setRootIdentifier(new SourceIdentifier(stmt.getArgument(), revisionDate));
     }
 
     @Override
