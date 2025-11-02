@@ -34,8 +34,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSourceInfoException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
@@ -120,6 +122,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
     private StatementStreamSource source;
 
+    // Cache the SourceInfo so we can use it multiple times without reading it repeatedly from the actual source
+    private SourceInfo sourceInfo;
+
     /*
      * "imported" namespaces in this source -- this points to RootStatementContexts of
      * - modules imported via 'import' statement
@@ -145,6 +150,24 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
+    }
+
+    /**
+     * Reads the {@link SourceInfo} from the underlying {@link StatementStreamSource} and caches it.
+     *
+     * @return SourceInfo extracted from StatementStreamSource
+     * @throws MissingSourceInfoException if the Source fails to provide a {@link SourceInfo}
+     */
+    @NonNull public SourceInfo getSourceInfo() throws MissingSourceInfoException {
+        if (this.sourceInfo == null) {
+            try {
+                this.sourceInfo = source.sourceInfo();
+            } catch (SourceInfo.ExtractorException e) {
+                throw new MissingSourceInfoException(inProgressPhase, "Failed to extract SourceInfo",
+                    identifySource(), e);
+            }
+        }
+        return this.sourceInfo;
     }
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
@@ -232,12 +255,25 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     /**
-     * Return version of root statement context.
+     * Resolves the YANG version for the current context.
+     * <p>
+     * Priority is given to the {@link RootStatementContext}. If unavailable, it attempts to retrieve the version
+     * from {@link SourceInfo}, falling back to the default version (V1) if neither is present.
      *
-     * @return version of root statement context
+     * @return the resolved {@link YangVersion}
      */
-    private YangVersion getRootVersion() {
-        return root != null ? root.yangVersion() : RootStatementContext.DEFAULT_VERSION;
+    @NonNull private YangVersion getRootVersion() {
+        if (root != null) {
+            return root.yangVersion();
+        }
+
+        try {
+            return getSourceInfo().yangVersion();
+        } catch (final MissingSourceInfoException e) {
+            LOG.warn("Source {}: Using default YangVersion; Root and SourceInfo unavailable in phase {}",
+                source, inProgressPhase);
+            return YangVersion.VERSION_1;
+        }
     }
 
     void startPhase(final ModelProcessingPhase phase) {
@@ -515,13 +551,5 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
 
         return qnameToStmtDefMap;
-    }
-
-    Collection<SourceIdentifier> getRequiredSources() {
-        return root.getRequiredSources();
-    }
-
-    SourceIdentifier getRootIdentifier() {
-        return root.getRootIdentifier();
     }
 }
