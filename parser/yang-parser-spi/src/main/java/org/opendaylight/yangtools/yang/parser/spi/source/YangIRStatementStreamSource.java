@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 
 /**
@@ -35,6 +36,12 @@ public record YangIRStatementStreamSource(@NonNull YangIRSource source) implemen
 
     private String symbolicName() {
         return source.symbolicName();
+    }
+
+
+    @Override
+    public SourceInfo sourceInfo() {
+        return source.extractSourceInfo();
     }
 
     @Override
