@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 
 /**
@@ -92,8 +93,8 @@ public final class YangIRSourceInfoExtractor {
      * @throws YangSyntaxErrorException If the resource does not pass syntactic analysis
      */
     public static SourceInfo forYangText(final YangTextSource yangText) throws IOException, YangSyntaxErrorException {
-        final var source = YangStatementStreamSource.create(yangText);
-        return forIR(source.rootStatement(), source.getIdentifier());
+        final var sourceId = yangText.sourceId();
+        return forIR(YangTextParser.parseToIR(yangText), sourceId);
     }
 
     private static SourceInfo.@NonNull Module moduleForIR(final IRStatement root, final SourceIdentifier sourceId) {
