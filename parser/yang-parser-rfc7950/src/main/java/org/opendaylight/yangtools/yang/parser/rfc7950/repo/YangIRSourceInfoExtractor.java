@@ -68,11 +68,11 @@ public final class YangIRSourceInfoExtractor {
      */
     public static @NonNull SourceInfo forIR(final IRStatement rootStatement, final SourceIdentifier sourceId) {
         final var keyword = rootStatement.keyword();
-        if (!(keyword instanceof IRKeyword.Unqualified)) {
+        if (!(keyword instanceof IRKeyword.Unqualified unqualified)) {
             throw new IllegalArgumentException("Invalid root statement " + keyword);
         }
 
-        final String arg = keyword.identifier();
+        final String arg = unqualified.identifier();
         if (MODULE.equals(arg)) {
             return moduleForIR(rootStatement, sourceId);
         }
