@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
@@ -52,6 +53,13 @@ public final class YangIRSource implements YangSourceRepresentation {
         this.symbolicName = symbolicName;
     }
 
+    /**
+     * {@return the root statement of this source}
+     */
+    public IRStatement statement() {
+        return statement;
+    }
+
     @Override
     public SourceIdentifier sourceId() {
         return sourceId;
@@ -67,13 +75,9 @@ public final class YangIRSource implements YangSourceRepresentation {
         return YangIRSource.class;
     }
 
-    /**
-     * Return the root statement of this source.
-     *
-     * @return Root statement.
-     */
-    public IRStatement statement() {
-        return statement;
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("identifier", sourceId).toString();
     }
 
     // FIXME: hide this method
