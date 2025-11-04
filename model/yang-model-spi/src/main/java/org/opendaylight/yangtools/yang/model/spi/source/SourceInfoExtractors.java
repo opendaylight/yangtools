@@ -50,14 +50,14 @@ public final class SourceInfoExtractors {
     public static Extractor forIR(final IRStatement stmt, final SourceIdentifier sourceId) throws ExtractorException {
         final var keyword = stmt.keyword();
         if (!(keyword instanceof IRKeyword.Unqualified)) {
-            throw new ExtractorInvalidRootException(YangIRSourceInfoExtractor.refOf(sourceId, stmt),
+            throw new ExtractorInvalidRootException(YangIRSource.refOf(sourceId, stmt),
                 "Invalid root statement " + keyword);
         }
 
         return switch (keyword.identifier()) {
             case MODULE -> new YangIRSourceInfoExtractor.ForModule(sourceId, stmt);
             case SUBMODULE -> new YangIRSourceInfoExtractor.ForSubmodule(sourceId, stmt);
-            default -> throw new ExtractorInvalidRootException(YangIRSourceInfoExtractor.refOf(sourceId, stmt),
+            default -> throw new ExtractorInvalidRootException(YangIRSource.refOf(sourceId, stmt),
                 "Root of parsed AST must be either module or submodule");
         };
     }

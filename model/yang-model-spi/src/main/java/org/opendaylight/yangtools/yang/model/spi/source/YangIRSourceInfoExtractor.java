@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Belongs
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorInvalidArgumentException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorMalformedArgumentException;
@@ -202,11 +201,6 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
 
     @NonNullByDefault
     final StatementDeclaration.InText refOf(final IRStatement stmt) {
-        return refOf(sourceId, stmt);
-    }
-
-    @NonNullByDefault
-    static final StatementDeclaration.InText refOf(final SourceIdentifier sourceId, final IRStatement stmt) {
-        return StatementDeclarations.inText(sourceId.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
+        return YangIRSource.refOf(sourceId, stmt);
     }
 }
