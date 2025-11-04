@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
+import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
@@ -32,7 +32,7 @@ public final class YangIRSource implements YangSourceRepresentation {
     public YangIRSource(final SourceIdentifier sourceId, final IRStatement statement,
             final @Nullable String symbolicName) {
         final var rootKeyword = statement.keyword();
-        if (!(rootKeyword instanceof Unqualified)) {
+        if (!(rootKeyword instanceof IRKeyword.Unqualified)) {
             throw new StatementSourceException(refOf(sourceId, statement),
                 "Root statement has invalid keyword " + rootKeyword);
         }
