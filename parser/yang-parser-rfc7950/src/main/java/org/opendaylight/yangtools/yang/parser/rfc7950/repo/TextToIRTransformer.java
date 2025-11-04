@@ -43,6 +43,6 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
         } catch (ExtractorException e) {
             throw new IOException("Failed to extract SourceInfo", e);
         }
-        return new YangIRSource(info.sourceId(), rootStatement, text.symbolicName());
+        return YangIRSource.of(info.sourceId(), rootStatement, text.symbolicName());
     }
 }
