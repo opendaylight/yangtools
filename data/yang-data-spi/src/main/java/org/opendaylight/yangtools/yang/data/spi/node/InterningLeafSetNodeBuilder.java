@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode.Builder;
 
 /**
  * Utility class for sharing instances of {@link LeafSetEntryNode}s which have low cardinality -- e.g. those which hold
@@ -29,53 +28,54 @@ import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode.Builder
  * hogging the heap retained via the DataTree with duplicate objects (same QName, same value, different object). Using
  * this utility, such objects will end up reusing the same object, preventing this overhead.
  */
-public final class InterningLeafSetNodeBuilder<T> implements Builder<T> {
+public final class InterningLeafSetNodeBuilder<T> implements SystemLeafSetNode.Builder<T> {
     private final Interner<LeafSetEntryNode<T>> interner;
-    private final Builder<T> delegate;
+    private final SystemLeafSetNode.Builder<T> delegate;
 
-    public InterningLeafSetNodeBuilder(final Builder<T> delegate, final Interner<LeafSetEntryNode<T>> interner) {
+    public InterningLeafSetNodeBuilder(final SystemLeafSetNode.Builder<T> delegate,
+            final Interner<LeafSetEntryNode<T>> interner) {
         this.delegate = requireNonNull(delegate);
         this.interner = requireNonNull(interner);
     }
 
     @Override
-    public Builder<T> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public SystemLeafSetNode.Builder<T> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
         delegate.withNodeIdentifier(nodeIdentifier);
         return this;
     }
 
     @Override
-    public Builder<T> withValue(final Collection<LeafSetEntryNode<T>> value) {
+    public SystemLeafSetNode.Builder<T> withValue(final Collection<LeafSetEntryNode<T>> value) {
         // FIXME: pass through interner
         delegate.withValue(value);
         return this;
     }
 
     @Override
-    public Builder<T> withChild(final LeafSetEntryNode<T> child) {
+    public SystemLeafSetNode.Builder<T> withChild(final LeafSetEntryNode<T> child) {
         delegate.withChild(interner.intern(child));
         return this;
     }
 
     @Override
-    public Builder<T> withoutChild(final PathArgument key) {
+    public SystemLeafSetNode.Builder<T> withoutChild(final PathArgument key) {
         delegate.withoutChild(key);
         return this;
     }
 
     @Override
-    public Builder<T> withChildValue(final T child) {
+    public SystemLeafSetNode.Builder<T> withChildValue(final T child) {
         // FIXME: implement this
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Builder<T> addChild(final LeafSetEntryNode<T> child) {
+    public SystemLeafSetNode.Builder<T> addChild(final LeafSetEntryNode<T> child) {
         return withChild(child);
     }
 
     @Override
-    public Builder<T> removeChild(final PathArgument key) {
+    public SystemLeafSetNode.Builder<T> removeChild(final PathArgument key) {
         return withoutChild(key);
     }
 

@@ -12,30 +12,29 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Interner;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode.Builder;
 
 /**
- * A {@link Builder} interning {@link LeafNode}s via an {@link Interner}.
+ * A {@link LeafNode.Builder} interning {@link LeafNode}s via an {@link Interner}.
  *
  * @param <T> value type
  */
-public final class InterningLeafNodeBuilder<T> implements Builder<T> {
+public final class InterningLeafNodeBuilder<T> implements LeafNode.Builder<T> {
     private final Interner<LeafNode<T>> interner;
-    private final Builder<T> delegate;
+    private final LeafNode.Builder<T> delegate;
 
-    public InterningLeafNodeBuilder(final Builder<T> delegate, final Interner<LeafNode<T>> interner) {
+    public InterningLeafNodeBuilder(final LeafNode.Builder<T> delegate, final Interner<LeafNode<T>> interner) {
         this.delegate = requireNonNull(delegate);
         this.interner = requireNonNull(interner);
     }
 
     @Override
-    public Builder<T> withValue(final T value) {
+    public LeafNode.Builder<T> withValue(final T value) {
         delegate.withValue(value);
         return this;
     }
 
     @Override
-    public Builder<T> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public LeafNode.Builder<T> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
         delegate.withNodeIdentifier(nodeIdentifier);
         return this;
     }
