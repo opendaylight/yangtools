@@ -126,8 +126,8 @@ public final class YangConstants {
      */
     public static final String YANG_LIBRARY_NAMESPACE_STRING = "urn:ietf:params:xml:ns:yang:ietf-yang-library";
     /**
-     * The namespace assigned to {@code ietf-yang-library}. This constant is useful for referencing things in a
-     * type-safe manner.
+     * The namespace assigned to {@code ietf-yang-library}. This constant is useful for referencing things
+     * in a type-safe manner.
      */
     public static final XMLNamespace YANG_LIBRARY_NAMESPACE = XMLNamespace.of(YANG_LIBRARY_NAMESPACE_STRING).intern();
     /**
@@ -142,6 +142,29 @@ public final class YangConstants {
      */
     public static final QNameModule RFC8525_YANG_MODULE =
         QNameModule.of(YANG_LIBRARY_NAMESPACE, Revision.of("2019-01-04")).intern();
+    /**
+     * The namespace assigned to {@code ietf-datastores}. This constant is required for XML-like parsers, using XML
+     * namespaces to reference modules.
+     *
+     * @since 14.0.21
+     */
+    public static final String IETF_DATASTORES_NAMESPACE_STRING = "urn:ietf:params:xml:ns:yang:ietf-datastores";
+    /**
+     * The namespace assigned to {@code ietf-datastores}. This constant is useful for referencing things in a type-safe
+     * manner.
+     *
+     * @since 14.0.21
+     */
+    public static final XMLNamespace IETF_DATASTORES_NAMESPACE =
+        XMLNamespace.of(IETF_DATASTORES_NAMESPACE_STRING).intern();
+    /**
+     * {@code ietf-yang-library} namespace bound to YANG through
+     * <a href="https://www.rfc-editor.org/rfc/rfc8342#section-7">ietf-datastores@2018-02-14.yang</a>.
+     *
+     * @since 14.0.21
+     */
+    public static final QNameModule RFC8342_YANG_MODULE =
+        QNameModule.of(IETF_DATASTORES_NAMESPACE, Revision.of("2018-02-14")).intern();
 
     // Dummy template UnqualifiedQName. These are never leaked, but are used for efficient instantiation via
     // UnqualifiedQName#bindTo()

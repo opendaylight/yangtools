@@ -17,12 +17,11 @@ import com.google.common.collect.ImmutableSet;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.WritableObject;
 import org.opendaylight.yangtools.util.AbstractIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Identifier of a RFC8342 (NMDA) datastore. This class is backed by the QName of the datastore, i.e.
@@ -32,11 +31,9 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 @Beta
 @NonNullByDefault
 public final class DatastoreIdentifier extends AbstractIdentifier<QName> implements WritableObject {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    private static final XMLNamespace IETF_DATASTORES_NAMESPACE =
-        XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-datastores").intern();
     private static final ImmutableSet<String> KNOWN_ABSTRACTS = ImmutableSet.of("datastore", "conventional", "dynamic");
 
     private static final LoadingCache<QName, DatastoreIdentifier> CACHE = CacheBuilder.newBuilder().weakValues()
@@ -49,7 +46,7 @@ public final class DatastoreIdentifier extends AbstractIdentifier<QName> impleme
 
     private DatastoreIdentifier(final QName qname) {
         super(qname);
-        if (IETF_DATASTORES_NAMESPACE.equals(qname.getNamespace())) {
+        if (YangConstants.IETF_DATASTORES_NAMESPACE.equals(qname.getNamespace())) {
             checkArgument(!KNOWN_ABSTRACTS.contains(qname.getLocalName()), "%s refers to a known-abstract datastore",
                 qname);
         }
@@ -59,13 +56,18 @@ public final class DatastoreIdentifier extends AbstractIdentifier<QName> impleme
         return new DatastoreIdentifier(qname);
     }
 
-    public static DatastoreIdentifier create(final QName qname) {
-        final DatastoreIdentifier existing = CACHE.getIfPresent(qname);
+    public static DatastoreIdentifier ofInterned(final QName qname) {
+        final var existing = CACHE.getIfPresent(qname);
         return existing != null ? existing : CACHE.getUnchecked(qname.intern());
     }
 
+    @Deprecated
+    public static DatastoreIdentifier create(final QName qname) {
+        return ofInterned(qname);
+    }
+
     public static DatastoreIdentifier readFrom(final DataInput in) throws IOException {
-        return create(QName.readFrom(in));
+        return ofInterned(QName.readFrom(in));
     }
 
     @Override
@@ -73,7 +75,7 @@ public final class DatastoreIdentifier extends AbstractIdentifier<QName> impleme
         getValue().writeTo(out);
     }
 
-    @Serial
+    @java.io.Serial
     private Object writeReplace() {
         return new DSIv1(getValue());
     }
