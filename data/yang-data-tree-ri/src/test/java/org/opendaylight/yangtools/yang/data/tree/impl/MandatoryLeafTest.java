@@ -21,26 +21,25 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 class MandatoryLeafTest {
-    private static EffectiveModelContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
     @BeforeAll
-    static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/mandatory-leaf-test.yang");
+    static void beforeAll() {
+        MODEL_CONTEXT = TestModel.createTestContext("/mandatory-leaf-test.yang");
     }
 
     @AfterAll
-    static void afterClass() {
-        SCHEMA_CONTEXT = null;
+    static void afterAll() {
+        MODEL_CONTEXT = null;
     }
 
     private static DataTree initDataTree(final boolean enableValidation) {
-        return new InMemoryDataTreeFactory().create(new DataTreeConfiguration.Builder(TreeType.CONFIGURATION)
+        return new ReferenceDataTreeFactory().create(new DataTreeConfiguration.Builder(TreeType.CONFIGURATION)
             .setMandatoryNodesValidation(enableValidation)
-            .build(), SCHEMA_CONTEXT);
+            .build(), MODEL_CONTEXT);
     }
 
     @Test
@@ -132,9 +131,10 @@ class MandatoryLeafTest {
                 final var prepare = inMemoryDataTree.prepare(modificationTree);
                 inMemoryDataTree.commit(prepare);
             } catch (final IllegalArgumentException e) {
-                assertEquals("Node (urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?"
-                    + "revision=2014-03-13)choice1 is missing mandatory descendant /(urn:opendaylight:params:xml:ns:"
-                    + "yang:controller:md:sal:dom:store:test?revision=2014-03-13)case2-cont/case2-leaf1",
+                assertEquals("""
+                    Node (urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?\
+                    revision=2014-03-13)choice1 is missing mandatory descendant /(urn:opendaylight:params:xml:ns:\
+                    yang:controller:md:sal:dom:store:test?revision=2014-03-13)case2-cont/case2-leaf1""",
                     e.getMessage());
                 throw e;
             }
@@ -201,9 +201,10 @@ class MandatoryLeafTest {
                 final var prepare2 = inMemoryDataTree.prepare(modificationTree2);
                 inMemoryDataTree.commit(prepare2);
             } catch (final IllegalArgumentException e) {
-                assertEquals("Node (urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?"
-                    + "revision=2014-03-13)choice1 is missing mandatory descendant /(urn:opendaylight:params:xml:ns:"
-                    + "yang:controller:md:sal:dom:store:test?revision=2014-03-13)case2-cont/case2-leaf1",
+                assertEquals("""
+                    Node (urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?\
+                    revision=2014-03-13)choice1 is missing mandatory descendant /(urn:opendaylight:params:xml:ns:\
+                    yang:controller:md:sal:dom:store:test?revision=2014-03-13)case2-cont/case2-leaf1""",
                     e.getMessage());
                 throw e;
             }

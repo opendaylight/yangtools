@@ -19,15 +19,14 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 final class StructuralApplyModificationTest extends AbstractTestModelTest {
     private DataTree inMemoryDataTree;
 
     @BeforeEach
-    void setUp() {
-        inMemoryDataTree = new InMemoryDataTreeFactory()
-            .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+    void beforeEach() {
+        inMemoryDataTree = new ReferenceDataTreeFactory()
+            .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
     }
 
     @Test

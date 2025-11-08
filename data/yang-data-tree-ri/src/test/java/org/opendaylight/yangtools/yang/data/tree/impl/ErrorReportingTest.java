@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,64 +17,52 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModifiedNodeDoesNotExistException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 class ErrorReportingTest extends AbstractTestModelTest {
-    private DataTree tree;
+    private DataTree dataTree;
 
     @BeforeEach
-    void setup() {
-        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
+    void beforeEach() {
+        dataTree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, MODEL_CONTEXT);
     }
 
     @Test
     void writeWithoutParentExisting() {
-        final var modification = tree.takeSnapshot().newModification();
+        final var modification = dataTree.takeSnapshot().newModification();
         // We write node without creating parent
         modification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         modification.ready();
-        try {
-            tree.validate(modification);
-            fail("ModifiedNodeDoesNotExistException should be raised");
-        } catch (ModifiedNodeDoesNotExistException e) {
-            assertEquals(TestModel.TEST_PATH, e.getPath());
-        } catch (DataValidationFailedException e) {
-            fail("ModifiedNodeDoesNotExistException expected");
-        }
+
+        final var ex = assertThrows(ModifiedNodeDoesNotExistException.class, () -> dataTree.validate(modification));
+        assertEquals(TestModel.TEST_PATH, ex.getPath());
     }
 
     @Test
-    void parentConcurrentlyDeletedExisting() throws DataValidationFailedException {
-        final var initial = tree.takeSnapshot().newModification();
+    void parentConcurrentlyDeletedExisting() throws Exception {
+        final var initial = dataTree.takeSnapshot().newModification();
         // We write node without creating parent
         initial.write(TestModel.TEST_PATH,
             ImmutableNodes.newContainerBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build());
         initial.ready();
         // We commit transaction
-        tree.commit(tree.prepare(initial));
+        dataTree.commit(dataTree.prepare(initial));
 
-        final var writeTx = tree.takeSnapshot().newModification();
-        final var deleteTx = tree.takeSnapshot().newModification();
+        final var writeTx = dataTree.takeSnapshot().newModification();
+        final var deleteTx = dataTree.takeSnapshot().newModification();
         deleteTx.delete(TestModel.TEST_PATH);
         deleteTx.ready();
         // We commit delete modification
-        tree.commit(tree.prepare(deleteTx));
+        dataTree.commit(dataTree.prepare(deleteTx));
 
         writeTx.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.newSystemMapBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
             .build());
         writeTx.ready();
-        try {
-            tree.validate(writeTx);
-            fail("ConflictingModificationAppliedException should be raised");
-        } catch (ConflictingModificationAppliedException e) {
-            assertEquals(TestModel.TEST_PATH, e.getPath());
-        } catch (DataValidationFailedException e) {
-            fail("ConflictingModificationAppliedException expected");
-        }
+
+        final var ex = assertThrows(ConflictingModificationAppliedException.class, () -> dataTree.validate(writeTx));
+        assertEquals(TestModel.TEST_PATH, ex.getPath());
     }
 }

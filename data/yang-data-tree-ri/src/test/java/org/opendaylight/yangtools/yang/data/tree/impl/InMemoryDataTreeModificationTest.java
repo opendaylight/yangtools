@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.tree.api.VersionInfo;
 import org.opendaylight.yangtools.yang.data.tree.impl.InMemoryDataTreeModification.State;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 /**
  * {@link InMemoryDataTreeModification} state transitions. Relies on Mockito's mocking of final classes to control code
@@ -58,7 +57,7 @@ class InMemoryDataTreeModificationTest extends AbstractTestModelTest {
 
     @BeforeEach
     void beforeEach() {
-        tree = new InMemoryDataTreeFactory().create(TREE_CONFIG, SCHEMA_CONTEXT);
+        tree = new ReferenceDataTreeFactory().create(TREE_CONFIG, MODEL_CONTEXT);
         final var real = assertInstanceOf(InMemoryDataTreeModification.class, tree.takeSnapshot().newModification());
         mod = spy(real);
     }

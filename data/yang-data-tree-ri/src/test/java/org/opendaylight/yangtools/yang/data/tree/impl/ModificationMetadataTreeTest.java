@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -94,8 +93,8 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
     private RootApplyStrategy rootOper;
 
     @BeforeEach
-    void prepare() throws ExcludedDataSchemaNodeException {
-        rootOper = RootApplyStrategy.from(SchemaAwareApplyOperation.from(SCHEMA_CONTEXT,
+    void beforeEach() throws ExcludedDataSchemaNodeException {
+        rootOper = RootApplyStrategy.from(SchemaAwareApplyOperation.from(MODEL_CONTEXT,
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
 
@@ -140,7 +139,7 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
     @Test
     void basicReadWrites() {
         final var modificationTree = new InMemoryDataTreeModification(
-            new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
+            new InMemoryDataTreeSnapshot(MODEL_CONTEXT,
                 TreeNode.of(createDocumentOne(), Version.initial(false)), rootOper), rootOper);
         final var originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
@@ -166,8 +165,8 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
         /**
          * Creates empty Snapshot with associated schema context.
          */
-        final var t = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            SCHEMA_CONTEXT);
+        final var t = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            MODEL_CONTEXT);
 
         /**
          *

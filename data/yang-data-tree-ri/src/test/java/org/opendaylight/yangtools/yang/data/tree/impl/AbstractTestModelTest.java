@@ -12,15 +12,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 abstract class AbstractTestModelTest {
-    static EffectiveModelContext SCHEMA_CONTEXT;
+    static EffectiveModelContext MODEL_CONTEXT;
 
     @BeforeAll
-    static final void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext();
+    static final void beforeAll() {
+        MODEL_CONTEXT = TestModel.createTestContext();
     }
 
     @AfterAll
-    static final void afterClass() {
-        SCHEMA_CONTEXT = null;
+    static final void afterAll() {
+        MODEL_CONTEXT = null;
     }
 }
