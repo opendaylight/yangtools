@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -30,11 +29,11 @@ class CaseAugmentTest {
     private static final QName C1L3_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf3");
     private static final NodeIdentifier CHOICE_ID = new NodeIdentifier(CHOICE1_QNAME);
 
-    private static EffectiveModelContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
     @BeforeAll
-    static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+    static void beforeAll() {
+        MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module case-augment-test {
               yang-version 1;
               namespace "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test";
@@ -71,13 +70,12 @@ class CaseAugmentTest {
     }
 
     @AfterAll
-    static void afterClass() {
-        SCHEMA_CONTEXT = null;
+    static void afterAll() {
+        MODEL_CONTEXT = null;
     }
 
     private static DataTree initDataTree() {
-        return new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION,
-            SCHEMA_CONTEXT);
+        return new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
     }
 
     @Test

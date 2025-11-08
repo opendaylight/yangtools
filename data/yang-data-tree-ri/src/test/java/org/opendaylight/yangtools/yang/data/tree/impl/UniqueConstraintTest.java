@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
 import org.opendaylight.yangtools.yang.data.tree.api.UniqueConstraintException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 class UniqueConstraintTest {
@@ -251,11 +250,11 @@ class UniqueConstraintTest {
         writeMapEntry(inMemoryDataTree, "6", "l3", "l4", "l7");
     }
 
-    private static InMemoryDataTree initDataTree(final EffectiveModelContext schemaContext, final boolean uniqueIndex)
+    private static InMemoryDataTree initDataTree(final EffectiveModelContext modelContext, final boolean uniqueIndex)
             throws DataValidationFailedException {
-        final var inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory()
-            .create(new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build(),
-                schemaContext);
+        final var inMemoryDataTree = new ReferenceDataTreeFactory()
+            .create(DataTreeConfiguration.builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build(),
+                modelContext);
 
         final var taskNode = ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -268,11 +267,10 @@ class UniqueConstraintTest {
         return inMemoryDataTree;
     }
 
-    private static InMemoryDataTree emptyDataTree(final EffectiveModelContext schemaContext,
+    private static InMemoryDataTree emptyDataTree(final EffectiveModelContext modelContext,
             final boolean uniqueIndex) {
-        final var inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory().create(
-            new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build(),
-            schemaContext);
+        final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+            DataTreeConfiguration.builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build(), modelContext);
 
         return inMemoryDataTree;
     }

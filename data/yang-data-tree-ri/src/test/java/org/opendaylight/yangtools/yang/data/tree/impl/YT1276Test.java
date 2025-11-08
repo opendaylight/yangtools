@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -42,11 +41,11 @@ class YT1276Test {
 
     private static EffectiveModelContext MODEL;
 
-    private final DataTree tree = new InMemoryDataTreeFactory()
+    private final DataTree tree = new ReferenceDataTreeFactory()
         .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL);
 
     @BeforeAll
-    static void beforeClass() {
+    static void beforeAll() {
         MODEL = YangParserTestUtils.parseYangResource("/yt1276.yang");
     }
 
