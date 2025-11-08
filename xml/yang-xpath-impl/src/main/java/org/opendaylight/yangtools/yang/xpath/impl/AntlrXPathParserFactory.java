@@ -18,13 +18,11 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.RequireServiceComponentRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component
 @MetaInfServices
-@RequireServiceComponentRuntime
 public final class AntlrXPathParserFactory implements YangXPathParserFactory {
     private static final Logger LOG = LoggerFactory.getLogger(AntlrXPathParserFactory.class);
 
