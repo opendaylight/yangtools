@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -65,13 +64,13 @@ class ListConstraintsValidation {
     private static final YangInstanceIdentifier UNKEYED_LIST_PATH = YangInstanceIdentifier
             .builder(MASTER_CONTAINER_PATH).node(UNKEYED_LIST_QNAME).build();
 
-    private static EffectiveModelContext schemaContext;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
-    private DataTree inMemoryDataTree;
+    private DataTree dataTree;
 
     @BeforeAll
-    static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYang("""
+    static void beforeAll() {
+        MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module list-constraints-validation-test-model  {
               yang-version 1;
               namespace "urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model";
@@ -119,27 +118,25 @@ class ListConstraintsValidation {
     }
 
     @AfterAll
-    static void afterClass() {
-        schemaContext = null;
+    static void afterAll() {
+        MODEL_CONTEXT = null;
     }
 
     @BeforeEach
-    void prepare() throws DataValidationFailedException {
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            schemaContext);
-        final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+    void beforeEach() throws Exception {
+        dataTree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, MODEL_CONTEXT);
+        final var initialDataTreeSnapshot = dataTree.takeSnapshot();
         final var modificationTree = initialDataTreeSnapshot.newModification();
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(MASTER_CONTAINER_QNAME))
             .build());
         modificationTree.ready();
-        inMemoryDataTree.commit(inMemoryDataTree.prepare(modificationTree));
+        dataTree.commit(dataTree.prepare(modificationTree));
     }
 
     @Test
-    void minMaxListTestPass() throws DataValidationFailedException {
-
+    void minMaxListTestPass() throws Exception {
         final var fooEntryNode = minMaxEntry("foo");
         final var barEntryNode = minMaxEntry("bar");
         final var mapNode1 = ImmutableNodes.newSystemMapBuilder()
@@ -149,16 +146,16 @@ class ListConstraintsValidation {
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(barEntryNode).build();
 
-        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = dataTree.takeSnapshot().newModification();
         modificationTree.write(MIN_MAX_LIST_PATH, mapNode1);
         modificationTree.merge(MIN_MAX_LIST_PATH, mapNode2);
         modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
-        final var prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+        dataTree.validate(modificationTree);
+        final var prepare = dataTree.prepare(modificationTree);
+        dataTree.commit(prepare);
 
-        final var snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final var snapshotAfterCommit = dataTree.takeSnapshot();
         final var minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
@@ -173,8 +170,9 @@ class ListConstraintsValidation {
 
     @Test
     void minMaxListFail() {
+        // FIXME: reduce the scope of this
         assertThrows(DataValidationFailedException.class, () -> {
-            var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            var modificationTree = dataTree.takeSnapshot().newModification();
 
             final var fooEntryNode = minMaxEntry("foo");
             final var barEntryNode = minMaxEntry("bar");
@@ -194,41 +192,41 @@ class ListConstraintsValidation {
             modificationTree.delete(gooPath);
             modificationTree.ready();
 
-            inMemoryDataTree.validate(modificationTree);
-            var prepare1 = inMemoryDataTree.prepare(modificationTree);
-            inMemoryDataTree.commit(prepare1);
+            dataTree.validate(modificationTree);
+            var prepare1 = dataTree.prepare(modificationTree);
+            dataTree.commit(prepare1);
 
-            var snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+            var snapshotAfterCommit = dataTree.takeSnapshot();
             var minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
             assertTrue(minMaxListRead.isPresent());
             assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
-            modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree = dataTree.takeSnapshot().newModification();
             modificationTree.write(gooPath, gooEntryNode);
             modificationTree.ready();
 
-            inMemoryDataTree.validate(modificationTree);
-            prepare1 = inMemoryDataTree.prepare(modificationTree);
-            inMemoryDataTree.commit(prepare1);
+            dataTree.validate(modificationTree);
+            prepare1 = dataTree.prepare(modificationTree);
+            dataTree.commit(prepare1);
 
-            snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+            snapshotAfterCommit = dataTree.takeSnapshot();
             minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
             assertTrue(minMaxListRead.isPresent());
             assertEquals(3, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
 
-            modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree = dataTree.takeSnapshot().newModification();
 
             modificationTree.delete(gooPath);
             modificationTree.delete(fooPath);
             modificationTree.ready();
 
-            inMemoryDataTree.validate(modificationTree);
+            dataTree.validate(modificationTree);
         });
     }
 
     @Test
-    void minMaxLeafListPass() throws DataValidationFailedException {
-        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    void minMaxLeafListPass() throws Exception {
+        final var modificationTree = dataTree.takeSnapshot().newModification();
 
         final var barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
         final var gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
@@ -242,23 +240,22 @@ class ListConstraintsValidation {
         modificationTree.delete(MIN_MAX_LEAF_LIST_PATH.node(gooPath));
         modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
-        final var prepare1 = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare1);
+        dataTree.validate(modificationTree);
+        final var prepare1 = dataTree.prepare(modificationTree);
+        dataTree.commit(prepare1);
 
-        final var snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final var masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
-        assertTrue(masterContainer.isPresent());
-        final var leafList =
-            (NormalizedNodeContainer<?>) ((DistinctNodeContainer) masterContainer.orElseThrow())
-                .childByArg(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
+        final var snapshotAfterCommit = dataTree.takeSnapshot();
+        final var masterContainer = assertInstanceOf(DistinctNodeContainer.class,
+            snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH).orElseThrow());
+        final var leafList = assertInstanceOf(NormalizedNodeContainer.class,
+            masterContainer.childByArg(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME)));
         assertNotNull(leafList);
         assertEquals(2, leafList.size());
     }
 
     @Test
     void minMaxLeafListFail() {
-        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = dataTree.takeSnapshot().newModification();
 
         final var barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
         final var gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
@@ -281,8 +278,8 @@ class ListConstraintsValidation {
     }
 
     @Test
-    void unkeyedListTestPass() throws DataValidationFailedException {
-        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    void unkeyedListTestPass() throws Exception {
+        final var modificationTree = dataTree.takeSnapshot().newModification();
 
         final var unkeyedListNode = ImmutableNodes.newUnkeyedListBuilder()
             .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
@@ -298,11 +295,11 @@ class ListConstraintsValidation {
         modificationTree.merge(UNKEYED_LIST_PATH, unkeyedListNode);
         modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
-        final var prepare1 = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare1);
+        dataTree.validate(modificationTree);
+        final var prepare1 = dataTree.prepare(modificationTree);
+        dataTree.commit(prepare1);
 
-        final var snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final var snapshotAfterCommit = dataTree.takeSnapshot();
         final var unkeyedListRead = snapshotAfterCommit.readNode(UNKEYED_LIST_PATH);
         assertTrue(unkeyedListRead.isPresent());
         assertEquals(1, ((UnkeyedListNode) unkeyedListRead.orElseThrow()).size());
@@ -310,7 +307,7 @@ class ListConstraintsValidation {
 
     @Test
     void unkeyedListTestFail() {
-        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = dataTree.takeSnapshot().newModification();
 
         modificationTree.write(UNKEYED_LIST_PATH, ImmutableNodes.newUnkeyedListBuilder()
             .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
@@ -340,8 +337,7 @@ class ListConstraintsValidation {
     }
 
     private static void assertOperationFailed(final Exception ex, final String expectedAppTag) {
-        assertInstanceOf(YangNetconfErrorAware.class, ex);
-        final var errors = ((YangNetconfErrorAware) ex).getNetconfErrors();
+        final var errors = assertInstanceOf(YangNetconfErrorAware.class, ex).getNetconfErrors();
         assertEquals(1, errors.size());
         final var error = errors.get(0);
         assertEquals(ErrorSeverity.ERROR, error.severity());

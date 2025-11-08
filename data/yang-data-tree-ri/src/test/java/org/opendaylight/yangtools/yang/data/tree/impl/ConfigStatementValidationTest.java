@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.SchemaValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 // TODO: expand these tests to catch some more obscure cases
 class ConfigStatementValidationTest extends AbstractTestModelTest {
@@ -87,8 +86,8 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
     @Test
     void testOnPathFail() {
         assertThrows(SchemaValidationFailedException.class, () -> {
-            final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
             final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
             final var ii = OUTER_LIST_1_PATH.node(new NodeIdentifier(TestModel.INNER_LIST_QNAME))
                 .node(INNER_FOO_ENTRY_NODE.name());
@@ -103,8 +102,8 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
     @Test
     void testOnDataFail() {
         assertThrows(SchemaValidationFailedException.class, () -> {
-            final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
             final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree.write(TestModel.TEST_PATH, createFooTestContainerNode());
             modificationTree.ready();
@@ -117,8 +116,8 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
     @Test
     void testOnDataLeafFail() {
         assertThrows(SchemaValidationFailedException.class, () -> {
-            final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
             final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree.write(TestModel.TEST_PATH, createBarTestContainerNode());
             modificationTree.ready();
@@ -131,8 +130,8 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
     @Test
     void testOnPathCaseLeafFail() {
         assertThrows(SchemaValidationFailedException.class, () -> {
-            final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
             final var case2ContId = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont"));
             final var ii = TestModel.TEST_PATH.node(choice1Id).node(case2ContId);
@@ -150,8 +149,8 @@ class ConfigStatementValidationTest extends AbstractTestModelTest {
     @Test
     void testOnDataCaseLeafFail() {
         assertThrows(SchemaValidationFailedException.class, () -> {
-            final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+            final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
             final var ii = TestModel.TEST_PATH.node(choice1Id);
             final var choice1 = ImmutableNodes.newChoiceBuilder()

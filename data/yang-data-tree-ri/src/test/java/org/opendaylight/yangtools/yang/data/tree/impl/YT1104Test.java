@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -35,7 +34,7 @@ class YT1104Test {
     private DataTree dataTree;
 
     @BeforeAll
-    static void beforeClass() {
+    static void beforeAll() {
         SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
             module yt1104 {
               yang-version 1.1;
@@ -50,17 +49,17 @@ class YT1104Test {
     }
 
     @AfterAll
-    static void afterClass() {
+    static void afterAll() {
         SCHEMA_CONTEXT = null;
     }
 
     @BeforeEach
-    void init() {
-        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+    void beforeEach() {
+        dataTree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
     }
 
     @Test
-    void testAnydata() throws DataValidationFailedException {
+    void testAnydata() throws Exception {
         writeChoice(ImmutableNodes.newAnydataBuilder(String.class)
             .withNodeIdentifier(BAR)
             .withValue("anydata")
@@ -68,7 +67,7 @@ class YT1104Test {
     }
 
     @Test
-    void testAnyxml() throws DataValidationFailedException {
+    void testAnyxml() throws Exception {
         writeChoice(ImmutableNodes.newAnyxmlBuilder(DOMSource.class)
             .withNodeIdentifier(BAZ)
             .withValue(new DOMSource())

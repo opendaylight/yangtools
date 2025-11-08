@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 /**
  * BUG-3674: issuing a delete on a non-existent entry must be preserved in
@@ -28,7 +27,7 @@ class Bug3674Test extends AbstractTestModelTest {
 
     @Test
     void testDeleteOfNonExistingNode() throws DataValidationFailedException {
-        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
+        tree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, MODEL_CONTEXT);
 
         // Create the top-level container
         final var mod = tree.takeSnapshot().newModification();

@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -52,7 +53,7 @@ class Bug8713Test {
               }
             }""");
         final var rootLeafRefContext = LeafRefContext.create(context);
-        final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
+        final var inMemoryDataTree = (DataTree) new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
 
         final var root = createRootContainer();

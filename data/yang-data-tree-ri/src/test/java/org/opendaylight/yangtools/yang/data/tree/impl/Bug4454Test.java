@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
@@ -34,8 +33,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
-import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -98,13 +95,13 @@ class Bug4454Test {
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).build();
 
-    private static EffectiveModelContext schemaContext;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
     private DataTree inMemoryDataTree;
 
     @BeforeAll
-    static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYang("""
+    static void beforeAll() {
+        MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module Bug4454Test {
               yang-version 1;
               namespace "urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model";
@@ -159,14 +156,14 @@ class Bug4454Test {
     }
 
     @AfterAll
-    static void afterClass() {
-        schemaContext = null;
+    static void afterAll() {
+        MODEL_CONTEXT = null;
     }
 
     @BeforeEach
-    void prepare() throws DataValidationFailedException {
-        inMemoryDataTree =  new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            schemaContext);
+    void beforeEach() throws Exception {
+        inMemoryDataTree =  new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            MODEL_CONTEXT);
         final var initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
         final var modificationTree = initialDataTreeSnapshot.newModification();
 
@@ -178,7 +175,7 @@ class Bug4454Test {
     }
 
     @Test
-    void minMaxListDeleteWriteTest() throws DataValidationFailedException {
+    void minMaxListDeleteWriteTest() throws Exception {
         final var modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
 
         final var key = new HashMap<QName, Object>();
@@ -309,7 +306,7 @@ class Bug4454Test {
     }
 
     @Test
-    void minMaxLeafListPass() throws DataValidationFailedException {
+    void minMaxLeafListPass() throws Exception {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         final var barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
@@ -352,9 +349,8 @@ class Bug4454Test {
     }
 
     @Test
-    void minMaxListDeleteTest() throws DataValidationFailedException {
+    void minMaxListDeleteTest() throws Exception {
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-
 
         var mapEntryPath2 = NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME,
             MIN_MAX_KEY_LEAF_QNAME, "foo");
@@ -426,7 +422,7 @@ class Bug4454Test {
     }
 
     @Test
-    void minMaxListNoMinMaxDeleteTest() throws DataValidationFailedException {
+    void minMaxListNoMinMaxDeleteTest() throws Exception {
         final var fooEntryNoMinMaxNode = ImmutableNodes.newMapEntryBuilder()
             .withNodeIdentifier(
                 NodeIdentifierWithPredicates.of(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME, "foo"))
@@ -472,11 +468,11 @@ class Bug4454Test {
     }
 
     private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
-        final var minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
-        assertTrue(minMaxListRead.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?>) minMaxListRead.orElseThrow()).size());
+        final var minMaxListRead = assertInstanceOf(NormalizedNodeContainer.class,
+            snapshot.readNode(MIN_MAX_LIST_PATH).orElseThrow());
+        assertEquals(2, minMaxListRead.size());
 
-        for (var collectionChild : (Collection<?>) minMaxListRead.orElseThrow().body()) {
+        for (var collectionChild : minMaxListRead.body()) {
             if (collectionChild.toString().contains(first)) {
                 assertTrue(collectionChild.toString().contains(first));
             } else {

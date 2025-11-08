@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppl
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ class OrderedListTest {
         childKeyLeaf = QName.create(testModule, "child-key-leaf");
         parentOrdinaryLeaf = QName.create(testModule, "parent-ordinary-leaf");
         childOrdinaryLeaf = QName.create(testModule, "child-ordinary-leaf");
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+        inMemoryDataTree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
             YangParserTestUtils.parseYang("""
                 module ordered-list-modification-test {
                   namespace "ordered-list-modification-test";
