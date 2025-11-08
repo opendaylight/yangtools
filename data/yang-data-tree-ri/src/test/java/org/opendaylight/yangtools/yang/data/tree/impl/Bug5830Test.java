@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -42,10 +41,10 @@ class Bug5830Test {
     private static final QName PRESENCE_CONTAINER_2 = QName.create(NS, REV, "presence-container-2");
     private static final QName MANDATORY_LEAF_2 = QName.create(NS, REV, "mandatory-leaf-2");
 
-    private static DataTree initDataTree(final EffectiveModelContext schemaContext)
+    private static DataTree initDataTree(final EffectiveModelContext modelContext)
             throws DataValidationFailedException {
-        final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+        final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, modelContext);
 
         final var taskNode = ImmutableNodes.newSystemMapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();

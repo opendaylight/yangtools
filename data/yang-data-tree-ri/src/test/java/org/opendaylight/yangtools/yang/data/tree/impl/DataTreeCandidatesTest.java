@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.data.tree.spi.DataTreeCandidates;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -34,8 +33,8 @@ class DataTreeCandidatesTest extends AbstractTestModelTest {
     private DataTree dataTree;
 
     @BeforeEach
-    void setUp() throws Exception {
-        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
+    void beforeEach() throws Exception {
+        dataTree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, MODEL_CONTEXT);
 
         final var testContainer = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
@@ -57,11 +56,11 @@ class DataTreeCandidatesTest extends AbstractTestModelTest {
 
     @Test
     void testRootedCandidate() throws DataValidationFailedException {
-        final var innerDataTree = new InMemoryDataTreeFactory().create(
-            new DataTreeConfiguration.Builder(TreeType.OPERATIONAL)
+        final var innerDataTree = new ReferenceDataTreeFactory().create(
+            DataTreeConfiguration.builder(TreeType.OPERATIONAL)
             .setMandatoryNodesValidation(true)
             .setRootPath(TestModel.INNER_CONTAINER_PATH)
-            .setUniqueIndexes(true).build(), SCHEMA_CONTEXT);
+            .setUniqueIndexes(true).build(), MODEL_CONTEXT);
 
         final var leaf = ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "testing-value");
 

@@ -20,28 +20,26 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 class CaseExclusionTest {
-    private static EffectiveModelContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
-    private DataTree inMemoryDataTree;
+    private DataTree dataTree;
 
     @BeforeAll
-    static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/case-exclusion-test.yang");
+    static void beforeAll() {
+        MODEL_CONTEXT = TestModel.createTestContext("/case-exclusion-test.yang");
     }
 
     @AfterAll
-    static void afterClass() {
-        SCHEMA_CONTEXT = null;
+    static void afterAll() {
+        MODEL_CONTEXT = null;
     }
 
     @BeforeEach
-    void before() {
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION,
-            SCHEMA_CONTEXT);
+    void beforeEach() {
+        dataTree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
     }
 
     @Test
@@ -55,13 +53,13 @@ class CaseExclusionTest {
                 .withChild(ImmutableNodes.leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
                 .build())
             .build();
-        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = dataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, container);
         modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
-        final var prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+        dataTree.validate(modificationTree);
+        final var prepare = dataTree.prepare(modificationTree);
+        dataTree.commit(prepare);
     }
 
     @Test
@@ -80,13 +78,13 @@ class CaseExclusionTest {
                 .build();
 
             try {
-                final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+                final var modificationTree = dataTree.takeSnapshot().newModification();
                 modificationTree.write(TestModel.TEST_PATH, container);
                 modificationTree.ready();
 
-                inMemoryDataTree.validate(modificationTree);
-                final var prepare = inMemoryDataTree.prepare(modificationTree);
-                inMemoryDataTree.commit(prepare);
+                dataTree.validate(modificationTree);
+                final var prepare = dataTree.prepare(modificationTree);
+                dataTree.commit(prepare);
             } catch (IllegalArgumentException e) {
                 assertTrue(e.getMessage().contains("implies non-presence of child"));
                 throw e;
@@ -101,13 +99,13 @@ class CaseExclusionTest {
             final var container = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
 
-            final var modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
+            final var modificationTree1 = dataTree.takeSnapshot().newModification();
             modificationTree1.write(TestModel.TEST_PATH, container);
             modificationTree1.ready();
 
-            inMemoryDataTree.validate(modificationTree1);
-            final var prepare1 = inMemoryDataTree.prepare(modificationTree1);
-            inMemoryDataTree.commit(prepare1);
+            dataTree.validate(modificationTree1);
+            final var prepare1 = dataTree.prepare(modificationTree1);
+            dataTree.commit(prepare1);
 
             // Choice write
             final var choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
@@ -119,14 +117,14 @@ class CaseExclusionTest {
                 .build();
 
             try {
-                final var modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
+                final var modificationTree2 = dataTree.takeSnapshot().newModification();
                 modificationTree2.write(TestModel.TEST_PATH.node(choice1Id), choice);
                 modificationTree2.ready();
 
-                inMemoryDataTree.validate(modificationTree2);
+                dataTree.validate(modificationTree2);
 
-                final var prepare2 = inMemoryDataTree.prepare(modificationTree2);
-                inMemoryDataTree.commit(prepare2);
+                final var prepare2 = dataTree.prepare(modificationTree2);
+                dataTree.commit(prepare2);
             } catch (IllegalArgumentException e) {
                 assertTrue(e.getMessage().contains("implies non-presence of child"));
                 throw e;

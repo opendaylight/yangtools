@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Bug4295Test {
@@ -44,7 +43,7 @@ class Bug4295Test {
     private static final QName O = QName.create(ROOT, "o");
     private static final QName I = QName.create(ROOT, "i");
 
-    private final DataTree tree = new InMemoryDataTreeFactory().create(
+    private final DataTree tree = new ReferenceDataTreeFactory().create(
         DataTreeConfiguration.DEFAULT_OPERATIONAL, YangParserTestUtils.parseYang("""
             module foo {
               namespace "foo";

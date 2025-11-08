@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 class MapEntryRootTest extends AbstractTestModelTest {
     @Test
@@ -21,10 +20,10 @@ class MapEntryRootTest extends AbstractTestModelTest {
         final var treeConfig = DataTreeConfiguration.builder(TreeType.OPERATIONAL).setRootPath(
             TestModel.TEST_PATH.node(TestModel.OUTER_LIST_QNAME).node(
                 NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, (short) 12))).build();
-        final var dataTree = new InMemoryDataTreeFactory().create(treeConfig, SCHEMA_CONTEXT);
+        final var dataTree = new ReferenceDataTreeFactory().create(treeConfig, MODEL_CONTEXT);
         assertInstanceOf(InMemoryDataTree.class, dataTree);
 
-        final var imdt = (InMemoryDataTree) dataTree;
+        final var imdt = dataTree;
         final var mod = imdt.takeSnapshot().newModification();
         final var strategy = mod.getStrategy();
         assertInstanceOf(MapEntryModificationStrategy.class, strategy);

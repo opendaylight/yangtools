@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -21,16 +20,10 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 class Bug2690Test extends AbstractTestModelTest {
-    private DataTree inMemoryDataTree;
-
-    @BeforeEach
-    void prepare() {
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            SCHEMA_CONTEXT);
-    }
+    private final DataTree dataTree = new ReferenceDataTreeFactory()
+        .create(DataTreeConfiguration.DEFAULT_OPERATIONAL, MODEL_CONTEXT);
 
     @Test
     void testWriteMerge1() throws DataValidationFailedException {
@@ -57,12 +50,12 @@ class Bug2690Test extends AbstractTestModelTest {
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(mapNode2).build();
 
-        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = dataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, cont1);
         modificationTree.merge(TestModel.TEST_PATH, cont2);
         commit(modificationTree);
 
-        final var snapshotAfterTx = inMemoryDataTree.takeSnapshot();
+        final var snapshotAfterTx = dataTree.takeSnapshot();
         final var modificationAfterTx = snapshotAfterTx.newModification();
         final var readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
         assertTrue(readNode.isPresent());
@@ -79,11 +72,11 @@ class Bug2690Test extends AbstractTestModelTest {
     void testDeleteStructuralAndWriteChildWithCommit() throws DataValidationFailedException {
         final var modificationTree = setupTestDeleteStructuralAndWriteChild();
         commit(modificationTree);
-        verifyTestDeleteStructuralAndWriteChild(inMemoryDataTree.takeSnapshot());
+        verifyTestDeleteStructuralAndWriteChild(dataTree.takeSnapshot());
     }
 
     private DataTreeModification setupTestDeleteStructuralAndWriteChild() {
-        final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final var modificationTree = dataTree.takeSnapshot().newModification();
         modificationTree.delete(TestModel.NON_PRESENCE_PATH);
         modificationTree.write(TestModel.NAME_PATH, ImmutableNodes.leafNode(TestModel.NAME_QNAME, "abc"));
         return modificationTree;
@@ -97,8 +90,8 @@ class Bug2690Test extends AbstractTestModelTest {
     private void commit(final DataTreeModification modificationTree) throws DataValidationFailedException {
         modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
-        final var prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+        dataTree.validate(modificationTree);
+        final var prepare = dataTree.prepare(modificationTree);
+        dataTree.commit(prepare);
     }
 }

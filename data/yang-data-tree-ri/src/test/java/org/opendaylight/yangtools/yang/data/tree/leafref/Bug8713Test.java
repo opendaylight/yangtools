@@ -52,8 +52,8 @@ class Bug8713Test {
               }
             }""");
         final var rootLeafRefContext = LeafRefContext.create(context);
-        final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
+        final var inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            context);
 
         final var root = createRootContainer();
         final var rootPath = YangInstanceIdentifier.of(foo("root"));
