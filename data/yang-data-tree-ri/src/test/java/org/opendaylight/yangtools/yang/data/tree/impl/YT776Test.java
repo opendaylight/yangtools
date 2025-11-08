@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -53,13 +52,13 @@ class YT776Test {
     private static final NodeIdentifier SOME_LIST_ID = new NodeIdentifier(SOME_LIST);
     private static final NodeIdentifierWithPredicates SOME_LIST_ITEM = NodeIdentifierWithPredicates.of(SOME_LIST,
                 ImmutableMap.of(SOME_LEAF, "foo"));
-    private static EffectiveModelContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
     private DataTree dataTree;
 
     @BeforeAll
-    static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+    static void beforeAll() {
+        MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module yt776 {
               namespace yt776;
               prefix yt776;
@@ -105,13 +104,13 @@ class YT776Test {
     }
 
     @AfterAll
-    static void afterClass() {
-        SCHEMA_CONTEXT = null;
+    static void afterAll() {
+        MODEL_CONTEXT = null;
     }
 
     @BeforeEach
-    void init() {
-        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
+    void beforeEach() {
+        dataTree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, MODEL_CONTEXT);
     }
 
     @Test

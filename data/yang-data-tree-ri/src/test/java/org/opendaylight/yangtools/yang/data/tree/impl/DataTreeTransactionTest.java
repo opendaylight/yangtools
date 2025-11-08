@@ -17,15 +17,14 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 class DataTreeTransactionTest extends AbstractTestModelTest {
     private DataTree tree;
     private DataTreeModification mod;
 
     @BeforeEach
-    void setUp() {
-        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
+    void beforeEach() {
+        tree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, MODEL_CONTEXT);
         mod = tree.takeSnapshot().newModification();
     }
 

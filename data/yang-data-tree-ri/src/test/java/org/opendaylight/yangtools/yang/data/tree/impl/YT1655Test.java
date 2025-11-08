@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.VersionInfo;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 @ExtendWith(MockitoExtension.class)
 class YT1655Test extends AbstractTestModelTest {
@@ -31,9 +30,9 @@ class YT1655Test extends AbstractTestModelTest {
 
     @Test
     void testVersionInfoRead() throws Exception {
-        final var tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION.copyBuilder()
+        final var tree = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION.toBuilder()
             .setTrackVersionInfo(true)
-            .build(), SCHEMA_CONTEXT);
+            .build(), MODEL_CONTEXT);
 
         final var snap = tree.takeSnapshot();
         assertEquals(Optional.empty(), snap.readVersionInfo(YangInstanceIdentifier.of()));

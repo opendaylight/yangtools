@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -36,11 +35,11 @@ class Bug5968Test {
     private static final QName MANDATORY_LEAF = QName.create(NS, REV, "mandatory-leaf");
     private static final QName COMMON_LEAF = QName.create(NS, REV, "common-leaf");
 
-    private static EffectiveModelContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
     @BeforeAll
-    static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+    static void beforeAll() {
+        MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module bug5968 {
               yang-version 1;
               namespace bug5968;
@@ -69,14 +68,14 @@ class Bug5968Test {
     }
 
     @AfterAll
-    static void afterClass() {
-        SCHEMA_CONTEXT = null;
+    static void afterAll() {
+        MODEL_CONTEXT = null;
     }
 
-    private static DataTree initDataTree(final EffectiveModelContext schemaContext, final boolean withMapNode)
+    private static DataTree initDataTree(final EffectiveModelContext modelContext, final boolean withMapNode)
             throws Exception {
-        final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+        final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, modelContext);
 
         final var root = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
@@ -96,13 +95,13 @@ class Bug5968Test {
         return inMemoryDataTree;
     }
 
-    private static DataTree emptyDataTree(final EffectiveModelContext schemaContext) {
-        return new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+    private static DataTree emptyDataTree(final EffectiveModelContext modelContext) {
+        return new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, modelContext);
     }
 
     @Test
     void writeInvalidContainerTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
 
         final var myList = createMap(true);
         final var root = ImmutableNodes.newContainerBuilder()
@@ -125,7 +124,7 @@ class Bug5968Test {
 
     @Test
     void writeInvalidMapTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         writeMap(modificationTree, true);
 
@@ -143,7 +142,7 @@ class Bug5968Test {
 
     @Test
     void writeInvalidMapEntryTest() throws Exception {
-        final var inMemoryDataTree = initDataTree(SCHEMA_CONTEXT, true);
+        final var inMemoryDataTree = initDataTree(MODEL_CONTEXT, true);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         writeMapEntry(modificationTree, "1", null, "common-value");
@@ -203,7 +202,7 @@ class Bug5968Test {
 
     @Test
     void writeValidContainerTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
 
         final var myList = createMap(false);
         final var root = ImmutableNodes.newContainerBuilder()
@@ -219,7 +218,7 @@ class Bug5968Test {
 
     @Test
     void writeValidMapTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         writeMap(modificationTree, false);
 
@@ -231,7 +230,7 @@ class Bug5968Test {
 
     @Test
     void writeValidMapEntryTest() throws Exception {
-        final var inMemoryDataTree = initDataTree(SCHEMA_CONTEXT, true);
+        final var inMemoryDataTree = initDataTree(MODEL_CONTEXT, true);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         writeMapEntry(modificationTree, "1", "mandatory-value", "common-value");

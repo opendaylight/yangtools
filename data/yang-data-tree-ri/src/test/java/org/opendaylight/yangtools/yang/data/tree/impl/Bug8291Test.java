@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.api.TreeType;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -32,10 +31,10 @@ class Bug8291Test {
 
     private EffectiveModelContext schemaContext;
 
-    private static DataTree initDataTree(final EffectiveModelContext schemaContext) {
-        final var config = new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setRootPath(
-                YangInstanceIdentifier.of(ROOT).node(OUTER_LIST)).build();
-        return new InMemoryDataTreeFactory().create(config, schemaContext);
+    private static DataTree initDataTree(final EffectiveModelContext modelContext) {
+        return new ReferenceDataTreeFactory().create(DataTreeConfiguration.builder(TreeType.CONFIGURATION)
+            .setRootPath(YangInstanceIdentifier.of(ROOT, OUTER_LIST))
+            .build(), modelContext);
     }
 
     @Test

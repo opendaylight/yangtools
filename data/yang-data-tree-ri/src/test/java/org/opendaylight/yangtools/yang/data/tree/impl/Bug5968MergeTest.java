@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -38,11 +37,11 @@ class Bug5968MergeTest {
     private static final QName LIST_ID = QName.create(NS, REV, "list-id");
     private static final QName MANDATORY_LEAF = QName.create(NS, REV, "mandatory-leaf");
     private static final QName COMMON_LEAF = QName.create(NS, REV, "common-leaf");
-    private static EffectiveModelContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext MODEL_CONTEXT;
 
     @BeforeAll
-    static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYang("""
+    static void beforeAll() {
+        MODEL_CONTEXT = YangParserTestUtils.parseYang("""
             module bug5968 {
               yang-version 1;
               namespace bug5968;
@@ -71,14 +70,14 @@ class Bug5968MergeTest {
     }
 
     @AfterAll
-    static void afterClass() {
-        SCHEMA_CONTEXT = null;
+    static void afterAll() {
+        MODEL_CONTEXT = null;
     }
 
-    private static DataTree initDataTree(final EffectiveModelContext schemaContext, final boolean withMapNode)
+    private static DataTree initDataTree(final EffectiveModelContext modelContext, final boolean withMapNode)
             throws Exception {
-        final var inMemoryDataTree = new InMemoryDataTreeFactory().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+        final var inMemoryDataTree = new ReferenceDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, modelContext);
 
         final var root = ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
@@ -96,13 +95,13 @@ class Bug5968MergeTest {
         return inMemoryDataTree;
     }
 
-    private static DataTree emptyDataTree(final EffectiveModelContext schemaContext) {
-        return new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+    private static DataTree emptyDataTree(final EffectiveModelContext modelContext) {
+        return new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, modelContext);
     }
 
     @Test
     void mergeInvalidContainerTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
 
         final var myList = createMap(true);
         final var root = ImmutableNodes.newContainerBuilder()
@@ -120,7 +119,7 @@ class Bug5968MergeTest {
 
     @Test
     void mergeInvalidMapTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         mergeMap(modificationTree, true);
 
@@ -133,7 +132,7 @@ class Bug5968MergeTest {
 
     @Test
     void mergeInvalidMapEntryTest() throws Exception {
-        final var inMemoryDataTree = initDataTree(SCHEMA_CONTEXT, true);
+        final var inMemoryDataTree = initDataTree(MODEL_CONTEXT, true);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         mergeMapEntry(modificationTree, "1", null, "common-value");
@@ -196,7 +195,7 @@ class Bug5968MergeTest {
 
     @Test
     void mergeValidContainerTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
 
         final var myList = createMap(false);
         final var root = ImmutableNodes.newContainerBuilder()
@@ -212,7 +211,7 @@ class Bug5968MergeTest {
 
     @Test
     void mergeValidMapTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         mergeMap(modificationTree, false);
 
@@ -224,7 +223,7 @@ class Bug5968MergeTest {
 
     @Test
     void mergeValidMapEntryTest() throws Exception {
-        final var inMemoryDataTree = initDataTree(SCHEMA_CONTEXT, true);
+        final var inMemoryDataTree = initDataTree(MODEL_CONTEXT, true);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         mergeMapEntry(modificationTree, "1", "mandatory-value", "common-value");
@@ -237,7 +236,7 @@ class Bug5968MergeTest {
 
     @Test
     void validMultiStepsMergeTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         modificationTree.merge(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
@@ -257,7 +256,7 @@ class Bug5968MergeTest {
 
     @Test
     void invalidMultiStepsMergeTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         modificationTree.merge(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
@@ -293,7 +292,7 @@ class Bug5968MergeTest {
 
     @Test
     void validMultiStepsWriteAndMergeTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         modificationTree.write(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
@@ -313,7 +312,7 @@ class Bug5968MergeTest {
 
     @Test
     void invalidMultiStepsWriteAndMergeTest() {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         modificationTree.write(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
@@ -332,7 +331,7 @@ class Bug5968MergeTest {
 
     @Test
     void validMapEntryMultiCommitMergeTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         modificationTree.write(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
@@ -361,7 +360,7 @@ class Bug5968MergeTest {
 
     @Test
     void invalidMapEntryMultiCommitMergeTest() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         modificationTree.write(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
@@ -402,7 +401,7 @@ class Bug5968MergeTest {
      */
     @Test
     void validMapEntryMultiCommitMergeTest2() throws Exception {
-        final var inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
+        final var inMemoryDataTree = emptyDataTree(MODEL_CONTEXT);
         final var modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         final var modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
 
