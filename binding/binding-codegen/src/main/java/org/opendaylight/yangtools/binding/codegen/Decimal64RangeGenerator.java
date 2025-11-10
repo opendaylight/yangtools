@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.binding.codegen;
 import com.google.common.collect.Range;
 import java.lang.reflect.Array;
 import java.util.Locale;
-import java.util.Set;
 import java.util.function.Function;
-import org.opendaylight.yangtools.binding.lib.CodeHelpers;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint8;
@@ -24,24 +24,37 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * boundary values.
  */
 final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
+    /**
+     * {@code java.lang.reflect.Array} as a JavaTypeName.
+     */
+    private static final @NonNull JavaTypeName ARRAY = JavaTypeName.create(Array.class);
+    /**
+     * {@code org.opendaylight.yangtools.yang.common.Decimal64} as a JavaTypeName.
+     */
+    private static final @NonNull JavaTypeName DECIMAL64 = JavaTypeName.create(Decimal64.class);
+    /**
+     * {@code com.google.common.collect.Range} as a JavaTypeName.
+     */
+    private static final @NonNull JavaTypeName RANGE = JavaTypeName.create(Range.class);
+
     Decimal64RangeGenerator() {
         super(Decimal64.class);
     }
 
-    private static String range(final Function<Class<?>, String> classImporter) {
-        return classImporter.apply(Range.class);
+    private static String range(final Function<JavaTypeName, String> classImporter) {
+        return classImporter.apply(RANGE);
     }
 
-    private static String itemType(final Function<Class<?>, String> classImporter) {
-        return range(classImporter) + '<' + classImporter.apply(Decimal64.class) + '>';
+    private static String itemType(final Function<JavaTypeName, String> classImporter) {
+        return range(classImporter) + '<' + classImporter.apply(DECIMAL64) + '>';
     }
 
-    private static String arrayType(final Function<Class<?>, String> classImporter) {
+    private static String arrayType(final Function<JavaTypeName, String> classImporter) {
         return itemType(classImporter) + "[]";
     }
 
-    private static String format(final Function<Class<?>, String> classImporter, final Decimal64 value) {
-        return classImporter.apply(Decimal64.class) +  ".of(" + value.scale() + ", " + value.unscaledValue() + "L)";
+    private static String format(final Function<JavaTypeName, String> classImporter, final Decimal64 value) {
+        return classImporter.apply(DECIMAL64) +  ".of(" + value.scale() + ", " + value.unscaledValue() + "L)";
     }
 
     @Override
@@ -51,18 +64,17 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
             || value instanceof Uint8 || value instanceof Uint16) {
             // FIXME: this is not quite right
             return Decimal64.valueOf(1, value.intValue());
-        } else {
-            // FIXME: this is not quite right
-            return Decimal64.valueOf(1, value.longValue());
         }
+        // FIXME: this is not quite right
+        return Decimal64.valueOf(1, value.longValue());
     }
 
     @Override
     protected String generateRangeCheckerImplementation(final String checkerName,
-            final RangeConstraint<?> constraint, final Function<Class<?>, String> classImporter) {
-        final Set<? extends Range<? extends Number>> constraints = constraint.getAllowedRanges().asRanges();
-        final String fieldName = checkerName.toUpperCase(Locale.ENGLISH) + "_RANGES";
-        final StringBuilder sb = new StringBuilder();
+            final RangeConstraint<?> constraint, final Function<JavaTypeName, String> classImporter) {
+        final var constraints = constraint.getAllowedRanges().asRanges();
+        final var fieldName = checkerName.toUpperCase(Locale.ENGLISH) + "_RANGES";
+        final var sb = new StringBuilder();
 
         // Field to hold the Range objects in an array
         sb.append("private static final ").append(arrayType(classImporter)).append(' ').append(fieldName).append(";\n");
@@ -71,13 +83,13 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
         sb.append("static {\n");
         sb.append("    @SuppressWarnings(\"unchecked\")\n");
         sb.append("    final ").append(arrayType(classImporter)).append(" a = (").append(arrayType(classImporter))
-            .append(") ").append(classImporter.apply(Array.class)).append(".newInstance(").append(range(classImporter))
+            .append(") ").append(classImporter.apply(ARRAY)).append(".newInstance(").append(range(classImporter))
             .append(".class, ").append(constraints.size()).append(");\n");
 
         int offset = 0;
-        for (Range<? extends Number> r : constraints) {
-            final String min = format(classImporter, getValue(r.lowerEndpoint()));
-            final String max = format(classImporter, getValue(r.upperEndpoint()));
+        for (var range : constraints) {
+            final var min = format(classImporter, getValue(range.lowerEndpoint()));
+            final var max = format(classImporter, getValue(range.upperEndpoint()));
 
             sb.append("    a[").append(offset++).append("] = ").append(range(classImporter)).append(".closed(")
                 .append(min).append(", ").append(max).append(");\n");
@@ -95,8 +107,8 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
         sb.append("        }\n");
         sb.append("    }\n");
 
-        sb.append("    ").append(classImporter.apply(CodeHelpers.class)).append(".throwInvalidRange(").append(fieldName)
-            .append(", value);\n");
+        sb.append("    ").append(classImporter.apply(JavaFileTemplate.CODEHELPERS)).append(".throwInvalidRange(")
+            .append(fieldName).append(", value);\n");
         sb.append("}\n");
 
         return sb.toString();
