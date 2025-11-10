@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     private final @NonNull Class<T> type;
 
     protected AbstractRangeGenerator(final Class<T> typeClass) {
-        this.type = requireNonNull(typeClass);
+        type = requireNonNull(typeClass);
     }
 
     static @NonNull AbstractRangeGenerator<?> forType(final @NonNull Type type) {
@@ -112,7 +113,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @return Method source code.
      */
     protected abstract @NonNull String generateRangeCheckerImplementation(@NonNull String checkerName,
-            @NonNull RangeConstraint<?> constraints, Function<Class<?>, String> classImporter);
+            @NonNull RangeConstraint<?> constraints, Function<JavaTypeName, String> classImporter);
 
     private static @NonNull String rangeCheckerName(final String member) {
         return "check" + member + "Range";

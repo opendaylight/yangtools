@@ -52,7 +52,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -220,10 +219,6 @@ class JavaFileTemplate {
 
     final @NonNull String importedName(final @NonNull Type intype, final @NonNull String annotation) {
         return javaType.getReferenceString(intype, annotation);
-    }
-
-    final @NonNull String importedName(final Class<?> cls) {
-        return importedName(Types.typeForClass(cls));
     }
 
     final @NonNull String importedName(final @NonNull JavaTypeName intype) {
