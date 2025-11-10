@@ -357,7 +357,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                    private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «jurPatternRef».compile("«firstEntry.key.escapeJava»");
                    private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = "«firstEntry.value.escapeJava»";
                 «ELSE»
-                   private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CODEHELPERS.importedName».compilePatterns(«IMMUTABLE_LIST.importedName».of(
+                   private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CODEHELPERS.importedName».compilePatterns(«JU_LIST.importedName».of(
                    «FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»));
                    private static final String[] «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = { «
                    FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };

@@ -16,7 +16,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.VerifyException;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
 import java.util.AbstractMap;
@@ -171,10 +170,6 @@ class JavaFileTemplate {
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 
-    /**
-     * {@code com.google.common.collect.ImmutableList} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName IMMUTABLE_LIST = JavaTypeName.create(ImmutableList.class);
     /**
      * {@code com.google.common.collect.Lists} as a JavaTypeName.
      */

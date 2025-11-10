@@ -537,7 +537,7 @@ class ClassTemplate extends BaseTemplate {
                 «IF TypeConstants.PATTERN_CONSTANT_NAME.equals(c.name)»
                     «val cValue = c.value as Map<String, String>»
                     «val jurPatternRef = JUR_PATTERN.importedName»
-                    public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «IMMUTABLE_LIST.importedName».of(«
+                    public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «JU_LIST.importedName».of(«
                     FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
                     «IF cValue.size == 1»
                         private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef».compile(«TypeConstants.PATTERN_CONSTANT_NAME».getFirst());
