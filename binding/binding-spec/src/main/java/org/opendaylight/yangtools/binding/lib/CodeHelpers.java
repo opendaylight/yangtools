@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
+import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
@@ -479,5 +480,20 @@ public final class CodeHelpers {
             final @NonNull String fieldName, final @Nullable Set<?> set) {
         DoNotLeakSpotbugs.checkCollectionField(requiredClass, fieldName, set);
         return (Set<T>) set;
+    }
+
+    /**
+     * Check if the proposed string is empty.
+     *
+     * @param str the string
+     * @return an {@link Empty} instance
+     * @throws IllegalArgumentException if {code str} is non-empty
+     * @throws NullPointerException if {@code str} is {@code null}
+     */
+    public static @NonNull Empty emptyFor(final String str) {
+        if (!str.isEmpty()) {
+            throw new IllegalArgumentException("Invalid value " + str);
+        }
+        return Empty.value();
     }
 }
