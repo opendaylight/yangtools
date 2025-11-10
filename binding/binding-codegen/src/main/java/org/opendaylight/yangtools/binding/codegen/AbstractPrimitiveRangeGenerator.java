@@ -12,11 +12,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.lib.CodeHelpers;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,23 +51,23 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     }
 
     private Collection<String> createExpressions(final RangeConstraint<?> constraint,
-            final Function<Class<?>, String> classImporter) {
-        final Set<? extends Range<? extends Number>> constraints = constraint.getAllowedRanges().asRanges();
-        final Collection<String> ret = new ArrayList<>(constraints.size());
+            final Function<JavaTypeName, String> classImporter) {
+        final var constraints = constraint.getAllowedRanges().asRanges();
+        final var ret = new ArrayList<String>(constraints.size());
 
-        for (Range<? extends Number> r : constraints) {
-            final T min = getValue(r.lowerEndpoint());
-            final boolean needMin = needsMinimumEnforcement(min);
+        for (var r : constraints) {
+            final var min = getValue(r.lowerEndpoint());
+            final var needMin = needsMinimumEnforcement(min);
 
-            final T max = getValue(r.upperEndpoint());
-            final boolean needMax = needsMaximumEnforcement(max);
+            final var max = getValue(r.upperEndpoint());
+            final var needMax = needsMaximumEnforcement(max);
 
             if (!needMin && !needMax) {
                 LOG.debug("Type {} indicates [{}, {}] does not require enforcement", getTypeName(), min, max);
                 continue;
             }
 
-            final StringBuilder sb = new StringBuilder();
+            final var sb = new StringBuilder();
             if (needMin) {
                 appendMinCheck(sb, min, classImporter);
             }
@@ -86,11 +84,11 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
         return ret;
     }
 
-    void appendMaxCheck(final StringBuilder sb, final T max, final Function<Class<?>, String> classImporter) {
+    void appendMaxCheck(final StringBuilder sb, final T max, final Function<JavaTypeName, String> classImporter) {
         sb.append("value <= ").append(format(max));
     }
 
-    void appendMinCheck(final StringBuilder sb, final T min, final Function<Class<?>, String> classImporter) {
+    void appendMinCheck(final StringBuilder sb, final T min, final Function<JavaTypeName, String> classImporter) {
         sb.append("value >= ").append(format(min));
     }
 
@@ -103,15 +101,19 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
      */
     protected abstract @NonNull String format(T value);
 
-    String codeHelpersThrow() {
+    /**
+     * {@return the {@link org.opendaylight.yangtools.binding.lib.CodeHelpers} {@code throwInvalidRange} variant
+     *          to call}
+     */
+    @NonNull String codeHelpersThrow() {
         return "throwInvalidRange";
     }
 
     private String createRangeString(final RangeConstraint<?> constraint) {
-        final Set<? extends Range<? extends Number>> constraints = constraint.getAllowedRanges().asRanges();
-        final List<Range<T>> ranges = new ArrayList<>(constraints.size());
+        final var constraints = constraint.getAllowedRanges().asRanges();
+        final var ranges = new ArrayList<Range<T>>(constraints.size());
 
-        for (Range<? extends Number> c : constraints) {
+        for (var c : constraints) {
             ranges.add(Range.closed(getValue(c.lowerEndpoint()), getValue(c.upperEndpoint())));
         }
 
@@ -120,22 +122,23 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
 
     @Override
     protected final String generateRangeCheckerImplementation(final String checkerName,
-            final RangeConstraint<?> constraints, final Function<Class<?>, String> classImporter) {
-        final StringBuilder sb = new StringBuilder();
-        final Collection<String> expressions = createExpressions(constraints, classImporter);
+            final RangeConstraint<?> constraints, final Function<JavaTypeName, String> classImporter) {
+        final var sb = new StringBuilder();
+        final var expressions = createExpressions(constraints, classImporter);
 
         sb.append("private static void ").append(checkerName).append("(final ").append(primitiveName)
             .append(" value) {\n");
 
         if (!expressions.isEmpty()) {
-            for (String exp : expressions) {
+            for (var exp : expressions) {
                 sb.append("    if (").append(exp).append(") {\n");
                 sb.append("        return;\n");
                 sb.append("    }\n");
             }
 
-            sb.append("    ").append(classImporter.apply(CodeHelpers.class)).append('.').append(codeHelpersThrow())
-            .append("(\"").append(createRangeString(constraints)).append("\", value);\n");
+            sb.append("    ").append(classImporter.apply(JavaFileTemplate.CODEHELPERS))
+                .append('.').append(codeHelpersThrow()).append("(\"").append(createRangeString(constraints))
+                .append("\", value);\n");
         }
 
         return sb.append("}\n").toString();
