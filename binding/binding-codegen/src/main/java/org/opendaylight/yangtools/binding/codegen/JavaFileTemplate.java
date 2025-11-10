@@ -16,7 +16,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Lists;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Base64;
@@ -162,10 +161,6 @@ class JavaFileTemplate {
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 
-    /**
-     * {@code com.google.common.collect.Lists} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName LISTS = JavaTypeName.create(Lists.class);
     /**
      * {@code com.google.common.base.MoreObjects} as a JavaTypeName.
      */

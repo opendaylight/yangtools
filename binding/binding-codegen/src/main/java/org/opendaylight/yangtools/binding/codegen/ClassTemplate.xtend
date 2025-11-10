@@ -449,7 +449,7 @@ class ClassTemplate extends BaseTemplate {
 
     @SuppressFBWarnings(value = "DLS_DEAD_LOCAL_STORE", justification = "FOR with SEPARATOR, not needing for value")
     def protected bitsArgs() '''
-        «JU_LIST.importedName»<«STRING.importedName»> properties = «LISTS.importedName».newArrayList(«allProperties.propsAsArgs»);
+        var properties = «JU_LIST.importedName».of(«allProperties.propsAsArgs»);
         if (!properties.contains(defaultValue)) {
             throw new «IAE.importedName»("invalid default parameter");
         }
