@@ -14,7 +14,6 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Lists;
@@ -54,7 +53,6 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multipl
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -161,11 +159,6 @@ class JavaFileTemplate {
     static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
 
     /**
-     * {@code org.opendaylight.yangtools.yang.common.Empty} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName EMPTY = JavaTypeName.create(Empty.class);
-
-    /**
      * {@code org.opendaylight.yangtools.binding.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
@@ -178,10 +171,6 @@ class JavaFileTemplate {
      * {@code com.google.common.base.MoreObjects} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName MOREOBJECTS = JavaTypeName.create(MoreObjects.class);
-    /**
-     * {@code com.google.common.base.Preconditions} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName PRECONDITIONS = JavaTypeName.create(Preconditions.class);
 
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');

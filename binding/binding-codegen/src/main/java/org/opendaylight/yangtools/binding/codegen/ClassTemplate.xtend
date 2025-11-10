@@ -438,8 +438,7 @@ class ClassTemplate extends BaseTemplate {
                 «ELSEIF BINARY_TYPE.equals(propType)»
                     return new «genTO.name»(«JU_BASE64.importedName».getDecoder().decode(defaultValue));
                 «ELSEIF EMPTY_TYPE.equals(propType)»
-                    «PRECONDITIONS.importedName».checkArgument(defaultValue.isEmpty(), "Invalid value %s", defaultValue);
-                    return new «genTO.name»(«EMPTY.importedName».value());
+                    return new «genTO.name»(«CODEHELPERS.importedName».emptyFor(defaultValue));
                 «ELSE»
                     return new «genTO.name»(new «propType.importedName»(defaultValue));
                 «ENDIF»
