@@ -27,19 +27,14 @@ import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
-import com.google.common.base.Preconditions
-import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
-import com.google.common.collect.Lists
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 import java.util.ArrayList
-import java.util.Base64;
 import java.util.Collection
 import java.util.Comparator
 import java.util.List
 import java.util.Map
 import java.util.Set
-import javax.management.ConstructorParameters
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.binding.model.api.Constant
 import org.opendaylight.yangtools.binding.model.api.Enumeration
@@ -51,7 +46,6 @@ import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.model.ri.Types
 import org.opendaylight.yangtools.binding.contract.Naming
-import org.opendaylight.yangtools.yang.common.Empty
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 
 /**
@@ -321,7 +315,7 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def private typedefConstructor() '''
-    @«ConstructorParameters.importedName»("«TypeConstants.VALUE_PROP»")
+    @«CONSTRUCTOR_PARAMETERS.importedName»("«TypeConstants.VALUE_PROP»")
     public «type.name»(«allProperties.asArgumentsDeclaration») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
@@ -442,10 +436,10 @@ class ClassTemplate extends BaseTemplate {
                 «ELSEIF STRING_TYPE.equals(propType)»
                     return new «genTO.name»(defaultValue);
                 «ELSEIF BINARY_TYPE.equals(propType)»
-                    return new «genTO.name»(«Base64.importedName».getDecoder().decode(defaultValue));
+                    return new «genTO.name»(«JU_BASE64.importedName».getDecoder().decode(defaultValue));
                 «ELSEIF EMPTY_TYPE.equals(propType)»
-                    «Preconditions.importedName».checkArgument(defaultValue.isEmpty(), "Invalid value %s", defaultValue);
-                    return new «genTO.name»(«Empty.importedName».value());
+                    «PRECONDITIONS.importedName».checkArgument(defaultValue.isEmpty(), "Invalid value %s", defaultValue);
+                    return new «genTO.name»(«EMPTY.importedName».value());
                 «ELSE»
                     return new «genTO.name»(new «propType.importedName»(defaultValue));
                 «ENDIF»
@@ -456,7 +450,7 @@ class ClassTemplate extends BaseTemplate {
 
     @SuppressFBWarnings(value = "DLS_DEAD_LOCAL_STORE", justification = "FOR with SEPARATOR, not needing for value")
     def protected bitsArgs() '''
-        «JU_LIST.importedName»<«STRING.importedName»> properties = «Lists.importedName».newArrayList(«allProperties.propsAsArgs»);
+        «JU_LIST.importedName»<«STRING.importedName»> properties = «LISTS.importedName».newArrayList(«allProperties.propsAsArgs»);
         if (!properties.contains(defaultValue)) {
             throw new «IAE.importedName»("invalid default parameter");
         }
@@ -543,7 +537,7 @@ class ClassTemplate extends BaseTemplate {
                 «IF TypeConstants.PATTERN_CONSTANT_NAME.equals(c.name)»
                     «val cValue = c.value as Map<String, String>»
                     «val jurPatternRef = JUR_PATTERN.importedName»
-                    public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
+                    public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «IMMUTABLE_LIST.importedName».of(«
                     FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
                     «IF cValue.size == 1»
                         private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef».compile(«TypeConstants.PATTERN_CONSTANT_NAME».getFirst());

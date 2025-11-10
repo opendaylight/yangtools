@@ -14,10 +14,14 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Lists;
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,6 +35,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.processing.Generated;
+import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -50,6 +55,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multipl
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -110,6 +116,10 @@ class JavaFileTemplate {
     /**
      * {@code java.util.HashMap} as a JavaTypeName.
      */
+    static final @NonNull JavaTypeName JU_BASE64 = JavaTypeName.create(Base64.class);
+    /**
+     * {@code java.util.HashMap} as a JavaTypeName.
+     */
     static final @NonNull JavaTypeName JU_HASHMAP = JavaTypeName.create(HashMap.class);
     /**
      * {@code java.util.List} as a JavaTypeName.
@@ -134,19 +144,27 @@ class JavaFileTemplate {
     static final @NonNull JavaTypeName GENERATED = JavaTypeName.create(Generated.class);
 
     /**
+     * {@code javax.management.ConstructorParameters} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName CONSTRUCTOR_PARAMETERS = JavaTypeName.create(ConstructorParameters.class);
+
+    /**
      * {@code org.eclipse.jdt.annotation.NonNull} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName NONNULL = JavaTypeName.create(NonNull.class);
-
     /**
      * {@code org.eclipse.jdt.annotation.NonNullByDefault} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName NONNULL_BY_DEFAULT = JavaTypeName.create(NonNullByDefault.class);
-
     /**
      * {@code org.eclipse.jdt.annotation.Nullable} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
+
+    /**
+     * {@code org.opendaylight.yangtools.yang.common.Empty} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName EMPTY = JavaTypeName.create(Empty.class);
 
     /**
      * {@code org.opendaylight.yangtools.binding.CodeHelpers} as a JavaTypeName.
@@ -154,9 +172,21 @@ class JavaFileTemplate {
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 
     /**
+     * {@code com.google.common.collect.ImmutableList} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName IMMUTABLE_LIST = JavaTypeName.create(ImmutableList.class);
+    /**
+     * {@code com.google.common.collect.Lists} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName LISTS = JavaTypeName.create(Lists.class);
+    /**
      * {@code com.google.common.base.MoreObjects} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName MOREOBJECTS = JavaTypeName.create(MoreObjects.class);
+    /**
+     * {@code com.google.common.base.Preconditions} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName PRECONDITIONS = JavaTypeName.create(Preconditions.class);
 
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');

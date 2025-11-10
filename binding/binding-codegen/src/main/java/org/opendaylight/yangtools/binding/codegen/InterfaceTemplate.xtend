@@ -290,7 +290,7 @@ class InterfaceTemplate extends BaseTemplate {
         «val augmentable = analyzeType»
         «IF augmentable || !typeAnalysis.value.empty»
             /**
-             * Default implementation of {@link «Object.importedName»#hashCode()} contract for this interface.
+             * Default implementation of {@link «OBJECT.importedName»#hashCode()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent hashing
              * results across all implementations.
              *
@@ -321,7 +321,7 @@ class InterfaceTemplate extends BaseTemplate {
         «val augmentable = analyzeType»
         «IF augmentable || !typeAnalysis.value.isEmpty»
             /**
-             * Default implementation of {@link «Object.importedName»#equals(«Object.importedName»)} contract for this interface.
+             * Default implementation of {@link «OBJECT.importedName»#equals(«OBJECT.importedName»)} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent equality
              * results across all implementations.
              *
@@ -347,7 +347,7 @@ class InterfaceTemplate extends BaseTemplate {
     def generateBindingToString() '''
         «val augmentable = analyzeType»
         /**
-         * Default implementation of {@link «Object.importedName»#toString()} contract for this interface.
+         * Default implementation of {@link «OBJECT.importedName»#toString()} contract for this interface.
          * Implementations of this interface are encouraged to defer to this method to get consistent string
          * representations across all implementations.
          *

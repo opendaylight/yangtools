@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FI
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME
 
-import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
 import java.util.ArrayList
@@ -358,7 +357,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                    private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «jurPatternRef».compile("«firstEntry.key.escapeJava»");
                    private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = "«firstEntry.value.escapeJava»";
                 «ELSE»
-                   private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CODEHELPERS.importedName».compilePatterns(«ImmutableList.importedName».of(
+                   private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CODEHELPERS.importedName».compilePatterns(«IMMUTABLE_LIST.importedName».of(
                    «FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»));
                    private static final String[] «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = { «
                    FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
