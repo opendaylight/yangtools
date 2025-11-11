@@ -16,6 +16,24 @@
       "message": "YANGTOOLS-1727",
       "revId": "68ea92177bb2ccf11dddd2ee18b29e9bc44b5672",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "373eb4ee_be6e0aa6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 30
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-11T23:49:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "57e6a37d_ad39b72d",
+      "revId": "68ea92177bb2ccf11dddd2ee18b29e9bc44b5672",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
