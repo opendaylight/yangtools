@@ -7,9 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.inject;
 
+import java.util.Collection;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
@@ -18,11 +23,28 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
  * The {@link YangParserFactory} implementation.
  */
 @Singleton
-@NonNullByDefault
 @SuppressWarnings("exports")
-public final class InjectYangParserFactory extends DefaultYangParserFactory {
+public final class InjectYangParserFactory implements YangParserFactory {
+    private final @NonNull DefaultYangParserFactory delegate;
+
     @Inject
+    @NonNullByDefault
     public InjectYangParserFactory(final YangXPathParserFactory xpathFactory) {
-        super(xpathFactory);
+        delegate = new DefaultYangParserFactory(xpathFactory);
+    }
+
+    @Override
+    public Collection<ImportResolutionMode> supportedImportResolutionModes() {
+        return delegate.supportedImportResolutionModes();
+    }
+
+    @Override
+    public YangParser createParser() {
+        return delegate.createParser();
+    }
+
+    @Override
+    public YangParser createParser(YangParserConfiguration configuration) {
+        return delegate.createParser(configuration);
     }
 }
