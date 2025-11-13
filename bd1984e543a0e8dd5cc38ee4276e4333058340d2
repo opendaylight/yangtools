@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd38132c_4bf23907",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-13T09:53:27Z",
+      "side": 1,
+      "message": "Fails on https://github.com/raphw/byte-buddy/issues/1872",
+      "revId": "bd1984e543a0e8dd5cc38ee4276e4333058340d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
