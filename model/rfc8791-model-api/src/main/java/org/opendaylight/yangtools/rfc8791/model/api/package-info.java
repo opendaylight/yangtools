@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2025 PANTHEON.tech, s.r.o. and others. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+/**
+ * YANG metamodel extensions to support YANG Data Structure Extensions, as defined in
+ * <a href="https://www.rfc-editor.org/rfc/rfc8791">RFC8791</a>.
+ *
+ * @since 14.0.21
+ */
+@org.osgi.annotation.bundle.Export
+package org.opendaylight.yangtools.rfc8791.model.api;

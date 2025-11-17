@@ -45,6 +45,7 @@
         <module>rfc8040-model-api</module>
         <module>rfc8528-model-api</module>
         <module>rfc8639-model-api</module>
+        <module>rfc8791-model-api</module>
         <module>rfc8819-model-api</module>
 
         <!-- OpenDaylight YANG extensions -->
