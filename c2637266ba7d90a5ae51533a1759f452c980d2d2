@@ -273,6 +273,30 @@
       },
       "revId": "c2637266ba7d90a5ae51533a1759f452c980d2d2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e53aaa84_c014950a",
+        "filename": "parser/rfc8791-parser-support/src/main/java/org/opendaylight/yangtools/rfc8791/parser/RafAugmentStructureStatement.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-17T20:18:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "724bb42e_4e6bf2ff",
+      "range": {
+        "startLine": 15,
+        "startChar": 13,
+        "endLine": 15,
+        "endChar": 16
+      },
+      "revId": "c2637266ba7d90a5ae51533a1759f452c980d2d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
