@@ -23,6 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 @Beta
 public enum ModuleTagStatements implements StatementDefinition {
+    /**
+     * The {@code module-tag} statement.
+     */
     MODULE_TAG(ModuleTagStatement.class, ModuleTagEffectiveStatement.class, "module-tag", "tag");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> type;

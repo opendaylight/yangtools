@@ -21,6 +21,8 @@ import org.eclipse.jdt.annotation.NonNull;
  * <p>This registry allocates tag prefixes. All YANG module tags SHOULD begin with one of the prefixes in this registry.
  * Prefix entries in this registry should be short strings consisting of lowercase ASCII alpha-numeric characters and
  * a final ":" character.
+ *
+ * @param value the prefix value
  */
 public record Prefix(@NonNull String value) {
     private static final Interner<@NonNull Prefix> INTERNER = Interners.newWeakInterner();
@@ -47,11 +49,19 @@ public record Prefix(@NonNull String value) {
      */
     public static final @NonNull Prefix USER = new Prefix("user:").intern();
 
+    /**
+     * Default constructor.
+     *
+     * @param value the prefix value
+     */
     public Prefix {
         requireNonNull(value);
         checkArgument(Tag.isValidValue(value), "Invalid prefix value '%s'.", value);
     }
 
+    /**
+     * {@return an interned equivalent of this prefix}
+     */
     public @NonNull Prefix intern() {
         return INTERNER.intern(this);
     }

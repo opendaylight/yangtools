@@ -50,6 +50,6 @@ class TagTest {
 
     private static void assertIllegalArgumentException(final @NonNull String input) {
         final var e = assertThrows(IllegalArgumentException.class, () -> new Tag(input));
-        assertEquals("Invalid tag value '" + input + "'.", e.getMessage());
+        assertEquals("Invalid tag value '" + input + "'", e.getMessage());
     }
 }

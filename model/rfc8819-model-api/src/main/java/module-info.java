@@ -5,6 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+/**
+ * YANG metamodel extensions to support YANG module tags, as defined in
+ * <a href="https://www.rfc-editor.org/rfc/rfc8819">RFC8819</a>.
+ */
 module org.opendaylight.yangtools.rfc8819.model.api {
     exports org.opendaylight.yangtools.rfc8819.model.api;
 

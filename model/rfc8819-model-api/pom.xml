@@ -22,8 +22,7 @@
     <description>RFC8819 model API</description>
 
     <properties>
-        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
-        <doclint>all,-missing</doclint>
+        <maven.javadoc.failOnWarnings>true</maven.javadoc.failOnWarnings>
     </properties>
 
     <dependencies>
