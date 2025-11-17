@@ -41,6 +41,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "075a446a_b8d47097",
+        "filename": "model/rfc8791-model-api/pom.xml",
+        "patchSetId": 16
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-17T17:55:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb671a07_0b6a447d",
+      "range": {
+        "startLine": 14,
+        "startChar": 20,
+        "endLine": 14,
+        "endChar": 33
+      },
+      "revId": "c2637266ba7d90a5ae51533a1759f452c980d2d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea1a400e_5fb2e635",
@@ -54,6 +78,30 @@
       "writtenOn": "2025-11-17T16:28:35Z",
       "side": 1,
       "message": "full module",
+      "range": {
+        "startLine": 50,
+        "startChar": 25,
+        "endLine": 50,
+        "endChar": 46
+      },
+      "revId": "c2637266ba7d90a5ae51533a1759f452c980d2d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b0f81549_8b6e8567",
+        "filename": "model/rfc8791-model-api/pom.xml",
+        "patchSetId": 16
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-17T17:55:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea1a400e_5fb2e635",
       "range": {
         "startLine": 50,
         "startChar": 25,
@@ -87,6 +135,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "11ef4eb9_7cbb466a",
+        "filename": "model/rfc8791-model-api/src/main/java/org/opendaylight/yangtools/rfc8791/model/api/AugmentStructureStatement.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-17T17:55:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3dddb619_9330a1dc",
+      "range": {
+        "startLine": 17,
+        "startChar": 97,
+        "endLine": 17,
+        "endChar": 105
+      },
+      "revId": "c2637266ba7d90a5ae51533a1759f452c980d2d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6ad1fff_f3c7df0c",
@@ -100,6 +172,30 @@
       "writtenOn": "2025-11-17T16:26:56Z",
       "side": 1,
       "message": "split into (Augment)StructureStatement.DEFINITION fields",
+      "range": {
+        "startLine": 26,
+        "startChar": 12,
+        "endLine": 26,
+        "endChar": 39
+      },
+      "revId": "c2637266ba7d90a5ae51533a1759f452c980d2d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "faba6fdb_3b924af5",
+        "filename": "model/rfc8791-model-api/src/main/java/org/opendaylight/yangtools/rfc8791/model/api/YangDataStructureStatements.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-17T17:55:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6ad1fff_f3c7df0c",
       "range": {
         "startLine": 26,
         "startChar": 12,
