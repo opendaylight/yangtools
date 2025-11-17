@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f2575ef_bc1d3b4e",
+        "filename": "model/rfc8791-model-api/src/main/java/org/opendaylight/yangtools/rfc8791/model/api/YangDataStructureConstants.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-17T18:54:12Z",
+      "side": 1,
+      "message": "8791",
+      "range": {
+        "startLine": 36,
+        "startChar": 10,
+        "endLine": 36,
+        "endChar": 14
+      },
+      "revId": "55baa8e5784a0faec4632a9a4bfb37cf24e4f493",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
