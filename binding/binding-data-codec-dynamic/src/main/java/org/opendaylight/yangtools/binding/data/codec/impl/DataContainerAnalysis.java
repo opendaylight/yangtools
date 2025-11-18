@@ -156,12 +156,12 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
                 return new StructuralContainerCodecPrototype(item, container, factory);
             }
             return new ContainerLikeCodecPrototype(item, containerLike, factory);
-        } else if (child instanceof ListRuntimeType list) {
+        }
+        if (child instanceof ListRuntimeType list) {
             return list.keyType() != null ? new MapCodecPrototype(item, list, factory)
                 : new ListCodecPrototype(item, list, factory);
-        } else {
-            throw new UnsupportedOperationException("Unhandled type " + child);
         }
+        throw new UnsupportedOperationException("Unhandled type " + child);
     }
 
     // FIXME: MDSAL-697: move this method into BindingRuntimeContext
@@ -223,12 +223,14 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
             return Optional.empty();
         }
 
-        final Class<?> returnType = method.getReturnType();
+        final var returnType = method.getReturnType();
         if (DataContainer.class.isAssignableFrom(returnType)) {
             return optionalDataContainer(returnType);
-        } else if (List.class.isAssignableFrom(returnType)) {
+        }
+        if (List.class.isAssignableFrom(returnType)) {
             return getYangModeledReturnType(method, 0);
-        } else if (Map.class.isAssignableFrom(returnType)) {
+        }
+        if (Map.class.isAssignableFrom(returnType)) {
             return getYangModeledReturnType(method, 1);
         }
         return Optional.empty();
