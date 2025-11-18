@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static java.util.Objects.requireNonNull;
-
 import java.lang.reflect.Method;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -37,30 +35,23 @@ sealed class ListCodecContext<D extends DataObject> extends DataObjectCodecConte
 
     @Override
     public D deserialize(final NormalizedNode node) {
-        final var nonnull = requireNonNull(node);
-        if (nonnull instanceof MapEntryNode mapEntry) {
-            return createBindingProxy(mapEntry);
-        } else if (nonnull instanceof UnkeyedListEntryNode unkeyedEntry) {
-            return createBindingProxy(unkeyedEntry);
-        } else {
-            throw new IllegalArgumentException("Expecting either a MapEntryNode or an UnkeyedListEntryNode, not "
-                + node.contract().getSimpleName());
-        }
+        return switch (node) {
+            case MapEntryNode mapEntry -> createBindingProxy(mapEntry);
+            case UnkeyedListEntryNode unkeyedEntry -> createBindingProxy(unkeyedEntry);
+            default -> throw new IllegalArgumentException(
+                "Expecting either a MapEntryNode or an UnkeyedListEntryNode, not " + node.contract().getSimpleName());
+        };
     }
 
     @Override
     Object deserializeObject(final NormalizedNode node) {
-        if (node instanceof MapNode map) {
-            return fromMap(map);
-        } else if (node instanceof MapEntryNode mapEntry) {
-            return createBindingProxy(mapEntry);
-        } else if (node instanceof UnkeyedListNode list) {
-            return fromUnkeyedList(list);
-        } else if (node instanceof UnkeyedListEntryNode listEntry) {
-            return createBindingProxy(listEntry);
-        } else {
-            throw new IllegalStateException("Unsupported data type " + node.contract().getSimpleName());
-        }
+        return switch (node) {
+            case MapNode map -> fromMap(map);
+            case MapEntryNode mapEntry -> createBindingProxy(mapEntry);
+            case UnkeyedListNode list -> fromUnkeyedList(list);
+            case UnkeyedListEntryNode listEntry -> createBindingProxy(listEntry);
+            default -> throw new IllegalStateException("Unsupported data type " + node.contract().getSimpleName());
+        };
     }
 
     @NonNull Object fromMap(final MapNode map, final int size) {
