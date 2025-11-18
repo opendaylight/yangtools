@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
@@ -31,9 +32,8 @@ final class StructuralContainerCodecContext<D extends DataObject> extends Contai
         }
     }
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
-    private volatile D emptyObject;
+    private volatile @Nullable D emptyObject = null;
 
     StructuralContainerCodecContext(final Class<D> cls, final ContainerRuntimeType type,
             final CodecContextFactory factory) {
