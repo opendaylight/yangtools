@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
-import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
+import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Bridge for initializing generated instance constants during class loading time. This class is public only due to
@@ -21,45 +21,50 @@ import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerat
  */
 @Beta
 public final class ClassGeneratorBridge {
-    interface BridgeProvider<T> extends ClassGenerator<T> {
-        @Override
-        default Class<T> customizeLoading(final @NonNull Supplier<Class<T>> loader) {
-            final var prev = ClassGeneratorBridge.setup(this);
-            try {
-                final var result = loader.get();
-
-                /*
-                 * This a bit of magic to support NodeContextSupplier constants. These constants need to be resolved
-                 * while we have the information needed to find them -- that information is being held in this instance
-                 * and we leak it to a thread-local variable held by CodecDataObjectBridge.
-                 *
-                 * By default the JVM will defer class initialization to first use, which unfortunately is too late for
-                 * us, and hence we need to force class to initialize.
-                 */
-                try {
-                    Class.forName(result.getName(), true, result.getClassLoader());
-                } catch (ClassNotFoundException e) {
-                    throw new LinkageError("Failed to find newly-defined " + result, e);
-                }
-
-                return result;
-            } finally {
-                ClassGeneratorBridge.tearDown(prev);
-            }
-        }
+    /**
+     * Base class for possible services that are being bridged. This interface, as well as its implementations, must be
+     * kept package-private.
+     *
+     * <p>This marker interface is weird: it allows for {@link GetterGenerator} implementations, but the baseline
+     * specializations are kept as interfaces in this class. The reason for this diamond layour is to keep the bridging
+     * contract versus code generation implementation separate all the while strictly keeping control over what gets
+     * implemented.
+     */
+    sealed interface BridgeProvider permits GetterGenerator, CodecContextSupplierProvider, LocalNameProvider {
+        // Marker interface only
     }
 
-    interface CodecContextSupplierProvider<T> extends BridgeProvider<T> {
-
-        @NonNull CodecContextSupplier resolveCodecContextSupplier(@NonNull String methodName);
+    /**
+     * A {@link BridgeProvider} accessed via {@link #resolveCodecContextSupplier(String)}.
+     */
+    @NonNullByDefault
+    sealed interface CodecContextSupplierProvider extends BridgeProvider permits FixedGetterGenerator {
+        /**
+         * Returns the {@link CodecContextSupplier} for specified method name.
+         *
+         * @param methodName the method name
+         * @return the {@link CodecContextSupplier}
+         */
+        CodecContextSupplier resolveCodecContextSupplier(String methodName);
     }
 
-    interface LocalNameProvider<T> extends BridgeProvider<T> {
-
-        @NonNull String resolveLocalName(@NonNull String methodName);
+    /**
+     * A {@link BridgeProvider} accessed via {@link #resolveLocalName(String)}.
+     */
+    @NonNullByDefault
+    sealed interface LocalNameProvider extends BridgeProvider permits ReusableGetterGenerator {
+        /**
+         * Returns the {@link QName#getLocalName()} for specified method name. Returned value needs to be
+         * cross-referenced the the underlying schema to find the correct namespace-bound definition.
+         *
+         * @param methodName the method name
+         * @return the local name
+         */
+        String resolveLocalName(String methodName);
     }
 
-    private static final ThreadLocal<BridgeProvider<?>> CURRENT_CUSTOMIZER = new ThreadLocal<>();
+    // FIXME: Java 25: can we use a ScopedValue instead?
+    private static final ThreadLocal<BridgeProvider> CURRENT_CUSTOMIZER = new ThreadLocal<>();
 
     private ClassGeneratorBridge() {
         // Hidden on purpose
@@ -73,13 +78,13 @@ public final class ClassGeneratorBridge {
         return current(LocalNameProvider.class).resolveLocalName(methodName);
     }
 
-    static @Nullable BridgeProvider<?> setup(final @NonNull BridgeProvider<?> next) {
+    static @Nullable BridgeProvider setup(final @NonNull BridgeProvider next) {
         final var prev = CURRENT_CUSTOMIZER.get();
         CURRENT_CUSTOMIZER.set(verifyNotNull(next));
         return prev;
     }
 
-    static void tearDown(final @Nullable BridgeProvider<?> prev) {
+    static void tearDown(final @Nullable BridgeProvider prev) {
         if (prev == null) {
             CURRENT_CUSTOMIZER.remove();
         } else {
@@ -87,7 +92,7 @@ public final class ClassGeneratorBridge {
         }
     }
 
-    private static <T extends BridgeProvider<?>> @NonNull T current(final Class<T> requested) {
+    private static <T extends BridgeProvider> @NonNull T current(final Class<T> requested) {
         return requested.cast(verifyNotNull(CURRENT_CUSTOMIZER.get(), "No customizer attached"));
     }
 }
