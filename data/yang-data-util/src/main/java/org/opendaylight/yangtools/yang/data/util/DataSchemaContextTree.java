@@ -98,7 +98,7 @@ public final class DataSchemaContextTree {
      */
     public @NonNull CheckedValue<@NonNull NodeAndStack, @NonNull IllegalArgumentException> enterPath(
             final YangInstanceIdentifier path) {
-        final var stack = SchemaInferenceStack.of((EffectiveModelContext) root.dataSchemaNode());
+        final var stack = SchemaInferenceStack.of(modelContext);
         DataSchemaContext node = root;
         for (var arg : path.getPathArguments()) {
             final var child = node instanceof Composite composite ? composite.enterChild(stack, arg) : null;
