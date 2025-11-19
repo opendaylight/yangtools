@@ -44,6 +44,11 @@ final class YangDataEffectiveStatementImpl
     }
 
     @Override
+    public YangDataName name() {
+        return argument();
+    }
+
+    @Override
     public QName getQName() {
         return child.getQName();
     }
