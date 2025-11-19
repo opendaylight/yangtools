@@ -13,13 +13,17 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.CheckedValue;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.context.ContainerContext;
+import org.opendaylight.yangtools.yang.data.util.context.YangDataContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -43,6 +47,8 @@ public final class DataSchemaContextTree {
             }
         });
 
+    // FIXME: ImmutableMap with compare-and-swap updates
+    private final @NonNull ConcurrentHashMap<YangDataName, YangDataContext> yangData = new ConcurrentHashMap<>();
     private final @NonNull EffectiveModelContext modelContext;
     private final @NonNull ContainerContext root;
 
@@ -85,6 +91,52 @@ public final class DataSchemaContextTree {
     public @NonNull Optional<@NonNull DataSchemaContext> findChild(final @NonNull YangInstanceIdentifier path) {
         // Optional.ofNullable() inline due to annotations
         final var child = root.childByPath(path);
+        return child == null ? Optional.empty() : Optional.of(child);
+    }
+
+    /**
+     * Find a child node as identified by {@link YangDataName}.
+     *
+     * @param name the {@link YangDataName}
+     * @return child node if present, or {@code null} when corresponding child is not found.
+     * @throws NullPointerException if {@code name} is {@code null}
+     * @since 14.0.21
+     */
+    public DataSchemaContext.@Nullable Composite childYangData(final @NonNull YangDataName name) {
+        final var existing = yangData.get(requireNonNull(name));
+        return existing != null ? existing : loadYangData(name);
+
+    }
+
+    // Split out to aid inlining
+    private DataSchemaContext.@Nullable Composite loadYangData(final @NonNull YangDataName name) {
+        final var optModule = modelContext.findModule(name.module());
+        if (optModule.isEmpty()) {
+            return null;
+        }
+
+        for (var unknownSchema : optModule.orElseThrow().getUnknownSchemaNodes()) {
+            if (unknownSchema instanceof YangDataSchemaNode schema && name.equals(schema.name())) {
+                final var created = new YangDataContext(schema);
+                final var raced = yangData.putIfAbsent(name, created);
+                return raced != null ? raced : created;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find a child node as identified by {@link YangDataName}.
+     *
+     * @param name the {@link YangDataName}
+     * @return child node if present, or empty when corresponding child is not found.
+     * @throws NullPointerException if {@code name} is {@code null}
+     * @since 14.0.21
+     */
+    public @NonNull Optional<DataSchemaContext.@NonNull Composite> findYangData(final @NonNull YangDataName name) {
+        // Optional.ofNullable() inline due to annotations
+        final var child = childYangData(name);
         return child == null ? Optional.empty() : Optional.of(child);
     }
 
