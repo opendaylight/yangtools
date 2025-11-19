@@ -40,6 +40,9 @@ public final class ImmutableNodes {
         // Hidden on purpose
     }
 
+    /**
+     * {@return the {@link BuilderFactory} used by this utility class}.
+     */
     public static @NonNull BuilderFactory builderFactory() {
         return BUILDER_FACTORY;
     }
