@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.function.Supplier;
@@ -63,8 +63,7 @@ public final class ClassGeneratorBridge {
         String resolveLocalName(String methodName);
     }
 
-    // FIXME: Java 25: can we use a ScopedValue instead?
-    private static final ThreadLocal<BridgeProvider> CURRENT_CUSTOMIZER = new ThreadLocal<>();
+    private static final ScopedValue<@NonNull BridgeProvider> CURRENT_PROVIDER = ScopedValue.newInstance();
 
     private ClassGeneratorBridge() {
         // Hidden on purpose
@@ -78,7 +77,7 @@ public final class ClassGeneratorBridge {
      */
     @NonNullByDefault
     public static CodecContextSupplier resolveCodecContextSupplier(final String methodName) {
-        return current(CodecContextSupplierProvider.class).resolveCodecContextSupplier(methodName);
+        return ((CodecContextSupplierProvider) CURRENT_PROVIDER.get()).resolveCodecContextSupplier(methodName);
     }
 
     /**
@@ -89,7 +88,7 @@ public final class ClassGeneratorBridge {
      */
     @NonNullByDefault
     public static String resolveLocalName(final String methodName) {
-        return current(LocalNameProvider.class).resolveLocalName(methodName);
+        return ((LocalNameProvider) CURRENT_PROVIDER.get()).resolveLocalName(methodName);
     }
 
     /**
@@ -102,10 +101,7 @@ public final class ClassGeneratorBridge {
      */
     static <T> Class<T> loadWithProvider(final @NonNull BridgeProvider provider,
             final @NonNull Supplier<Class<T>> loader) {
-        final var prev = CURRENT_CUSTOMIZER.get();
-        CURRENT_CUSTOMIZER.set(verifyNotNull(provider));
-
-        try {
+        return ScopedValue.getWhere(CURRENT_PROVIDER, requireNonNull(provider), () -> {
             final var result = loader.get();
 
             /*
@@ -123,16 +119,6 @@ public final class ClassGeneratorBridge {
             }
 
             return result;
-        } finally {
-            if (prev == null) {
-                CURRENT_CUSTOMIZER.remove();
-            } else {
-                CURRENT_CUSTOMIZER.set(prev);
-            }
-        }
-    }
-
-    private static <T extends BridgeProvider> @NonNull T current(final Class<T> requested) {
-        return requested.cast(verifyNotNull(CURRENT_CUSTOMIZER.get(), "No customizer attached"));
+        });
     }
 }
