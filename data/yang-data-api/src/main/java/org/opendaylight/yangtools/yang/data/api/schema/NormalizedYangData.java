@@ -8,15 +8,17 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.YangDataName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * The contents of a {@code yang-data} template instance, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8040#page-80">RFC8040</a>'s {@code ietf-restconf} module.
  */
-// FIXME: YANGTOOLS-1744: add child() and default DataContainer method implementations
 @NonNullByDefault
 public non-sealed interface NormalizedYangData extends DataContainer {
     @Override
@@ -26,6 +28,24 @@ public non-sealed interface NormalizedYangData extends DataContainer {
 
     @Override
     YangDataName name();
+
+    /**
+     * {@return the single DataContainerChild}
+     *
+     * @since 15.0.0
+     */
+    DataContainerChild child();
+
+    @Override
+    default List<DataContainerChild> body() {
+        return List.of(child());
+    }
+
+    @Override
+    default @Nullable DataContainerChild childByArg(final NodeIdentifier key) {
+        final var child = child();
+        return key.equals(child.name()) ? child : null;
+    }
 
     /**
      * A builder of {@link NormalizedYangData}s.
