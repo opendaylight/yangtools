@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc8040.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -21,6 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 public interface YangDataSchemaNode extends UnknownSchemaNode, DataNodeContainer {
     @Override
     YangDataEffectiveStatement asEffectiveStatement();
+
+    /**
+     * {@return the {@link YangDataName} of this node}
+     * @since 14.0.21
+     */
+    default @NonNull YangDataName name() {
+        return asEffectiveStatement().argument();
+    }
 
     /**
      * Return a {@link ContainerLike} backed by this definition's {@link #getChildNodes()}.
