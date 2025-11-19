@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.spi.node;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -40,7 +41,11 @@ public final class ImmutableNodes {
         // Hidden on purpose
     }
 
-    public static @NonNull BuilderFactory builderFactory() {
+    /**
+     * {@return the {@link BuilderFactory} used by this utility class}.
+     */
+    @NonNullByDefault
+    public static BuilderFactory builderFactory() {
         return BUILDER_FACTORY;
     }
 
