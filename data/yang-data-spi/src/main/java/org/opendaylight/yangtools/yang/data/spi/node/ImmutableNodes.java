@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.spi.node;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedYangData;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -30,12 +32,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableBuilderFactory;
 import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableLeafNode;
 import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableLeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.spi.node.impl.ImmutableYangDataBuilderFactory;
 
 /**
  * Utilities for creating immutable implementations of various {@link NormalizedNode}s.
  */
 public final class ImmutableNodes {
     private static final @NonNull ImmutableBuilderFactory BUILDER_FACTORY = new ImmutableBuilderFactory();
+    private static final @NonNull ImmutableYangDataBuilderFactory YANG_DATA_BUILDER_FACTORY =
+        new ImmutableYangDataBuilderFactory();
 
     private ImmutableNodes() {
         // Hidden on purpose
@@ -47,6 +52,14 @@ public final class ImmutableNodes {
     @NonNullByDefault
     public static BuilderFactory builderFactory() {
         return BUILDER_FACTORY;
+    }
+
+    /**
+     * {@return the {@link NormalizedYangData.BuilderFactory} used by this utility class}.
+     */
+    @NonNullByDefault
+    public static NormalizedYangData.BuilderFactory yangDataBuilderFactory() {
+        return YANG_DATA_BUILDER_FACTORY;
     }
 
     /**
@@ -133,5 +146,10 @@ public final class ImmutableNodes {
 
     public static <T> UserLeafSetNode.@NonNull Builder<T> newUserLeafSetBuilder() {
         return BUILDER_FACTORY.newUserLeafSetBuilder();
+    }
+
+    @NonNullByDefault
+    public static NormalizedYangData.Builder newYangDataBuilder(final YangDataName name) {
+        return YANG_DATA_BUILDER_FACTORY.newYangDataBuilder(name);
     }
 }
