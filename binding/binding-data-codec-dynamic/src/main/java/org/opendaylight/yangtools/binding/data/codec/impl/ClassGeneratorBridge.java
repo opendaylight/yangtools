@@ -70,11 +70,25 @@ public final class ClassGeneratorBridge {
         // Hidden on purpose
     }
 
-    public static @NonNull CodecContextSupplier resolveCodecContextSupplier(final @NonNull String methodName) {
+    /**
+     * Resolve the {@link CodecContextSupplier} for specified method name.
+     *
+     * @param methodName the method name
+     * @return the {@link CodecContextSupplier}
+     */
+    @NonNullByDefault
+    public static CodecContextSupplier resolveCodecContextSupplier(final String methodName) {
         return current(CodecContextSupplierProvider.class).resolveCodecContextSupplier(methodName);
     }
 
-    public static @NonNull String resolveLocalName(final @NonNull String methodName) {
+    /**
+     * Resolve the YANG local name for specified method name.
+     *
+     * @param methodName the method name
+     * @return the YANG local name
+     */
+    @NonNullByDefault
+    public static String resolveLocalName(final String methodName) {
         return current(LocalNameProvider.class).resolveLocalName(methodName);
     }
 
