@@ -59,29 +59,8 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
     }
 
     @Override
-    public final Class<T> customizeLoading(final @NonNull Supplier<Class<T>> loader) {
-        final var prev = ClassGeneratorBridge.setup(getterGenerator);
-        try {
-            final var result = loader.get();
-
-            /*
-             * This a bit of magic to support NodeContextSupplier constants. These constants need to be resolved while
-             * we have the information needed to find them -- that information is being held in this instance and we
-             * leak it to a thread-local variable held by CodecDataObjectBridge.
-             *
-             * By default the JVM will defer class initialization to first use, which unfortunately is too late for us,
-             * and hence we need to force class to initialize.
-             */
-            try {
-                Class.forName(result.getName(), true, result.getClassLoader());
-            } catch (ClassNotFoundException e) {
-                throw new LinkageError("Failed to find newly-defined " + result, e);
-            }
-
-            return result;
-        } finally {
-            ClassGeneratorBridge.tearDown(prev);
-        }
+    public final Class<T> customizeLoading(final Supplier<Class<T>> loader) {
+        return ClassGeneratorBridge.loadWithProvider(getterGenerator, loader);
     }
 
     @Override
