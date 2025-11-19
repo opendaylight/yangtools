@@ -181,7 +181,7 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
             LOG.trace("Generating for simple method {}", method);
             final var methodName = method.getName();
             final var retType = ForLoadedType.of(method.getReturnType());
-            tmp = tmp.defineMethod(methodName, retType, CodecDataObjectGenerator.PUB_FINAL)
+            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL)
                 .intercept(new SimpleGetterMethodImplementation(methodName, retType));
         }
         for (var entry : daoProperties.entrySet()) {
@@ -190,12 +190,12 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
             LOG.trace("Generating for structured method {}", method);
             final var methodName = method.getName();
             final var retType = ForLoadedType.of(method.getReturnType());
-            tmp = tmp.defineMethod(methodName, retType, CodecDataObjectGenerator.PUB_FINAL)
+            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL)
                 .intercept(new StructuredGetterMethodImplementation(methodName, retType, entry.getKey()));
 
             if (info instanceof PropertyInfo.GetterAndNonnull orEmpty) {
                 final var nonnullName = orEmpty.nonnullMethod().getName();
-                tmp = tmp.defineMethod(nonnullName, retType, CodecDataObjectGenerator.PUB_FINAL)
+                tmp = tmp.defineMethod(nonnullName, retType, CodecClassGenerator.PUB_FINAL)
                     .intercept(new NonnullMethodImplementation(nonnullName, retType, entry.getKey(), method));
             }
         }

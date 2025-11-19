@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static java.util.Objects.requireNonNull;
 import static net.bytebuddy.implementation.bytecode.member.MethodVariableAccess.loadThis;
 import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.getField;
 import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.invokeMethod;
@@ -16,27 +15,17 @@ import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.function.Supplier;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.ForLoadedType;
-import net.bytebuddy.description.type.TypeDescription.Generic;
-import net.bytebuddy.dynamic.DynamicType.Builder;
-import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
-import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
-import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
-import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
-import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,30 +119,37 @@ import org.slf4j.LoggerFactory;
  * loading block runs with the class loading lock for this FQCN and the reference is not leaked until the process
  * completes.
  */
-final class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T> {
+final class CodecDataObjectGenerator<T extends CodecDataObject<?>> extends CodecClassGenerator<T> {
+    private static final class KeyMethodImplementation extends CachedMethodImplementation {
+        private static final StackManipulation CODEC_KEY =
+            invokeMethod(CodecDataObject.class, "codecKey", VarHandle.class);
+
+        @NonNullByDefault
+        KeyMethodImplementation(final String methodName, final TypeDescription retType) {
+            super(methodName, retType);
+        }
+
+        @Override
+        public ByteCodeAppender appender(final Target implementationTarget) {
+            return new ByteCodeAppender.Simple(
+                // return (FooType) codecKey(getFoo$$$V);
+                loadThis(),
+                getField(implementationTarget.getInstrumentedType(), handleName),
+                CODEC_KEY,
+                TypeCasting.to(retType),
+                MethodReturn.REFERENCE);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(CodecDataObjectGenerator.class);
-    private static final Generic BB_BOOLEAN = TypeDefinition.Sort.describe(boolean.class);
-    private static final Generic BB_OBJECT = TypeDefinition.Sort.describe(Object.class);
-    private static final Generic BB_INT = TypeDefinition.Sort.describe(int.class);
-    private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
     private static final TypeDescription BB_CDO = ForLoadedType.of(CodecDataObject.class);
     private static final TypeDescription BB_ACDO = ForLoadedType.of(AugmentableCodecDataObject.class);
 
-    private static final StackManipulation FIRST_ARG_REF = MethodVariableAccess.REFERENCE.loadFrom(1);
-
-    private static final int PROT_FINAL = Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
-    static final int PUB_FINAL = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
-
-    private static final ByteBuddy BB = new ByteBuddy();
-
-    private final @NonNull TypeDescription superClass;
-    private final @NonNull GetterGenerator getterGenerator;
     private final Method keyMethod;
 
-    CodecDataObjectGenerator(final TypeDescription superClass, @NonNull GetterGenerator getterGenerator,
-            final @Nullable Method keyMethod) {
-        this.superClass = requireNonNull(superClass);
-        this.getterGenerator = requireNonNull(getterGenerator);
+    private CodecDataObjectGenerator(final @NonNull TypeDescription superClass,
+            final @NonNull GetterGenerator getterGenerator, final @Nullable Method keyMethod) {
+        super(superClass, getterGenerator);
         this.keyMethod = keyMethod;
     }
 
@@ -174,109 +170,15 @@ final class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements Cl
     }
 
     @Override
-    public Class<T> customizeLoading(final @NonNull Supplier<Class<T>> loader) {
-        final var prev = ClassGeneratorBridge.setup(getterGenerator);
-        try {
-            final var result = loader.get();
-
-            /*
-             * This a bit of magic to support NodeContextSupplier constants. These constants need to be resolved
-             * while we have the information needed to find them -- that information is being held in this instance
-             * and we leak it to a thread-local variable held by CodecDataObjectBridge.
-             *
-             * By default the JVM will defer class initialization to first use, which unfortunately is too late for
-             * us, and hence we need to force class to initialize.
-             */
-            try {
-                Class.forName(result.getName(), true, result.getClassLoader());
-            } catch (ClassNotFoundException e) {
-                throw new LinkageError("Failed to find newly-defined " + result, e);
-            }
-
-            return result;
-        } finally {
-            ClassGeneratorBridge.tearDown(prev);
-        }
-    }
-
-    @Override
-    public GeneratorResult<T> generateClass(final BindingClassLoader loader, final String fqcn,
-            final Class<?> bindingInterface) {
-        LOG.trace("Generating class {}", fqcn);
-
-        final var bindingDef = TypeDefinition.Sort.describe(bindingInterface);
-        @SuppressWarnings("unchecked")
-        var builder = (Builder<T>) BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef).build())
-            .name(fqcn).implement(bindingDef);
-
-        builder = getterGenerator.generateGetters(builder);
-
-        if (keyMethod != null) {
-            LOG.trace("Generating for key {}", keyMethod);
-            final var methodName = keyMethod.getName();
-            final var retType = ForLoadedType.of(keyMethod.getReturnType());
-            builder = builder.defineMethod(methodName, retType, PUB_FINAL)
-                .intercept(new KeyMethodImplementation(methodName, retType));
+    DynamicType.Builder<T> customizeBuilder(final DynamicType.Builder<T> builder) {
+        if (keyMethod == null) {
+            return builder;
         }
 
-        // Final bits:
-        return GeneratorResult.of(builder
-            // codecHashCode() ...
-            .defineMethod("codecHashCode", BB_INT, PROT_FINAL)
-            .intercept(codecHashCode(bindingInterface))
-            // ... equals(Object) ...
-            .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_OBJECT)
-            .intercept(codecEquals(bindingInterface))
-            // ... toString() ...
-            .defineMethod("toString", BB_STRING, PUB_FINAL)
-            .intercept(toString(bindingInterface))
-            // ... and build it
-            .make());
-    }
-
-    private static Implementation codecHashCode(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingHashCode(this);
-            loadThis(),
-            invokeMethod(bindingInterface, Naming.BINDING_HASHCODE_NAME, bindingInterface),
-            MethodReturn.INTEGER);
-    }
-
-    private static Implementation codecEquals(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingEquals(this, obj);
-            loadThis(),
-            FIRST_ARG_REF,
-            invokeMethod(bindingInterface, Naming.BINDING_EQUALS_NAME, bindingInterface, Object.class),
-            MethodReturn.INTEGER);
-    }
-
-    private static Implementation toString(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingToString(this);
-            loadThis(),
-            invokeMethod(bindingInterface, Naming.BINDING_TO_STRING_NAME, bindingInterface),
-            MethodReturn.REFERENCE);
-    }
-
-    private static final class KeyMethodImplementation extends CachedMethodImplementation {
-        private static final StackManipulation CODEC_KEY =
-            invokeMethod(CodecDataObject.class, "codecKey", VarHandle.class);
-
-        @NonNullByDefault
-        KeyMethodImplementation(final String methodName, final TypeDescription retType) {
-            super(methodName, retType);
-        }
-
-        @Override
-        public ByteCodeAppender appender(final Target implementationTarget) {
-            return new ByteCodeAppender.Simple(
-                // return (FooType) codecKey(getFoo$$$V);
-                loadThis(),
-                getField(implementationTarget.getInstrumentedType(), handleName),
-                CODEC_KEY,
-                TypeCasting.to(retType),
-                MethodReturn.REFERENCE);
-        }
+        LOG.trace("Generating for key {}", keyMethod);
+        final var methodName = keyMethod.getName();
+        final var retType = ForLoadedType.of(keyMethod.getReturnType());
+        return builder.defineMethod(methodName, retType, PUB_FINAL)
+            .intercept(new KeyMethodImplementation(methodName, retType));
     }
 }

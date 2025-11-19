@@ -111,7 +111,7 @@ final class FixedGetterGenerator extends GetterGenerator implements CodecContext
             LOG.trace("Generating for fixed method {}", method);
             final var methodName = method.getName();
             final var retType = ForLoadedType.of(method.getReturnType());
-            tmp = tmp.defineMethod(methodName, retType, CodecDataObjectGenerator.PUB_FINAL)
+            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL)
                 .intercept(new SupplierGetterMethodImplementation(methodName, retType));
         }
         return tmp;
