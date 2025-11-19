@@ -59,7 +59,7 @@ public sealed interface NormalizedNode extends NormalizedData, PrettyTreeAware
      */
     interface Builder extends Mutable {
         /**
-         * Return a builder {@link NormalizedNode} contract.
+         * Return the built {@link NormalizedNode} contract.
          *
          * @return a built NormalizedNode
          * @throws IllegalStateException if this builder does not have sufficient state
