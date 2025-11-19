@@ -47,7 +47,7 @@ final class FixedGetterGenerator extends GetterGenerator implements CodecContext
         private static final StackManipulation CODEC_MEMBER =
             invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, CodecContextSupplier.class);
         private static final StackManipulation BRIDGE_RESOLVE =
-            invokeMethod(ClassGeneratorBridge.class, "resolveNodeContextSupplier", String.class);
+            invokeMethod(ClassGeneratorBridge.class, "resolveCodecContextSupplier", String.class);
         private static final Generic BB_NCS = TypeDefinition.Sort.describe(CodecContextSupplier.class);
 
         // getFoo$$$C
