@@ -9,13 +9,10 @@ package org.opendaylight.yangtools.yang.data.spi.node.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.YangDataName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedYangData;
 
@@ -37,13 +34,8 @@ final class ImmutableYangData implements Immutable, NormalizedYangData {
     }
 
     @Override
-    public Collection<DataContainerChild> body() {
-        return List.of(child);
-    }
-
-    @Override
-    public DataContainerChild childByArg(final NodeIdentifier key) {
-        return key.equals(child.name()) ? child : null;
+    public DataContainerChild child() {
+        return child;
     }
 
     @Override
@@ -54,12 +46,7 @@ final class ImmutableYangData implements Immutable, NormalizedYangData {
     @Override
     public boolean equals(final Object obj) {
         return this == obj || obj instanceof NormalizedYangData other && name.equals(other.name())
-            && equalBody(other.body());
-    }
-
-    private boolean equalBody(final Collection<? extends DataContainerChild> otherBody) {
-        final var it = otherBody.iterator();
-        return it.hasNext() && child.equals(it.next()) && !it.hasNext();
+            && child.equals(other.child());
     }
 
     @Override
