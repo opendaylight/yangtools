@@ -31,8 +31,8 @@ import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import net.bytebuddy.implementation.bytecode.constant.TextConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.data.codec.impl.ClassGeneratorBridge.CodecContextSupplierProvider;
-import org.opendaylight.yangtools.binding.data.codec.impl.CodecDataObjectGenerator.AbstractCachedMethodImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 // FIXME: MDSAL-443: wire this implementation, which requires that BindingRuntimeTypes provides information about types
 //                   being generated from within a grouping
 final class FixedGetterGenerator extends GetterGenerator implements CodecContextSupplierProvider {
-    private static final class SupplierGetterMethodImplementation extends AbstractCachedMethodImplementation {
+    private static final class SupplierGetterMethodImplementation extends CachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
             invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, CodecContextSupplier.class);
         private static final StackManipulation BRIDGE_RESOLVE =
@@ -51,8 +51,9 @@ final class FixedGetterGenerator extends GetterGenerator implements CodecContext
         private static final Generic BB_NCS = TypeDefinition.Sort.describe(CodecContextSupplier.class);
 
         // getFoo$$$C
-        private final String contextName;
+        private final @NonNull String contextName;
 
+        @NonNullByDefault
         SupplierGetterMethodImplementation(final String methodName, final TypeDescription retType) {
             super(methodName, retType);
             contextName = methodName + "$$$C";

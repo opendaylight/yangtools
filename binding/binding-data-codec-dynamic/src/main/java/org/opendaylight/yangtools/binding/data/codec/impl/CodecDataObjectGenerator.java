@@ -11,33 +11,27 @@ import static java.util.Objects.requireNonNull;
 import static net.bytebuddy.implementation.bytecode.member.MethodVariableAccess.loadThis;
 import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.getField;
 import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.invokeMethod;
-import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.putField;
 
 import com.google.common.collect.ImmutableMap;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.ForLoadedType;
 import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType.Builder;
-import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
-import net.bytebuddy.implementation.bytecode.constant.ClassConstant;
-import net.bytebuddy.implementation.bytecode.constant.TextConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
@@ -221,8 +215,8 @@ final class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements Cl
             LOG.trace("Generating for key {}", keyMethod);
             final var methodName = keyMethod.getName();
             final var retType = ForLoadedType.of(keyMethod.getReturnType());
-            builder = builder.defineMethod(methodName, retType, PUB_FINAL).intercept(
-                new KeyMethodImplementation(methodName, retType));
+            builder = builder.defineMethod(methodName, retType, PUB_FINAL)
+                .intercept(new KeyMethodImplementation(methodName, retType));
         }
 
         // Final bits:
@@ -265,61 +259,11 @@ final class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements Cl
             MethodReturn.REFERENCE);
     }
 
-    abstract static class AbstractMethodImplementation implements Implementation {
-        final TypeDescription retType;
-        // getFoo, usually
-        final String methodName;
+    private static final class KeyMethodImplementation extends CachedMethodImplementation {
+        private static final StackManipulation CODEC_KEY =
+            invokeMethod(CodecDataObject.class, "codecKey", VarHandle.class);
 
-        AbstractMethodImplementation(final String methodName, final TypeDescription retType) {
-            this.methodName = requireNonNull(methodName);
-            this.retType = requireNonNull(retType);
-        }
-    }
-
-    abstract static class AbstractCachedMethodImplementation extends AbstractMethodImplementation {
-        private static final Generic BB_HANDLE = TypeDefinition.Sort.describe(VarHandle.class);
-        private static final Generic BB_OBJECT = TypeDefinition.Sort.describe(Object.class);
-        private static final StackManipulation OBJECT_CLASS = ClassConstant.of(ForLoadedType.of(Object.class));
-        private static final StackManipulation LOOKUP = invokeMethod(MethodHandles.class, "lookup");
-        private static final StackManipulation FIND_VAR_HANDLE = invokeMethod(Lookup.class,
-            "findVarHandle", Class.class, String.class, Class.class);
-
-        static final int PRIV_CONST = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL
-                | Opcodes.ACC_SYNTHETIC;
-        private static final int PRIV_VOLATILE = Opcodes.ACC_PRIVATE | Opcodes.ACC_VOLATILE | Opcodes.ACC_SYNTHETIC;
-
-        // getFoo$$$V
-        final String handleName;
-
-        AbstractCachedMethodImplementation(final String methodName, final TypeDescription retType) {
-            super(methodName, retType);
-            handleName = methodName + "$$$V";
-        }
-
-        @Override
-        public InstrumentedType prepare(final InstrumentedType instrumentedType) {
-            final InstrumentedType tmp = instrumentedType
-                    // private static final VarHandle getFoo$$$V;
-                    .withField(new FieldDescription.Token(handleName, PRIV_CONST, BB_HANDLE))
-                    // private volatile Object getFoo;
-                    .withField(new FieldDescription.Token(methodName, PRIV_VOLATILE, BB_OBJECT));
-
-            return tmp.withInitializer(new ByteCodeAppender.Simple(
-                // TODO: acquiring lookup is expensive, we should share it across all initialization
-                // getFoo$$$V = MethodHandles.lookup().findVarHandle(This.class, "getFoo", Object.class);
-                LOOKUP,
-                ClassConstant.of(tmp),
-                new TextConstant(methodName),
-                OBJECT_CLASS,
-                FIND_VAR_HANDLE,
-                putField(tmp, handleName)));
-        }
-    }
-
-    private static final class KeyMethodImplementation extends AbstractCachedMethodImplementation {
-        private static final StackManipulation CODEC_KEY = invokeMethod(CodecDataObject.class,
-            "codecKey", VarHandle.class);
-
+        @NonNullByDefault
         KeyMethodImplementation(final String methodName, final TypeDescription retType) {
             super(methodName, retType);
         }

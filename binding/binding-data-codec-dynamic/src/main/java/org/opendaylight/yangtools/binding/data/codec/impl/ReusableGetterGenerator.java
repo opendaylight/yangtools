@@ -32,9 +32,8 @@ import net.bytebuddy.implementation.bytecode.constant.ClassConstant;
 import net.bytebuddy.implementation.bytecode.constant.TextConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.data.codec.impl.ClassGeneratorBridge.LocalNameProvider;
-import org.opendaylight.yangtools.binding.data.codec.impl.CodecDataObjectGenerator.AbstractCachedMethodImplementation;
-import org.opendaylight.yangtools.binding.data.codec.impl.CodecDataObjectGenerator.AbstractMethodImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * YANG local name against the local namespace.
  */
 final class ReusableGetterGenerator extends GetterGenerator implements LocalNameProvider {
-    private static final class NonnullMethodImplementation extends AbstractMethodImplementation {
+    private static final class NonnullMethodImplementation extends MethodImplementation {
         private static final StackManipulation NONNULL_MEMBER =
             invokeMethod(CodecDataObject.class, "codecMemberOrEmpty", Object.class, Class.class);
 
@@ -85,7 +84,7 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
      * as minimizing footprint. Since that string is not guaranteed to be interned in the String Pool, we cannot rely
      * on the constant pool entry to resolve to the same object.
      */
-    private static final class SimpleGetterMethodImplementation extends AbstractCachedMethodImplementation {
+    private static final class SimpleGetterMethodImplementation extends CachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
             invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, String.class);
         private static final StackManipulation BRIDGE_RESOLVE =
@@ -93,8 +92,9 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
         private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
 
         // getFoo$$$S
-        private final String stringName;
+        private final @NonNull String stringName;
 
+        @NonNullByDefault
         SimpleGetterMethodImplementation(final String methodName, final TypeDescription retType) {
             super(methodName, retType);
             stringName = methodName + "$$$S";
@@ -127,12 +127,13 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
         }
     }
 
-    private static final class StructuredGetterMethodImplementation extends AbstractCachedMethodImplementation {
+    private static final class StructuredGetterMethodImplementation extends CachedMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
             invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, Class.class);
 
-        private final Class<?> bindingClass;
+        private final @NonNull Class<?> bindingClass;
 
+        @NonNullByDefault
         StructuredGetterMethodImplementation(final String methodName, final TypeDescription retType,
                 final Class<?> bindingClass) {
             super(methodName, retType);
