@@ -41,7 +41,7 @@ abstract sealed class AbstractOperationStatementSupport<D extends OperationDecla
     AbstractOperationStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
-        super(publicDefinition, policy, config, validator);
+        super(publicDefinition, policy, SubtreePolicy.STRUCTURE, config, validator);
     }
 
     @Override

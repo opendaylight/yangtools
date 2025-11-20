@@ -1,0 +1,58 @@
+module yt1475 {
+  namespace yt1475;
+  prefix yt1475;
+
+  grouping one {
+    leaf one {
+      type string;
+      config true;
+    }
+  }
+
+  rpc arrr {
+    grouping two {
+      leaf two {
+        type string;
+        config true;
+      }
+    }
+
+    input {
+      uses one;
+      uses two;
+
+      leaf three {
+        type string;
+        config true;
+      }
+    }
+
+    output {
+      uses one;
+      uses two;
+
+      leaf three {
+        type string;
+        config true;
+      }
+    }
+  }
+
+  notification naaa {
+    grouping two {
+      leaf two {
+        type string;
+        config true;
+      }
+    }
+
+    uses one;
+    uses two;
+
+    leaf three {
+      type string;
+      config true;
+    }
+  }
+}
+
