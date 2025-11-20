@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractNotificationStatementSupport
         extends AbstractSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
     AbstractNotificationStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.NOTIFICATION, uninstantiatedPolicy(), config, validator);
+        super(YangStmtMapping.NOTIFICATION, uninstantiatedPolicy(), SubtreePolicy.structure(), config, validator);
     }
 
     @Override
