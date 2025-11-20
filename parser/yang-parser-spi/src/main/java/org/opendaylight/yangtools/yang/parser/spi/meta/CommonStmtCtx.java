@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -72,6 +70,10 @@ public interface CommonStmtCtx {
      * @throws VerifyException if this statement does not have an argument
      */
     default @NonNull String getRawArgument() {
-        return verifyNotNull(rawArgument(), "Statement context %s does not have an argument", this);
-    }
+        final var ret = rawArgument();
+        if (ret == null) {
+            throw new VerifyException("Statement context " + this + " does not have an argument");
+        }
+        return ret;
+   }
 }
