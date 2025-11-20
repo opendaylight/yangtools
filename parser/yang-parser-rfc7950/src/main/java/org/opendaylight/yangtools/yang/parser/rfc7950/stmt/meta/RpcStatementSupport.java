@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -23,12 +21,10 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
-import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class RpcStatementSupport extends AbstractOperationStatementSupport<RpcStatement, RpcEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
@@ -59,16 +55,10 @@ public final class RpcStatementSupport extends AbstractOperationStatementSupport
     }
 
     @Override
-    protected RpcEffectiveStatement createEffective(final Current<QName, RpcStatement> stmt,
+    RpcEffectiveStatement createEffectiveImpl(final Current<QName, RpcStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", stmt.sourceReference());
-
-        try {
-            return EffectiveStatements.createRpc(stmt.declared(), substatements, stmt.getArgument(),
-                computeFlags(substatements));
-        } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt, e);
-        }
+        return EffectiveStatements.createRpc(stmt.declared(), substatements, stmt.getArgument(),
+            computeFlags(substatements));
     }
 
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
