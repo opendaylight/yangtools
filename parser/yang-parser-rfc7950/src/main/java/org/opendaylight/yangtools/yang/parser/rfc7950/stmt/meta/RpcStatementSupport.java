@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -17,8 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -28,16 +25,12 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class RpcStatementSupport extends AbstractSchemaTreeStatementSupport<RpcStatement, RpcEffectiveStatement> {
+public final class RpcStatementSupport extends AbstractOperationStatementSupport<RpcStatement, RpcEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.RPC)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -52,18 +45,6 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
 
     public RpcStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.RPC, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-
-        if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            appendImplicitSubstatement(stmt, YangStmtMapping.INPUT.getStatementName());
-        }
-        if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            appendImplicitSubstatement(stmt, YangStmtMapping.OUTPUT.getStatementName());
-        }
     }
 
     @Override
@@ -94,11 +75,5 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
         return new FlagsBuilder()
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();
-    }
-
-    private static void appendImplicitSubstatement(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt,
-            final QName substatementName) {
-        stmt.addEffectiveSubstatement(stmt.createUndeclaredSubstatement(
-            verifyNotNull(stmt.namespaceItem(StatementSupport.NAMESPACE, substatementName)), null));
     }
 }
