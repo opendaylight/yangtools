@@ -39,8 +39,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStatement<QName>,
-        E extends SchemaTreeEffectiveStatement<D>> extends AbstractImplicitStatementSupport<D, E> {
+abstract sealed class AbstractOperationContainerStatementSupport<D extends DeclaredStatement<QName>,
+        E extends SchemaTreeEffectiveStatement<D>>
+        extends AbstractImplicitStatementSupport<D, E>
+        permits InputStatementSupport, OutputStatementSupport {
     private final Function<QNameModule, QName> createArgument;
 
     AbstractOperationContainerStatementSupport(final StatementDefinition publicDefinition,
