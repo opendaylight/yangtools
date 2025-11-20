@@ -18,13 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -84,17 +82,10 @@ public final class ActionStatementSupport
     }
 
     @Override
-    protected ActionEffectiveStatement createEffective(final Current<QName, ActionStatement> stmt,
+    ActionEffectiveStatement createEffectiveImpl(final Current<QName, ActionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final StatementSourceReference ref = stmt.sourceReference();
-        verify(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
-
-        try {
-            return EffectiveStatements.createAction(stmt.declared(), stmt.getArgument(),
-                EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements), substatements);
-        } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt, e);
-        }
+        return EffectiveStatements.createAction(stmt.declared(), stmt.getArgument(),
+            EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements), substatements);
     }
 
     @Override
