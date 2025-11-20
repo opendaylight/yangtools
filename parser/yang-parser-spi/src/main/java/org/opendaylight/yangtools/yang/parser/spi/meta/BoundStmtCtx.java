@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import java.util.Optional;
@@ -39,7 +37,11 @@ public interface BoundStmtCtx<A> extends CommonStmtCtx {
      * @throws VerifyException if this statement does not have an argument
      */
     default @NonNull A getArgument() {
-        return verifyNotNull(argument(), "Attempted to use non-existent argument of %s", this);
+        final var ret = argument();
+        if (ret == null) {
+            throw new VerifyException("Attempted to use non-existent argument of " + this);
+        }
+        return ret;
     }
 
     /**

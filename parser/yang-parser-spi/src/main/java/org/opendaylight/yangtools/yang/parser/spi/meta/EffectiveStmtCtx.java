@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -40,7 +38,11 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
      * @throws VerifyException if this context is already the root
      */
     default @NonNull Parent getEffectiveParent() {
-        return verifyNotNull(effectiveParent(), "Attempted to access beyond root context");
+        final var ret = effectiveParent();
+        if (ret == null) {
+            throw new VerifyException("Attempted to access beyond root context");
+        }
+        return ret;
     }
 
     /**

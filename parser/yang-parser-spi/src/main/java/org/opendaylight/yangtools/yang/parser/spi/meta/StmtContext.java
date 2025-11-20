@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.Iterables;
@@ -48,7 +46,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @throws VerifyException if this statement is the root statement
      */
     default @NonNull StmtContext<?, ?, ?> coerceParentContext() {
-        return verifyNotNull(getParentContext(), "Root context %s does not have a parent", this);
+        final var ret = getParentContext();
+        if (ret == null) {
+            throw new VerifyException("Root context " + this + " does not have a parent");
+        }
+        return ret;
     }
 
     /**
@@ -177,7 +179,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
         @Override
         default Mutable<?, ?, ?> coerceParentContext() {
-            return verifyNotNull(getParentContext(), "Root context %s does not have a parent", this);
+            final var ret = getParentContext();
+            if (ret == null) {
+                throw new VerifyException("Root context " + this + " does not have a parent");
+            }
+            return ret;
         }
 
         /**
