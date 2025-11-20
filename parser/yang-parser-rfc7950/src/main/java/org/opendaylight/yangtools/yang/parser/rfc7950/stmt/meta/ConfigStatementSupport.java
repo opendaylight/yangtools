@@ -30,9 +30,9 @@ public final class ConfigStatementSupport
     public ConfigStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.CONFIG,
             EffectiveStatements.createConfig(false), EffectiveStatements.createConfig(true),
-            // FIXME: This is not quite true. If we are instantiated in a context which ignores config, which should
-            //        really fizzle. This needs some more analysis.
-            StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+            StatementPolicy.copyDeclared(
+                (copy, current, substatements) -> copy.effectiveConfig() == current.effectiveConfig()),
+            config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
