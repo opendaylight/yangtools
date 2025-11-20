@@ -96,4 +96,9 @@ abstract sealed class AbstractOperationContainerStatementSupport<D extends Decla
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(),
             EffectiveStmtUtils.historyAndStatusFlags((ContainerLike) stmt));
     }
+
+    @Override
+    public final boolean isIgnoringConfig() {
+        return true;
+    }
 }
