@@ -76,4 +76,9 @@ abstract class AbstractNotificationStatementSupport
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(),
             EffectiveStmtUtils.historyAndStatusFlags(schema));
     }
+
+    @Override
+    protected final ConfigPolicy configPolicy() {
+        return ConfigPolicy.IGNORE;
+    }
 }
