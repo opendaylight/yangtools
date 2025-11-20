@@ -106,14 +106,14 @@ public final class YangDataStatementSupport
             return;
         }
 
-        final var name = stmt.argument();
+        final var name = stmt.getArgument();
         final var prev = parent.namespaceItem(NAMESPACE, name);
         if (prev != null) {
             throw new SourceException(stmt,
                 "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
                 stmt.getRoot().rawArgument(), name, prev.argument(), prev.sourceReference());
         }
-        parent.addToNs(NAMESPACE, stmt.argument(), stmt);
+        parent.addToNs(NAMESPACE, name, stmt);
     }
 
     @Override
