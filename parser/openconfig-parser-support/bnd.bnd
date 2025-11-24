@@ -1,1 +1,1 @@
-Import-Package: !javax.inject, *
+Import-Package: !dagger.*, !jakarta.inject, !javax.inject, *

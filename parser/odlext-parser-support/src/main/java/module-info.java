@@ -7,9 +7,18 @@
  */
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 
+/**
+ * A {@link ParserExtension} providing support for extensions introduced in OpenDaylight's
+ * {@code odl-codegen-extensions.yang} and {@code yang-ext.yang} modules.
+ *
+ * @provides ParserExtension
+ */
 module org.opendaylight.yangtools.odlext.parser.support {
+    exports org.opendaylight.yangtools.odlext.parser.dagger;
+
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.odlext.parser;
+    // FIXME: remove this package
     exports org.opendaylight.yangtools.odlext.parser.inject;
 
     provides ParserExtension with
@@ -27,6 +36,9 @@ module org.opendaylight.yangtools.odlext.parser.support {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static dagger;
+    requires static jakarta.inject;
+    requires static java.compiler;
     requires static javax.inject;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
