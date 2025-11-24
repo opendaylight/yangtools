@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.LegacyAugmentIdentifierStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.MountStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupport;
-import org.opendaylight.yangtools.odlext.parser.inject.InjectYangExtParserExtension;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -31,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class YangExtParserExtension extends AbstractParserExtension permits InjectYangExtParserExtension {
+public final class YangExtParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
@@ -40,7 +39,7 @@ public sealed class YangExtParserExtension extends AbstractParserExtension permi
     }
 
     @Override
-    public final StatementSupportBundle configureBundle(final YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
             .addSupport(new ContextInstanceStatementSupport(config))
             .addSupport(new ContextReferenceStatementSupport(config))

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfConstants;
-import org.opendaylight.yangtools.rfc6241.parser.inject.InjectRfc6241ParserExtension;
+import org.opendaylight.yangtools.rfc6241.parser.dagger.Rfc6241Module;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -31,7 +31,7 @@ class NetconfTest {
     void testResolution() throws Exception {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
-                new InjectRfc6241ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
+                Rfc6241Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var context = reactor.newBuild()
             .addLibSources(YangStatementStreamSource.create(
