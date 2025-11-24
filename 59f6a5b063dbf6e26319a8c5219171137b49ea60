@@ -16,6 +16,24 @@
       "message": "add tests for each Dagger extension",
       "revId": "59f6a5b063dbf6e26319a8c5219171137b49ea60",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "13728a2c_5fb18967",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-24T21:46:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "79803bcb_ba678259",
+      "revId": "59f6a5b063dbf6e26319a8c5219171137b49ea60",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
