@@ -7,25 +7,45 @@
  */
 package org.opendaylight.yangtools.odlext.parser.inject;
 
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.odlext.parser.dagger.OdlCodegenModule;
 import org.opendaylight.yangtools.odlext.parser.impl.OdlCodegenParserExtension;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 
 /**
  * Parser support for {@code odl-codegen-extensions.yang} exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link OdlCodegenModule#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
 @SuppressWarnings("exports")
-public final class InjectOdlCodegenParserExtension extends OdlCodegenParserExtension {
+@Deprecated(since = "14.0.21", forRemoval = true)
+public final class InjectOdlCodegenParserExtension implements ParserExtension {
+    private final OdlCodegenParserExtension delegate = new OdlCodegenParserExtension();
+
     /**
      * Default constructor.
      */
     @Inject
     public InjectOdlCodegenParserExtension() {
         // visible for DI
+    }
+
+    @Override
+    public StatementSupportBundle configureBundle(YangParserConfiguration config) {
+        return delegate.configureBundle(config);
+    }
+
+    @Override
+    public Set<StatementDefinition> supportedStatements() {
+        return delegate.supportedStatements();
     }
 }
