@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.rfc8639.parser.dagger.Rfc8639Module;
 import org.opendaylight.yangtools.rfc8819.parser.dagger.Rfc8819Module;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.dagger.YangLibResolverModule;
+import org.opendaylight.yangtools.yang.parser.dagger.YangParserFactoryModule;
 import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule;
 
 /**

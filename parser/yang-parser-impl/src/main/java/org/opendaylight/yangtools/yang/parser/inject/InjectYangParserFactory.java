@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
-import org.opendaylight.yangtools.yang.parser.impl.dagger.YangParserFactoryModule;
+import org.opendaylight.yangtools.yang.parser.dagger.YangParserFactoryModule;
+import org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
