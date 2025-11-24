@@ -24,6 +24,7 @@
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
+        <spotbugs.onlyAnalyze>!org.opendaylight.yangtools.yang.parser.ri.dagger.-</spotbugs.onlyAnalyze>
     </properties>
 
     <dependencies>
@@ -33,12 +34,22 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>com.google.dagger</groupId>
+            <artifactId>dagger</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
             <groupId>com.guicedee.services</groupId>
             <artifactId>javax.inject</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
