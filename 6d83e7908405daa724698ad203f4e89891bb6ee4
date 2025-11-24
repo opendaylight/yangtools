@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6dd607c0_a51e1330",
+        "filename": "parser/odlext-parser-support/src/main/java/module-info.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-24T18:13:45Z",
+      "side": 1,
+      "message": "these should not be transitive",
+      "range": {
+        "startLine": 38,
+        "startChar": 20,
+        "endLine": 38,
+        "endChar": 30
+      },
+      "revId": "6d83e7908405daa724698ad203f4e89891bb6ee4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
