@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab3e4b54_998a6a4d",
+        "filename": "parser/rfc8791-parser-support/src/main/java/org/opendaylight/yangtools/rfc8791/parser/AugmentStructureStatementSupport.java",
+        "patchSetId": 25
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-24T16:06:37Z",
+      "side": 1,
+      "message": "this is not exported: we probably want to refactor it to into parser.spi",
+      "range": {
+        "startLine": 25,
+        "startChar": 39,
+        "endLine": 25,
+        "endChar": 72
+      },
+      "revId": "8211444a7e64eb694be0fec1cfc73d94f2fb7ceb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
