@@ -7,25 +7,45 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser.inject;
 
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.rfc8040.parser.dagger.Rfc8040Module;
 import org.opendaylight.yangtools.rfc8040.parser.impl.Rfc8040ParserExtension;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 
 /**
  * Parser support for {@code ietf-restconf.yang} exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link Rfc8040Module#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
 @SuppressWarnings("exports")
-public final class InjectRfc8040ParserExtension extends Rfc8040ParserExtension {
+@Deprecated(since = "14.0.21", forRemoval = true)
+public final class InjectRfc8040ParserExtension implements ParserExtension {
+    private final Rfc8040ParserExtension delegate = new Rfc8040ParserExtension();
+
     /**
      * Default constructor.
      */
     @Inject
     public InjectRfc8040ParserExtension() {
         // visible for DI
+    }
+
+    @Override
+    public StatementSupportBundle configureBundle(YangParserConfiguration config) {
+        return delegate.configureBundle(config);
+    }
+
+    @Override
+    public Set<StatementDefinition> supportedStatements() {
+        return delegate.supportedStatements();
     }
 }
