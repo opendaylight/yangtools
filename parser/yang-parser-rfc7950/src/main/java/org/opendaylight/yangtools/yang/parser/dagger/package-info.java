@@ -11,14 +11,8 @@
  * a singleton implementation of they underlying construct. These methods can be used to build bindings to other
  * injection frameworks, like Guice or Spring Framework.
  *
- * <p>Additionally there is a single component, {@link DefaultYangParserComponent}, which combines the two modules
- * with the reference XPath parser implementation and all production-ready parser extensions defined in YANGTOOLS.
- *
  * <p>This package is not exposed to OSGi runtime.
  *
  * @since 14.0.21
  */
-package org.opendaylight.yangtools.yang.parser.impl.dagger;
-
-import org.opendaylight.yangtools.yang.parser.dagger.YangLibResolverModule;
-import org.opendaylight.yangtools.yang.parser.dagger.YangParserFactoryModule;
+package org.opendaylight.yangtools.yang.parser.dagger;

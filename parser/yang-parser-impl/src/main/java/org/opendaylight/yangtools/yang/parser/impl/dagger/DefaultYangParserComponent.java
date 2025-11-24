@@ -23,10 +23,12 @@ import org.opendaylight.yangtools.rfc8639.parser.dagger.Rfc8639Module;
 import org.opendaylight.yangtools.rfc8819.parser.dagger.Rfc8819Module;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.dagger.YangLibResolverModule;
+import org.opendaylight.yangtools.yang.parser.dagger.YangParserFactoryModule;
 import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule;
 
 /**
- * A component exposing {@link YangParserFactory} and {@link YangLibResolver}.
+ * A component exposing {@link YangParserFactory} and {@link YangLibResolver} with the default set of extensions.
  *
  * @since 14.0.21
  */
@@ -50,7 +52,7 @@ import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule
     })
 @NonNullByDefault
 @SuppressWarnings("exports")
-public interface YangParserComponent {
+public interface DefaultYangParserComponent {
 
     YangParserFactory parserFactory();
 
