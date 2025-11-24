@@ -14,23 +14,29 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 * @provides ParserExtension
  */
 module org.opendaylight.yangtools.openconfig.parser.support {
+    exports org.opendaylight.yangtools.openconfig.parser.dagger;
+
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.openconfig.parser;
+    // FIXME: remove this package
     exports org.opendaylight.yangtools.openconfig.parser.inject;
 
     provides ParserExtension with org.opendaylight.yangtools.openconfig.parser.impl.OpenConfigParserExtension;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
+    requires transitive org.opendaylight.yangtools.yang.parser.spi;
     requires transitive org.opendaylight.yangtools.openconfig.model.api;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
-    requires org.opendaylight.yangtools.yang.parser.spi;
     requires org.slf4j;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static dagger;
+    requires static jakarta.inject;
+    requires static java.compiler;
     requires static javax.inject;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;

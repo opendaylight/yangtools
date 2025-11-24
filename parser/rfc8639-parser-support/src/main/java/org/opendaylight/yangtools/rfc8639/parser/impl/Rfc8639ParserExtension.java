@@ -11,7 +11,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscribedNotificationsStatements;
 import org.opendaylight.yangtools.rfc8639.parser.SubscriptionStateNotificationStatementSupport;
-import org.opendaylight.yangtools.rfc8639.parser.inject.InjectRfc8639ParserExtension;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -26,7 +25,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class Rfc8639ParserExtension extends AbstractParserExtension permits InjectRfc8639ParserExtension {
+public final class Rfc8639ParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
@@ -35,7 +34,7 @@ public sealed class Rfc8639ParserExtension extends AbstractParserExtension permi
     }
 
     @Override
-    public final StatementSupportBundle configureBundle(final YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
             .addSupport(new SubscriptionStateNotificationStatementSupport(config))
             .build();
