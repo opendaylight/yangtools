@@ -7,38 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.ServiceLoader;
-import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
-import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.parser.dagger.YangLibResolverModule;
+import org.opendaylight.yangtools.yang.parser.inject.InjectYangLibResolver;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * Reference {@link YangLibResolver} implementation.
  */
-@Component
-@MetaInfServices
-public final class DefaultYangLibResolver implements YangLibResolver {
-    private final CrossSourceStatementReactor reactor;
+@Deprecated(since = "14.0.21", forRemoval = true)
+public sealed class DefaultYangLibResolver implements YangLibResolver permits InjectYangLibResolver {
+    private final @NonNull YangLibResolver delegate;
 
     /**
      * Default constructor for {@link ServiceLoader} instantiation.
@@ -49,49 +39,23 @@ public final class DefaultYangLibResolver implements YangLibResolver {
     }
 
     public DefaultYangLibResolver(final YangXPathParserFactory xpathFactory) {
-        this(xpathFactory,
-            ServiceLoader.load(ParserExtension.class).stream().map(ServiceLoader.Provider::get).toList());
+        this(xpathFactory, ServiceLoader.load(ParserExtension.class).stream()
+            .map(ServiceLoader.Provider::get)
+            .collect(Collectors.toUnmodifiableSet()));
     }
 
-    @Activate
-    public DefaultYangLibResolver(@Reference final YangXPathParserFactory xpathFactory,
-            @Reference(policyOption = ReferencePolicyOption.GREEDY) final Collection<ParserExtension> extensions) {
-        final var builder = RFC7950Reactors.defaultReactorBuilder(xpathFactory, YangParserConfiguration.DEFAULT);
-        for (var extension : extensions) {
-            builder.addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
-                extension.configureBundle(YangParserConfiguration.DEFAULT));
-        }
-        reactor = builder.build();
+    public DefaultYangLibResolver(final YangXPathParserFactory xpathFactory, final Set<ParserExtension> extensions) {
+        delegate = YangLibResolverModule.provideYangLibResolver(xpathFactory, extensions);
     }
 
     @Override
-    public Collection<Class<? extends SourceRepresentation>> supportedSourceRepresentations() {
-        return DefaultYangParser.REPRESENTATIONS;
+    public final Collection<Class<? extends SourceRepresentation>> supportedSourceRepresentations() {
+        return delegate.supportedSourceRepresentations();
     }
 
     @Override
-    public EffectiveModelContext resolveModuleSet(final YangLibModuleSet moduleSet)
+    public final EffectiveModelContext resolveModuleSet(final YangLibModuleSet moduleSet)
             throws IOException, YangParserException {
-        final var act = reactor.newBuild();
-        final var features = ImmutableSet.<QName>builder();
-
-        for (var module : moduleSet.modules().values()) {
-            final var namespace = QNameModule.ofRevision(module.namespace(), module.identifier().revision());
-            for (var feat : module.features()) {
-                features.add(feat.bindTo(namespace));
-            }
-
-            act.addSource(DefaultYangParser.sourceToStatementStream(module.source()));
-        }
-
-        for (var module : moduleSet.importOnlyModules().values()) {
-            act.addLibSource(DefaultYangParser.sourceToStatementStream(module.source()));
-        }
-
-        try {
-            return act.setSupportedFeatures(FeatureSet.of(features.build())).buildEffective();
-        } catch (ReactorException e) {
-            throw DefaultYangParser.decodeReactorException(e);
-        }
+        return delegate.resolveModuleSet(moduleSet);
     }
 }

@@ -44,10 +44,9 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Utility class for instantiating default-configured {@link CrossSourceStatementReactor}s.
- *
- * @author Robert Varga
  */
 @Beta
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class DefaultReactors {
     private static final class DefaultReactor {
         // Thread-safe lazy init

@@ -5,14 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 module org.opendaylight.yangtools.yang.parser.rfc7950 {
+    exports org.opendaylight.yangtools.yang.parser.dagger;
     // FIXME: audit these, potentially lowering them to their sole user if reasonable
     exports org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
     uses YangXPathParserFactory;
+    provides YangLibResolver with org.opendaylight.yangtools.yang.parser.ri.DefaultYangLibResolver;
+    provides YangParserFactory with org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
 
     requires transitive java.xml;
     requires transitive com.google.common;
@@ -35,5 +40,11 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static dagger;
+    requires static java.compiler;
+    requires static javax.inject;
+    requires static jakarta.inject;
+    requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
+    requires static org.osgi.service.component.annotations;
 }
