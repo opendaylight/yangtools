@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.OpenConfigVersionSupport;
-import org.opendaylight.yangtools.openconfig.parser.inject.InjectOpenConfigParserExtension;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -28,7 +27,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class OpenConfigParserExtension extends AbstractParserExtension permits InjectOpenConfigParserExtension {
+public final class OpenConfigParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
@@ -38,7 +37,7 @@ public sealed class OpenConfigParserExtension extends AbstractParserExtension pe
     }
 
     @Override
-    public final StatementSupportBundle configureBundle(final YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
             .addSupport(new EncryptedValueStatementSupport(config))
             .addSupport(new HashedValueStatementSupport(config))
