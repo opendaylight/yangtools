@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaRepository;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
+import org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
 
 /**
  * A {@link SchemaRepository} which allows sharing of {@link SchemaContext} as long as their specification is the same.

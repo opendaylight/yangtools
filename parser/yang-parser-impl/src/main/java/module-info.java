@@ -31,8 +31,8 @@ module org.opendaylight.yangtools.yang.parser.impl {
     uses YangXPathParserFactory;
 
     provides SchemaRepository with org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
-    provides YangLibResolver with org.opendaylight.yangtools.yang.parser.impl.DefaultYangLibResolver;
-    provides YangParserFactory with org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
+    provides YangLibResolver with org.opendaylight.yangtools.yang.parser.ri.DefaultYangLibResolver;
+    provides YangParserFactory with org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
