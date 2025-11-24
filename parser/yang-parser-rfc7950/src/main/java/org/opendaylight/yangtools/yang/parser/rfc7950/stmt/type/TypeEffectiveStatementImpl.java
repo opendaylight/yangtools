@@ -26,9 +26,9 @@ final class TypeEffectiveStatementImpl<T extends TypeDefinition<T>, D extends Ty
             final TypeBuilder<T> builder) {
         super(declared, substatements);
 
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof UnknownSchemaNode) {
-                builder.addUnknownSchemaNode((UnknownSchemaNode)stmt);
+        for (var stmt : substatements) {
+            if (stmt instanceof UnknownSchemaNode unknown) {
+                builder.addUnknownSchemaNode(unknown);
             }
         }
         typeDefinition = builder.build();
