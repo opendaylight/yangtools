@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.rfc6643.parser.ImpliedStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.MaxAccessStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.OidStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.SubIdStatementSupport;
-import org.opendaylight.yangtools.rfc6643.parser.inject.InjectRfc6643ParserExtension;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -32,7 +31,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class Rfc6643ParserExtension extends AbstractParserExtension permits InjectRfc6643ParserExtension {
+public final class Rfc6643ParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
@@ -41,7 +40,7 @@ public sealed class Rfc6643ParserExtension extends AbstractParserExtension permi
     }
 
     @Override
-    public final StatementSupportBundle configureBundle(final YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
             .addSupport(new DisplayHintStatementSupport(config))
             .addSupport(new MaxAccessStatementSupport(config))

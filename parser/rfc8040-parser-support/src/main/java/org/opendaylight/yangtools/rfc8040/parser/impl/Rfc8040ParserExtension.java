@@ -11,7 +11,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatements;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
-import org.opendaylight.yangtools.rfc8040.parser.inject.InjectRfc8040ParserExtension;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -26,7 +25,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class Rfc8040ParserExtension extends AbstractParserExtension permits InjectRfc8040ParserExtension {
+public final class Rfc8040ParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
@@ -35,7 +34,7 @@ public sealed class Rfc8040ParserExtension extends AbstractParserExtension permi
     }
 
     @Override
-    public final StatementSupportBundle configureBundle(final YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
             .addSupport(new YangDataStatementSupport(config))
             .addSupport(YangDataStatementSupport.BEHAVIOUR)

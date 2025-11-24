@@ -11,7 +11,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.rfc7952.model.api.MetadataStatements;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
-import org.opendaylight.yangtools.rfc7952.parser.inject.InjectRfc7952ParserExtension;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -26,7 +25,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class Rfc7952ParserExtension extends AbstractParserExtension permits InjectRfc7952ParserExtension {
+public final class Rfc7952ParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
@@ -35,7 +34,7 @@ public sealed class Rfc7952ParserExtension extends AbstractParserExtension permi
     }
 
     @Override
-    public final StatementSupportBundle configureBundle(final YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder().addSupport(new AnnotationStatementSupport(config)).build();
     }
 }

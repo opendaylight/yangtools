@@ -11,7 +11,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
 import org.opendaylight.yangtools.odlext.parser.AugmentIdentifierStatementSupport;
-import org.opendaylight.yangtools.odlext.parser.inject.InjectOdlCodegenParserExtension;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -26,7 +25,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class OdlCodegenParserExtension extends AbstractParserExtension permits InjectOdlCodegenParserExtension {
+public final class OdlCodegenParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
@@ -35,7 +34,7 @@ public sealed class OdlCodegenParserExtension extends AbstractParserExtension pe
     }
 
     @Override
-    public final StatementSupportBundle configureBundle(final YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder().addSupport(new AugmentIdentifierStatementSupport(config)).build();
     }
 }
