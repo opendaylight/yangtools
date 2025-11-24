@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f813568_82208710",
+        "filename": "parser/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/inject/InjectYangLibResolver.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-24T23:57:01Z",
+      "side": 0,
+      "message": "keep this",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 3
+      },
+      "revId": "ed99668051eb5fee404612819b727f0250758d99",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
