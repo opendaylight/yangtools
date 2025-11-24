@@ -1,1 +1,1 @@
-Import-Package: !javax.inject, !org.checkerframework.*, *
+Import-Package: !dagger.*, !jakarta.inject, !javax.inject, !org.checkerframework.*, !org.opendaylight.yangtools.*.dagger, *

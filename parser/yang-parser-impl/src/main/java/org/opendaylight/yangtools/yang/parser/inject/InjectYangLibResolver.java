@@ -18,13 +18,18 @@ import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangLibResolver;
+import org.opendaylight.yangtools.yang.parser.impl.dagger.YangLibResolverModule;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Reference {@link YangLibResolver} implementation.
+ *
+ * @since 14.0.20
+ * @deprecated Use {@link YangLibResolverModule#provideYangLibResolver(YangXPathParserFactory, java.util.Set)} instead.
  */
 @Singleton
 @SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectYangLibResolver implements YangLibResolver {
     private final @NonNull DefaultYangLibResolver delegate;
 
