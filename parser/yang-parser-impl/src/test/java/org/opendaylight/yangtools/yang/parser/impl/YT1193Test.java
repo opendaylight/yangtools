@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
 
 class YT1193Test {
     @Test
