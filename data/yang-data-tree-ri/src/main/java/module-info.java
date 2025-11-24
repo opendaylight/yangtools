@@ -8,8 +8,10 @@
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
 
 module org.opendaylight.yangtools.yang.data.tree {
-    exports org.opendaylight.yangtools.yang.data.tree.impl.di;
+    exports org.opendaylight.yangtools.yang.data.tree.dagger;
     exports org.opendaylight.yangtools.yang.data.tree.leafref;
+    // FIXME: 15.0.0: remove this package
+    exports org.opendaylight.yangtools.yang.data.tree.impl.di;
 
     provides DataTreeFactory with org.opendaylight.yangtools.yang.data.tree.impl.ReferenceDataTreeFactory;
 
@@ -25,9 +27,11 @@ module org.opendaylight.yangtools.yang.data.tree {
     requires org.slf4j;
 
     // Annotations
-    requires static transitive javax.inject;
+    requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
-    requires static org.eclipse.jdt.annotation;
+    requires static dagger;
+    requires static jakarta.inject;
+    requires static javax.inject;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
