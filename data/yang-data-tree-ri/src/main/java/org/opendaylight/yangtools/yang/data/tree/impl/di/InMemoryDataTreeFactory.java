@@ -15,13 +15,18 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.tree.dagger.ReferenceDataTreeFactoryModule;
 import org.opendaylight.yangtools.yang.data.tree.impl.ReferenceDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * A factory for creating in-memory data trees.
+ *
+ * @deprecated Use {@link ReferenceDataTreeFactoryModule#provideDataTreeFactory()} instead.
  */
 @Singleton
+@Deprecated(since = "14.0.21", forRemoval = true)
+@SuppressWarnings("exports")
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private final @NonNull ReferenceDataTreeFactory delegate = new ReferenceDataTreeFactory();
 
