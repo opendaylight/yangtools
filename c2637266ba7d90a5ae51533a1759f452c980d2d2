@@ -229,6 +229,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "adec97fe_b1184552",
+        "filename": "parser/rfc8791-parser-support/pom.xml",
+        "patchSetId": 16
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-24T16:05:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c7a0dac_c1a68174",
+      "range": {
+        "startLine": 14,
+        "startChar": 20,
+        "endLine": 14,
+        "endChar": 26
+      },
+      "revId": "c2637266ba7d90a5ae51533a1759f452c980d2d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "96378912_e0d140de",
@@ -242,6 +266,30 @@
       "writtenOn": "2025-11-17T16:28:35Z",
       "side": 1,
       "message": "full module",
+      "range": {
+        "startLine": 56,
+        "startChar": 25,
+        "endLine": 56,
+        "endChar": 46
+      },
+      "revId": "c2637266ba7d90a5ae51533a1759f452c980d2d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4be14da9_32b44d6e",
+        "filename": "parser/rfc8791-parser-support/pom.xml",
+        "patchSetId": 16
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-11-24T16:05:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96378912_e0d140de",
       "range": {
         "startLine": 56,
         "startChar": 25,
