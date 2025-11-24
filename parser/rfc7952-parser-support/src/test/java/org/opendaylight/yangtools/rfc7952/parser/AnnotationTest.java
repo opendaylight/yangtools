@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
-import org.opendaylight.yangtools.rfc7952.parser.inject.InjectRfc7952ParserExtension;
+import org.opendaylight.yangtools.rfc7952.parser.dagger.Rfc7952Module;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -33,7 +33,7 @@ class AnnotationTest {
     void testAnnotationResolution() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
-                new InjectRfc7952ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
+                Rfc7952Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var context = reactor.newBuild()
             .addSources(

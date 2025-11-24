@@ -12,7 +12,6 @@ import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
-import org.opendaylight.yangtools.rfc6536.parser.inject.InjectRfc6536ParserExtension;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -27,7 +26,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class Rfc6536ParserExtension extends AbstractParserExtension permits InjectRfc6536ParserExtension {
+public final class Rfc6536ParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
@@ -36,7 +35,7 @@ public sealed class Rfc6536ParserExtension extends AbstractParserExtension permi
     }
 
     @Override
-    public final StatementSupportBundle configureBundle(final YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
             .addSupport(new DefaultDenyAllStatementSupport(config))
             .addSupport(new DefaultDenyWriteStatementSupport(config))
