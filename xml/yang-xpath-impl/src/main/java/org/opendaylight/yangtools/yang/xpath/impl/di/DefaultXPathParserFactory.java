@@ -17,12 +17,16 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.QualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.UnqualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.opendaylight.yangtools.yang.xpath.impl.AntlrXPathParserFactory;
+import org.opendaylight.yangtools.yang.xpath.ri.dagger.ReferenceYangXPathParserFactoryModule;
 
 /**
  * Default implementation of {@link YangXPathParserFactory} for {@code javax.inject}-based dependency injection
  * frameworks.
+ *
+ * @deprecated Use {@link ReferenceYangXPathParserFactoryModule#provideYangXPathParserFactory()} instead..
  */
 @Singleton
+@Deprecated(forRemoval = true, since = "14.0.21")
 public final class DefaultXPathParserFactory implements YangXPathParserFactory {
     private final AntlrXPathParserFactory delegate = new AntlrXPathParserFactory();
 

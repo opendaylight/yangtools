@@ -6,15 +6,20 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
-import org.opendaylight.yangtools.yang.xpath.impl.AntlrXPathParserFactory;
 
 /**
  * Reference implementation of YANG XPath parser.
+ *
+ * @provides YangXPathParserFactory
  */
+// FIXME: 15.0.0: rename to xpath.ri
 module org.opendaylight.yangtools.yang.xpath.impl {
+    exports org.opendaylight.yangtools.yang.xpath.ri.dagger;
+
+    // FIXME: 15.0.0: remove this package
     exports org.opendaylight.yangtools.yang.xpath.impl.di;
 
-    provides YangXPathParserFactory with AntlrXPathParserFactory;
+    provides YangXPathParserFactory with org.opendaylight.yangtools.yang.xpath.impl.AntlrXPathParserFactory;
 
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
     requires java.xml;
@@ -25,6 +30,9 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     // Annotations
     requires static transitive javax.inject;
     requires static com.github.spotbugs.annotations;
+    requires static dagger;
+    requires static jakarta.inject;
+    requires static java.compiler;
     requires static org.eclipse.jdt.annotation;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.service.component.annotations;
