@@ -7,25 +7,45 @@
  */
 package org.opendaylight.yangtools.odlext.parser.inject;
 
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.odlext.parser.dagger.YangExtModule;
 import org.opendaylight.yangtools.odlext.parser.impl.YangExtParserExtension;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 
 /**
  * Our extension exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link YangExtModule#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
 @SuppressWarnings("exports")
-public final class InjectYangExtParserExtension extends YangExtParserExtension {
+@Deprecated(since = "14.0.21", forRemoval = true)
+public final class InjectYangExtParserExtension implements ParserExtension {
+    private final YangExtParserExtension delegate = new YangExtParserExtension();
+
     /**
      * Default constructor.
      */
     @Inject
     public InjectYangExtParserExtension() {
         // visible for DI
+    }
+
+    @Override
+    public StatementSupportBundle configureBundle(YangParserConfiguration config) {
+        return delegate.configureBundle(config);
+    }
+
+    @Override
+    public Set<StatementDefinition> supportedStatements() {
+        return delegate.supportedStatements();
     }
 }
