@@ -6,13 +6,12 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 
 module org.opendaylight.yangtools.yang.data.tree {
     exports org.opendaylight.yangtools.yang.data.tree.impl.di;
     exports org.opendaylight.yangtools.yang.data.tree.leafref;
 
-    provides DataTreeFactory with InMemoryDataTreeFactory;
+    provides DataTreeFactory with org.opendaylight.yangtools.yang.data.tree.impl.ReferenceDataTreeFactory;
 
     requires transitive org.opendaylight.yangtools.yang.data.tree.api;
     requires com.google.common;
