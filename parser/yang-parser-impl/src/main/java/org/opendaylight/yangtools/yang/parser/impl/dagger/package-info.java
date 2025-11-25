@@ -6,13 +6,8 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * Dagger modules and components for parsing YANG and YIN files. There are two separate modules,
- * {@link YangLibResolverModule} and {@link YangParserFactoryModule}, which provide static factory methods returning
- * a singleton implementation of they underlying construct. These methods can be used to build bindings to other
- * injection frameworks, like Guice or Spring Framework.
- *
- * <p>Additionally there is a single component, {@link YangParserComponent}, which combines the two modules
- * with the reference XPath parser implementation and all production-ready parser extensions defined in YANGTOOLS.
+ * Dagger components, specifically {@link YangParserComponent}, which combines the two modules with the reference XPath
+ * parser implementation and all production-ready parser extensions defined in YANGTOOLS.
  *
  * <p>This package is not exposed to OSGi runtime.
  *

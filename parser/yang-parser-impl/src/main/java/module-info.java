@@ -6,8 +6,6 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
-import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
@@ -15,8 +13,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
  * Reference implementation of YANG parser.
  *
  * @provides SchemaRepository
- * @provides YangLibResolver
- * @provides YangParserFactory
  */
 module org.opendaylight.yangtools.yang.parser.impl {
     exports org.opendaylight.yangtools.yang.parser.repo;
@@ -31,8 +27,6 @@ module org.opendaylight.yangtools.yang.parser.impl {
     uses YangXPathParserFactory;
 
     provides SchemaRepository with org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
-    provides YangLibResolver with org.opendaylight.yangtools.yang.parser.impl.DefaultYangLibResolver;
-    provides YangParserFactory with org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
@@ -66,5 +60,4 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires static org.gaul.modernizer_maven_annotations;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
-    requires static org.osgi.service.component.annotations;
 }
