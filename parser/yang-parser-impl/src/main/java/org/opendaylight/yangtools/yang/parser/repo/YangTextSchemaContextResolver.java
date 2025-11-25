@@ -86,6 +86,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         cache = GuavaSchemaSourceCache.createSoftCache(registry, YangIRSource.class, SOURCE_LIFETIME);
     }
 
+    @Deprecated(since = "14.0.21", forRemoval = true)
     public static @NonNull YangTextSchemaContextResolver create(final String name) {
         final var sharedRepo = new SharedSchemaRepository(name);
         return new YangTextSchemaContextResolver(sharedRepo, sharedRepo);
