@@ -6,8 +6,6 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Reference implementation of YANG parser.
@@ -22,9 +20,6 @@ module org.opendaylight.yangtools.yang.parser.impl {
     exports org.opendaylight.yangtools.yang.parser.impl;
     // FIXME: remove this package
     exports org.opendaylight.yangtools.yang.parser.inject;
-
-    uses ParserExtension;
-    uses YangXPathParserFactory;
 
     provides SchemaRepository with org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 
