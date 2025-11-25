@@ -5,31 +5,31 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.impl.dagger;
+package org.opendaylight.yangtools.yang.parser.dagger;
 
 import dagger.Module;
 import dagger.Provides;
 import jakarta.inject.Singleton;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultYangLibResolver;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
- * A Dagger module providing {@link YangLibResolver}.
+ * A Dagger module providing {@link YangParserFactory}.
  *
  * @since 14.0.21
  */
 @Module
 @NonNullByDefault
 @SuppressWarnings("exports")
-public interface YangLibResolverModule {
+public interface YangParserFactoryModule {
     @Provides
     @Singleton
-    static YangLibResolver provideYangLibResolver(final YangXPathParserFactory xpathFactory,
+    static YangParserFactory provideParserFactory(final YangXPathParserFactory xpathFactory,
             final Set<ParserExtension> extensions) {
-        return new DefaultYangLibResolver(xpathFactory, extensions);
+        return new DefaultYangParserFactory(xpathFactory, extensions);
     }
 }

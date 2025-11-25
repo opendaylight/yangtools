@@ -5,12 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.impl;
+package org.opendaylight.yangtools.yang.parser.ri;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.ServiceLoader;
+import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -26,11 +27,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * Reference {@link YangLibResolver} implementation.
  */
-@Deprecated(since = "14.0.21", forRemoval = true)
+@Component
+@MetaInfServices
 public final class DefaultYangLibResolver implements YangLibResolver {
     private final CrossSourceStatementReactor reactor;
 
@@ -47,8 +53,9 @@ public final class DefaultYangLibResolver implements YangLibResolver {
             ServiceLoader.load(ParserExtension.class).stream().map(ServiceLoader.Provider::get).toList());
     }
 
-    public DefaultYangLibResolver(final YangXPathParserFactory xpathFactory,
-            final Collection<ParserExtension> extensions) {
+    @Activate
+    public DefaultYangLibResolver(@Reference final YangXPathParserFactory xpathFactory,
+            @Reference(policyOption = ReferencePolicyOption.GREEDY) final Collection<ParserExtension> extensions) {
         final var builder = RFC7950Reactors.defaultReactorBuilder(xpathFactory, YangParserConfiguration.DEFAULT);
         for (var extension : extensions) {
             builder.addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
