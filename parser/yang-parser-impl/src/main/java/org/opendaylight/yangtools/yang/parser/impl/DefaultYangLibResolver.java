@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.ServiceLoader;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -18,11 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
-import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.inject.InjectYangLibResolver;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
@@ -31,30 +27,15 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
  * Reference {@link YangLibResolver} implementation.
  */
 @Deprecated(since = "14.0.21", forRemoval = true)
-public final class DefaultYangLibResolver implements YangLibResolver {
+public sealed class DefaultYangLibResolver implements YangLibResolver permits InjectYangLibResolver {
     private final CrossSourceStatementReactor reactor;
 
-    /**
-     * Default constructor for {@link ServiceLoader} instantiation.
-     */
     public DefaultYangLibResolver() {
-        this(ServiceLoader.load(YangXPathParserFactory.class).findFirst()
-            .orElseThrow(() -> new IllegalStateException("No YangXPathParserFactory found")));
+        reactor = DefaultReactors.defaultReactorBuilder().build();
     }
 
     public DefaultYangLibResolver(final YangXPathParserFactory xpathFactory) {
-        this(xpathFactory,
-            ServiceLoader.load(ParserExtension.class).stream().map(ServiceLoader.Provider::get).toList());
-    }
-
-    public DefaultYangLibResolver(final YangXPathParserFactory xpathFactory,
-            final Collection<ParserExtension> extensions) {
-        final var builder = RFC7950Reactors.defaultReactorBuilder(xpathFactory, YangParserConfiguration.DEFAULT);
-        for (var extension : extensions) {
-            builder.addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
-                extension.configureBundle(YangParserConfiguration.DEFAULT));
-        }
-        reactor = builder.build();
+        reactor = DefaultReactors.defaultReactorBuilder(xpathFactory).build();
     }
 
     @Override
