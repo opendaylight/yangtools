@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.parser.AugmentIdentifierStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.ContextInstanceStatementSupport;
@@ -44,10 +43,8 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * Utility class for instantiating default-configured {@link CrossSourceStatementReactor}s.
- *
- * @author Robert Varga
  */
-@Beta
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class DefaultReactors {
     private static final class DefaultReactor {
         // Thread-safe lazy init

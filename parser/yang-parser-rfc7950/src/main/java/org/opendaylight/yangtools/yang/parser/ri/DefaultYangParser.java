@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.impl;
+package org.opendaylight.yangtools.yang.parser.ri;
 
 import static java.util.Objects.requireNonNull;
 
@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.xml.sax.SAXException;
 
-@Deprecated(since = "14.0.21", forRemoval = true)
 final class DefaultYangParser implements YangParser {
     static final @NonNull ImmutableSet<Class<? extends SourceRepresentation>> REPRESENTATIONS = ImmutableSet.of(
         // In order of preference
