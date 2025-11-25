@@ -7,20 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.inject;
 
-import java.util.Collection;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
-import org.opendaylight.yangtools.yang.parser.api.YangParser;
-import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.dagger.YangParserFactoryModule;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
-import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
@@ -30,32 +22,12 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
  * @deprecated Use {@link YangParserFactoryModule#provideParserFactory(YangXPathParserFactory, java.util.Set)} instead.
  */
 @Singleton
+@NonNullByDefault
 @SuppressWarnings("exports")
 @Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectYangParserFactory extends DefaultYangParserFactory {
-    private final @NonNull YangParserFactory delegate;
-
     @Inject
-    @NonNullByDefault
     public InjectYangParserFactory(final YangXPathParserFactory xpathFactory) {
-        delegate = YangParserFactoryModule.provideParserFactory(xpathFactory,
-            ServiceLoader.load(ParserExtension.class).stream()
-                .map(ServiceLoader.Provider::get)
-                .collect(Collectors.toUnmodifiableSet()));
-    }
-
-    @Override
-    public Collection<ImportResolutionMode> supportedImportResolutionModes() {
-        return delegate.supportedImportResolutionModes();
-    }
-
-    @Override
-    public YangParser createParser() {
-        return delegate.createParser();
-    }
-
-    @Override
-    public YangParser createParser(YangParserConfiguration configuration) {
-        return delegate.createParser(configuration);
+        super(xpathFactory);
     }
 }

@@ -11,16 +11,13 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.inject.InjectYangParserFactory;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
@@ -28,7 +25,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
  * Reference {@link YangParserFactory} implementation.
  */
 @Deprecated(since = "14.0.21", forRemoval = true)
-public final class DefaultYangParserFactory implements YangParserFactory {
+public sealed class DefaultYangParserFactory implements YangParserFactory permits InjectYangParserFactory {
     private static final List<ImportResolutionMode> SUPPORTED_MODES = List.of(ImportResolutionMode.DEFAULT);
 
     private final ConcurrentHashMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
@@ -36,42 +33,16 @@ public final class DefaultYangParserFactory implements YangParserFactory {
     private final Function<YangParserConfiguration, CrossSourceStatementReactor> reactorFactory;
 
     /**
-     * Default constructor for {@link ServiceLoader} instantiation.
+     * Construct a new {@link YangParserFactory} backed by {@link DefaultReactors#defaultReactor()}.
      */
     public DefaultYangParserFactory() {
-        this(ServiceLoader.load(YangXPathParserFactory.class).findFirst()
-            .orElseThrow(() -> new IllegalStateException("No YangXPathParserFactory found")));
-    }
-
-    /**
-     * Utility constructor for partial injection.
-     *
-     * @deprecated Exposed only for InjectYangParserFactory
-     */
-    @Deprecated(since = "14.0.21", forRemoval = true)
-    public DefaultYangParserFactory(final YangXPathParserFactory xpathFactory) {
-        this(xpathFactory,
-            ServiceLoader.load(ParserExtension.class).stream().map(ServiceLoader.Provider::get).toList());
-    }
-
-    /**
-     * Default constructor for full injection.
-     *
-     * @param xpathFactory the {@link YangXPathParserFactory} to use
-     * @param extensions the {@link ParserExtension}s to use
-     */
-    public DefaultYangParserFactory(final YangXPathParserFactory xpathFactory,
-            final Collection<ParserExtension> extensions) {
-        reactorFactory = config -> {
-            final var builder = RFC7950Reactors.defaultReactorBuilder(xpathFactory, config);
-            for (var extension : extensions) {
-                builder.addAllSupports(ModelProcessingPhase.FULL_DECLARATION, extension.configureBundle(config));
-            }
-            return builder.build();
-        };
-
+        reactorFactory = config -> DefaultReactors.defaultReactorBuilder(config).build();
         // Make sure default reactor is available
         verifyNotNull(reactorFactory.apply(YangParserConfiguration.DEFAULT));
+    }
+
+    public DefaultYangParserFactory(final YangXPathParserFactory xpathFactory) {
+        reactorFactory = config -> DefaultReactors.defaultReactorBuilder(xpathFactory, config).build();
     }
 
     @Override
