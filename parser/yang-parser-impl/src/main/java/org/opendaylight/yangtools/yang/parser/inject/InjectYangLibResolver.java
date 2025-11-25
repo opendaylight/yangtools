@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.parser.dagger.YangLibResolverModule;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangLibResolver;
-import org.opendaylight.yangtools.yang.parser.impl.dagger.YangLibResolverModule;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
