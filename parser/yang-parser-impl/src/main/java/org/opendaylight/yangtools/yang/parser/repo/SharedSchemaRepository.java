@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
  *
  * <p>Note: for current implementation, "same" means the same filter and the same set of {@link SourceIdentifier}s.
  */
+// FIXME: do no provide via ServiceLoader
 @Beta
 @MetaInfServices(value = SchemaRepository.class)
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
@@ -45,10 +46,12 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     private final @NonNull String id;
     private final @NonNull YangParserFactory factory;
 
+    @Deprecated(since = "14.0.21", forRemoval = true)
     public SharedSchemaRepository() {
         this("unnamed");
     }
 
+    @Deprecated(since = "14.0.21", forRemoval = true)
     public SharedSchemaRepository(final String id) {
         this(id, new DefaultYangParserFactory());
     }
