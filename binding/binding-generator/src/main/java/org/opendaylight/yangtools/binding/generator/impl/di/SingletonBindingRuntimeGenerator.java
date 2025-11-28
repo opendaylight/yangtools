@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingRuntimeGe
 @Beta
 @Singleton
 @SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class SingletonBindingRuntimeGenerator extends DefaultBindingRuntimeGenerator {
     @Inject
     public SingletonBindingRuntimeGenerator() {
