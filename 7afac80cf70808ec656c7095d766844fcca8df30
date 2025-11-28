@@ -34,6 +34,24 @@
       "parentUuid": "aef0269d_e41c5cf9",
       "revId": "7afac80cf70808ec656c7095d766844fcca8df30",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8ebf886_fde322f0",
+        "filename": "tests/test_yangmodels_ieee.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 9389
+      },
+      "writtenOn": "2025-11-28T14:52:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a15fde06_43792462",
+      "revId": "7afac80cf70808ec656c7095d766844fcca8df30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
