@@ -16,6 +16,24 @@
       "message": "Maybe it could be more easier to check this using something like this\n`if number in YANG_MODEL_PATHS:`",
       "revId": "7afac80cf70808ec656c7095d766844fcca8df30",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a15fde06_43792462",
+        "filename": "tests/test_yangmodels_ieee.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-11-28T14:15:09Z",
+      "side": 1,
+      "message": "oh, now I noticed you have there model paths with emtpy lists. Now it makes sense. But still maybe a bit more readable could be either\n`if YANG_MODEL_PATHS.get(number):` (automatically should return `None` as default value, when the key is not found)\nor\n`if number in YANG_MODEL_PATHS and YANG_MODEL_PATHS[number]`",
+      "parentUuid": "aef0269d_e41c5cf9",
+      "revId": "7afac80cf70808ec656c7095d766844fcca8df30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
