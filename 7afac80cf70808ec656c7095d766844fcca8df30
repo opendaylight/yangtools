@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aef0269d_e41c5cf9",
+        "filename": "tests/test_yangmodels_ieee.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2025-11-28T13:58:26Z",
+      "side": 1,
+      "message": "Maybe it could be more easier to check this using something like this\n`if number in YANG_MODEL_PATHS:`",
+      "revId": "7afac80cf70808ec656c7095d766844fcca8df30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
