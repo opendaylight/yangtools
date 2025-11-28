@@ -19,7 +19,7 @@ YANG_MODEL_PATHS = {
 }
 
 
-@pytest.mark.parametrize("solVersion", [
+@pytest.mark.parametrize("sol_version", [
     "NFV-SOL006-v4.3.1",
     "NFV-SOL006-v3.6.1",
     "NFV-SOL006-v3.5.1",
@@ -28,8 +28,8 @@ YANG_MODEL_PATHS = {
     "NFV-SOL006-v2.7.1",
     "NFV-SOL006-v2.6.1"
 ])
-def test_validate_yangmodels_etsi_yangs(fixture_models_repos, solVersion):  # noqa: F811
-    yang_files = get_yang_files(f"./src/main/yang/standard/etsi/{solVersion}/src/yang")
+def test_validate_yangmodels_etsi_yangs(fixture_models_repos, sol_version):  # noqa: F811
+    yang_files = get_yang_files(f"./src/main/yang/standard/etsi/{sol_version}/src/yang")
     yang_files_str = " ".join([f"'{f}'" for f in yang_files])
 
     rc, test_tool_output = shell(
