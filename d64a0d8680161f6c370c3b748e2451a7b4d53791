@@ -22,6 +22,30 @@
       },
       "revId": "d64a0d8680161f6c370c3b748e2451a7b4d53791",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0df829af_bba3b551",
+        "filename": "binding/binding-generator/src/main/java/org/opendaylight/yangtools/binding/generator/impl/di/SingletonBindingRuntimeGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-02T14:07:13Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "d890e0b6_5d56a921",
+      "range": {
+        "startLine": 17,
+        "startChar": 1,
+        "endLine": 17,
+        "endChar": 17
+      },
+      "revId": "d64a0d8680161f6c370c3b748e2451a7b4d53791",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
