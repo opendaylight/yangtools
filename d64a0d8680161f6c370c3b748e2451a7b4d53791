@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d890e0b6_5d56a921",
+        "filename": "binding/binding-generator/src/main/java/org/opendaylight/yangtools/binding/generator/impl/di/SingletonBindingRuntimeGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-02T14:05:54Z",
+      "side": 0,
+      "message": "this needs to remain",
+      "range": {
+        "startLine": 17,
+        "startChar": 1,
+        "endLine": 17,
+        "endChar": 17
+      },
+      "revId": "d64a0d8680161f6c370c3b748e2451a7b4d53791",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
