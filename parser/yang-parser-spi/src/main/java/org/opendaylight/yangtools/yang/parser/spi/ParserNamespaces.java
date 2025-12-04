@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ResolvedSourceInfo;
 
 /**
  * Baseline {@link ParserNamespace}s mostly derived from YANG specification.
@@ -163,6 +164,9 @@ public final class ParserNamespaces {
      */
     public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, QNameModule> MODULECTX_TO_QNAME =
         new ParserNamespace<>("modulectx-to-qnamemodule");
+
+    public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, ResolvedSourceInfo> MODULECTX_TO_RESOLVED =
+        new ParserNamespace<>("modulectx-to-resolved");
 
     public static final @NonNull ParserNamespace<Empty, FeatureSet> SUPPORTED_FEATURES =
         new ParserNamespace<>("supportedFeatures");

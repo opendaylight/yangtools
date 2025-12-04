@@ -53,6 +53,13 @@ class StatementContextVisitor {
         processStatement(0, stmt);
     }
 
+    void skipRootAndVisit(final IRStatement rootStmt) {
+        int offset = 0;
+        for (IRStatement statement : rootStmt.statements()) {
+            processStatement(offset++, statement);
+        }
+    }
+
     /**
      * Based on identifier read from source and collections of relevant prefixes and statement definitions mappings
      * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
@@ -142,7 +149,7 @@ class StatementContextVisitor {
         }
 
         writer.storeStatement(childOffset, fullyDefined);
-        writer.endStatement(ref);
+        writer.endStatement();
         return fullyDefined;
     }
 }

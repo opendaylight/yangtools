@@ -21,21 +21,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -50,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceLinkageResolver.ResolvedSourceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,36 +147,54 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @NonNull ReactorDeclaredModel build() throws ReactorException {
-        final List<ResolvedSource> resolvedSources = resolveSources();
-        executePhases(resolvedSources);
-        return transform(resolvedSources);
+        final List<ResolvedSourceContext> resolvedSourceContexts = resolveSources();
+        executePhases(resolvedSourceContexts);
+        return transform(resolvedSourceContexts);
     }
 
     @NonNull EffectiveSchemaContext buildEffective() throws ReactorException {
-        final List<ResolvedSource> resolvedSources = resolveSources();
-        executePhases(resolvedSources);
-        return transformEffective(resolvedSources);
+        final List<ResolvedSourceContext> resolvedSourceContexts = resolveSources();
+        executePhases(resolvedSourceContexts);
+        return transformEffective(resolvedSourceContexts);
     }
 
-    private List<ResolvedSource> resolveSources() throws SomeModifiersUnresolvedException {
+    private List<ResolvedSourceContext> resolveSources() throws SomeModifiersUnresolvedException {
+        this.currentPhase = ModelProcessingPhase.STATEMENT_DEFINITION;
+
+        for (SourceSpecificContext source : sources) {
+            source.startPhase(ModelProcessingPhase.STATEMENT_DEFINITION);
+            source.loadRootStatement();
+        }
+
+        for (SourceSpecificContext libSource : libSources) {
+            libSource.startPhase(ModelProcessingPhase.STATEMENT_DEFINITION);
+            libSource.loadRootStatement();
+        }
+
         final var linkageResolver = new SourceLinkageResolver(sources, libSources);
-        return linkageResolver.resolveInvolvedSources();
+        final List<ResolvedSourceContext> resolvedSourceContexts = linkageResolver.resolveInvolvedSources();
+        for (ResolvedSourceContext resolvedContext : resolvedSourceContexts) {
+            SourceLinkageResolver.fillNamespaces(resolvedContext.resolvedSourceInfo());
+            final var root = (RootStatementContext<?, ?, ?>) resolvedContext.resolvedSourceInfo().root();
+            root.addToNamespace(ParserNamespaces.MODULECTX_TO_RESOLVED, root, resolvedContext.resolvedSourceInfo());
+        }
+        return resolvedSourceContexts;
     }
 
-    private void executePhases(final List<ResolvedSource> resolvedSources) throws ReactorException {
+    private void executePhases(final List<ResolvedSourceContext> resolvedSourceContexts) throws ReactorException {
         for (var phase : PHASE_EXECUTION_ORDER) {
-            startPhase(phase, resolvedSources);
-            loadPhaseStatements(resolvedSources);
-            completePhaseActions(resolvedSources);
+            startPhase(phase, resolvedSourceContexts);
+            loadPhaseStatements(resolvedSourceContexts);
+            completePhaseActions(resolvedSourceContexts);
             endPhase(phase);
         }
     }
 
-    private @NonNull ReactorDeclaredModel transform(final List<ResolvedSource> resolvedSources) {
+    private @NonNull ReactorDeclaredModel transform(final List<ResolvedSourceContext> resolvedSources) {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final var rootStatements = new ArrayList<DeclaredStatement<?>>(resolvedSources.size());
         for (var source : resolvedSources) {
-            rootStatements.add(source.getContext().declaredRoot());
+            rootStatements.add(source.context().declaredRoot());
         }
         return new ReactorDeclaredModel(rootStatements);
     }
@@ -201,14 +216,14 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private @NonNull EffectiveSchemaContext transformEffective(final List<ResolvedSource> resolvedSources)
+    private @NonNull EffectiveSchemaContext transformEffective(final List<ResolvedSourceContext> resolvedSources)
         throws ReactorException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final var rootStatements = new ArrayList<DeclaredStatement<?>>(resolvedSources.size());
         final var rootEffectiveStatements = new ArrayList<EffectiveStatement<?, ?>>(resolvedSources.size());
 
         for (var source : resolvedSources) {
-            final SourceSpecificContext resolvedCtx = source.getContext();
+            final SourceSpecificContext resolvedCtx = source.context();
             try {
                 rootStatements.add(resolvedCtx.declaredRoot());
                 rootEffectiveStatements.add(resolvedCtx.effectiveRoot());
@@ -221,7 +236,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return EffectiveSchemaContext.create(rootStatements, rootEffectiveStatements);
     }
 
-    private void startPhase(final ModelProcessingPhase phase, final List<ResolvedSource> resolved) {
+    private void startPhase(final ModelProcessingPhase phase, final List<ResolvedSourceContext> resolved) {
         checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
         startPhaseFor(phase, resolved);
 
@@ -229,78 +244,24 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         LOG.debug("Global phase {} started", phase);
     }
 
-    private static void startPhaseFor(final ModelProcessingPhase phase, final List<ResolvedSource> sources) {
+    private static void startPhaseFor(final ModelProcessingPhase phase, final List<ResolvedSourceContext> sources) {
         for (var source : sources) {
-            source.getContext().startPhase(phase);
+            source.context().startPhase(phase);
         }
     }
 
-    private void loadPhaseStatements(final List<ResolvedSource> resolved) throws ReactorException {
+    private void loadPhaseStatements(final List<ResolvedSourceContext> resolved) throws ReactorException {
         checkState(currentPhase != null);
         loadPhaseStatementsFor(resolved);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void loadPhaseStatementsFor(final List<ResolvedSource> srcs) throws ReactorException {
-        //TODO: change the representation here to something more succinct
-        final Map<SourceIdentifier, Map.Entry<RootStatementContext<?,?,?>, ResolvedSource>> resolvedRootContexts =
-            new LinkedHashMap<>();
+    private void loadPhaseStatementsFor(final List<ResolvedSourceContext> srcs) throws ReactorException {
         for (var source : srcs) {
             try {
-                source.getContext().loadStatements(source, resolvedRootContexts);
+                source.context().loadStatements();
             } catch (RuntimeException e) {
-                throw propagateException(source.getContext(), e);
-            }
-        }
-
-        //TODO: refactoring needed - this is messy and needs to be done only once - during STATEMENT_DECLARATION.
-        final Map<RootStatementContext<?, ?, ?>, Map.Entry<String, QNameModule>> submoduleCtxToItsBelongsToQnameModule =
-            resolvedRootContexts.entrySet()
-            .stream()
-            .filter(e -> e.getValue().getValue().getBelongsTo() != null)
-            .collect(Collectors.toMap(e -> e.getValue().getKey(),
-                e -> e.getValue().getValue().getBelongsTo()));
-
-        final Map<QNameModule, RootStatementContext<?, ?, ?>> moduleQNameToCtx =
-            resolvedRootContexts.entrySet()
-                .stream()
-                .filter(e -> e.getValue().getValue().getBelongsTo() == null)
-                .collect(Collectors.toMap(e -> e.getValue().getValue().getQNameModule(),
-                    e -> e.getValue().getKey()));
-
-        for (Map.Entry<RootStatementContext<?, ?, ?>, Map.Entry<String, QNameModule>> submodule :
-            submoduleCtxToItsBelongsToQnameModule.entrySet()) {
-            RootStatementContext<?, ?, ?> submoduleCtx = submodule.getKey();
-            Map.Entry<String, QNameModule> belongsTo = submodule.getValue();
-            RootStatementContext<?, ?, ?> parentModule = moduleQNameToCtx.get(belongsTo.getValue());
-            if (parentModule == null) {
-                throw new SomeModifiersUnresolvedException(
-                    ModelProcessingPhase.STATEMENT_DEFINITION, submoduleCtx.getRootIdentifier(),
-                    new IllegalStateException(
-                        String.format("Belongs-to module [%s] was not found for submodule [%s]",
-                            belongsTo.getValue(), submoduleCtx.argument())
-                    ));
-            }
-            submodule.getKey().addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, belongsTo.getKey(),
-                parentModule);
-        }
-
-        for (Map.Entry<SourceIdentifier, Map.Entry<RootStatementContext<?, ?, ?>, ResolvedSource>>
-            resolvedContext : resolvedRootContexts.entrySet()) {
-            final RootStatementContext<?, ?, ?> rootCtx = resolvedContext.getValue().getKey();
-            final ResolvedSource resolvedSource = resolvedContext.getValue().getValue();
-            for (Map.Entry<SourceIdentifier, QNameModule> include : resolvedSource.getIncludes().entrySet()) {
-                final UnresolvedQName.Unqualified submoduleName = include.getKey().name();
-                final QNameModule qnameModule = include.getValue();
-                final var includedContext = verifyNotNull(resolvedRootContexts.get(include.getKey()),
-                    "Root context of included module %s (included by %s) was not resolved",
-                    qnameModule, resolvedSource.getQNameModule());
-
-                rootCtx.addToNs(ParserNamespaces.INCLUDED_MODULE,
-                    includedContext.getValue().getContext().getRootIdentifier(), includedContext.getKey());
-
-                rootCtx.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX,
-                    submoduleName, includedContext.getKey());
+                throw propagateException(source.context(), e);
             }
         }
     }
@@ -347,9 +308,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void completePhaseActions(final List<ResolvedSource> resolved) throws ReactorException {
+    private void completePhaseActions(final List<ResolvedSourceContext> resolved) throws ReactorException {
         checkState(currentPhase != null);
-        final var sourcesToProgress = new ArrayList<>(resolved.stream().map(ResolvedSource::getContext).toList());
+        final var sourcesToProgress = new ArrayList<>(resolved.stream().map(ResolvedSourceContext::context).toList());
 
         boolean progressing = true;
         while (progressing) {
