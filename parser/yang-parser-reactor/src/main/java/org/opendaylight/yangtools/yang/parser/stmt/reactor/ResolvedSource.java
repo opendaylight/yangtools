@@ -11,9 +11,11 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,30 +24,46 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Contains the resolved information about a source. Such as the linkage details about imports, includes, belongsTo.
  */
 final class ResolvedSource {
+
+    record ResolvedBelongsTo(String prefix,
+                             QNameModule parentModuleQname,
+                             StmtContext<?, ?, ?> rootContext) {
+        ResolvedBelongsTo {
+            requireNonNull(prefix);
+            requireNonNull(parentModuleQname);
+            requireNonNull(rootContext);
+        }
+    }
+
+    record ResolvedInclude(SourceIdentifier includeId,
+                           QNameModule includeModuleQname,
+                           StmtContext<?, ?, ?> rootContext) {
+        ResolvedInclude {
+            requireNonNull(includeId);
+            requireNonNull(includeModuleQname);
+            requireNonNull(rootContext);
+        }
+    }
+
     private final SourceIdentifier sourceId;
     private final QNameModule qnameModule;
     private final String prefix;
     private final YangVersion yangVersion;
     private final SourceSpecificContext context;
     private final ImmutableMap<String, ResolvedSource> imports;
-
-    // FIXME: Includes are problematic. They can form circular includes among their siblings (submodules of the
-    //  same parent module). This makes it impossible to resolve in the same way as Imports. We can't have them as
-    //  fully formed ResolvedSource objects.
-    private final ImmutableMap<SourceIdentifier, QNameModule> includes;
-
-    // TODO: consider a different way to store this info. Map.Entry works for now.
-    private final Map.Entry<String, QNameModule> belongsTo;
+    private final ImmutableList<ResolvedInclude> includes;
+    private final ResolvedBelongsTo belongsTo;
 
     ResolvedSource(final @NonNull SourceSpecificContext context, final SourceIdentifier sourceId,
         final QNameModule qnameModule, final YangVersion yangVersion, final String prefix,
-        final Map.Entry<String, QNameModule> belongsTo, final Map<String, ResolvedSource> resolvedImports,
-        final Map<SourceIdentifier, QNameModule> resolvedIncludes) {
+        final ResolvedBelongsTo belongsTo, final Map<String, ResolvedSource> resolvedImports,
+        final List<ResolvedInclude> resolvedIncludes) {
         this.context = requireNonNull(context);
         this.sourceId = sourceId;
         this.qnameModule = qnameModule;
@@ -53,7 +71,7 @@ final class ResolvedSource {
         this.prefix = prefix;
         this.belongsTo = belongsTo;
         this.imports = ImmutableMap.copyOf(resolvedImports);
-        this.includes = ImmutableMap.copyOf(resolvedIncludes);
+        this.includes = ImmutableList.copyOf(resolvedIncludes);
     }
 
     public String getPrefix() {
@@ -68,7 +86,7 @@ final class ResolvedSource {
         return sourceId;
     }
 
-    public Map.Entry<String, QNameModule> getBelongsTo() {
+    public ResolvedBelongsTo getBelongsTo() {
         return belongsTo;
     }
 
@@ -80,7 +98,7 @@ final class ResolvedSource {
         return imports;
     }
 
-    public ImmutableMap<SourceIdentifier, QNameModule> getIncludes() {
+    public ImmutableList<ResolvedInclude> getIncludes() {
         return includes;
     }
 
@@ -149,15 +167,17 @@ final class ResolvedSource {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
             final var resolvedBelongsTo = belongsTo == null ? null :
-                Map.entry(belongsTo.getKey(), belongsTo.getValue().resolveQnameModule());
+               new ResolvedBelongsTo(belongsTo.getKey(), belongsTo.getValue().resolveQnameModule(),
+                   belongsTo.getValue().getContext().getRoot());
 
             final String prefix = sourceInfo instanceof SourceInfo.Module
                 ? ((SourceInfo.Module) sourceInfo).prefix().getLocalName() : null;
 
-            final Map<SourceIdentifier, QNameModule> resolvedIncludes = includes.build()
+            final List<ResolvedInclude> resolvedIncludes = includes.build()
                 .stream()
-                .map(builder -> Map.entry(builder.getSourceId(), builder.resolveQnameModule()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(builder -> new ResolvedInclude(builder.getSourceId(), builder.resolveQnameModule(),
+                    builder.context.getRoot()))
+                .toList();
 
             buildFinished = new ResolvedSource(context, sourceInfo.sourceId(), resolveQnameModule(),
                 sourceInfo.yangVersion(), prefix, resolvedBelongsTo, resolvedImports, resolvedIncludes);

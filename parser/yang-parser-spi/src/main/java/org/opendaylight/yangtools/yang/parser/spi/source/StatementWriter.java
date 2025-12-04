@@ -59,7 +59,7 @@ public interface StatementWriter {
      * no further action with this or any of the child statements. Otherwise this call is equivalent of issuing
      * {@link #startStatement(int, QName, String, StatementSourceReference)} and the caller is expected to process
      * any child statements. The caller should call {@link #storeStatement(int, boolean)} before finishing processing
-     * with {@link #endStatement(StatementSourceReference)}.
+     * with {@link #endStatement()}.
      *
      * @param childId Child
      * @return A resumed statement or empty if the statement has not previously been defined.
@@ -68,7 +68,7 @@ public interface StatementWriter {
 
     /**
      * Store a defined statement, hinting at the number of children it is expected to have and indicating whether
-     * it has been fully defined. This method should be called before {@link #endStatement(StatementSourceReference)}
+     * it has been fully defined. This method should be called before {@link #endStatement()}
      * when the caller is taking advantage of {@link #resumeStatement(int)}.
      *
      * @param expectedChildren Number of expected children, cannot be negative
@@ -80,7 +80,7 @@ public interface StatementWriter {
      * Starts statement with supplied name and location in source.
      *
      * <p>Each started statement must also be closed by
-     * {@link #endStatement(StatementSourceReference)} in order for stream to be
+     * {@link #endStatement()} in order for stream to be
      * correct.
      *
      * <p>If statement has substatements, in order to start substatement, call to
@@ -99,11 +99,9 @@ public interface StatementWriter {
     /**
      * Ends current opened statement.
      *
-     * @param ref Identifier of location in source, which will be used for reporting in case of statement processing
-     *            error.
      * @throws SourceException if closed statement is not valid in current context, or there is no such statement
      */
-    void endStatement(@NonNull StatementSourceReference ref);
+    void endStatement();
 
     /**
      * Return current model processing phase.

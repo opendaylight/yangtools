@@ -110,6 +110,17 @@ public final class RFC7950Reactors {
             .addSupport(ValidationBundles.BEHAVIOUR)
             .addSupport(NamespaceBehaviours.SUPPORTED_FEATURES)
             .addSupport(NamespaceBehaviours.MODULES_DEVIATED_BY)
+            .addSupport(NamespaceBehaviours.MODULECTX_TO_QNAME)
+            .addSupport(NamespaceBehaviours.MODULE)
+            .addSupport(NamespaceBehaviours.SUBMODULE)
+            .addSupport(NamespaceBehaviours.INCLUDED_MODULE)
+            .addSupport(NamespaceBehaviours.INCLUDED_SUBMODULE_NAME_TO_MODULECTX)
+            .addSupport(NamespaceBehaviours.IMPORT_PREFIX_TO_QNAME_MODULE)
+            .addSupport(NamespaceBehaviours.IMPORT_PREFIX_TO_SOURCE_ID)
+            .addSupport(NamespaceBehaviours.IMPORT_PREFIX_TO_MODULECTX)
+            .addSupport(NamespaceBehaviours.IMPORTED_MODULE)
+            .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_QNAME_MODULE)
+            .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULECTX)
             .build();
 
     private RFC7950Reactors() {
@@ -133,25 +144,11 @@ public final class RFC7950Reactors {
             .addSupport(new YangVersionStatementSupport(config))
             .addSupport(new RevisionStatementSupport(config))
             .addSupport(new RevisionDateStatementSupport(config))
-            .addSupport(NamespaceBehaviours.MODULECTX_TO_QNAME)
-
-            //linkage supports
             .addSupport(new DescriptionStatementSupport(config))
             .addSupport(new ReferenceStatementSupport(config))
             .addSupport(new ContactStatementSupport(config))
             .addSupport(new OrganizationStatementSupport(config))
-            .addSupport(NamespaceBehaviours.MODULE)
-            .addSupport(NamespaceBehaviours.SUBMODULE)
-            .addSupport(NamespaceBehaviours.INCLUDED_MODULE)
-            .addSupport(NamespaceBehaviours.INCLUDED_SUBMODULE_NAME_TO_MODULECTX)
-            .addSupport(NamespaceBehaviours.IMPORT_PREFIX_TO_QNAME_MODULE)
-            .addSupport(NamespaceBehaviours.IMPORT_PREFIX_TO_SOURCE_ID)
-            .addSupport(NamespaceBehaviours.IMPORT_PREFIX_TO_MODULECTX)
-            .addSupport(NamespaceBehaviours.IMPORTED_MODULE)
-            .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_QNAME_MODULE)
-            .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULECTX)
             .addSupport(ModuleQNameToPrefix.BEHAVIOUR)
-
             .addSupport(new YinElementStatementSupport(config))
             .addSupport(new ArgumentStatementSupport(config))
             .addSupport(new ExtensionStatementSupport(config))
