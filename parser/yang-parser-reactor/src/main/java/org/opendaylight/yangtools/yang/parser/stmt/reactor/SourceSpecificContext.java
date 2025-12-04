@@ -54,6 +54,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class SourceSpecificContext implements NamespaceStorage, Mutable {
+
+    //TODO: ideally rework in a way where we don't need to store it like this
+    private StatementContextWriter rootWriter;
+
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -205,10 +209,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
          */
         if (root == null) {
             root = new RootStatementContext<>(this, def, ref, argument);
-        } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.yangVersion())
-                && inProgressPhase == ModelProcessingPhase.STATEMENT_DEFINITION) {
-            root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
-                    root.getRootIdentifier());
         } else {
             final QName rootStatement = root.definition().getStatementName();
             final String rootArgument = root.rawArgument();
@@ -243,6 +243,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return root.buildEffective();
     }
 
+    public RootStatementContext<?, ?, ?> getRoot() {
+        return root;
+    }
+
     /**
      * Return version of root statement context.
      *
@@ -252,10 +256,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         if (root != null) {
             return root.yangVersion();
         }
-        if (sourceInfo != null) {
-            return sourceInfo.yangVersion();
-        }
-        return RootStatementContext.DEFAULT_VERSION;
+        return getSourceInfo().yangVersion();
     }
 
     void startPhase(final ModelProcessingPhase phase) {
@@ -455,19 +456,32 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         };
     }
 
-    void loadStatements(final ResolvedSource resolvedSource,
-        final Map<SourceIdentifier, Entry<RootStatementContext<?, ?, ?>, ResolvedSource>> resolvedRootContexts) {
+    /**
+     * Creates just the RootStatementContext so it can be used during linkage. It's substatements
+     * will be processed later.
+     */
+    void loadRootStatement() {
+        final YangVersion rootVersion = getRootVersion();
+        this.rootWriter = new StatementContextWriter(this, inProgressPhase);
+        this.source.writeRoot(rootWriter, stmtDef(), rootVersion);
+        root.setRootVersionImpl(rootVersion);
+    }
+
+    void loadStatements() {
         LOG.trace("Source {} loading statements for phase {}", this.source, inProgressPhase);
 
         switch (inProgressPhase) {
             case STATEMENT_DEFINITION:
-                this.source.writeLinkageAndStatementDefinitions(
-                    new StatementContextWriter(this, inProgressPhase, resolvedSource, resolvedRootContexts), stmtDef(),
+                // Utilize the fact that RootStatement was already created by reusing the same writer
+                // that created them.
+                this.source.writeLinkageAndStatementDefinitions(requireNonNull(rootWriter,
+                        "Missing root statement in source " + source.getIdentifier()), stmtDef(),
                     null, getRootVersion());
+                rootWriter.endStatement();
                 break;
             case FULL_DECLARATION:
                 this.source.writeFull(
-                    new StatementContextWriter(this, inProgressPhase, resolvedSource, resolvedRootContexts), stmtDef(),
+                    new StatementContextWriter(this, inProgressPhase), stmtDef(),
                     prefixes(), getRootVersion());
                 break;
             default:
@@ -515,13 +529,5 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
 
         return qnameToStmtDefMap;
-    }
-
-    Collection<SourceIdentifier> getRequiredSources() {
-        return root.getRequiredSources();
-    }
-
-    SourceIdentifier getRootIdentifier() {
-        return root.getRootIdentifier();
     }
 }
