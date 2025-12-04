@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -14,14 +15,14 @@ import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
@@ -80,25 +81,31 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, null, YangVersion.VERSION_1).visit(rootStatement);
-    }
+    public void writeRoot(StatementWriter writer, QNameToStatementDefinition stmtDef, YangVersion version) {
+        final var ref = StatementDeclarations.inText(sourceName, rootStatement.startLine(),
+            rootStatement.startColumn() + 1);
+        verify(rootStatement.keyword() instanceof IRKeyword.Unqualified);
 
-    @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
-            @Override
-            StatementDefinition resolveStatement(final QNameModule module, final String localName) {
-                return stmtDef.getByNamespaceAndLocalName(module.namespace(), localName);
-            }
-        }.visit(rootStatement);
+        final var def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE,
+            rootStatement.keyword().identifier()));
+        if (def == null) {
+            throw new SourceException(ref, "%s is not a YANG Module or Submodule.",
+                this.getIdentifier());
+        }
+        final QName defQname = def.getStatementName();
+
+        final var argumentCtx = rootStatement.argument();
+        final var argument = argumentCtx == null ? null :
+            ArgumentContextUtils.forVersion(version).stringFromStringContext(argumentCtx, ref);
+        writer.startStatement(0, defQname, argument, ref);
+        writer.storeStatement(rootStatement.statements().size(), false);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion).visit(rootStatement);
+        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion)
+            .skipRootAndVisit(rootStatement);
     }
 
     @Override

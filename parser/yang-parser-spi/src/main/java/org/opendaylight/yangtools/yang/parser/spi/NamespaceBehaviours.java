@@ -46,6 +46,9 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> MODULECTX_TO_QNAME =
         NamespaceBehaviour.global(ParserNamespaces.MODULECTX_TO_QNAME);
 
+    public static final @NonNull NamespaceBehaviour<?, ?> MODULECTX_TO_RESOLVED =
+        NamespaceBehaviour.global(ParserNamespaces.MODULECTX_TO_RESOLVED);
+
     public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_SUBMODULE_NAME_TO_MODULECTX =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
 
