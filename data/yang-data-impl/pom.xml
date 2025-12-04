@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>bnd-parent</artifactId>
-        <version>14.0.21</version>
+        <version>14.0.22-SNAPSHOT</version>
         <relativePath>../../bnd-parent/pom.xml</relativePath>
     </parent>
 
