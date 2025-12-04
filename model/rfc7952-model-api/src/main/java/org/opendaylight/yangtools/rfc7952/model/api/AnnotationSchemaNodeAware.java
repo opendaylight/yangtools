@@ -22,7 +22,7 @@ public interface AnnotationSchemaNodeAware {
      *
      * @param name Annotation name
      * @return AnnotationSchemaNode if found
-     * @throws NullPointerException if {@code qname} is null
+     * @throws NullPointerException if {@code name} is null
      */
     @NonNull Optional<AnnotationSchemaNode> findAnnotation(AnnotationName name);
 }
