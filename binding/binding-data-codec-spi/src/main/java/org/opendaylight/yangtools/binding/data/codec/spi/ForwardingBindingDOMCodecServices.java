@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 @Beta
+@Deprecated(since = "14.0.21", forRemoval = true)
 public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject implements BindingDOMCodecServices {
     @Override
     protected abstract @NonNull BindingDOMCodecServices delegate();
