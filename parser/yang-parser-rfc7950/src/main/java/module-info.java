@@ -7,6 +7,7 @@
  */
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 module org.opendaylight.yangtools.yang.parser.rfc7950 {
@@ -16,6 +17,7 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     exports org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+    uses ParserExtension;
     uses YangXPathParserFactory;
     provides YangLibResolver with org.opendaylight.yangtools.yang.parser.ri.DefaultYangLibResolver;
     provides YangParserFactory with org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
