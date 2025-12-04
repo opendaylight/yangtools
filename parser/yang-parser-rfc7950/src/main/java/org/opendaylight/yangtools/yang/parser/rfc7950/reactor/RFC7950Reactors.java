@@ -118,7 +118,6 @@ public final class RFC7950Reactors {
 
     private static StatementSupportBundle stmtDefBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builderDerivedFrom(INIT_BUNDLE)
-            // pre-linkage supports
             .addVersionSpecificSupport(VERSION_1, ModuleStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, ModuleStatementSupport.rfc7950Instance(config))
             .addVersionSpecificSupport(VERSION_1, SubmoduleStatementSupport.rfc6020Instance(config))
@@ -133,13 +132,12 @@ public final class RFC7950Reactors {
             .addSupport(new YangVersionStatementSupport(config))
             .addSupport(new RevisionStatementSupport(config))
             .addSupport(new RevisionDateStatementSupport(config))
-            .addSupport(NamespaceBehaviours.MODULECTX_TO_QNAME)
-
-            //linkage supports
             .addSupport(new DescriptionStatementSupport(config))
             .addSupport(new ReferenceStatementSupport(config))
             .addSupport(new ContactStatementSupport(config))
             .addSupport(new OrganizationStatementSupport(config))
+            .addSupport(ModuleQNameToPrefix.BEHAVIOUR)
+            .addSupport(NamespaceBehaviours.MODULECTX_TO_QNAME)
             .addSupport(NamespaceBehaviours.MODULE)
             .addSupport(NamespaceBehaviours.SUBMODULE)
             .addSupport(NamespaceBehaviours.INCLUDED_MODULE)
@@ -150,8 +148,6 @@ public final class RFC7950Reactors {
             .addSupport(NamespaceBehaviours.IMPORTED_MODULE)
             .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_QNAME_MODULE)
             .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULECTX)
-            .addSupport(ModuleQNameToPrefix.BEHAVIOUR)
-
             .addSupport(new YinElementStatementSupport(config))
             .addSupport(new ArgumentStatementSupport(config))
             .addSupport(new ExtensionStatementSupport(config))

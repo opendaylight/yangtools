@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import static org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
@@ -28,15 +29,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * This class identifies and organizes the main sources and library sources used to build the SchemaContext.
@@ -473,5 +481,77 @@ public final class SourceLinkageResolver {
             throwingSource,
             new IllegalStateException(message)
         );
+    }
+
+    public static void fillNamespaces(final ResolvedSource resolvedSource) {
+        final RootStatementContext<?, ?, ?> rootStmt = resolvedSource.getContext().getRoot();
+        populateRootNamespaces(rootStmt, resolvedSource);
+    }
+
+    private static void populateRootNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSource resolvedSource) {
+
+        fillCommonNamespaces(root, resolvedSource);
+        fillImportedNamespaces(root, resolvedSource);
+
+        if (resolvedSource.getBelongsTo() != null) {
+            fillSubmoduleNamespaces(root, resolvedSource);
+        } else {
+            fillModuleNamespaces(root, resolvedSource);
+        }
+    }
+
+    private static void fillCommonNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSource resolvedSource) {
+        root.addToNamespace(ParserNamespaces.MODULECTX_TO_QNAME, root, resolvedSource.getQNameModule());
+        fillImportedNamespaces(root, resolvedSource);
+        fillIncludedNamespaces(root, resolvedSource);
+    }
+
+    private static void fillIncludedNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSource resolvedSource) {
+        for (var anInclude : resolvedSource.getIncludes()) {
+            root.addToNs(ParserNamespaces.INCLUDED_MODULE, anInclude.includeId(), anInclude.rootContext());
+            root.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX,
+                anInclude.includeId().name(), anInclude.rootContext());
+        }
+    }
+
+    private static void fillImportedNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSource resolvedSource) {
+        for (var entry : resolvedSource.getImports().entrySet()) {
+            final String prefix = entry.getKey();
+            final ResolvedSource imported = entry.getValue();
+            final QNameModule qnameModule = imported.getQNameModule();
+            final SourceIdentifier sourceId = imported.getSourceId();
+            final var importContext = imported.getContext().getRoot();
+
+            verifyNotNull(importContext, "Root context of imported module %s (imported by %s) was not resolved",
+                qnameModule, resolvedSource.getQNameModule());
+
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE, prefix, qnameModule);
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix, importContext);
+            root.addToNamespace(ParserNamespaces.IMPORT_PREFIX_TO_SOURCE_ID, prefix, sourceId);
+            root.addToNamespace(ParserNamespaces.IMPORTED_MODULE, sourceId, importContext);
+        }
+    }
+
+    private static void fillSubmoduleNamespaces(final RootStatementContext<?, ?, ?> root,
+        final ResolvedSource resolvedSource) {
+        root.addToNs(ParserNamespaces.SUBMODULE, root.getRootIdentifier(),
+            (StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>) root);
+
+        final var belongsTo = resolvedSource.getBelongsTo();
+        root.addToNamespace(ParserNamespaces.BELONGSTO_PREFIX_TO_QNAME_MODULE, belongsTo.prefix(),
+            belongsTo.parentModuleQname());
+        root.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, belongsTo.prefix(), belongsTo.rootContext());
+    }
+
+    private static void fillModuleNamespaces(final RootStatementContext<?, ?, ?> root, ResolvedSource resolvedSource) {
+        root.addToNs(ParserNamespaces.MODULE, root.getRootIdentifier(),
+            (StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>) root);
+
+        root.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_QNAME_MODULE, resolvedSource.getPrefix(),
+            resolvedSource.getQNameModule());
     }
 }
