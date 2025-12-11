@@ -183,7 +183,7 @@ public final class YangIRSourceInfoExtractor {
         }
 
         // TODO: we probably need to understand yang version first....
-        return ArgumentContextUtils.rfc6020().stringFromStringContext(arg, ref);
+        return ArgumentContextUtils.RFC6020.stringFromStringContext(arg, ref);
     }
 
     private static StatementDeclaration.InText refOf(final SourceIdentifier source, final IRStatement stmt) {

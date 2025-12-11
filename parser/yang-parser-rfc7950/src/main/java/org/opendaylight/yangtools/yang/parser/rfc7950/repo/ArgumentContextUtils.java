@@ -21,14 +21,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 /**
  * Utilities for dealing with YANG statement argument strings, encapsulated in ANTLR grammar's ArgumentContext.
  */
-abstract class ArgumentContextUtils {
+enum ArgumentContextUtils {
     /**
      * YANG 1.0 version of strings, which were not completely clarified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.1.3">RFC6020</a>.
      */
-    private static final class RFC6020 extends ArgumentContextUtils {
-        private static final @NonNull RFC6020 INSTANCE = new RFC6020();
-
+    RFC6020 {
         @Override
         void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
             // No-op
@@ -38,7 +36,7 @@ abstract class ArgumentContextUtils {
         void checkUnquoted(final String str, final StatementSourceReference ref) {
             // No-op
         }
-    }
+    },
 
     /**
      * YANG 1.1 version of strings, which were clarified in
@@ -46,9 +44,8 @@ abstract class ArgumentContextUtils {
      */
     // NOTE: the differences clarified lead to a proper ability to delegate this to ANTLR lexer, but that does not
     //       understand versions and needs to work with both.
-    private static final class RFC7950 extends ArgumentContextUtils {
+    RFC7950 {
         private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
-        private static final @NonNull RFC7950 INSTANCE = new RFC7950();
 
         @Override
         void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
@@ -71,22 +68,13 @@ abstract class ArgumentContextUtils {
             SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
                 "YANG 1.1: unquoted string (%s) contains illegal characters", str);
         }
-    }
-
-    private ArgumentContextUtils() {
-        // Hidden on purpose
-    }
+    };
 
     static @NonNull ArgumentContextUtils forVersion(final YangVersion version) {
         return switch (version) {
-            case VERSION_1 -> RFC6020.INSTANCE;
-            case VERSION_1_1 -> RFC7950.INSTANCE;
+            case VERSION_1 -> RFC6020;
+            case VERSION_1_1 -> RFC7950;
         };
-    }
-
-    // TODO: teach the only caller about versions, or provide common-enough idioms for its use case
-    static @NonNull ArgumentContextUtils rfc6020() {
-        return RFC6020.INSTANCE;
     }
 
     /*
@@ -147,18 +135,16 @@ abstract class ArgumentContextUtils {
         int backslashIndex = backslash;
         while (true) {
             int nextIndex = backslashIndex + 1;
-            if (backslashIndex != -1 && nextIndex < substring.length()) {
-                replaceBackslash(sb, substring, nextIndex);
-                substring = substring.substring(nextIndex + 1);
-                if (substring.length() > 0) {
-                    backslashIndex = substring.indexOf('\\');
-                } else {
-                    break;
-                }
-            } else {
+            if (backslashIndex == -1 || nextIndex >= substring.length()) {
                 sb.append(substring);
                 break;
             }
+            replaceBackslash(sb, substring, nextIndex);
+            substring = substring.substring(nextIndex + 1);
+            if (substring.length() <= 0) {
+                break;
+            }
+            backslashIndex = substring.indexOf('\\');
         }
     }
 
