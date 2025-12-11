@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.ParseException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 class StatementContextVisitor {
@@ -109,7 +111,17 @@ class StatementContextVisitor {
         }
 
         final var argumentCtx = stmt.argument();
-        final var argument = argumentCtx == null ? null : utils.stringFromStringContext(argumentCtx, ref);
+        final String argument;
+        if (argumentCtx != null) {
+            try {
+                argument = utils.stringFromStringContext(argumentCtx);
+            } catch (ParseException e) {
+                throw new SourceException(e.getMessage(), ref, e);
+            }
+        } else {
+            argument = null;
+        }
+
         writer.startStatement(myOffset, def, argument, ref);
         return doProcessStatement(stmt, ref);
     }
