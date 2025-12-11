@@ -10,10 +10,7 @@ package org.opendaylight.yangtools.yang.ir;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import java.text.ParseException;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
-import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
 
 /**
  * String escaping semantics.
@@ -71,32 +68,6 @@ public enum StringEscaping {
     };
 
     /*
-     * NOTE: this method we do not use convenience methods provided by generated parser code, but instead are making
-     *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
-     *       such as intermediate List allocation et al.
-     */
-    public final @NonNull String stringFromStringContext(final IRArgument argument) throws ParseException {
-        return switch (argument) {
-            case Concatenation concat -> concatStrings(concat.parts());
-            case Single single -> {
-                final var str = single.string();
-                if (single.needQuoteCheck()) {
-                    checkUnquoted(str);
-                }
-                yield single.needUnescape() ? unescape(str) : str;
-            }
-        };
-    }
-
-    private @NonNull String concatStrings(final List<? extends Single> parts) throws ParseException {
-        final var sb = new StringBuilder();
-        for (var part : parts) {
-            sb.append(part.needUnescape() ? unescape(part.string()) : part.string());
-        }
-        return sb.toString();
-    }
-
-    /*
      * NOTE: Enforcement and transformation logic done by these methods should logically reside in the lexer and ANTLR
      *       account the for it with lexer modes. We do not want to force a re-lexing phase in the parser just because
      *       we decided to let ANTLR do the work.
@@ -105,7 +76,7 @@ public enum StringEscaping {
 
     abstract void checkUnquoted(String str) throws ParseException;
 
-    private @NonNull String unescape(final String str) throws ParseException {
+    final @NonNull String unescape(final String str) throws ParseException {
         // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
         // validation and processing (which will reuse the work we have done)
         final int backslash = str.indexOf('\\');
