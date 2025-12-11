@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * Thrown when there was invalid element in YANG file.
  */
 public class InvalidSubstatementException extends SourceException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     public InvalidSubstatementException(final @NonNull String message, final @NonNull StatementSourceReference source) {

@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
  */
 @Beta
 public class YangVersionLinkageException extends SourceException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     public YangVersionLinkageException(final @NonNull StatementSourceReference source, final @NonNull String format,

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * Thrown when there was Missing element in yang file.
  */
 public class MissingSubstatementException extends SourceException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     public MissingSubstatementException(final @NonNull String message, final @NonNull StatementSourceReference source) {
