@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.ir.StringEscaping;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -185,7 +186,7 @@ public final class YangIRSourceInfoExtractor {
 
         try {
             // TODO: we probably need to understand yang version first....
-            return ArgumentContextUtils.RFC6020.stringFromStringContext(arg);
+            return StringEscaping.RFC6020.stringFromStringContext(arg);
         } catch (ParseException e) {
             throw new SourceException(e.getMessage(), refOf(source, stmt), e);
         }

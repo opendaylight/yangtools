@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.ir.StringEscaping;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
@@ -31,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 class StatementContextVisitor {
     private final @NonNull QNameToStatementDefinition stmtDef;
-    private final @NonNull ArgumentContextUtils utils;
+    private final @NonNull StringEscaping utils;
     private final PrefixResolver prefixes;
     private final @NonNull StatementWriter writer;
     private final String sourceName;
@@ -43,8 +44,8 @@ class StatementContextVisitor {
         this.sourceName = sourceName;
         this.prefixes = prefixes;
         utils = switch (yangVersion) {
-            case VERSION_1 -> ArgumentContextUtils.RFC6020;
-            case VERSION_1_1 -> ArgumentContextUtils.RFC7950;
+            case VERSION_1 -> StringEscaping.RFC6020;
+            case VERSION_1_1 -> StringEscaping.RFC7950;
         };
     }
 
