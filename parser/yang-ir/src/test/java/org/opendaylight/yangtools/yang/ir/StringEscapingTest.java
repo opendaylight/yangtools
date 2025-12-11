@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.ir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.ArgumentContextUtils.unescapeBackslash;
 
 import org.junit.jupiter.api.Test;
 
-class ArgumentContextUtilsTest {
+class StringEscapingTest {
     @Test
     void testUnescapeNew() {
         //      a\b -----> a\b  (invalid for 7950)
@@ -75,7 +74,7 @@ class ArgumentContextUtilsTest {
 
     private static String unescape(final String str, final int backslash) {
         final var sb = new StringBuilder(str.length());
-        unescapeBackslash(sb, str, backslash);
+        StringEscaping.unescapeBackslash(sb, str, backslash);
         return sb.toString();
     }
 }
