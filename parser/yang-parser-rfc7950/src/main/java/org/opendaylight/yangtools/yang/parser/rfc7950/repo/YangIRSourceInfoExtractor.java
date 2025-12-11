@@ -210,7 +210,7 @@ public abstract sealed class YangIRSourceInfoExtractor {
 
         try {
             // TODO: we probably need to understand yang version first....
-            return ArgumentContextUtils.rfc6020().stringFromStringContext(arg);
+            return ArgumentContextUtils.RFC6020.stringFromStringContext(arg);
         } catch (ParseException e) {
             throw new SourceException(e.getMessage(), refOf(stmt), e);
         }

@@ -40,9 +40,12 @@ class StatementContextVisitor {
             final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
-        utils = ArgumentContextUtils.forVersion(yangVersion);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
+        utils = switch (yangVersion) {
+            case VERSION_1 -> ArgumentContextUtils.RFC6020;
+            case VERSION_1_1 -> ArgumentContextUtils.RFC7950;
+        };
     }
 
     void visit(final IRStatement stmt) {
