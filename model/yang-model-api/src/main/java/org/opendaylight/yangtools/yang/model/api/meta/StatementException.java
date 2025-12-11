@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2025 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
@@ -18,56 +19,53 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * An exception identifying a problem detected at a particular YANG statement. Exposes {@link #sourceRef()} to that
- * statement.
+ * An abstract base class of checked exceptions which are caused by a specific statement identified by
+ * {@link #sourceRef()}. Subclasses of this exception are not serializable.
+ *
+ * @since 14.0.22
  */
-// FIXME: 15.0.0: retire this exception in favor of UncheckedStatementException
-public class StatementSourceException extends RuntimeException implements StatementSourceReferenceAware {
+public abstract class StatementException extends Exception implements StatementSourceReferenceAware {
     @java.io.Serial
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 1L;
 
     private final @NonNull StatementSourceReference sourceRef;
 
-    public StatementSourceException(final StatementSourceReference sourceRef, final String message) {
-        super(StatementException.createMessage(sourceRef, message));
+    @NonNullByDefault
+    protected StatementException(final StatementSourceReference sourceRef, final String message) {
+        super(createMessage(sourceRef, message));
         this.sourceRef = requireNonNull(sourceRef);
     }
 
-    public StatementSourceException(final StatementSourceReference sourceRef, final String message,
+    @NonNullByDefault
+    protected StatementException(final StatementSourceReference sourceRef, final String message,
             final Throwable cause) {
-        super(StatementException.createMessage(sourceRef, message), cause);
+        super(createMessage(sourceRef, message), requireNonNull(cause));
         this.sourceRef = requireNonNull(sourceRef);
     }
 
-    public StatementSourceException(final StatementSourceReference sourceRef, final String format,
-            final Object... args) {
-        this(sourceRef, format.formatted(args));
-    }
-
-    public StatementSourceException(final StatementSourceReference sourceRef, final Throwable cause,
-            final String format, final Object... args) {
-        this(sourceRef, format.formatted(args), cause);
-    }
-
     @NonNullByDefault
-    public StatementSourceException(final StatementException cause) {
-        super(cause.getMessage(), cause);
+    protected StatementException(final StatementSourceException cause) {
+        super(verifyNotNull(cause.getMessage()), cause);
         sourceRef = cause.sourceRef();
     }
 
-    @NonNullByDefault
-    public StatementSourceException(final UncheckedStatementException cause) {
-        super(cause.getMessage(), cause);
-        sourceRef = cause.sourceRef();
+    @Override
+    public final @NonNull String getMessage() {
+        return verifyNotNull(getMessage());
     }
 
     /**
      * {@return the reference to the source which caused this exception}
      */
     @Override
-    public final @NonNull StatementSourceReference sourceRef() {
+    public final StatementSourceReference sourceRef() {
         return sourceRef;
     }
+
+    /**
+     * {@return {@link UncheckedStatementException} equivalent of this exception}
+     */
+    public abstract @NonNull UncheckedStatementException toUnchecked();
 
     @java.io.Serial
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
@@ -86,5 +84,10 @@ public class StatementSourceException extends RuntimeException implements Statem
 
     protected final void throwNSE() throws NotSerializableException {
         throw new NotSerializableException(getClass().getName());
+    }
+
+    @NonNullByDefault
+    static final String createMessage(final StatementSourceReference sourceRef, final String message) {
+        return requireNonNull(message) + " [at " + requireNonNull(sourceRef) + ']';
     }
 }
