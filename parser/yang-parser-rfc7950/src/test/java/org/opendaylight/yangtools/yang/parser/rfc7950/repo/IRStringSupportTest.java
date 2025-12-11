@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.ArgumentContextUtils.unescapeBackslash;
+import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.IRStringSupport.unescapeBackslash;
 
 import java.nio.file.Path;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-class ArgumentContextUtilsTest {
+class IRStringSupportTest {
     @Test
     void testUnescapeNew() {
         //      a\b -----> a\b  (invalid for 7950)
@@ -79,7 +79,7 @@ class ArgumentContextUtilsTest {
 
     @Test
     void stringTestUnescape() throws Exception {
-        final var schemaContext = StmtTestUtils.parseYangSources(Path.of(ArgumentContextUtilsTest.class
+        final var schemaContext = StmtTestUtils.parseYangSources(Path.of(IRStringSupportTest.class
             .getResource("/unescape/string-test.yang").toURI()).toFile());
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());

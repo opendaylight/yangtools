@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 class StatementContextVisitor {
     private final QNameToStatementDefinition stmtDef;
-    private final ArgumentContextUtils utils;
+    private final IRStringSupport stringSupport;
     private final PrefixResolver prefixes;
     private final StatementWriter writer;
     private final String sourceName;
@@ -40,9 +40,12 @@ class StatementContextVisitor {
             final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
-        utils = ArgumentContextUtils.forVersion(yangVersion);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
+        stringSupport = switch (yangVersion) {
+            case VERSION_1 -> IRStringSupport.RFC6020;
+            case VERSION_1_1 -> IRStringSupport.RFC7950;
+        };
     }
 
     void visit(final IRStatement stmt) {
@@ -114,7 +117,7 @@ class StatementContextVisitor {
         final String argument;
         if (argumentCtx != null) {
             try {
-                argument = utils.stringFromStringContext(argumentCtx);
+                argument = stringSupport.stringOf(argumentCtx);
             } catch (ParseException e) {
                 throw new SourceException(e.getMessage(), ref, e);
             }
