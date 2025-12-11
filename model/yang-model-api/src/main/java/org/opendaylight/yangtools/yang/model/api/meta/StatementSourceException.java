@@ -15,25 +15,27 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * An exception identifying a problem detected at a particular YANG statement. Exposes {@link #sourceRef()} to that
  * statement.
  */
-public class StatementSourceException extends RuntimeException {
+// FIXME: 15.0.0: retire this exception in favor of UncheckedStatementException
+public class StatementSourceException extends RuntimeException implements StatementSourceReferenceAware {
     @java.io.Serial
     private static final long serialVersionUID = 2L;
 
     private final @NonNull StatementSourceReference sourceRef;
 
     public StatementSourceException(final StatementSourceReference sourceRef, final String message) {
-        super(createMessage(sourceRef, message));
+        super(StatementException.createMessage(sourceRef, message));
         this.sourceRef = requireNonNull(sourceRef);
     }
 
     public StatementSourceException(final StatementSourceReference sourceRef, final String message,
             final Throwable cause) {
-        super(createMessage(sourceRef, message), cause);
+        super(StatementException.createMessage(sourceRef, message), cause);
         this.sourceRef = requireNonNull(sourceRef);
     }
 
@@ -47,15 +49,34 @@ public class StatementSourceException extends RuntimeException {
         this(sourceRef, format.formatted(args), cause);
     }
 
-    private static String createMessage(final StatementSourceReference sourceRef, final String message) {
-        return requireNonNull(message) + " [at " + requireNonNull(sourceRef) + ']';
+    /**
+     * Construct an instance by inheriting message and sourceRef from a {@link StatementException}.
+     *
+     * @param cause the {@link StatementException}
+     * @since 14.0.22
+     */
+    @NonNullByDefault
+    public StatementSourceException(final StatementException cause) {
+        super(cause.getMessage(), cause);
+        sourceRef = cause.sourceRef();
     }
 
     /**
-     * Return the reference to the source which caused this exception.
+     * Construct an instance by inheriting message and sourceRef from a {@link UncheckedStatementException}.
      *
-     * @return the reference to the source which caused this exception
+     * @param cause the {@link UncheckedStatementException}
+     * @since 14.0.22
      */
+    @NonNullByDefault
+    public StatementSourceException(final UncheckedStatementException cause) {
+        super(cause.getMessage(), cause);
+        sourceRef = cause.sourceRef();
+    }
+
+    /**
+     * {@return the reference to the source which caused this exception}
+     */
+    @Override
     public final @NonNull StatementSourceReference sourceRef() {
         return sourceRef;
     }

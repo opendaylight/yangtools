@@ -9,9 +9,12 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.meta.UncheckedStatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 
 /**
@@ -119,6 +122,28 @@ public class SourceException extends StatementSourceException {
     public SourceException(final @NonNull CommonStmtCtx stmt, final Throwable cause,
             final @NonNull String format, final Object... args) {
         this(stmt.sourceReference(), cause, format, args);
+    }
+
+    /**
+     * Create a new instance inheriting message and source from specified {@link StatementException}.
+     *
+     * @param cause the {@link StatementException}
+     * @since 14.0.22
+     */
+    @NonNullByDefault
+    public SourceException(final StatementException cause) {
+        super(cause);
+    }
+
+    /**
+     * Create a new instance inheriting message and source from specified {@link UncheckedStatementException}.
+     *
+     * @param cause the {@link UncheckedStatementException}
+     * @since 14.0.22
+     */
+    @NonNullByDefault
+    public SourceException(final UncheckedStatementException cause) {
+        super(cause);
     }
 
     /**
