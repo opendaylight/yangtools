@@ -35,7 +35,50 @@ import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 /**
  * Utility class for extract {@link SourceInfo} from a {@link YangIRSource}.
  */
-public final class YangIRSourceInfoExtractor {
+public abstract sealed class YangIRSourceInfoExtractor {
+    private static final class ForModule extends YangIRSourceInfoExtractor {
+        @NonNullByDefault
+        ForModule(final SourceIdentifier sourceId, final IRStatement root) {
+            super(sourceId, root);
+        }
+
+        @Override
+        SourceInfo.Module extractSourceInfo() {
+            final var builder = SourceInfo.Module.builder();
+            fillBuilder(builder);
+            return builder
+                .setNamespace(root.statements().stream()
+                    .filter(stmt -> isStatement(stmt, NAMESPACE))
+                    .findFirst()
+                    .map(stmt -> safeStringArgument(stmt, "namespace argument"))
+                    .map(XMLNamespace::of)
+                    .orElseThrow(() -> new IllegalArgumentException("No namespace statement in " + refOf(root))))
+                .setPrefix(extractPrefix(root))
+                .build();
+        }
+    }
+
+    private static final class ForSubmodule extends YangIRSourceInfoExtractor {
+        @NonNullByDefault
+        ForSubmodule(final SourceIdentifier sourceId, final IRStatement root) {
+            super(sourceId, root);
+        }
+
+        @Override
+        SourceInfo.Submodule extractSourceInfo() {
+            final var builder = SourceInfo.Submodule.builder();
+            fillBuilder(builder);
+            return builder
+                .setBelongsTo(root.statements().stream()
+                    .filter(stmt -> isStatement(stmt, BELONGS_TO))
+                    .findFirst()
+                    .map(stmt -> new BelongsTo(Unqualified.of(safeStringArgument(stmt, "belongs-to module name")),
+                        extractPrefix(stmt)))
+                    .orElseThrow(() -> new IllegalArgumentException("No belongs-to statement in " + refOf(root))))
+                .build();
+        }
+    }
+
     private static final String BELONGS_TO = YangStmtMapping.BELONGS_TO.getStatementName().getLocalName();
     private static final String IMPORT = YangStmtMapping.IMPORT.getStatementName().getLocalName();
     private static final String INCLUDE = YangStmtMapping.INCLUDE.getStatementName().getLocalName();
@@ -47,13 +90,13 @@ public final class YangIRSourceInfoExtractor {
     private static final String SUBMODULE = YangStmtMapping.SUBMODULE.getStatementName().getLocalName();
     private static final String YANG_VERSION = YangStmtMapping.YANG_VERSION.getStatementName().getLocalName();
 
-    private final @NonNull IRStatement root;
     private final @NonNull SourceIdentifier sourceId;
+    final @NonNull IRStatement root;
 
     @NonNullByDefault
-    private YangIRSourceInfoExtractor(final IRStatement root, final SourceIdentifier sourceId) {
-        this.root = requireNonNull(root);
+    YangIRSourceInfoExtractor(final SourceIdentifier sourceId, final IRStatement root) {
         this.sourceId = requireNonNull(sourceId);
+        this.root = requireNonNull(root);
     }
 
     /**
@@ -81,15 +124,17 @@ public final class YangIRSourceInfoExtractor {
             throw new IllegalArgumentException("Invalid root statement " + keyword);
         }
 
-        final var extractor = new YangIRSourceInfoExtractor(rootStatement, sourceId);
+        final YangIRSourceInfoExtractor extractor;
         final String arg = keyword.identifier();
         if (MODULE.equals(arg)) {
-            return extractor.moduleForIR();
+            extractor = new ForModule(sourceId, rootStatement);
+        } else if (SUBMODULE.equals(arg)) {
+            extractor = new ForSubmodule(sourceId, rootStatement);
+        } else {
+            throw new IllegalArgumentException("Root of parsed AST must be either module or submodule");
         }
-        if (SUBMODULE.equals(arg)) {
-            return extractor.submmoduleForIR();
-        }
-        throw new IllegalArgumentException("Root of parsed AST must be either module or submodule");
+
+        return extractor.extractSourceInfo();
     }
 
     /**
@@ -106,34 +151,9 @@ public final class YangIRSourceInfoExtractor {
         return forIR(YangTextParser.parseToIR(yangText), sourceId);
     }
 
-    private SourceInfo.@NonNull Module moduleForIR() {
-        final var builder = SourceInfo.Module.builder();
-        fill(builder);
-        return builder
-            .setNamespace(root.statements().stream()
-                .filter(stmt -> isStatement(stmt, NAMESPACE))
-                .findFirst()
-                .map(stmt -> safeStringArgument(stmt, "namespace argument"))
-                .map(XMLNamespace::of)
-                .orElseThrow(() -> new IllegalArgumentException("No namespace statement in " + refOf(root))))
-            .setPrefix(extractPrefix(root))
-            .build();
-    }
+    abstract @NonNull SourceInfo extractSourceInfo();
 
-    private SourceInfo.@NonNull Submodule submmoduleForIR() {
-        final var builder = SourceInfo.Submodule.builder();
-        fill(builder);
-        return builder
-            .setBelongsTo(root.statements().stream()
-                .filter(stmt -> isStatement(stmt, BELONGS_TO))
-                .findFirst()
-                .map(stmt -> new BelongsTo(Unqualified.of(safeStringArgument(stmt, "belongs-to module name")),
-                    extractPrefix(stmt)))
-                .orElseThrow(() -> new IllegalArgumentException("No belongs-to statement in " + refOf(root))))
-            .build();
-    }
-
-    private void fill(final SourceInfo.Builder<?, ?> builder) {
+    final void fillBuilder(final SourceInfo.Builder<?, ?> builder) {
         builder.setName(Unqualified.of(safeStringArgument(root, "module/submodule argument")));
 
         root.statements().stream()
@@ -161,7 +181,7 @@ public final class YangIRSourceInfoExtractor {
             .forEach(builder::addInclude);
     }
 
-    private @NonNull Unqualified extractPrefix(final IRStatement stmt) {
+    final @NonNull Unqualified extractPrefix(final IRStatement stmt) {
         return stmt.statements().stream()
             .filter(subStmt -> isStatement(subStmt, PREFIX))
             .findFirst()
@@ -181,7 +201,7 @@ public final class YangIRSourceInfoExtractor {
         return stmt.keyword() instanceof IRKeyword.Unqualified keyword && name.equals(keyword.identifier());
     }
 
-    private @NonNull String safeStringArgument(final IRStatement stmt, final String desc) {
+    final @NonNull String safeStringArgument(final IRStatement stmt, final String desc) {
         final var ref = refOf(stmt);
         final var arg = stmt.argument();
         if (arg == null) {
@@ -192,7 +212,7 @@ public final class YangIRSourceInfoExtractor {
         return ArgumentContextUtils.rfc6020().stringFromStringContext(arg, ref);
     }
 
-    private StatementDeclaration.InText refOf(final IRStatement stmt) {
+    final StatementDeclaration.@NonNull InText refOf(final IRStatement stmt) {
         return StatementDeclarations.inText(sourceId.name().getLocalName(), stmt.startLine(), stmt.startColumn() + 1);
     }
 }
