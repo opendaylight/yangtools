@@ -186,7 +186,7 @@ public final class YangIRSourceInfoExtractor {
 
         try {
             // TODO: we probably need to understand yang version first....
-            return StringEscaping.RFC6020.stringFromStringContext(arg);
+            return arg.asString(StringEscaping.RFC6020);
         } catch (ParseException e) {
             throw new SourceException(e.getMessage(), refOf(source, stmt), e);
         }

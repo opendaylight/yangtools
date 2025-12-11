@@ -11,8 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.text.ParseException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * An argument to a YANG statement, as defined by section 6.1.3 of both
@@ -58,6 +60,15 @@ public abstract sealed class IRArgument extends AbstractIRObject {
          */
         public @NonNull List<? extends Single> parts() {
             return parts;
+        }
+
+        @Override
+        public String asString(final StringEscaping escaping) throws ParseException {
+            final var sb = new StringBuilder();
+            for (var part : parts) {
+                sb.append(part.needUnescape() ? escaping.unescape(part.string()) : part.string());
+            }
+            return sb.toString();
         }
 
         @Override
@@ -157,6 +168,14 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
 
         @Override
+        public final String asString(final StringEscaping escaping) throws ParseException {
+            if (needQuoteCheck()) {
+                escaping.checkUnquoted(string);
+            }
+            return needUnescape() ? escaping.unescape(string) : string;
+        }
+
+        @Override
         public final int hashCode() {
             return string.hashCode();
         }
@@ -242,10 +261,22 @@ public abstract sealed class IRArgument extends AbstractIRObject {
             // A single string concatenated with empty string(s), use just the significant portion
             case 1 -> parts.getFirst();
             // TODO: perform concatenation of single-quoted strings. For double-quoted strings this may not be as nice,
-            //       but for single-quoted strings we do not need further validation in in the reactor and can use them
-            //       as raw literals. This saves some indirection overhead (on memory side) and can slightly improve
+            //       but for single-quoted strings we do not need further validation in the reactor and can use them as
+            //       raw literals. This saves some indirection overhead (on memory side) and can slightly improve
             //       execution speed when we process the same IR multiple times.
             default -> new Concatenation(parts);
         };
     }
+
+    /**
+     * Convert this {@link IRArgument} into a raw String, performing any concatenation and unescaping needed using
+     * specified {@link StringEscaping}.
+     *
+     * @param escaping the {@link StringEscaping}
+     * @return A String
+     * @throws ParseException if the conversion fails
+     * @since 14.0.22
+     */
+    @NonNullByDefault
+    public abstract String asString(StringEscaping escaping) throws ParseException;
 }

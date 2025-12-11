@@ -118,7 +118,7 @@ class StatementContextVisitor {
         final String argument;
         if (argumentCtx != null) {
             try {
-                argument = escaping.stringFromStringContext(argumentCtx);
+                argument = argumentCtx.asString(escaping);
             } catch (ParseException e) {
                 throw new SourceException(e.getMessage(), ref, e);
             }
