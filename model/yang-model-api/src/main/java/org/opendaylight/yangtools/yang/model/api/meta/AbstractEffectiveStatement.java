@@ -24,7 +24,8 @@ import org.opendaylight.yangtools.yang.common.Empty;
 public abstract non-sealed class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         extends AbstractModelStatement<A> implements EffectiveStatement<A, D> {
     /**
-     * Utility method for recovering singleton lists squashed by {@link #maskList(ImmutableList)}.
+     * Utility method for recovering singleton lists squashed by
+     * {@link AbstractEffectiveStatement#maskList(ImmutableList)}.
      *
      * @param masked list to unmask
      * @return Unmasked list
