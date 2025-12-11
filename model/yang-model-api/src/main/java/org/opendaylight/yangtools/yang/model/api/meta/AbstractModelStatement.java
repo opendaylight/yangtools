@@ -56,7 +56,7 @@ abstract sealed class AbstractModelStatement<A> implements ModelStatement<A>
     }
 
     /**
-     * Utility method for recovering singleton lists squashed by {@link #maskList(ImmutableList)}.
+     * Utility method for recovering singleton lists squashed by {@link AbstractModelStatement#maskList(ImmutableList)}.
      *
      * @param masked list to unmask
      * @return Unmasked list
