@@ -11,6 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -19,6 +23,8 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementException;
+import org.opendaylight.yangtools.yang.model.api.meta.UncheckedStatementException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
@@ -241,6 +247,74 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         @SuppressWarnings("unchecked")
         private B thisInstance() {
             return (B) this;
+        }
+    }
+
+    /**
+     * An entity capable of extracting {@link SourceInfo} from its state.
+     */
+    interface Extractor {
+        /**
+         * {@return extracted {@link SourceInfo}}
+         * @throws ExtractorException if the {@link SourceInfo} cannot be extracted
+         */
+        SourceInfo extractSourceInfo() throws ExtractorException;
+    }
+
+    /**
+     * A {@link StatementException} reported by when the {@link SourceInfo} cannot be extracted. Subclasses of this
+     * exception are not serializable.
+     */
+    abstract sealed class ExtractorException extends StatementException
+            permits ExtractorInvalidRootException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public final UncheckedExtractorException toUnchecked() {
+            return new UncheckedExtractorException(this);
+        }
+    }
+
+    /**
+     * An {@link ExtractorException} reported when the {@link SourceRepresentation}'s top-level statement is not a
+     * {@code module} or a {@code submodule}. Instsances of this exception are not serializable.
+     */
+    final class ExtractorInvalidRootException extends ExtractorException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+    }
+
+    /**
+     * An {@link UncheckedStatementException} holding a {@link ExtractorException}. Instances of this exception
+     * are not serializable and can only be created via {@link ExtractorException#toUnchecked()}.
+     */
+    final class UncheckedExtractorException extends UncheckedStatementException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        private UncheckedExtractorException(final ExtractorException cause) {
+            super(cause);
+        }
+
+        @Override
+        public ExtractorException getCause() {
+            return (ExtractorException) super.getCause();
+        }
+
+        @java.io.Serial
+        private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+            throwNSE();
+        }
+
+        @java.io.Serial
+        private void readObjectNoData() throws ObjectStreamException {
+            throwNSE();
+        }
+
+        @java.io.Serial
+        private void writeObject(final ObjectOutputStream stream) throws IOException {
+            throwNSE();
         }
     }
 }
