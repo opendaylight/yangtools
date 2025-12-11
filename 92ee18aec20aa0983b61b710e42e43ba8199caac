@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71cae0d3_270593ee",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/StatementException.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-11T23:27:29Z",
+      "side": 1,
+      "message": "this conversion does not help at all, as SpotBugs flags uses as losing exception cause",
+      "range": {
+        "startLine": 68,
+        "startChar": 57,
+        "endLine": 68,
+        "endChar": 68
+      },
+      "revId": "92ee18aec20aa0983b61b710e42e43ba8199caac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
