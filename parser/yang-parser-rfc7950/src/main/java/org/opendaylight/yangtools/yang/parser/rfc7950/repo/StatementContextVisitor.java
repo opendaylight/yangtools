@@ -28,19 +28,22 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 class StatementContextVisitor {
-    private final QNameToStatementDefinition stmtDef;
-    private final ArgumentContextUtils utils;
+    private final @NonNull QNameToStatementDefinition stmtDef;
+    private final @NonNull ArgumentContextUtils utils;
     private final PrefixResolver prefixes;
-    private final StatementWriter writer;
+    private final @NonNull StatementWriter writer;
     private final String sourceName;
 
     StatementContextVisitor(final String sourceName, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
-        utils = ArgumentContextUtils.forVersion(yangVersion);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
+        utils = switch (yangVersion) {
+            case VERSION_1 -> ArgumentContextUtils.RFC6020;
+            case VERSION_1_1 -> ArgumentContextUtils.RFC7950;
+        };
     }
 
     void visit(final IRStatement stmt) {

@@ -11,7 +11,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
@@ -69,13 +68,6 @@ enum ArgumentContextUtils {
                 "YANG 1.1: unquoted string (%s) contains illegal characters", str);
         }
     };
-
-    static @NonNull ArgumentContextUtils forVersion(final YangVersion version) {
-        return switch (version) {
-            case VERSION_1 -> RFC6020;
-            case VERSION_1_1 -> RFC7950;
-        };
-    }
 
     /*
      * NOTE: this method we do not use convenience methods provided by generated parser code, but instead are making
