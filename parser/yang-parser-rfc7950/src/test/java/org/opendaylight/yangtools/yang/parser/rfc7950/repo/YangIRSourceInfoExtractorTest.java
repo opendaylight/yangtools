@@ -70,25 +70,25 @@ class YangIRSourceInfoExtractorTest {
     @Test
     void testMalformedImport() {
         final var ex = assertIAE("/depinfo-malformed/malformed-import.yang");
-        assertEquals("Missing import argument at malformed-import:4:5", ex.getMessage());
+        assertEquals("Missing argument to import [at malformed-import:4:5]", ex.getMessage());
     }
 
     @Test
     void testMalformedImportRev() {
         final var ex = assertIAE("/depinfo-malformed/malformed-import-rev.yang");
-        assertEquals("Missing revision date argument at malformed-import-rev:4:18", ex.getMessage());
+        assertEquals("Missing argument to revision-date [at malformed-import-rev:4:18]", ex.getMessage());
     }
 
     @Test
     void testMalformedModule() {
         final var ex = assertIAE("/depinfo-malformed/malformed-module.yang");
-        assertEquals("Missing module/submodule argument at malformed-module:1:1", ex.getMessage());
+        assertEquals("Missing argument to module [at malformed-module:1:1]", ex.getMessage());
     }
 
     @Test
     void testMalformedRev() {
         final var ex = assertIAE("/depinfo-malformed/malformed-rev.yang");
-        assertEquals("Missing revision argument at malformed-rev:5:5", ex.getMessage());
+        assertEquals("Missing argument to revision [at malformed-rev:5:5]", ex.getMessage());
     }
 
     private static IllegalArgumentException assertIAE(final String resourceName) {
