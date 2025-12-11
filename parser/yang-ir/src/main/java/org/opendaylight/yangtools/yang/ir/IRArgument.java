@@ -11,8 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.text.ParseException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * An argument to a YANG statement, as defined by section 6.1.3 of both
@@ -58,6 +60,15 @@ public abstract sealed class IRArgument extends AbstractIRObject {
          */
         public @NonNull List<? extends Single> parts() {
             return parts;
+        }
+
+        @Override
+        public String asString(final IRStringSupport support) throws ParseException {
+            final var sb = new StringBuilder();
+            for (var part : parts) {
+                sb.append(part.needUnescape() ? support.unescape(part.string()) : part.string());
+            }
+            return sb.toString();
         }
 
         @Override
@@ -157,6 +168,14 @@ public abstract sealed class IRArgument extends AbstractIRObject {
         }
 
         @Override
+        public final String asString(final IRStringSupport support) throws ParseException {
+            if (needQuoteCheck()) {
+                support.checkUnquoted(string);
+            }
+            return needUnescape() ? support.unescape(string) : string;
+        }
+
+        @Override
         public final int hashCode() {
             return string.hashCode();
         }
@@ -248,4 +267,15 @@ public abstract sealed class IRArgument extends AbstractIRObject {
             default -> new Concatenation(parts);
         };
     }
+
+    /**
+     * Convert this {@link IRArgument} into a raw String, performing any concatenation and unescaping needed using
+     * specified {@link IRStringSupport}.
+     *
+     * @param support the {@link IRStringSupport}
+     * @return A String
+     * @throws ParseException if the conversion fails
+     */
+    @NonNullByDefault
+    public abstract String asString(IRStringSupport support) throws ParseException;
 }

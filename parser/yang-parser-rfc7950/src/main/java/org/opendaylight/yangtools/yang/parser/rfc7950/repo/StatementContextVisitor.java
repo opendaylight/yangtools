@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.ir.IRStringSupport;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
@@ -30,10 +31,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 class StatementContextVisitor {
-    private final QNameToStatementDefinition stmtDef;
-    private final IRStringSupport stringSupport;
+    private final @NonNull QNameToStatementDefinition stmtDef;
+    private final @NonNull IRStringSupport stringSupport;
     private final PrefixResolver prefixes;
-    private final StatementWriter writer;
+    private final @NonNull StatementWriter writer;
     private final String sourceName;
 
     StatementContextVisitor(final String sourceName, final StatementWriter writer,
@@ -117,7 +118,7 @@ class StatementContextVisitor {
         final String argument;
         if (argumentCtx != null) {
             try {
-                argument = stringSupport.stringOf(argumentCtx);
+                argument = argumentCtx.asString(stringSupport);
             } catch (ParseException e) {
                 throw new SourceException(e.getMessage(), ref, e);
             }

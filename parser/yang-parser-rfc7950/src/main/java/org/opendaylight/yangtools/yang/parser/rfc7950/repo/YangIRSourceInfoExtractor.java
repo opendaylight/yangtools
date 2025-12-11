@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.ir.IRStringSupport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -210,7 +211,7 @@ public abstract sealed class YangIRSourceInfoExtractor {
 
         try {
             // TODO: we probably need to understand yang version first....
-            return IRStringSupport.RFC6020.stringOf(arg);
+            return arg.asString(IRStringSupport.RFC6020);
         } catch (ParseException e) {
             throw new SourceException(e.getMessage(), refOf(stmt), e);
         }

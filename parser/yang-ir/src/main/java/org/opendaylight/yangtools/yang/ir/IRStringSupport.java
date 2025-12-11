@@ -5,21 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.ir;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import java.text.ParseException;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.ir.IRArgument;
-import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
-import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Support for extracting raw string from an {@link IRArgument}.
+ *
+ * @since 14.0.22
  */
-enum IRStringSupport {
+public enum IRStringSupport {
     /**
      * YANG 1.0 version of strings, which were not completely clarified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.1.3">RFC6020</a>.
@@ -40,8 +39,6 @@ enum IRStringSupport {
      * YANG 1.1 version of strings, which were clarified in
      * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3">RFC7950</a>.
      */
-    // NOTE: the differences clarified lead to a proper ability to delegate this to ANTLR lexer, but that does not
-    //       understand versions and needs to work with both.
     RFC7950 {
         private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
 
@@ -72,32 +69,6 @@ enum IRStringSupport {
     };
 
     /*
-     * NOTE: this method we do not use convenience methods provided by generated parser code, but instead are making
-     *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
-     *       such as intermediate List allocation et al.
-     */
-    final @NonNull String stringOf(final IRArgument argument) throws ParseException {
-        return switch (argument) {
-            case Concatenation concat -> concatStrings(concat.parts());
-            case Single single -> {
-                final var str = single.string();
-                if (single.needQuoteCheck()) {
-                    checkUnquoted(str);
-                }
-                yield single.needUnescape() ? unescape(str) : str;
-            }
-        };
-    }
-
-    private @NonNull String concatStrings(final List<? extends Single> parts) throws ParseException {
-        final var sb = new StringBuilder();
-        for (var part : parts) {
-            sb.append(part.needUnescape() ? unescape(part.string()) : part.string());
-        }
-        return sb.toString();
-    }
-
-    /*
      * NOTE: Enforcement and transformation logic done by these methods should logically reside in the lexer and ANTLR
      *       account the for it with lexer modes. We do not want to force a re-lexing phase in the parser just because
      *       we decided to let ANTLR do the work.
@@ -106,7 +77,8 @@ enum IRStringSupport {
 
     abstract void checkUnquoted(String str) throws ParseException;
 
-    private @NonNull String unescape(final String str) throws ParseException {
+    @NonNullByDefault
+    final String unescape(final String str) throws ParseException {
         // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
         // validation and processing (which will reuse the work we have done)
         final int backslash = str.indexOf('\\');
@@ -124,7 +96,7 @@ enum IRStringSupport {
     }
 
     @VisibleForTesting
-    static void unescapeBackslash(final StringBuilder sb, final String str, final int backslash) {
+    static final void unescapeBackslash(final StringBuilder sb, final String str, final int backslash) {
         String substring = str;
         int backslashIndex = backslash;
         while (true) {
