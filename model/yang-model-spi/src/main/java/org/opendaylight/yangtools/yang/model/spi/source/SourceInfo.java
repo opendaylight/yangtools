@@ -19,6 +19,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementException;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.meta.UncheckedStatementException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
@@ -241,6 +244,133 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         @SuppressWarnings("unchecked")
         private B thisInstance() {
             return (B) this;
+        }
+    }
+
+    /**
+     * An entity capable of extracting {@link SourceInfo} from its state.
+     *
+     * @since 14.0.22
+     */
+    interface Extractor {
+        /**
+         * {@return extracted {@link SourceInfo}}
+         * @throws ExtractorException if the {@link SourceInfo} cannot be extracted
+         */
+        SourceInfo extractSourceInfo() throws ExtractorException;
+    }
+
+    /**
+     * A {@link StatementException} reported by when the {@link SourceInfo} cannot be extracted. Subclasses of this
+     * exception are not serializable.
+     *
+     * @since 14.0.22
+     */
+    abstract sealed class ExtractorException extends StatementException
+            permits ExtractorInvalidRootException, ExtractorInvalidArgumentException,
+                    ExtractorMalformedArgumentException, ExtractorMissingArgumentException,
+                    ExtractorMissingStatementException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        ExtractorException(final StatementSourceReference sourceRef, final String message) {
+            super(sourceRef, message);
+        }
+
+        ExtractorException(final StatementSourceReference sourceRef, final String message, final Throwable cause) {
+            super(sourceRef, message, cause);
+        }
+    }
+
+    /**
+     * An {@link ExtractorException} reported when the {@link SourceRepresentation}'s top-level statement is not a
+     * {@code module} or a {@code submodule}. Instances of this exception are not serializable.
+     *
+     * @since 14.0.22
+     */
+    final class ExtractorInvalidRootException extends ExtractorException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        public ExtractorInvalidRootException(final StatementSourceReference sourceRef, final String message) {
+            super(sourceRef, message);
+        }
+    }
+
+    /**
+     * An {@link ExtractorException} reported when a YANG statement has an invalid argument, such as
+     * {@code yang-version foo} escaped. Instances of this exception are not serializable.
+     *
+     * @since 14.0.22
+     */
+    final class ExtractorInvalidArgumentException extends ExtractorException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        public ExtractorInvalidArgumentException(final StatementSourceReference sourceRef, final String statement,
+                final Exception cause) {
+            super(sourceRef, "Invalid argument to " + statement + ": " + cause.getMessage(), cause);
+        }
+    }
+
+    /**
+     * An {@link ExtractorException} reported when a YANG statement has a malformed argument, e.g. it is incorrectly
+     * escaped. Instances of this exception are not serializable.
+     *
+     * @since 14.0.22
+     */
+    final class ExtractorMalformedArgumentException extends ExtractorException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        public ExtractorMalformedArgumentException(final StatementSourceReference sourceRef, final String statement,
+                final Exception cause) {
+            super(sourceRef, "Malformed argument to " + statement + ": " + cause.getMessage(), cause);
+        }
+    }
+
+    /**
+     * An {@link ExtractorException} reported when a YANG statement is missing its argument. Instances of this
+     * exception are not serializable.
+     *
+     * @since 14.0.22
+     */
+    final class ExtractorMissingArgumentException extends ExtractorException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        public ExtractorMissingArgumentException(final StatementSourceReference sourceRef, final String statement) {
+            super(sourceRef, "Missing argument to " + statement);
+        }
+    }
+
+    /**
+     * An {@link ExtractorException} reported when a required YANG statement is missing. Instances of this exception are
+     * not serializable.
+     *
+     * @since 14.0.22
+     */
+    final class ExtractorMissingStatementException extends ExtractorException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        public ExtractorMissingStatementException(final StatementSourceReference sourceRef, final String statement) {
+            super(sourceRef, "Missing " + statement + " substatement");
+        }
+    }
+
+    /**
+     * An {@link UncheckedStatementException} wrapping an {@link ExtractorException}. Instances of this exception are
+     * not serializable.
+     *
+     * @since 14.0.22
+     */
+    final class UncheckedExtractorException extends UncheckedStatementException {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+
+        public UncheckedExtractorException(final ExtractorException cause) {
+            super(cause);
         }
     }
 }
