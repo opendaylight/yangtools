@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
+import org.opendaylight.yangtools.yang.ir.StringEscaping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
@@ -31,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 class StatementContextVisitor {
     private final @NonNull QNameToStatementDefinition stmtDef;
-    private final @NonNull ArgumentContextUtils utils;
+    private final @NonNull StringEscaping escaping;
     private final PrefixResolver prefixes;
     private final @NonNull StatementWriter writer;
     private final String sourceName;
@@ -42,9 +43,9 @@ class StatementContextVisitor {
         this.stmtDef = requireNonNull(stmtDef);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
-        utils = switch (yangVersion) {
-            case VERSION_1 -> ArgumentContextUtils.RFC6020;
-            case VERSION_1_1 -> ArgumentContextUtils.RFC7950;
+        escaping = switch (yangVersion) {
+            case VERSION_1 -> StringEscaping.RFC6020;
+            case VERSION_1_1 -> StringEscaping.RFC7950;
         };
     }
 
@@ -117,7 +118,7 @@ class StatementContextVisitor {
         final String argument;
         if (argumentCtx != null) {
             try {
-                argument = utils.stringFromStringContext(argumentCtx);
+                argument = escaping.stringFromStringContext(argumentCtx);
             } catch (ParseException e) {
                 throw new SourceException(e.getMessage(), ref, e);
             }

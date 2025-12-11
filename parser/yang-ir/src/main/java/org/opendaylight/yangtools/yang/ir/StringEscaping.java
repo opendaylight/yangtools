@@ -5,23 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.ir;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import java.text.ParseException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
 
 /**
- * Utilities for dealing with YANG statement argument strings, encapsulated in ANTLR grammar's ArgumentContext.
+ * String escaping semantics.
+ *
+ * @since 14.0.22
  */
-enum ArgumentContextUtils {
+public enum StringEscaping {
     /**
-     * YANG 1.0 version of strings, which were not completely clarified in
+     * YANG 1.0 version of string escaping, which was not completely clarified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.1.3">RFC6020</a>.
      */
     RFC6020 {
@@ -37,11 +38,9 @@ enum ArgumentContextUtils {
     },
 
     /**
-     * YANG 1.1 version of strings, which were clarified in
+     * YANG 1.1 version of string escaping, which was clarified in
      * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-6.1.3">RFC7950</a>.
      */
-    // NOTE: the differences clarified lead to a proper ability to delegate this to ANTLR lexer, but that does not
-    //       understand versions and needs to work with both.
     RFC7950 {
         private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
 
@@ -76,7 +75,7 @@ enum ArgumentContextUtils {
      *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
      *       such as intermediate List allocation et al.
      */
-    final @NonNull String stringFromStringContext(final IRArgument argument) throws ParseException {
+    public final @NonNull String stringFromStringContext(final IRArgument argument) throws ParseException {
         return switch (argument) {
             case Concatenation concat -> concatStrings(concat.parts());
             case Single single -> {
@@ -124,7 +123,7 @@ enum ArgumentContextUtils {
     }
 
     @VisibleForTesting
-    static void unescapeBackslash(final StringBuilder sb, final String str, final int backslash) {
+    static final void unescapeBackslash(final StringBuilder sb, final String str, final int backslash) {
         String substring = str;
         int backslashIndex = backslash;
         while (true) {
