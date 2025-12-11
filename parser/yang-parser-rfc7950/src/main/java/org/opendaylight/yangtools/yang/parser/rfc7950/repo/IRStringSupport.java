@@ -12,22 +12,19 @@ import com.google.common.base.CharMatcher;
 import java.text.ParseException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
 
 /**
- * Utilities for dealing with YANG statement argument strings, encapsulated in ANTLR grammar's ArgumentContext.
+ * Support for extracting raw string from an {@link IRArgument}.
  */
-abstract class ArgumentContextUtils {
+enum IRStringSupport {
     /**
      * YANG 1.0 version of strings, which were not completely clarified in
      * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.1.3">RFC6020</a>.
      */
-    private static final class RFC6020 extends ArgumentContextUtils {
-        private static final @NonNull RFC6020 INSTANCE = new RFC6020();
-
+    RFC6020 {
         @Override
         void checkDoubleQuoted(final String str, final int backslash) {
             // No-op
@@ -37,7 +34,7 @@ abstract class ArgumentContextUtils {
         void checkUnquoted(final String str) {
             // No-op
         }
-    }
+    },
 
     /**
      * YANG 1.1 version of strings, which were clarified in
@@ -45,9 +42,8 @@ abstract class ArgumentContextUtils {
      */
     // NOTE: the differences clarified lead to a proper ability to delegate this to ANTLR lexer, but that does not
     //       understand versions and needs to work with both.
-    private static final class RFC7950 extends ArgumentContextUtils {
+    RFC7950 {
         private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
-        private static final @NonNull RFC7950 INSTANCE = new RFC7950();
 
         @Override
         void checkDoubleQuoted(final String str, final int backslash) throws ParseException {
@@ -73,30 +69,14 @@ abstract class ArgumentContextUtils {
                 throw new ParseException("YANG 1.1: unquoted string (" + str + ") contains illegal characters", index);
             }
         }
-    }
-
-    private ArgumentContextUtils() {
-        // Hidden on purpose
-    }
-
-    static @NonNull ArgumentContextUtils forVersion(final YangVersion version) {
-        return switch (version) {
-            case VERSION_1 -> RFC6020.INSTANCE;
-            case VERSION_1_1 -> RFC7950.INSTANCE;
-        };
-    }
-
-    // TODO: teach the only caller about versions, or provide common-enough idioms for its use case
-    static @NonNull ArgumentContextUtils rfc6020() {
-        return RFC6020.INSTANCE;
-    }
+    };
 
     /*
      * NOTE: this method we do not use convenience methods provided by generated parser code, but instead are making
      *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
      *       such as intermediate List allocation et al.
      */
-    final @NonNull String stringFromStringContext(final IRArgument argument) throws ParseException {
+    final @NonNull String stringOf(final IRArgument argument) throws ParseException {
         return switch (argument) {
             case Concatenation concat -> concatStrings(concat.parts());
             case Single single -> {
@@ -149,18 +129,16 @@ abstract class ArgumentContextUtils {
         int backslashIndex = backslash;
         while (true) {
             int nextIndex = backslashIndex + 1;
-            if (backslashIndex != -1 && nextIndex < substring.length()) {
-                replaceBackslash(sb, substring, nextIndex);
-                substring = substring.substring(nextIndex + 1);
-                if (substring.length() > 0) {
-                    backslashIndex = substring.indexOf('\\');
-                } else {
-                    break;
-                }
-            } else {
+            if (backslashIndex == -1 || nextIndex >= substring.length()) {
                 sb.append(substring);
                 break;
             }
+            replaceBackslash(sb, substring, nextIndex);
+            substring = substring.substring(nextIndex + 1);
+            if (substring.length() <= 0) {
+                break;
+            }
+            backslashIndex = substring.indexOf('\\');
         }
     }
 
