@@ -168,38 +168,35 @@ public abstract sealed class YangIRSourceInfoExtractor {
             .map(YangVersion::forString)
             .ifPresent(builder::setYangVersion);
 
-        root.statements().stream()
-            .filter(stmt -> isStatement(stmt, REVISION))
-            .map(stmt -> Revision.of(safeStringArgument(stmt, "revision argument")))
-            .forEach(builder::addRevision);
-
-        root.statements().stream()
-            .filter(stmt -> isStatement(stmt, IMPORT))
-            .map(stmt -> new Import(Unqualified.of(safeStringArgument(stmt, "import argument")),
-                extractPrefix(stmt), extractRevisionDate(stmt)))
-            .forEach(builder::addImport);
-
-        root.statements().stream()
-            .filter(stmt -> isStatement(stmt, INCLUDE))
-            .map(stmt -> new Include(Unqualified.of(safeStringArgument(stmt, "include argument")),
-                extractRevisionDate(stmt)))
-            .forEach(builder::addInclude);
+        for (var stmt : root.statements()) {
+            if (isStatement(stmt, IMPORT)) {
+                builder.addImport(new Import(Unqualified.of(safeStringArgument(stmt, "import argument")),
+                    extractPrefix(stmt), extractRevisionDate(stmt)));
+            } else if (isStatement(stmt, INCLUDE)) {
+                builder.addInclude(new Include(Unqualified.of(safeStringArgument(stmt, "include argument")),
+                    extractRevisionDate(stmt)));
+            } else if (isStatement(stmt, REVISION)) {
+                builder.addRevision(Revision.of(safeStringArgument(stmt, "revision argument")));
+            }
+        }
     }
 
     final @NonNull Unqualified extractPrefix(final IRStatement stmt) {
-        return stmt.statements().stream()
-            .filter(subStmt -> isStatement(subStmt, PREFIX))
-            .findFirst()
-            .map(subStmt -> Unqualified.of(safeStringArgument(subStmt, "prefix argument")))
-            .orElseThrow(() -> new IllegalArgumentException("No prefix statement in " + refOf(stmt)));
+        for (var subStmt : stmt.statements()) {
+            if (isStatement(subStmt, PREFIX)) {
+                return Unqualified.of(safeStringArgument(subStmt, "prefix argument"));
+            }
+        }
+        throw new IllegalArgumentException("No prefix statement in " + refOf(stmt));
     }
 
     private @Nullable Revision extractRevisionDate(final IRStatement stmt) {
-        return stmt.statements().stream()
-            .filter(subStmt -> isStatement(subStmt, REVISION_DATE))
-            .findFirst()
-            .map(subStmt -> Revision.of(safeStringArgument(subStmt, "revision date argument")))
-            .orElse(null);
+        for (var subStmt : stmt.statements()) {
+            if (isStatement(subStmt, REVISION_DATE)) {
+                return Revision.of(safeStringArgument(subStmt, "revision date argument"));
+            }
+        }
+        return null;
     }
 
     private static boolean isStatement(final IRStatement stmt, final String name) {
