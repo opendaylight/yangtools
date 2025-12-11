@@ -20,12 +20,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
  * A {@link YangSourceRepresentation} backed by an {@link IRStatement}.
  */
 @NonNullByDefault
-public final class YangIRSource implements YangSourceRepresentation {
+public final class YangIRSource implements YangSourceRepresentation, SourceInfo.Extractor {
     private final SourceIdentifier sourceId;
     private final IRStatement statement;
     private final @Nullable String symbolicName;
@@ -73,6 +74,11 @@ public final class YangIRSource implements YangSourceRepresentation {
     @Override
     public Class<YangIRSource> getType() {
         return YangIRSource.class;
+    }
+
+    @Override
+    public SourceInfo extractSourceInfo() throws ExtractorException {
+        return SourceInfoExtractors.forIR(statement, sourceId).extractSourceInfo();
     }
 
     @Override
