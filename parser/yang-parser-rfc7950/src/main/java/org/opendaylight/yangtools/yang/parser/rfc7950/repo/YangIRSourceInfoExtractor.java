@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import java.io.IOException;
+import java.text.ParseException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Utility class for extract {@link SourceInfo} from a {@link YangIRSource}.
@@ -176,14 +178,17 @@ public final class YangIRSourceInfoExtractor {
 
     private static @NonNull String safeStringArgument(final SourceIdentifier source, final IRStatement stmt,
             final String desc) {
-        final var ref = refOf(source, stmt);
         final var arg = stmt.argument();
         if (arg == null) {
-            throw new IllegalArgumentException("Missing " + desc + " at " + ref);
+            throw new IllegalArgumentException("Missing " + desc + " at " + refOf(source, stmt));
         }
 
-        // TODO: we probably need to understand yang version first....
-        return ArgumentContextUtils.RFC6020.stringFromStringContext(arg, ref);
+        try {
+            // TODO: we probably need to understand yang version first....
+            return ArgumentContextUtils.RFC6020.stringFromStringContext(arg);
+        } catch (ParseException e) {
+            throw new SourceException(e.getMessage(), refOf(source, stmt), e);
+        }
     }
 
     private static StatementDeclaration.InText refOf(final SourceIdentifier source, final IRStatement stmt) {

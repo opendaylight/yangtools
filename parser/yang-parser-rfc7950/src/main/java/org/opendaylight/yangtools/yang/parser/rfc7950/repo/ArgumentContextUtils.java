@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
+import java.text.ParseException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Concatenation;
 import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Utilities for dealing with YANG statement argument strings, encapsulated in ANTLR grammar's ArgumentContext.
@@ -27,12 +26,12 @@ enum ArgumentContextUtils {
      */
     RFC6020 {
         @Override
-        void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
+        void checkDoubleQuoted(final String str, final int backslash) {
             // No-op
         }
 
         @Override
-        void checkUnquoted(final String str, final StatementSourceReference ref) {
+        void checkUnquoted(final String str) {
             // No-op
         }
     },
@@ -47,25 +46,28 @@ enum ArgumentContextUtils {
         private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
 
         @Override
-        void checkDoubleQuoted(final String str, final StatementSourceReference ref, final int backslash) {
+        void checkDoubleQuoted(final String str, final int backslash) throws ParseException {
             if (backslash < str.length() - 1) {
                 int index = backslash;
                 while (index != -1) {
                     final var escape = str.charAt(index + 1);
                     index = switch (escape) {
                         case 'n', 't', '\\', '\"' -> str.indexOf('\\', index + 2);
-                        default -> throw new SourceException(ref, """
+                        default -> throw new ParseException("""
                             YANG 1.1: illegal double quoted string (%s). In double quoted string the backslash must be \
-                            followed by one of the following character [n,t,",\\], but was '%s'.""", str, escape);
+                            followed by one of the following character [n,t,",\\], but was '%s'.""".formatted(str, escape),
+                            index);
                     };
                 }
             }
         }
 
         @Override
-        void checkUnquoted(final String str, final StatementSourceReference ref) {
-            SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
-                "YANG 1.1: unquoted string (%s) contains illegal characters", str);
+        void checkUnquoted(final String str) throws ParseException {
+            final var index = ANYQUOTE_MATCHER.indexIn(str);
+            if (index != -1) {
+                throw new ParseException("YANG 1.1: unquoted string (" + str + ") contains illegal characters", index);
+            }
         }
     };
 
@@ -74,23 +76,23 @@ enum ArgumentContextUtils {
      *       based on the grammar assumptions. While this is more verbose, it cuts out a number of unnecessary code,
      *       such as intermediate List allocation et al.
      */
-    final @NonNull String stringFromStringContext(final IRArgument argument, final StatementSourceReference ref) {
+    final @NonNull String stringFromStringContext(final IRArgument argument) throws ParseException {
         return switch (argument) {
-            case Concatenation concat -> concatStrings(concat.parts(), ref);
+            case Concatenation concat -> concatStrings(concat.parts());
             case Single single -> {
                 final var str = single.string();
                 if (single.needQuoteCheck()) {
-                    checkUnquoted(str, ref);
+                    checkUnquoted(str);
                 }
-                yield single.needUnescape() ? unescape(str, ref) : str;
+                yield single.needUnescape() ? unescape(str) : str;
             }
         };
     }
 
-    private @NonNull String concatStrings(final List<? extends Single> parts, final StatementSourceReference ref) {
+    private @NonNull String concatStrings(final List<? extends Single> parts) throws ParseException {
         final var sb = new StringBuilder();
         for (var part : parts) {
-            sb.append(part.needUnescape() ? unescape(part.string(), ref) : part.string());
+            sb.append(part.needUnescape() ? unescape(part.string()) : part.string());
         }
         return sb.toString();
     }
@@ -100,22 +102,22 @@ enum ArgumentContextUtils {
      *       account the for it with lexer modes. We do not want to force a re-lexing phase in the parser just because
      *       we decided to let ANTLR do the work.
      */
-    abstract void checkDoubleQuoted(String str, StatementSourceReference ref, int backslash);
+    abstract void checkDoubleQuoted(String str, int backslash) throws ParseException;
 
-    abstract void checkUnquoted(String str, StatementSourceReference ref);
+    abstract void checkUnquoted(String str) throws ParseException;
 
-    private @NonNull String unescape(final String str, final StatementSourceReference ref) {
+    private @NonNull String unescape(final String str) throws ParseException {
         // Now we need to perform some amount of unescaping. This serves as a pre-check before we dispatch
         // validation and processing (which will reuse the work we have done)
         final int backslash = str.indexOf('\\');
-        return backslash == -1 ? str : unescape(ref, str, backslash);
+        return backslash == -1 ? str : unescape(str, backslash);
     }
 
     /*
      * Unescape escaped double quotes, tabs, new line and backslash in the inner string and trim the result.
      */
-    private @NonNull String unescape(final StatementSourceReference ref, final String str, final int backslash) {
-        checkDoubleQuoted(str, ref, backslash);
+    private @NonNull String unescape(final String str, final int backslash) throws ParseException {
+        checkDoubleQuoted(str, backslash);
         final var sb = new StringBuilder(str.length());
         unescapeBackslash(sb, str, backslash);
         return sb.toString();
