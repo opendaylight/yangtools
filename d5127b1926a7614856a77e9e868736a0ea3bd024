@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "649ad5e0_e2ef7b4e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-11T22:12:08Z",
+      "side": 1,
+      "message": "We need to capture the resolved namespaces in a yang-parser-rfc7950 DTO, so that the resolution can be off-loaded to YangLibResolver",
+      "revId": "d5127b1926a7614856a77e9e868736a0ea3bd024",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
