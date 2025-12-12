@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "daac97ff_38514fe8",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/source/SourceInfo.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-12T15:06:18Z",
+      "side": 1,
+      "message": "why do we need this here?",
+      "range": {
+        "startLine": 112,
+        "startChar": 8,
+        "endLine": 112,
+        "endChar": 47
+      },
+      "revId": "029285c622d1031277585c20305c03298ad55182",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc12b168_ba38c52a",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/source/SourceInfo.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-12T15:06:18Z",
+      "side": 1,
+      "message": "revisions are already sorted with latestRevision being the first, see Builder.build() below",
+      "range": {
+        "startLine": 115,
+        "startChar": 16,
+        "endLine": 115,
+        "endChar": 47
+      },
+      "revId": "029285c622d1031277585c20305c03298ad55182",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
