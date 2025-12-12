@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "12306c14_d7b1aac7",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/StatementException.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-12T02:14:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71cae0d3_270593ee",
+      "range": {
+        "startLine": 68,
+        "startChar": 57,
+        "endLine": 68,
+        "endChar": 68
+      },
+      "revId": "92ee18aec20aa0983b61b710e42e43ba8199caac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b4e2d242_9ed64b15",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-12-11T23:28:09Z",
       "side": 1,
       "message": "it seems we can just make this final",
+      "range": {
+        "startLine": 25,
+        "startChar": 7,
+        "endLine": 25,
+        "endChar": 15
+      },
+      "revId": "92ee18aec20aa0983b61b710e42e43ba8199caac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77bc1997_52d1e2b8",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/UncheckedStatementException.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-12T02:14:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4e2d242_9ed64b15",
       "range": {
         "startLine": 25,
         "startChar": 7,
