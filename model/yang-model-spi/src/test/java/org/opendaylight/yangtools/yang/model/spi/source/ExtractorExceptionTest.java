@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorInvalidArgumentException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorInvalidRootException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorMalformedArgumentException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorMissingArgumentException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorMissingStatementException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.UncheckedExtractorException;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,18 +26,19 @@ class ExtractorExceptionTest {
     private StatementSourceReference sourceRef;
 
     @Test
-    void extractorInvalidRootException() {
-        final var ex = new ExtractorInvalidRootException(sourceRef, "foo message");
+    void extractorException() {
+        final var ex = new ExtractorException(sourceRef, "foo message");
         assertSame(sourceRef, ex.sourceRef());
         assertEquals("foo message [at sourceRef]", ex.getMessage());
+        assertNull(ex.getCause());
     }
 
     @Test
-    void extractorInvalidArgumentException() {
+    void extractorExceptionWithCause() {
         final var cause = new RuntimeException("some cause");
-        final var ex = new ExtractorInvalidArgumentException(sourceRef, "foo", cause);
+        final var ex = new ExtractorException(sourceRef, "bar message", cause);
         assertSame(sourceRef, ex.sourceRef());
-        assertEquals("Invalid argument to foo: some cause [at sourceRef]", ex.getMessage());
+        assertEquals("bar message [at sourceRef]", ex.getMessage());
         assertSame(cause, ex.getCause());
     }
 
@@ -53,22 +52,8 @@ class ExtractorExceptionTest {
     }
 
     @Test
-    void extractorMissingArgumentException() {
-        final var ex = new ExtractorMissingArgumentException(sourceRef, "foo");
-        assertSame(sourceRef, ex.sourceRef());
-        assertEquals("Missing argument to foo [at sourceRef]", ex.getMessage());
-    }
-
-    @Test
-    void extractorMissingStatementException() {
-        final var ex = new ExtractorMissingStatementException(sourceRef, "foo");
-        assertSame(sourceRef, ex.sourceRef());
-        assertEquals("Missing foo substatement [at sourceRef]", ex.getMessage());
-    }
-
-    @Test
     void uncheckedExtractException() {
-        final var cause = new ExtractorMissingArgumentException(sourceRef, "foo");
+        final var cause = new ExtractorException(sourceRef, "foo message");
         final var ex = new UncheckedExtractorException(cause);
         assertSame(cause, ex.getCause());
         assertSame(cause.getMessage(), ex.getMessage());

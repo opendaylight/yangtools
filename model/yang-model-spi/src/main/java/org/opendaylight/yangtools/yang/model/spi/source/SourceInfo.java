@@ -261,55 +261,35 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
     }
 
     /**
-     * A {@link StatementException} reported by when the {@link SourceInfo} cannot be extracted. Subclasses of this
-     * exception are not serializable.
+     * A {@link StatementException} reported by when the {@link SourceInfo} cannot be extracted. Instances of this
+     * exception and its subclasses are not serializable.
      *
      * @since 14.0.22
      */
-    abstract sealed class ExtractorException extends StatementException
-            permits ExtractorInvalidRootException, ExtractorInvalidArgumentException,
-                    ExtractorMalformedArgumentException, ExtractorMissingArgumentException,
-                    ExtractorMissingStatementException {
+    sealed class ExtractorException extends StatementException permits ExtractorMalformedArgumentException {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
-        ExtractorException(final StatementSourceReference sourceRef, final String message) {
+        /**
+         * Construct an instance with specified {@link StatementSourceReference} and message.
+         *
+         * @param sourceRef the {@link StatementSourceReference}
+         * @param message the message
+         */
+        public ExtractorException(final StatementSourceReference sourceRef, final String message) {
             super(sourceRef, message);
         }
 
-        ExtractorException(final StatementSourceReference sourceRef, final String message, final Throwable cause) {
+        /**
+         * Construct an instance with specified {@link StatementSourceReference}, message and cause.
+         *
+         * @param sourceRef the {@link StatementSourceReference}
+         * @param message the message
+         * @param cause the cause
+         */
+        public ExtractorException(final StatementSourceReference sourceRef, final String message,
+                final Throwable cause) {
             super(sourceRef, message, cause);
-        }
-    }
-
-    /**
-     * An {@link ExtractorException} reported when the {@link SourceRepresentation}'s top-level statement is not a
-     * {@code module} or a {@code submodule}. Instances of this exception are not serializable.
-     *
-     * @since 14.0.22
-     */
-    final class ExtractorInvalidRootException extends ExtractorException {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        public ExtractorInvalidRootException(final StatementSourceReference sourceRef, final String message) {
-            super(sourceRef, message);
-        }
-    }
-
-    /**
-     * An {@link ExtractorException} reported when a YANG statement has an invalid argument, such as
-     * {@code yang-version foo} escaped. Instances of this exception are not serializable.
-     *
-     * @since 14.0.22
-     */
-    final class ExtractorInvalidArgumentException extends ExtractorException {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        public ExtractorInvalidArgumentException(final StatementSourceReference sourceRef, final String statement,
-                final Exception cause) {
-            super(sourceRef, "Invalid argument to " + statement + ": " + cause.getMessage(), cause);
         }
     }
 
@@ -318,44 +298,17 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      * escaped. Instances of this exception are not serializable.
      *
      * @since 14.0.22
+     * @deprecated This exception is exposed only for backwards compatibility
      */
+    @Deprecated(since = "14.0.22", forRemoval = true)
     final class ExtractorMalformedArgumentException extends ExtractorException {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
+        @Deprecated(since = "14.0.22", forRemoval = true)
         public ExtractorMalformedArgumentException(final StatementSourceReference sourceRef, final String statement,
                 final Exception cause) {
             super(sourceRef, "Malformed argument to " + statement + ": " + cause.getMessage(), cause);
-        }
-    }
-
-    /**
-     * An {@link ExtractorException} reported when a YANG statement is missing its argument. Instances of this
-     * exception are not serializable.
-     *
-     * @since 14.0.22
-     */
-    final class ExtractorMissingArgumentException extends ExtractorException {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        public ExtractorMissingArgumentException(final StatementSourceReference sourceRef, final String statement) {
-            super(sourceRef, "Missing argument to " + statement);
-        }
-    }
-
-    /**
-     * An {@link ExtractorException} reported when a required YANG statement is missing. Instances of this exception are
-     * not serializable.
-     *
-     * @since 14.0.22
-     */
-    final class ExtractorMissingStatementException extends ExtractorException {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        public ExtractorMissingStatementException(final StatementSourceReference sourceRef, final String statement) {
-            super(sourceRef, "Missing " + statement + " substatement");
         }
     }
 
@@ -369,8 +322,18 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
+        /**
+         * Construct an instance wrapping specified {@link ExtractorException}.
+         *
+         * @param cause the {@link ExtractorException}.
+         */
         public UncheckedExtractorException(final ExtractorException cause) {
             super(cause);
+        }
+
+        @Override
+        public ExtractorException getCause() {
+            return ExtractorException.class.cast(super.getCause());
         }
     }
 }
