@@ -9,16 +9,18 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
  * Abstract base class for implementing {@link YangTextSource}s with {@link Delegator}.
  */
 @NonNullByDefault
-abstract class AbstractYangTextSource<T> extends YangTextSource implements Delegator<T> {
+abstract class AbstractYangTextSource<T> extends YangTextSource implements Delegator<T>, SourceInfo.Extractor {
     private final SourceIdentifier sourceId;
     private final T delegate;
 
@@ -35,5 +37,14 @@ abstract class AbstractYangTextSource<T> extends YangTextSource implements Deleg
     @Override
     public final T getDelegate() {
         return delegate;
+    }
+
+    @Override
+    public final SourceInfo extractSourceInfo() throws ExtractorException {
+        try (var is = openBufferedStream()) {
+            return XMLReaderSourceInfoExtractor.extractSourceInfo(sourceId, is);
+        } catch (IOException e) {
+            throw new ExtractorException(null, "Failed to read text", e);
+        }
     }
 }
