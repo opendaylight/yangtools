@@ -37,7 +37,7 @@ public abstract class UncheckedStatementException extends RuntimeException imple
     }
 
     @Override
-    public @NonNull String getMessage() {
+    public final @NonNull String getMessage() {
         return verifyNotNull(super.getMessage());
     }
 
