@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorMalformedArgumentException;
 
 /**
  * Utility class for extract {@link SourceInfo} from a {@link YangIRSource}.
@@ -186,7 +185,8 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
             // TODO: we probably need to understand yang version first....
             return arg.asString(StringEscaping.RFC6020);
         } catch (ParseException e) {
-            throw new ExtractorMalformedArgumentException(refOf(stmt), stmt.keyword().asStringDeclaration(), e);
+            throw new ExtractorException(refOf(stmt),
+                "Malformed argument to " + stmt.keyword().asStringDeclaration() + ": " + e.getMessage(), e);
         }
     }
 

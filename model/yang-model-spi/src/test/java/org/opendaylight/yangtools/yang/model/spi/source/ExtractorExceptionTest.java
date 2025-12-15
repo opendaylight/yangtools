@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorMalformedArgumentException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.UncheckedExtractorException;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,15 +38,6 @@ class ExtractorExceptionTest {
         final var ex = new ExtractorException(sourceRef, "bar message", cause);
         assertSame(sourceRef, ex.sourceRef());
         assertEquals("bar message [at sourceRef]", ex.getMessage());
-        assertSame(cause, ex.getCause());
-    }
-
-    @Test
-    void extractorMalformedArgumentException() {
-        final var cause = new RuntimeException("some cause");
-        final var ex = new ExtractorMalformedArgumentException(sourceRef, "foo", cause);
-        assertSame(sourceRef, ex.sourceRef());
-        assertEquals("Malformed argument to foo: some cause [at sourceRef]", ex.getMessage());
         assertSame(cause, ex.getCause());
     }
 

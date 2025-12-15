@@ -266,7 +266,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
      *
      * @since 14.0.22
      */
-    sealed class ExtractorException extends StatementException permits ExtractorMalformedArgumentException {
+    final class ExtractorException extends StatementException {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
@@ -290,25 +290,6 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         public ExtractorException(final StatementSourceReference sourceRef, final String message,
                 final Throwable cause) {
             super(sourceRef, message, cause);
-        }
-    }
-
-    /**
-     * An {@link ExtractorException} reported when a YANG statement has a malformed argument, e.g. it is incorrectly
-     * escaped. Instances of this exception are not serializable.
-     *
-     * @since 14.0.22
-     * @deprecated This exception is exposed only for backwards compatibility
-     */
-    @Deprecated(since = "14.0.22", forRemoval = true)
-    final class ExtractorMalformedArgumentException extends ExtractorException {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        @Deprecated(since = "14.0.22", forRemoval = true)
-        public ExtractorMalformedArgumentException(final StatementSourceReference sourceRef, final String statement,
-                final Exception cause) {
-            super(sourceRef, "Malformed argument to " + statement + ": " + cause.getMessage(), cause);
         }
     }
 

@@ -86,9 +86,25 @@ class YangIRSourceInfoExtractorTest {
     }
 
     @Test
+    void testMalformedModuleArg() {
+        final var ex = assertIAE("/depinfo-malformed/malformed-module-arg.yang");
+        assertEquals(
+            "Invalid argument to module: String '0123' is not a valid identifier [at malformed-module-arg:1:1]",
+            ex.getMessage());
+    }
+
+    @Test
     void testMalformedRev() {
         final var ex = assertIAE("/depinfo-malformed/malformed-rev.yang");
         assertEquals("Missing argument to revision [at malformed-rev:5:5]", ex.getMessage());
+    }
+
+    @Test
+    void testMalformedRevArg() {
+        final var ex = assertIAE("/depinfo-malformed/malformed-rev-arg.yang");
+        assertEquals(
+            "Invalid argument to revision: Text 'bad' could not be parsed at index 0 [at malformed-rev-arg:5:5]",
+            ex.getMessage());
     }
 
     private static IllegalArgumentException assertIAE(final String resourceName) {

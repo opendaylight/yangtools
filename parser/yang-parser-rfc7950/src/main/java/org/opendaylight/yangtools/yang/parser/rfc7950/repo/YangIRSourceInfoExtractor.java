@@ -15,12 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorMalformedArgumentException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoExtractors;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Utility class for extract {@link SourceInfo} from a {@link YangIRSource}.
@@ -44,8 +42,6 @@ public final class YangIRSourceInfoExtractor {
     public static @NonNull SourceInfo forIR(final YangIRSource source) {
         try {
             return source.extractSourceInfo();
-        } catch (ExtractorMalformedArgumentException e) {
-            throw new SourceException(e);
         } catch (ExtractorException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
@@ -65,8 +61,6 @@ public final class YangIRSourceInfoExtractor {
     public static @NonNull SourceInfo forIR(final IRStatement rootStatement, final SourceIdentifier sourceId) {
         try {
             return SourceInfoExtractors.forIR(rootStatement, sourceId).extractSourceInfo();
-        } catch (ExtractorMalformedArgumentException e) {
-            throw new SourceException(e);
         } catch (ExtractorException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
