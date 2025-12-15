@@ -15,6 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoExtractors;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -34,7 +37,12 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
     public static @NonNull YangIRSource transformText(final YangTextSource text)
             throws YangSyntaxErrorException, IOException {
         final var rootStatement = YangTextParser.parseToIR(text);
-        final var info = YangIRSourceInfoExtractor.forIR(rootStatement, text.sourceId());
+        final SourceInfo info;
+        try {
+            info = SourceInfoExtractors.forIR(rootStatement, text.sourceId()).extractSourceInfo();
+        } catch (ExtractorException e) {
+            throw new IOException("Failed to extract SourceInfo", e);
+        }
         return new YangIRSource(info.sourceId(), rootStatement, text.symbolicName());
     }
 }

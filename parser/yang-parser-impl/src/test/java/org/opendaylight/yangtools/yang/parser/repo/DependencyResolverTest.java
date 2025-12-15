@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Belongs
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangIRSourceInfoExtractor;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 class DependencyResolverTest {
     @Test
@@ -65,8 +65,9 @@ class DependencyResolverTest {
     private static RevisionDependencyResolver resolveResources(final String... resourceNames) throws Exception {
         final var map = new HashMap<SourceIdentifier, SourceInfo>();
         for (var resourceName : resourceNames) {
-            final var info = YangIRSourceInfoExtractor.forYangText(
-                new URLYangTextSource(DependencyResolverTest.class.getResource(resourceName)));
+            final var info = TextToIRTransformer.transformText(new URLYangTextSource(
+                DependencyResolverTest.class.getResource(resourceName)))
+                .extractSourceInfo();
             map.put(info.sourceId(), info);
         }
         return new RevisionDependencyResolver(map);

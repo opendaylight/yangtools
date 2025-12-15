@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoExtractors;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 class YangIRSourceInfoExtractorTest {
@@ -98,7 +100,10 @@ class YangIRSourceInfoExtractorTest {
     // Utility
     private static SourceInfo forResource(final String resourceName) {
         final var source = StmtTestUtils.sourceForResource(resourceName);
-        final var info = YangIRSourceInfoExtractor.forIR(source.rootStatement(), source.getIdentifier());
+        final var extractor = assertDoesNotThrow(
+            () -> SourceInfoExtractors.forIR(source.rootStatement(), source.getIdentifier()));
+        assertNotNull(extractor);
+        final var info = assertDoesNotThrow(extractor::extractSourceInfo);
         assertNotNull(info);
         return info;
     }
