@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.UncheckedExtractorException;
 
 @ExtendWith(MockitoExtension.class)
 class ExtractorExceptionTest {
@@ -26,7 +25,7 @@ class ExtractorExceptionTest {
 
     @Test
     void extractorException() {
-        final var ex = new ExtractorException(sourceRef, "foo message");
+        final var ex = new ExtractorException("foo message", sourceRef);
         assertSame(sourceRef, ex.sourceRef());
         assertEquals("foo message [at sourceRef]", ex.getMessage());
         assertNull(ex.getCause());
@@ -35,18 +34,9 @@ class ExtractorExceptionTest {
     @Test
     void extractorExceptionWithCause() {
         final var cause = new RuntimeException("some cause");
-        final var ex = new ExtractorException(sourceRef, "bar message", cause);
+        final var ex = new ExtractorException("bar message", cause, sourceRef);
         assertSame(sourceRef, ex.sourceRef());
         assertEquals("bar message [at sourceRef]", ex.getMessage());
         assertSame(cause, ex.getCause());
-    }
-
-    @Test
-    void uncheckedExtractException() {
-        final var cause = new ExtractorException(sourceRef, "foo message");
-        final var ex = new UncheckedExtractorException(cause);
-        assertSame(cause, ex.getCause());
-        assertSame(cause.getMessage(), ex.getMessage());
-        assertSame(sourceRef, ex.sourceRef());
     }
 }
