@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.FluentFuture;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
@@ -19,11 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangIRSourceInfoExtractor;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +49,23 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
     @Override
     public FluentFuture<EffectiveModelContext> apply(final List<YangIRSource> sources) {
         final var srcs = Maps.uniqueIndex(sources, getIdentifier);
-        final var deps = Maps.transformValues(srcs, YangIRSourceInfoExtractor::forIR);
-        LOG.debug("Resolving dependency reactor {}", deps);
 
+        final var deps = HashMap.<SourceIdentifier, SourceInfo>newHashMap(srcs.size());
+        for (var entry : srcs.entrySet()) {
+            final var src = entry.getKey();
+            final SourceInfo info;
+            try {
+                info = entry.getValue().extractSourceInfo();
+            } catch (ExtractorException e) {
+                LOG.debug("Cannot extract dependency information from {}", src, e);
+                return FluentFutures.immediateFailedFluentFuture(new SchemaResolutionException(
+                    "Failed to extract dependency information", src, e));
+            }
+
+            deps.put(src, info);
+        }
+
+        LOG.debug("Resolving dependency reactor {}", deps);
         final var res = switch (config.getStatementParserMode()) {
             case DEFAULT_MODE -> new RevisionDependencyResolver(deps);
         };
