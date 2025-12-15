@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 import static java.util.Objects.requireNonNull;
 
 import java.text.ParseException;
+import java.time.format.DateTimeParseException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -169,7 +170,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         final var arg = stringArgument(stmt);
         try {
             return Revision.of(arg);
-        } catch (IllegalArgumentException e) {
+        } catch (DateTimeParseException e) {
             throw newInvalidArgument(stmt, e);
         }
     }
