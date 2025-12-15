@@ -168,7 +168,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 allElements = !allAttrs;
 
                 argValue = getArgValue(element, argName, allAttrs);
-                SourceException.throwIfNull(argValue, ref, "Statement {} is missing mandatory argument %s",
+                SourceException.throwIfNull(argValue, ref, "Statement %s is missing mandatory argument %s",
                     def.getStatementName(), argName);
             } else {
                 argName = null;
