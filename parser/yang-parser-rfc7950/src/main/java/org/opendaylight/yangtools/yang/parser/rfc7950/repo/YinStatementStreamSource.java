@@ -36,9 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * A {@link StatementStreamSource} based on a {@link YinXmlSource}. Internal implementation works on top
@@ -75,9 +73,8 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
 
     private static StatementDefinition getValidDefinition(final Node node, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
-        final XMLNamespace uri = NS_CACHE.getUnchecked(node.getNamespaceURI());
-        final StatementDefinition def = stmtDef.getByNamespaceAndLocalName(uri, node.getLocalName());
-
+        final var uri = NS_CACHE.getUnchecked(node.getNamespaceURI());
+        final var def = stmtDef.getByNamespaceAndLocalName(uri, node.getLocalName());
         if (def == null) {
             SourceException.throwIf(writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION), ref,
                 "%s is not a YIN statement or use of extension.", node.getLocalName());
@@ -94,7 +91,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             return true;
         }
 
-        final StatementDefinition def = getValidDefinition(attr, writer, stmtDef, ref);
+        final var def = getValidDefinition(attr, writer, stmtDef, ref);
         if (def == null) {
             return false;
         }
@@ -108,7 +105,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
 
     private static String getArgValue(final Element element, final QName argName, final boolean yinElement) {
         if (yinElement) {
-            final NodeList children = element.getElementsByTagNameNS(argName.getNamespace().toString(),
+            final var children = element.getElementsByTagNameNS(argName.getNamespace().toString(),
                 argName.getLocalName());
             if (children.getLength() == 0) {
                 return null;
@@ -138,7 +135,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 return true;
             }
 
-            final StatementDefinition def = resumed.getDefinition();
+            final var def = resumed.getDefinition();
             ref = resumed.getSourceReference();
             final var optArgDef = def.getArgumentDefinition();
             if (optArgDef.isPresent()) {
@@ -153,7 +150,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             }
         } else {
             ref = refProvider.getRefOf(element);
-            final StatementDefinition def = getValidDefinition(element, writer, stmtDef, ref);
+            final var def = getValidDefinition(element, writer, stmtDef, ref);
             if (def == null) {
                 LOG.debug("Skipping element {}", element);
                 return false;
@@ -185,10 +182,10 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         boolean fullyDefined = true;
 
         // First process any statements defined as attributes. We need to skip argument, if present
-        final NamedNodeMap attributes = element.getAttributes();
+        final var attributes = element.getAttributes();
         if (attributes != null) {
             for (int i = 0, len = attributes.getLength(); i < len; ++i) {
-                final Attr attr = (Attr) attributes.item(i);
+                final var attr = (Attr) attributes.item(i);
                 if ((allAttrs || !isArgument(argName, attr))
                         && !processAttribute(childCounter++, attr, writer, stmtDef, ref)) {
                     fullyDefined = false;
@@ -197,11 +194,10 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         }
 
         // Now process child elements, if present
-        final NodeList children = element.getChildNodes();
+        final var children = element.getChildNodes();
         for (int i = 0, len = children.getLength(); i < len; ++i) {
-            final Node child = children.item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE && (allElements || !isArgument(argName, child))
-                    && !processElement(childCounter++, (Element) child, writer, stmtDef)) {
+            if (children.item(i) instanceof Element child && (allElements || !isArgument(argName, child))
+                    && !processElement(childCounter++, child, writer, stmtDef)) {
                 fullyDefined = false;
             }
         }
@@ -216,13 +212,12 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     }
 
     private void walkTree(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        final NodeList children = root.getChildNodes();
+        final var children = root.getChildNodes();
 
         int childCounter = 0;
         for (int i = 0, len = children.getLength(); i < len; ++i) {
-            final Node child = children.item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE) {
-                processElement(childCounter++, (Element) child, writer, stmtDef);
+            if (children.item(i) instanceof Element child) {
+                processElement(childCounter++, child, writer, stmtDef);
             }
         }
     }
