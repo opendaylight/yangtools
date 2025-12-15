@@ -178,15 +178,16 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     final String stringArgument(final IRStatement stmt) throws ExtractorException {
         final var arg = stmt.argument();
         if (arg == null) {
-            throw new ExtractorException(refOf(stmt), "Missing argument to " + stmt.keyword().asStringDeclaration());
+            throw new ExtractorException("Missing argument to " + stmt.keyword().asStringDeclaration(), refOf(stmt));
         }
 
         try {
             // TODO: we probably need to understand yang version first....
             return arg.asString(StringEscaping.RFC6020);
         } catch (ParseException e) {
-            throw new ExtractorException(refOf(stmt),
-                "Malformed argument to " + stmt.keyword().asStringDeclaration() + ": " + e.getMessage(), e);
+            throw new ExtractorException(
+                "Malformed argument to " + stmt.keyword().asStringDeclaration() + ": " + e.getMessage(), e,
+                refOf(stmt));
         }
     }
 
@@ -202,13 +203,14 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
 
     @NonNullByDefault
     final ExtractorException newInvalidArgument(final IRStatement stmt, final Exception cause) {
-        return new ExtractorException(refOf(stmt),
-            "Invalid argument to " + stmt.keyword().asStringDeclaration() + ": " + cause.getMessage(), cause);
+        return new ExtractorException(
+            "Invalid argument to " + stmt.keyword().asStringDeclaration() + ": " + cause.getMessage(), cause,
+            refOf(stmt));
     }
 
     @NonNullByDefault
     final ExtractorException newMissingSubstatement(final IRStatement parent, final String keyword) {
-        return new ExtractorException(refOf(parent), "Missing " + keyword + " substatement");
+        return new ExtractorException("Missing " + keyword + " substatement", refOf(parent));
     }
 
     @NonNullByDefault
