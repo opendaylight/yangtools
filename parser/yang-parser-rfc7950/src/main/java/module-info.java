@@ -38,7 +38,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
 
     requires org.antlr.antlr4.runtime;
     requires org.opendaylight.yangtools.yang.model.ri;
-    requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations

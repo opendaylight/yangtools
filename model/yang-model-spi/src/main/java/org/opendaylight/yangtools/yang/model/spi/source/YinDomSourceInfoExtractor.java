@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.time.format.DateTimeParseException;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -20,9 +19,9 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
 import org.w3c.dom.Element;
 
 /**
@@ -35,8 +34,8 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
         private static final String NAMESPACE_ARG =
             YangStmtMapping.NAMESPACE.getArgumentDefinition().orElseThrow().argumentName().getLocalName();
 
-        ForModule(final Element root, final Function<Element, @Nullable StatementSourceReference> elementToRef) {
-            super(root, elementToRef);
+        ForModule(final Element root, final SourceRefProvider refProvider) {
+            super(root, refProvider);
         }
 
         @Override
@@ -65,8 +64,8 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
         private static final String BELONGS_TO_ARG =
             YangStmtMapping.BELONGS_TO.getArgumentDefinition().orElseThrow().argumentName().getLocalName();
 
-        ForSubmodule(final Element root, final Function<Element, @Nullable StatementSourceReference> elementToRef) {
-            super(root, elementToRef);
+        ForSubmodule(final Element root, final SourceRefProvider refProvider) {
+            super(root, refProvider);
         }
 
         @Override
@@ -119,13 +118,12 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
     private static final String YANG_VERSION_ARG =
         YangStmtMapping.YANG_VERSION.getArgumentDefinition().orElseThrow().argumentName().getLocalName();
 
-    private final Function<Element, @Nullable StatementSourceReference> elementToRef;
+    private final SourceRefProvider refProvider;
     final Element root;
 
-    YinDomSourceInfoExtractor(final Element root,
-            final Function<Element, @Nullable StatementSourceReference> elementToRef) {
+    YinDomSourceInfoExtractor(final Element root, final SourceRefProvider refProvider) {
         this.root = requireNonNull(root);
-        this.elementToRef = requireNonNull(elementToRef);
+        this.refProvider = requireNonNull(refProvider);
     }
 
     final void fillCommon(final SourceInfo.Builder<?, ?> builder) throws ExtractorException {
@@ -214,22 +212,18 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
     final String getElementArgumentString(final Element element, final String argument) throws ExtractorException {
         final var arg = element.getAttributeNodeNS(null, argument);
         if (arg == null || !arg.getSpecified()) {
-            throw new ExtractorException("Missing argument to " + element.getLocalName(), refOf(element));
+            throw new ExtractorException("Missing argument to " + element.getLocalName(), refProvider.refOf(element));
         }
         return arg.getValue();
     }
 
     final ExtractorException newInvalidArgument(final Element stmt, final Exception cause) {
         return new ExtractorException(
-            "Invalid argument to " + stmt.getLocalName() + ": " + cause.getMessage(), cause, refOf(stmt));
+            "Invalid argument to " + stmt.getLocalName() + ": " + cause.getMessage(), cause, refProvider.refOf(stmt));
     }
 
     private ExtractorException newMissingSubstatement(final Element parent, final String keyword) {
-        return new ExtractorException("Missing " + keyword + " substatement", refOf(parent));
-    }
-
-    private @Nullable StatementSourceReference refOf(final Element element) {
-        return elementToRef.apply(element);
+        return new ExtractorException("Missing " + keyword + " substatement", refProvider.refOf(parent));
     }
 
     static boolean isYinElement(final Element element) {

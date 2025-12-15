@@ -5,14 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -28,6 +30,18 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
     private static final Logger LOG = LoggerFactory.getLogger(StatementSourceReferenceHandler.class);
     private static final String USER_DATA_KEY = StatementSourceReference.class.getName();
 
+    static final @NonNull SourceRefProvider REF_PROVIDER = element -> {
+        final var value = element.getUserData(USER_DATA_KEY);
+        return switch (value) {
+            case null -> null;
+            case StatementSourceReference sourceRef -> sourceRef;
+            default -> {
+                LOG.debug("Ignoring {} attached to key {}", value, USER_DATA_KEY);
+                yield null;
+            }
+        };
+    };
+
     private final Deque<Element> stack = new ArrayDeque<>();
     private final StringBuilder sb = new StringBuilder();
     private final Document doc;
@@ -38,17 +52,6 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
     StatementSourceReferenceHandler(final Document doc, final String file) {
         this.doc = requireNonNull(doc);
         this.file = file;
-    }
-
-    static StatementSourceReference extractRef(final Element element) {
-        final Object value = element.getUserData(USER_DATA_KEY);
-        if (value instanceof StatementSourceReference sourceRef) {
-            return sourceRef;
-        }
-        if (value != null) {
-            LOG.debug("Ignoring {} attached to key {}", value, USER_DATA_KEY);
-        }
-        return null;
     }
 
     @Override

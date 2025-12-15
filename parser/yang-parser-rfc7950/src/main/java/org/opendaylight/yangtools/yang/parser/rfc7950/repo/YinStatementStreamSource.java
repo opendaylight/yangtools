@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.StatementSourceReferenceHandler.extractRef;
 
 import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import javax.xml.transform.TransformerException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
@@ -42,8 +43,6 @@ import org.w3c.dom.NodeList;
 /**
  * A {@link StatementStreamSource} based on a {@link YinXmlSource}. Internal implementation works on top
  * of {@link YinDomSource} and its DOM document.
- *
- * @author Robert Varga
  */
 @Beta
 public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<SourceIdentifier>
@@ -56,11 +55,14 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 return XMLNamespace.of(key).intern();
             }
         });
-    private final Node root;
+    private final @NonNull Node root;
+    private final @NonNull SourceRefProvider refProvider;
 
-    private YinStatementStreamSource(final SourceIdentifier sourceId, final Node root) {
+    private YinStatementStreamSource(final SourceIdentifier sourceId, final Node root,
+            final SourceRefProvider refProvider) {
         super(sourceId);
         this.root = requireNonNull(root);
+        this.refProvider = requireNonNull(refProvider);
     }
 
     public static StatementStreamSource create(final YinXmlSource source) throws TransformerException {
@@ -68,7 +70,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     }
 
     public static StatementStreamSource create(final YinDomSource source) {
-        return new YinStatementStreamSource(source.sourceId(), source.getSource().getNode());
+        return new YinStatementStreamSource(source.sourceId(), source.getSource().getNode(), source.refProvider());
     }
 
     private static StatementDefinition getValidDefinition(final Node node, final StatementWriter writer,
@@ -122,7 +124,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         return attr.getValue();
     }
 
-    private static boolean processElement(final int childId, final Element element, final StatementWriter writer,
+    private boolean processElement(final int childId, final Element element, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef) {
 
         final var optResumed = writer.resumeStatement(childId);
@@ -150,7 +152,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 allElements = false;
             }
         } else {
-            ref = extractRef(element);
+            ref = refProvider.getRefOf(element);
             final StatementDefinition def = getValidDefinition(element, writer, stmtDef, ref);
             if (def == null) {
                 LOG.debug("Skipping element {}", element);
