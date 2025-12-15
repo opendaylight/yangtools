@@ -75,9 +75,8 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
         final var uri = NS_CACHE.getUnchecked(node.getNamespaceURI());
         final var def = stmtDef.getByNamespaceAndLocalName(uri, node.getLocalName());
-        if (def == null) {
-            SourceException.throwIf(writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION), ref,
-                "%s is not a YIN statement or use of extension.", node.getLocalName());
+        if (def == null && writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
+            throw new SourceException(ref, "%s is not a YIN statement or use of extension.", node.getLocalName());
         }
         return def;
     }
@@ -165,8 +164,10 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 allElements = !allAttrs;
 
                 argValue = getArgValue(element, argName, allAttrs);
-                SourceException.throwIfNull(argValue, ref, "Statement %s is missing mandatory argument %s",
-                    def.getStatementName(), argName);
+                if (argValue == null) {
+                    throw new SourceException(ref, "Statement %s is missing mandatory argument %s",
+                        def.getStatementName(), argName);
+                }
             } else {
                 argName = null;
                 argValue = null;
