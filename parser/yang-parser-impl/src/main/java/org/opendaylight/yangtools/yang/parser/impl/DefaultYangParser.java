@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
@@ -113,7 +112,7 @@ final class DefaultYangParser implements YangParser {
             case YinDomSource yinDom -> YinStatementStreamSource.create(yinDom);
             case YinTextSource yinText -> {
                 try {
-                    yield YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(yinText));
+                    yield YinStatementStreamSource.create(YinDomSource.of(yinText));
                 } catch (SAXException e) {
                     throw new YangSyntaxErrorException(source.sourceId(), 0, 0, "Failed to parse XML text", e);
                 }

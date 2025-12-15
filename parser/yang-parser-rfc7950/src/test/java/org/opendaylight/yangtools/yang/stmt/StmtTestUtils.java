@@ -26,12 +26,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -146,8 +146,7 @@ public final class StmtTestUtils {
             .listFiles(YIN_FILE_FILTER);
         final var sources = new StatementStreamSource[files.length];
         for (int i = 0; i < files.length; i++) {
-            sources[i] = YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                new FileYinTextSource(files[i].toPath())));
+            sources[i] = YinStatementStreamSource.create(YinDomSource.of(new FileYinTextSource(files[i].toPath())));
         }
 
         return parseYinSources(config, sources);

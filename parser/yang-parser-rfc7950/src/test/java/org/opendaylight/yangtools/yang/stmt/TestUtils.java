@@ -27,10 +27,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.xml.sax.SAXException;
@@ -110,8 +110,7 @@ public final class TestUtils {
 
         // FIXME: use Files to list files
         for (var file : Path.of(resourceDirectory).toFile().listFiles()) {
-            reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                new FileYinTextSource(file.toPath()))));
+            reactor.addSource(YinStatementStreamSource.create(YinDomSource.of(new FileYinTextSource(file.toPath()))));
         }
 
         return reactor.buildEffective();
@@ -119,7 +118,7 @@ public final class TestUtils {
 
     public static Module loadYinModule(final YinTextSource source) throws ReactorException, SAXException, IOException {
         return RFC7950Reactors.defaultReactor().newBuild()
-            .addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)))
+            .addSource(YinStatementStreamSource.create(YinDomSource.of(source)))
             .buildEffective()
             .getModules().iterator().next();
     }
