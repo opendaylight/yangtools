@@ -38,7 +38,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         private static final @NonNull String NAMESPACE = YangStmtMapping.NAMESPACE.getStatementName().getLocalName();
 
         @NonNullByDefault
-        ForModule(final SourceIdentifier sourceId, final IRStatement root) {
+        ForModule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
             super(sourceId, root);
         }
 
@@ -71,7 +71,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         private static final @NonNull String BELONGS_TO = YangStmtMapping.BELONGS_TO.getStatementName().getLocalName();
 
         @NonNullByDefault
-        ForSubmodule(final SourceIdentifier sourceId, final IRStatement root) {
+        ForSubmodule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
             super(sourceId, root);
         }
 
@@ -103,18 +103,38 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     private static final @NonNull String YANG_VERSION = YangStmtMapping.YANG_VERSION.getStatementName().getLocalName();
 
     private final @NonNull SourceIdentifier sourceId;
+    private final @NonNull StringEscaping escaping;
+    private final @NonNull YangVersion version;
     final @NonNull IRStatement root;
 
     @NonNullByDefault
-    YangIRSourceInfoExtractor(final SourceIdentifier sourceId, final IRStatement root) {
+    YangIRSourceInfoExtractor(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
         this.sourceId = requireNonNull(sourceId);
         this.root = requireNonNull(root);
+        version = determineVersion();
+        escaping = switch (version) {
+            case VERSION_1 -> StringEscaping.RFC6020;
+            case VERSION_1_1 -> StringEscaping.RFC7950;
+        };
+    }
+
+    private @NonNull YangVersion determineVersion() throws ExtractorException {
+        for (var stmt : root.statements()) {
+            if (isStatement(stmt, YANG_VERSION)) {
+                // use most lenient escaping
+                final var arg = stringArgument(stmt, StringEscaping.RFC6020);
+                try {
+                    return YangVersion.ofString(arg);
+                } catch (IllegalArgumentException e) {
+                    throw newInvalidArgument(stmt, e);
+                }
+            }
+        }
+        return YangVersion.VERSION_1;
     }
 
     final void fillBuilder(final SourceInfo.Builder<?, ?> builder) throws ExtractorException {
-        builder
-            .setYangVersion(extractYangVersion())
-            .setName(unqualifiedArgument(root));
+        builder.setYangVersion(version).setName(unqualifiedArgument(root));
 
         for (var stmt : root.statements()) {
             if (isStatement(stmt, IMPORT)) {
@@ -126,20 +146,6 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
                 builder.addRevision(revisionArgument(stmt));
             }
         }
-    }
-
-    private @NonNull YangVersion extractYangVersion() throws ExtractorException {
-        for (var stmt : root.statements()) {
-            if (isStatement(stmt, YANG_VERSION)) {
-                final var arg = stringArgument(stmt);
-                try {
-                    return YangVersion.ofString(arg);
-                } catch (IllegalArgumentException e) {
-                    throw newInvalidArgument(stmt, e);
-                }
-            }
-        }
-        return YangVersion.VERSION_1;
     }
 
     final @NonNull Unqualified extractPrefix(final IRStatement stmt) throws ExtractorException {
@@ -176,14 +182,18 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
 
     @NonNullByDefault
     final String stringArgument(final IRStatement stmt) throws ExtractorException {
+        return stringArgument(stmt, escaping);
+    }
+
+    @NonNullByDefault
+    private String stringArgument(final IRStatement stmt, final StringEscaping argEscaping) throws ExtractorException {
         final var arg = stmt.argument();
         if (arg == null) {
             throw new ExtractorException("Missing argument to " + stmt.keyword().asStringDeclaration(), refOf(stmt));
         }
 
         try {
-            // TODO: we probably need to understand yang version first....
-            return arg.asString(StringEscaping.RFC6020);
+            return arg.asString(argEscaping);
         } catch (ParseException e) {
             throw new ExtractorException(
                 "Malformed argument to " + stmt.keyword().asStringDeclaration() + ": " + e.getMessage(), e,
