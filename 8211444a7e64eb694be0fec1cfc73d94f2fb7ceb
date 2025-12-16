@@ -22,6 +22,30 @@
       },
       "revId": "8211444a7e64eb694be0fec1cfc73d94f2fb7ceb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c68dc67_29c5c296",
+        "filename": "parser/rfc8791-parser-support/src/main/java/org/opendaylight/yangtools/rfc8791/parser/AugmentStructureStatementSupport.java",
+        "patchSetId": 25
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-16T19:40:03Z",
+      "side": 1,
+      "message": "indeed, this needs YANGTOOLS-1754 and use that facility instead",
+      "parentUuid": "ab3e4b54_998a6a4d",
+      "range": {
+        "startLine": 25,
+        "startChar": 39,
+        "endLine": 25,
+        "endChar": 72
+      },
+      "revId": "8211444a7e64eb694be0fec1cfc73d94f2fb7ceb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
