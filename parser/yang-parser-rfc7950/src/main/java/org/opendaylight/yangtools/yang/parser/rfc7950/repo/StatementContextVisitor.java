@@ -98,9 +98,8 @@ class StatementContextVisitor {
 
     // Normal entry point, checks for potential resume
     private boolean processStatement(final int myOffset, final IRStatement stmt) {
-        final var optResumed = writer.resumeStatement(myOffset);
-        if (optResumed.isPresent()) {
-            final var resumed = optResumed.orElseThrow();
+        final var resumed = writer.resumeStatement(myOffset);
+        if (resumed != null) {
             return resumed.isFullyDefined() || doProcessStatement(stmt, resumed.getSourceReference());
         }
         return processNewStatement(myOffset, stmt);
