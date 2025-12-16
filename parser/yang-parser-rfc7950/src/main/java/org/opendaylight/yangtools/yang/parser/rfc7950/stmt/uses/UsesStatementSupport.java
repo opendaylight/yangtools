@@ -288,15 +288,13 @@ public final class UsesStatementSupport
 
     private static void addOrReplaceNode(final StmtContext<?, ?, ?> refineSubstatementCtx,
             final Mutable<?, ?, ?> refineTargetNodeCtx) {
-
-        final StatementDefinition refineSubstatementDef = refineSubstatementCtx.publicDefinition();
-
-        // FIXME: this is quite costly, use an explicit block
-        SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
-                refineSubstatementCtx,
+        final var refineSubstatementDef = refineSubstatementCtx.publicDefinition();
+        if (!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx)) {
+            throw new SourceException(refineSubstatementCtx,
                 "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
                 refineSubstatementCtx.getRoot().rawArgument(), refineSubstatementCtx.coerceParentContext().argument(),
                 refineSubstatementCtx.publicDefinition(), refineTargetNodeCtx.publicDefinition());
+        }
 
         if (!isAllowedToAddByRefine(refineSubstatementDef)) {
             refineTargetNodeCtx.removeStatementFromEffectiveSubstatements(refineSubstatementDef);
