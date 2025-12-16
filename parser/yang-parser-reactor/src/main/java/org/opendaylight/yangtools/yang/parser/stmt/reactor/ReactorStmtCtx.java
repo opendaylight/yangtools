@@ -299,6 +299,11 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
      */
     abstract @NonNull StatementDefinitionContext<A, D, E> definition();
 
+    @Override
+    public QNameModule definingModule() {
+        return getRoot().definingModule();
+    }
+
     //
     //
     // AbstractNamespaceStorage/Mutable integration methods. Keep these together.
