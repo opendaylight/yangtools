@@ -22,10 +22,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 @Beta
 public interface RootStmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StmtContext<A, D, E> {
-
+    /**
+     * A marker interface for a {@link StmtContext.Mutable}. Useful for operations which make assumption about the
+     * context's hierarchy.
+     *
+     * @param <A> Argument type
+     * @param <D> Declared Statement representation
+     * @param <E> Effective Statement representation
+     */
     interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
             extends StmtContext.Mutable<A, D, E>, RootStmtContext<A, D, E> {
-
         @Override
         RootStmtContext.Mutable<?, ?, ?> getRoot();
     }
