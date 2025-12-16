@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -23,17 +24,21 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +99,29 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     @Override
     public StorageType getStorageType() {
         return StorageType.ROOT_STATEMENT_LOCAL;
+    }
+
+    @Override
+    public QNameModule definingModule() {
+        final var declaredRepr = publicDefinition().getDeclaredRepresentationClass();
+        final StmtContext<?, ?, ?> module;
+        if (ModuleStatement.class.isAssignableFrom(declaredRepr)) {
+            module = this;
+        } else if (SubmoduleStatement.class.isAssignableFrom(declaredRepr)) {
+            final var belongsTo = namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+            if (belongsTo == null || belongsTo.isEmpty()) {
+                throw new VerifyException(this + " does not have belongs-to linkage resolved");
+            }
+            module = belongsTo.values().iterator().next();
+        } else {
+            throw new VerifyException("Unsupported root " + this);
+        }
+
+        final var ret = namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, module);
+        if (ret == null) {
+            throw new VerifyException("Failed to look up QNameModule for " + module + " in " + this);
+        }
+        return ret;
     }
 
     @Override
