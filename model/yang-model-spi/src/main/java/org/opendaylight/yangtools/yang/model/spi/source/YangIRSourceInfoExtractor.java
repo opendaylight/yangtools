@@ -8,6 +8,7 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.text.ParseException;
@@ -86,10 +87,17 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         }
     }
 
-    private static final @NonNull String IMPORT = YangStmtMapping.IMPORT.getStatementName().getLocalName();
-    private static final @NonNull String INCLUDE = YangStmtMapping.INCLUDE.getStatementName().getLocalName();
+    private static final @NonNull String IMPORT = "import";
+    private static final @NonNull String INCLUDE = "include";
+    private static final @NonNull String REVISION = "revision";
+
+    static {
+        verify(IMPORT.equals(YangStmtMapping.IMPORT.getStatementName().getLocalName()));
+        verify(INCLUDE.equals(YangStmtMapping.INCLUDE.getStatementName().getLocalName()));
+        verify(REVISION.equals(YangStmtMapping.REVISION.getStatementName().getLocalName()));
+    }
+
     private static final @NonNull String PREFIX = YangStmtMapping.PREFIX.getStatementName().getLocalName();
-    private static final @NonNull String REVISION = YangStmtMapping.REVISION.getStatementName().getLocalName();
     private static final @NonNull String REVISION_DATE =
         YangStmtMapping.REVISION_DATE.getStatementName().getLocalName();
     private static final @NonNull String YANG_VERSION = YangStmtMapping.YANG_VERSION.getStatementName().getLocalName();
@@ -125,17 +133,22 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         }
     }
 
+    @NonNullByDefault
     final void fillBuilder(final SourceInfo.Builder<?, ?> builder) throws ExtractorException {
         builder.setYangVersion(version).setName(unqualifiedArgument(root));
 
         for (var stmt : root.statements()) {
-            if (isStatement(stmt, IMPORT)) {
-                builder.addImport(new Import(unqualifiedArgument(stmt), extractPrefix(stmt),
-                    extractRevisionDate(stmt)));
-            } else if (isStatement(stmt, INCLUDE)) {
-                builder.addInclude(new Include(unqualifiedArgument(stmt), extractRevisionDate(stmt)));
-            } else if (isStatement(stmt, REVISION)) {
-                builder.addRevision(revisionArgument(stmt));
+            if (stmt.keyword() instanceof IRKeyword.Unqualified keyword) {
+                switch (keyword.identifier()) {
+                    case IMPORT -> builder.addImport(new Import(unqualifiedArgument(stmt), extractPrefix(stmt),
+                        extractRevisionDate(stmt)));
+                    case INCLUDE -> builder.addInclude(new Include(unqualifiedArgument(stmt),
+                        extractRevisionDate(stmt)));
+                    case REVISION -> builder.addRevision(revisionArgument(stmt));
+                    default -> {
+                        // No-op
+                    }
+                }
             }
         }
     }
@@ -153,7 +166,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     private static @Nullable IRStatement firstStatement(final @NonNull IRStatement parent,
             final @NonNull String keyword) {
         for (var stmt : parent.statements()) {
-            if (isStatement(stmt, keyword)) {
+            if (stmt.keyword() instanceof IRKeyword.Unqualified kw && keyword.equals(kw.identifier())) {
                 return stmt;
             }
         }
@@ -167,10 +180,6 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
             throw new ExtractorException("Missing " + keyword + " substatement", refOf(parent));
         }
         return stmt;
-    }
-
-    private static boolean isStatement(final IRStatement stmt, final String name) {
-        return stmt.keyword() instanceof IRKeyword.Unqualified keyword && name.equals(keyword.identifier());
     }
 
     @NonNullByDefault
