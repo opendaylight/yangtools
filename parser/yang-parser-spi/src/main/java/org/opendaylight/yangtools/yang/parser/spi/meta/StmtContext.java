@@ -170,9 +170,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @since 14.0.22
      */
     @NonNullByDefault
-    default QNameModule definingModule() {
-        return getRoot().definingModule();
-    }
+    QNameModule definingModule();
 
     @NonNullByDefault
     default IdentifierBinding identifierBinding() {
