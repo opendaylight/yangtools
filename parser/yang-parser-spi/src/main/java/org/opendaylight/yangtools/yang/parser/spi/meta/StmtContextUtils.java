@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -462,7 +461,7 @@ public final class StmtContextUtils {
         switch (namesParts.length) {
             case 1:
                 localName = namesParts[0];
-                qnameModule = getModuleQName(ctx);
+                qnameModule = ctx.definingModule();
                 break;
             default:
                 final var prefix = namesParts[0];
@@ -471,7 +470,7 @@ public final class StmtContextUtils {
                 // in case of unknown statement argument, we're not going to parse it
                 if (qnameModule == null && isUnknownStatement(ctx)) {
                     localName = value;
-                    qnameModule = getModuleQName(ctx);
+                    qnameModule = ctx.definingModule();
                 }
                 if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
                     ctx = ctx.getOriginalCtx().orElse(null);
@@ -531,7 +530,7 @@ public final class StmtContextUtils {
     }
 
     private static @NonNull QName internedQName(final @NonNull StmtContext<?, ?, ?> ctx, final String localName) {
-        return internedQName(ctx, getModuleQName(ctx), localName);
+        return internedQName(ctx, ctx.definingModule(), localName);
     }
 
     private static @NonNull QName internedQName(final @NonNull CommonStmtCtx ctx, final QNameModule module,
@@ -545,31 +544,14 @@ public final class StmtContextUtils {
         return template.intern();
     }
 
+    @Deprecated(since = "14.0.22", forRemoval = true)
     public static @NonNull QNameModule getModuleQName(final @NonNull StmtContext<?, ?, ?> ctx) {
-        return getModuleQName(ctx.getRoot());
+        return ctx.definingModule();
     }
 
+    @Deprecated(since = "14.0.22", forRemoval = true)
     public static @NonNull QNameModule getModuleQName(final @NonNull RootStmtContext<?, ?, ?> ctx) {
-        if (ctx.producesDeclared(ModuleStatement.class)) {
-            return lookupModuleQName(ctx, ctx);
-        } else if (ctx.producesDeclared(SubmoduleStatement.class)) {
-            final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
-            if (belongsTo == null || belongsTo.isEmpty()) {
-                throw new IllegalArgumentException(ctx + " does not have belongs-to linkage resolved");
-            }
-            return lookupModuleQName(ctx, belongsTo.values().iterator().next());
-        } else {
-            throw new IllegalArgumentException("Unsupported root " + ctx);
-        }
-    }
-
-    private static @NonNull QNameModule lookupModuleQName(final NamespaceStmtCtx storage,
-            final StmtContext<?, ?, ?> module) {
-        final var ret = storage.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, module);
-        if (ret == null) {
-            throw new IllegalArgumentException("Failed to look up QNameModule for " + module + " in " + storage);
-        }
-        return ret;
+        return ctx.definingModule();
     }
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {

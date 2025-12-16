@@ -221,7 +221,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     @Override
     public final QName moduleName() {
         final var root = getRoot();
-        return QName.create(StmtContextUtils.getModuleQName(root), root.getRawArgument());
+        return QName.create(root.definingModule(), root.getRawArgument());
     }
 
     //

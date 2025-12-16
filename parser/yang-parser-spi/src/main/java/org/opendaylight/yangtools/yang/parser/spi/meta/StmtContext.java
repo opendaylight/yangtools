@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -163,6 +164,15 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
             @Nullable QNameModule targetModule);
 
     ModelProcessingPhase getCompletedPhase();
+
+    /**
+     * {@return the {@link QNameModule} of the module in which this context is resides}
+     * @since 14.0.22
+     */
+    @NonNullByDefault
+    default QNameModule definingModule() {
+        return getRoot().definingModule();
+    }
 
     /**
      * An mutable view of an inference context associated with an instance of a statement.

@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -89,7 +88,7 @@ public final class YangDataStatementSupport
 
     @Override
     public YangDataName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final var module = StmtContextUtils.getModuleQName(ctx);
+        final var module = ctx.definingModule();
         try {
             return new YangDataName(module, value);
         } catch (IllegalArgumentException e) {

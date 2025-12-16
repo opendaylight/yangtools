@@ -238,7 +238,7 @@ public final class UsesStatementSupport
             return targetCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
         }
         if (targetCtx.publicDefinition() == YangStmtMapping.AUGMENT) {
-            return StmtContextUtils.getModuleQName(targetCtx);
+            return targetCtx.definingModule();
         }
         if (targetCtx.argument() instanceof QName targetQName && stmtContext.argument() instanceof QName) {
             return targetQName.getModule();

@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.OnDemandSchemaTreeStorage
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -435,9 +434,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             if (!targetModule.equals(requestedNamespace)) {
                 return null;
             }
-            templateQName = qname.bindTo(StmtContextUtils.getModuleQName(prototype));
+            templateQName = qname.bindTo(prototype.definingModule());
         } else {
-            if (!StmtContextUtils.getModuleQName(prototype).equals(requestedNamespace)) {
+            if (!requestedNamespace.equals(prototype.definingModule())) {
                 return null;
             }
             templateQName = qname;
