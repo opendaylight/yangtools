@@ -89,8 +89,9 @@ public final class YangDataStatementSupport
 
     @Override
     public YangDataName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        final var module = StmtContextUtils.getModuleQName(ctx);
         try {
-            return new YangDataName(StmtContextUtils.getModuleQName(ctx.getRoot()), value);
+            return new YangDataName(module, value);
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid yang-data argument %s", value);
         }
