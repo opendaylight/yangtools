@@ -38,7 +38,11 @@ public final class YangVersionStatementSupport
 
     @Override
     public YangVersion parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.throwIfNull(YangVersion.forString(value), ctx,  "Unsupported YANG version %s", value);
+        try {
+            return YangVersion.forString(value);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException("Unsupported YANG version " + value, ctx, e);
+        }
     }
 
     @Override
