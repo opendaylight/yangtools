@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -196,8 +197,8 @@ public final class UniqueStatementSupport
     }
 
     private static final class RequireLeafDescendants implements InferenceAction {
-        private final Map<Prerequisite<StmtContext<?, ?, ?>>, Descendant> prereqs;
-        private final StmtContext<Set<Descendant>, ?, ?> unique;
+        private final @NonNull Map<Prerequisite<StmtContext<?, ?, ?>>, Descendant> prereqs;
+        private final @NonNull StmtContext<Set<Descendant>, ?, ?> unique;
 
         RequireLeafDescendants(final StmtContext<Set<Descendant>, ?, ?> unique,
                 final Map<Prerequisite<StmtContext<?, ?, ?>>, Descendant> prereqs) {
@@ -211,8 +212,10 @@ public final class UniqueStatementSupport
             for (var entry : prereqs.entrySet()) {
                 final var stmt = entry.getKey().resolve(ctx);
                 // ... and if it is not a leaf, report an error
-                SourceException.throwIf(!stmt.producesEffective(LeafEffectiveStatement.class),
-                    unique, "Path %s resolved to non-leaf %s", stmt.publicDefinition().getStatementName());
+                if (!stmt.producesEffective(LeafEffectiveStatement.class)) {
+                    throw new SourceException(unique, "Path %s resolved to non-leaf %s", entry.getValue(),
+                        stmt.publicDefinition().getStatementName());
+                }
             }
         }
 
