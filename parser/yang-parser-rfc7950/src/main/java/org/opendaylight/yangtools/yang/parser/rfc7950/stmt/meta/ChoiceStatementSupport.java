@@ -151,8 +151,10 @@ public final class ChoiceStatementSupport
             }
 
             // FIXME: this does not work with submodules, as they are
-            defaultCase = InferenceException.throwIfNull(findCase(qname, substatements), stmt,
-                "Default statement refers to missing case %s", qname);
+            defaultCase = findCase(qname, substatements);
+            if (defaultCase == null) {
+                throw new InferenceException(stmt, "Default statement refers to missing case %s", qname);
+            }
         } else {
             defaultCase = null;
         }
