@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -31,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -61,14 +59,13 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
             EffectiveStatement<QName, IdentityRefSpecification>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        final Collection<StmtContext<QName, BaseStatement, ?>> baseStatements =
-                StmtContextUtils.findAllDeclaredSubstatements(stmt, BaseStatement.class);
-        for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
-            final QName baseIdentity = baseStmt.getArgument();
-            final StmtContext<?, ?, ?> stmtCtx = stmt.namespaceItem(ParserNamespaces.IDENTITY, baseIdentity);
-            InferenceException.throwIfNull(stmtCtx, stmt,
-                "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",
-                baseIdentity.getLocalName());
+        for (var baseStmt : StmtContextUtils.findAllDeclaredSubstatements(stmt, BaseStatement.class)) {
+            final var baseIdentity = baseStmt.getArgument();
+            if (stmt.namespaceItem(ParserNamespaces.IDENTITY, baseIdentity) == null) {
+                throw new InferenceException(stmt,
+                    "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",
+                    baseIdentity.getLocalName());
+            }
         }
     }
 
