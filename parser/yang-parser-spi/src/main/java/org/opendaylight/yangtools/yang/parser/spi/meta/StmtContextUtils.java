@@ -544,16 +544,6 @@ public final class StmtContextUtils {
         return template.intern();
     }
 
-    @Deprecated(since = "14.0.22", forRemoval = true)
-    public static @NonNull QNameModule getModuleQName(final @NonNull StmtContext<?, ?, ?> ctx) {
-        return ctx.definingModule();
-    }
-
-    @Deprecated(since = "14.0.22", forRemoval = true)
-    public static @NonNull QNameModule getModuleQName(final @NonNull RootStmtContext<?, ?, ?> ctx) {
-        return ctx.definingModule();
-    }
-
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
         final var root = ctx.getRoot();
         final var importedModule = root.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
