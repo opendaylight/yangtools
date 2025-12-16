@@ -83,9 +83,8 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
 
     private static boolean processAttribute(final int childId, final Attr attr, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
-        final var optResumed = writer.resumeStatement(childId);
-        if (optResumed.isPresent()) {
-            final var resumed = optResumed.orElseThrow();
+        final var resumed = writer.resumeStatement(childId);
+        if (resumed != null) {
             checkState(resumed.isFullyDefined(), "Statement %s is not fully defined", resumed);
             return true;
         }
@@ -123,13 +122,12 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
     private boolean processElement(final int childId, final Element element, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef) {
 
-        final var optResumed = writer.resumeStatement(childId);
+        final var resumed = writer.resumeStatement(childId);
         final StatementSourceReference ref;
         final QName argName;
         final boolean allAttrs;
         final boolean allElements;
-        if (optResumed.isPresent()) {
-            final var resumed = optResumed.orElseThrow();
+        if (resumed != null) {
             if (resumed.isFullyDefined()) {
                 return true;
             }

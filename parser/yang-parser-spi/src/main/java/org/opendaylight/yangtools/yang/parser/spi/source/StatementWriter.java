@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -62,9 +61,9 @@ public interface StatementWriter {
      * with {@link #endStatement(StatementSourceReference)}.
      *
      * @param childId Child
-     * @return A resumed statement or empty if the statement has not previously been defined.
+     * @return A resumed statement or {@code null} if the statement has not previously been defined.
      */
-    Optional<? extends ResumedStatement> resumeStatement(int childId);
+    @Nullable ResumedStatement resumeStatement(int childId);
 
     /**
      * Store a defined statement, hinting at the number of children it is expected to have and indicating whether

@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -37,13 +36,14 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     @Override
-    public Optional<? extends ResumedStatement> resumeStatement(final int childId) {
-        final AbstractResumedStatement<?, ?, ?> existing = lookupDeclaredChild(current, childId);
-        if (existing != null) {
-            resumeStatement(existing);
-            return Optional.of(existing);
+    public ResumedStatement resumeStatement(final int childId) {
+        final var existing = lookupDeclaredChild(current, childId);
+        if (existing == null) {
+            return null;
         }
-        return Optional.empty();
+
+        resumeStatement(existing);
+        return existing;
     }
 
     private void resumeStatement(final AbstractResumedStatement<?, ?, ?> child) {
