@@ -104,13 +104,16 @@ public final class LeafStatementSupport
 
     private static void validateEffective(final @NonNull BoundStmtCtx<QName> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
-            findFirstStatement(substatements, TypeEffectiveStatement.class), stmt,
-            "Leaf is missing a 'type' statement");
-        final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
-        SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt), stmt,
-            "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
+        final var typeStmt = findFirstStatement(substatements, TypeEffectiveStatement.class);
+        if (typeStmt == null) {
+            throw new SourceException("Leaf is missing a 'type' statement", stmt);
+        }
+
+        final var dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
+        if (EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt)) {
+            throw new SourceException(stmt,
+                "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
+        }
     }
 
     @Override
