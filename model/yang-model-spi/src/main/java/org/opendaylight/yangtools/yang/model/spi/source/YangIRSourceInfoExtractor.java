@@ -53,17 +53,13 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         }
 
         private @NonNull XMLNamespace extractNamespace() throws ExtractorException {
-            for (var stmt : root.statements()) {
-                if (isStatement(stmt, NAMESPACE)) {
-                    final var arg = stringArgument(stmt);
-                    try {
-                        return XMLNamespace.of(arg);
-                    } catch (IllegalArgumentException e) {
-                        throw newInvalidArgument(stmt, e);
-                    }
-                }
+            final var stmt = getFirstStatement(root, NAMESPACE);
+            final var arg = stringArgument(stmt);
+            try {
+                return XMLNamespace.of(arg);
+            } catch (IllegalArgumentException e) {
+                throw newInvalidArgument(stmt, e);
             }
-            throw newMissingSubstatement(root, NAMESPACE);
         }
     }
 
@@ -85,12 +81,8 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         }
 
         private @NonNull BelongsTo extractBelongsTo() throws ExtractorException {
-            for (var stmt : root.statements()) {
-                if (isStatement(stmt, BELONGS_TO)) {
-                    return new BelongsTo(unqualifiedArgument(stmt), extractPrefix(stmt));
-                }
-            }
-            throw newMissingSubstatement(root, BELONGS_TO);
+            final var stmt = getFirstStatement(root, BELONGS_TO);
+            return new BelongsTo(unqualifiedArgument(stmt), extractPrefix(stmt));
         }
     }
 
@@ -119,18 +111,18 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     private @NonNull YangVersion determineVersion() throws ExtractorException {
-        for (var stmt : root.statements()) {
-            if (isStatement(stmt, YANG_VERSION)) {
-                // use most lenient escaping
-                final var arg = stringArgument(stmt, StringEscaping.RFC6020);
-                try {
-                    return YangVersion.ofString(arg);
-                } catch (IllegalArgumentException e) {
-                    throw newInvalidArgument(stmt, e);
-                }
-            }
+        final var stmt = firstStatement(root, YANG_VERSION);
+        if (stmt == null) {
+            return YangVersion.VERSION_1;
         }
-        return YangVersion.VERSION_1;
+
+        // use most lenient escaping
+        final var arg = stringArgument(stmt, StringEscaping.RFC6020);
+        try {
+            return YangVersion.ofString(arg);
+        } catch (IllegalArgumentException e) {
+            throw newInvalidArgument(stmt, e);
+        }
     }
 
     final void fillBuilder(final SourceInfo.Builder<?, ?> builder) throws ExtractorException {
@@ -148,22 +140,33 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         }
     }
 
-    final @NonNull Unqualified extractPrefix(final IRStatement stmt) throws ExtractorException {
-        for (var subStmt : stmt.statements()) {
-            if (isStatement(subStmt, PREFIX)) {
-                return unqualifiedArgument(subStmt);
-            }
-        }
-        throw newMissingSubstatement(stmt, PREFIX);
+    @NonNullByDefault
+    final Unqualified extractPrefix(final IRStatement parent) throws ExtractorException {
+        return unqualifiedArgument(getFirstStatement(parent, PREFIX));
     }
 
-    private @Nullable Revision extractRevisionDate(final IRStatement stmt) throws ExtractorException {
-        for (var subStmt : stmt.statements()) {
-            if (isStatement(subStmt, REVISION_DATE)) {
-                return revisionArgument(subStmt);
+    private @Nullable Revision extractRevisionDate(final @NonNull IRStatement parent) throws ExtractorException {
+        final var stmt = firstStatement(parent, REVISION_DATE);
+        return stmt == null ? null : revisionArgument(stmt);
+    }
+
+    private static @Nullable IRStatement firstStatement(final @NonNull IRStatement parent,
+            final @NonNull String keyword) {
+        for (var stmt : parent.statements()) {
+            if (isStatement(stmt, keyword)) {
+                return stmt;
             }
         }
         return null;
+    }
+
+    @NonNullByDefault
+    final IRStatement getFirstStatement(final IRStatement parent, final String keyword) throws ExtractorException {
+        final var stmt = firstStatement(parent, keyword);
+        if (stmt == null) {
+            throw new ExtractorException("Missing " + keyword + " substatement", refOf(parent));
+        }
+        return stmt;
     }
 
     private static boolean isStatement(final IRStatement stmt, final String name) {
@@ -171,7 +174,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     @NonNullByDefault
-    final Revision revisionArgument(final IRStatement stmt) throws ExtractorException {
+    private Revision revisionArgument(final IRStatement stmt) throws ExtractorException {
         final var arg = stringArgument(stmt);
         try {
             return Revision.of(arg);
@@ -219,12 +222,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     @NonNullByDefault
-    final ExtractorException newMissingSubstatement(final IRStatement parent, final String keyword) {
-        return new ExtractorException("Missing " + keyword + " substatement", refOf(parent));
-    }
-
-    @NonNullByDefault
-    final StatementDeclaration.InText refOf(final IRStatement stmt) {
+    private StatementDeclaration.InText refOf(final IRStatement stmt) {
         return YangIRSource.refOf(sourceId, stmt);
     }
 }
