@@ -497,9 +497,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         accessSubstatements();
         if (substatements instanceof HashMap) {
             return castMaterialized(substatements).values().iterator();
-        } else {
-            return castEffective(substatements).iterator();
         }
+        return castEffective(substatements).iterator();
     }
 
     @Override
