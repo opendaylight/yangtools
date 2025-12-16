@@ -149,11 +149,11 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
             final int childId, final QName name, final String argument, final StatementSourceReference ref) {
-        StatementDefinitionContext<?, ?, ?> def = globalContext.getStatementDefinition(getRootVersion(), name);
+        var def = globalContext.getStatementDefinition(getRootVersion(), name);
         if (def == null) {
             def = globalContext.getModelDefinedStatementDefinition(name);
             if (def == null) {
-                final StatementSupport<?, ?, ?> extension = qnameToStmtDefMap.getSupport(name);
+                final var extension = qnameToStmtDefMap.getSupport(name);
                 if (extension != null) {
                     def = new StatementDefinitionContext<>(extension);
                     globalContext.putModelDefinedStatementDefinition(name, def);
@@ -163,11 +163,15 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             def = current.definition().overrideDefinition(def);
         }
 
-        if (InferenceException.throwIfNull(def, ref, "Statement %s does not have type mapping defined.", name)
-                .getArgumentDefinition().isPresent()) {
-            SourceException.throwIfNull(argument, ref, "Statement %s requires an argument", name);
-        } else {
-            SourceException.throwIf(argument != null, ref, "Statement %s does not take argument", name);
+        if (def == null) {
+            throw new InferenceException(ref, "Statement %s does not have type mapping defined.", name);
+        }
+        if (def.getArgumentDefinition().isPresent()) {
+            if (argument == null) {
+                throw new SourceException(ref, "Statement %s requires an argument", name);
+            }
+        } else if (argument != null) {
+            throw new SourceException(ref, "Statement %s does not take argument", name);
         }
 
         /*
@@ -195,8 +199,8 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
                     root.getRootIdentifier());
         } else {
-            final QName rootStatement = root.definition().getStatementName();
-            final String rootArgument = root.rawArgument();
+            final var rootStatement = root.definition().getStatementName();
+            final var rootArgument = root.rawArgument();
 
             checkState(Objects.equals(def.getStatementName(), rootStatement) && Objects.equals(argument, rootArgument),
                 "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
