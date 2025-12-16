@@ -11,9 +11,6 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 
 /**
  * A marker interface for a {@link StmtContext}. Useful for operations which make assumption about the context's
@@ -40,28 +37,6 @@ public interface RootStmtContext<A, D extends DeclaredStatement<A>, E extends Ef
         RootStmtContext.Mutable<?, ?, ?> getRoot();
     }
 
-    // FIXME: 15.0.0: make this method non-default
-    // FIXME: 15.0.0: throw VerifyException or similar this-is-a-coding-error exception
     @Override
-    default QNameModule definingModule() {
-        final var declaredRepr = publicDefinition().getDeclaredRepresentationClass();
-        final StmtContext<?, ?, ?> module;
-        if (ModuleStatement.class.isAssignableFrom(declaredRepr)) {
-            module = this;
-        } else if (SubmoduleStatement.class.isAssignableFrom(declaredRepr)) {
-            final var belongsTo = namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
-            if (belongsTo == null || belongsTo.isEmpty()) {
-                throw new IllegalArgumentException(this + " does not have belongs-to linkage resolved");
-            }
-            module = belongsTo.values().iterator().next();
-        } else {
-            throw new IllegalArgumentException("Unsupported root " + this);
-        }
-
-        final var ret = namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, module);
-        if (ret == null) {
-            throw new IllegalArgumentException("Failed to look up QNameModule for " + module + " in " + this);
-        }
-        return ret;
-    }
+    QNameModule definingModule();
 }
