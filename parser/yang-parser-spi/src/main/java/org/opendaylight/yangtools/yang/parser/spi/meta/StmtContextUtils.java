@@ -548,16 +548,6 @@ public final class StmtContextUtils {
         return template.intern();
     }
 
-    @Deprecated(since = "14.0.22", forRemoval = true)
-    public static @NonNull QNameModule getModuleQName(final @NonNull StmtContext<?, ?, ?> ctx) {
-        return ctx.definingModule();
-    }
-
-    @Deprecated(since = "14.0.22", forRemoval = true)
-    public static @NonNull QNameModule getModuleQName(final @NonNull RootStmtContext<?, ?, ?> ctx) {
-        return ctx.definingModule();
-    }
-
     /**
      * Return the {@link QNameModule} corresponding to a prefix in the specified {@link StmtContext}. The lookup
      * consults {@code import} and {@code belongs-to} statements.
