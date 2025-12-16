@@ -108,9 +108,10 @@ public final class LeafListStatementSupport
     @Override
     protected LeafListEffectiveStatement createEffective(final Current<QName, LeafListStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final var typeStmt = SourceException.throwIfNull(
-                findFirstStatement(substatements, TypeEffectiveStatement.class), stmt,
-                "Leaf-list is missing a 'type' statement");
+        final var typeStmt = findFirstStatement(substatements, TypeEffectiveStatement.class);
+        if (typeStmt == null) {
+            throw new SourceException("Leaf-list is missing a 'type' statement", stmt);
+        }
 
         final var defaultValues = substatements.stream()
             .filter(DefaultEffectiveStatement.class::isInstance)
@@ -119,10 +120,11 @@ public final class LeafListStatementSupport
             .collect(ImmutableSet.toImmutableSet());
 
         // FIXME: We need to interpret the default value in terms of supplied element type
-        SourceException.throwIf(
-                EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, defaultValues),
-                stmt, "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
+        if (EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, defaultValues)) {
+            throw new SourceException(stmt,
+                "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
                 stmt.argument(), defaultValues);
+        }
 
         // FIXME: RFC7950 section 7.7.4: we need to check for min-elements and defaultValues conflict
 
