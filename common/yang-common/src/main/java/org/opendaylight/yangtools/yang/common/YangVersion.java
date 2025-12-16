@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -41,7 +42,7 @@ public enum YangVersion {
      * @throws NullPointerException if the string is {@code null}
      */
     public static @Nullable YangVersion forString(final @NonNull String str) {
-        return switch (requireNonNull(str)) {
+        return switch (str) {
             case "1" -> VERSION_1;
             case "1.1" -> VERSION_1_1;
             default -> null;
@@ -56,12 +57,13 @@ public enum YangVersion {
      * @throws NullPointerException if the string is {@code null}
      * @throws IllegalArgumentException if the string is not recognized
      */
-    public static @NonNull YangVersion ofString(final @NonNull String str) {
-        final var ret = forString(str);
-        if (ret != null) {
-            return ret;
-        }
-        throw new IllegalArgumentException("Invalid YANG version " + str);
+    @NonNullByDefault
+    public static YangVersion ofString(final String str) {
+        return switch (str) {
+            case "1" -> VERSION_1;
+            case "1.1" -> VERSION_1_1;
+            default -> throw new IllegalArgumentException("Invalid YANG version " + str);
+        };
     }
 
     /**
