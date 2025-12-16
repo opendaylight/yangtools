@@ -78,10 +78,12 @@ public enum Status {
      * @throws IllegalArgumentException if {@code argument} is not a valid {@code status} statement argument
      */
     public static Status ofArgument(final String argument) {
-        final var ret = forArgument(argument);
-        if (ret == null) {
-            throw new IllegalArgumentException("\"" + argument + "\" is not a valid status statement argument");
-        }
-        return ret;
+        return switch (argument) {
+            case "current" -> CURRENT;
+            case "deprecated" -> DEPRECATED;
+            case "obsolete" -> OBSOLETE;
+            default -> throw new IllegalArgumentException(
+                "\"" + argument + "\" is not a valid status statement argument");
+        };
     }
 }

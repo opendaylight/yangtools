@@ -37,8 +37,12 @@ public final class StatusStatementSupport
 
     @Override
     public Status parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.throwIfNull(Status.forArgument(value), ctx,
-            "Invalid status '%s', must be one of 'current', 'deprecated' or 'obsolete'", value);
+        try {
+            return Status.ofArgument(value);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx, e,
+                "Invalid status '%s', must be one of 'current', 'deprecated' or 'obsolete'", value);
+        }
     }
 
     @Override
