@@ -9,6 +9,7 @@ module org.opendaylight.yangtools.yang.model.spi {
     exports org.opendaylight.yangtools.yang.model.spi;
     exports org.opendaylight.yangtools.yang.model.spi.meta;
     exports org.opendaylight.yangtools.yang.model.spi.source;
+    exports org.opendaylight.yangtools.yang.model.spi.stmt;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
