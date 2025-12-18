@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.meta;
+package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import java.util.HashMap;
 import org.eclipse.jdt.annotation.NonNull;
@@ -19,22 +18,20 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.spi.stmt.SchemaNodeIdentifierParser.ModuleResolver;
+import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
- * A {@link ModuleResolver} operating on a {@link StmtContext}. This class is NOT thread-safe.
- *
- * @since 14.0.22
+ * A {@link ModuleResolver} operating on a {@link RootStmtContext}. This class is NOT thread-safe.
  */
-// FIXME: 15.0.0: relocate this class once we expose SchemaNodeIdentifierParser from StmtContext
-@Beta
-public final class StmtContextModuleResolver implements ModuleResolver {
+final class StmtContextModuleResolver implements ModuleResolver {
     private final @NonNull HashMap<@NonNull String, QNameModule> modules = new HashMap<>();
     private final @NonNull RootStmtContext<?, ?, ?> context;
 
     private QNameModule currentModule;
 
     @NonNullByDefault
-    public StmtContextModuleResolver(final RootStmtContext<?, ?, ?> context) {
+    StmtContextModuleResolver(final RootStmtContext<?, ?, ?> context) {
         this.context = requireNonNull(context);
     }
 
