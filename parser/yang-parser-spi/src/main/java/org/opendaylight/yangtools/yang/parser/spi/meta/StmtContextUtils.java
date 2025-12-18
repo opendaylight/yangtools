@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -554,15 +555,20 @@ public final class StmtContextUtils {
         return ctx.definingModule();
     }
 
-    public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
+    // FIXME: 15.0.0: hide/relocate this method?
+    public static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull StmtContext<?, ?, ?> ctx,
+            final String prefix) {
         final var root = ctx.getRoot();
         final var importedModule = root.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
+        // FIXME: MODULECTX_TO_QNAME is a global namespace, so we should be able to look it up from root
         final var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
         if (qnameModule != null) {
             return qnameModule;
         }
 
+        // FIXME: explain this logic
         if (root.producesDeclared(SubmoduleStatement.class)) {
+            // FIXME: MODULE_NAME_TO_QNAME, we should be able to look it up from root
             return ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
                 root.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
         }
