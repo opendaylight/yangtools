@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -69,7 +68,7 @@ public final class KeyStatementSupport
         final Builder<QName> builder = ImmutableSet.builder();
         int tokens = 0;
         for (String keyToken : KEY_ARG_SPLITTER.split(value)) {
-            builder.add(StmtContextUtils.parseNodeIdentifier(ctx, keyToken));
+            builder.add(ctx.parseNodeIdentifier(keyToken));
             tokens++;
         }
 
