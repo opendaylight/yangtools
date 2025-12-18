@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.stmt.CommonArgumentParsers;
@@ -216,6 +217,28 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     default QName parseNodeIdentifier(final String str) {
         try {
             return commonParsers().nodeIdentifier().parseArgument(str);
+        } catch (ArgumentBindingException e) {
+            throw new InferenceException(e.getMessage(), this, e);
+        } catch (ArgumentSyntaxException e) {
+            throw new SourceException(e.getMessage(), this, e);
+        }
+    }
+
+    @NonNullByDefault
+    default SchemaNodeIdentifier.Absolute parseAbsoluteSchemaNodeid(final String str) {
+        try {
+            return commonParsers().absoluteSchemaNodeId().parseArgument(str);
+        } catch (ArgumentBindingException e) {
+            throw new InferenceException(e.getMessage(), this, e);
+        } catch (ArgumentSyntaxException e) {
+            throw new SourceException(e.getMessage(), this, e);
+        }
+    }
+
+    @NonNullByDefault
+    default SchemaNodeIdentifier.Descendant parseDescendantSchemaNodeid(final String str) {
+        try {
+            return commonParsers().descendantSchemaNodeId().parseArgument(str);
         } catch (ArgumentBindingException e) {
             throw new InferenceException(e.getMessage(), this, e);
         } catch (ArgumentSyntaxException e) {
