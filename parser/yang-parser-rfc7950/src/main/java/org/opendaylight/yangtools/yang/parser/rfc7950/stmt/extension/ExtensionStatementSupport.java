@@ -62,10 +62,8 @@ public final class ExtensionStatementSupport
 
         stmt.addToNs(ParserNamespaces.EXTENSION, stmt.getArgument(), stmt);
 
-        final StmtContext<QName, ?, ?> argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
-            ArgumentStatement.class);
-        final StmtContext<Boolean, ?, ?> yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
-            YinElementStatement.class);
+        final var argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt, ArgumentStatement.class);
+        final var yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt, YinElementStatement.class);
 
         stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.argument(),
             new UnrecognizedStatementSupport(new ModelDefinedStatementDefinition(stmt.getArgument(),
