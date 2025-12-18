@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ArgumentStatementSupport
@@ -37,7 +36,7 @@ public final class ArgumentStatementSupport
 
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
+        return ctx.parseIdentifier(value);
     }
 
     @Override
