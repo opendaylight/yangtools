@@ -11,12 +11,14 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -24,6 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.stmt.SchemaNodeIdentifierParser;
+import org.opendaylight.yangtools.yang.model.spi.stmt.UnknownPrefixException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * An inference context associated with an instance of a statement.
@@ -179,6 +183,45 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * {@return the {@link SchemaNodeIdentifierParser} associated with this context}
      */
     @NonNull SchemaNodeIdentifierParser schemaNodeIdentifierParser();
+
+    /**
+     * Parse a YANG identifier string in context of a statement.
+     *
+     * @param str String to be parsed
+     * @return An interned QName
+     * @throws NullPointerException if any of the arguments are null
+     * @throws SourceException if the string is not a valid YANG identifier
+     * @since 15.0.0
+     */
+    @NonNullByDefault
+    default QName parseIdentifier(final String str) {
+        try {
+            return schemaNodeIdentifierParser().parseIdentifier(str);
+        } catch (ParseException e) {
+            throw new SourceException(e.getMessage(), this, e);
+        }
+    }
+
+    /**
+     * Parse a YANG node identifier string in context of a statement.
+     *
+     * @param str String to be parsed
+     * @return An interned QName
+     * @throws NullPointerException if any of the arguments are null
+     * @throws SourceException if the string is not a valid YANG node identifier
+     * @throws InfrenceException if YANG node identifier's module cannot be resolved
+     * @since 15.0.0
+     */
+    @NonNullByDefault
+    default QName parseNodeIdentifier(final String str) {
+        try {
+            return schemaNodeIdentifierParser().parseNodeIdentifier(str);
+        } catch (ParseException e) {
+            throw new SourceException(e.getMessage(), this, e);
+        } catch (UnknownPrefixException e) {
+            throw new InferenceException(e.getMessage(), this, e);
+        }
+    }
 
     /**
      * An mutable view of an inference context associated with an instance of a statement.
