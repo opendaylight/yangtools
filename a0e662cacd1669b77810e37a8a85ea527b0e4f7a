@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d8f2b7da_2258b901",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-18T21:20:19Z",
+      "side": 1,
+      "message": "While this is deals with the migration in one go, we really should have each statement support do its own thing (and each provide the outer context)",
+      "revId": "a0e662cacd1669b77810e37a8a85ea527b0e4f7a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
