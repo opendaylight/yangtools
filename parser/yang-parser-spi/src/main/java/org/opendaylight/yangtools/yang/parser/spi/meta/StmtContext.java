@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.stmt.SchemaNodeIdentifierParser;
 import org.opendaylight.yangtools.yang.model.spi.stmt.UnknownPrefixException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -216,6 +217,28 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     default QName parseNodeIdentifier(final String str) {
         try {
             return schemaNodeIdentifierParser().parseNodeIdentifier(str);
+        } catch (ParseException e) {
+            throw new SourceException(e.getMessage(), this, e);
+        } catch (UnknownPrefixException e) {
+            throw new InferenceException(e.getMessage(), this, e);
+        }
+    }
+
+    @NonNullByDefault
+    default SchemaNodeIdentifier.Absolute parseAbsoluteSchemaNodeid(final String str) {
+        try {
+            return schemaNodeIdentifierParser().parseAbsoluteSchemaNodeid(str);
+        } catch (ParseException e) {
+            throw new SourceException(e.getMessage(), this, e);
+        } catch (UnknownPrefixException e) {
+            throw new InferenceException(e.getMessage(), this, e);
+        }
+    }
+
+    @NonNullByDefault
+    default SchemaNodeIdentifier.Descendant parseDescendantSchemaNodeid(final String str) {
+        try {
+            return schemaNodeIdentifierParser().parseDescendantSchemaNodeid(str);
         } catch (ParseException e) {
             throw new SourceException(e.getMessage(), this, e);
         } catch (UnknownPrefixException e) {
