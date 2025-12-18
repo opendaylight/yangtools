@@ -49,16 +49,19 @@ public final class ArgumentUtils {
         return PATH_ABS.matcher(path).matches();
     }
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static Absolute parseAbsoluteSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         // FIXME: this does accept check for a leading slash
         return Absolute.of(parseNodeIdentifiers(ctx, str));
     }
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static Descendant parseDescendantSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         // FIXME: this does accept a leading slash
         return Descendant.of(parseNodeIdentifiers(ctx, str));
     }
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final var qnames = parseNodeIdentifiers(ctx, path);
         return PATH_ABS.matcher(path).matches() ? Absolute.of(qnames) : Descendant.of(qnames);
