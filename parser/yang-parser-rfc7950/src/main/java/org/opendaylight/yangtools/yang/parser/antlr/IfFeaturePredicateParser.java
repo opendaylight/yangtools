@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser.
 import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser.If_feature_factorContext;
 import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser.If_feature_termContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @NonNullByDefault
@@ -62,7 +61,7 @@ final class IfFeaturePredicateParser {
         final var first = factor.getChild(0);
         return switch (first) {
             case Identifier_ref_argContext refArg ->
-                IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(stmt, refArg.getText()));
+                IfFeatureExpr.isPresent(stmt.parseNodeIdentifier(refArg.getText()));
             case TerminalNode terminal ->
                 switch (terminal.getSymbol().getType()) {
                     case IfFeatureExpressionParser.LP ->

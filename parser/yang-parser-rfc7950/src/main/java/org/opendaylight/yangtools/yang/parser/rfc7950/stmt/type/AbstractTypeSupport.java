@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
@@ -70,6 +69,6 @@ abstract class AbstractTypeSupport<T extends TypeStatement>
         // built in types and if it's not there parse it as a node identifier.
         final String rawArgument = ctx.getRawArgument();
         final QName builtin = BUILTIN_TYPES.get(rawArgument);
-        return builtin != null ? builtin : StmtContextUtils.parseNodeIdentifier(ctx, rawArgument);
+        return builtin != null ? builtin : ctx.parseNodeIdentifier(rawArgument);
     }
 }
