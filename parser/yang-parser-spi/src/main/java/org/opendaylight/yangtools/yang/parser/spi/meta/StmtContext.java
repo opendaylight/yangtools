@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.stmt.CommonArgumentParsers;
 
 /**
  * An inference context associated with an instance of a statement.
@@ -173,6 +174,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     default QNameModule definingModule() {
         return getRoot().definingModule();
     }
+
+    /**
+     * {@return the {@link CommonArgumentParsers} associated with this context}
+     */
+    @NonNull CommonArgumentParsers commonParsers();
 
     /**
      * An mutable view of an inference context associated with an instance of a statement.
