@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.collect.ImmutableList;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -16,25 +15,25 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -46,9 +45,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractAugmentStatementSupport
         extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
-    private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
-    private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
-
     AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
             (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
@@ -57,10 +53,6 @@ abstract class AbstractAugmentStatementSupport
 
     @Override
     public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        SourceException.throwIf(PATH_REL_PATTERN1.matcher(value).matches()
-            || PATH_REL_PATTERN2.matcher(value).matches(), ctx,
-            "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses", value);
-
         // As per:
         //   https://www.rfc-editor.org/rfc/rfc6020#section-7.15
         //   https://www.rfc-editor.org/rfc/rfc7950#section-7.17
@@ -68,16 +60,29 @@ abstract class AbstractAugmentStatementSupport
         // The argument is either Absolute or Descendant based on whether the statement is declared within a 'uses'
         // statement. The mechanics differs wildly between the two cases, so let's start by ensuring our argument
         // is in the correct domain.
-        final SchemaNodeIdentifier result = ArgumentUtils.nodeIdentifierFromPath(ctx, value);
-        final StatementDefinition parent = ctx.coerceParentContext().publicDefinition();
-        if (parent == YangStmtMapping.USES) {
-            SourceException.throwIf(result instanceof Absolute, ctx,
-                "Absolute schema node identifier is not allowed when used within a uses statement");
-        } else {
-            SourceException.throwIf(result instanceof Descendant, ctx,
-                "Descendant schema node identifier is not allowed when used outside of a uses statement");
+        final var parsers = ctx.commonParsers();
+
+        if (ctx.coerceParentContext().producesDeclared(UsesStatement.class)) {
+            try {
+                return parsers.descendantSchemaNodeId().parseArgument(value);
+            } catch (ArgumentSyntaxException e) {
+                throw new SourceException(ctx, e, "'%s' is not a valid descendant-schema-nodeid at position %s: %s",
+                    value, e.getPosition(), e.getMessage());
+            } catch (ArgumentBindingException e) {
+                throw new InferenceException(
+                    "'%s' cannot be bound as a descendant-schema-nodeid: %s".formatted(value, e.getMessage()), ctx, e);
+            }
         }
-        return result;
+
+        try {
+            return parsers.absoluteSchemaNodeId().parseArgument(value);
+        } catch (ArgumentSyntaxException e) {
+            throw new SourceException(ctx, e, "'%s' is not a valid absolute-schema-nodeid at position %s: %s", value,
+                e.getPosition(), e.getMessage());
+        } catch (ArgumentBindingException e) {
+            throw new InferenceException(
+                "'%s' cannot be bound as a absolute-schema-nodeid: %s".formatted(value, e.getMessage()), ctx, e);
+        }
     }
 
     @Override
