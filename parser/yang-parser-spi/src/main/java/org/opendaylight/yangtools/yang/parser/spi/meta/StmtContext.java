@@ -17,13 +17,17 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.stmt.CommonArgumentParsers;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * An inference context associated with an instance of a statement.
@@ -179,6 +183,47 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * {@return the {@link CommonArgumentParsers} associated with this context}
      */
     @NonNull CommonArgumentParsers commonParsers();
+
+    /**
+     * Parse a YANG identifier string in context of a statement.
+     *
+     * @param str String to be parsed
+     * @return An interned QName
+     * @throws NullPointerException if any of the arguments are null
+     * @throws SourceException if the string is not a valid YANG identifier
+     * @since 15.0.0
+     */
+    @NonNullByDefault
+    default QName parseIdentifier(final String str) {
+        try {
+            return commonParsers().identifier().parseArgument(str);
+        } catch (ArgumentBindingException e) {
+            throw new InferenceException(e.getMessage(), this, e);
+        } catch (ArgumentSyntaxException e) {
+            throw new SourceException(e.getMessage(), this, e);
+        }
+    }
+
+    /**
+     * Parse a YANG node identifier string in context of a statement.
+     *
+     * @param str String to be parsed
+     * @return An interned QName
+     * @throws NullPointerException if any of the arguments are null
+     * @throws SourceException if the string is not a valid YANG node identifier
+     * @throws InfrenceException if YANG node identifier's module cannot be resolved
+     * @since 15.0.0
+     */
+    @NonNullByDefault
+    default QName parseNodeIdentifier(final String str) {
+        try {
+            return commonParsers().nodeIdentifier().parseArgument(str);
+        } catch (ArgumentBindingException e) {
+            throw new InferenceException(e.getMessage(), this, e);
+        } catch (ArgumentSyntaxException e) {
+            throw new SourceException(e.getMessage(), this, e);
+        }
+    }
 
     /**
      * An mutable view of an inference context associated with an instance of a statement.

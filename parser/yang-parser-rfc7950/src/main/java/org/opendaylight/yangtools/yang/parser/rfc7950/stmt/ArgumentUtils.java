@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -71,7 +70,7 @@ public final class ArgumentUtils {
         final var qnames = new ArrayList<QName>();
         for (var nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
             try {
-                qnames.add(StmtContextUtils.parseNodeIdentifier(ctx, nodeName));
+                qnames.add(ctx.parseNodeIdentifier(nodeName));
             } catch (RuntimeException e) {
                 throw new SourceException(ctx, e, "Failed to parse node '%s' in path '%s'", nodeName, path);
             }
