@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.stmt.CommonArgumentParsers;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -53,6 +54,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         ParserNamespaces.TYPE, new SweptNamespace(ParserNamespaces.TYPE));
 
     private final @NonNull SourceSpecificContext sourceContext;
+    private final @NonNull CommonArgumentParsers commonParsers;
     private final A argument;
 
     private YangVersion rootVersion;
@@ -69,6 +71,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         super(def, ref, rawArgument);
         this.sourceContext = requireNonNull(sourceContext);
         argument = def.parseArgumentValue(this, rawArgument());
+        commonParsers = new CommonArgumentParsers(new StmtContextNamespaceBinding(this));
     }
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
@@ -100,6 +103,11 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     public RootStatementContext<?, ?, ?> getRoot() {
         // this as its own root
         return this;
+    }
+
+    @Override
+    public CommonArgumentParsers commonParsers() {
+        return commonParsers;
     }
 
     @NonNull SourceSpecificContext getSourceContext() {
