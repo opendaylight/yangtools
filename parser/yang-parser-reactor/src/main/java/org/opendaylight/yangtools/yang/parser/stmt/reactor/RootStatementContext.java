@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.stmt.SchemaNodeIdentifierParser;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -52,6 +53,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         ParserNamespaces.schemaTree(), new SweptNamespace(ParserNamespaces.schemaTree()),
         ParserNamespaces.TYPE, new SweptNamespace(ParserNamespaces.TYPE));
 
+    private final @NonNull SchemaNodeIdentifierParser schemaNodeIdentifierParser;
     private final @NonNull SourceSpecificContext sourceContext;
     private final A argument;
 
@@ -69,6 +71,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         super(def, ref, rawArgument);
         this.sourceContext = requireNonNull(sourceContext);
         argument = def.parseArgumentValue(this, rawArgument());
+        schemaNodeIdentifierParser = new SchemaNodeIdentifierParser(new StmtContextModuleResolver(this));
     }
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
@@ -100,6 +103,11 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     public RootStatementContext<?, ?, ?> getRoot() {
         // this as its own root
         return this;
+    }
+
+    @Override
+    public SchemaNodeIdentifierParser schemaNodeIdentifierParser() {
+        return schemaNodeIdentifierParser;
     }
 
     @NonNull SourceSpecificContext getSourceContext() {
