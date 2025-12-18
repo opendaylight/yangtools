@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f7e7e22d_44445b2d",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/stmt/SchemaNodeIdentifierParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-18T21:17:56Z",
+      "side": 1,
+      "message": "we really should explain how users should handle messages from ParseException -- in this sense \u0027parseIdentifier\u0027 is different from other methods, as it reports the entire argument, while others should report only the spot the offending substring",
+      "range": {
+        "startLine": 66,
+        "startChar": 15,
+        "endLine": 66,
+        "endChar": 60
+      },
+      "revId": "7d54b8143f4d8e556d5143580a2441cd03d6f466",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25af7ddc_ae887ba6",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/stmt/SchemaNodeIdentifierParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-18T21:17:56Z",
+      "side": 1,
+      "message": "same as explained below: empty string should be discerned separately",
+      "range": {
+        "startLine": 76,
+        "startChar": 37,
+        "endLine": 76,
+        "endChar": 51
+      },
+      "revId": "7d54b8143f4d8e556d5143580a2441cd03d6f466",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1531df7_6e6529e7",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/stmt/SchemaNodeIdentifierParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-18T21:17:56Z",
+      "side": 1,
+      "message": "we need to differentiate \":foo\" better: from ABNF perspective we expect (ALPHA / \"_\") but have \u0027:\u0027, we should report it as something like \"\u0027:\u0027 is not a valid prefix nor identifier\"",
+      "range": {
+        "startLine": 101,
+        "startChar": 27,
+        "endLine": 101,
+        "endChar": 55
+      },
+      "revId": "7d54b8143f4d8e556d5143580a2441cd03d6f466",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "857cc389_3ddcb0ba",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/stmt/SchemaNodeIdentifierParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-18T21:17:56Z",
+      "side": 1,
+      "message": "this does not lend itself to error reporting composition:\n- empty string should be reported something like \"empty string\"\n- the first char should be reported as \"first character is not \u0027/\u0027\"",
+      "range": {
+        "startLine": 125,
+        "startChar": 12,
+        "endLine": 125,
+        "endChar": 81
+      },
+      "revId": "7d54b8143f4d8e556d5143580a2441cd03d6f466",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
