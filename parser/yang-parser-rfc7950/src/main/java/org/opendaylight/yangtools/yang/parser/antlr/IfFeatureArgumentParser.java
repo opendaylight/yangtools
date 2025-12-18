@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.antlr;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -24,7 +23,7 @@ public enum IfFeatureArgumentParser {
     RFC6020 {
         @Override
         public IfFeatureExpr parseArgument(final StmtContext<?, ?, ?> ctx, final String argument) {
-            return IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(ctx, argument));
+            return IfFeatureExpr.isPresent(ctx.parseNodeIdentifier(argument));
         }
     },
     /**
@@ -32,7 +31,7 @@ public enum IfFeatureArgumentParser {
      */
     RFC7950 {
         @Override
-        public IfFeatureExpr parseArgument(StmtContext<?, ?, ?> ctx, String argument) {
+        public IfFeatureExpr parseArgument(final StmtContext<?, ?, ?> ctx, final String argument) {
             return IfFeaturePredicateParser.parseIfFeatureExpression(ctx, argument);
         }
     };
