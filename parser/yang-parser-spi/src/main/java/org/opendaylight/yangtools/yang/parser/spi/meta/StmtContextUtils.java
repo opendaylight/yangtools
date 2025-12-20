@@ -566,17 +566,30 @@ public final class StmtContextUtils {
     // FIXME: 15.0.0: hide/relocate this method?
     public static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull StmtContext<?, ?, ?> ctx,
             final String prefix) {
-        final var root = ctx.getRoot();
-        final var importedModule = root.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
-        final var qnameModule = root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
+        return getModuleQNameByPrefix(ctx.getRoot(), prefix);
+    }
+
+    /**
+     * Return the {@link QNameModule} corresponding to a prefix in the specified {@link RootStmtContext}. The lookup
+     * consults {@code import} and {@code belongs-to} statements.
+     *
+     * @param ctx the {@link RootStmtContext}
+     * @param prefix the prefix
+     * @return the {@link QNameModule}, or {@code null} if not found
+     */
+    // FIXME: 15.0.0: hide/relocate this method?
+    public static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull RootStmtContext<?, ?, ?> ctx,
+            final String prefix) {
+        final var importedModule = ctx.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
+        final var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
         if (qnameModule != null) {
             return qnameModule;
         }
 
         // This is a submodule, so we also need consult 'belongs-to' mapping
-        if (root.producesDeclared(SubmoduleStatement.class)) {
-            return root.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
-                root.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
+        if (ctx.producesDeclared(SubmoduleStatement.class)) {
+            return ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
+                ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
         }
 
         return null;
