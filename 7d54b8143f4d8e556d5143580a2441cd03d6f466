@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2ff0759_80f39986",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/stmt/SchemaNodeIdentifierParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-21T09:42:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7e7e22d_44445b2d",
+      "range": {
+        "startLine": 66,
+        "startChar": 15,
+        "endLine": 66,
+        "endChar": 60
+      },
+      "revId": "7d54b8143f4d8e556d5143580a2441cd03d6f466",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "25af7ddc_ae887ba6",
@@ -37,6 +61,30 @@
       "writtenOn": "2025-12-18T21:17:56Z",
       "side": 1,
       "message": "same as explained below: empty string should be discerned separately",
+      "range": {
+        "startLine": 76,
+        "startChar": 37,
+        "endLine": 76,
+        "endChar": 51
+      },
+      "revId": "7d54b8143f4d8e556d5143580a2441cd03d6f466",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "79f9519f_f91dae12",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/stmt/SchemaNodeIdentifierParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-21T09:42:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "25af7ddc_ae887ba6",
       "range": {
         "startLine": 76,
         "startChar": 37,
@@ -70,6 +118,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "82043558_2dc1d41f",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/stmt/SchemaNodeIdentifierParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-21T09:42:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d1531df7_6e6529e7",
+      "range": {
+        "startLine": 101,
+        "startChar": 27,
+        "endLine": 101,
+        "endChar": 55
+      },
+      "revId": "7d54b8143f4d8e556d5143580a2441cd03d6f466",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "857cc389_3ddcb0ba",
@@ -83,6 +155,30 @@
       "writtenOn": "2025-12-18T21:17:56Z",
       "side": 1,
       "message": "this does not lend itself to error reporting composition:\n- empty string should be reported something like \"empty string\"\n- the first char should be reported as \"first character is not \u0027/\u0027\"",
+      "range": {
+        "startLine": 125,
+        "startChar": 12,
+        "endLine": 125,
+        "endChar": 81
+      },
+      "revId": "7d54b8143f4d8e556d5143580a2441cd03d6f466",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "573e7da8_a61c216b",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/stmt/SchemaNodeIdentifierParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2025-12-21T09:42:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "857cc389_3ddcb0ba",
       "range": {
         "startLine": 125,
         "startChar": 12,
