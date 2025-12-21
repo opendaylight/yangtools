@@ -12,6 +12,7 @@
  *   <li>{@link IdentifierParser}</li>
  *   <li>{@link NodeIdentifierParser}</li>
  *   <li>{@link DescendantSchemaNodeidParser}</li>
+ *   <li>{@link AbsoluteSchemaNodeidParser}</li>
  * </ul>
  *
  * @since 14.0.22
