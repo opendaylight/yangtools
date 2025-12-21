@@ -9,12 +9,13 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularMaxElementsEffectiveStatement extends WithSubstatements<String, MaxElementsStatement>
-        implements MaxElementsEffectiveStatement {
+public final class RegularMaxElementsEffectiveStatement
+        extends WithSubstatements<MaxElementsArgument, MaxElementsStatement> implements MaxElementsEffectiveStatement {
     public RegularMaxElementsEffectiveStatement(final MaxElementsStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
