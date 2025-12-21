@@ -29,17 +29,17 @@ class DescendantSchemaNodeidParserTest extends AbstractNamespaceBindingTest<Desc
     }
 
     @Test
-    void goodOneParseArgument() throws Exception {
+    void goodOneParseArgument() {
         doReturn(BAR).when(namespaceBinding).lookupModule(ABC);
-        assertEquals(Descendant.of(QName.create(BAR, "foolocal")), parser.parseArgument("abc:foolocal"));
+        assertArgument(Descendant.of(QName.create(BAR, "foolocal")), "abc:foolocal");
     }
 
     @Test
-    void goodTwoParseArgument() throws Exception {
+    void goodTwoParseArgument() {
         doReturn(BAR).when(namespaceBinding).lookupModule(ABC);
         doReturn(FOO).when(namespaceBinding).currentModule();
-        assertEquals(Descendant.of(QName.create(BAR, "foolocal"), QName.create(FOO, "barlocal")),
-            parser.parseArgument("abc:foolocal/barlocal"));
+        assertArgument(Descendant.of(QName.create(BAR, "foolocal"), QName.create(FOO, "barlocal")),
+            "abc:foolocal/barlocal");
     }
 
     @Test

@@ -28,9 +28,9 @@ class IdentifierParserTest extends AbstractNamespaceBindingTest<QName> {
     }
 
     @Test
-    void goodParseArgument() throws Exception {
+    void goodParseArgument() {
         doReturn(FOO).when(namespaceBinding).currentModule();
-        assertEquals(QName.create(FOO, "aeiou"), parser.parseArgument("aeiou"));
+        assertArgument(QName.create(FOO, "aeiou"), "aeiou");
     }
 
     @Test

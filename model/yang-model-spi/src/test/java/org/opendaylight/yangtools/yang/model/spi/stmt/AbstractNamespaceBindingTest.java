@@ -7,10 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.stmt;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.ThrowingSupplier;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -30,11 +34,18 @@ abstract class AbstractNamespaceBindingTest<A> {
 
     abstract ArgumentParser<@NonNull A> parser();
 
+    final void assertArgument(final A expected, final String str) {
+        assertNotNull(str);
+        assertEquals(expected, assertDoesNotThrow((ThrowingSupplier<@NonNull A>)() -> parser().parseArgument(str)));
+    }
+
     final ArgumentBindingException assertBindingException(final String str) {
+        assertNotNull(str);
         return assertThrowsExactly(ArgumentBindingException.class, () -> parser().parseArgument(str));
     }
 
     final ArgumentSyntaxException assertSyntaxException(final String str) {
+        assertNotNull(str);
         return assertThrowsExactly(ArgumentSyntaxException.class, () -> parser().parseArgument(str));
     }
 }
