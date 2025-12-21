@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsValue;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefMaxElementsStatement extends AbstractRefStatement<String, MaxElementsStatement>
+public final class RefMaxElementsStatement extends AbstractRefStatement<MaxElementsValue, MaxElementsStatement>
         implements MaxElementsStatement {
     public RefMaxElementsStatement(final MaxElementsStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

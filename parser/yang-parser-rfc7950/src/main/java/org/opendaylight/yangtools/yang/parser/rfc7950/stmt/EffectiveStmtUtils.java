@@ -77,9 +77,8 @@ public final class EffectiveStmtUtils {
 
         final Integer maxElements;
         if (maxStmt != null) {
-            final var arg = maxStmt.argument();
-            final var m = UNBOUNDED_STR.equals(arg) ? Integer.MAX_VALUE : Integer.parseInt(arg);
-            maxElements = m < Integer.MAX_VALUE ? m : null;
+            final var max = maxStmt.argument().asSaturatedInt();
+            maxElements = max < Integer.MAX_VALUE ? max : null;
         } else {
             maxElements = null;
         }
