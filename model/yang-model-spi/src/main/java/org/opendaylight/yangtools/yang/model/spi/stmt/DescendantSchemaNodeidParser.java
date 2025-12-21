@@ -75,7 +75,7 @@ public final class DescendantSchemaNodeidParser extends AbstractArgumentParser<D
     }
 
     // Note: assumes str is non-empty, str is being cons
-    private ImmutableList<QName> parseNodeIdentifiers(final String str, final int beginIndex, final int endIndex)
+    ImmutableList<QName> parseNodeIdentifiers(final String str, final int beginIndex, final int endIndex)
             throws ArgumentSyntaxException, ArgumentBindingException {
         final var builder = ImmutableList.<QName>builder();
         var nextIndex = beginIndex;
