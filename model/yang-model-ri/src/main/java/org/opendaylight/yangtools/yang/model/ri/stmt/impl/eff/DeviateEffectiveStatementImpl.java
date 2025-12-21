@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsValue;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
@@ -58,8 +60,13 @@ public final class DeviateEffectiveStatementImpl extends WithSubstatements<Devia
     @Override
     public Integer getDeviatedMaxElements() {
         return findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class)
-                // FIXME: this does not handle 'unbounded'
-                .map(Integer::valueOf).orElse(null);
+            .filter(MaxElementsValue.Bounded.class::isInstance)
+            .map(MaxElementsValue.Bounded.class::cast)
+            .flatMap(value -> {
+                final var intValue = value.asSaturatedInt();
+                return intValue == Integer.MAX_VALUE ? Optional.empty() : Optional.of(intValue);
+            })
+            .orElse(null);
     }
 
     @Override
@@ -75,7 +82,8 @@ public final class DeviateEffectiveStatementImpl extends WithSubstatements<Devia
     @Override
     public TypeDefinition<?> getDeviatedType() {
         return findFirstEffectiveSubstatement(TypeEffectiveStatement.class)
-                .map(TypeEffectiveStatement::getTypeDefinition).orElse(null);
+            .map(TypeEffectiveStatement::getTypeDefinition)
+            .orElse(null);
     }
 
     @Override
