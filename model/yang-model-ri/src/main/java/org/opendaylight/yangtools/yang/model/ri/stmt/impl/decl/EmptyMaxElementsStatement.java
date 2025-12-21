@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyMaxElementsStatement extends WithArgument<String> implements MaxElementsStatement {
-    public EmptyMaxElementsStatement(final String rawArgument, final String argument) {
+public final class EmptyMaxElementsStatement extends WithArgument<MaxElementsArgument> implements MaxElementsStatement {
+    public EmptyMaxElementsStatement(final String rawArgument, final MaxElementsArgument argument) {
         super(rawArgument, argument);
     }
 }
