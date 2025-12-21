@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsValue;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularMaxElementsStatement extends WithSubstatements<String> implements MaxElementsStatement {
-    public RegularMaxElementsStatement(final String rawArgument, final String argument,
+public final class RegularMaxElementsStatement extends WithSubstatements<MaxElementsValue>
+        implements MaxElementsStatement {
+    public RegularMaxElementsStatement(final String rawArgument, final MaxElementsValue argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
     }

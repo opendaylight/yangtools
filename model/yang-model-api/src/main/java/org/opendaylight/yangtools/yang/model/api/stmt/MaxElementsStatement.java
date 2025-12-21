@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code max-elements} statement.
  */
-public interface MaxElementsStatement extends DeclaredStatement<String> {
+public interface MaxElementsStatement extends DeclaredStatement<MaxElementsValue> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.MAX_ELEMENTS;

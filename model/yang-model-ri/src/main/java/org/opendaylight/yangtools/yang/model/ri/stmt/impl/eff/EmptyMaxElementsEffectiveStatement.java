@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsValue;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyMaxElementsEffectiveStatement extends DefaultArgument<String, MaxElementsStatement>
+public final class EmptyMaxElementsEffectiveStatement extends DefaultArgument<MaxElementsValue, MaxElementsStatement>
         implements MaxElementsEffectiveStatement {
     public EmptyMaxElementsEffectiveStatement(final MaxElementsStatement declared) {
         super(declared);
