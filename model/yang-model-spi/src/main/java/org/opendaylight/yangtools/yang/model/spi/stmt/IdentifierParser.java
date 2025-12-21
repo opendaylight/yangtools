@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
  *
  * {@apiNote This class is designed to support parsing of other ABNF productions which boil down to an
  *           {@code identifier}}
+ * @since 14.0.22
  */
 @NonNullByDefault
 public final class IdentifierParser extends AbstractArgumentParser<QName> implements ArgumentParser.SyntaxOnly<QName> {
