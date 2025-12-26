@@ -43,6 +43,7 @@ class Uint8Test {
     }
 
     @Test
+    @SuppressWarnings("SelfComparison")
     void testCompareTo() {
         final var five = Uint8.valueOf(5);
         final var zero = Uint8.valueOf(0);
