@@ -12,8 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNames;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentParser;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 
@@ -46,6 +48,16 @@ public final class IdentifierParser extends AbstractArgumentParser<QName> implem
     // split out for implementation layout consistency
     private QName parseIdentifierArgStr(final String str, final int beginIndex) throws ArgumentSyntaxException {
         return parseIdentifierAs("identifier-arg-str", str, beginIndex);
+    }
+
+    QNameModule parsePrefixAs(final String production, final String str, final int beginIndex)
+            throws ArgumentSyntaxException, ArgumentBindingException {
+        final var prefix = lexIdentifierAs(production, str, beginIndex);
+        final var module = namespaceBinding.lookupModule(prefix);
+        if (module == null) {
+            throw new ArgumentBindingException("cannot bind prefix '" + prefix.getLocalName() + "'", beginIndex);
+        }
+        return module;
     }
 
     QName parseIdentifierAs(final String production, final String rawArgument, final int beginIndex)
