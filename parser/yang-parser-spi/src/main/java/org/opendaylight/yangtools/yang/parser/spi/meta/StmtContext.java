@@ -17,12 +17,16 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.IdentifierParser;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * An inference context associated with an instance of a statement.
@@ -172,6 +176,57 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @NonNullByDefault
     default QNameModule definingModule() {
         return getRoot().definingModule();
+    }
+
+    // FIXME: document
+    // FIXME: consider moving out with others?
+    @Beta
+    @NonNullByDefault
+    default QName parseIdentifier(final String rawArgument) throws SourceException {
+        try {
+            return new IdentifierParser(new StmtContextNamespaceBinding(getRoot())).parseArgument(rawArgument);
+        } catch (ArgumentSyntaxException e) {
+            throw newSourceException(publicDefinition().getStatementName().getLocalName(), this,
+                rawArgument, e);
+        }
+    }
+
+    // FIXME: document
+    // FIXME: consider moving out with others?
+    @Beta
+    @NonNullByDefault
+    default QName parseIdentifier(final String qualifier, final String rawArgument) throws SourceException {
+        try {
+            return new IdentifierParser(new StmtContextNamespaceBinding(getRoot())).parseArgument(rawArgument);
+        } catch (ArgumentSyntaxException e) {
+            throw newSourceException(qualifier, this, rawArgument, e);
+        }
+    }
+
+    /**
+     * Return a new {@link SourceException} that is reporting an {@link ArgumentSyntaxException} while parsing a
+     * statement argument.
+     *
+     * @param qualifier the string used to qualify the argument name
+     * @param stmt Statement context, not retained
+     * @param rawArgument the argument value being parsed
+     * @param cause the {@link ArgumentSyntaxException} cause
+     * @return a new {@link SourceException}
+     */
+    @Beta
+    @NonNullByDefault
+    private static SourceException newSourceException(final String qualifier, final CommonStmtCtx stmt,
+            final String rawArgument, final ArgumentSyntaxException cause) {
+        final var sb = new StringBuilder()
+            .append('\'').append(rawArgument).append("' is not a valid ").append(qualifier).append(' ')
+            .append(stmt.publicDefinition().getArgumentDefinition().orElseThrow().argumentName().getLocalName());
+
+        final var position = cause.getPosition();
+        if (position != 0) {
+            sb.append(" on position ").append(position);
+        }
+
+        return new SourceException(sb.append(": ").append(cause.getMessage()).toString(), stmt, cause);
     }
 
     /**
