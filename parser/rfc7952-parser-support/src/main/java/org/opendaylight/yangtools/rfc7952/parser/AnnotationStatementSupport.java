@@ -17,14 +17,14 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -45,7 +45,7 @@ public final class AnnotationStatementSupport
 
     @Override
     public AnnotationName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return new AnnotationName(StmtContextUtils.parseIdentifier(ctx, value)).intern();
+        return new AnnotationName(ctx.parseIdentifier(value)).intern();
     }
 
     @Override
@@ -58,9 +58,11 @@ public final class AnnotationStatementSupport
     @Override
     public void onStatementAdded(
             final Mutable<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
-        final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
-        SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
-                stmt, "Annotations may only be defined at root of either a module or a submodule");
+        final var parent = stmt.coerceParentContext().publicDefinition().getDeclaredRepresentationClass();
+        if (!ModuleStatement.class.isAssignableFrom(parent) && !SubmoduleStatement.class.isAssignableFrom(parent)) {
+            throw new SourceException(stmt,
+                "Annotations may only be defined at root of either a module or a submodule");
+        }
     }
 
     @Override

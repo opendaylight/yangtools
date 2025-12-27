@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class BitStatementSupport extends AbstractStatementSupport<String, BitStatement, BitEffectiveStatement> {
@@ -57,8 +56,8 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
 
     @Override
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        // Performs de-duplication and interning in one go
-        return StmtContextUtils.parseIdentifier(ctx, value).getLocalName();
+        // FIXME: this might be an overkill, but since we are doing this, perhaps we want to have A=Unqualified?
+        return ctx.parseIdentifier(value).getLocalName();
     }
 
     @Override
