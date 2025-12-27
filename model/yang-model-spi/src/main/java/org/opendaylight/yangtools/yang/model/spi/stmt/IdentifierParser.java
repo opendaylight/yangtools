@@ -67,6 +67,31 @@ public final class IdentifierParser extends AbstractArgumentParser<QName> implem
     }
 
     /**
+     * Parse {@code identifier} ABNF production.
+     *
+     * @param str the string to parse
+     * @param beginIndex logical start index for error reporting
+     * @return an {@link QName}
+     * @throws ArgumentSyntaxException if {@code str} does not conform to {@code identifier}
+     */
+    QName parseIdentifier(final String str, final int beginIndex) throws ArgumentSyntaxException {
+        return lexIdentifier(str, beginIndex).bindTo(namespaceBinding.currentModule()).intern();
+    }
+
+    /**
+     * Lex {@code identifier} ABNF production.
+     *
+     * @param str the string to parse
+     * @param beginIndex logical start index for error reporting
+     * @return an {@link UnresolvedQName.Unqualified}
+     * @throws ArgumentSyntaxException if {@code str} does not conform to {@code identifier}
+     */
+    static UnresolvedQName.Unqualified lexIdentifier(final String str, final int beginIndex)
+            throws ArgumentSyntaxException {
+        return lexIdentifierAs("identifier", str, beginIndex);
+    }
+
+    /**
      * Lex an ABNF production as an equivalent of the {@code identifier} ABNF production, such as
      * {@code identifier-arg}, {@code prefix} and similar. Not interned for wider reuse.
      *
@@ -76,8 +101,8 @@ public final class IdentifierParser extends AbstractArgumentParser<QName> implem
      * @return an {@link UnresolvedQName.Unqualified}
      * @throws ArgumentSyntaxException if {@code str} does not conform to {@code identifier}
      */
-    private static UnresolvedQName.Unqualified lexIdentifierAs(final String production, final String str,
-            final int beginIndex) throws ArgumentSyntaxException {
+    static UnresolvedQName.Unqualified lexIdentifierAs(final String production, final String str, final int beginIndex)
+            throws ArgumentSyntaxException {
         final var identifier = UnresolvedQName.tryLocalName(str);
         if (identifier == null) {
             throw syntaxExceptionOf(production, str, beginIndex);
