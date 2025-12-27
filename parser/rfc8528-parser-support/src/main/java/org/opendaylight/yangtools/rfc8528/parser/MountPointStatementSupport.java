@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -53,7 +52,7 @@ public final class MountPointStatementSupport
     // We are not doing exactly that, in that we can end up rebinding the argument through 'augment', I think.
     @Override
     public MountPointLabel parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return new MountPointLabel(StmtContextUtils.parseIdentifier(ctx, value)).intern();
+        return new MountPointLabel(ctx.parseIdentifier("mount point", value)).intern();
     }
 
     @Override
