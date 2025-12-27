@@ -10,6 +10,7 @@
  * implementations. In particular, the following might be of interest:
  * <ul>
  *   <li>{@link IdentifierParser}</li>
+ *   <li>{@link NodeIdentifierParser}</li>
  * </ul>
  *
  * @since 14.0.22
