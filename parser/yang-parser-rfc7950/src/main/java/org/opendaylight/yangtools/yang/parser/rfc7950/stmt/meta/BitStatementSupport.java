@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -20,13 +21,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.IdentifierParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class BitStatementSupport extends AbstractStatementSupport<String, BitStatement, BitEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.BIT)
@@ -57,8 +61,14 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
 
     @Override
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        // Performs de-duplication and interning in one go
-        return StmtContextUtils.parseIdentifier(ctx, value).getLocalName();
+        final QName qname;
+        try {
+            // FIXME: this might be an overkill, but since we are doing this, perhaps we want to have A=Unqualified?
+            qname = new IdentifierParser(new StmtContextNamespaceBinding(ctx.getRoot())).parseArgument(value);
+        } catch (ArgumentSyntaxException e) {
+            throw SourceException.ofArgumentSyntax(ctx, value, e);
+        }
+        return qname.getLocalName();
     }
 
     @Override

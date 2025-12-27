@@ -12,18 +12,21 @@ import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountStatements;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.IdentifierParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -53,7 +56,13 @@ public final class MountPointStatementSupport
     // We are not doing exactly that, in that we can end up rebinding the argument through 'augment', I think.
     @Override
     public MountPointLabel parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return new MountPointLabel(StmtContextUtils.parseIdentifier(ctx, value)).intern();
+        final QName qname;
+        try {
+            qname = new IdentifierParser(new StmtContextNamespaceBinding(ctx.getRoot())).parseArgument(value);
+        } catch (ArgumentSyntaxException e) {
+            throw SourceException.ofArgumentSyntax("mount point name", ctx, value, e);
+        }
+        return new MountPointLabel(qname).intern();
     }
 
     @Override

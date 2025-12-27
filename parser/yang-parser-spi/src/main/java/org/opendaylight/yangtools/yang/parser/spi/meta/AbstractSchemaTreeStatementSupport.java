@@ -16,10 +16,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.IdentifierParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Specialization of {@link AbstractQNameStatementSupport} for {@link SchemaTreeEffectiveStatement} implementations.
@@ -115,6 +118,10 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
     // Non-final because {@code input} and {@code output} are doing their own thing.
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
+        try {
+            return new IdentifierParser(new StmtContextNamespaceBinding(ctx.getRoot())).parseArgument(value);
+        } catch (ArgumentSyntaxException e) {
+            throw SourceException.ofArgumentSyntax(ctx, value, e);
+        }
     }
 }

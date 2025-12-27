@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.meta.UncheckedStatementException;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 
 /**
@@ -144,6 +146,49 @@ public class SourceException extends StatementSourceException {
     @NonNullByDefault
     public SourceException(final UncheckedStatementException cause) {
         super(cause);
+    }
+
+    /**
+     * Return a new {@link SourceException} that is reporting an {@link ArgumentSyntaxException} while parsing a
+     * statement argument.
+     *
+     * @param argName the argument name to report
+     * @param stmt Statement context, not retained
+     * @param rawArgument the argument value being parsed
+     * @param cause the {@link ArgumentSyntaxException} cause
+     * @return a new {@link SourceException}
+     */
+    @Beta
+    @NonNullByDefault
+    public static final SourceException ofArgumentSyntax(final CommonStmtCtx stmt, final String rawArgument,
+            final ArgumentSyntaxException cause) {
+        return ofArgumentSyntax(stmt.publicDefinition().getStatementName().getLocalName(), stmt, rawArgument, cause);
+    }
+
+    /**
+     * Return a new {@link SourceException} that is reporting an {@link ArgumentSyntaxException} while parsing a
+     * statement argument.
+     *
+     * @param qualifier the string used to qualify the argument name
+     * @param stmt Statement context, not retained
+     * @param rawArgument the argument value being parsed
+     * @param cause the {@link ArgumentSyntaxException} cause
+     * @return a new {@link SourceException}
+     */
+    @Beta
+    @NonNullByDefault
+    public static final SourceException ofArgumentSyntax(final String qualifier, final CommonStmtCtx stmt,
+            final String rawArgument, final ArgumentSyntaxException cause) {
+        final var sb = new StringBuilder()
+            .append('\'').append(rawArgument).append("' is not a valid ").append(qualifier).append(' ')
+            .append(stmt.publicDefinition().getArgumentDefinition().orElseThrow().argumentName().getLocalName());
+
+        final var position = cause.getPosition();
+        if (position != 0) {
+            sb.append(" on position ").append(position);
+        }
+
+        return new SourceException(sb.append(": ").append(cause.getMessage()).toString(), stmt, cause);
     }
 
     /**

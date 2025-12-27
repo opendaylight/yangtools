@@ -12,19 +12,23 @@ import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.MetadataStatements;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.IdentifierParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -45,7 +49,13 @@ public final class AnnotationStatementSupport
 
     @Override
     public AnnotationName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return new AnnotationName(StmtContextUtils.parseIdentifier(ctx, value)).intern();
+        final QName qname;
+        try {
+            qname = new IdentifierParser(new StmtContextNamespaceBinding(ctx.getRoot())).parseArgument(value);
+        } catch (ArgumentSyntaxException e) {
+            throw SourceException.ofArgumentSyntax("annotation name", ctx, value, e);
+        }
+        return new AnnotationName(qname).intern();
     }
 
     @Override
@@ -58,9 +68,11 @@ public final class AnnotationStatementSupport
     @Override
     public void onStatementAdded(
             final Mutable<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
-        final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
-        SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
-                stmt, "Annotations may only be defined at root of either a module or a submodule");
+        final var parent = stmt.coerceParentContext().publicDefinition().getDeclaredRepresentationClass();
+        if (!ModuleStatement.class.isAssignableFrom(parent) && !SubmoduleStatement.class.isAssignableFrom(parent)) {
+            throw new SourceException(stmt,
+                "Annotations may only be defined at root of either a module or a submodule");
+        }
     }
 
     @Override

@@ -21,7 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.model.spi.stmt.IdentifierParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -29,8 +31,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class FeatureStatementSupport
         extends AbstractQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
@@ -48,7 +51,11 @@ public final class FeatureStatementSupport
 
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
+        try {
+            return new IdentifierParser(new StmtContextNamespaceBinding(ctx.getRoot())).parseArgument(value);
+        } catch (ArgumentSyntaxException e) {
+            throw SourceException.ofArgumentSyntax(ctx, value, e);
+        }
     }
 
     @Override
