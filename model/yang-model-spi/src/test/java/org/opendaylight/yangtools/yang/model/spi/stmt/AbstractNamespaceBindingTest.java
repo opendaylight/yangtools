@@ -11,26 +11,30 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentParser;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 
 @ExtendWith(MockitoExtension.class)
-abstract class AbstractNamespaceBindingTest {
+abstract class AbstractNamespaceBindingTest<A> {
     static final @NonNull QNameModule FOO = QNameModule.ofRevision("foons", "2025-12-16");
     static final @NonNull QNameModule BAR = QNameModule.ofRevision("barns", "2025-12-16");
+    static final @NonNull Unqualified ABC = Unqualified.of("abc");
 
     @Mock
     NamespaceBinding namespaceBinding;
 
-    static final ArgumentBindingException assertBindingException(final Executable executable) {
-        return assertThrowsExactly(ArgumentBindingException.class, executable);
+    abstract ArgumentParser<@NonNull A> parser();
+
+    final ArgumentBindingException assertBindingException(final String str) {
+        return assertThrowsExactly(ArgumentBindingException.class, () -> parser().parseArgument(str));
     }
 
-    static final ArgumentSyntaxException assertSyntaxException(final Executable executable) {
-        return assertThrowsExactly(ArgumentSyntaxException.class, executable);
+    final ArgumentSyntaxException assertSyntaxException(final String str) {
+        return assertThrowsExactly(ArgumentSyntaxException.class, () -> parser().parseArgument(str));
     }
 }
