@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * Interface for resolving XML prefixes to their bound {@link QNameModule}s. This resolution entails determining
  * the correct {@link Revision} bound at the use site.
  */
+// FIXME: 15.0.0: unify with YangNamespaceContext except the serialzable bit
+// FIXME: 15.0.0: unify with NamespaceBinding ?
 public interface PrefixResolver {
     /**
      * Returns QNameModule (namespace + revision) associated with supplied prefix.
