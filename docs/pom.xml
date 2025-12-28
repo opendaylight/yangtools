@@ -496,7 +496,7 @@
                 <!-- FIXME: remove this section once we can activate javadoc-links profile -->
                 <configuration combine.children="append">
                     <links>
-                        <link>https://junit.org/junit5/docs/current/api/</link>
+                        <link>https://docs.junit.org/5.14.1/api/</link>
                         <link>https://hamcrest.org/JavaHamcrest/javadoc/3.0/</link>
                         <link>https://www.slf4j.org/apidocs/</link>
                         <link>https://guava.dev/releases/33.4.0-jre/api/docs/</link>
