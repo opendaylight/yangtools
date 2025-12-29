@@ -111,8 +111,7 @@ public final class IdentifierParser extends AbstractArgumentParser<QName> implem
     }
 
     // run manual validation so we can report the exact cause why the string was rejected
-    private static ArgumentSyntaxException syntaxExceptionOf(final String production, final String str,
-            final int beginIndex) {
+    static ArgumentSyntaxException syntaxExceptionOf(final String production, final String str, final int beginIndex) {
         if (str.isEmpty()) {
             return new ArgumentSyntaxException(production + " cannot be empty", beginIndex);
         }
