@@ -25,7 +25,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
  */
 @NonNullByDefault
 public final class NodeIdentifierParser extends AbstractArgumentParser<QName> {
-    private final IdentifierParser identifierParser;
+    // package-visible for common use
+    final IdentifierParser identifierParser;
 
     /**
      * Construct an instance using specified {@link IdentifierParser}.
