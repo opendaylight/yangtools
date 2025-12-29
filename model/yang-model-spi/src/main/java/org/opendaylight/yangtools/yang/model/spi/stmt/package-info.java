@@ -11,6 +11,7 @@
  * <ul>
  *   <li>{@link IdentifierParser}</li>
  *   <li>{@link NodeIdentifierParser}</li>
+ *   <li>{@link DescendantSchemaNodeidParser}</li>
  * </ul>
  *
  * @since 14.0.22
