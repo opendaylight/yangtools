@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 class YT893Test extends AbstractYangTest {
     @Test
     void testCR() {
-        assertSourceException(startsWith("Failed to parse node"), "/bugs/YT893/cr.yang");
+        assertSourceException(startsWith(
+            "'a\rb' is not a valid unique tag on position 2: '\r' is not valid as a character in identifier [at "),
+            "/bugs/YT893/cr.yang");
     }
 
     @Test

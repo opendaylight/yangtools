@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -49,40 +51,51 @@ class AugmentArgumentParsingTest {
 
     @Test
     void invalidAugRel1Test() {
-        assertSourceExceptionCause(assertReactorThrows(INVALID_REL1), "Augment argument './aug1/aug11' is not valid");
+        assertSourceExceptionCause(assertReactorThrows(INVALID_REL1), """
+            './aug1/aug11' is not a valid augment target-node on position 1: '.' is not '/' as required by \
+            absolute-schema-nodeid [at """);
     }
 
     @Test
     void invalidAugRel2Test() {
-        assertSourceExceptionCause(assertReactorThrows(INVALID_REL2), "Augment argument '../aug1/aug11' is not valid");
+        assertSourceExceptionCause(assertReactorThrows(INVALID_REL2), """
+            '../aug1/aug11' is not a valid augment target-node on position 1: '.' is not '/' as required by \
+            absolute-schema-nodeid [at """);
     }
 
     @Test
     void invalidAugAbs() {
         assertSourceExceptionCause(assertReactorThrows(INVALID_ABS),
-            "Augment argument '//aug1/aug11/aug111' is not valid");
+            "'//aug1/aug11/aug111' is not a valid augment target-node on position 2: "
+            + "'/' is not a valid prefix nor identifier [at ");
     }
 
     @Test
     void invalidAugAbsPrefixedNoImp() {
-        assertSourceExceptionCause(assertReactorThrows(INVALID_ABS_PREFIXED_NO_IMP), "Failed to parse node 'imp:aug1'");
+        assertSourceExceptionCause(assertReactorThrows(INVALID_ABS_PREFIXED_NO_IMP), """
+            'imp:aug1/imp:aug11/imp:aug111' is not a valid augment target-node on position 1: 'i' is not '/' as \
+            required by absolute-schema-nodeid [at """);
     }
 
     @Test
     void invalidAugEmptyTest() {
         final var ex = assertReactorThrows(INVALID_EMPTY);
         final var cause = assertInstanceOf(SourceException.class, ex.getCause());
-        assertThat(cause.getMessage()).startsWith("Schema node identifier must not be empty");
+        assertThat(cause.getMessage())
+            .startsWith("'' is not a valid augment target-node: absolute-schema-nodeid cannot be empty [at");
     }
 
     @Test
     void invalidAugXPathTest() {
         final var ex = assertReactorThrows(INVALID_XPATH);
         final var cause = assertInstanceOf(SourceException.class, ex.getCause());
-        assertThat(cause.getMessage()).startsWith("Failed to parse node '-' in path '/aug1/-'");
+        assertThat(cause.getMessage()).startsWith("""
+            '/aug1/-' is not a valid augment target-node on position 7: '-' is not valid as a first character in \
+            identifier [at """);
 
-        final var nested = assertInstanceOf(SourceException.class, cause.getCause());
-        assertThat(nested.getMessage()).startsWith("Invalid identifier '-'");
+        final var ase = assertInstanceOf(ArgumentSyntaxException.class, cause.getCause());
+        assertEquals("'-' is not valid as a first character in identifier", ase.getMessage());
+        assertEquals(7, ase.getPosition());
     }
 
     private static ReactorException assertReactorThrows(final StatementStreamSource source) {
