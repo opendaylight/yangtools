@@ -174,6 +174,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         return getRoot().definingModule();
     }
 
+    @NonNullByDefault
+    default IdentifierBinding identifierBinding() {
+        return getRoot().identifierBinding();
+    }
+
     /**
      * An mutable view of an inference context associated with an instance of a statement.
      *
