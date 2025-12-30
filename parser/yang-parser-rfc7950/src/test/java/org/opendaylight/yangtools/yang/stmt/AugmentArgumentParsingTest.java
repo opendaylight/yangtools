@@ -60,7 +60,8 @@ class AugmentArgumentParsingTest {
     @Test
     void invalidAugAbs() {
         assertSourceExceptionCause(assertReactorThrows(INVALID_ABS),
-            "Augment argument '//aug1/aug11/aug111' is not valid");
+            "'//aug1/aug11/aug111' is not a valid augment target-node on position 2: "
+            + "'/' is not a valid prefix nor identifier [at ");
     }
 
     @Test
