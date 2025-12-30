@@ -22,14 +22,12 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement<QName>,
@@ -41,12 +39,12 @@ abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement
 
     @Override
     public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseNodeIdentifier(ctx, value);
+        return ctx.identifierBinding().parseIdentifierRefArg(ctx, value);
     }
 
     @Override
     public void onStatementDefinitionDeclared(final Mutable<QName, D, E> stmt) {
-        final ModelActionBuilder action = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var action = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         action.requiresCtx(stmt, ParserNamespaces.IDENTITY, stmt.getArgument(), ModelProcessingPhase.EFFECTIVE_MODEL);
 
         action.apply(new InferenceAction() {
@@ -65,8 +63,8 @@ abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement
     @Override
     protected final E createEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final QName qname = stmt.getArgument();
-        final StmtContext<?, ?, IdentityEffectiveStatement> identityCtx =
+        final var qname = stmt.getArgument();
+        final var identityCtx =
             verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, qname), "Failed to find identity %s", qname);
         return createEffective(stmt.declared(), identityCtx.buildEffective(), substatements);
     }

@@ -498,7 +498,7 @@ public final class StmtContextUtils {
         return internedQName(ctx, str);
     }
 
-    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseNodeIdentifierArg()
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
         return internedQName(ctx,
@@ -515,8 +515,9 @@ public final class StmtContextUtils {
      * @return An interned QName
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG node identifier
+     * @deprecated Use {@link StmtContext#identifierBinding()} instead
      */
-    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseNodeIdentifierArg()
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Node identifier may not be an empty string");
 

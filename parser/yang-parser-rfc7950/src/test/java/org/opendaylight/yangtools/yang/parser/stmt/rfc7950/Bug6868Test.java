@@ -80,7 +80,9 @@ class Bug6868Test extends AbstractYangTest {
 
     @Test
     void invalidYang10Test() {
-        assertSourceException(startsWith("Invalid identifier '(not foo) or (bar and baz)' [at "),
+        assertSourceException(startsWith("""
+            '(not foo) or (bar and baz)' is not a valid if-feature name on position 1: '(' is not valid as a first \
+            character in identifier [at """),
             "/rfc7950/bug6868/invalid10.yang");
     }
 }
