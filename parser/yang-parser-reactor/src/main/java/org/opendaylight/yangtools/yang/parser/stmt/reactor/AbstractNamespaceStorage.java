@@ -20,7 +20,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractNamespaceStorage implements NamespaceStorage {
+/**
+ * Abstract base class for our {@link NamespaceStorage} implementations. There are two of those:
+ * <ol>
+ *   <li>{@link BuildGlobalContext}, servicing all global namespaces</li>
+ *   <li>{@link ReactorStmtCtx}, servicing all other namespaces</li>
+ * </ol>
+ */
+abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permits BuildGlobalContext, ReactorStmtCtx {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractNamespaceStorage.class);
 
     private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = ImmutableMap.of();

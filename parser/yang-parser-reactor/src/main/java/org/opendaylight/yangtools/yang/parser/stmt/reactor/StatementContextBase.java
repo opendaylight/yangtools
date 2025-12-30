@@ -59,8 +59,9 @@ import org.slf4j.LoggerFactory;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends ReactorStmtCtx<A, D, E> implements CopyHistory {
+abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends ReactorStmtCtx<A, D, E> implements CopyHistory
+        permits InferredStatementContext, OriginalStmtCtx {
     /**
      * Event listener when an item is added to model namespace.
      */
@@ -160,25 +161,25 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
-        this.bitsAight = original.bitsAight;
-        this.definition = original.definition;
-        this.executionOrder = original.executionOrder;
+        bitsAight = original.bitsAight;
+        definition = original.definition;
+        executionOrder = original.executionOrder;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
-        this.definition = requireNonNull(def);
-        this.bitsAight = COPY_ORIGINAL;
+        definition = requireNonNull(def);
+        bitsAight = COPY_ORIGINAL;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
-        this.definition = requireNonNull(def);
-        this.bitsAight = (byte) copyFlags(copyType);
+        definition = requireNonNull(def);
+        bitsAight = (byte) copyFlags(copyType);
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType,
             final CopyType childCopyType) {
-        this.definition = prototype.definition;
-        this.bitsAight = (byte) (copyFlags(copyType)
+        definition = prototype.definition;
+        bitsAight = (byte) (copyFlags(copyType)
             | prototype.bitsAight & ~COPY_LAST_TYPE_MASK | childCopyType.ordinal() << COPY_CHILD_TYPE_SHIFT);
     }
 

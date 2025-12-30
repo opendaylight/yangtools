@@ -32,8 +32,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends OriginalStmtCtx<A, D, E> implements UndeclaredCurrent<A, D> {
+sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends OriginalStmtCtx<A, D, E> implements UndeclaredCurrent<A, D>
+        permits ImplicitStmtCtx {
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
 
