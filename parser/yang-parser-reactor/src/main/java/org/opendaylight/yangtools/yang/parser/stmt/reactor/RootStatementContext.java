@@ -29,11 +29,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextNamespaceBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +60,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     private YangVersion rootVersion;
     private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
     private SourceIdentifier rootIdentifier;
+    private IdentifierBinding identifierBinding;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -100,6 +103,15 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     public RootStatementContext<?, ?, ?> getRoot() {
         // this as its own root
         return this;
+    }
+
+    @Override
+    public IdentifierBinding identifierBinding() {
+        var local = identifierBinding;
+        if (local == null) {
+            identifierBinding = local = new IdentifierBinding(new StmtContextNamespaceBinding(this));
+        }
+        return local;
     }
 
     @NonNull SourceSpecificContext getSourceContext() {

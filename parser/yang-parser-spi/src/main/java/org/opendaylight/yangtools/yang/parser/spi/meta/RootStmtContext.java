@@ -64,4 +64,9 @@ public interface RootStmtContext<A, D extends DeclaredStatement<A>, E extends Ef
         }
         return ret;
     }
+
+    @Override
+    default IdentifierBinding identifierBinding() {
+        return new IdentifierBinding(new StmtContextNamespaceBinding(this));
+    }
 }

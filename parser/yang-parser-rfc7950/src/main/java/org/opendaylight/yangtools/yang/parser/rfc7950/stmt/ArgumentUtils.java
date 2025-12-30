@@ -46,20 +46,24 @@ public final class ArgumentUtils {
         return new BigDecimal(num1.toString()).compareTo(new BigDecimal(num2.toString()));
     }
 
+    // FIXME: 15.0.0: deprecate with no direct replacement
     public static boolean isAbsoluteXPath(final String path) {
         return PATH_ABS.matcher(path).matches();
     }
 
+    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseAbsoluteSchemaNodeid()
     public static Absolute parseAbsoluteSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         // FIXME: this does accept check for a leading slash
         return Absolute.of(parseNodeIdentifiers(ctx, str));
     }
 
+    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseDescendantSchemaNodeid()
     public static Descendant parseDescendantSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         // FIXME: this does accept a leading slash
         return Descendant.of(parseNodeIdentifiers(ctx, str));
     }
 
+    // FIXME: 15.0.0: deprecate with no direct replacement
     public static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final var qnames = parseNodeIdentifiers(ctx, path);
         return PATH_ABS.matcher(path).matches() ? Absolute.of(qnames) : Descendant.of(qnames);
