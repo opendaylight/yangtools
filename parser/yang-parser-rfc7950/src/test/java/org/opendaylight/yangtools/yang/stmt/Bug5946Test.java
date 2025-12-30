@@ -73,8 +73,9 @@ class Bug5946Test extends AbstractYangTest {
     @Test
     void testInvalid() {
         assertSourceException(
-            startsWith("Unique statement argument '/simple-unique/l1' contains schema node identifier "
-                + "'/simple-unique/l1' which is not in the descendant node identifier form."),
+            startsWith("""
+                '/simple-unique/l1' is not a valid unique tag on position 1: '/' is not a valid prefix nor identifier \
+                [at """),
             "/bugs/bug5946/foo-invalid.yang");
     }
 
