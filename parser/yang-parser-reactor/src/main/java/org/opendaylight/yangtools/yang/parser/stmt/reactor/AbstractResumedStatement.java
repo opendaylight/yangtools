@@ -37,8 +37,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends OriginalStmtCtx<A, D, E> implements ResumedStatement {
+abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends OriginalStmtCtx<A, D, E> implements ResumedStatement
+        permits RootStatementContext, SubstatementContext {
     private final String rawArgument;
 
     private StatementMap substatements = StatementMap.empty();
@@ -288,11 +289,10 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     private static @NonNull AbstractResumedStatement<?, ?, ?> unmaskUndeclared(final ReactorStmtCtx<?, ?, ?> stmt) {
         var ret = stmt;
         while (!(ret instanceof AbstractResumedStatement<?, ?, ?> resumed)) {
-            if (ret instanceof UndeclaredStmtCtx<?, ?, ?> undeclared) {
-                ret = undeclared.getResumedSubstatement();
-            } else {
+            if (!(ret instanceof UndeclaredStmtCtx<?, ?, ?> undeclared)) {
                 throw new VerifyException("Unexpected statement " + ret);
             }
+            ret = undeclared.getResumedSubstatement();
         }
         return resumed;
     }

@@ -29,8 +29,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementContextBase<A, D, E> {
+/**
+ * A statement that is an original definition, realized through either an explicit declaration or via source-level
+ * structural implications.
+ *
+ * @param <A> Argument type
+ * @param <D> Declared Statement representation
+ * @param <E> Effective Statement representation
+ */
+abstract sealed class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends StatementContextBase<A, D, E>
+        permits AbstractResumedStatement, UndeclaredStmtCtx {
     private static final Logger LOG = LoggerFactory.getLogger(OriginalStmtCtx.class);
 
     private final @NonNull StatementSourceReference ref;
