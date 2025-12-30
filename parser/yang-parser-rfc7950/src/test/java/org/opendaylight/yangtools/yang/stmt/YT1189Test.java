@@ -14,13 +14,15 @@ import org.junit.jupiter.api.Test;
 class YT1189Test extends AbstractYangTest {
     @Test
     void testDescendantAugment() {
-        assertSourceException(startsWith("Descendant schema node identifier is not allowed when used outside"
-            + " of a uses statement [at "), "/bugs/YT1189/foo.yang");
+        assertSourceException(startsWith("""
+            'cont' is not a valid augment target-node on position 1: 'c' is not '/' as required by \
+            absolute-schema-nodeid [at """), "/bugs/YT1189/foo.yang");
     }
 
     @Test
     void testAbsoluteUsesAugment() {
-        assertSourceException(startsWith("Absolute schema node identifier is not allowed when used within a"
-            + " uses statement [at "), "/bugs/YT1189/bar.yang");
+        assertSourceException(startsWith("""
+            '/grp-cont' is not a valid augment target-node on position 1: '/' is not a valid prefix nor identifier [at \
+            """), "/bugs/YT1189/bar.yang");
     }
 }
