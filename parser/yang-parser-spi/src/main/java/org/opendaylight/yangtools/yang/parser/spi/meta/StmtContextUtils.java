@@ -492,13 +492,13 @@ public final class StmtContextUtils {
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG identifier
      */
-    // FIXME: 15.0.0: deprecate in favor of model.spi.stmt.IdentifierParser
+    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseIdentifierArg()
     public static @NonNull QName parseIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Identifier may not be an empty string");
         return internedQName(ctx, str);
     }
 
-    // FIXME: 15.0.0: deprecate in favor of model.spi.stmt.NodeIdentifierParser
+    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseNodeIdentifierArg()
     public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
         return internedQName(ctx,
@@ -516,7 +516,7 @@ public final class StmtContextUtils {
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG node identifier
      */
-    // FIXME: 15.0.0: deprecate in favor of model.spi.stmt.NodeIdentifierParser
+    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseNodeIdentifierArg()
     public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Node identifier may not be an empty string");
 
