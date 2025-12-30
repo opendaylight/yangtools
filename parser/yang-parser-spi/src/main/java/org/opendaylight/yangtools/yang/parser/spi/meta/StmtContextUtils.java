@@ -492,7 +492,7 @@ public final class StmtContextUtils {
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG identifier
      */
-    // FIXME: 15.0.0: deprecate in favor of model.spi.stmt.IdentifierParser
+    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseIdentifierArg()
     public static @NonNull QName parseIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Identifier may not be an empty string");
         return internedQName(ctx, str);
