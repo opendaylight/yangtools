@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -144,14 +143,9 @@ public final class UniqueStatementSupport
     private static ImmutableSet<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
+        final var binding = ctx.identifierBinding();
         return SEP_SPLITTER.splitToStream(CRLF_PATTERN.matcher(argumentValue).replaceAll("\n"))
-            .map(uniqueArgToken -> {
-                if (!(ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken) instanceof Descendant descendant)) {
-                    throw new SourceException(ctx, "Unique statement argument '%s' contains schema node identifier '%s'"
-                        + " which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
-                }
-                return descendant;
-            })
+            .map(uniqueArgToken -> binding.parseDescendantSchemaNodeid(ctx, uniqueArgToken))
             .collect(ImmutableSet.toImmutableSet());
     }
 
