@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -66,15 +65,16 @@ public final class KeyStatementSupport
 
     @Override
     public ImmutableSet<QName> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final Builder<QName> builder = ImmutableSet.builder();
+        final var builder = ImmutableSet.<QName>builder();
+        final var binding = ctx.identifierBinding();
         int tokens = 0;
-        for (String keyToken : KEY_ARG_SPLITTER.split(value)) {
-            builder.add(StmtContextUtils.parseNodeIdentifier(ctx, keyToken));
+        for (var keyToken : KEY_ARG_SPLITTER.split(value)) {
+            builder.add(binding.parseNodeIdentifierArg(ctx, keyToken));
             tokens++;
         }
 
         // Throws NPE on nulls, retains first inserted value, cannot be modified
-        final ImmutableSet<QName> ret = builder.build();
+        final var ret = builder.build();
         SourceException.throwIf(ret.size() != tokens, ctx, "Key argument '%s' contains duplicates", value);
         return ret;
     }
