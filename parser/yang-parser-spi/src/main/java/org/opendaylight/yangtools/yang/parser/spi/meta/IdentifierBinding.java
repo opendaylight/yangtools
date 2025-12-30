@@ -62,6 +62,25 @@ public final class IdentifierBinding {
     }
 
     /**
+     * Parse a statement argument as an {@code identifier-ref-arg}.
+     *
+     * @param stmt the statement
+     * @param rawArgument the argument
+     * @return a {@link QName}
+     * @throws SourceException if {@code arg} is not a valid {@code identifier-ref-arg}
+     * @throws InferenceException if YANG node identifier's module cannot be resolved
+     */
+    public QName parseIdentifierRefArg(final CommonStmtCtx stmt, final String rawArgument) {
+        try {
+            return nodeIdentifier.parseNodeIdentifierAs("identifier-ref-arg", rawArgument, 0, rawArgument.length());
+        } catch (ArgumentBindingException e) {
+            throw new InferenceException(e.getMessage(), stmt, e);
+        } catch (ArgumentSyntaxException e) {
+            throw newSourceException(stmt, rawArgument, e);
+        }
+    }
+
+    /**
      * Parse a statement argument as an {@code identifier-arg}.
      *
      * @param qualifier the string used to qualify the argument name
