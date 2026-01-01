@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f61ad2e0_e147a473",
+        "filename": "parser/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-01T11:54:08Z",
+      "side": 1,
+      "message": "this is a looong name. can have have a better name?",
+      "range": {
+        "startLine": 181,
+        "startChar": 40,
+        "endLine": 181,
+        "endChar": 66
+      },
+      "revId": "e64c02f4c7b6ac97cf466a9fef54a0b818d709d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
