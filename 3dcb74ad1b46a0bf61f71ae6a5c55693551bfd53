@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68a503b9_551f40ad",
+        "filename": "tests/test_yangmodels_ietf.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-01-09T09:56:49Z",
+      "side": 1,
+      "message": "Now it is 2026",
+      "revId": "3dcb74ad1b46a0bf61f71ae6a5c55693551bfd53",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
