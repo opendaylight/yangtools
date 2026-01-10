@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.rfc7952.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
@@ -36,18 +36,18 @@ public enum MetadataStatements implements StatementDefinition {
             final Class<? extends DeclaredStatement<?>> declaredRepresentation,
                     final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
-        this.argumentDef = ArgumentDefinition.of(QName.create(statementName, argumentName).intern(), false);
         this.declaredRepresentation = requireNonNull(declaredRepresentation);
         this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
+        argumentDef = ArgumentDefinition.of(QName.create(statementName, argumentName).intern(), false);
     }
 
     @Override
-    public Optional<ArgumentDefinition> getArgumentDefinition() {
-        return Optional.of(argumentDef);
+    public @NonNull ArgumentDefinition argumentDefinition() {
+        return argumentDef;
     }
 
     @Override
-    public QName getStatementName() {
+    public QName statementName() {
         return statementName;
     }
 

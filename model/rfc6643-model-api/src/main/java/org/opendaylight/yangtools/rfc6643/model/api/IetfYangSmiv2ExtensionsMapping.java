@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc6643.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
@@ -47,13 +46,13 @@ public enum IetfYangSmiv2ExtensionsMapping implements StatementDefinition {
     }
 
     @Override
-    public QName getStatementName() {
+    public QName statementName() {
         return name;
     }
 
     @Override
-    public Optional<ArgumentDefinition> getArgumentDefinition() {
-        return Optional.of(argument);
+    public ArgumentDefinition argumentDefinition() {
+        return argument;
     }
 
     @Override

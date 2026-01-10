@@ -170,7 +170,7 @@ public final class SubstatementValidator {
     private @Nullable SourceException evaluate(final StmtContext<?, ?, ?> ctx, final StatementDefinition def,
             final int count, final @Nullable Cardinality cardinality) {
         if (cardinality == null) {
-            if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.getStatementName()) == null) {
+            if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.statementName()) == null) {
                 final var root = ctx.getRoot();
                 return new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", def,
                     currentStatement, root.rawArgument(),
