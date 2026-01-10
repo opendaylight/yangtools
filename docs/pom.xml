@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-docs</artifactId>
-    <version>14.0.22-SNAPSHOT</version>
+    <version>14.0.22</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>YANG Tools documentation</description>
