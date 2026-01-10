@@ -214,7 +214,7 @@ public final class UniqueStatementSupport
                 // ... and if it is not a leaf, report an error
                 if (!stmt.producesEffective(LeafEffectiveStatement.class)) {
                     throw new SourceException(unique, "Path %s resolved to non-leaf %s", entry.getValue(),
-                        stmt.publicDefinition().getStatementName());
+                        stmt.publicDefinition().statementName());
                 }
             }
         }

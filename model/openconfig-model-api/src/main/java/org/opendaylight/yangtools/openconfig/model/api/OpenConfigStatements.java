@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.openconfig.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -47,13 +46,13 @@ public enum OpenConfigStatements implements StatementDefinition {
     }
 
     @Override
-    public QName getStatementName() {
+    public QName statementName() {
         return statementName;
     }
 
     @Override
-    public Optional<ArgumentDefinition> getArgumentDefinition() {
-        return ArgumentDefinition.ofNullable(argumentName, false);
+    public ArgumentDefinition argumentDefinition() {
+        return argumentName == null ? null : ArgumentDefinition.of(argumentName, false);
     }
 
     @Override

@@ -57,9 +57,9 @@ class ExtensionStmtTest extends AbstractYangTest {
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
         final var extensionUse = unknownNodes.iterator().next();
-        assertEquals(extensionDefinition.getQName(), extensionUse.statementDefinition().getStatementName());
-        assertEquals(extensionDefinition.getArgument(), extensionUse.statementDefinition().getArgumentDefinition()
-            .orElseThrow().argumentName().getLocalName());
+        assertEquals(extensionDefinition.getQName(), extensionUse.statementDefinition().statementName());
+        assertEquals(extensionDefinition.getArgument(),
+            extensionUse.statementDefinition().getArgumentDefinition().argumentName().getLocalName());
 
         assertEquals("key:value", extensionUse.argument());
     }

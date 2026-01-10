@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
@@ -60,13 +59,13 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
     }
 
     @Override
-    public QName getStatementName() {
+    public QName statementName() {
         return name;
     }
 
     @Override
-    public @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
-        return ArgumentDefinition.ofNullable(argument, yinElement);
+    public ArgumentDefinition argumentDefinition() {
+        return ArgumentDefinition.of(argument, yinElement);
     }
 
     @Override

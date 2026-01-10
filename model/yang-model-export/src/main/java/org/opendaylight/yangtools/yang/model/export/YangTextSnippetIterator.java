@@ -174,7 +174,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
             strings.add(prefix);
             strings.add(":");
         });
-        strings.add(def.getStatementName().getLocalName());
+        strings.add(def.statementName().getLocalName());
 
         // Add argument, quoted and properly indented if need be
         addArgument(def, stmt.rawArgument());

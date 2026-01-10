@@ -70,7 +70,7 @@ class GroupingAndUsesStmtTest extends AbstractYangTest {
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
         final UnrecognizedStatement extensionUse = unknownSchemaNodes.iterator().next();
-        assertEquals("opendaylight", extensionUse.statementDefinition().getStatementName().getLocalName());
+        assertEquals("opendaylight", extensionUse.statementDefinition().statementName().getLocalName());
     }
 
     @Test

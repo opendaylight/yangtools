@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -236,7 +235,7 @@ public enum YangStmtMapping implements StatementDefinition {
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredType;
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveType;
     private final @NonNull QName name;
-    private final @Nullable QName argument;
+    private final @Nullable QName argumentName;
     private final boolean yinElement;
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
@@ -244,7 +243,7 @@ public enum YangStmtMapping implements StatementDefinition {
         declaredType = requireNonNull(declared);
         effectiveType = requireNonNull(effective);
         name = yinQName(nameStr);
-        argument = null;
+        argumentName = null;
         yinElement = false;
     }
 
@@ -259,7 +258,7 @@ public enum YangStmtMapping implements StatementDefinition {
         declaredType = requireNonNull(declared);
         effectiveType = requireNonNull(effective);
         name = yinQName(nameStr);
-        argument = yinQName(argumentStr);
+        argumentName = yinQName(argumentStr);
         this.yinElement = yinElement;
     }
 
@@ -269,13 +268,13 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     @Override
-    public QName getStatementName() {
+    public QName statementName() {
         return name;
     }
 
     @Override
-    public Optional<ArgumentDefinition> getArgumentDefinition() {
-        return ArgumentDefinition.ofNullable(argument, yinElement);
+    public ArgumentDefinition argumentDefinition() {
+        return argumentName == null ? null : ArgumentDefinition.of(argumentName, yinElement);
     }
 
     @Override
