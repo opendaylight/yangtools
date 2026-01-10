@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -53,12 +51,11 @@ final class UnrecognizedStatementSupport
          * statements.
          */
         // FIXME: remove this bit?
-        final QName statementName = QName.create(statementName(), childDef.getStatementName().getLocalName());
+        final QName statementName = QName.create(statementName(), childDef.statementName().getLocalName());
 
         final StatementDefinition def;
-        final Optional<ArgumentDefinition> optArgDef = childDef.getArgumentDefinition();
-        if (optArgDef.isPresent()) {
-            final ArgumentDefinition argDef = optArgDef.orElseThrow();
+        final var argDef = childDef.argumentDefinition();
+        if (argDef != null) {
             def = new ModelDefinedStatementDefinition(statementName, argDef.argumentName(), argDef.isYinElement());
         } else {
             def = new ModelDefinedStatementDefinition(statementName);

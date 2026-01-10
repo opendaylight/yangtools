@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.rfc8040.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
@@ -40,13 +40,13 @@ public enum YangDataStatements implements StatementDefinition {
     }
 
     @Override
-    public Optional<ArgumentDefinition> getArgumentDefinition() {
-        return Optional.of(argumentDef);
+    public QName statementName() {
+        return statementName;
     }
 
     @Override
-    public QName getStatementName() {
-        return statementName;
+    public @NonNull ArgumentDefinition argumentDefinition() {
+        return argumentDef;
     }
 
     @Override
