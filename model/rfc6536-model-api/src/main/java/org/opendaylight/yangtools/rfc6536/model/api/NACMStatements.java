@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.rfc6536.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -39,12 +39,12 @@ public enum NACMStatements implements StatementDefinition {
     }
 
     @Override
-    public Optional<ArgumentDefinition> getArgumentDefinition() {
-        return Optional.empty();
+    public @Nullable ArgumentDefinition argumentDefinition() {
+        return null;
     }
 
     @Override
-    public QName getStatementName() {
+    public QName statementName() {
         return statementName;
     }
 
