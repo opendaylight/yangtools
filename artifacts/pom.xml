@@ -19,7 +19,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-artifacts</artifactId>
-    <version>14.0.23-SNAPSHOT</version>
+    <version>15.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <dependencyManagement>
@@ -27,389 +27,389 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-util</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>concepts</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-common</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-spi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-impl</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-transform</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-tree-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-tree-spi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-tree-ri</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-codec-binfmt</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-codec-gson</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-codec-xml</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-export</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-spi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-ri</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-util</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-ir</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-spi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-reactor</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-impl</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-rfc7950</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-repo-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-repo-spi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-repo-fs</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-test-util</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>plugin-generator-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odlext-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odlext-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>openconfig-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>openconfig-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc6241-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc6241-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc6536-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc6536-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc6643-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc6643-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc7952-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc7952-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8040-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8040-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8528-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8528-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8639-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8639-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8791-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8819-model-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8819-parser-support</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>regex</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-impl</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>util</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-common-netty</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <!-- YANG Java Binding -->
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-codegen</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-data-codec-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-data-codec-dynamic</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-data-codec-osgi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-data-codec-spi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-generator</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-loader</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-model</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-reflect</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-osgi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-spi</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-spec</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-test-model</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>codegen-extensions</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <!-- Test utilities, not packaged in features -->
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>mockito-configuration</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>testutils</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
 
@@ -419,119 +419,119 @@
                 <artifactId>features-yangtools</artifactId>
                 <classifier>features</classifier>
                 <type>xml</type>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>features-yangtools-experimental</artifactId>
                 <classifier>features</classifier>
                 <type>xml</type>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
 
             <!-- Stable features -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>odl-bytebuddy</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <classifier>features</classifier>
                 <type>xml</type>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-binding-codec</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-binding-runtime</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-binding-spec</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-util</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-common</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-parser-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-parser</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-data-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-data</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-codec</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-export</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-netty</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-xpath-api</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-xpath</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
@@ -542,7 +542,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-docs</artifactId>
-                <version>14.0.23-SNAPSHOT</version>
+                <version>15.0.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
