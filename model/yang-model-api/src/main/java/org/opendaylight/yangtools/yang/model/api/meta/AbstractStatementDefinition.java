@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,13 +39,13 @@ public abstract class AbstractStatementDefinition implements StatementDefinition
     }
 
     @Override
-    public final QName getStatementName() {
+    public final QName statementName() {
         return statementName;
     }
 
     @Override
-    public final Optional<ArgumentDefinition> getArgumentDefinition() {
-        return ArgumentDefinition.ofNullable(argumentName, yinElement);
+    public final @Nullable ArgumentDefinition argumentDefinition() {
+        return argumentName == null ? null : ArgumentDefinition.of(argumentName, yinElement);
     }
 
     @Override

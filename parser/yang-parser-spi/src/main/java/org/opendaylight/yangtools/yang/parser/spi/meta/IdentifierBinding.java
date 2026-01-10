@@ -218,7 +218,7 @@ public final class IdentifierBinding {
             final String rawArgument, final ArgumentSyntaxException cause) {
         final var sb = new StringBuilder()
             .append('\'').append(rawArgument).append("' is not a valid ").append(qualifier).append(' ')
-            .append(stmt.publicDefinition().getArgumentDefinition().orElseThrow().argumentName().getLocalName());
+            .append(stmt.publicDefinition().getArgumentDefinition().argumentName().getLocalName());
         final var position = cause.getPosition();
         if (position != 0) {
             sb.append(" on position ").append(position);

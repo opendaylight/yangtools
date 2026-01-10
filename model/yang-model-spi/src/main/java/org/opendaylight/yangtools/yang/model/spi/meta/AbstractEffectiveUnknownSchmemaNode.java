@@ -43,8 +43,8 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
         this.argument = requireNonNull(argument);
         this.declared = requireNonNull(declared);
         this.substatements = requireNonNull(substatements);
-        this.augmenting = history.isAugmenting();
-        this.addedByUses = history.isAddedByUses();
+        augmenting = history.isAugmenting();
+        addedByUses = history.isAddedByUses();
     }
 
     @Override
@@ -64,7 +64,7 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
 
     @Override
     public final QName getNodeType() {
-        return statementDefinition().getStatementName();
+        return statementDefinition().statementName();
     }
 
     @Override

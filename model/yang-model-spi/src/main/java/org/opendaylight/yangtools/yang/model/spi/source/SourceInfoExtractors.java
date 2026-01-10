@@ -32,8 +32,8 @@ public final class SourceInfoExtractors {
     static final String SUBMODULE = "submodule";
 
     static {
-        verify(MODULE.equals(YangStmtMapping.MODULE.getStatementName().getLocalName()));
-        verify(SUBMODULE.equals(YangStmtMapping.SUBMODULE.getStatementName().getLocalName()));
+        verify(MODULE.equals(YangStmtMapping.MODULE.statementName().getLocalName()));
+        verify(SUBMODULE.equals(YangStmtMapping.SUBMODULE.statementName().getLocalName()));
     }
 
     private SourceInfoExtractors() {

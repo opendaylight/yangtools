@@ -163,11 +163,9 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
 
     private static final Logger LOG = LoggerFactory.getLogger(YinDomSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-    private static final QName REVISION_STMT = REVISION.getStatementName();
-    private static final String MODULE_ARG = MODULE.getArgumentDefinition().orElseThrow()
-        .argumentName().getLocalName();
-    private static final String REVISION_ARG = REVISION.getArgumentDefinition().orElseThrow()
-        .argumentName().getLocalName();
+    private static final QName REVISION_STMT = REVISION.statementName();
+    private static final String MODULE_ARG = MODULE.getArgumentDefinition().argumentName().getLocalName();
+    private static final String REVISION_ARG = REVISION.getArgumentDefinition().argumentName().getLocalName();
 
     private final @NonNull SourceRefProvider refProvider;
 
@@ -215,8 +213,8 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
         final QName qname = QName.create(rootNs, root.getLocalName());
         checkArgument(RFC6020_YIN_MODULE.equals(qname.getModule()),
             "Root node namepsace %s does not match %s", rootNs, YangConstants.RFC6020_YIN_NAMESPACE);
-        checkArgument(MODULE.getStatementName().equals(qname)
-            || SUBMODULE.getStatementName().equals(qname), "Root element %s is not a module nor a submodule", qname);
+        checkArgument(MODULE.statementName().equals(qname)
+            || SUBMODULE.statementName().equals(qname), "Root element %s is not a module nor a submodule", qname);
 
         checkArgument(root instanceof Element, "Root node %s is not an element", root);
         final Element element = (Element)root;
