@@ -70,7 +70,7 @@ class StatementContextVisitor {
             case Qualified qualified -> getValidStatementDefinition(qualified, ref);
             case Unqualified unqualified -> {
                 final var def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, unqualified.identifier()));
-                yield def != null ? def.getStatementName() : null;
+                yield def != null ? def.statementName() : null;
             }
         };
     }
@@ -89,7 +89,7 @@ class StatementContextVisitor {
         }
 
         final var foundStmtDef = resolveStatement(module, keyword.identifier());
-        return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
+        return foundStmtDef != null ? foundStmtDef.statementName() : null;
     }
 
     StatementDefinition resolveStatement(final @NonNull QNameModule module, final @NonNull String localName) {

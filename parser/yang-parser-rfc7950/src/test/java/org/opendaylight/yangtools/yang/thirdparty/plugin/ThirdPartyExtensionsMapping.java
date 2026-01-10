@@ -60,13 +60,13 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
     }
 
     @Override
-    public QName getStatementName() {
+    public QName statementName() {
         return name;
     }
 
     @Override
-    public @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
-        return ArgumentDefinition.ofNullable(argument, yinElement);
+    public ArgumentDefinition argumentDefinition() {
+        return ArgumentDefinition.of(argument, yinElement);
     }
 
     @Override
