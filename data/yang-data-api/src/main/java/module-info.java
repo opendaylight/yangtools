@@ -8,6 +8,7 @@
 module org.opendaylight.yangtools.yang.data.api {
     exports org.opendaylight.yangtools.yang.data.api;
     exports org.opendaylight.yangtools.yang.data.api.codec;
+    exports org.opendaylight.yangtools.yang.data.api.pipeline;
     exports org.opendaylight.yangtools.yang.data.api.schema;
     exports org.opendaylight.yangtools.yang.data.api.schema.builder;
     exports org.opendaylight.yangtools.yang.data.api.schema.stream;

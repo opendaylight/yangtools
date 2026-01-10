@@ -7,6 +7,7 @@
  */
 module org.opendaylight.yangtools.yang.data.spi {
     exports org.opendaylight.yangtools.yang.data.spi.node;
+    exports org.opendaylight.yangtools.yang.data.spi.pipeline;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.data.api;
@@ -19,4 +20,5 @@ module org.opendaylight.yangtools.yang.data.spi {
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
     requires static org.osgi.annotation.bundle;
+    requires org.opendaylight.yangtools.yang.model.api;
 }
