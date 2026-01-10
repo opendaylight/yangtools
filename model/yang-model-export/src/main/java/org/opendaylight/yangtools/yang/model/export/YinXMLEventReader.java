@@ -54,8 +54,8 @@ final class YinXMLEventReader implements XMLEventReader {
         events.add(eventFactory.createStartDocument(StandardCharsets.UTF_8.name()));
 
         final StatementDefinition def = root.statementDefinition();
-        final QName name = def.getStatementName();
-        final ArgumentDefinition arg = def.getArgumentDefinition().orElseThrow();
+        final QName name = def.statementName();
+        final ArgumentDefinition arg = def.getArgumentDefinition();
 
         events.add(eventFactory.createStartElement(XMLConstants.DEFAULT_NS_PREFIX, name.getNamespace().toString(),
             name.getLocalName(), singletonIterator(attribute(arg.argumentName(), root.rawArgument())),
@@ -187,10 +187,9 @@ final class YinXMLEventReader implements XMLEventReader {
 
     private void addStatement(final DeclaredStatement<?> statement) {
         final var def = statement.statementDefinition();
-        final var name = def.getStatementName();
-        final var optArgDef = def.getArgumentDefinition();
-        if (optArgDef.isPresent()) {
-            final var argDef = optArgDef.orElseThrow();
+        final var name = def.statementName();
+        final var argDef = def.argumentDefinition();
+        if (argDef != null) {
             final var argName = argDef.argumentName();
             if (argDef.isYinElement()) {
                 events.addAll(Arrays.asList(startElement(name), startElement(argName),

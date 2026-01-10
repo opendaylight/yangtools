@@ -277,7 +277,7 @@ class YangParserWithContextTest {
         assertEquals(1, unknownNodes.size());
 
         final var un = unknownNodes.iterator().next();
-        final QName unType = un.statementDefinition().getStatementName();
+        final QName unType = un.statementDefinition().statementName();
         assertEquals(XMLNamespace.of("urn:custom.types.demo"), unType.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), unType.getRevision());
         assertEquals("mountpoint", unType.getLocalName());

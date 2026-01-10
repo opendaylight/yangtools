@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc8639.model.api;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public enum SubscribedNotificationsStatements implements StatementDefinition {
     SUBSCRIPTION_STATE_NOTIFICATION("subscription-state-notification") {
         @Override
-        public Optional<ArgumentDefinition> getArgumentDefinition() {
-            return Optional.empty();
+        public @Nullable ArgumentDefinition argumentDefinition() {
+            return null;
         }
 
         @Override
@@ -44,7 +44,7 @@ public enum SubscribedNotificationsStatements implements StatementDefinition {
     }
 
     @Override
-    public final QName getStatementName() {
+    public final QName statementName() {
         return statementName;
     }
 }

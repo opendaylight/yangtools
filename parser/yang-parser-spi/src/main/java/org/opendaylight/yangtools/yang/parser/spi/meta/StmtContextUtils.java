@@ -447,13 +447,13 @@ public final class StmtContextUtils {
             SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
                     || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx,
                     "%s statement is not allowed in %s leaf statement which is specified as a list key.",
-                    statementDef.getStatementName(), leafStmtCtx.argument());
+                    statementDef.statementName(), leafStmtCtx.argument());
         });
     }
 
     public static @NonNull QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
         if (Strings.isNullOrEmpty(value)) {
-            return ctx.publicDefinition().getStatementName();
+            return ctx.publicDefinition().statementName();
         }
 
         QNameModule qnameModule;

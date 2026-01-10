@@ -95,7 +95,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         }
 
         final String value = attr.getValue();
-        writer.startStatement(childId, def.getStatementName(), value.isEmpty() ? null : value, ref);
+        writer.startStatement(childId, def.statementName(), value.isEmpty() ? null : value, ref);
         writer.storeStatement(0, true);
         writer.endStatement(ref);
         return true;
@@ -134,9 +134,8 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
 
             final var def = resumed.getDefinition();
             ref = resumed.getSourceReference();
-            final var optArgDef = def.getArgumentDefinition();
-            if (optArgDef.isPresent()) {
-                final var argDef = optArgDef.orElseThrow();
+            final var argDef = def.argumentDefinition();
+            if (argDef != null) {
                 argName = argDef.argumentName();
                 allAttrs = argDef.isYinElement();
                 allElements = !allAttrs;
@@ -154,9 +153,8 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             }
 
             final String argValue;
-            final var optArgDef = def.getArgumentDefinition();
-            if (optArgDef.isPresent()) {
-                final var argDef = optArgDef.orElseThrow();
+            final var argDef = def.argumentDefinition();
+            if (argDef != null) {
                 argName = argDef.argumentName();
                 allAttrs = argDef.isYinElement();
                 allElements = !allAttrs;
@@ -164,7 +162,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 argValue = getArgValue(element, argName, allAttrs);
                 if (argValue == null) {
                     throw new SourceException(ref, "Statement %s is missing mandatory argument %s",
-                        def.getStatementName(), argName);
+                        def.statementName(), argName);
                 }
             } else {
                 argName = null;
@@ -173,7 +171,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
                 allElements = false;
             }
 
-            writer.startStatement(childId, def.getStatementName(), argValue, ref);
+            writer.startStatement(childId, def.statementName(), argValue, ref);
         }
 
         // Child counter

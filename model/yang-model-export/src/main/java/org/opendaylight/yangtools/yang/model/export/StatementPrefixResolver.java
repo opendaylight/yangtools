@@ -133,7 +133,7 @@ final class StatementPrefixResolver {
     }
 
     Optional<String> findPrefix(final DeclaredStatement<?> stmt) {
-        final var module = stmt.statementDefinition().getStatementName().getModule();
+        final var module = stmt.statementDefinition().statementName().getModule();
         if (YangConstants.RFC6020_YIN_MODULE.equals(module)) {
             return Optional.empty();
         }
