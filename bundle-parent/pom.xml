@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>bundle-parent</artifactId>
-    <version>14.0.22</version>
+    <version>14.0.23-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>Bundle parent (felix-based)</description>
@@ -33,7 +33,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>bnd-parent</artifactId>
-                <version>14.0.22</version>
+                <version>14.0.23-SNAPSHOT</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
