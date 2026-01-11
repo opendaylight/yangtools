@@ -22,6 +22,30 @@
       },
       "revId": "902a36579921aea16e88a4d99f5c48217feb87b4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "627af1ed_042eb21d",
+        "filename": "parser/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/SubstatementValidator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-11T15:45:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b19361e3_f9a78c40",
+      "range": {
+        "startLine": 110,
+        "startChar": 80,
+        "endLine": 110,
+        "endChar": 88
+      },
+      "revId": "902a36579921aea16e88a4d99f5c48217feb87b4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
