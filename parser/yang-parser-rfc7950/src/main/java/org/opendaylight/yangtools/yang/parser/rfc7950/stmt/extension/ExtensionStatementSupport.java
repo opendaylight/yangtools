@@ -52,7 +52,7 @@ public final class ExtensionStatementSupport
 
     @Override
     public QName parseArgumentValue(final StmtContext<?,?,?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
+        return ctx.identifierBinding().parseIdentifierArg(ctx, value);
     }
 
     @Override

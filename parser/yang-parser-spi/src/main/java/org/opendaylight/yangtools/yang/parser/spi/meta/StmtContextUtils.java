@@ -491,8 +491,9 @@ public final class StmtContextUtils {
      * @return An interned QName
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG identifier
+     * @deprecated Use {@link StmtContext#identifierBinding()} instead
      */
-    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseIdentifierArg()
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull QName parseIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Identifier may not be an empty string");
         return internedQName(ctx, str);
