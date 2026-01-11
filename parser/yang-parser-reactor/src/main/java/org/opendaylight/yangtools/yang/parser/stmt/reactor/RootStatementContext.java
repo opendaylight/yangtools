@@ -12,19 +12,23 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -32,8 +36,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
@@ -136,9 +142,59 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     public IdentifierBinding identifierBinding() {
         var local = identifierBinding;
         if (local == null) {
-            identifierBinding = local = new IdentifierBinding(new StmtContextNamespaceBinding(this));
+            identifierBinding = local = new IdentifierBinding(newNamespaceBinding());
         }
         return local;
+    }
+
+    @NonNullByDefault
+    @VisibleForTesting
+    ImmutableNamespaceBinding newNamespaceBinding() {
+        final var prefixToModule = new HashMap<Unqualified, QNameModule>();
+
+        // process all import statements
+        final var importedModules = namespace(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        if (importedModules != null) {
+            for (var entry : importedModules.entrySet()) {
+                final var module = namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, entry.getValue());
+                if (module == null) {
+                    throw new InferenceException(this, "Missing IMPORT_PREFIX_TO_MODULECTX linkage of " + entry);
+                }
+
+                prefixToModule.put(Unqualified.of(entry.getKey()), module);
+            }
+        }
+
+        // submodules also define a prefix via 'belongs-to', which must not conflict with import prefixes
+        if (producesDeclared(SubmoduleStatement.class)) {
+            final var belongsToName = namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME);
+            if (belongsToName == null) {
+                throw new InferenceException(this, "Missing BELONGSTO_PREFIX_TO_MODULE_NAME linkage");
+            }
+            if (belongsToName.size() != 1) {
+                throw new InferenceException(this,
+                    "Unexpected BELONGSTO_PREFIX_TO_MODULE_NAME linkage " + belongsToName);
+            }
+
+            final var entry = belongsToName.entrySet().iterator().next();
+            final var belongsTo = this.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME, entry.getValue());
+            if (belongsTo == null) {
+                throw new InferenceException(this, "Missing MODULE_NAME_TO_QNAME linkage of " + entry);
+            }
+
+            final var prev = prefixToModule.putIfAbsent(Unqualified.of(entry.getKey()), belongsTo);
+            if (prev != null) {
+                final var sb = new StringBuilder("belongs-to prefix ").append(entry.getValue().getLocalName())
+                    .append(" overlaps with import of ").append(prev.namespace());
+                final var revision = prev.revision();
+                if (revision != null) {
+                    sb.append('@').append(revision);
+                }
+                throw new InferenceException(this, sb.toString());
+            }
+        }
+
+        return new ImmutableNamespaceBinding(moduleName(), Map.copyOf(prefixToModule));
     }
 
     @NonNull SourceSpecificContext getSourceContext() {
