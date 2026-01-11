@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.meta;
+package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @ExtendWith(MockitoExtension.class)
 class StmtContextNamespaceBindingTest {
@@ -32,7 +33,7 @@ class StmtContextNamespaceBindingTest {
     private static final @NonNull Unqualified FOO = Unqualified.of("foo");
 
     @Mock
-    private RootStmtContext<?, ?, ?> context;
+    private RootStatementContext<?, ?, ?> context;
     @Mock
     private StmtContext<?, ?, ?> importedContext;
 
