@@ -136,7 +136,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     public IdentifierBinding identifierBinding() {
         var local = identifierBinding;
         if (local == null) {
-            identifierBinding = local = new IdentifierBinding(new StmtContextNamespaceBinding(this));
+            identifierBinding = local = new IdentifierBinding(ReactorNamespaceBinding.of(this));
         }
         return local;
     }
