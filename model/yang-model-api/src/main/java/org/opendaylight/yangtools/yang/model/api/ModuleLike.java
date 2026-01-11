@@ -24,10 +24,7 @@ public interface ModuleLike
     /**
      * {@return the {@code SourceIdentifier} of the file associated with this module or submodule}
      */
-    // FIXME: 15.0.0: not default
-    default @NonNull SourceIdentifier getSourceIdentifier() {
-        return new SourceIdentifier(getName(), getQNameModule().revision());
-    }
+    @NonNull SourceIdentifier getSourceIdentifier();
 
     /**
      * Returns the name of the module which is specified as argument of YANG {@code module} statement.
