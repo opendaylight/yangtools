@@ -19,8 +19,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.parser.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathLexer;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser;
@@ -58,14 +56,13 @@ final class PathExpressionParser {
             LeafRefPathParser::path_arg, ctx.sourceReference(), pathArg);
 
         final var childPath = path.getChild(0);
-        final var steps = switch (childPath) {
-            case Path_strContext str -> new LocationPathSteps(parsePathStr(ctx, pathArg, str));
-            case Deref_exprContext deref -> new DerefSteps(parseRelative(ctx, pathArg,
+        return switch (childPath) {
+            case Path_strContext str -> new PathExpression.LocationPath(pathArg, parsePathStr(ctx, pathArg, str));
+            case Deref_exprContext deref -> new PathExpression.Deref(pathArg, parseRelative(ctx, pathArg,
                 getChild(deref, 0, Deref_function_invocationContext.class).getChild(Relative_pathContext.class, 0)),
                 parseRelative(ctx, pathArg, getChild(deref, deref.getChildCount() - 1, Relative_pathContext.class)));
             default -> throw new IllegalStateException("Unsupported child " + childPath);
         };
-        return new PathExpression(pathArg, steps);
     }
 
     private static YangLocationPath parsePathStr(final StmtContext<?, ?, ?> ctx, final String pathArg,

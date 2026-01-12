@@ -19,8 +19,7 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
@@ -30,7 +29,7 @@ class YT1060Test {
     private static final QName LEAF1 = QName.create(CONT, "leaf1");
 
     private EffectiveModelContext context;
-    private PathExpression path;
+    private LocationPath path;
 
     @BeforeEach
     void before() {
@@ -81,11 +80,11 @@ class YT1060Test {
         final var module = context.findModule(CONT.getModule()).orElseThrow();
         final var cont = assertInstanceOf(ContainerSchemaNode.class, module.getDataChildByName(CONT));
         final var leaf1 = assertInstanceOf(LeafSchemaNode.class, cont.getDataChildByName(LEAF1));
-        path = assertInstanceOf(LeafrefTypeDefinition.class, leaf1.getType()).getPathStatement();
+        path = assertInstanceOf(LocationPath.class,
+            assertInstanceOf(LeafrefTypeDefinition.class, leaf1.getType()).getPathStatement());
 
         // Quick checks before we get to the point
-        final var pathSteps = assertInstanceOf(LocationPathSteps.class, path.getSteps());
-        final var locationPath = pathSteps.getLocationPath();
+        final var locationPath = path.locationPath();
         assertTrue(locationPath.isAbsolute());
         final var steps = locationPath.getSteps();
         assertEquals(2, steps.size());

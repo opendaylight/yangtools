@@ -16,19 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 
-@ExtendWith(MockitoExtension.class)
 class LeafrefTest {
-    @Mock
-    private PathExpression expression;
-    @Mock
-    private PathExpression expression2;
+    private final LocationPath expression = new LocationPath("/", YangLocationPath.root());
+    private final LocationPath expression2 = new LocationPath(".", YangLocationPath.self());
 
     @Test
     void testMethodsOfLeafrefTest() {

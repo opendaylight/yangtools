@@ -17,8 +17,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
@@ -66,9 +64,9 @@ final class LeafRefPathParserImpl {
     }
 
     LeafRefPath parseLeafRefPath(final PathExpression path) {
-        return switch (path.getSteps()) {
-            case LocationPathSteps location -> parseLocationPath(location.getLocationPath());
-            case DerefSteps deref ->
+        return switch (path) {
+            case PathExpression.LocationPath location -> parseLocationPath(location.locationPath());
+            case PathExpression.Deref deref ->
                 throw new UnsupportedOperationException("deref() leafrefs are not implemented yet");
         };
     }

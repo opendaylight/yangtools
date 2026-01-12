@@ -13,13 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -29,20 +25,15 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
-@ExtendWith(MockitoExtension.class)
 class SchemaInferenceStackTest {
     static final EffectiveModelContext CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
 
     private static Module myModule;
-
-    @Mock
-    private PathExpression expr;
 
     @BeforeAll
     static void beforeAll() {
@@ -60,23 +51,22 @@ class SchemaInferenceStackTest {
         final var testNode = assertInstanceOf(ContainerSchemaNode.class,
             importedModule.getDataChildByName(myImportedContainer)).getDataChildByName(myImportedLeaf);
 
-        doReturn(new LocationPathSteps(YangLocationPath.absolute(
-                YangXPathAxis.CHILD.asStep(myImportedContainer), YangXPathAxis.CHILD.asStep(myImportedLeaf))))
-                .when(expr).getSteps();
-
-        assertEquals(testNode, SchemaInferenceStack.of(CONTEXT).resolvePathExpression(expr));
+        assertEquals(testNode, SchemaInferenceStack.of(CONTEXT)
+            .resolvePathExpression(new PathExpression.LocationPath("foo", YangLocationPath.absolute(
+                YangXPathAxis.CHILD.asStep(myImportedContainer),
+                YangXPathAxis.CHILD.asStep(myImportedLeaf)))));
     }
 
     @Test
     void findDataSchemaNodeTest2() {
         final var myLeafInGrouping2 = QName.create(myModule.getQNameModule(), "my-leaf-in-gouping2");
-        doReturn(new LocationPathSteps(YangLocationPath.relative(YangXPathAxis.CHILD.asStep(myLeafInGrouping2))))
-                .when(expr).getSteps();
 
         final var grouping = getGroupingByName(myModule, "my-grouping");
         final var stack = SchemaInferenceStack.of(CONTEXT);
         assertSame(grouping, stack.enterGrouping(grouping.getQName()));
-        assertEquals(grouping.getDataChildByName(myLeafInGrouping2), stack.resolvePathExpression(expr));
+        assertEquals(grouping.getDataChildByName(myLeafInGrouping2),
+            stack.resolvePathExpression(new PathExpression.LocationPath("bar", YangLocationPath.relative(
+                YangXPathAxis.CHILD.asStep(myLeafInGrouping2)))));
     }
 
     @Test
