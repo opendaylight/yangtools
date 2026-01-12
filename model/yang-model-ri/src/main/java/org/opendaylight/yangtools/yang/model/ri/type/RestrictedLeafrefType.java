@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
@@ -24,7 +24,7 @@ final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefi
     }
 
     @Override
-    public PathExpression getPathStatement() {
+    public PathArgument getPathStatement() {
         return getBaseType().getPathStatement();
     }
 

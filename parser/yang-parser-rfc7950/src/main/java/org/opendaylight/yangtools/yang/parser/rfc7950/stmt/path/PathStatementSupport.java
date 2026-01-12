@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -26,11 +26,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class PathStatementSupport
-        extends AbstractStatementSupport<PathExpression, PathStatement, PathEffectiveStatement> {
+        extends AbstractStatementSupport<PathArgument, PathStatement, PathEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.PATH).build();
 
-    private final PathExpressionParser parser = new PathExpressionParser();
+    private final PathArgumentParser parser = new PathArgumentParser();
 
     public PathStatementSupport(final YangParserConfiguration config) {
         // TODO: can 'path' really be copied?
@@ -38,12 +38,12 @@ public final class PathStatementSupport
     }
 
     @Override
-    public PathExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return parser.parseExpression(ctx, value);
+    public PathArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return parser.parseArgument(ctx, value);
     }
 
     @Override
-    protected PathStatement createDeclared(final BoundStmtCtx<PathExpression> ctx,
+    protected PathStatement createDeclared(final BoundStmtCtx<PathArgument> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createPath(ctx.getArgument(), substatements);
     }
@@ -54,7 +54,7 @@ public final class PathStatementSupport
     }
 
     @Override
-    protected PathEffectiveStatement createEffective(final Current<PathExpression, PathStatement> stmt,
+    protected PathEffectiveStatement createEffective(final Current<PathArgument, PathStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createPath(stmt.declared(), substatements);
     }

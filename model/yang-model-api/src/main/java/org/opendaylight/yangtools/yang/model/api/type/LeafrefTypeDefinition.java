@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 
 public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefinition<LeafrefTypeDefinition> {
     /**
-     * Return the {@link PathExpression} of this {@code leafref}.
+     * Return the {@link PathArgument} of this {@code leafref}.
      *
      * @return A path expression
      */
-    @NonNull PathExpression getPathStatement();
+    @NonNull PathArgument getPathStatement();
 
     /**
      * {@inheritDoc}

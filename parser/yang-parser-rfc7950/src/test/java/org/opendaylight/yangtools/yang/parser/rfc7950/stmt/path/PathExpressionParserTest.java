@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -46,7 +46,7 @@ class PathExpressionParserTest {
     @Mock
     public StatementSourceReference ref;
 
-    private final PathExpressionParser parser = new PathExpressionParser();
+    private final PathArgumentParser parser = new PathArgumentParser();
 
     @BeforeEach
     void before() {
@@ -56,8 +56,8 @@ class PathExpressionParserTest {
     @Test
     void testDerefPath() {
         // deref() is not valid as per RFC7950, but we tolarate it.
-        final var deref = assertInstanceOf(PathExpression.Deref.class,
-            parser.parseExpression(ctx, "deref(../id)/../type"));
+        final var deref = assertInstanceOf(PathArgument.DerefExpr.class,
+            parser.parseArgument(ctx, "deref(../id)/../type"));
 
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
             YangXPathAxis.CHILD.asStep(Unqualified.of("type"))), deref.relativePath());
@@ -67,7 +67,7 @@ class PathExpressionParserTest {
 
     @Test
     void testInvalidLeftParent() {
-        final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo("));
+        final var ex = assertThrows(SourceException.class, () -> parser.parseArgument(ctx, "foo("));
         assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), allOf(
             startsWith("extraneous input '(' expecting "),
@@ -76,7 +76,7 @@ class PathExpressionParserTest {
 
     @Test
     void testInvalidRightParent() {
-        final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo)"));
+        final var ex = assertThrows(SourceException.class, () -> parser.parseArgument(ctx, "foo)"));
         assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), allOf(
             startsWith("extraneous input ')' expecting "),
@@ -85,15 +85,15 @@ class PathExpressionParserTest {
 
     @Test
     void testInvalidIdentifier() {
-        final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo%"));
+        final var ex = assertThrows(SourceException.class, () -> parser.parseArgument(ctx, "foo%"));
         assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), startsWith("token recognition error at: '%' at 1:3 [at "));
     }
 
     @Test
     void testCurrentPredicateParsing() {
-        final var path = assertInstanceOf(PathExpression.LocationPath.class,
-            parser.parseExpression(ctx, "/device_types/device_type[type = current()/../type_text]/desc"))
+        final var path = assertInstanceOf(PathArgument.LocationPath.class,
+            parser.parseArgument(ctx, "/device_types/device_type[type = current()/../type_text]/desc"))
             .locationPath();
         assertTrue(path.isAbsolute());
 

@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -542,7 +542,7 @@ public final class DeclaredStatements {
             : new RegularOrderedByStatement(argument, substatements);
     }
 
-    public static PathStatement createPath(final PathExpression argument,
+    public static PathStatement createPath(final PathArgument argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyPathStatement(argument)
             : new RegularPathStatement(argument, substatements);

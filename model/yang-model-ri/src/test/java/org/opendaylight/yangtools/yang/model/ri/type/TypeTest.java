@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -306,7 +306,7 @@ class TypeTest {
 
     @Test
     void leafrefTypeTest() {
-        final var expr = mock(PathExpression.class);
+        final var expr = mock(PathArgument.class);
 
         final var leafrefTypeBuilder1 = BaseTypes.leafrefTypeBuilder(Q_NAME);
         final var leafrefTypeBuilder2 = BaseTypes.leafrefTypeBuilder(Q_NAME);

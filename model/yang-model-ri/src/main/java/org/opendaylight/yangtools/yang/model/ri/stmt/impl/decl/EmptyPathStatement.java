@@ -10,24 +10,24 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
-public class EmptyPathStatement extends AbstractDeclaredStatement<PathExpression> implements PathStatement {
-    private final @NonNull PathExpression argument;
+public class EmptyPathStatement extends AbstractDeclaredStatement<PathArgument> implements PathStatement {
+    private final @NonNull PathArgument argument;
 
-    public EmptyPathStatement(final PathExpression argument) {
+    public EmptyPathStatement(final PathArgument argument) {
         this.argument = requireNonNull(argument);
     }
 
     @Override
-    public final PathExpression argument() {
+    public final PathArgument argument() {
         return argument;
     }
 
     @Override
     public final String rawArgument() {
-        return argument.getOriginalString();
+        return argument.originalString();
     }
 }

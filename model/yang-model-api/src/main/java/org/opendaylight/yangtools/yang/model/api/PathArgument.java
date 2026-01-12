@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
  * An expression as defined in <a href="https://www.rfc-editor.org/rfc/rfc7950#section-9.9.2">RFC7950 Section 9.9.2</a>,
  * i.e. the argument of a {@code path} statement.
  *
- * <p>Semantically a {@link PathExpression} is similar to a {@link YangXPathExpression} with guarantees around what
+ * <p>Semantically a {@link PathArgument} is similar to a {@link YangXPathExpression} with guarantees around what
  * subexpressions it can contain:
  * <ul>
  *   <li>the root expression must be a {@link YangLocationPath}</li>
@@ -37,12 +37,12 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
  * </ul>
  */
 @NonNullByDefault
-public sealed interface PathExpression extends Immutable {
+public sealed interface PathArgument extends Immutable {
     /**
-     * Steps of a {@link PathExpression} which is a {@link YangLocationPath locationPath}, corresponding to RFC7950 base
+     * Steps of a {@link PathArgument} which is a {@link YangLocationPath locationPath}, corresponding to RFC7950 base
      * specification.
      */
-    record LocationPath(String originalString, YangLocationPath locationPath) implements PathExpression {
+    record LocationPath(String originalString, YangLocationPath locationPath) implements PathArgument {
         public LocationPath {
             requireNonNull(originalString);
             requireNonNull(locationPath);
@@ -59,8 +59,8 @@ public sealed interface PathExpression extends Immutable {
      * corresponding to <a href="https://www.rfc-editor.org/errata/eid5617">Errata 5617</a>. The corresponding construct
      * is a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}.
      */
-    record Deref(String originalString, Relative derefArgument, Relative relativePath) implements PathExpression {
-        public Deref {
+    record DerefExpr(String originalString, Relative derefArgument, Relative relativePath) implements PathArgument {
+        public DerefExpr {
             requireNonNull(originalString);
             requireNonNull(derefArgument);
             requireNonNull(relativePath);

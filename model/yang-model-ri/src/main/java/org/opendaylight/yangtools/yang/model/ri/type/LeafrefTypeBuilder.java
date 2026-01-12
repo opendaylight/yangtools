@@ -12,17 +12,17 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> {
-    private PathExpression pathStatement;
+    private PathArgument pathStatement;
 
     LeafrefTypeBuilder(final QName qname) {
         super(null, qname);
     }
 
-    public LeafrefTypeBuilder setPathStatement(final @NonNull PathExpression pathStatement) {
+    public LeafrefTypeBuilder setPathStatement(final @NonNull PathArgument pathStatement) {
         checkState(this.pathStatement == null, "Path statement already set to %s", this.pathStatement);
         this.pathStatement = requireNonNull(pathStatement);
         return this;

@@ -20,15 +20,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
 @ExtendWith(MockitoExtension.class)
 class LeafrefTest {
     @Mock
-    private PathExpression expression;
+    private PathArgument expression;
     @Mock
-    private PathExpression expression2;
+    private PathArgument expression2;
 
     @Test
     void testMethodsOfLeafrefTest() {

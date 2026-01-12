@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code path} statement.
  */
-public interface PathStatement extends DeclaredStatement<PathExpression> {
+public interface PathStatement extends DeclaredStatement<PathArgument> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.PATH;

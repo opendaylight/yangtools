@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefPathStatement extends AbstractRefStatement<PathExpression, PathStatement>
-        implements PathStatement {
+public final class RefPathStatement extends AbstractRefStatement<PathArgument, PathStatement> implements PathStatement {
     public RefPathStatement(final PathStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }

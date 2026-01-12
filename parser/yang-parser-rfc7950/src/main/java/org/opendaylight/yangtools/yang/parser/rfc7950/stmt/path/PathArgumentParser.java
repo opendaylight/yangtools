@@ -18,7 +18,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.parser.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathLexer;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser;
@@ -47,18 +47,18 @@ import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
-final class PathExpressionParser {
+final class PathArgumentParser {
     private static final YangFunctionCallExpr CURRENT_CALL =
         YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier());
 
-    PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
+    PathArgument parseArgument(final StmtContext<?, ?, ?> ctx, final String pathArg) {
         final var path = SourceExceptionParser.parseString(LeafRefPathLexer::new, LeafRefPathParser::new,
             LeafRefPathParser::path_arg, ctx.sourceReference(), pathArg);
 
         final var childPath = path.getChild(0);
         return switch (childPath) {
-            case Path_strContext str -> new PathExpression.LocationPath(pathArg, parsePathStr(ctx, pathArg, str));
-            case Deref_exprContext deref -> new PathExpression.Deref(pathArg, parseRelative(ctx, pathArg,
+            case Path_strContext str -> new PathArgument.LocationPath(pathArg, parsePathStr(ctx, pathArg, str));
+            case Deref_exprContext deref -> new PathArgument.DerefExpr(pathArg, parseRelative(ctx, pathArg,
                 getChild(deref, 0, Deref_function_invocationContext.class).getChild(Relative_pathContext.class, 0)),
                 parseRelative(ctx, pathArg, getChild(deref, deref.getChildCount() - 1, Relative_pathContext.class)));
             default -> throw new IllegalStateException("Unsupported child " + childPath);

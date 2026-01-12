@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyPathEffectiveStatement extends DefaultArgument<PathExpression, PathStatement>
+public final class EmptyPathEffectiveStatement extends DefaultArgument<PathArgument, PathStatement>
         implements PathEffectiveStatement {
     public EmptyPathEffectiveStatement(final PathStatement declared) {
         super(declared);
