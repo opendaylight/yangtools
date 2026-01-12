@@ -63,7 +63,7 @@ public final class ArgumentUtils {
         return Descendant.of(parseNodeIdentifiers(ctx, str));
     }
 
-    // FIXME: 15.0.0: deprecate with no direct replacement
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final var qnames = parseNodeIdentifiers(ctx, path);
         return PATH_ABS.matcher(path).matches() ? Absolute.of(qnames) : Descendant.of(qnames);
