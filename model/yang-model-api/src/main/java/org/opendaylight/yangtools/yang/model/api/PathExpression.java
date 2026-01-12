@@ -38,13 +38,18 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
  *   <li>no literals nor numbers are allowed</li>
  *   <li>all qualified node identifiers must me resolved</li>
  * </ul>
+ *
+ * @param originalString the path expression formatted string as is defined in model. For example:
+ *                       {@code /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf}
+ * @param steps the path of this expression, which can either be a {@link YangLocationPath} (compliant to RFC7950) or
+ *              a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}
  */
 @NonNullByDefault
-public interface PathExpression extends Immutable {
+public record PathExpression(String originalString, Steps steps) implements Immutable {
     /**
      * Abstract base class for expressing steps of a PathExpression.
      */
-    abstract sealed class Steps {
+    public abstract static sealed class Steps {
         Steps() {
             // Prevent external subclassing
         }
@@ -66,7 +71,7 @@ public interface PathExpression extends Immutable {
     /**
      * Steps of a PathExpression which is a LocationPath, corresponding to RFC7950 base specification.
      */
-    final class LocationPathSteps extends Steps {
+    public static final class LocationPathSteps extends Steps {
         private final YangLocationPath locationPath;
 
         public LocationPathSteps(final YangLocationPath locationPath) {
@@ -97,7 +102,7 @@ public interface PathExpression extends Immutable {
      * Steps of a PathExpression which is a combination of {@code deref()} function call and a relative path,
      * corresponding to Errata 5617.
      */
-    final class DerefSteps extends Steps {
+    public static final class DerefSteps extends Steps {
         private final Relative derefArgument;
         private final Relative relativePath;
 
@@ -131,30 +136,39 @@ public interface PathExpression extends Immutable {
         }
     }
 
+    public PathExpression {
+        requireNonNull(originalString);
+        requireNonNull(steps);
+    }
+
     /**
      * Returns the path expression formatted string as is defined in model. For example:
      * {@code /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf}
      *
-     * @return the path expression formatted string as is defined in model.
+     * @return the path expression formatted string as is defined in model
+     * @deprecated Use {@link #originalString()} instead
      */
-    String getOriginalString();
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    public String getOriginalString() {
+        return originalString;
+    }
 
     /**
      * Return the path of this expression, which can either be a {@link YangLocationPath} (compliant to RFC7950) or
      * a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}.
      *
      * @return The path's steps
-     * @throws UnsupportedOperationException if the implementation has not parsed the string. Implementations are
-     *         strongly encouraged to perform proper parsing.
      */
-    Steps getSteps();
+    public Steps getSteps() {
+        return steps;
+    }
 
     /**
      * Returns <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>.
      *
      * @return <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>
      */
-    default boolean isAbsolute() {
+    public boolean isAbsolute() {
         return getSteps() instanceof LocationPathSteps locationSteps && locationSteps.getLocationPath().isAbsolute();
     }
 }
