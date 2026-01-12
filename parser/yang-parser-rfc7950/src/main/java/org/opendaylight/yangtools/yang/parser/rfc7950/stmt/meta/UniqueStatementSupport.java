@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -143,15 +142,10 @@ public final class UniqueStatementSupport
 
     private static ImmutableSet<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {
+        final var binding = ctx.identifierBinding();
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
         return SEP_SPLITTER.splitToStream(CRLF_PATTERN.matcher(argumentValue).replaceAll("\n"))
-            .map(uniqueArgToken -> {
-                if (!(ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken) instanceof Descendant descendant)) {
-                    throw new SourceException(ctx, "Unique statement argument '%s' contains schema node identifier '%s'"
-                        + " which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
-                }
-                return descendant;
-            })
+            .map(uniqueArgToken -> binding.parseDescendantSchemaNodeid(ctx, uniqueArgToken))
             .collect(ImmutableSet.toImmutableSet());
     }
 
@@ -221,7 +215,7 @@ public final class UniqueStatementSupport
 
         @Override
         public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-            // Report failed descandants
+            // Report failed descendants
             final var inv = ImmutableBiMap.copyOf(prereqs);
             throw new SourceException(unique,
                 "Following components of unique statement argument refer to non-existent nodes: %s",
