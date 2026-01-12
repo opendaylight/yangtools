@@ -111,10 +111,4 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
     public void onStatementAdded(final Mutable<QName, D, E> stmt) {
         stmt.coerceParentContext().addToNs(ParserNamespaces.schemaTree(), stmt.getArgument(), stmt);
     }
-
-    // Non-final because {@code input} and {@code output} are doing their own thing.
-    @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ctx.identifierBinding().parseIdentifierArg(ctx, value);
-    }
 }

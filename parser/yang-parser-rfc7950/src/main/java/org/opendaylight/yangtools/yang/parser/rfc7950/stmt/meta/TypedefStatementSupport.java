@@ -59,11 +59,6 @@ public final class TypedefStatementSupport extends
     }
 
     @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ctx.identifierBinding().parseIdentifierArg(ctx, value);
-    }
-
-    @Override
     public void onFullDefinitionDeclared(final Mutable<QName, TypedefStatement, TypedefEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
