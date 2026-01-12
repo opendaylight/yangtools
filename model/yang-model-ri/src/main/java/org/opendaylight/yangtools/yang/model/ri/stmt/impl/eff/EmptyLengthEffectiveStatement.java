@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
-public final class EmptyLengthEffectiveStatement extends DefaultArgument<List<ValueRange>, LengthStatement>
-        implements LengthEffectiveStatement, ConstraintMetaDefinitionMixin<List<ValueRange>, LengthStatement> {
+public final class EmptyLengthEffectiveStatement extends DefaultArgument<ValueRanges, LengthStatement>
+        implements LengthEffectiveStatement, ConstraintMetaDefinitionMixin<ValueRanges, LengthStatement> {
     public EmptyLengthEffectiveStatement(final LengthStatement declared) {
         super(declared);
     }

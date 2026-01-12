@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -23,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -37,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class RangeStatementSupport
-        extends AbstractStatementSupport<List<ValueRange>, RangeStatement, RangeEffectiveStatement> {
+        extends AbstractStatementSupport<ValueRanges, RangeStatement, RangeEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.RANGE)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -51,12 +50,12 @@ public final class RangeStatementSupport
     }
 
     @Override
-    public ImmutableList<ValueRange> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String rangeArgument) {
-        final List<ValueRange> ranges = new ArrayList<>();
+    public ValueRanges parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String rangeArgument) {
+        final var ranges = new ArrayList<ValueRange>();
 
-        for (final String singleRange : ArgumentUtils.PIPE_SPLITTER.split(rangeArgument)) {
-            final Iterator<String> boundaries = ArgumentUtils.TWO_DOTS_SPLITTER.split(singleRange).iterator();
-            final Number min = parseDecimalConstraintValue(ctx, boundaries.next());
+        for (var singleRange : ArgumentUtils.PIPE_SPLITTER.split(rangeArgument)) {
+            final var boundaries = ArgumentUtils.TWO_DOTS_SPLITTER.split(singleRange).iterator();
+            final var min = parseDecimalConstraintValue(ctx, boundaries.next());
 
             final Number max;
             if (boundaries.hasNext()) {
@@ -78,11 +77,11 @@ public final class RangeStatementSupport
             ranges.add(ValueRange.of(min, max));
         }
 
-        return ImmutableList.copyOf(ranges);
+        return ValueRanges.of(ranges);
     }
 
     @Override
-    protected RangeStatement createDeclared(final BoundStmtCtx<List<ValueRange>> ctx,
+    protected RangeStatement createDeclared(final BoundStmtCtx<ValueRanges> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createRange(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
@@ -94,7 +93,7 @@ public final class RangeStatementSupport
     }
 
     @Override
-    protected RangeEffectiveStatement createEffective(final Current<List<ValueRange>, RangeStatement> stmt,
+    protected RangeEffectiveStatement createEffective(final Current<ValueRanges, RangeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createRange(stmt.declared(), substatements);
     }

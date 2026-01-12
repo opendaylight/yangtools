@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
@@ -48,7 +48,7 @@ class StringCodecStringTest {
     void testDeserializeUnicode() throws InvalidLengthConstraintException {
         final var builder = RestrictedTypes.newStringBuilder(BaseTypes.stringType(),
             QName.create("foo", "foo"));
-        builder.setLengthConstraint(mock(ConstraintMetaDefinition.class), List.of(ValueRange.of(1)));
+        builder.setLengthConstraint(mock(ConstraintMetaDefinition.class), ValueRanges.of(ValueRange.of(1)));
         final var type = builder.build();
 
         final var codec = TypeDefinitionAwareCodecTestHelper.getCodec(type, StringCodec.class);

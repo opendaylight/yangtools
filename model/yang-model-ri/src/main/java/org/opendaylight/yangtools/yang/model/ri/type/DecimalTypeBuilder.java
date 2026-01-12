@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
@@ -18,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
 public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<DecimalTypeDefinition, Decimal64> {
@@ -35,8 +34,7 @@ public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<Decimal
     }
 
     @Override
-    DecimalTypeDefinition buildConstrainedType(final ConstraintMetaDefinition constraint,
-            final ImmutableList<ValueRange> ranges) {
+    DecimalTypeDefinition buildConstrainedType(final ConstraintMetaDefinition constraint, final ValueRanges ranges) {
         final int scale = scale();
         return new BaseDecimalType(getQName(), getUnknownSchemaNodes(), scale,
             new ResolvedRangeConstraint<>(constraint, ensureResolvedScale(

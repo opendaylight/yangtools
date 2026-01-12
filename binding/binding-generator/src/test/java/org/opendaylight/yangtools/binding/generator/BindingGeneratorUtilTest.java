@@ -24,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.DerivedTypes;
@@ -44,7 +45,7 @@ class BindingGeneratorUtilTest {
         final var builder = RestrictedTypes.newStringBuilder(BaseTypes.stringType(), ROOT);
 
         builder.addPatternConstraint(constraint);
-        builder.setLengthConstraint(constraintMeta, List.of(ValueRange.of(1, 2)));
+        builder.setLengthConstraint(constraintMeta, ValueRanges.of(ValueRange.of(1, 2)));
 
         final var restrictions = BindingGeneratorUtil.getRestrictions(builder.build());
 
@@ -70,7 +71,7 @@ class BindingGeneratorUtilTest {
     @Test
     void getRedundantRestrictionsTest() {
         final var builder = RestrictedTypes.newUint16Builder(BaseTypes.uint16Type(), ROOT);
-        builder.setRangeConstraint(constraintMeta, List.of(ValueRange.of(0, 65535)));
+        builder.setRangeConstraint(constraintMeta, ValueRanges.of(ValueRange.of(0, 65535)));
         final var restrictions = BindingGeneratorUtil.getRestrictions(builder.build());
 
         assertNotNull(restrictions);

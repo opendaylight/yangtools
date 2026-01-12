@@ -13,24 +13,23 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
 public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T, N>,
         N extends Number & Comparable<N>> extends AbstractRestrictedTypeBuilder<T> {
     private ConstraintMetaDefinition constraint;
-    private ImmutableList<ValueRange> ranges;
+    private ValueRanges ranges;
 
     RangeRestrictedTypeBuilder(final T baseType, final QName qname) {
         super(baseType, qname);
@@ -38,11 +37,11 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
 
     @SuppressWarnings("checkstyle:hiddenField")
     public final void setRangeConstraint(final @NonNull ConstraintMetaDefinition constraint,
-            final @NonNull List<ValueRange> ranges) {
+            final @NonNull ValueRanges ranges) {
         checkState(this.ranges == null, "Range constraint already defined as %s %s", this.ranges, this.constraint);
 
         this.constraint = requireNonNull(constraint);
-        this.ranges = ImmutableList.copyOf(ranges);
+        this.ranges = requireNonNull(ranges);
         touch();
     }
 
@@ -53,22 +52,22 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
             : buildConstrainedType(verifyNotNull(constraint), localRanges);
     }
 
-    abstract @NonNull T buildConstrainedType(@NonNull ConstraintMetaDefinition constraint,
-        @NonNull ImmutableList<ValueRange> ranges);
+    abstract @NonNull T buildConstrainedType(@NonNull ConstraintMetaDefinition constraint, @NonNull ValueRanges ranges);
 
     abstract @NonNull T buildUnconstrainedType();
 
     final RangeSet<N> calculateRanges(final @NonNull RangeConstraint<N> baseConstraint,
-            final @NonNull ImmutableList<ValueRange> contraintRanges) {
+            final @NonNull ValueRanges contraintRanges) {
         // Run through alternatives and resolve them against the base type
-        final RangeSet<N> baseRangeSet = baseConstraint.getAllowedRanges();
+        final var baseRangeSet = baseConstraint.getAllowedRanges();
         verify(!baseRangeSet.isEmpty(), "Base type %s does not define constraints", getBaseType());
 
-        final Range<N> baseRange = baseRangeSet.span();
-        final List<ValueRange> resolvedRanges = ensureResolvedRanges(contraintRanges, baseRange);
+        final var baseRange = baseRangeSet.span();
+        final var resolvedRanges = ensureResolvedRanges(contraintRanges, baseRange);
 
         // Next up, ensure the of boundaries match base constraints
-        final RangeSet<N> typedRanges = ensureTypedRanges(resolvedRanges, baseRange.lowerEndpoint().getClass());
+        final var typedRanges = RangeRestrictedTypeBuilder.<N>ensureTypedRanges(resolvedRanges,
+            baseRange.lowerEndpoint().getClass());
 
         // Now verify if new ranges are strict subset of base ranges
         if (!baseRangeSet.enclosesAll(typedRanges)) {
@@ -78,10 +77,10 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
         return typedRanges;
     }
 
-    private static <C extends Number & Comparable<C>> List<ValueRange> ensureResolvedRanges(
-            final List<ValueRange> unresolved, final Range<C> baseRange) {
+    private static <C extends Number & Comparable<C>> ValueRanges ensureResolvedRanges(
+            final ValueRanges unresolved, final Range<C> baseRange) {
         // First check if we need to resolve anything at all
-        for (ValueRange c : unresolved) {
+        for (var c : unresolved) {
             if (c.lowerBound() instanceof UnresolvedNumber || c.upperBound() instanceof UnresolvedNumber) {
                 return resolveRanges(unresolved, baseRange);
             }
@@ -91,12 +90,12 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
         return unresolved;
     }
 
-    private static <T extends Number & Comparable<T>> List<ValueRange> resolveRanges(final List<ValueRange> unresolved,
+    private static <T extends Number & Comparable<T>> ValueRanges resolveRanges(final ValueRanges unresolved,
             final Range<T> baseRange) {
         final var ret = new ArrayList<ValueRange>(unresolved.size());
         for (var range : unresolved) {
-            final Number min = range.lowerBound();
-            final Number max = range.upperBound();
+            final var min = range.lowerBound();
+            final var max = range.upperBound();
 
             if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
                 ret.add(ValueRange.of(
@@ -106,12 +105,11 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
                 ret.add(range);
             }
         }
-
-        return ret;
+        return ValueRanges.of(ret);
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Number & Comparable<T>> RangeSet<T> ensureTypedRanges(final List<ValueRange> ranges,
+    private static <T extends Number & Comparable<T>> RangeSet<T> ensureTypedRanges(final ValueRanges ranges,
             final Class<? extends Number> clazz) {
         final var builder = ImmutableRangeSet.<T>builder();
         for (var range : ranges) {
@@ -126,7 +124,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Number & Comparable<T>> RangeSet<T> typedRanges(final List<ValueRange> ranges,
+    private static <T extends Number & Comparable<T>> RangeSet<T> typedRanges(final ValueRanges ranges,
             final Class<? extends Number> clazz) {
         final var function = NumberUtil.converterTo(clazz);
         checkArgument(function != null, "Unsupported range class %s", clazz);
