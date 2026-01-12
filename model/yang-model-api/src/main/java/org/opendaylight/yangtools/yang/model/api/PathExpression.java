@@ -35,68 +35,48 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
  *   <li>no literals nor numbers are allowed</li>
  *   <li>all qualified node identifiers must me resolved</li>
  * </ul>
- *
- * @param originalString the path expression formatted string as is defined in model. For example:
- *                       {@code /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf}
- * @param steps the path of this expression, which can either be a {@link YangLocationPath} (compliant to RFC7950) or
- *              a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}
  */
 @NonNullByDefault
-public record PathExpression(String originalString, Steps steps) implements Immutable {
+public sealed interface PathExpression extends Immutable {
     /**
-     * Abstract base class for expressing steps of a PathExpression.
+     * Steps of a {@link PathExpression} which is a {@link YangLocationPath locationPath}, corresponding to RFC7950 base
+     * specification.
      */
-    public sealed interface Steps {
-        // Marker interface
-    }
-
-    /**
-     * Steps of a PathExpression which is a LocationPath, corresponding to RFC7950 base specification.
-     */
-    public record LocationPathSteps(YangLocationPath locationPath) implements Steps {
-        public LocationPathSteps {
+    record LocationPath(String originalString, YangLocationPath locationPath) implements PathExpression {
+        public LocationPath {
+            requireNonNull(originalString);
             requireNonNull(locationPath);
         }
 
-        @Deprecated(since = "15.0.0", forRemoval = true)
-        public YangLocationPath getLocationPath() {
-            return locationPath;
+        @Override
+        public boolean isAbsolute() {
+            return locationPath.isAbsolute();
         }
     }
 
     /**
      * Steps of a PathExpression which is a combination of {@code deref()} function call and a relative path,
-     * corresponding to Errata 5617.
+     * corresponding to <a href="https://www.rfc-editor.org/errata/eid5617">Errata 5617</a>. The corresponding construct
+     * is a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}.
      */
-    public record DerefSteps(Relative derefArgument, Relative relativePath) implements Steps {
-        public DerefSteps {
+    record Deref(String originalString, Relative derefArgument, Relative relativePath) implements PathExpression {
+        public Deref {
+            requireNonNull(originalString);
             requireNonNull(derefArgument);
             requireNonNull(relativePath);
         }
 
-        @Deprecated(since = "15.0.0", forRemoval = true)
-        public Relative getDerefArgument() {
-            return derefArgument;
-        }
-
-        @Deprecated(since = "15.0.0", forRemoval = true)
-        public Relative getRelativePath() {
-            return relativePath;
+        @Override
+        public boolean isAbsolute() {
+            return false;
         }
     }
 
     /**
-     * Default constructor.
-     *
-     * @param originalString the path expression formatted string as is defined in model. For example:
-     *                       {@code /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf}
-     * @param steps the path of this expression, which can either be a {@link YangLocationPath} (compliant to RFC7950)
-     *              or a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}
+     * {@return the path expression formatted string as is defined in model. For example:
+     * {@code /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf}}
      */
-    public PathExpression {
-        requireNonNull(originalString);
-        requireNonNull(steps);
-    }
+    String originalString();
 
     /**
      * Returns the path expression formatted string as is defined in model. For example:
@@ -106,28 +86,12 @@ public record PathExpression(String originalString, Steps steps) implements Immu
      * @deprecated Use {@link #originalString()} instead
      */
     @Deprecated(since = "15.0.0", forRemoval = true)
-    public String getOriginalString() {
-        return originalString;
+    default String getOriginalString() {
+        return originalString();
     }
 
     /**
-     * Return the path of this expression, which can either be a {@link YangLocationPath} (compliant to RFC7950) or
-     * a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}.
-     *
-     * @return The path's steps
-     * @deprecated Use {@link #steps()} instead
+     * {@return {@code true} if the XPath starts in root of YANG model, otherwise {@code false}}
      */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public Steps getSteps() {
-        return steps;
-    }
-
-    /**
-     * Returns <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>.
-     *
-     * @return <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>
-     */
-    public boolean isAbsolute() {
-        return steps instanceof LocationPathSteps(var locationPath) && locationPath.isAbsolute();
-    }
+    boolean isAbsolute();
 }
