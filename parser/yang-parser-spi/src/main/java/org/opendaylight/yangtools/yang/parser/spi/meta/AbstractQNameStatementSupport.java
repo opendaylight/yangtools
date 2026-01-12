@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
 public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<QName>,
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
     protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition,
@@ -31,8 +29,14 @@ public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<
         super(publicDefinition, policy, config, validator);
     }
 
+    // Non-final to allow customization
     @Override
-    public QName adaptArgumentValue(final StmtContext<QName, D, E> ctx, final QNameModule targetModule) {
+    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return ctx.identifierBinding().parseIdentifierArg(ctx, value);
+    }
+
+    @Override
+    public final QName adaptArgumentValue(final StmtContext<QName, D, E> ctx, final QNameModule targetModule) {
         return ctx.getArgument().bindTo(targetModule).intern();
     }
 }

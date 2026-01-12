@@ -88,13 +88,7 @@ public final class GroupingStatementSupport
     }
 
     @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ctx.identifierBinding().parseIdentifierArg(ctx, value);
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(
-            final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
+    public void onFullDefinitionDeclared(final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         final var parent = stmt.getParentContext();
