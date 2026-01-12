@@ -71,7 +71,7 @@ import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
  * @deprecated Use {@link DataObjectIdentifier} for the {@link #isExact()} case and {@link DataObjectReference} for the
  *             {@link #isWildcarded()} case.
  */
-@Deprecated(since = "14.0.0")
+@Deprecated(since = "14.0.0", forRemoval = true)
 public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDataObjectReference<T, DataObjectStep<?>>
         implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>>
         permits KeyedInstanceIdentifier {
@@ -568,7 +568,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      *
      * @param <T> Instance identifier target type
      */
-    @Deprecated(since = "14.0.23")
+    @Deprecated(since = "14.0.23", forRemoval = true)
     public abstract static sealed class Builder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
         Builder(final Builder<?> prev) {
             super(prev);
@@ -626,7 +626,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
             KeyStep<Y, X> step);
     }
 
-    @Deprecated(since = "14.0.23")
+    @Deprecated(since = "14.0.23", forRemoval = true)
     public static final class KeyedBuilder<T extends EntryObject<T, K>, K extends Key<T>> extends Builder<T>
             implements DataObjectReference.Builder.WithKey<T, K> {
         KeyedBuilder(final KeyStep<K, T> firstStep) {
@@ -664,7 +664,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
     }
 
-    @Deprecated(since = "14.0.23")
+    @Deprecated(since = "14.0.23", forRemoval = true)
     private static final class RegularBuilder<T extends DataObject> extends Builder<T> {
         RegularBuilder(final DataObjectStep<T> item) {
             super(item);
