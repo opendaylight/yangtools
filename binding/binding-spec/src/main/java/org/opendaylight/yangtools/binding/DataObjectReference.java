@@ -21,9 +21,6 @@ import org.opendaylight.yangtools.binding.impl.DataObjectReferenceBuilderWithKey
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceImpl;
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.KeyedBuilder;
-import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 
 /**
  * A reference to a {@link DataObject} with semantics partially overlapping with to YANG {@code instance-identifier}.
@@ -65,7 +62,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @param <K> {@link Key} type
          */
         sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>> extends Builder<T>
-                permits DataObjectIdentifier.Builder.WithKey, DataObjectReferenceBuilderWithKey, KeyedBuilder {
+                permits DataObjectIdentifier.Builder.WithKey, DataObjectReferenceBuilderWithKey {
             @Override
             DataObjectReference.WithKey<T, K> build();
         }
@@ -153,7 +150,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @param <T> EntryObject type
      */
     sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>> extends DataObjectReference<T>, KeyAware<K>
-            permits DataObjectIdentifier.WithKey, DataObjectReferenceWithKey, KeyedInstanceIdentifier {
+            permits DataObjectIdentifier.WithKey, DataObjectReferenceWithKey {
         @Override
         KeyStep<K, T> lastStep();
 
@@ -162,17 +159,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
 
         @Override
         DataObjectIdentifier.WithKey<T, K> toIdentifier();
-
-        /**
-         * Return a legacy {@link KeyedInstanceIdentifier} for this reference.
-         *
-         * @return A {@link KeyedInstanceIdentifier}.
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        default @NonNull KeyedInstanceIdentifier<T, K> toLegacy() {
-            return (KeyedInstanceIdentifier<T, K>) InstanceIdentifier.<T>unsafeOf(ImmutableList.copyOf(steps()));
-        }
 
         @Override
         default K key() {
@@ -309,16 +295,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      */
     default boolean isExact() {
         return false;
-    }
-
-    /**
-     * Return a legacy {@link InstanceIdentifier} for this reference.
-     *
-     * @return An {@link InstanceIdentifier}.
-     */
-    @Deprecated(since = "14.0.23", forRemoval = true)
-    default @NonNull InstanceIdentifier<T> toLegacy() {
-        return InstanceIdentifier.unsafeOf(ImmutableList.copyOf(steps()));
     }
 
     /**

@@ -25,14 +25,12 @@ import org.opendaylight.yangtools.binding.InexactDataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.NodeStep;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
  * Base implementation of {@link Builder}.
  */
 public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataObject> implements Builder<T>
-        permits AbstractDataObjectIdentifierBuilder, DataObjectReferenceBuilder, DataObjectReferenceBuilderWithKey,
-                InstanceIdentifier.Builder {
+        permits AbstractDataObjectIdentifierBuilder, DataObjectReferenceBuilder, DataObjectReferenceBuilderWithKey {
     private final ArrayList<@NonNull DataObjectStep<?>> pathBuilder;
     private final Iterable<? extends @NonNull DataObjectStep<?>> basePath;
 
