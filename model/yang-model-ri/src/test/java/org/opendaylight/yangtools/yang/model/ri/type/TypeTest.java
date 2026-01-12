@@ -18,7 +18,6 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
-import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
@@ -35,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
@@ -389,8 +389,9 @@ class TypeTest {
         final var lengthRestrictedTypeBuilder = RestrictedTypes.newBinaryBuilder(baseBinaryType, Q_NAME);
         final Long min = 0L;
         final var max = UnresolvedNumber.max();
-        final var lengthArrayList = List.of(ValueRange.of(min, max));
-        lengthRestrictedTypeBuilder.setLengthConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
+        final var lengthArrayList = ValueRanges.of(ValueRange.of(min, max));
+        lengthRestrictedTypeBuilder.setLengthConstraint(mock(ConstraintMetaDefinition.class),
+            ValueRanges.of(ValueRange.of(min, max)));
         final var typeDefinition = lengthRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition);
 
