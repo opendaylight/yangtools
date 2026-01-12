@@ -115,7 +115,7 @@ class DOMSourceXMLStreamReaderTest extends AbstractXmlTest {
                 prefix foo;
               }
 
-              augment "/foo:top-cont/foo:keyed-list/" {
+              augment "/foo:top-cont/foo:keyed-list" {
                 /*leaf ordinary-leaf {
                   type int32;
                 }*/

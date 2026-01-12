@@ -23,17 +23,17 @@ module test {
         }
     }
 
-    augment "/container/" {
+    augment "/container" {
         leaf augLeaf {
             type string;
         }
     }
 
-    augment "/container/" {
+    augment "/container" {
         choice ch{}
     }
 
-    augment "/container/ch/" {
+    augment "/container/ch" {
         case c1 {
             leaf c1Leaf {
                 type string;
@@ -44,7 +44,8 @@ module test {
             type string;
         }
     }
-    augment "/container/ch/c1/" {
+
+    augment "/container/ch/c1" {
         leaf c1Leaf_AnotherAugment {
             type string;
         }
@@ -52,7 +53,7 @@ module test {
         choice deepChoice{}
     }
 
-    augment "/container/ch3/" {
+    augment "/container/ch3" {
         case c32 {
             leaf c32Leaf {
                 type string;
@@ -64,8 +65,7 @@ module test {
         }
     }
 
-
-    augment "/container/ch/c1/deepChoice/" {
+    augment "/container/ch/c1/deepChoice" {
         case deepCase1 {
             leaf deepLeafc1 {
                 type string;
@@ -78,7 +78,7 @@ module test {
         }
     }
 
-    augment "/container/ch2/" {
+    augment "/container/ch2" {
         case c2 {
             leaf c2Leaf {
                 type string;
@@ -99,7 +99,7 @@ module test {
         }
     }
 
-    augment "/container/ch2/" {
+    augment "/container/ch2" {
         leaf c22Leaf {
             type string;
         }
@@ -138,6 +138,4 @@ module test {
             }
         }
     }
-
-
 }

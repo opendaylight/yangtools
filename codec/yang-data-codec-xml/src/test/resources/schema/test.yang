@@ -97,7 +97,7 @@ module test {
         }
 
         uses listGroup {
-            augment "list/" {
+            augment "list" {
                 leaf stringAugmentedToList{
                     type string;
                 }
@@ -139,19 +139,19 @@ module test {
         }
     }
 
-    augment "/container/" {
+    augment "/container" {
         leaf augmentUint32 {
             type uint32;
         }
     }
 
-    augment "/container/directList/" {
+    augment "/container/directList" {
         leaf augmentedString {
             type uint32;
         }
     }
 
-    augment "/container/choice/" {
+    augment "/container/choice" {
         case test-identity-augment {
             when "/container/identityRef = 'test-identity'";
             leaf augmentString1 {
@@ -174,7 +174,7 @@ module test {
         }
     }
 
-    augment "/container/choice/test-identity-augment/" {
+    augment "/container/choice/test-identity-augment" {
 
         choice augmentedChoiceInCase {
 
@@ -192,7 +192,7 @@ module test {
         }
     }
 
-    augment "/container/choice/test-identity-augment/augmentedChoiceInCase/" {
+    augment "/container/choice/test-identity-augment/augmentedChoiceInCase" {
         case augmentedCaseInAugmentedChoiceFromAugment {
             leaf stringInAugmentedCaseInAugmentedChoiceFromAugment {
                 type string;
@@ -200,7 +200,7 @@ module test {
         }
     }
 
-    augment "/container/choice2/" {
+    augment "/container/choice2" {
         case test-identity-augment {
             when "/container/identityRef = 'test-identity'";
             container augmentContainer {
@@ -220,7 +220,7 @@ module test {
     }
 
 
-    augment "/container/choice2/test-identity-augment2/augmentedList/" {
+    augment "/container/choice2/test-identity-augment2/augmentedList" {
 
         container augmentedContainerInAugmentedListInAugmentedCase {
             leaf-list leafInAugmentedContainerInAugmentedListInAugmentedCase {

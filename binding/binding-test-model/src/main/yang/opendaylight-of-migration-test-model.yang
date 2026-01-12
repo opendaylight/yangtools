@@ -124,7 +124,7 @@ module opendaylight-of-migration-test-model {
         uses aug-grouping;
     }
 
-    augment "/test:top/test:top-level-list/list1/list1-1"  {
+    augment "/test:top/test:top-level-list/list1/list1-1" {
         ext:augment-identifier list11-simple-augment;
 
         leaf attr-str2 {
@@ -138,7 +138,7 @@ module opendaylight-of-migration-test-model {
         }
     }
 
-    augment "/test:top/test:top-level-list/test:nested-list/"  {
+    augment "/test:top/test:top-level-list/test:nested-list" {
         ext:augment-identifier nested-list-simple-augment;
 
         leaf type {
