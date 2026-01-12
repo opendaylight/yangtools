@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Strings;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Map;
@@ -601,8 +602,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public final QName argumentAsTypeQName() {
-        // FIXME: This may yield illegal argument exceptions
-        return StmtContextUtils.qnameFromArgument(getOriginalCtx().orElse(this), getRawArgument());
+        return qnameFromArgument(getOriginalCtx().orElse(this), getRawArgument());
     }
 
     @Override
@@ -619,8 +619,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
             return qname.getModule();
         }
         if (argument instanceof String str) {
-            // FIXME: This may yield illegal argument exceptions
-            return StmtContextUtils.qnameFromArgument(getOriginalCtx().orElse(this), str).getModule();
+            return qnameFromArgument(getOriginalCtx().orElse(this), str).getModule();
         }
         if (argument instanceof SchemaNodeIdentifier sni
                 && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
@@ -629,6 +628,44 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
         }
 
         return coerceParent().effectiveNamespace();
+    }
+
+    // FIXME: This may yield illegal argument exceptions
+    // FIXME: document the intent here (and rename accordingly)
+    // FIXME: this looks like an attempt to default to IdentifierBinding.parseIdentifierRefArg(), so we should refactor
+    //        this code to work without StmtContextUtils
+    private static @NonNull QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
+        if (Strings.isNullOrEmpty(value)) {
+            return ctx.publicDefinition().statementName();
+        }
+
+        QNameModule qnameModule;
+        String localName;
+        final var namesParts = value.split(":");
+        switch (namesParts.length) {
+            case 1 -> {
+                localName = namesParts[0];
+                qnameModule = ctx.definingModule();
+            }
+            default -> {
+                final var root = ctx.getRoot();
+                final var prefix = namesParts[0];
+                localName = namesParts[1];
+                qnameModule = StmtContextUtils.getModuleQNameByPrefix(root, prefix);
+                // in case of unknown statement argument, we're not going to parse it
+                if (qnameModule == null && StmtContextUtils.isUnknownStatement(ctx)) {
+                    localName = value;
+                    qnameModule = ctx.definingModule();
+                }
+                if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+                    ctx = ctx.getOriginalCtx().orElseThrow();
+                    qnameModule = StmtContextUtils.getModuleQNameByPrefix(root, prefix);
+                }
+            }
+        }
+
+        return StmtContextUtils.internedQName(ctx, InferenceException.throwIfNull(qnameModule, ctx,
+            "Cannot resolve QNameModule for '%s'", value), localName);
     }
 
     private ReactorStmtCtx<?, ?, ?> coerceParent() {

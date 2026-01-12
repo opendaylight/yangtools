@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Strings;
+import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -233,12 +233,11 @@ public final class StmtContextUtils {
             if (YangStmtMapping.IF_FEATURE.equals(stmt.publicDefinition())) {
                 containsIfFeature = true;
                 final var argument = (IfFeatureExpr) stmt.getArgument();
-                if (argument.test(supportedFeatures)) {
-                    isSupported = true;
-                } else {
+                if (!argument.test(supportedFeatures)) {
                     isSupported = false;
                     break;
                 }
+                isSupported = true;
             }
         }
 
@@ -451,38 +450,6 @@ public final class StmtContextUtils {
         });
     }
 
-    public static @NonNull QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
-        if (Strings.isNullOrEmpty(value)) {
-            return ctx.publicDefinition().statementName();
-        }
-
-        QNameModule qnameModule;
-        String localName;
-        final var namesParts = value.split(":");
-        switch (namesParts.length) {
-            case 1:
-                localName = namesParts[0];
-                qnameModule = ctx.definingModule();
-                break;
-            default:
-                final var prefix = namesParts[0];
-                localName = namesParts[1];
-                qnameModule = getModuleQNameByPrefix(ctx, prefix);
-                // in case of unknown statement argument, we're not going to parse it
-                if (qnameModule == null && isUnknownStatement(ctx)) {
-                    localName = value;
-                    qnameModule = ctx.definingModule();
-                }
-                if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                    ctx = ctx.getOriginalCtx().orElse(null);
-                    qnameModule = getModuleQNameByPrefix(ctx, prefix);
-                }
-        }
-
-        return internedQName(ctx, InferenceException.throwIfNull(qnameModule, ctx,
-            "Cannot resolve QNameModule for '%s'", value), localName);
-    }
-
     /**
      * Parse a YANG identifier string in context of a statement.
      *
@@ -539,7 +506,8 @@ public final class StmtContextUtils {
         return internedQName(ctx, ctx.definingModule(), localName);
     }
 
-    private static @NonNull QName internedQName(final @NonNull CommonStmtCtx ctx, final QNameModule module,
+    @Beta
+    public static @NonNull QName internedQName(final @NonNull CommonStmtCtx ctx, final QNameModule module,
             final String localName) {
         final QName template;
         try {
@@ -558,8 +526,7 @@ public final class StmtContextUtils {
      * @param prefix the prefix
      * @return the {@link QNameModule}, or {@code null} if not found
      */
-    // FIXME: 15.0.0: hide/relocate this method?
-    public static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull StmtContext<?, ?, ?> ctx,
+    private static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull StmtContext<?, ?, ?> ctx,
             final String prefix) {
         return getModuleQNameByPrefix(ctx.getRoot(), prefix);
     }
