@@ -65,7 +65,7 @@ final class PathExpressionParser {
                 parseRelative(ctx, pathArg, getChild(deref, deref.getChildCount() - 1, Relative_pathContext.class)));
             default -> throw new IllegalStateException("Unsupported child " + childPath);
         };
-        return new ParsedPathExpression(steps, pathArg);
+        return new PathExpression(pathArg, steps);
     }
 
     private static YangLocationPath parsePathStr(final StmtContext<?, ?, ?> ctx, final String pathArg,
