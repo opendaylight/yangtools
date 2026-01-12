@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
  * @param <T> Target data type
  * @param <K> Target key type
  */
-@Deprecated(since = "14.0.23")
+@Deprecated(since = "14.0.23", forRemoval = true)
 public final class KeyedInstanceIdentifier<T extends EntryObject<T, K>, K extends Key<T>>
         extends InstanceIdentifier<T> implements WithKey<T, K> {
     @java.io.Serial
