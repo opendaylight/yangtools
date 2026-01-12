@@ -76,7 +76,7 @@ class YT821Test {
                 }
               }
 
-              augment /root/bar/ {
+              augment /root/bar {
                 container container-from-aug {
                   leaf ref-in-container {
                     type leafref {
