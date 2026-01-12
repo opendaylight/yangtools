@@ -9,10 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunction;
@@ -49,52 +46,21 @@ public record PathExpression(String originalString, Steps steps) implements Immu
     /**
      * Abstract base class for expressing steps of a PathExpression.
      */
-    public abstract static sealed class Steps {
-        Steps() {
-            // Prevent external subclassing
-        }
-
-        @Override
-        public abstract int hashCode();
-
-        @Override
-        public abstract boolean equals(@Nullable Object obj);
-
-        @Override
-        public final String toString() {
-            return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-        }
-
-        abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
+    public sealed interface Steps {
+        // Marker interface
     }
 
     /**
      * Steps of a PathExpression which is a LocationPath, corresponding to RFC7950 base specification.
      */
-    public static final class LocationPathSteps extends Steps {
-        private final YangLocationPath locationPath;
-
-        public LocationPathSteps(final YangLocationPath locationPath) {
-            this.locationPath = requireNonNull(locationPath);
+    public record LocationPathSteps(YangLocationPath locationPath) implements Steps {
+        public LocationPathSteps {
+            requireNonNull(locationPath);
         }
 
+        @Deprecated(since = "15.0.0", forRemoval = true)
         public YangLocationPath getLocationPath() {
             return locationPath;
-        }
-
-        @Override
-        public int hashCode() {
-            return locationPath.hashCode();
-        }
-
-        @Override
-        public boolean equals(final @Nullable Object obj) {
-            return this == obj || obj instanceof LocationPathSteps other && locationPath.equals(other.locationPath);
-        }
-
-        @Override
-        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            return helper.add("locationPath", locationPath);
         }
     }
 
@@ -102,40 +68,31 @@ public record PathExpression(String originalString, Steps steps) implements Immu
      * Steps of a PathExpression which is a combination of {@code deref()} function call and a relative path,
      * corresponding to Errata 5617.
      */
-    public static final class DerefSteps extends Steps {
-        private final Relative derefArgument;
-        private final Relative relativePath;
-
-        public DerefSteps(final Relative derefArgument, final Relative relativePath) {
-            this.derefArgument = requireNonNull(derefArgument);
-            this.relativePath = requireNonNull(relativePath);
+    public record DerefSteps(Relative derefArgument, Relative relativePath) implements Steps {
+        public DerefSteps {
+            requireNonNull(derefArgument);
+            requireNonNull(relativePath);
         }
 
+        @Deprecated(since = "15.0.0", forRemoval = true)
         public Relative getDerefArgument() {
             return derefArgument;
         }
 
+        @Deprecated(since = "15.0.0", forRemoval = true)
         public Relative getRelativePath() {
             return relativePath;
         }
-
-        @Override
-        public int hashCode() {
-            return 31 * derefArgument.hashCode() + relativePath.hashCode();
-        }
-
-        @Override
-        public boolean equals(final @Nullable Object obj) {
-            return this == obj || obj instanceof DerefSteps other
-                && derefArgument.equals(other.derefArgument) && relativePath.equals(other.relativePath);
-        }
-
-        @Override
-        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            return helper.add("derefArgument", derefArgument).add("relativePath", relativePath);
-        }
     }
 
+    /**
+     * Default constructor.
+     *
+     * @param originalString the path expression formatted string as is defined in model. For example:
+     *                       {@code /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf}
+     * @param steps the path of this expression, which can either be a {@link YangLocationPath} (compliant to RFC7950)
+     *              or a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}
+     */
     public PathExpression {
         requireNonNull(originalString);
         requireNonNull(steps);
@@ -171,6 +128,6 @@ public record PathExpression(String originalString, Steps steps) implements Immu
      * @return <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>
      */
     public boolean isAbsolute() {
-        return steps instanceof LocationPathSteps locationSteps && locationSteps.getLocationPath().isAbsolute();
+        return steps instanceof LocationPathSteps(var locationPath) && locationPath.isAbsolute();
     }
 }
