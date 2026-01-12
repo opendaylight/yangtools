@@ -48,31 +48,28 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
 
     @Override
     public final Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        if ("true".equals(value)) {
-            return Boolean.TRUE;
-        } else if ("false".equals(value)) {
-            return Boolean.FALSE;
-        } else {
-            throw new SourceException(ctx, "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
-                statementName(), argumentName(), value);
-        }
+        return switch (value) {
+            case "false" -> Boolean.FALSE;
+            case "true" -> Boolean.TRUE;
+            case null, default -> throw new SourceException(ctx,
+                "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'", statementName(), argumentName(),
+                value);
+        };
     }
 
     @Override
     public final String internArgument(final String rawArgument) {
-        if ("true".equals(rawArgument)) {
-            return "true";
-        } else if ("false".equals(rawArgument)) {
-            return "false";
-        } else {
-            return rawArgument;
-        }
+        return switch (rawArgument) {
+            case "false" -> "false";
+            case "true" -> "true";
+            case null, default -> rawArgument;
+        };
     }
 
     @Override
     protected final D createDeclared(final BoundStmtCtx<Boolean> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        final Boolean argument = ctx.getArgument();
+        final var argument = ctx.getArgument();
         if (substatements.isEmpty()) {
             return argument ? emptyDeclaredTrue : emptyDeclaredFalse;
         }
@@ -94,13 +91,13 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
     protected abstract @NonNull E createEmptyEffective(@NonNull D declared);
 
     private @NonNull E createEmptyEffective(final Current<Boolean, D> stmt) {
-        final D declared = stmt.declared();
+        final var declared = stmt.declared();
         if (emptyDeclaredTrue.equals(declared)) {
             return emptyEffectiveTrue;
-        } else if (emptyDeclaredFalse.equals(declared)) {
-            return emptyEffectiveFalse;
-        } else {
-            return createEmptyEffective(declared);
         }
+        if (emptyDeclaredFalse.equals(declared)) {
+            return emptyEffectiveFalse;
+        }
+        return createEmptyEffective(declared);
     }
 }
