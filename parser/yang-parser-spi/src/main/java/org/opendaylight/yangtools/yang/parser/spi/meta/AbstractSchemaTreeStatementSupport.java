@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
 public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractQNameStatementSupport<D, E> {
     private static class SchemaTreeEquality<D extends DeclaredStatement<QName>>

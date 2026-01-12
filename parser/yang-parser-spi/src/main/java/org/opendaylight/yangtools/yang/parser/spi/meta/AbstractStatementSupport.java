@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
 public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends StatementSupport<A, D, E> {
     private final SubstatementValidator substatementValidator;

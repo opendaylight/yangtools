@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
 public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatement<Boolean>,
         E extends EffectiveStatement<Boolean, D>> extends AbstractStatementSupport<Boolean, D, E> {
     private final @NonNull E emptyEffectiveFalse;
