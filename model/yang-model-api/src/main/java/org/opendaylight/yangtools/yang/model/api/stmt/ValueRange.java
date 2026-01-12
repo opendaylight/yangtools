@@ -7,84 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static java.util.Objects.requireNonNull;
-
-import java.util.Objects;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * YANG specification of a numeric value range. This object is used for {@link LengthStatement} and
  * {@link RangeStatement}.
  */
-public abstract sealed class ValueRange {
-    private static final class Singleton extends ValueRange {
-        private final @NonNull Number value;
+@NonNullByDefault
+public sealed interface ValueRange extends Immutable permits RegularValueRange, SingleValueRange {
+    /**
+     * {@return this range's lower bound}
+     */
+    Number lowerBound();
 
-        Singleton(final @NonNull Number value) {
-            this.value = requireNonNull(value);
-        }
+    /**
+     * {@return this range's upper bound}
+     */
+    Number upperBound();
 
-        @Override
-        public @NonNull Number lowerBound() {
-            return value;
-        }
-
-        @Override
-        public @NonNull Number upperBound() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return value.toString();
-        }
+    static ValueRange of(final Number value) {
+        return new SingleValueRange(value);
     }
 
-    private static final class Range extends ValueRange {
-        private final @NonNull Number lower;
-        private final @NonNull Number upper;
-
-        Range(final Number lower, final Number upper) {
-            this.lower = requireNonNull(lower);
-            this.upper = requireNonNull(upper);
-        }
-
-        @Override
-        public @NonNull Number lowerBound() {
-            return lower;
-        }
-
-        @Override
-        public @NonNull Number upperBound() {
-            return upper;
-        }
-
-        @Override
-        public String toString() {
-            return lower + ".." + upper;
-        }
-    }
-
-    public static @NonNull ValueRange of(final @NonNull Number value) {
-        return new Singleton(value);
-    }
-
-    public static @NonNull ValueRange of(final @NonNull Number lower, final @NonNull Number upper) {
-        return lower.equals(upper) ? of(lower) : new Range(lower, upper);
-    }
-
-    public abstract @NonNull Number lowerBound();
-
-    public abstract @NonNull Number upperBound();
-
-    @Override
-    public final int hashCode() {
-        return Objects.hash(lowerBound(), upperBound());
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        return this == obj || obj instanceof ValueRange other
-            && lowerBound().equals(other.lowerBound()) && upperBound().equals(other.upperBound());
+    static ValueRange of(final Number lower, final Number upper) {
+        return lower.equals(upper) ? of(lower) : new RegularValueRange(lower, upper);
     }
 }
