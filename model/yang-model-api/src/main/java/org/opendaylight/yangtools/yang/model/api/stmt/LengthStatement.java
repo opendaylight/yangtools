@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code length} statement.
  */
-public interface LengthStatement extends ConstrainedDocumentedDeclaredStatement<List<ValueRange>> {
+public interface LengthStatement extends ConstrainedDocumentedDeclaredStatement<ValueRanges> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.LENGTH;

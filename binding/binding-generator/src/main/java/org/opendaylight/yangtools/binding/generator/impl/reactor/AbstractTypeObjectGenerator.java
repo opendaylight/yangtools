@@ -54,10 +54,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -568,11 +567,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     final @Nullable Restrictions computeRestrictions() {
-        final List<ValueRange> length = type.findFirstEffectiveSubstatementArgument(LengthEffectiveStatement.class)
+        final var length = type.findFirstEffectiveSubstatementArgument(LengthEffectiveStatement.class)
+            .map(ValueRanges::asList)
             .orElse(List.of());
-        final List<ValueRange> range = type.findFirstEffectiveSubstatementArgument(RangeEffectiveStatement.class)
+        final var range = type.findFirstEffectiveSubstatementArgument(RangeEffectiveStatement.class)
+            .map(ValueRanges::asList)
             .orElse(List.of());
-        final List<PatternExpression> patterns = type.streamEffectiveSubstatements(PatternEffectiveStatement.class)
+        final var patterns = type.streamEffectiveSubstatements(PatternEffectiveStatement.class)
             .map(PatternEffectiveStatement::argument)
             .collect(Collectors.toUnmodifiableList());
 
@@ -597,19 +598,20 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         if (TypeDefinitions.BITS.equals(arg)) {
             return createBits(builderFactory, statement(), typeName(), currentModule(),
                 (BitsTypeDefinition) extractTypeDefinition(), isTypedef);
-        } else if (TypeDefinitions.ENUMERATION.equals(arg)) {
+        }
+        if (TypeDefinitions.ENUMERATION.equals(arg)) {
             return createEnumeration(builderFactory, statement(), typeName(), currentModule(),
                 (EnumTypeDefinition) extractTypeDefinition());
-        } else if (TypeDefinitions.UNION.equals(arg)) {
+        }
+        if (TypeDefinitions.UNION.equals(arg)) {
             final List<GeneratedType> tmp = new ArrayList<>(1);
             final GeneratedTransferObject ret = createUnion(tmp, builderFactory, statement(), unionDependencies,
                 typeName(), currentModule(), type, isTypedef, extractTypeDefinition());
             auxiliaryGeneratedTypes = List.copyOf(tmp);
             return ret;
-        } else {
-            return createSimple(builderFactory, statement(), typeName(), currentModule(),
-                verifyNotNull(SIMPLE_TYPES.get(arg), "Unhandled type %s", arg), extractTypeDefinition());
         }
+        return createSimple(builderFactory, statement(), typeName(), currentModule(),
+            verifyNotNull(SIMPLE_TYPES.get(arg), "Unhandled type %s", arg), extractTypeDefinition());
     }
 
     private static @NonNull GeneratedTransferObject createBits(final TypeBuilderFactory builderFactory,

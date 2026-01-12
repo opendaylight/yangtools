@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefLengthStatement extends AbstractRefStatement<List<ValueRange>, LengthStatement>
+public final class RefLengthStatement extends AbstractRefStatement<ValueRanges, LengthStatement>
         implements LengthStatement {
     public RefLengthStatement(final LengthStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

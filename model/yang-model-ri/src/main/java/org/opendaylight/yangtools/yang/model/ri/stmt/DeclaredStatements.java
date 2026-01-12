@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.ri.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Ordering;
@@ -94,7 +93,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
@@ -446,7 +445,7 @@ public final class DeclaredStatements {
             : new RegularLeafListStatement(argument, substatements);
     }
 
-    public static LengthStatement createLength(final String rawArgument, final List<ValueRange> argument,
+    public static LengthStatement createLength(final String rawArgument, final ValueRanges argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyLengthStatement(rawArgument, argument)
             : new RegularLengthStatement(rawArgument, argument, substatements);
@@ -582,7 +581,7 @@ public final class DeclaredStatements {
             : new RegularReferenceStatement(argument, substatements);
     }
 
-    public static RangeStatement createRange(final String rawArgument, final List<ValueRange> argument,
+    public static RangeStatement createRange(final String rawArgument, final ValueRanges argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyRangeStatement(rawArgument, argument)
             : new RegularRangeStatement(rawArgument, argument, substatements);

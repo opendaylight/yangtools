@@ -12,13 +12,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
-import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 
@@ -40,18 +39,13 @@ public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedType
      * @throws NullPointerException if any of the arguments is null
      */
     public final void setLengthConstraint(final @NonNull ConstraintMetaDefinition constraint,
-            final @NonNull List<ValueRange> ranges) throws InvalidLengthConstraintException {
+            final @NonNull ValueRanges ranges) throws InvalidLengthConstraintException {
         if (lengthConstraint != null) {
             throw new IllegalStateException("Length constraint already defined as " + lengthConstraint);
         }
 
-        final var baseLengths = findLenghts();
-        if (ranges.isEmpty()) {
-            lengthConstraint = baseLengths;
-            return;
-        }
-
         // Run through alternatives and resolve them against the base type
+        final var baseLengths = findLenghts();
         requireNonNull(constraint);
         final var builder = ImmutableRangeSet.<Integer>builder();
         final var span = baseLengths.getAllowedRanges().span();
