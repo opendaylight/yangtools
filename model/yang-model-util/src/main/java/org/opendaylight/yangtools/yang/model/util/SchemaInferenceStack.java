@@ -36,8 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
@@ -658,15 +656,15 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
      * @throws VerifyException if path expression is invalid
      */
     public @NonNull EffectiveStatement<?, ?> resolvePathExpression(final PathExpression path) {
-        return switch (path.getSteps()) {
-            case LocationPathSteps location -> resolveLocationPath(location.getLocationPath());
-            case DerefSteps deref -> resolveDeref(deref);
+        return switch (path) {
+            case PathExpression.LocationPath location -> resolveLocationPath(location.locationPath());
+            case PathExpression.Deref deref -> resolveDeref(deref);
         };
     }
 
-    private @NonNull EffectiveStatement<?, ?> resolveDeref(final DerefSteps deref) {
+    private @NonNull EffectiveStatement<?, ?> resolveDeref(final PathExpression.Deref deref) {
         final var leafRefSchemaNode = currentStatement();
-        final var derefArg = deref.getDerefArgument();
+        final var derefArg = deref.derefArgument();
         final var derefStmt = resolveLocationPath(derefArg);
         if (derefStmt == null) {
             // FIXME: dead code?
@@ -697,7 +695,7 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
         checkArgument(derefStmt != null, "Can not find target node of dereferenced node %s", derefStmt);
         checkArgument(derefNode instanceof LeafSchemaNode, "Unexpected %s reference in %s", deref,
                 dereferencedLeafRefPath);
-        return resolveLocationPath(deref.getRelativePath());
+        return resolveLocationPath(deref.relativePath());
     }
 
     private @NonNull EffectiveStatement<?, ?> resolveLocationPath(final YangLocationPath path) {

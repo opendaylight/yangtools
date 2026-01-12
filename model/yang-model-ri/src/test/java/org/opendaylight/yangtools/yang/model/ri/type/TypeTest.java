@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 
 @ExtendWith(MockitoExtension.class)
 class TypeTest {
@@ -306,7 +307,7 @@ class TypeTest {
 
     @Test
     void leafrefTypeTest() {
-        final var expr = mock(PathExpression.class);
+        final var expr = new PathExpression.LocationPath("/", YangLocationPath.root());
 
         final var leafrefTypeBuilder1 = BaseTypes.leafrefTypeBuilder(Q_NAME);
         final var leafrefTypeBuilder2 = BaseTypes.leafrefTypeBuilder(Q_NAME);
