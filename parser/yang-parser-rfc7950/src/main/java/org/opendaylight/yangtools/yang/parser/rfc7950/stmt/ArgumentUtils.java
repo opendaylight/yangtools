@@ -57,7 +57,7 @@ public final class ArgumentUtils {
         return Absolute.of(parseNodeIdentifiers(ctx, str));
     }
 
-    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseDescendantSchemaNodeid()
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static Descendant parseDescendantSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         // FIXME: this does accept a leading slash
         return Descendant.of(parseNodeIdentifiers(ctx, str));
