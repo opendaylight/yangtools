@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
  *
  * <p>Note: use of this base class implies context-independence.
  */
-@Beta
 public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends AbstractStatementSupport<A, D, E> {
     private final LoadingCache<A, D> declaredCache = CacheBuilder.newBuilder().weakValues()

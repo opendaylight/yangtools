@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
 public abstract class AbstractEmptyStatementSupport<D extends DeclaredStatement<Empty>,
         E extends EffectiveStatement<Empty, D>> extends AbstractStatementSupport<Empty, D, E> {
     protected AbstractEmptyStatementSupport(final StatementDefinition publicDefinition,

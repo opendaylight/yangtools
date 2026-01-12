@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -23,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
 public abstract class AbstractUnqualifiedStatementSupport<D extends DeclaredStatement<Unqualified>,
         E extends EffectiveStatement<Unqualified, D>> extends AbstractStatementSupport<Unqualified, D, E> {
     protected AbstractUnqualifiedStatementSupport(final StatementDefinition publicDefinition,
