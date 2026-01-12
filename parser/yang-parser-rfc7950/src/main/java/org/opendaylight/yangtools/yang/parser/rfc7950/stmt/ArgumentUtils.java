@@ -51,7 +51,7 @@ public final class ArgumentUtils {
         return PATH_ABS.matcher(path).matches();
     }
 
-    // FIXME: 15.0.0: deprecate in favor of ctx.identifierBinding().parseAbsoluteSchemaNodeid()
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static Absolute parseAbsoluteSchemaNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         // FIXME: this does accept check for a leading slash
         return Absolute.of(parseNodeIdentifiers(ctx, str));
