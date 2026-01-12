@@ -22,13 +22,13 @@ import org.opendaylight.yang.gen.v1.mdsal437.norev.Cont;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.ContBuilder;
 import org.opendaylight.yang.gen.v1.mdsal437.norev.cont.ContAny;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.LeafPropertyStep;
 import org.opendaylight.yangtools.binding.OpaqueData;
 import org.opendaylight.yangtools.binding.PropertyIdentifier;
 import org.opendaylight.yangtools.binding.lib.AbstractOpaqueData;
 import org.opendaylight.yangtools.binding.lib.AbstractOpaqueObject;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -60,7 +60,7 @@ class AnyxmlLeafTest extends AbstractBindingCodecTest {
     @Test
     void testAnyxmlToBinding() {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(CONT_NODE_ID), cont);
-        assertEquals(InstanceIdentifier.create(Cont.class), entry.getKey());
+        assertEquals(DataObjectIdentifier.builder(Cont.class).build(), entry.getKey());
 
         // So no... GrpAny should be null ..
         final var contValue = assertInstanceOf(Cont.class, entry.getValue());

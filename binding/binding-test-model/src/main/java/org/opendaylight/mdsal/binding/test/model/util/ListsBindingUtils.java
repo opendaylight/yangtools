@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.test.model.util;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyUsesAugment;
@@ -25,10 +26,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier.WithKey;
 
 public final class ListsBindingUtils {
-    private static final InstanceIdentifier<Top> TOP_PATH = InstanceIdentifier.create(Top.class);
+    private static final DataObjectIdentifier<Top> TOP_PATH = DataObjectIdentifier.builder(Top.class).build();
 
     public static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     public static final TopLevelListKey TOP_BAR_KEY = new TopLevelListKey("bar");
@@ -39,21 +41,26 @@ public final class ListsBindingUtils {
         // Hidden on purpose
     }
 
-    public static InstanceIdentifier<TopLevelList> path(final TopLevelListKey key) {
-        return TOP_PATH.child(TopLevelList.class, key);
+    public static @NonNull WithKey<TopLevelList, TopLevelListKey> path(final TopLevelListKey key) {
+        return TOP_PATH.toBuilder().child(TopLevelList.class, key).build();
     }
 
-    public static InstanceIdentifier<NestedList> path(final TopLevelListKey top,final NestedListKey nested) {
-        return path(top).child(NestedList.class, nested);
+    public static @NonNull WithKey<NestedList, NestedListKey> path(final TopLevelListKey top,
+            final NestedListKey nested) {
+        return path(top).toBuilder().child(NestedList.class, nested).build();
     }
 
-    public static InstanceIdentifier<ListViaUses> path(final TopLevelListKey top,final ListViaUsesKey uses) {
-        return path(top).augmentation(TreeComplexUsesAugment.class).child(ListViaUses.class, uses);
+    public static @NonNull WithKey<ListViaUses, ListViaUsesKey> path(final TopLevelListKey top,
+            final ListViaUsesKey uses) {
+        return path(top).toBuilder()
+            .augmentation(TreeComplexUsesAugment.class)
+            .child(ListViaUses.class, uses)
+            .build();
     }
 
-    public static <T extends Augmentation<TopLevelList>> InstanceIdentifier<T> path(final TopLevelListKey key,
+    public static <T extends Augmentation<TopLevelList>> DataObjectIdentifier<T> path(final TopLevelListKey key,
             final Class<T> augmentation) {
-        return path(key).augmentation(augmentation);
+        return path(key).toBuilder().augmentation(augmentation).build();
     }
 
     public static Top top() {
@@ -73,8 +80,8 @@ public final class ListsBindingUtils {
     }
 
     public static TreeComplexUsesAugment complexUsesAugment(final ListViaUsesKey... keys) {
-        final ImmutableMap.Builder<ListViaUsesKey, ListViaUses> listViaUses = ImmutableMap.builder();
-        for (final ListViaUsesKey key : keys) {
+        final var listViaUses = ImmutableMap.<ListViaUsesKey, ListViaUses>builder();
+        for (var key : keys) {
             listViaUses.put(key, new ListViaUsesBuilder().withKey(key).build());
         }
         return new TreeComplexUsesAugmentBuilder().setListViaUses(listViaUses.build()).build();

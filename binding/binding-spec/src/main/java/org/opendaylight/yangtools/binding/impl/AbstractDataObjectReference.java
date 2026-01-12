@@ -28,14 +28,13 @@ import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
  * Base implementation of {@link DataObjectReference}.
  */
 public abstract sealed class AbstractDataObjectReference<T extends DataObject, S extends DataObjectStep<?>>
         implements DataObjectReference<T>
-        permits DataObjectIdentifierImpl, DataObjectReferenceImpl, InstanceIdentifier {
+        permits DataObjectIdentifierImpl, DataObjectReferenceImpl {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
