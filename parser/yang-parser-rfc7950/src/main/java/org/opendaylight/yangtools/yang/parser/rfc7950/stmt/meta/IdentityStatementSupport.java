@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -67,11 +66,6 @@ public final class IdentityStatementSupport
 
     public static @NonNull IdentityStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new IdentityStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ctx.identifierBinding().parseIdentifierArg(ctx, value);
     }
 
     @Override

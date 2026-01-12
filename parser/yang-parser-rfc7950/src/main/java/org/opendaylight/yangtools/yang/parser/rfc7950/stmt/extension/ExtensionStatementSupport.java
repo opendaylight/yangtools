@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -48,11 +47,6 @@ public final class ExtensionStatementSupport
     public ExtensionStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.EXTENSION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
         this.config = requireNonNull(config);
-    }
-
-    @Override
-    public QName parseArgumentValue(final StmtContext<?,?,?> ctx, final String value) {
-        return ctx.identifierBinding().parseIdentifierArg(ctx, value);
     }
 
     @Override
