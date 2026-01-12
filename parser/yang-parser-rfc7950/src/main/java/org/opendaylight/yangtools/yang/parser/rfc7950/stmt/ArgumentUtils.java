@@ -46,7 +46,7 @@ public final class ArgumentUtils {
         return new BigDecimal(num1.toString()).compareTo(new BigDecimal(num2.toString()));
     }
 
-    // FIXME: 15.0.0: deprecate with no direct replacement
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static boolean isAbsoluteXPath(final String path) {
         return PATH_ABS.matcher(path).matches();
     }

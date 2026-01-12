@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.parser.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathLexer;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser;
@@ -49,26 +48,10 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-class PathExpressionParser {
-    static final class Lenient extends PathExpressionParser {
-        private static final Logger LOG = LoggerFactory.getLogger(Lenient.class);
-
-        @Override
-        PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
-            try {
-                return super.parseExpression(ctx, pathArg);
-            } catch (IllegalStateException | StatementSourceException e) {
-                LOG.warn("Failed to parse expression '{}'", pathArg, e);
-                return new UnparsedPathExpression(pathArg, e);
-            }
-        }
-    }
-
-    private static final YangFunctionCallExpr CURRENT_CALL = YangFunctionCallExpr.of(
-        YangFunction.CURRENT.getIdentifier());
+final class PathExpressionParser {
+    private static final YangFunctionCallExpr CURRENT_CALL =
+        YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier());
 
     PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
         final var path = SourceExceptionParser.parseString(LeafRefPathLexer::new, LeafRefPathParser::new,

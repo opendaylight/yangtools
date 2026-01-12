@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -32,20 +30,11 @@ public final class PathStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.PATH).build();
 
-    private final PathExpressionParser parser;
+    private final PathExpressionParser parser = new PathExpressionParser();
 
-    private PathStatementSupport(final YangParserConfiguration config, final PathExpressionParser parser) {
+    public PathStatementSupport(final YangParserConfiguration config) {
         // TODO: can 'path' really be copied?
         super(YangStmtMapping.PATH, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
-        this.parser = requireNonNull(parser);
-    }
-
-    public static PathStatementSupport lenientInstance(final YangParserConfiguration config) {
-        return new PathStatementSupport(config, new PathExpressionParser.Lenient());
-    }
-
-    public static PathStatementSupport strictInstance(final YangParserConfiguration config) {
-        return new PathStatementSupport(config, new PathExpressionParser());
     }
 
     @Override

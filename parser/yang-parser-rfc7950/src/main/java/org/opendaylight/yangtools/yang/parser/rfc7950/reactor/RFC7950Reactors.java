@@ -190,7 +190,7 @@ public final class RFC7950Reactors {
             .addSupport(new RequireInstanceStatementSupport(config))
             .addVersionSpecificSupport(VERSION_1, BitStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, BitStatementSupport.rfc7950Instance(config))
-            .addSupport(PathStatementSupport.strictInstance(config))
+            .addSupport(new PathStatementSupport(config))
             .addVersionSpecificSupport(VERSION_1, EnumStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, EnumStatementSupport.rfc7950Instance(config))
             .addSupport(new LengthStatementSupport(config))
