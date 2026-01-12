@@ -568,6 +568,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
      *
      * @param <T> Instance identifier target type
      */
+    @Deprecated(since = "14.0.23")
     public abstract static sealed class Builder<T extends DataObject> extends AbstractDataObjectReferenceBuilder<T> {
         Builder(final Builder<?> prev) {
             super(prev);
@@ -625,6 +626,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
             KeyStep<Y, X> step);
     }
 
+    @Deprecated(since = "14.0.23")
     public static final class KeyedBuilder<T extends EntryObject<T, K>, K extends Key<T>> extends Builder<T>
             implements DataObjectReference.Builder.WithKey<T, K> {
         KeyedBuilder(final KeyStep<K, T> firstStep) {
@@ -662,6 +664,7 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         }
     }
 
+    @Deprecated(since = "14.0.23")
     private static final class RegularBuilder<T extends DataObject> extends Builder<T> {
         RegularBuilder(final DataObjectStep<T> item) {
             super(item);

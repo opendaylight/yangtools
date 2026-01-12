@@ -316,6 +316,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      *
      * @return An {@link InstanceIdentifier}.
      */
+    @Deprecated(since = "14.0.23", forRemoval = true)
     default @NonNull InstanceIdentifier<T> toLegacy() {
         return InstanceIdentifier.unsafeOf(ImmutableList.copyOf(steps()));
     }
