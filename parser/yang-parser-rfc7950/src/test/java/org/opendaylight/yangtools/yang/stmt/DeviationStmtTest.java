@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import com.google.common.collect.Iterables;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -49,35 +48,43 @@ class DeviationStmtTest {
         for (var deviation : deviations) {
             final var deviates = deviation.getDeviates();
 
-            final String targetLocalName = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers())
-                .getLocalName();
-            if ("test-leaf".equals(targetLocalName)) {
-                assertEquals(Optional.of("test-leaf is not supported"), deviation.getDescription());
-                assertEquals(1, deviates.size());
-                assertEquals(DeviateKind.NOT_SUPPORTED, deviates.iterator().next().getDeviateType());
-            } else if ("test-leaf-2".equals(targetLocalName)) {
-                assertEquals(1, deviates.size());
-                assertEquals(DeviateKind.ADD, deviates.iterator().next().getDeviateType());
-                assertEquals("added-def-val", deviates.iterator().next().getDeviatedDefault());
-                assertFalse(deviates.iterator().next().getDeviatedConfig());
-                assertTrue(deviates.iterator().next().getDeviatedMandatory());
-            } else if ("test-leaf-list".equals(targetLocalName)) {
-                assertEquals(3, deviates.size());
-                for (var deviate : deviates) {
-                    if (DeviateKind.ADD.equals(deviate.getDeviateType())) {
-                        assertEquals(MaxElementsArgument.ofArgument("12"), deviate.getDeviatedMaxElements());
-                    } else if (DeviateKind.REPLACE.equals(deviate.getDeviateType())) {
-                        assertEquals(5, deviate.getDeviatedMinElements().intValue());
-                        assertInstanceOf(Uint32TypeDefinition.class, deviate.getDeviatedType());
-                    } else {
-                        assertEquals(2, deviate.getDeviatedMusts().size());
-                        assertEquals("minutes", deviate.getDeviatedUnits());
+            final var targetLocalName = deviation.getTargetPath().getNodeIdentifiers().getLast().getLocalName();
+            switch (targetLocalName) {
+                case "test-leaf" -> {
+                    assertEquals(Optional.of("test-leaf is not supported"), deviation.getDescription());
+                    assertEquals(1, deviates.size());
+                    assertEquals(DeviateKind.NOT_SUPPORTED, deviates.iterator().next().getDeviateType());
+                }
+                case "test-leaf-2" -> {
+                    assertEquals(1, deviates.size());
+                    assertEquals(DeviateKind.ADD, deviates.iterator().next().getDeviateType());
+                    assertEquals("added-def-val", deviates.iterator().next().getDeviatedDefault());
+                    assertFalse(deviates.iterator().next().getDeviatedConfig());
+                    assertTrue(deviates.iterator().next().getDeviatedMandatory());
+                }
+                case "test-leaf-list" -> {
+                    assertEquals(3, deviates.size());
+                    for (var deviate : deviates) {
+                        switch (deviate.getDeviateType()) {
+                            case ADD -> {
+                                assertEquals(MaxElementsArgument.ofArgument("12"), deviate.getDeviatedMaxElements());
+                            }
+                            case REPLACE -> {
+                                assertEquals(5, deviate.getDeviatedMinElements().intValue());
+                                assertInstanceOf(Uint32TypeDefinition.class, deviate.getDeviatedType());
+                            }
+                            default -> {
+                                assertEquals(2, deviate.getDeviatedMusts().size());
+                                assertEquals("minutes", deviate.getDeviatedUnits());
+                            }
+                        }
                     }
                 }
-            } else {
-                assertEquals(1, deviation.getDeviates().size());
-                assertEquals(DeviateKind.DELETE, deviates.iterator().next().getDeviateType());
-                assertEquals(2, deviates.iterator().next().getDeviatedUniques().size());
+                default -> {
+                    assertEquals(1, deviation.getDeviates().size());
+                    assertEquals(DeviateKind.DELETE, deviates.iterator().next().getDeviateType());
+                    assertEquals(2, deviates.iterator().next().getDeviatedUniques().size());
+                }
             }
         }
 
@@ -97,8 +104,7 @@ class DeviationStmtTest {
 
         for (var deviation : deviations) {
             final var deviates = deviation.getDeviates();
-            final String targetLocalName = Iterables.getLast(deviation.getTargetPath().getNodeIdentifiers())
-                .getLocalName();
+            final String targetLocalName = deviation.getTargetPath().getNodeIdentifiers().getLast().getLocalName();
 
             if ("bar-container-1".equals(targetLocalName)) {
                 deviation1 = deviation;
