@@ -28,7 +28,7 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         /**
          * The singleton instance.
          */
-        public static final Unbounded INSTANCE = new Unbounded();
+        private static final Unbounded VALUE = new Unbounded();
 
         private Unbounded() {
             // Hidden on purpose
@@ -109,15 +109,58 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
     }
 
     /**
-     * Return a {@link MaxElementsArgument} value for specified argument string.
-     *
+     * {@return an unbouded {@link MaxElementsArgument}}
+     */
+    static MaxElementsArgument.Unbounded of() {
+        return Unbounded.VALUE;
+    }
+
+    /**
+     * {@return a {@link MaxElementsArgument} bounded to a value}
+     * @param value the value
+     * @throws IllegalArgumentException if {@code value} is non-positive
+     */
+    static MaxElementsArgument.Bounded of(final int value) {
+        if (value < 1) {
+            throw new IllegalArgumentException("non-positive value " + value);
+        }
+        return new MaxElementsArgument32(value);
+    }
+
+    /**
+     * {@return a {@link MaxElementsArgument} bounded to a value}
+     * @param value the value
+     * @throws IllegalArgumentException if {@code value} is non-positive
+     */
+    static MaxElementsArgument.Bounded of(final long value) {
+        if (value < 1) {
+            throw new IllegalArgumentException("non-positive value " + value);
+        }
+        return value <= Integer.MAX_VALUE ? new MaxElementsArgument32((int) value) : new MaxElementsArgument64(value);
+    }
+
+    /**
+     * {@return a {@link MaxElementsArgument} bounded to a value}
+     * @param value the value
+     * @throws IllegalArgumentException if {@code value} is non-positive
+     */
+    static MaxElementsArgument.Bounded of(final BigInteger value) {
+        if (value.compareTo(BigInteger.ZERO) < 1) {
+            throw new IllegalArgumentException("non-positive value " + value);
+        }
+        return value.compareTo(MaxElementsArgumentBig.LONG_MAX_VALUE) <= 0
+            ? of(value.longValueExact())
+            : new MaxElementsArgumentBig(value);
+    }
+
+    /**
+     * {@return a {@link MaxElementsArgument} value for specified argument string}
      * @param argument the argument string
-     * @return the {@link MaxElementsArgument} value
      * @throws IllegalArgumentException if {@code argument} does not represent a valid value
      */
     static MaxElementsArgument ofArgument(final String argument) {
         if (argument.equals("unbounded")) {
-            return Unbounded.INSTANCE;
+            return Unbounded.VALUE;
         }
 
         // parse a positive-integer-value ABNF production
@@ -141,26 +184,13 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         // log10(value) == length here, allowing us to use primitive type parse results
         if (length <= 9) {
             // 10^9 is less than 2^31-1, defer to Integer.parseInt()
-            return ofArgument(Integer.parseInt(argument));
+            return of(Integer.parseInt(argument));
         }
         if (length <= 18) {
             // 10^18 is less than 2^63-1, defer to Long.parseLong()
-            return ofArgument(Long.parseLong(argument));
+            return of(Long.parseLong(argument));
         }
-        return ofArgument(new BigInteger(argument));
-    }
-
-    private static MaxElementsArgument32 ofArgument(final int value) {
-        return new MaxElementsArgument32(value);
-    }
-
-    private static MaxElementsArgument.Bounded ofArgument(final long value) {
-        return value <= Integer.MAX_VALUE ? ofArgument((int) value) : new MaxElementsArgument64(value);
-    }
-
-    private static MaxElementsArgument.Bounded ofArgument(final BigInteger value) {
-        return value.compareTo(MaxElementsArgumentBig.LONG_MAX_VALUE) <= 0 ? ofArgument(value.longValueExact())
-            : new MaxElementsArgumentBig(value);
+        return of(new BigInteger(argument));
     }
 
     /**

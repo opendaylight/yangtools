@@ -35,7 +35,7 @@ public final class MaxElementsStatementSupport
     private static final String UNBOUNDED_STR = "unbounded";
 
     static {
-        verify(UNBOUNDED_STR.equals(MaxElementsArgument.Unbounded.INSTANCE.toString()));
+        verify(UNBOUNDED_STR.equals(MaxElementsArgument.of().toString()));
     }
 
     public MaxElementsStatementSupport(final YangParserConfiguration config) {
