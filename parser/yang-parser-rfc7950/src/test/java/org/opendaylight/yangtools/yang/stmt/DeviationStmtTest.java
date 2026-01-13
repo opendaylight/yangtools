@@ -67,7 +67,7 @@ class DeviationStmtTest {
                     for (var deviate : deviates) {
                         switch (deviate.getDeviateType()) {
                             case ADD -> {
-                                assertEquals(MaxElementsArgument.ofArgument("12"), deviate.getDeviatedMaxElements());
+                                assertEquals(MaxElementsArgument.of(12), deviate.getDeviatedMaxElements());
                             }
                             case REPLACE -> {
                                 assertEquals(5, deviate.getDeviatedMinElements().intValue());
