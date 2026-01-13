@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Unboun
  */
 // FIXME: use JEP-401 when available
 @NonNullByDefault
-public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgument>, ElementsConstraint
+public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgument>, ElementCountMatcher
         permits Bounded, Unbounded {
     /**
      * Singleton value representing an {@code unbounded} value.
