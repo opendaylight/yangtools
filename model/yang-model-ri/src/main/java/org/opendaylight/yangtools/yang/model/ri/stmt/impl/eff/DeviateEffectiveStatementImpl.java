@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
@@ -58,15 +57,8 @@ public final class DeviateEffectiveStatementImpl extends WithSubstatements<Devia
     }
 
     @Override
-    public Integer getDeviatedMaxElements() {
-        return findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class)
-            .filter(MaxElementsArgument.Bounded.class::isInstance)
-            .map(MaxElementsArgument.Bounded.class::cast)
-            .flatMap(value -> {
-                final var intValue = value.asSaturatedInt();
-                return intValue == Integer.MAX_VALUE ? Optional.empty() : Optional.of(intValue);
-            })
-            .orElse(null);
+    public MaxElementsArgument getDeviatedMaxElements() {
+        return findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class).orElse(null);
     }
 
     @Override

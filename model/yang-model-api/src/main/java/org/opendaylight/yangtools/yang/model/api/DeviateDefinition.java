@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 
 /**
@@ -26,42 +28,42 @@ public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateE
      *
      * @return enum which describes the type of this deviate statement
      */
-    DeviateKind getDeviateType();
+    @NonNull DeviateKind getDeviateType();
 
     /**
      * Returns deviated config value.
      *
      * @return value of the deviated config statement or null if it is not deviated
      */
-    Boolean getDeviatedConfig();
+    @Nullable Boolean getDeviatedConfig();
 
     /**
      * Returns deviated default value.
      *
      * @return value of the deviated default statement or null if it is not deviated
      */
-    String getDeviatedDefault();
+    @Nullable String getDeviatedDefault();
 
     /**
      * Returns deviated mandatory value.
      *
      * @return value of the deviated mandatory statement or null if it is not deviated
      */
-    Boolean getDeviatedMandatory();
+    @Nullable Boolean getDeviatedMandatory();
 
     /**
      * Returns deviated max-elements.
      *
      * @return value of the deviated max-elements statement or null if it is not deviated
      */
-    Integer getDeviatedMaxElements();
+    @Nullable MaxElementsArgument getDeviatedMaxElements();
 
     /**
      * Returns deviated min-elements.
      *
      * @return value of the deviated min-elements statement or null if it is not deviated
      */
-    Integer getDeviatedMinElements();
+    @Nullable Integer getDeviatedMinElements();
 
     /**
      * Returns deviated must statements.
@@ -75,7 +77,7 @@ public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateE
      *
      * @return deviated type statement or null if it is not deviated
      */
-    TypeDefinition<?> getDeviatedType();
+    @Nullable TypeDefinition<?> getDeviatedType();
 
     /**
      * Returns deviated unique statements.
@@ -89,5 +91,5 @@ public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateE
      *
      * @return value of the deviated units statement or null if it is not deviated
      */
-    String getDeviatedUnits();
+    @Nullable String getDeviatedUnits();
 }

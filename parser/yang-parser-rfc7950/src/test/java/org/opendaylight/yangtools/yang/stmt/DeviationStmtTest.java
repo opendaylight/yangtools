@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -64,7 +65,7 @@ class DeviationStmtTest {
                 assertEquals(3, deviates.size());
                 for (var deviate : deviates) {
                     if (DeviateKind.ADD.equals(deviate.getDeviateType())) {
-                        assertEquals(12, deviate.getDeviatedMaxElements().intValue());
+                        assertEquals(MaxElementsArgument.ofArgument("12"), deviate.getDeviatedMaxElements());
                     } else if (DeviateKind.REPLACE.equals(deviate.getDeviateType())) {
                         assertEquals(5, deviate.getDeviatedMinElements().intValue());
                         assertInstanceOf(Uint32TypeDefinition.class, deviate.getDeviatedType());
