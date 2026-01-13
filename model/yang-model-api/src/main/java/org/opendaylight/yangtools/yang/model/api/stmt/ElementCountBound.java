@@ -12,26 +12,27 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- * Common interface for {@code min-elements} and {@code max-elememnts} constraints.
+ * An inclusive bound on the number of elements, as expressed via {@code min-elements} and {@code max-elememnts}
+ * statements. The two represent inclusive lower and upper bound on an interval of allowed element count.
  *
  * @since 15.0.0
  */
 @NonNullByDefault
-public sealed interface ElementsConstraint extends Immutable permits MaxElementsArgument {
+public sealed interface ElementCountBound extends Immutable permits MaxElementsArgument {
     /**
-     * {@return {@code true} if {@code elementCount} matches this constraint}
+     * {@return {@code true} if {@code elementCount} matches this bound}
      * @param elementCount the element count
      */
     boolean matches(int elementCount);
 
     /**
-     * {@return {@code true} if {@code elementCount} matches this constraint}
+     * {@return {@code true} if {@code elementCount} matches this bound}
      * @param elementCount the element count
      */
     boolean matches(long elementCount);
 
     /**
-     * {@return {@code true} if {@code elementCount} matches this constraint}
+     * {@return {@code true} if {@code elementCount} matches this bound}
      * @param elementCount the element count
      */
     boolean matches(BigInteger elementCount);
