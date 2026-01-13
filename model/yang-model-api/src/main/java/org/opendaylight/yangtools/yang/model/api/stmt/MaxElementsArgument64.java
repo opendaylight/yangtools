@@ -16,22 +16,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Bounde
 /**
  * A Bounded argument whose upper bound does not exceed {@value Integer#MAX_VALUE}.
  */
-// FIXME: use JEP-401 when available
+// TODO: use JEP-401 when available
 @NonNullByDefault
 record MaxElementsArgument64(long value) implements Bounded {
-    private static final MaxElementsArgument64 MAX_VALUE = new MaxElementsArgument64(Long.MAX_VALUE);
-    private static final BigInteger MAX_VALUE_BIG = MAX_VALUE.asBigInteger();
-
     MaxElementsArgument64 {
         verify(value > Integer.MAX_VALUE);
-    }
-
-    static MaxElementsArgument.Bounded ofArgument(final BigInteger argument) {
-        final var cmp = MAX_VALUE_BIG.compareTo(argument);
-        if (cmp == 0) {
-            return MAX_VALUE;
-        }
-        return cmp > 0 ? new MaxElementsArgument64(argument.longValueExact()) : new MaxElementsArgumentBig(argument);
     }
 
     @Override
@@ -60,7 +49,7 @@ record MaxElementsArgument64(long value) implements Bounded {
     }
 
     @Override
-    public int compareToBounded(final Bounded obj) {
+    public int compareToOther(final Bounded obj) {
         return switch (obj) {
             // TODO: Java 22+: use https://openjdk.org/jeps/456 uunabed pattern
             case MaxElementsArgument32 other -> 1;

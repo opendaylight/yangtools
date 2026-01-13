@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static java.util.Objects.requireNonNull;
+import static com.google.common.base.Verify.verify;
 
 import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -16,10 +16,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Bounde
 /**
  * Used for {@code max-value} argument integer literal that would exceed the {@link Long.MAX_VALUE}.
  */
+// TODO: use JEP-401 when available
 @NonNullByDefault
 record MaxElementsArgumentBig(BigInteger value) implements Bounded {
+    static final BigInteger LONG_MAX_VALUE = BigInteger.valueOf(Long.MAX_VALUE);
+
     MaxElementsArgumentBig {
-        requireNonNull(value);
+        verify(value.compareTo(LONG_MAX_VALUE) > 0);
     }
 
     @Override
@@ -48,7 +51,7 @@ record MaxElementsArgumentBig(BigInteger value) implements Bounded {
     }
 
     @Override
-    public int compareToBounded(final Bounded obj) {
+    public int compareToOther(final Bounded obj) {
         return switch (obj) {
             // TODO: Java 22+: use https://openjdk.org/jeps/456 uunabed pattern
             case MaxElementsArgument32 other -> 1;

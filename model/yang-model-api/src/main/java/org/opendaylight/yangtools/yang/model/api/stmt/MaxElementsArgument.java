@@ -45,6 +45,12 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         }
 
         @Override
+        @Deprecated(forRemoval = true)
+        public Unbounded intern() {
+            return this;
+        }
+
+        @Override
         public boolean matches(final int elementCount) {
             return true;
         }
@@ -67,30 +73,39 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
 
     /**
      * A {@link MaxElementsArgument} with an upper bound on elements.
-     *
-     * @implSpec this interface establishes exclusion alongside
      */
-    // All implementations are kept internal to establish the following invariant:
+    // All implementations are kept internal and carve out the BigInteger value space into memory-efficient
+    // representations for 'int' and 'long'. This is done via MaxElementsArgument32.of() and MaxElementsArgument64.of()
+    // cascade.
     sealed interface Bounded extends MaxElementsArgument
+            // Note: we could also use 'Int' prefix/suffix instead of '32' suffix, but this way the name's alpha sort
+            //       matches the storage efficiency preference
             permits MaxElementsArgument32, MaxElementsArgument64, MaxElementsArgumentBig {
+        @Override
+        default Bounded intern() {
+            return MaxElementsArgument32.INTERNER.intern(this);
+        }
+
+        @Override
+        default boolean matches(final BigInteger elementCount) {
+            return elementCount.compareTo(asBigInteger()) <= 0;
+        }
+
         /**
          * {@return this value as a {@link BigInteger}, guaranteed to be greater than {@link BigInteger#ZERO}}
          */
         BigInteger asBigInteger();
 
         /**
-         * Compare this instance to another object.
+         * Compare this instance to another {@link Bounded}.
          *
          * @param obj the other instance
          * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater
          *         than the specified object
          */
-        int compareToBounded(Bounded obj);
-
-        @Override
-        default boolean matches(final BigInteger elementCount) {
-            return elementCount.compareTo(asBigInteger()) <= 0;
-        }
+        // Note: 'obj' to keep similarity with compareTo(Bounded) we would like, but SpotBugs rejects due to naming
+        //       similarity. That also allows 'other' to be used as a common identifier in a switch pattern.
+        int compareToOther(Bounded obj);
     }
 
     /**
@@ -101,11 +116,11 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
      * @throws IllegalArgumentException if {@code argument} does not represent a valid value
      */
     static MaxElementsArgument ofArgument(final String argument) {
-        return argument.equals("unbounded") ? Unbounded.INSTANCE
-            : MaxElementsArgument32.ofArgument(parsePositiveIntegerValue(argument));
-    }
+        if (argument.equals("unbounded")) {
+            return Unbounded.INSTANCE;
+        }
 
-    private static BigInteger parsePositiveIntegerValue(final String argument) {
+        // parse a positive-integer-value ABNF production
         final var length = argument.length();
         if (length == 0) {
             throw new IllegalArgumentException("empty max-value-arg");
@@ -122,25 +137,53 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
                     + (i + 1) + ": '" + ch + "' is not a valid DIGIT");
             }
         }
-        return new BigInteger(argument);
+
+        // log10(value) == length here, allowing us to use primitive type parse results
+        if (length <= 9) {
+            // 10^9 is less than 2^31-1, defer to Integer.parseInt()
+            return ofArgument(Integer.parseInt(argument));
+        }
+        if (length <= 18) {
+            // 10^18 is less than 2^63-1, defer to Long.parseLong()
+            return ofArgument(Long.parseLong(argument));
+        }
+        return ofArgument(new BigInteger(argument));
     }
+
+    private static MaxElementsArgument32 ofArgument(final int value) {
+        return new MaxElementsArgument32(value);
+    }
+
+    private static MaxElementsArgument.Bounded ofArgument(final long value) {
+        return value <= Integer.MAX_VALUE ? ofArgument((int) value) : new MaxElementsArgument64(value);
+    }
+
+    private static MaxElementsArgument.Bounded ofArgument(final BigInteger value) {
+        return value.compareTo(MaxElementsArgumentBig.LONG_MAX_VALUE) <= 0 ? ofArgument(value.longValueExact())
+            : new MaxElementsArgumentBig(value);
+    }
+
+    /**
+     * {@return this argument saturated to {@link Integer#MAX_VALUE}}
+     */
+    int asSaturatedInt();
+
+    /**
+     * {@return this argument saturated to {@link Long#MAX_VALUE}}
+     */
+    long asSaturatedLong();
+
+    /**
+     * {@return interned equivalent of this argument}
+     */
+    MaxElementsArgument intern();
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     default int compareTo(final MaxElementsArgument o) {
         return switch (o) {
             case Unbounded other -> this instanceof Unbounded ? 0 : -1;
-            case Bounded other -> this instanceof Bounded bounded ? bounded.compareToBounded(other) : 1;
+            case Bounded other -> this instanceof Bounded bounded ? bounded.compareToOther(other) : 1;
         };
     }
-
-    /**
-     * {@return this argument saturated to {@code int}}
-     */
-    int asSaturatedInt();
-
-    /**
-     * {@return this argument saturated to {@code long}}
-     */
-    long asSaturatedLong();
 }

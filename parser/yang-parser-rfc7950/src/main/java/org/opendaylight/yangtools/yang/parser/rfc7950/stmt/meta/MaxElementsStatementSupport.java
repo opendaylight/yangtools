@@ -55,7 +55,7 @@ public final class MaxElementsStatementSupport
     @Override
     public MaxElementsArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return MaxElementsArgument.ofArgument(value);
+            return MaxElementsArgument.ofArgument(value).intern();
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid max-elements argument \"%s\"", value);
         }

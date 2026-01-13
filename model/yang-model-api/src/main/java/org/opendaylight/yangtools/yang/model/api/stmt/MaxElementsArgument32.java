@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.math.BigInteger;
@@ -15,30 +17,14 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 /**
  * A Bounded argument whose upper bound does not exceed {@value Integer#MAX_VALUE}.
  */
-// FIXME: use JEP-401 when available
+// TODO: use JEP-401 when available
 @NonNullByDefault
 record MaxElementsArgument32(int value) implements MaxElementsArgument.Bounded {
-    // TODO: extend range to unsigned
-    private static final BigInteger MAX_VALUE_BIG = BigInteger.valueOf(Integer.MAX_VALUE);
-    private static final MaxElementsArgument32 MAX_VALUE = new MaxElementsArgument32(Integer.MAX_VALUE);
-
     // Convenience placement outside of the main interface
-    private static final Interner<MaxElementsArgument.Bounded> INTERNER = Interners.newWeakInterner();
+    static final Interner<MaxElementsArgument.Bounded> INTERNER = Interners.newWeakInterner();
 
     MaxElementsArgument32 {
-        if (value < 1) {
-            throw new IllegalArgumentException("Invalid max-elements" + value);
-        }
-    }
-
-    static MaxElementsArgument.Bounded ofArgument(final BigInteger argument) {
-        final var cmp = MAX_VALUE_BIG.compareTo(argument);
-        if (cmp == 0) {
-            return MaxElementsArgument32.MAX_VALUE;
-        }
-        return INTERNER.intern(cmp > 0
-            ? new MaxElementsArgument32(argument.intValueExact())
-            : MaxElementsArgument64.ofArgument(argument));
+        verify(value > 0);
     }
 
     @Override
@@ -67,7 +53,7 @@ record MaxElementsArgument32(int value) implements MaxElementsArgument.Bounded {
     }
 
     @Override
-    public int compareToBounded(final Bounded obj) {
+    public int compareToOther(final Bounded obj) {
         return switch (obj) {
             case MaxElementsArgument32 other -> Integer.compare(value, other.value);
             // TODO: Java 22+: use https://openjdk.org/jeps/456 uunabed pattern
