@@ -88,6 +88,16 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         }
 
         @Override
+        default boolean matches(final int elementCount) {
+            return elementCount <= asSaturatedInt();
+        }
+
+        @Override
+        default boolean matches(final long elementCount) {
+            return elementCount <= asSaturatedLong();
+        }
+
+        @Override
         default boolean matches(final BigInteger elementCount) {
             return elementCount.compareTo(asBigInteger()) <= 0;
         }
@@ -218,4 +228,10 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
             case Bounded other -> this instanceof Bounded bounded ? bounded.compareToOther(other) : 1;
         };
     }
+
+    /**
+     * {@return the string representation of the maximum number of elements}
+     */
+    @Override
+    String toString();
 }
