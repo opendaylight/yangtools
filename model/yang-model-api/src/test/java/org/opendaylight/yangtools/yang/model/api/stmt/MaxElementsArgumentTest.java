@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -133,9 +133,9 @@ class MaxElementsArgumentTest {
     @Test
     void unboundedMatches() {
         final var unbounded = MaxElementsArgument.of();
-        assertTrue(unbounded.matches(0));
-        assertTrue(unbounded.matches(1L));
-        assertTrue(unbounded.matches(BigInteger.TEN));
+        assertNull(unbounded.matches(0));
+        assertNull(unbounded.matches(1L));
+        assertNull(unbounded.matches(BigInteger.TEN));
     }
 
     @Test
@@ -148,25 +148,25 @@ class MaxElementsArgumentTest {
     @Test
     void intMatches() {
         final var arg = MaxElementsArgument.of(5);
-        assertTrue(arg.matches(4));
-        assertTrue(arg.matches(3L));
-        assertFalse(arg.matches(BigInteger.TEN));
+        assertNull(arg.matches(4));
+        assertNull(arg.matches(3L));
+        assertNotNull(arg.matches(BigInteger.TEN));
     }
 
     @Test
     void longMatches() {
         final var arg = MaxElementsArgument.of(1L + Integer.MAX_VALUE);
-        assertTrue(arg.matches(Integer.MAX_VALUE));
-        assertTrue(arg.matches(1L + Integer.MAX_VALUE));
-        assertFalse(arg.matches(BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.TWO)));
+        assertNull(arg.matches(Integer.MAX_VALUE));
+        assertNull(arg.matches(1L + Integer.MAX_VALUE));
+        assertNotNull(arg.matches(BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.TWO)));
     }
 
     @Test
     void bigMatches() {
         final var arg = MaxElementsArgument.of(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE));
-        assertTrue(arg.matches(Integer.MAX_VALUE));
-        assertTrue(arg.matches(1L + Integer.MAX_VALUE));
-        assertFalse(arg.matches(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TWO)));
+        assertNull(arg.matches(Integer.MAX_VALUE));
+        assertNull(arg.matches(1L + Integer.MAX_VALUE));
+        assertNotNull(arg.matches(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TWO)));
     }
 
     @Test
