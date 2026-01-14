@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
+import java.text.ParseException;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -55,9 +56,10 @@ public final class MaxElementsStatementSupport
     @Override
     public MaxElementsArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return MaxElementsArgument.ofArgument(value).intern();
-        } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Invalid max-elements argument \"%s\"", value);
+            return MaxElementsArgument.parse(value).intern();
+        } catch (ParseException e) {
+            throw new SourceException(ctx, e, "Invalid max-elements argument \"%s\" at offset %s: %s", value,
+                e.getErrorOffset(), e.getMessage());
         }
     }
 
