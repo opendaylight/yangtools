@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -127,25 +127,25 @@ class MinElementsArgumentTest {
     @Test
     void intMatches() {
         final var arg = MinElementsArgument.of(5);
-        assertFalse(arg.matches(4));
-        assertFalse(arg.matches(3L));
-        assertTrue(arg.matches(BigInteger.TEN));
+        assertNotNull(arg.matches(4));
+        assertNotNull(arg.matches(3L));
+        assertNull(arg.matches(BigInteger.TEN));
     }
 
     @Test
     void longMatches() {
         final var arg = MinElementsArgument.of(1L + Integer.MAX_VALUE);
-        assertFalse(arg.matches(Integer.MAX_VALUE));
-        assertTrue(arg.matches(1L + Integer.MAX_VALUE));
-        assertTrue(arg.matches(BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.TWO)));
+        assertNotNull(arg.matches(Integer.MAX_VALUE));
+        assertNull(arg.matches(1L + Integer.MAX_VALUE));
+        assertNull(arg.matches(BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.TWO)));
     }
 
     @Test
     void bigMatches() {
         final var arg = MinElementsArgument.of(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE));
-        assertFalse(arg.matches(Integer.MAX_VALUE));
-        assertFalse(arg.matches(1L + Integer.MAX_VALUE));
-        assertTrue(arg.matches(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TWO)));
+        assertNotNull(arg.matches(Integer.MAX_VALUE));
+        assertNotNull(arg.matches(1L + Integer.MAX_VALUE));
+        assertNull(arg.matches(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TWO)));
     }
 
     @Test
