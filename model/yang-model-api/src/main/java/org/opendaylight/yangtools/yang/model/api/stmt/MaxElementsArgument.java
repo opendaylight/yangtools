@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.math.BigInteger;
 import java.text.ParseException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Bounded;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Unbounded;
 
@@ -52,18 +53,18 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         }
 
         @Override
-        public boolean matches(final int elementCount) {
-            return true;
+        public @Nullable TooManyElements matches(final int elementCount) {
+            return null;
         }
 
         @Override
-        public boolean matches(final long elementCount) {
-            return true;
+        public @Nullable TooManyElements matches(final long elementCount) {
+            return null;
         }
 
         @Override
-        public boolean matches(final BigInteger elementCount) {
-            return true;
+        public @Nullable TooManyElements matches(final BigInteger elementCount) {
+            return null;
         }
 
         @Override
@@ -88,18 +89,21 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         }
 
         @Override
-        default boolean matches(final int elementCount) {
-            return elementCount <= asSaturatedInt();
+        default @Nullable TooManyElements matches(final int elementCount) {
+            final var asInt = asSaturatedInt();
+            return elementCount <= asInt ? null : new TooManyElements(asInt);
         }
 
         @Override
-        default boolean matches(final long elementCount) {
-            return elementCount <= asSaturatedLong();
+        default @Nullable TooManyElements matches(final long elementCount) {
+            final var asLong = asSaturatedLong();
+            return elementCount <= asLong ? null : new TooManyElements(asLong);
         }
 
         @Override
-        default boolean matches(final BigInteger elementCount) {
-            return elementCount.compareTo(asBigInteger()) <= 0;
+        default @Nullable TooManyElements matches(final BigInteger elementCount) {
+            final var asBig = asBigInteger();
+            return elementCount.compareTo(asBig) <= 0 ? null : new TooManyElements(asBig);
         }
 
         /**
@@ -204,6 +208,15 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         }
         return of(new BigInteger(argument));
     }
+
+    @Override
+    @Nullable TooManyElements matches(int elementCount);
+
+    @Override
+    @Nullable TooManyElements matches(long elementCount);
+
+    @Override
+    @Nullable TooManyElements matches(BigInteger elementCount);
 
     /**
      * {@return this argument saturated to {@link Integer#MAX_VALUE}}
