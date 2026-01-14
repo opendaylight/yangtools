@@ -13,8 +13,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
 public final class RegularLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffectiveStatement {
@@ -22,8 +22,8 @@ public final class RegularLeafListEffectiveStatement extends AbstractNonEmptyLea
 
     public RegularLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final ImmutableSet<String> defaults,
-            final ElementCountConstraint elementCountConstraint) {
-        super(declared, argument, flags, substatements, elementCountConstraint);
+            final ElementCountMatcher elementCountMatcher) {
+        super(declared, argument, flags, substatements, elementCountMatcher);
         this.defaults = requireNonNull(defaults);
     }
 

@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -99,7 +98,7 @@ class YangParserTest extends AbstractModelTest {
         // ifEntry should be a context node ?
         // assertNull(constraints.getWhenCondition());
         assertEquals(0, ifEntry.getMustConstraints().size());
-        ElementCountConstraint constraints = ifEntry.getElementCountConstraint().orElseThrow();
+        var constraints = ifEntry.elementCountMatcher();
         assertEquals(MinElementsArgument.of(1), constraints.getMinElements());
         assertEquals(11, constraints.getMaxElements());
         // test AugmentationTarget args

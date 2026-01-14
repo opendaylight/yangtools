@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -54,6 +53,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
@@ -593,17 +593,16 @@ public final class EffectiveStatements {
 
     public static LeafListEffectiveStatement createLeafList(final LeafListStatement declared, final QName argument,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final ImmutableSet<String> defaultValues, final @Nullable ElementCountConstraint elementCountConstraint)
+            final ImmutableSet<String> defaultValues, final @Nullable ElementCountMatcher elementCountMatcher)
                 throws SubstatementIndexingException {
         if (defaultValues.isEmpty()) {
-            return elementCountConstraint == null && argument.equals(declared.argument())
+            return elementCountMatcher == null && argument.equals(declared.argument())
                 ? new EmptyLeafListEffectiveStatement(declared, flags, substatements)
-                    : new SlimLeafListEffectiveStatement(declared, argument, flags, substatements,
-                        elementCountConstraint);
+                    : new SlimLeafListEffectiveStatement(declared, argument, flags, substatements, elementCountMatcher);
         }
 
         return new RegularLeafListEffectiveStatement(declared, argument, flags, substatements, defaultValues,
-            elementCountConstraint);
+            elementCountMatcher);
     }
 
     public static LengthEffectiveStatement createLength(final LengthStatement declared,
@@ -623,11 +622,11 @@ public final class EffectiveStatements {
 
     public static ListEffectiveStatement createList(final ListStatement declared, final QName argument,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final ImmutableList<QName> keyDefinition, final @Nullable ElementCountConstraint elementCountConstraint) {
-        return elementCountConstraint == null && argument.equals(declared.argument())
+            final ImmutableList<QName> keyDefinition, final @Nullable ElementCountMatcher elementCountMatcher) {
+        return elementCountMatcher == null && argument.equals(declared.argument())
             ? new EmptyListEffectiveStatement(declared, flags, substatements, keyDefinition)
                 : new RegularListEffectiveStatement(declared, argument, flags, substatements, keyDefinition,
-                    elementCountConstraint);
+                    elementCountMatcher);
     }
 
     public static MandatoryEffectiveStatement createMandatory(final MandatoryStatement declared) {
@@ -793,11 +792,11 @@ public final class EffectiveStatements {
     public static RequireInstanceEffectiveStatement createRequireInstance(final RequireInstanceStatement declared) {
         if (EmptyRequireInstanceStatement.TRUE.equals(declared)) {
             return EmptyRequireInstanceEffectiveStatement.TRUE;
-        } else if (EmptyRequireInstanceStatement.FALSE.equals(declared)) {
-            return EmptyRequireInstanceEffectiveStatement.FALSE;
-        } else {
-            return new EmptyRequireInstanceEffectiveStatement(declared);
         }
+        if (EmptyRequireInstanceStatement.FALSE.equals(declared)) {
+            return EmptyRequireInstanceEffectiveStatement.FALSE;
+        }
+        return new EmptyRequireInstanceEffectiveStatement(declared);
     }
 
     public static RequireInstanceEffectiveStatement createRequireInstance(final RequireInstanceStatement declared,
@@ -824,15 +823,16 @@ public final class EffectiveStatements {
         if (EmptyStatusStatement.DEPRECATED.equals(declared)) {
             // Most likely to be seen (as current is the default)
             return EmptyStatusEffectiveStatement.DEPRECATED;
-        } else if (EmptyStatusStatement.OBSOLETE.equals(declared)) {
+        }
+        if (EmptyStatusStatement.OBSOLETE.equals(declared)) {
             // less likely
             return EmptyStatusEffectiveStatement.OBSOLETE;
-        } else if (EmptyStatusStatement.CURRENT.equals(declared)) {
+        }
+        if (EmptyStatusStatement.CURRENT.equals(declared)) {
             // ... okay, why is this there? :)
             return EmptyStatusEffectiveStatement.CURRENT;
-        } else {
-            return new EmptyStatusEffectiveStatement(declared);
         }
+        return new EmptyStatusEffectiveStatement(declared);
     }
 
     public static StatusEffectiveStatement createStatus(final StatusStatement declared,
@@ -877,11 +877,11 @@ public final class EffectiveStatements {
     public static YangVersionEffectiveStatement createYangVersion(final YangVersionStatement declared) {
         if (EmptyYangVersionStatement.VERSION_1.equals(declared)) {
             return EmptyYangVersionEffectiveStatement.VERSION_1;
-        } else if (EmptyYangVersionStatement.VERSION_1_1.equals(declared)) {
-            return EmptyYangVersionEffectiveStatement.VERSION_1_1;
-        } else {
-            return new EmptyYangVersionEffectiveStatement(declared);
         }
+        if (EmptyYangVersionStatement.VERSION_1_1.equals(declared)) {
+            return EmptyYangVersionEffectiveStatement.VERSION_1_1;
+        }
+        return new EmptyYangVersionEffectiveStatement(declared);
     }
 
     public static YangVersionEffectiveStatement createYangVersion(final YangVersionStatement declared,

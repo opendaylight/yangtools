@@ -12,19 +12,18 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
@@ -57,36 +56,15 @@ public final class EffectiveStmtUtils {
     }
 
     @NonNullByDefault
-    public static @Nullable ElementCountConstraint createElementCountConstraint(final CommonStmtCtx ctx,
+    public static @Nullable ElementCountMatcher elementCountMatcherOf(final CommonStmtCtx ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createElementCountConstraint(ctx,
-            AbstractStatementSupport.findFirstStatement(substatements, MinElementsEffectiveStatement.class),
-            AbstractStatementSupport.findFirstStatement(substatements, MaxElementsEffectiveStatement.class));
-    }
-
-    private static @Nullable ElementCountConstraint createElementCountConstraint(final @NonNull CommonStmtCtx ctx,
-            final @Nullable MinElementsEffectiveStatement minStmt,
-            final @Nullable MaxElementsEffectiveStatement maxStmt) {
-        final var minElements = minStmt == null ? null : minStmt.argument();
-        final Integer maxElements;
-        if (maxStmt != null) {
-            final var max = maxStmt.argument().asSaturatedInt();
-            maxElements = max < Integer.MAX_VALUE ? max : null;
-        } else {
-            maxElements = null;
-        }
-
-        if (minElements == null) {
-            return maxElements == null ? null : ElementCountConstraint.atMost(maxElements);
-        }
-        if (maxElements == null) {
-            return ElementCountConstraint.atLeast(minElements);
-        }
-        if (minElements.lowerInt() < maxElements) {
-            return ElementCountConstraint.inRange(minElements, maxElements);
-        }
-
-        throw new SourceException(ctx, "Conflicting 'min-elements %s' and 'max-elements %s'", minElements, maxElements);
+        final var minStmt = AbstractStatementSupport.findFirstStatement(substatements,
+            MinElementsEffectiveStatement.class);
+        final var maxStmt = AbstractStatementSupport.findFirstStatement(substatements,
+            MaxElementsEffectiveStatement.class);
+        // FIXME: should report mismatch
+        return ElementCountMatcher.ofNullable(minStmt == null ? null : minStmt.argument(),
+            maxStmt == null ? null : maxStmt.argument());
     }
 
     /**

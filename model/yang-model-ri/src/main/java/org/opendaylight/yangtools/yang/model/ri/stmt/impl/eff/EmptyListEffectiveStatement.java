@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 
 public final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
@@ -27,7 +26,7 @@ public final class EmptyListEffectiveStatement extends AbstractListEffectiveStat
     }
 
     @Override
-    public Optional<ElementCountConstraint> getElementCountConstraint() {
-        return Optional.empty();
+    public ElementCountMatcher elementCountMatcher() {
+        return null;
     }
 }
