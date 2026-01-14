@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,14 +57,29 @@ class MaxElementsArgumentTest {
     }
 
     @Test
-    void badThrows() {
+    void moreThanNineThrows() {
         final var ex = assertThrowsExactly(ParseException.class, () -> MaxElementsArgument.parse("1a"));
         assertEquals("'a' is not a valid DIGIT", ex.getMessage());
         assertEquals(1, ex.getErrorOffset());
     }
 
     @Test
+    void lessThanZeroThrows() {
+        final var ex = assertThrowsExactly(ParseException.class, () -> MaxElementsArgument.parse("1/"));
+        assertEquals("'/' is not a valid DIGIT", ex.getMessage());
+        assertEquals(1, ex.getErrorOffset());
+    }
+
+    @Test
     void intParses() throws Exception {
+        final var arg = assertInstanceOf(MaxElementsArgument32.class, MaxElementsArgument.parse("999999999"));
+        assertEquals("999999999", arg.toString());
+        assertEquals(999_999_999, arg.asSaturatedInt());
+        assertEquals(999_999_999, arg.asSaturatedLong());
+    }
+
+    @Test
+    void intParsesViaLong() throws Exception {
         final var arg = assertInstanceOf(MaxElementsArgument32.class, MaxElementsArgument.parse("2147483647"));
         assertEquals("2147483647", arg.toString());
         assertEquals(Integer.MAX_VALUE, arg.asSaturatedInt());
@@ -72,6 +88,14 @@ class MaxElementsArgumentTest {
 
     @Test
     void longParses() throws Exception {
+        final var arg = assertInstanceOf(MaxElementsArgument64.class, MaxElementsArgument.parse("999999999999999999"));
+        assertEquals("999999999999999999", arg.toString());
+        assertEquals(Integer.MAX_VALUE, arg.asSaturatedInt());
+        assertEquals(999_999_999_999_999_999L, arg.asSaturatedLong());
+    }
+
+    @Test
+    void longParsesViaBig() throws Exception {
         final var arg = assertInstanceOf(MaxElementsArgument64.class, MaxElementsArgument.parse("9223372036854775807"));
         assertEquals("9223372036854775807", arg.toString());
         assertEquals(Integer.MAX_VALUE, arg.asSaturatedInt());
@@ -119,7 +143,6 @@ class MaxElementsArgumentTest {
         final var unbounded = MaxElementsArgument.of();
         assertEquals(Integer.MAX_VALUE, unbounded.asSaturatedInt());
         assertEquals(Long.MAX_VALUE, unbounded.asSaturatedLong());
-        assertSame(unbounded, unbounded.intern());
     }
 
     @Test
@@ -137,7 +160,6 @@ class MaxElementsArgumentTest {
         assertTrue(arg.matches(1L + Integer.MAX_VALUE));
         assertFalse(arg.matches(BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.TWO)));
     }
-
 
     @Test
     void bigMatches() {
@@ -208,5 +230,25 @@ class MaxElementsArgumentTest {
 
         assertThat(bigOne).isLessThan(bigTwo);
         assertThat(bigTwo).isGreaterThan(bigOne);
+    }
+
+    @Test
+    void unboundedIsSingleton() {
+        final var first = MaxElementsArgument.of();
+        assertSame(first, MaxElementsArgument.of());
+        assertSame(first, first.intern());
+    }
+
+    @Test
+    void boundedInternWorks() {
+        final var first = MaxElementsArgument.of(1);
+        final var second = MaxElementsArgument.of(1);
+        assertNotSame(first, second);
+        assertEquals(first, second);
+
+        final var interned = first.intern();
+        assertEquals(interned, first);
+        assertNotSame(interned, second);
+        assertSame(interned, second.intern());
     }
 }

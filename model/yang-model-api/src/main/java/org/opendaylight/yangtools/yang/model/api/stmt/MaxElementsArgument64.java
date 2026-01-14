@@ -24,16 +24,6 @@ record MaxElementsArgument64(long asSaturatedLong) implements Bounded {
     }
 
     @Override
-    public boolean matches(final int elementCount) {
-        return elementCount <= asSaturatedLong;
-    }
-
-    @Override
-    public boolean matches(final long elementCount) {
-        return elementCount <= asSaturatedLong;
-    }
-
-    @Override
     public int asSaturatedInt() {
         return Integer.MAX_VALUE;
     }
