@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 
 /**
@@ -72,7 +73,7 @@ public abstract sealed class ElementCountConstraint {
             if (maxElements < 0) {
                 throw new IllegalArgumentException("maximum elements " + maxElements + " is not non-negative");
             }
-            if (!minElements.matches(maxElements)) {
+            if (minElements.match(maxElements) instanceof ElementCountMatcher.Failure) {
                 throw new IllegalArgumentException("minimum elements " + minElements
                     + " is not less than or equal to maximum elements " + maxElements);
             }

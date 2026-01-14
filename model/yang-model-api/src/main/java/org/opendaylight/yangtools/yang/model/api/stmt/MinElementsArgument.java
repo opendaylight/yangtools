@@ -27,7 +27,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public sealed interface MinElementsArgument extends Comparable<MinElementsArgument>, ElementCountMatcher
         permits MinElementsArgument32, MinElementsArgument64, MinElementsArgumentBig {
-    /**
+   /**
      * {@return a {@link MinElementsArgument} with specified value}
      * @param value the value
      * @throws IllegalArgumentException if value is negative
@@ -119,18 +119,22 @@ public sealed interface MinElementsArgument extends Comparable<MinElementsArgume
     }
 
     @Override
-    default boolean matches(final int elementCount) {
-        return elementCount > lowerInt();
+    default Match match(final int elementCount) {
+        return elementCount > lowerInt() ? Success.VALUE : newViolation();
     }
 
     @Override
-    default boolean matches(final long elementCount) {
-        return elementCount > lowerLong();
+    default Match match(final long elementCount) {
+        return elementCount > lowerLong() ? Success.VALUE : newViolation();
     }
 
     @Override
-    default boolean matches(final BigInteger elementCount) {
-        return elementCount.compareTo(lowerBig()) > 0;
+    default Match match(final BigInteger elementCount) {
+        return elementCount.compareTo(lowerBig()) > 0  ? Success.VALUE : newViolation();
+    }
+
+    private TooFewElements newViolation() {
+        return new TooFewElements(toString());
     }
 
     /**

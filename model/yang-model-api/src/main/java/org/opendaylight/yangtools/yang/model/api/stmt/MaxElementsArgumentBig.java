@@ -26,13 +26,13 @@ record MaxElementsArgumentBig(BigInteger value) implements Bounded {
     }
 
     @Override
-    public boolean matches(final int elementCount) {
-        return matches((long) elementCount);
+    public boolean match(final int elementCount) {
+        return match((long) elementCount);
     }
 
     @Override
-    public boolean matches(final long elementCount) {
-        return matches(BigInteger.valueOf(elementCount));
+    public boolean match(final long elementCount) {
+        return match(BigInteger.valueOf(elementCount));
     }
 
     @Override

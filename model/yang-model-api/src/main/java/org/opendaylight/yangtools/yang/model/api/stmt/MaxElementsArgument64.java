@@ -24,12 +24,12 @@ record MaxElementsArgument64(long value) implements Bounded {
     }
 
     @Override
-    public boolean matches(final int elementCount) {
+    public boolean match(final int elementCount) {
         return elementCount <= value;
     }
 
     @Override
-    public boolean matches(final long elementCount) {
+    public boolean match(final long elementCount) {
         return elementCount <= value;
     }
 
