@@ -13,6 +13,8 @@ import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Bounded;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Unbounded;
 
 /**
  * A matcher on element count in a container like {@code list}, as expressed via {@code min-elements} and
@@ -21,7 +23,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @since 15.0.0
  */
 @NonNullByDefault
-public sealed interface ElementCountMatcher extends Immutable permits MinElementsArgument, MaxElementsArgument {
+public sealed interface ElementCountMatcher extends Immutable
+        permits MinElementsArgument, MaxElementsArgument, ElementCountRange {
     /**
      * A matching violation.
      */
@@ -51,6 +54,69 @@ public sealed interface ElementCountMatcher extends Immutable permits MinElement
         public TooManyElements {
             requireNonNull(maxElements);
         }
+    }
+
+    /**
+     * {@return an ElementCountMatcher matching specified {@code min-elements}, or {@code null} if no matching is
+     * needed}
+     * @param minElements the {@link MinElementsArgument}
+     */
+    static @Nullable ElementCountMatcher atLeast(final MinElementsArgument minElements) {
+        return isZero(minElements) ? null : minElements;
+    }
+
+    /**
+     * {@return an ElementCountMatcher matching specified {@code max-elements}, or {@code null} if no matching is
+     * needed}
+     * @param maxElements the {@link MaxElementsArgument}
+     */
+    static @Nullable ElementCountMatcher atMost(final MaxElementsArgument maxElements) {
+        return switch (maxElements) {
+            case Bounded bounded -> bounded;
+            case Unbounded unbounded -> null;
+        };
+    }
+
+    /**
+     * {@return an ElementCountMatcher matching optional {@code min-elements} and optional {@code max-elements},
+     * or {@code null} if no matching is needed}
+     * @param minElements the {@link MinElementsArgument} or {@code null}
+     * @param maxElements the {@link MaxElementsArgument} or {@code null}
+     */
+    static @Nullable ElementCountMatcher ofNullable(final @Nullable MinElementsArgument minElements,
+            final @Nullable MaxElementsArgument maxElements) {
+        if (minElements == null) {
+            return maxElements == null ? null : atMost(maxElements);
+        }
+        return maxElements == null ? atLeast(minElements) : ofRange(minElements, maxElements);
+    }
+
+    /**
+     * {@return an ElementCountMatcher matching specified {@code min-elements} and {@code max-elements}, or {@code null}
+     * if no matching is needed}
+     * @param minElements the {@link MinElementsArgument}
+     * @param maxElements the {@link MaxElementsArgument}
+     */
+    static @Nullable ElementCountMatcher ofRange(final MinElementsArgument minElements,
+            final MaxElementsArgument maxElements) {
+        return switch (maxElements) {
+            case Bounded bounded -> ofRange(minElements, bounded);
+            case Unbounded unbounded -> atLeast(minElements);
+        };
+    }
+
+    /**
+     * {@return an ElementCountMatcher matching specified {@code min-elements} and bounded {@code max-elements}}
+     * @param minElements the {@link MinElementsArgument}
+     * @param maxElements the {@link Bounded}
+     */
+    static ElementCountMatcher ofRange(final MinElementsArgument minElements, final Bounded maxElements) {
+        return isZero(minElements) ? requireNonNull(maxElements) : new ElementCountRange(minElements, maxElements);
+    }
+
+    private static boolean isZero(final MinElementsArgument minElements) {
+        // 'min.lowerInt == -1' == 'min-elements == 0'
+        return minElements.lowerInt() == -1;
     }
 
     /**
