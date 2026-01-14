@@ -72,7 +72,7 @@ public abstract sealed class ElementCountConstraint {
             if (maxElements < 0) {
                 throw new IllegalArgumentException("maximum elements " + maxElements + " is not non-negative");
             }
-            if (!minElements.matches(maxElements)) {
+            if (minElements.matches(maxElements) != null) {
                 throw new IllegalArgumentException("minimum elements " + minElements
                     + " is not less than or equal to maximum elements " + maxElements);
             }

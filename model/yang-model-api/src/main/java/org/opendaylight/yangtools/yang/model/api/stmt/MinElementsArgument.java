@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.math.BigInteger;
 import java.text.ParseException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * An argument to {@code min-elements} statement.
@@ -119,18 +120,27 @@ public sealed interface MinElementsArgument extends Comparable<MinElementsArgume
     }
 
     @Override
-    default boolean matches(final int elementCount) {
-        return elementCount > lowerInt();
+    default @Nullable TooFewElements matches(final int elementCount) {
+        return elementCount > lowerInt() ? null : tooFewElements();
     }
 
     @Override
-    default boolean matches(final long elementCount) {
-        return elementCount > lowerLong();
+    default @Nullable TooFewElements matches(final long elementCount) {
+        return elementCount > lowerLong() ? null : tooFewElements();
     }
 
     @Override
-    default boolean matches(final BigInteger elementCount) {
-        return elementCount.compareTo(lowerBig()) > 0;
+    default @Nullable TooFewElements matches(final BigInteger elementCount) {
+        final var lowerBig = lowerBig();
+        return elementCount.compareTo(lowerBig) > 0 ? null : tooFewElements(lowerBig);
+    }
+
+    private TooFewElements tooFewElements() {
+        return tooFewElements(lowerBig());
+    }
+
+    private static TooFewElements tooFewElements(final BigInteger lowerBig) {
+        return new TooFewElements(lowerBig.add(BigInteger.ONE));
     }
 
     /**
