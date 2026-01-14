@@ -28,16 +28,6 @@ record MaxElementsArgument32(int asSaturatedInt) implements MaxElementsArgument.
     }
 
     @Override
-    public boolean matches(final int elementCount) {
-        return elementCount <= asSaturatedInt;
-    }
-
-    @Override
-    public boolean matches(final long elementCount) {
-        return elementCount <= asSaturatedInt;
-    }
-
-    @Override
     public long asSaturatedLong() {
         return asSaturatedInt;
     }

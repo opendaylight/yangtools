@@ -56,14 +56,29 @@ class MaxElementsArgumentTest {
     }
 
     @Test
-    void badThrows() {
+    void moreThanNineThrows() {
         final var ex = assertThrowsExactly(ParseException.class, () -> MaxElementsArgument.parse("1a"));
         assertEquals("'a' is not a valid DIGIT", ex.getMessage());
         assertEquals(1, ex.getErrorOffset());
     }
 
     @Test
+    void lessThanZeroThrows() {
+        final var ex = assertThrowsExactly(ParseException.class, () -> MaxElementsArgument.parse("1/"));
+        assertEquals("'/' is not a valid DIGIT", ex.getMessage());
+        assertEquals(1, ex.getErrorOffset());
+    }
+
+    @Test
     void intParses() throws Exception {
+        final var arg = assertInstanceOf(MaxElementsArgument32.class, MaxElementsArgument.parse("999999999"));
+        assertEquals("999999999", arg.toString());
+        assertEquals(999_999_999, arg.asSaturatedInt());
+        assertEquals(999_999_999, arg.asSaturatedLong());
+    }
+
+    @Test
+    void intParsesViaLong() throws Exception {
         final var arg = assertInstanceOf(MaxElementsArgument32.class, MaxElementsArgument.parse("2147483647"));
         assertEquals("2147483647", arg.toString());
         assertEquals(Integer.MAX_VALUE, arg.asSaturatedInt());
@@ -72,6 +87,14 @@ class MaxElementsArgumentTest {
 
     @Test
     void longParses() throws Exception {
+        final var arg = assertInstanceOf(MaxElementsArgument64.class, MaxElementsArgument.parse("999999999999999999"));
+        assertEquals("999999999999999999", arg.toString());
+        assertEquals(Integer.MAX_VALUE, arg.asSaturatedInt());
+        assertEquals(999_999_999_999_999_999L, arg.asSaturatedLong());
+    }
+
+    @Test
+    void longParsesViaBig() throws Exception {
         final var arg = assertInstanceOf(MaxElementsArgument64.class, MaxElementsArgument.parse("9223372036854775807"));
         assertEquals("9223372036854775807", arg.toString());
         assertEquals(Integer.MAX_VALUE, arg.asSaturatedInt());
