@@ -18,19 +18,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Bounde
  */
 // TODO: use JEP-401 when available
 @NonNullByDefault
-record MaxElementsArgument64(long value) implements Bounded {
+record MaxElementsArgument64(long asSaturatedLong) implements Bounded {
     MaxElementsArgument64 {
-        verify(value > Integer.MAX_VALUE);
+        verify(asSaturatedLong > Integer.MAX_VALUE);
     }
 
     @Override
     public boolean matches(final int elementCount) {
-        return elementCount <= value;
+        return elementCount <= asSaturatedLong;
     }
 
     @Override
     public boolean matches(final long elementCount) {
-        return elementCount <= value;
+        return elementCount <= asSaturatedLong;
     }
 
     @Override
@@ -39,13 +39,8 @@ record MaxElementsArgument64(long value) implements Bounded {
     }
 
     @Override
-    public long asSaturatedLong() {
-        return value;
-    }
-
-    @Override
     public BigInteger asBigInteger() {
-        return BigInteger.valueOf(value);
+        return BigInteger.valueOf(asSaturatedLong);
     }
 
     @Override
@@ -53,13 +48,13 @@ record MaxElementsArgument64(long value) implements Bounded {
         return switch (obj) {
             // TODO: Java 22+: use https://openjdk.org/jeps/456 uunabed pattern
             case MaxElementsArgument32 other -> 1;
-            case MaxElementsArgument64 other -> Long.compare(value, other.value);
+            case MaxElementsArgument64 other -> Long.compare(asSaturatedLong, other.asSaturatedLong);
             case MaxElementsArgumentBig other -> -1;
         };
     }
 
     @Override
     public String toString() {
-        return Long.toString(value);
+        return Long.toString(asSaturatedLong);
     }
 }

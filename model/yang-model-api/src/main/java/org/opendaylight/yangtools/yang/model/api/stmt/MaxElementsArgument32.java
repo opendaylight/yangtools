@@ -19,43 +19,38 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 // TODO: use JEP-401 when available
 @NonNullByDefault
-record MaxElementsArgument32(int value) implements MaxElementsArgument.Bounded {
+record MaxElementsArgument32(int asSaturatedInt) implements MaxElementsArgument.Bounded {
     // Convenience placement outside of the main interface
     static final Interner<MaxElementsArgument.Bounded> INTERNER = Interners.newWeakInterner();
 
     MaxElementsArgument32 {
-        verify(value > 0);
+        verify(asSaturatedInt > 0);
     }
 
     @Override
     public boolean matches(final int elementCount) {
-        return elementCount <= value;
+        return elementCount <= asSaturatedInt;
     }
 
     @Override
     public boolean matches(final long elementCount) {
-        return elementCount <= value;
-    }
-
-    @Override
-    public int asSaturatedInt() {
-        return value;
+        return elementCount <= asSaturatedInt;
     }
 
     @Override
     public long asSaturatedLong() {
-        return value;
+        return asSaturatedInt;
     }
 
     @Override
     public BigInteger asBigInteger() {
-        return BigInteger.valueOf(value);
+        return BigInteger.valueOf(asSaturatedInt);
     }
 
     @Override
     public int compareToOther(final Bounded obj) {
         return switch (obj) {
-            case MaxElementsArgument32 other -> Integer.compare(value, other.value);
+            case MaxElementsArgument32 other -> Integer.compare(asSaturatedInt, other.asSaturatedInt);
             // TODO: Java 22+: use https://openjdk.org/jeps/456 uunabed pattern
             case MaxElementsArgument64 other -> -1;
             case MaxElementsArgumentBig other -> -1;
@@ -64,6 +59,6 @@ record MaxElementsArgument32(int value) implements MaxElementsArgument.Bounded {
 
     @Override
     public String toString() {
-        return Integer.toString(value);
+        return Integer.toString(asSaturatedInt);
     }
 }

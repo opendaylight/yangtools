@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -100,5 +104,109 @@ class MaxElementsArgumentTest {
     void ofZeroInt() {
         final var ex = assertThrowsExactly(IllegalArgumentException.class, () -> MaxElementsArgument.of(0));
         assertEquals("non-positive value 0", ex.getMessage());
+    }
+
+    @Test
+    void unboundedMatches() {
+        final var unbounded = MaxElementsArgument.of();
+        assertTrue(unbounded.matches(0));
+        assertTrue(unbounded.matches(1L));
+        assertTrue(unbounded.matches(BigInteger.TEN));
+    }
+
+    @Test
+    void unboundedMethods() {
+        final var unbounded = MaxElementsArgument.of();
+        assertEquals(Integer.MAX_VALUE, unbounded.asSaturatedInt());
+        assertEquals(Long.MAX_VALUE, unbounded.asSaturatedLong());
+        assertSame(unbounded, unbounded.intern());
+    }
+
+    @Test
+    void intMatches() {
+        final var arg = MaxElementsArgument.of(5);
+        assertTrue(arg.matches(4));
+        assertTrue(arg.matches(3L));
+        assertFalse(arg.matches(BigInteger.TEN));
+    }
+
+    @Test
+    void longMatches() {
+        final var arg = MaxElementsArgument.of(1L + Integer.MAX_VALUE);
+        assertTrue(arg.matches(Integer.MAX_VALUE));
+        assertTrue(arg.matches(1L + Integer.MAX_VALUE));
+        assertFalse(arg.matches(BigInteger.valueOf(Integer.MAX_VALUE).add(BigInteger.TWO)));
+    }
+
+
+    @Test
+    void bigMatches() {
+        final var arg = MaxElementsArgument.of(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE));
+        assertTrue(arg.matches(Integer.MAX_VALUE));
+        assertTrue(arg.matches(1L + Integer.MAX_VALUE));
+        assertFalse(arg.matches(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TWO)));
+    }
+
+    @Test
+    void compareToWorks() {
+        final MaxElementsArgument unbounded = MaxElementsArgument.of();
+        assertThat(unbounded).isEqualByComparingTo(unbounded);
+
+        final MaxElementsArgument intOne = MaxElementsArgument.of(1);
+        assertInstanceOf(MaxElementsArgument32.class, intOne);
+        assertThat(intOne).isEqualByComparingTo(intOne);
+        assertThat(intOne).isLessThan(unbounded);
+        assertThat(unbounded).isGreaterThan(intOne);
+
+        final MaxElementsArgument intTwo = MaxElementsArgument.of(2);
+        assertInstanceOf(MaxElementsArgument32.class, intTwo);
+        assertThat(intTwo).isEqualByComparingTo(intTwo);
+        assertThat(intTwo).isLessThan(unbounded);
+        assertThat(unbounded).isGreaterThan(intTwo);
+
+        assertThat(intOne).isLessThan(intTwo);
+        assertThat(intTwo).isGreaterThan(intOne);
+
+        final MaxElementsArgument longOne = MaxElementsArgument.of(1L + Integer.MAX_VALUE);
+        assertInstanceOf(MaxElementsArgument64.class, longOne);
+        assertThat(longOne).isEqualByComparingTo(longOne);
+        assertThat(longOne).isLessThan(unbounded);
+        assertThat(unbounded).isGreaterThan(longOne);
+        assertThat(intOne).isLessThan(longOne);
+        assertThat(longOne).isGreaterThan(intOne);
+
+        final MaxElementsArgument longTwo = MaxElementsArgument.of(2L + Integer.MAX_VALUE);
+        assertInstanceOf(MaxElementsArgument64.class, longTwo);
+        assertThat(longTwo).isEqualByComparingTo(longTwo);
+        assertThat(longTwo).isLessThan(unbounded);
+        assertThat(unbounded).isGreaterThan(longTwo);
+
+        assertThat(longOne).isLessThan(longTwo);
+        assertThat(longTwo).isGreaterThan(longOne);
+
+        final MaxElementsArgument bigOne =
+            MaxElementsArgument.of(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE));
+        assertInstanceOf(MaxElementsArgumentBig.class, bigOne);
+        assertThat(bigOne).isEqualByComparingTo(bigOne);
+        assertThat(bigOne).isLessThan(unbounded);
+        assertThat(unbounded).isGreaterThan(bigOne);
+        assertThat(intOne).isLessThan(bigOne);
+        assertThat(longOne).isLessThan(bigOne);
+        assertThat(bigOne).isGreaterThan(intOne);
+        assertThat(bigOne).isGreaterThan(longOne);
+
+        final MaxElementsArgument bigTwo =
+            MaxElementsArgument.of(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TWO));
+        assertInstanceOf(MaxElementsArgumentBig.class, bigTwo);
+        assertThat(bigTwo).isEqualByComparingTo(bigTwo);
+        assertThat(bigTwo).isLessThan(unbounded);
+        assertThat(unbounded).isGreaterThan(bigTwo);
+        assertThat(intTwo).isLessThan(bigTwo);
+        assertThat(longTwo).isLessThan(bigTwo);
+        assertThat(bigTwo).isGreaterThan(intTwo);
+        assertThat(bigTwo).isGreaterThan(longTwo);
+
+        assertThat(bigOne).isLessThan(bigTwo);
+        assertThat(bigTwo).isGreaterThan(bigOne);
     }
 }
