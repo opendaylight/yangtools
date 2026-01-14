@@ -51,17 +51,17 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         }
 
         @Override
-        public boolean matches(final int elementCount) {
+        public boolean match(final int elementCount) {
             return true;
         }
 
         @Override
-        public boolean matches(final long elementCount) {
+        public boolean match(final long elementCount) {
             return true;
         }
 
         @Override
-        public boolean matches(final BigInteger elementCount) {
+        public boolean match(final BigInteger elementCount) {
             return true;
         }
 
@@ -87,7 +87,7 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         }
 
         @Override
-        default boolean matches(final BigInteger elementCount) {
+        default boolean match(final BigInteger elementCount) {
             return elementCount.compareTo(asBigInteger()) <= 0;
         }
 

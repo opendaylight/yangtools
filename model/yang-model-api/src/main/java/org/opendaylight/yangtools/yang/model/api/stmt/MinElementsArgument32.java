@@ -24,21 +24,6 @@ record MinElementsArgument32(int lowerInt) implements MinElementsArgument {
     }
 
     @Override
-    public boolean matches(final int elementCount) {
-        return lowerInt >= elementCount;
-    }
-
-    @Override
-    public boolean matches(final long elementCount) {
-        return lowerInt >= elementCount;
-    }
-
-    @Override
-    public boolean matches(final BigInteger elementCount) {
-        return elementCount.compareTo(BigInteger.valueOf(lowerInt)) >= 0;
-    }
-
-    @Override
     public long lowerLong() {
         return lowerInt;
     }
