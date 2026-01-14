@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ElementCountAware;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -18,9 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ListEffectiveStatement extends DataTreeEffectiveStatement<ListStatement>,
         DataTreeAwareEffectiveStatement<QName, ListStatement>, TypedefAwareEffectiveStatement<QName, ListStatement>,
-        OrderedByAwareEffectiveStatement<QName, ListStatement> {
+        OrderedByAwareEffectiveStatement<QName, ListStatement>, ElementCountAware {
     @Override
-    default  StatementDefinition statementDefinition() {
+    default StatementDefinition statementDefinition() {
         return YangStmtMapping.LIST;
+    }
+
+    @Override
+    default @Nullable ElementCountMatcher elementCountMatcher() {
+        return ElementCountMatcher.ofStatement(this);
     }
 }

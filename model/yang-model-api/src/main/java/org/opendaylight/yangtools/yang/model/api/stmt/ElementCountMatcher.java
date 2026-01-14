@@ -13,6 +13,7 @@ import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Bounded;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Unbounded;
 
@@ -110,6 +111,17 @@ public sealed interface ElementCountMatcher extends Immutable
      */
     static ElementCountMatcher ofRange(final MinElementsArgument minElements, final Bounded maxElements) {
         return isZero(minElements) ? requireNonNull(maxElements) : new ElementCountRange(minElements, maxElements);
+    }
+
+    /**
+     * {@return an ElementCountMatcher matching {@ode min-elements} and {@code max-elements} sub-statements
+     * of a statement, or {@code null} if no matching is needed}
+     * @param stmt the {@link EffectiveStatement}
+     */
+    static @Nullable ElementCountMatcher ofStatement(final EffectiveStatement<?, ?> stmt) {
+        return ElementCountMatcher.ofNullable(
+            stmt.findFirstEffectiveSubstatementArgument(MinElementsEffectiveStatement.class).orElse(null),
+            stmt.findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class).orElse(null));
     }
 
     private static boolean isZero(final MinElementsArgument minElements) {

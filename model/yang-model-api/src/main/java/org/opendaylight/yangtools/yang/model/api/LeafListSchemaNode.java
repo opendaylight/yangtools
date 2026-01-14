@@ -9,14 +9,15 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 
 /**
  * Interface describing YANG 'leaf-list' statement.
  */
-public non-sealed interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware,
-        ElementCountConstraintAware, UserOrderedAware<LeafListEffectiveStatement> {
-
+public non-sealed interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware, ElementCountAware,
+        UserOrderedAware<LeafListEffectiveStatement> {
     /**
      * Return the default value of this leaf-list, as per the rules outlined in
      * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.7.4">Section 7.4.4 of RFC7950</a>. RFC6020 does not
@@ -25,4 +26,9 @@ public non-sealed interface LeafListSchemaNode extends TypedDataSchemaNode, Must
      * @return Ordered list of Strings which specify the default values of this leaf-list
      */
     @NonNull Collection<? extends @NonNull Object> getDefaults();
+
+    @Override
+    default @Nullable ElementCountMatcher elementCountMatcher() {
+        return asEffectiveStatement().elementCountMatcher();
+    }
 }

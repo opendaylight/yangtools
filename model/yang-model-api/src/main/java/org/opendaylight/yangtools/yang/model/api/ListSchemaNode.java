@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.model.api;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 
@@ -21,8 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
  * identified by the values of the list's keys, if defined.
  */
 public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode, ActionNodeContainer,
-        NotificationNodeContainer, ElementCountConstraintAware, MustConstraintAware,
-        UserOrderedAware<ListEffectiveStatement> {
+        NotificationNodeContainer, ElementCountAware, MustConstraintAware, UserOrderedAware<ListEffectiveStatement> {
     /**
      * Returns the list of leaf identifiers.
      *
@@ -36,4 +37,9 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
      * @return Collection of unique constraints of this list schema node
      */
     @NonNull Collection<? extends @NonNull UniqueEffectiveStatement> getUniqueConstraints();
+
+    @Override
+    default @Nullable ElementCountMatcher elementCountMatcher() {
+        return asEffectiveStatement().elementCountMatcher();
+    }
 }
