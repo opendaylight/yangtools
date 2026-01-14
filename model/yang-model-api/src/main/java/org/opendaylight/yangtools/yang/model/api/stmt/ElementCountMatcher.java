@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static java.util.Objects.requireNonNull;
+
 import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -20,20 +23,51 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @NonNullByDefault
 public sealed interface ElementCountMatcher extends Immutable permits MinElementsArgument, MaxElementsArgument {
     /**
-     * {@return {@code true} if {@code elementCount} matches this matcher}
-     * @param elementCount the element count
+     * A matching violation.
      */
-    boolean matches(int elementCount);
+    sealed interface Violation {
+        // Just a marker
+    }
 
     /**
-     * {@return {@code true} if {@code elementCount} matches this matcher}
-     * @param elementCount the element count
+     * Proposed element count violates constraint imposed by {@code min-elements}, as illustrated in
+     * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-15.3">RFC7950 section 15.3</a>.
+     *
+     * @param minElements minimum allowed elements
      */
-    boolean matches(long elementCount);
+    record TooFewElements(Number minElements) implements Violation {
+        public TooFewElements {
+            requireNonNull(minElements);
+        }
+    }
 
     /**
-     * {@return {@code true} if {@code elementCount} matches this matcher}
+     * Proposed element count violates constraint imposed by {@code max-elements}, as illustrated in
+     * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-15.2">RFC7950 section 15.2</a>.
+     *
+     * @param maxElements maximum allowed elements
+     */
+    record TooManyElements(Number maxElements) implements Violation {
+        public TooManyElements {
+            requireNonNull(maxElements);
+        }
+    }
+
+    /**
+     * {@return {@code null} if {@code elementCount} matches this matcher or a {@link Violation}}
      * @param elementCount the element count
      */
-    boolean matches(BigInteger elementCount);
+    @Nullable Violation matches(int elementCount);
+
+    /**
+     * {@return {@code null} if {@code elementCount} matches this matcher or a {@link Violation}}
+     * @param elementCount the element count
+     */
+    @Nullable Violation matches(long elementCount);
+
+    /**
+     * {@return {@code null} if {@code elementCount} matches this matcher or a {@link Violation}}
+     * @param elementCount the element count
+     */
+    @Nullable Violation matches(BigInteger elementCount);
 }
