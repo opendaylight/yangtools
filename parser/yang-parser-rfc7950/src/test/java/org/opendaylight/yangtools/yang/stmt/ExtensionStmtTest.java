@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,11 +50,10 @@ class ExtensionStmtTest extends AbstractYangTest {
         final var testModule2 = result.findModules("ext-use").iterator().next();
         assertNotNull(testModule2);
 
-        final var leaf = (LeafSchemaNode) testModule2.getDataChildByName(
-            QName.create(testModule2.getQNameModule(), "value"));
-        assertNotNull(leaf);
+        final var leaf = assertInstanceOf(LeafSchemaNode.class,
+            testModule2.getDataChildByName(QName.create(testModule2.getQNameModule(), "value")));
 
-        final var unknownNodes = leaf.asEffectiveStatement().getDeclared()
+        final var unknownNodes = leaf.asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
         final var extensionUse = unknownNodes.iterator().next();

@@ -85,7 +85,7 @@ public final class YinXMLEventReaderFactory {
      * @throws IllegalArgumentException if the specified module does not expose declared model
      */
     public XMLEventReader createXMLEventReader(final ModuleEffectiveStatement module) {
-        final var declared = module.getDeclared();
+        final var declared = module.declared();
         checkArgument(declared != null, "Module %s does not expose declared model", module);
         return new YinXMLEventReader(eventFactory, new ModuleNamespaceContext(module), declared);
     }
@@ -101,7 +101,7 @@ public final class YinXMLEventReaderFactory {
      */
     public XMLEventReader createXMLEventReader(final ModuleEffectiveStatement module,
             final SubmoduleEffectiveStatement submodule) {
-        final var declared = submodule.getDeclared();
+        final var declared = submodule.declared();
         checkArgument(declared != null, "Submodule %s does not expose declared model", submodule);
         return new YinXMLEventReader(eventFactory, new ModuleNamespaceContext(module), declared);
     }

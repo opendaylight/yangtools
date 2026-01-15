@@ -33,7 +33,7 @@ class Bug5942Test extends AbstractYangTest {
 
         assertEquals("0!=1", usesNode.getWhenCondition().orElseThrow().toString());
 
-        final var unknownSchemaNode = usesNode.asEffectiveStatement().getDeclared()
+        final var unknownSchemaNode = usesNode.asEffectiveStatement().requireDeclared()
             .findFirstDeclaredSubstatement(UnrecognizedStatement.class).orElseThrow();
 
         assertEquals("argument", unknownSchemaNode.argument());

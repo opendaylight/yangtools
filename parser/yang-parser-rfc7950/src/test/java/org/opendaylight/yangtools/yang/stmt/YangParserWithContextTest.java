@@ -275,7 +275,7 @@ class YangParserWithContextTest {
         final var module = context.findModule("test3", Revision.of("2013-06-18")).orElseThrow();
         final var network = assertInstanceOf(ContainerSchemaNode.class,
             module.dataChildByName(QName.create(module.getQNameModule(), "network")))
-            .asEffectiveStatement().getDeclared();
+            .asEffectiveStatement().requireDeclared();
         final var unknownNodes = network.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
 

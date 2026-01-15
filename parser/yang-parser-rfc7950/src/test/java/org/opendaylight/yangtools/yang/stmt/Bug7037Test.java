@@ -11,13 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
 class Bug7037Test extends AbstractYangTest {
@@ -28,36 +25,33 @@ class Bug7037Test extends AbstractYangTest {
     void test() {
         final var context = assertEffectiveModelDir("/bugs/bug7037");
 
-        final var unknownSchemaNodes = context.getModuleStatement(foo("foo")) .getDeclared()
+        final var unknownSchemaNodes = context.getModuleStatement(foo("foo")).requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
 
-        final UnrecognizedStatement first = unknownSchemaNodes.iterator().next();
-        final Collection<? extends UnrecognizedStatement> firstUnknownNodes =
-            first.declaredSubstatements(UnrecognizedStatement.class);
+        final var first = unknownSchemaNodes.iterator().next();
+        final var firstUnknownNodes = first.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, firstUnknownNodes.size());
 
-        final UnrecognizedStatement barExtCont = firstUnknownNodes.iterator().next();
+        final var barExtCont = firstUnknownNodes.iterator().next();
         assertEquals(bar("container"), barExtCont.statementDefinition().statementName());
         assertEquals("bar-ext-con", barExtCont.argument());
 
-        final DataSchemaNode root = context.getDataChildByName(foo("root"));
-
-        final Collection<? extends UnrecognizedStatement> rootUnknownNodes =
-            assertInstanceOf(ContainerSchemaNode.class, root).asEffectiveStatement().getDeclared()
-                .declaredSubstatements(UnrecognizedStatement.class);
+        final var root = context.getDataChildByName(foo("root"));
+        final var rootUnknownNodes = assertInstanceOf(ContainerSchemaNode.class, root).asEffectiveStatement()
+            .requireDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(2, rootUnknownNodes.size());
 
-        final Map<QName, UnrecognizedStatement> rootUnknownNodeMap = rootUnknownNodes.stream()
+        final var rootUnknownNodeMap = rootUnknownNodes.stream()
             .collect(Collectors.toMap(u -> u.statementDefinition().statementName(), u -> u));
 
-        final UnrecognizedStatement barExt = rootUnknownNodeMap.get(bar("bar-ext"));
-        final Collection<? extends UnrecognizedStatement> barExtUnknownNodes =
-            barExt.declaredSubstatements(UnrecognizedStatement.class);
+        final var barExt = rootUnknownNodeMap.get(bar("bar-ext"));
+        final var barExtUnknownNodes = barExt.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(3, barExtUnknownNodes.size());
 
         UnrecognizedStatement barExtCont2 = null;
-        for (UnrecognizedStatement next : barExtUnknownNodes) {
+        for (var next : barExtUnknownNodes) {
             if (bar("container").equals(next.statementDefinition().statementName())) {
                 barExtCont2 = next;
                 break;
@@ -66,12 +60,11 @@ class Bug7037Test extends AbstractYangTest {
         assertNotNull(barExtCont2);
         assertEquals("bar-ext-con-2", barExtCont2.argument());
 
-        final UnrecognizedStatement fooExt = rootUnknownNodeMap.get(foo("foo-ext"));
-        final Collection<? extends UnrecognizedStatement> fooUnknownNodes =
-            fooExt.declaredSubstatements(UnrecognizedStatement.class);
+        final var fooExt = rootUnknownNodeMap.get(foo("foo-ext"));
+        final var fooUnknownNodes = fooExt.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, fooUnknownNodes.size());
 
-        final UnrecognizedStatement fooExtCont = fooUnknownNodes.iterator().next();
+        final var fooExtCont = fooUnknownNodes.iterator().next();
         assertEquals(foo("container"), fooExtCont.statementDefinition().statementName());
         assertEquals("foo-ext-con", fooExtCont.argument());
     }

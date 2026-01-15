@@ -42,11 +42,11 @@ class YT1338Test extends AbstractYangDataTest {
             .orElseThrow();
         assertEquals(QName.create("yt1338", "foo"), leaf.argument());
         assertEquals(StatementOrigin.CONTEXT, leaf.statementOrigin());
-        assertNull(leaf.getDeclared());
+        assertNull(leaf.declared());
 
         final var type = leaf.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         assertEquals(TypeDefinitions.EMPTY, type.argument());
         assertEquals(StatementOrigin.CONTEXT, type.statementOrigin());
-        assertNull(type.getDeclared());
+        assertNull(type.declared());
     }
 }
