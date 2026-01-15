@@ -29,8 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
@@ -65,7 +63,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
 
         final var anyxmlSchemaNode = assertInstanceOf(AnyxmlSchemaNode.class,
             testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "foobar")));
-        final var anyxmlStatement = anyxmlSchemaNode.asEffectiveStatement().getDeclared();
+        final var anyxmlStatement = anyxmlSchemaNode.asEffectiveStatement().declared();
         assertNotNull(anyxmlStatement);
 
         final QName name = anyxmlStatement.argument();
@@ -119,7 +117,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) testModule.getDataChildByName(
             QName.create(testModule.getQNameModule(), "test-choice"));
         assertNotNull(choiceSchemaNode);
-        final ChoiceStatement choiceStatement = ((ChoiceEffectiveStatement) choiceSchemaNode).getDeclared();
+        final var choiceStatement = choiceSchemaNode.asEffectiveStatement().requireDeclared();
 
         final QName name = choiceStatement.argument();
         assertNotNull(name);
