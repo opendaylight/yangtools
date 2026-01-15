@@ -54,8 +54,8 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
     }
 
     @Override
-    public AugmentStatement getDeclared() {
-        return delegate.getDeclared();
+    public AugmentStatement declared() {
+        return delegate.declared();
     }
 
     @Override

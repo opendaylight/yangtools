@@ -31,7 +31,7 @@ final class UnrecognizedEffectiveStatement extends AbstractDeclaredEffectiveStat
     }
 
     @Override
-    public UnrecognizedStatement getDeclared() {
+    public UnrecognizedStatement declared() {
         throw new UnsupportedOperationException();
     }
 }
