@@ -44,7 +44,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveState
 public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends DeclaredStatement<A>>
         extends AbstractIndexedEffectiveStatement<A, D> {
     @Override
-    public abstract @NonNull D getDeclared();
+    public abstract @NonNull D declared();
+
+    @Override
+    public final D requireDeclared() {
+        return declared();
+    }
 
     /**
      * Base stateless superclass form {@link SchemaTreeAwareEffectiveStatement}s. It maintains the contents of schema
@@ -97,7 +102,7 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
         }
 
         @Override
-        public final @NonNull D getDeclared() {
+        public final D declared() {
             return declared;
         }
     }
@@ -143,7 +148,7 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
 
         @Override
         public final A argument() {
-            return getDeclared().argument();
+            return declared().argument();
         }
     }
 
@@ -209,7 +214,7 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
         }
 
         @Override
-        public final @NonNull D getDeclared() {
+        public final @NonNull D declared() {
             return declared;
         }
 
@@ -275,7 +280,7 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
         }
 
         @Override
-        public final @NonNull D getDeclared() {
+        public final @NonNull D declared() {
             return declared;
         }
 
