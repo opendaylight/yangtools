@@ -38,7 +38,7 @@ class EffectiveSchemaContextTest extends AbstractYangTest {
         assertEquals(3, schemaContext.getExtensions().size());
 
         for (var module : schemaContext.getModuleStatements().values()) {
-            assertEquals(1, module.getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
+            assertEquals(1, module.requireDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
         }
 
         assertNull(schemaContext.dataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));

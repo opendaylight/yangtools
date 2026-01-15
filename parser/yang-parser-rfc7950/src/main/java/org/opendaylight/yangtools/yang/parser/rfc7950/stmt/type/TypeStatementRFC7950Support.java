@@ -62,7 +62,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
         final var declaredValue = enumStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
         final int effectiveValue;
         if (declaredValue.isEmpty()) {
-            effectiveValue = getBaseTypeEnumValue(enumStmt.getDeclared().rawArgument(), base, stmt);
+            effectiveValue = getBaseTypeEnumValue(enumStmt.requireDeclared().rawArgument(), base, stmt);
         } else {
             effectiveValue = declaredValue.orElseThrow();
         }

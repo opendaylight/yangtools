@@ -27,7 +27,7 @@ public final class EmptyLeafListEffectiveStatement extends AbstractLeafListEffec
 
     @Override
     public QName argument() {
-        return getDeclared().argument();
+        return declared().argument();
     }
 
     @Override

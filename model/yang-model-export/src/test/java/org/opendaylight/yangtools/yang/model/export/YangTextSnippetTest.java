@@ -93,10 +93,10 @@ class YangTextSnippetTest {
     }
 
     private static String formatModule(final ModuleEffectiveStatement stmt) {
-        return defaultInstance().toYangTextSnippet(stmt, stmt.getDeclared()).toString();
+        return defaultInstance().toYangTextSnippet(stmt, stmt.requireDeclared()).toString();
     }
 
     private static String formatSubmodule(final SubmoduleEffectiveStatement stmt) {
-        return defaultInstance().toYangTextSnippet(stmt, stmt.getDeclared()).toString();
+        return defaultInstance().toYangTextSnippet(stmt, stmt.requireDeclared()).toString();
     }
 }

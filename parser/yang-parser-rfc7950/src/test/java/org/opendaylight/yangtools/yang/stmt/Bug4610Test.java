@@ -31,22 +31,22 @@ class Bug4610Test extends AbstractYangTest {
         final QName c1Bar = QName.create(QNameModule.of("bar", "2015-12-12"), "c1");
         final ContainerEffectiveStatement g1container = findContainer(context, QName.create(c1Bar, "g1"), c1Bar);
         final QName g1argument = g1container.argument();
-        final ContainerStatement g1original = g1container.getDeclared();
+        final ContainerStatement g1original = g1container.declared();
 
         final ContainerEffectiveStatement g2container = findContainer(context, QName.create(c1Bar, "g2"), c1Bar);
         assertEquals(g1argument, g2container.argument());
-        assertSame(g1original, g2container.getDeclared());
+        assertSame(g1original, g2container.declared());
 
         final QName c1Foo = QName.create(QNameModule.of("foo", "2015-12-12"), "c1");
         final ContainerEffectiveStatement g3container = findContainer(context, QName.create(c1Foo, "g3"), c1Foo);
         assertNotEquals(g1argument, g3container.argument());
-        assertSame(g1original, g3container.getDeclared());
+        assertSame(g1original, g3container.declared());
 
         final SchemaTreeEffectiveStatement<?> rootContainer = context.getModuleStatement(c1Foo.getModule())
             .findSchemaTreeNode(QName.create(c1Foo, "root"), c1Foo).orElseThrow();
         assertInstanceOf(ContainerEffectiveStatement.class, rootContainer);
         assertNotEquals(g1argument, rootContainer.argument());
-        assertSame(g1original, rootContainer.getDeclared());
+        assertSame(g1original, rootContainer.declared());
     }
 
     private static ContainerEffectiveStatement findContainer(final EffectiveModelContext context, final QName grouping,
