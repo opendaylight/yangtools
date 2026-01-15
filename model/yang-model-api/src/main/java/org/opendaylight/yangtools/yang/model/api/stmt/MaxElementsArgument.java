@@ -11,6 +11,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Bounded;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Unbounded;
 
@@ -21,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument.Unboun
  */
 // FIXME: use JEP-401 when available
 @NonNullByDefault
-public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgument>, ElementCountMatcher
+public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgument>, ElementCountMatcher.AtMost
         permits Bounded, Unbounded {
     /**
      * Singleton value representing an {@code unbounded} value.
@@ -68,6 +69,30 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         }
 
         @Override
+        public boolean matchesAll() {
+            return true;
+        }
+
+        @Override
+        @SuppressWarnings("checkstyle:parameterName")
+        public int compareTo(final MaxElementsArgument o) {
+            return switch (o) {
+                case Bounded other -> 1;
+                case Unbounded other -> 0;
+            };
+        }
+
+        @Override
+        public int hashCode() {
+            return 0;
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return obj instanceof Unbounded;
+        }
+
+        @Override
         public String toString() {
             return "unbounded";
         }
@@ -106,10 +131,25 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
             return elementCount.compareTo(asBig) <= 0 ? null : new TooManyElements(asBig);
         }
 
+        @Override
+        default boolean matchesAll() {
+            return false;
+        }
+
         /**
          * {@return this value as a {@link BigInteger}, guaranteed to be greater than {@link BigInteger#ZERO}}
          */
         BigInteger asBigInteger();
+
+
+        @Override
+        @SuppressWarnings("checkstyle:parameterName")
+        default int compareTo(final MaxElementsArgument o) {
+            return switch (o) {
+                case Bounded other -> compareToOther(other);
+                case Unbounded other -> -1;
+            };
+        }
 
         /**
          * Compare this instance to another {@link Bounded}.
@@ -209,42 +249,8 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
         return of(new BigInteger(argument));
     }
 
-    @Override
-    @Nullable TooManyElements matches(int elementCount);
-
-    @Override
-    @Nullable TooManyElements matches(long elementCount);
-
-    @Override
-    @Nullable TooManyElements matches(BigInteger elementCount);
-
-    /**
-     * {@return this argument saturated to {@link Integer#MAX_VALUE}}
-     */
-    int asSaturatedInt();
-
-    /**
-     * {@return this argument saturated to {@link Long#MAX_VALUE}}
-     */
-    long asSaturatedLong();
-
     /**
      * {@return interned equivalent of this argument}
      */
     MaxElementsArgument intern();
-
-    @Override
-    @SuppressWarnings("checkstyle:parameterName")
-    default int compareTo(final MaxElementsArgument o) {
-        return switch (o) {
-            case Unbounded other -> this instanceof Unbounded ? 0 : -1;
-            case Bounded other -> this instanceof Bounded bounded ? bounded.compareToOther(other) : 1;
-        };
-    }
-
-    /**
-     * {@return the string representation of the maximum number of elements}
-     */
-    @Override
-    String toString();
 }
