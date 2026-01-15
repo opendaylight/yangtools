@@ -106,15 +106,14 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
      */
     public @NonNull Map<QNameModule, ModuleGenerator> execute(final TypeBuilderFactory builderFactory) {
         switch (state) {
-            case INITIALIZED:
+            case null -> throw new NullPointerException();
+            case INITIALIZED -> {
                 state = State.EXECUTING;
-                break;
-            case FINISHED:
+            }
+            case FINISHED -> {
                 return generators;
-            case EXECUTING:
-                throw new IllegalStateException("Cannot resume partial execution");
-            default:
-                throw new IllegalStateException("Unhandled state" + state);
+            }
+            case EXECUTING -> throw new IllegalStateException("Cannot resume partial execution");
         }
 
         // Start measuring time...
@@ -317,11 +316,10 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
 
             while (it.hasNext()) {
                 final var item = it.next();
-                if (item instanceof Generator generator) {
-                    generator.pushToInference(inferenceStack);
-                } else {
+                if (!(item instanceof Generator generator)) {
                     throw new VerifyException("Unexpected stack item " + item);
                 }
+                generator.pushToInference(inferenceStack);
             }
 
             return inferenceStack.inGrouping() ? lenientResolveLeafref(path) : strictResolvePath(path);
@@ -334,7 +332,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         try {
             inferenceStack.resolvePathExpression(path);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Failed to find leafref target " + path.getOriginalString(), e);
+            throw new IllegalArgumentException("Failed to find leafref target " + path.originalString(), e);
         }
         return mapToGenerator();
     }
