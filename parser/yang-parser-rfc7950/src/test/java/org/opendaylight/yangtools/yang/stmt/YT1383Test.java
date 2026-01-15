@@ -29,13 +29,13 @@ class YT1383Test extends AbstractYangTest {
         assertEquals(2, effStatements.size());
         final var bar = effStatements.get(0);
         assertInstanceOf(CaseEffectiveStatement.class, bar);
-        assertNotNull(bar.getDeclared());
+        assertNotNull(bar.declared());
         final var baz = effStatements.get(1);
         assertInstanceOf(CaseEffectiveStatement.class, baz);
-        assertNull(baz.getDeclared());
+        assertNull(baz.declared());
 
         // Declared view of things
-        final var fooDecl = foo.getDeclared();
+        final var fooDecl = foo.declared();
         assertNotNull(fooDecl);
         final var declStatements = fooDecl.declaredSubstatements();
         assertEquals(2, declStatements.size());

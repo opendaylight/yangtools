@@ -30,7 +30,7 @@ class Bug4456Test extends AbstractYangTest {
         for (ExtensionDefinition extensionDefinition : extensionSchemaNodes) {
 
             var unknownSchemaNodes = extensionDefinition.asEffectiveStatement()
-                .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+                .requireDeclared().declaredSubstatements(UnrecognizedStatement.class);
             assertEquals(1, unknownSchemaNodes.size());
             UnrecognizedStatement unknownSchemaNode = unknownSchemaNodes.iterator().next();
             String unknownNodeExtensionDefName = unknownSchemaNode.statementDefinition().statementName().getLocalName();
