@@ -34,7 +34,7 @@ class Bug1412Test extends AbstractYangTest {
         final UnrecognizedStatement action = unknownNodes.iterator().next();
 
         assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action"),
-            action.statementDefinition().getStatementName());
+            action.statementDefinition().statementName());
         assertEquals("hello", action.argument());
 
         unknownNodes = action.declaredSubstatements(UnrecognizedStatement.class);
@@ -44,36 +44,44 @@ class Bug1412Test extends AbstractYangTest {
         UnrecognizedStatement actionPoint = null;
         UnrecognizedStatement output = null;
         for (final UnrecognizedStatement un : unknownNodes) {
-            final String name = un.statementDefinition().getStatementName().getLocalName();
-            if ("info".equals(name)) {
-                info = un;
-            } else if ("description".equals(name)) {
-                description = un;
-            } else if ("actionpoint".equals(name)) {
-                actionPoint = un;
-            } else if ("output".equals(name)) {
-                output = un;
+            final String name = un.statementDefinition().statementName().getLocalName();
+            switch (name) {
+                case "info":
+                    info = un;
+                    break;
+                case "description":
+                    description = un;
+                    break;
+                case "actionpoint":
+                    actionPoint = un;
+                    break;
+                case "output":
+                    output = un;
+                    break;
+                case null:
+                default:
+                    break;
             }
         }
 
         assertNotNull(info);
         assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "info"),
-            info.statementDefinition().getStatementName());
+            info.statementDefinition().statementName());
         assertEquals("greeting", info.argument());
 
         assertNotNull(description);
         assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "description"),
-            description.statementDefinition().getStatementName());
+            description.statementDefinition().statementName());
         assertEquals("say greeting", description.argument());
 
         assertNotNull(actionPoint);
         assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "actionpoint"),
-            actionPoint.statementDefinition().getStatementName());
+            actionPoint.statementDefinition().statementName());
         assertEquals("entry", actionPoint.argument());
 
         assertNotNull(output);
         assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "output"),
-            output.statementDefinition().getStatementName());
+            output.statementDefinition().statementName());
         assertEquals(Empty.value(), output.argument());
     }
 }

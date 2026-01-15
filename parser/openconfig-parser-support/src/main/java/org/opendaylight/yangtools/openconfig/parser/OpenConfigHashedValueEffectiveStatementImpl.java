@@ -31,7 +31,7 @@ final class OpenConfigHashedValueEffectiveStatementImpl
 
     @Override
     public QName getQName() {
-        return definition.getStatementName();
+        return definition.statementName();
     }
 
     @Override

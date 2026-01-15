@@ -38,7 +38,7 @@ class Bug7037Test extends AbstractYangTest {
         assertEquals(1, firstUnknownNodes.size());
 
         final UnrecognizedStatement barExtCont = firstUnknownNodes.iterator().next();
-        assertEquals(bar("container"), barExtCont.statementDefinition().getStatementName());
+        assertEquals(bar("container"), barExtCont.statementDefinition().statementName());
         assertEquals("bar-ext-con", barExtCont.argument());
 
         final DataSchemaNode root = context.getDataChildByName(foo("root"));
@@ -49,7 +49,7 @@ class Bug7037Test extends AbstractYangTest {
         assertEquals(2, rootUnknownNodes.size());
 
         final Map<QName, UnrecognizedStatement> rootUnknownNodeMap = rootUnknownNodes.stream()
-            .collect(Collectors.toMap(u -> u.statementDefinition().getStatementName(), u -> u));
+            .collect(Collectors.toMap(u -> u.statementDefinition().statementName(), u -> u));
 
         final UnrecognizedStatement barExt = rootUnknownNodeMap.get(bar("bar-ext"));
         final Collection<? extends UnrecognizedStatement> barExtUnknownNodes =
@@ -58,7 +58,7 @@ class Bug7037Test extends AbstractYangTest {
 
         UnrecognizedStatement barExtCont2 = null;
         for (UnrecognizedStatement next : barExtUnknownNodes) {
-            if (bar("container").equals(next.statementDefinition().getStatementName())) {
+            if (bar("container").equals(next.statementDefinition().statementName())) {
                 barExtCont2 = next;
                 break;
             }
@@ -72,7 +72,7 @@ class Bug7037Test extends AbstractYangTest {
         assertEquals(1, fooUnknownNodes.size());
 
         final UnrecognizedStatement fooExtCont = fooUnknownNodes.iterator().next();
-        assertEquals(foo("container"), fooExtCont.statementDefinition().getStatementName());
+        assertEquals(foo("container"), fooExtCont.statementDefinition().statementName());
         assertEquals("foo-ext-con", fooExtCont.argument());
     }
 

@@ -275,10 +275,9 @@ public final class DeviateStatementSupport
                     && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
                 for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
-                        stmtCtxToBeAdded,
-                        "Deviation cannot add substatement %s to target node %s because it is already defined "
-                        + "in target and can appear only once.",
-                        stmtToBeAdded.getStatementName(), targetCtx.argument());
+                        stmtCtxToBeAdded, """
+                            Deviation cannot add substatement %s to target node %s because it is already defined in \
+                            target and can appear only once.""", stmtToBeAdded.statementName(), targetCtx.argument());
                 }
             }
         }
@@ -300,9 +299,10 @@ public final class DeviateStatementSupport
 
         if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
                 && YangStmtMapping.LEAF_LIST.equals(targetCtx.publicDefinition())) {
-            LOG.error("Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can "
-                    + "have multiple default statements. At line: {}", stmtToBeReplaced.getStatementName(),
-                    targetCtx.argument(), stmtCtxToBeReplaced.sourceReference());
+            LOG.error("""
+                Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can have multiple \
+                default statements. At line: {}""", stmtToBeReplaced.statementName(), targetCtx.argument(),
+                stmtCtxToBeReplaced.sourceReference());
             return;
         }
 
@@ -332,7 +332,7 @@ public final class DeviateStatementSupport
 
         throw new InferenceException(stmtCtxToBeReplaced,
             "Deviation cannot replace substatement %s in target node %s because it does not exist in target node.",
-            stmtToBeReplaced.getStatementName(), targetCtx.argument());
+            stmtToBeReplaced.statementName(), targetCtx.argument());
     }
 
     private static void performDeviateDelete(final StmtContext<?, ?, ?> deviateStmtCtx,
@@ -364,9 +364,10 @@ public final class DeviateStatementSupport
             }
         }
 
-        LOG.error("Deviation cannot delete substatement {} with argument '{}' in target node {} because it does "
-                + "not exist in the target node. At line: {}", stmtToBeDeleted.getStatementName(), stmtArgument,
-                targetCtx.argument(), stmtCtxToBeDeleted.sourceReference());
+        LOG.error("""
+            Deviation cannot delete substatement {} with argument '{}' in target node {} because it does not exist in \
+            the target node. At line: {}""", stmtToBeDeleted.statementName(), stmtArgument, targetCtx.argument(),
+            stmtCtxToBeDeleted.sourceReference());
     }
 
     private static void copyStatement(final StmtContext<?, ?, ?> stmtCtxToBeCopied, final Mutable<?, ?, ?> targetCtx) {
@@ -390,7 +391,7 @@ public final class DeviateStatementSupport
         InferenceException.throwIf(!isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx,
             targetCtx.yangVersion()), deviateSubStmtCtx,
             "%s is not a valid deviation target for substatement %s.", targetCtx.argument(),
-            deviateSubStmtCtx.publicDefinition().getStatementName());
+            deviateSubStmtCtx.publicDefinition().statementName());
     }
 
     private static boolean isSupportedDeviationTarget(final StmtContext<?, ?, ?> deviateSubstatementCtx,

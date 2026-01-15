@@ -608,7 +608,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     @Override
     public final QNameModule effectiveNamespace() {
         if (StmtContextUtils.isUnknownStatement(this)) {
-            return publicDefinition().getStatementName().getModule();
+            return publicDefinition().statementName().getModule();
         }
         if (producesDeclared(UsesStatement.class)) {
             return coerceParent().effectiveNamespace();

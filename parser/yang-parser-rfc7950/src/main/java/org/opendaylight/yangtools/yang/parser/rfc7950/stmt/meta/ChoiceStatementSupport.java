@@ -115,7 +115,7 @@ public final class ChoiceStatementSupport
             return Optional.empty();
         }
         return Optional.of(verifyNotNull(parent.namespaceItem(StatementSupport.NAMESPACE,
-            YangStmtMapping.CASE.getStatementName())));
+            YangStmtMapping.CASE.statementName())));
     }
 
     @Override

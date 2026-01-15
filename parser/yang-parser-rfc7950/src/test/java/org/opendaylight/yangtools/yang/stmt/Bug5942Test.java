@@ -38,6 +38,6 @@ class Bug5942Test extends AbstractYangTest {
 
         assertEquals("argument", unknownSchemaNode.argument());
         assertEquals(QName.create("foo", "2016-06-02", "e"),
-            unknownSchemaNode.statementDefinition().getStatementName());
+            unknownSchemaNode.statementDefinition().statementName());
     }
 }
