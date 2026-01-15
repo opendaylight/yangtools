@@ -285,7 +285,7 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
                 currentLeaf.asEffectiveStatement().effectiveSubstatements().iterator().next())
             .getTypeDefinition());
 
-        assertEquals("/container-test/leaf-test", leafrefEff.getPathStatement().getOriginalString());
+        assertEquals("/container-test/leaf-test", leafrefEff.getPathStatement().originalString());
         assertNull(leafrefEff.getBaseType());
         assertEquals(Optional.empty(), leafrefEff.getUnits());
         assertEquals(Optional.empty(), leafrefEff.getDefaultValue());
@@ -312,8 +312,7 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
                 currentLeaf.asEffectiveStatement().effectiveSubstatements().iterator().next())
             .getTypeDefinition());
 
-        assertEquals("deref(../container-test)/leaf-test",
-            leafrefEff.getPathStatement().getOriginalString());
+        assertEquals("deref(../container-test)/leaf-test", leafrefEff.getPathStatement().originalString());
         assertNull(leafrefEff.getBaseType());
         assertEquals(Optional.empty(), leafrefEff.getUnits());
         assertEquals(Optional.empty(), leafrefEff.getDefaultValue());
