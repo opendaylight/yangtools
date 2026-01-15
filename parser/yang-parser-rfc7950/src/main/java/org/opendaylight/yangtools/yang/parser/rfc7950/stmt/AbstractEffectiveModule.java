@@ -99,7 +99,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
 
     @Override
     public final Unqualified argument() {
-        return getDeclared().argument();
+        return declared().argument();
     }
 
     @Override

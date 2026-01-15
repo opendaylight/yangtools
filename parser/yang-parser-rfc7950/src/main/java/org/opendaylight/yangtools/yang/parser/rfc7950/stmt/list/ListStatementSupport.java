@@ -155,7 +155,7 @@ public final class ListStatementSupport
             for (var keyQName : keyStmt.argument()) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
                     throw new InferenceException(stmt, "Key '%s' misses node '%s' in list '%s'",
-                        keyStmt.getDeclared().rawArgument(), keyQName.getLocalName(), stmt.argument());
+                        keyStmt.requireDeclared().rawArgument(), keyQName.getLocalName(), stmt.argument());
                 }
                 keyDefinitionInit.add(keyQName);
             }

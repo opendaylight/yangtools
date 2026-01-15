@@ -118,7 +118,7 @@ final class StatementPrefixResolver {
             for (var entry : prefixToNamespaces.entrySet()) {
                 for (var namespaceEntry : entry.getValue().entries()) {
                     conflicts.put(namespaceEntry.getKey(),
-                        new SimpleImmutableEntry<>(namespaceEntry.getValue().getDeclared(), entry.getKey()));
+                        new SimpleImmutableEntry<>(namespaceEntry.getValue().declared(), entry.getKey()));
                 }
             }
 

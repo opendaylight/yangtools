@@ -57,7 +57,7 @@ final class UsesAugmentGenerator extends AbstractAugmentGenerator {
 
     private static AugmentStatement declared(final AugmentEffectiveStatement statement) {
         // We are generating Augmentation interfaces on declared model, hence this is accurate
-        return verifyNotNull(statement.getDeclared(), " %s does not have a declared view", statement);
+        return statement.requireDeclared();
     }
 
     @Override

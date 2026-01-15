@@ -20,7 +20,7 @@ class Bug7865Test extends AbstractYangTest {
     void test() {
         final var context = assertEffectiveModelDir("/bugs/bug7865");
         final var unknownSchemaNodes = assertInstanceOf(ContainerSchemaNode.class,
-            context.getDataChildByName(foo("root"))).asEffectiveStatement().getDeclared()
+            context.getDataChildByName(foo("root"))).asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
 

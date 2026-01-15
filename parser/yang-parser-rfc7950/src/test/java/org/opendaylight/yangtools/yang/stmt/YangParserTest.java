@@ -328,7 +328,7 @@ class YangParserTest extends AbstractModelTest {
         final var unionTypes = unionType.getTypes();
         assertEquals(2, unionTypes.size());
 
-        final var unionType1 = (Int16TypeDefinition) unionTypes.get(0);
+        final var unionType1 = assertInstanceOf(Int16TypeDefinition.class, unionTypes.get(0));
         assertEquals(barQName("my-union"), baseType.getQName());
         assertEquals(Optional.empty(), unionType1.getUnits());
         assertEquals(Optional.empty(), unionType1.getDefaultValue());
@@ -435,7 +435,7 @@ class YangParserTest extends AbstractModelTest {
     @Test
     void testUnknownNode() {
         final var network = assertInstanceOf(ContainerSchemaNode.class, BAZ.getDataChildByName(bazQName("network")));
-        final var unknownNodes = network.asEffectiveStatement().getDeclared()
+        final var unknownNodes = network.asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
         assertEquals("point", unknownNodes.iterator().next().argument());

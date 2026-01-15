@@ -424,7 +424,7 @@ class JavaFileTemplate {
                     .append("This class represents the following YANG schema fragment defined in module <b>")
                     .append(def.getModule().argument().getLocalName()).append("</b>\n")
                     .append("<pre>\n");
-                appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).getDeclared());
+                appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).declared());
                 sb.append("</pre>");
 
                 if (node instanceof SchemaNode schema) {
@@ -465,7 +465,7 @@ class JavaFileTemplate {
             } else if (def instanceof Multiple multiple) {
                 sb.append("<pre>\n");
                 for (var node : multiple.getNodes()) {
-                    appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).getDeclared());
+                    appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).declared());
                 }
                 sb.append("</pre>\n");
             }
@@ -491,7 +491,7 @@ class JavaFileTemplate {
     }
 
     private static void appendYangSnippet(final StringBuilder sb, final ModuleEffectiveStatement module,
-        final DeclaredStatement<?> stmt) {
+            final DeclaredStatement<?> stmt) {
         for (String str : YANG_FORMATTER.toYangTextSnippet(module, stmt)) {
             sb.append(replaceAllIllegalChars(encodeAngleBrackets(encodeJavadocSymbols(str))));
         }

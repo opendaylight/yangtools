@@ -20,6 +20,6 @@ public final class EmptyGroupingEffectiveStatement extends AbstractGroupingEffec
 
     @Override
     public QName argument() {
-        return getDeclared().argument();
+        return declared().argument();
     }
 }

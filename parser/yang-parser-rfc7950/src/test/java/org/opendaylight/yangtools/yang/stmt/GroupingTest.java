@@ -66,7 +66,7 @@ class GroupingTest extends AbstractModelTest {
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.getXpath().toString());
         assertEquals(0, refineLeaf.getUnknownSchemaNodes().size());
         assertEquals(1, usesNode.asEffectiveStatement()
-            .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow().getDeclared()
+            .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class).size());
 
         // container port
@@ -182,8 +182,8 @@ class GroupingTest extends AbstractModelTest {
         assertIsAddedByUses(grouping_g, false);
 
         assertEquals(0, destination.getUnknownSchemaNodes().size());
-        assertEquals(1,
-            grouping.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
+        assertEquals(1, grouping.asEffectiveStatement().requireDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class).size());
     }
 
     @Test
@@ -264,8 +264,8 @@ class GroupingTest extends AbstractModelTest {
         assertIsAddedByUses(grouping_g, false);
 
         assertEquals(0, grouping.getUnknownSchemaNodes().size());
-        assertEquals(1, grouping.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class)
-            .size());
+        assertEquals(1, grouping.asEffectiveStatement().requireDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class).size());
 
         final var un = uses.iterator().next();
         final var usesAugments = un.getAugmentations();
@@ -294,28 +294,16 @@ class GroupingTest extends AbstractModelTest {
         GroupingDefinition gz = null;
         GroupingDefinition gzz = null;
         for (var gd : groupings) {
-            final String name = gd.getQName().getLocalName();
-            switch (name) {
-                case "grouping-U":
-                    gu = gd;
-                    break;
-                case "grouping-V":
-                    gv = gd;
-                    break;
-                case "grouping-X":
-                    gx = gd;
-                    break;
-                case "grouping-Y":
-                    gy = gd;
-                    break;
-                case "grouping-Z":
-                    gz = gd;
-                    break;
-                case "grouping-ZZ":
-                    gzz = gd;
-                    break;
-                default:
-                    break;
+            switch (gd.getQName().getLocalName()) {
+                case "grouping-U" -> gu = gd;
+                case "grouping-V" -> gv = gd;
+                case "grouping-X" -> gx = gd;
+                case "grouping-Y" -> gy = gd;
+                case "grouping-Z" -> gz = gd;
+                case "grouping-ZZ" -> gzz = gd;
+                default -> {
+                    // No-op
+                }
             }
         }
         assertNotNull(gu);
@@ -347,12 +335,12 @@ class GroupingTest extends AbstractModelTest {
         LeafSchemaNode leafGroupingV = null;
         ContainerSchemaNode containerGroupingV = null;
         for (var childNode : childNodes) {
-            if ("leaf-grouping-V".equals(childNode.getQName().getLocalName())) {
-                leafGroupingV = assertInstanceOf(LeafSchemaNode.class, childNode);
-            } else if ("container-grouping-V".equals(childNode.getQName().getLocalName())) {
-                containerGroupingV = assertInstanceOf(ContainerSchemaNode.class, childNode);
-            } else {
-                assertIsAddedByUses(childNode, true);
+            switch (childNode.getQName().getLocalName()) {
+                case "leaf-grouping-V" ->
+                    leafGroupingV = assertInstanceOf(LeafSchemaNode.class, childNode);
+                case "container-grouping-V" ->
+                    containerGroupingV = assertInstanceOf(ContainerSchemaNode.class, childNode);
+                default -> assertIsAddedByUses(childNode, true);
             }
         }
         assertNotNull(leafGroupingV);

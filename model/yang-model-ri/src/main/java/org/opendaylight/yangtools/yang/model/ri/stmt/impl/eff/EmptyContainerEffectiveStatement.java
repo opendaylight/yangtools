@@ -24,6 +24,6 @@ public final class EmptyContainerEffectiveStatement extends AbstractContainerEff
 
     @Override
     public QName argument() {
-        return getDeclared().argument();
+        return declared().argument();
     }
 }

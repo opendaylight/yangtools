@@ -24,7 +24,7 @@ class Bug7038Test extends AbstractYangTest {
     @Test
     void unknownNodeTest() {
         final var bar = assertEffectiveModelDir("/bugs/bug7038").getModuleStatement(QNameModule.of("bar"))
-            .getDeclared();
+            .requireDeclared();
         final var decimal64 = bar.findFirstDeclaredSubstatement(UnrecognizedStatement.class).orElseThrow();
         assertEquals("decimal64", decimal64.argument());
         assertEquals(QName.create("foo", "decimal64"), decimal64.statementDefinition().statementName());
@@ -32,10 +32,10 @@ class Bug7038Test extends AbstractYangTest {
 
     @Test
     void testYang11() {
-        final var root = (ContainerSchemaNode) assertEffectiveModelDir("/bugs/bug7038/yang11")
-            .getDataChildByName(QName.create("foo", "root"));
-        final var typedef = ((LeafSchemaNode) root.getDataChildByName(QName.create("foo", "my-leafref")))
-            .getType();
+        final var root = assertInstanceOf(ContainerSchemaNode.class,
+            assertEffectiveModelDir("/bugs/bug7038/yang11").getDataChildByName(QName.create("foo", "root")));
+        final var typedef = assertInstanceOf(LeafSchemaNode.class,
+            root.getDataChildByName(QName.create("foo", "my-leafref"))).getType();
         assertFalse(assertInstanceOf(LeafrefTypeDefinition.class, typedef).requireInstance());
     }
 

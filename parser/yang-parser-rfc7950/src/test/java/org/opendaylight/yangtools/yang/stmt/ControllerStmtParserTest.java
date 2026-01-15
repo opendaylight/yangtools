@@ -45,17 +45,16 @@ class ControllerStmtParserTest extends AbstractYangTest {
             final var dataNode = augmentationSchema.dataChildByName(
                 QName.create(module.getQNameModule(), "dom-broker-impl"));
             if (dataNode instanceof CaseSchemaNode caseNode) {
-                final DataSchemaNode dataNode2 = caseNode.dataChildByName(
+                final var dataNode2 = caseNode.dataChildByName(
                     QName.create(module.getQNameModule(), "async-data-broker"));
                 if (dataNode2 instanceof ContainerSchemaNode containerNode) {
-                    final DataSchemaNode leaf = containerNode
-                        .getDataChildByName(QName.create(module.getQNameModule(), "type"));
+                    final var leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
                     assertEquals(0, leaf.getUnknownSchemaNodes().size());
 
                     final var unknownSchemaNodes = containerNode.asEffectiveStatement()
                             .findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow()
                             .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow()
-                            .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+                            .requireDeclared().declaredSubstatements(UnrecognizedStatement.class);
 
 
                     final var unknownSchemaNode = unknownSchemaNodes.iterator().next();
@@ -73,35 +72,33 @@ class ControllerStmtParserTest extends AbstractYangTest {
         final var module = CONTEXT.findModule("opendaylight-sal-dom-broker-impl", Revision.of("2013-10-28"))
             .orElseThrow();
 
-        final DataSchemaNode dataNode = configModule.getDataChildByName(QName.create(configModule.getQNameModule(),
-            "modules"));
-        final ContainerSchemaNode moduleContainer = assertInstanceOf(ContainerSchemaNode.class, dataNode);
+        final var dataNode = configModule.getDataChildByName(
+            QName.create(configModule.getQNameModule(), "modules"));
+        final var moduleContainer = assertInstanceOf(ContainerSchemaNode.class, dataNode);
 
-        final DataSchemaNode dataChildList = moduleContainer
-            .getDataChildByName(QName.create(configModule.getQNameModule(), "module"));
-        final ListSchemaNode listModule = assertInstanceOf(ListSchemaNode.class, dataChildList);
+        final var dataChildList = moduleContainer.getDataChildByName(
+            QName.create(configModule.getQNameModule(), "module"));
+        final var listModule = assertInstanceOf(ListSchemaNode.class, dataChildList);
 
-        final DataSchemaNode dataChildChoice = listModule
-            .getDataChildByName(QName.create(configModule.getQNameModule(), "configuration"));
-        final ChoiceSchemaNode confChoice = assertInstanceOf(ChoiceSchemaNode.class, dataChildChoice);
+        final var dataChildChoice = listModule.getDataChildByName(
+            QName.create(configModule.getQNameModule(), "configuration"));
+        final var confChoice = assertInstanceOf(ChoiceSchemaNode.class, dataChildChoice);
 
-        final CaseSchemaNode caseNodeByName = confChoice.findCaseNodes("dom-broker-impl").iterator().next();
-
+        final var caseNodeByName = confChoice.findCaseNodes("dom-broker-impl").iterator().next();
         assertNotNull(caseNodeByName);
-        final DataSchemaNode dataNode2 = caseNodeByName
-            .getDataChildByName(QName.create(module.getQNameModule(), "async-data-broker"));
-        final ContainerSchemaNode containerNode = assertInstanceOf(ContainerSchemaNode.class, dataNode2);
+        final var dataNode2 = caseNodeByName.getDataChildByName(
+            QName.create(module.getQNameModule(), "async-data-broker"));
+        final var containerNode = assertInstanceOf(ContainerSchemaNode.class, dataNode2);
 
-        final DataSchemaNode leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
+        final var leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
         assertEquals(0, leaf.getUnknownSchemaNodes().size());
 
-        final CaseSchemaNode domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator()
-            .next();
+        final var domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator().next();
 
         assertNotNull(domInmemoryDataBroker);
-        final DataSchemaNode schemaService = domInmemoryDataBroker
-            .getDataChildByName(QName.create(module.getQNameModule(), "schema-service"));
-        final ContainerSchemaNode schemaServiceContainer = assertInstanceOf(ContainerSchemaNode.class, schemaService);
+        final var schemaService = domInmemoryDataBroker.getDataChildByName(
+            QName.create(module.getQNameModule(), "schema-service"));
+        final var schemaServiceContainer = assertInstanceOf(ContainerSchemaNode.class, schemaService);
 
         assertEquals(1, schemaServiceContainer.getUses().size());
         final var uses = schemaServiceContainer.getUses().iterator().next();
@@ -116,7 +113,7 @@ class ControllerStmtParserTest extends AbstractYangTest {
         final var typeUnknownSchemaNodes = schemaServiceContainer.asEffectiveStatement()
                 .findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow()
                 .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow()
-                .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+                .requireDeclared().declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, typeUnknownSchemaNodes.size());
 
 

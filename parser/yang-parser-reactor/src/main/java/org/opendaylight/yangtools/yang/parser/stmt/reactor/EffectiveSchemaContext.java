@@ -43,7 +43,7 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext implements
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
         final var modules = new HashSet<Module>();
         for (var stmt : rootEffectiveStatements) {
-            if (stmt.getDeclared() instanceof ModuleStatement) {
+            if (stmt.requireDeclared() instanceof ModuleStatement) {
                 Verify.verify(stmt instanceof Module);
                 modules.add((Module) stmt);
             }

@@ -116,7 +116,7 @@ class Bug4623Test extends AbstractYangTest {
     }
 
     private static void assertExtension(final LeafSchemaNode leaf) {
-        final var unknownSchemaNodes = leaf.asEffectiveStatement().getDeclared()
+        final var unknownSchemaNodes = leaf.asEffectiveStatement().requireDeclared()
             .findFirstDeclaredSubstatement(TypeStatement.class).orElseThrow()
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
