@@ -33,7 +33,7 @@ class Bug394Test extends AbstractYangTest {
             bug394.dataChildByName(QName.create(bug394.getQNameModule(), "logrecords")));
         assertNotNull(logrecords);
 
-        final var nodes = logrecords.asEffectiveStatement().getDeclared()
+        final var nodes = logrecords.asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(2, nodes.size());
 

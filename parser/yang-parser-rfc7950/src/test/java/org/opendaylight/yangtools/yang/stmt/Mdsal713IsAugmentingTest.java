@@ -47,7 +47,7 @@ class Mdsal713IsAugmentingTest {
             //  This is different for DeclaredCaseEffectiveStatement whose children are.
             //  .
             //  Audit this behavior and either fix and remove the check or remove this test altogether
-            if (caze.getDeclared() == null) {
+            if (caze.declared() == null) {
                 showChildNotFromAugmentation(caze);
             } else {
                 // check whether the children of DeclaredCaseEffectiveStatement are also from augmentation
