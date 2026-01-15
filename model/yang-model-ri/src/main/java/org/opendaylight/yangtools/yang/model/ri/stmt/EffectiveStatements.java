@@ -381,7 +381,7 @@ public final class EffectiveStatements {
     public static ChoiceEffectiveStatement copyChoice(final ChoiceEffectiveStatement original,
             final QName argument, final int flags) {
         final var orig = checkCast(AbstractChoiceEffectiveStatement.class, original);
-        return argument.equals(orig.getDeclared().argument()) && orig.getDefaultCase().isEmpty()
+        return argument.equals(orig.declared().argument()) && orig.getDefaultCase().isEmpty()
             ? new EmptyChoiceEffectiveStatement(orig, flags)
                 : new RegularChoiceEffectiveStatement((AbstractChoiceEffectiveStatement) original, argument, flags);
     }
@@ -421,7 +421,7 @@ public final class EffectiveStatements {
     public static ContainerEffectiveStatement copyContainer(final ContainerEffectiveStatement original,
             final QName argument, final int flags) {
         final var orig = checkCast(AbstractContainerEffectiveStatement.class, original);
-        return argument.equals(orig.getDeclared().argument()) ? new EmptyContainerEffectiveStatement(orig, flags)
+        return argument.equals(orig.declared().argument()) ? new EmptyContainerEffectiveStatement(orig, flags)
             : new RegularContainerEffectiveStatement(orig, argument, flags);
     }
 
@@ -560,7 +560,7 @@ public final class EffectiveStatements {
             final int flags) {
         return switch (original) {
             case AbstractLeafEffectiveStatement orig ->
-                argument.equals(orig.getDeclared().argument()) ? new EmptyLeafEffectiveStatement(orig, flags)
+                argument.equals(orig.declared().argument()) ? new EmptyLeafEffectiveStatement(orig, flags)
                     : new RegularLeafEffectiveStatement(orig, argument, flags);
             case UndeclaredLeafEffectiveStatement undeclared ->
                 new UndeclaredLeafEffectiveStatement(undeclared, argument, flags);
