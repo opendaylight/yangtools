@@ -171,8 +171,8 @@ class TypesResolutionTest extends AbstractYangTest {
             tested.getDataChildByName(QName.create(tested.getQNameModule(), "inst-id-leaf1")));
         var leafType = assertInstanceOf(InstanceIdentifierTypeDefinition.class, leaf.getType());
         assertFalse(leafType.requireInstance());
-        assertEquals(1,
-            leaf.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
+        assertEquals(1, leaf.asEffectiveStatement().requireDeclared().declaredSubstatements(UnrecognizedStatement.class)
+            .size());
     }
 
     @Test
@@ -193,12 +193,13 @@ class TypesResolutionTest extends AbstractYangTest {
         IdentitySchemaNode cryptoBase = null;
         IdentitySchemaNode cryptoId = null;
         for (var id : identities) {
-            if (id.getQName().getLocalName().equals("crypto-alg")) {
-                cryptoAlg = id;
-            } else if ("crypto-base".equals(id.getQName().getLocalName())) {
-                cryptoBase = id;
-            } else if ("crypto-id".equals(id.getQName().getLocalName())) {
-                cryptoId = id;
+            switch (id.getQName().getLocalName()) {
+                case "crypto-alg" -> cryptoAlg = id;
+                case "crypto-base" -> cryptoBase = id;
+                case "crypto-id" -> cryptoId = id;
+                default -> {
+                    // no-op
+                }
             }
         }
         assertNotNull(cryptoAlg);
@@ -212,8 +213,8 @@ class TypesResolutionTest extends AbstractYangTest {
         assertEquals(3, CONTEXT.getDerivedIdentities(cryptoBase).size());
 
         assertNotNull(cryptoId);
-        assertEquals(1,
-            cryptoId.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
+        assertEquals(1, cryptoId.asEffectiveStatement().requireDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class).size());
     }
 
     @Test

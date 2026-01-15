@@ -29,7 +29,8 @@ class Bug1412Test extends AbstractYangTest {
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
             bug1412.getQNameModule(), "node"));
-        var unknownNodes = node.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+        var unknownNodes = node.asEffectiveStatement().requireDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
         final UnrecognizedStatement action = unknownNodes.iterator().next();
 
