@@ -123,7 +123,7 @@ class ControllerStmtParserTest extends AbstractYangTest {
         final var typeUnknownSchemaNode = typeUnknownSchemaNodes.iterator().next();
         assertEquals("sal:schema-service", typeUnknownSchemaNode.argument());
         assertEquals(QName.create(groupingQName, "required-identity"),
-            typeUnknownSchemaNode.statementDefinition().getStatementName());
+            typeUnknownSchemaNode.statementDefinition().statementName());
     }
 
     private static int getChildNodeSizeWithoutUses(final DataNodeContainer csn) {

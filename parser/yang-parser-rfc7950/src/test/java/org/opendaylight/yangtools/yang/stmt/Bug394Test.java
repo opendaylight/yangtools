@@ -43,7 +43,7 @@ class Bug394Test extends AbstractYangTest {
         assertEquals(3, extensions.size());
 
         final var it = nodes.iterator();
-        assertTrue(extensions.contains(it.next().statementDefinition().getStatementName()));
-        assertTrue(extensions.contains(it.next().statementDefinition().getStatementName()));
+        assertTrue(extensions.contains(it.next().statementDefinition().statementName()));
+        assertTrue(extensions.contains(it.next().statementDefinition().statementName()));
     }
 }

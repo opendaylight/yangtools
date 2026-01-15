@@ -27,7 +27,7 @@ class Bug7038Test extends AbstractYangTest {
             .getDeclared();
         final var decimal64 = bar.findFirstDeclaredSubstatement(UnrecognizedStatement.class).orElseThrow();
         assertEquals("decimal64", decimal64.argument());
-        assertEquals(QName.create("foo", "decimal64"), decimal64.statementDefinition().getStatementName());
+        assertEquals(QName.create("foo", "decimal64"), decimal64.statementDefinition().statementName());
     }
 
     @Test

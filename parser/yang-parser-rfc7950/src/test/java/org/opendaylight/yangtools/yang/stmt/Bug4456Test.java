@@ -33,38 +33,36 @@ class Bug4456Test extends AbstractYangTest {
                 .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
             assertEquals(1, unknownSchemaNodes.size());
             UnrecognizedStatement unknownSchemaNode = unknownSchemaNodes.iterator().next();
-            String unknownNodeExtensionDefName = unknownSchemaNode.statementDefinition().getStatementName()
-                .getLocalName();
+            String unknownNodeExtensionDefName = unknownSchemaNode.statementDefinition().statementName().getLocalName();
 
             var subUnknownSchemaNodes = unknownSchemaNode.declaredSubstatements(UnrecognizedStatement.class);
             assertEquals(1, subUnknownSchemaNodes.size());
             UnrecognizedStatement subUnknownSchemaNode = subUnknownSchemaNodes.iterator().next();
-            String subUnknownNodeExtensionDefName = subUnknownSchemaNode.statementDefinition().getStatementName()
+            String subUnknownNodeExtensionDefName = subUnknownSchemaNode.statementDefinition().statementName()
                 .getLocalName();
 
             switch (extensionDefinition.getQName().getLocalName()) {
-                case "a":
+                case "a" -> {
                     assertEquals("b", unknownNodeExtensionDefName);
                     assertEquals("c", subUnknownNodeExtensionDefName);
-                    break;
-                case "b":
+                }
+                case "b" -> {
                     assertEquals("c", unknownNodeExtensionDefName);
                     assertEquals("a", subUnknownNodeExtensionDefName);
-                    break;
-                case "c":
+                }
+                case "c" -> {
                     assertEquals("a", unknownNodeExtensionDefName);
                     assertEquals("b", subUnknownNodeExtensionDefName);
-                    break;
-                case "r":
+                }
+                case "r" -> {
                     assertEquals("r", unknownNodeExtensionDefName);
                     assertEquals("r2", subUnknownNodeExtensionDefName);
-                    break;
-                case "r2":
+                }
+                case "r2" -> {
                     assertEquals("r2", unknownNodeExtensionDefName);
                     assertEquals("r", subUnknownNodeExtensionDefName);
-                    break;
-                default:
-                    fail("Unexpected extension definition");
+                }
+                default -> fail("Unexpected extension definition");
             }
         }
     }

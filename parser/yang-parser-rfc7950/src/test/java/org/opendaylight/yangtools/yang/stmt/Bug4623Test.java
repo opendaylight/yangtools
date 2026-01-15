@@ -124,6 +124,6 @@ class Bug4623Test extends AbstractYangTest {
         final var unknownSchemaNode = unknownSchemaNodes.iterator().next();
         assertEquals("unknown", unknownSchemaNode.argument());
         assertEquals(QName.create("urn:simple.extension.typedefs", "unknown"),
-            unknownSchemaNode.statementDefinition().getStatementName());
+            unknownSchemaNode.statementDefinition().statementName());
     }
 }
