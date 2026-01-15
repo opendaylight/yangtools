@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.api.stmt;
+package org.opendaylight.yangtools.yang.model.api.meta;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -13,9 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.math.BigInteger;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher.TooFewElements;
-import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher.TooManyElements;
-import org.opendaylight.yangtools.yang.model.api.stmt.ElementCountMatcher.Violation;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher.TooFewElements;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher.TooManyElements;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher.Violation;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 
 class ElementCountRangeTest {
     private final ElementCountRange range = new ElementCountRange(MinElementsArgument.of(2), MaxElementsArgument.of(5));
@@ -45,10 +47,10 @@ class ElementCountRangeTest {
     }
 
     private static String assertTooFew(final Violation violation) {
-        return assertInstanceOf(TooFewElements.class, violation).minElements().toString();
+        return assertInstanceOf(TooFewElements.class, violation).atLeast().toString();
     }
 
     private static String assertTooMany(final Violation violation) {
-        return assertInstanceOf(TooManyElements.class, violation).maxElements().toString();
+        return assertInstanceOf(TooManyElements.class, violation).atMost().toString();
     }
 }

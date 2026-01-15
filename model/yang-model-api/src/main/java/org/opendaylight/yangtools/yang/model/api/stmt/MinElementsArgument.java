@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.math.BigInteger;
 import java.text.ParseException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 
 /**
  * An argument to {@code min-elements} statement.
@@ -26,7 +26,7 @@ import org.eclipse.jdt.annotation.Nullable;
 //         - any *64 object is less than any *Big object
 //       and all that remains to be implemented are intra-class comparisons, which are nigh trivial
 @NonNullByDefault
-public sealed interface MinElementsArgument extends Comparable<MinElementsArgument>, ElementCountMatcher
+public sealed interface MinElementsArgument extends Comparable<MinElementsArgument>, ElementCountMatcher.AtLeast
         permits MinElementsArgument32, MinElementsArgument64, MinElementsArgumentBig {
     /**
      * {@return a {@link MinElementsArgument} with specified value}
@@ -119,51 +119,10 @@ public sealed interface MinElementsArgument extends Comparable<MinElementsArgume
         return of(new BigInteger(argument));
     }
 
-    @Override
-    default @Nullable TooFewElements matches(final int elementCount) {
-        return elementCount > lowerInt() ? null : tooFewElements(lowerBig());
-    }
-
-    @Override
-    default @Nullable TooFewElements matches(final long elementCount) {
-        return elementCount > lowerLong() ? null : tooFewElements(lowerBig());
-    }
-
-    @Override
-    default @Nullable TooFewElements matches(final BigInteger elementCount) {
-        final var lowerBig = lowerBig();
-        return elementCount.compareTo(lowerBig) > 0 ? null : tooFewElements(lowerBig);
-    }
-
-    private static TooFewElements tooFewElements(final BigInteger lowerBig) {
-        return new TooFewElements(lowerBig.add(BigInteger.ONE));
-    }
-
-    /**
-     * {@return the next lower-than-this {@code int} bound of this argument}
-     */
-    int lowerInt();
-
-    /**
-     * {@return the next lower-than-this {@code long} bound of this argument}
-     */
-    long lowerLong();
-
-    /**
-     * {@return the next lower-than-this {@code BigInteger} bound of this argument}
-     */
-    BigInteger lowerBig();
-
     /**
      * {@return interned equivalent of this argument}
      */
     default MinElementsArgument intern() {
         return MinElementsArgument32.INTERNER.intern(this);
     }
-
-    /**
-     * {@return the string representation of the minimum number of elements}
-     */
-    @Override
-    String toString();
 }
