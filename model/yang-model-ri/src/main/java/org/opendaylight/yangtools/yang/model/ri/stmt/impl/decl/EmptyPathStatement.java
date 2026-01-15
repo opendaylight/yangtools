@@ -28,6 +28,6 @@ public class EmptyPathStatement extends AbstractDeclaredStatement<PathExpression
 
     @Override
     public final String rawArgument() {
-        return argument.getOriginalString();
+        return argument.originalString();
     }
 }
