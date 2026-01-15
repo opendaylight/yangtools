@@ -85,7 +85,7 @@ abstract sealed class AbstractOperationStatementSupport<D extends OperationDecla
 
     private static void appendImplicitSubstatement(final @NonNull Mutable<?, ?, ?> stmt,
             final @NonNull StatementDefinition def) {
-        final var statementName = def.getStatementName();
+        final var statementName = def.statementName();
         final var support = stmt.namespaceItem(StatementSupport.NAMESPACE, statementName);
         if (support == null) {
             throw new VerifyException("No support for " + statementName + " registered");
