@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @since 15.0.0
  */
 @NonNullByDefault
-public sealed interface ElementCountMatcher extends Immutable permits MaxElementsArgument {
+public sealed interface ElementCountMatcher extends Immutable permits MinElementsArgument, MaxElementsArgument {
     /**
      * {@return {@code true} if {@code elementCount} matches this matcher}
      * @param elementCount the element count
