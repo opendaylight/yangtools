@@ -53,7 +53,7 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
     }
 
     @Override
-    public final @NonNull D getDeclared() {
+    public final @NonNull D declared() {
         return declared;
     }
 
@@ -69,7 +69,7 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
 
     @Override
     public final String getNodeParameter() {
-        final String rawArgument = getDeclared().rawArgument();
+        final String rawArgument = declared().rawArgument();
         return rawArgument == null ? "" : rawArgument;
     }
 

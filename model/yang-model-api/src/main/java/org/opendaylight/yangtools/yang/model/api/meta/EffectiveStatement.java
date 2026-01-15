@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,22 +36,52 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
      * @return statement origin.
      */
     default @NonNull StatementOrigin statementOrigin() {
-        return getDeclared() != null ? StatementOrigin.DECLARATION : StatementOrigin.CONTEXT;
+        return declared() != null ? StatementOrigin.DECLARATION : StatementOrigin.CONTEXT;
     }
 
     /**
-     * Returns statement, which was explicit declaration of this effective
-     * statement.
-     *
-     * @return statement, which was explicit declaration of this effective
-     *         statement or null if statement was inferred from context.
+     * {@return the {@link DeclaredStatement} declaring of effective statement or {@code null} if this effective
+     * statement was inferred}
+     * @since 15.0.0
      */
-    @Nullable D getDeclared();
+    @Nullable D declared();
 
     /**
-     * Returns a collection of all effective substatements.
-     *
-     * @return collection of all effective substatements.
+     * {@return the {@link DeclaredStatement} declaring of effective statement or empty if this effective statement was
+     * inferred}
+     * @since 15.0.0
+     */
+    default @NonNull Optional<D> findDeclared() {
+        final var declared = declared();
+        return declared == null ? Optional.empty() : Optional.of(declared);
+    }
+
+    /**
+     * {@return the {@link DeclaredStatement} declaring of effective statement or {@code null} if this effective
+     * statement was inferred}
+     * @deprecated Use {@link #declared()} instead or {@link #requireDeclared()} instead.
+     */
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default @Nullable D getDeclared() {
+        return declared();
+    }
+
+    /**
+     * {@return the {@link DeclaredStatement} declaring of effective statement}}
+     * @throws NoSuchElementException if if this effective statement was inferred
+     * @since 15.0.0
+     */
+    // FIXME: rename to getDeclared() once that name is available
+    default @NonNull D requireDeclared() {
+        final var declared = declared();
+        if (declared == null) {
+            throw new NoSuchElementException(this + " was not explicitly declared");
+        }
+        return declared;
+    }
+
+    /**
+     * {@return a collection of all effective substatements}
      */
     @NonNull List<? extends @NonNull EffectiveStatement<?, ?>> effectiveSubstatements();
 
@@ -61,8 +92,7 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
      * @param type substatement type
      * @return First effective substatement, or empty if no match is found.
      */
-    @Beta
-    default <T> Optional<T> findFirstEffectiveSubstatement(final @NonNull Class<T> type) {
+    default <T> @NonNull Optional<T> findFirstEffectiveSubstatement(final @NonNull Class<T> type) {
         return effectiveSubstatements().stream().filter(type::isInstance).findFirst().map(type::cast);
     }
 
@@ -74,8 +104,7 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
      * @param type substatement type
      * @return First effective substatement's argument, or empty if no match is found.
      */
-    @Beta
-    default <V, T extends EffectiveStatement<V, ?>> Optional<V> findFirstEffectiveSubstatementArgument(
+    default <V, T extends EffectiveStatement<V, ?>> @NonNull Optional<V> findFirstEffectiveSubstatementArgument(
             final @NonNull Class<T> type) {
         return findFirstEffectiveSubstatement(type).map(EffectiveStatement::argument);
     }
@@ -87,8 +116,8 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
      * @param type substatement type
      * @return A stream of all effective substatements of specified type.
      */
-    @Beta
-    default <T extends EffectiveStatement<?, ?>> Stream<T> streamEffectiveSubstatements(final @NonNull Class<T> type) {
+    default <T extends EffectiveStatement<?, ?>> @NonNull Stream<T> streamEffectiveSubstatements(
+            final @NonNull Class<T> type) {
         return effectiveSubstatements().stream().filter(type::isInstance).map(type::cast);
     }
 
