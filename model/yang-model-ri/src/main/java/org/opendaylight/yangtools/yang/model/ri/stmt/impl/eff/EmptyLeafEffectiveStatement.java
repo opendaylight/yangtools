@@ -24,6 +24,6 @@ public final class EmptyLeafEffectiveStatement extends AbstractLeafEffectiveStat
 
     @Override
     public QName argument() {
-        return getDeclared().argument();
+        return declared().argument();
     }
 }

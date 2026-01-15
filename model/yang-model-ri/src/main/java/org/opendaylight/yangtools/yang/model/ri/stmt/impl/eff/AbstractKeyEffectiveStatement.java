@@ -55,7 +55,7 @@ abstract class AbstractKeyEffectiveStatement
 
         @Override
         public final Set<QName> argument() {
-            return getDeclared().argument();
+            return declared().argument();
         }
     }
 

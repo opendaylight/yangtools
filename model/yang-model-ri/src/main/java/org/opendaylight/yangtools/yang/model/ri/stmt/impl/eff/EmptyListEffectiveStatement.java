@@ -22,7 +22,7 @@ public final class EmptyListEffectiveStatement extends AbstractListEffectiveStat
 
     @Override
     public QName argument() {
-        return getDeclared().argument();
+        return declared().argument();
     }
 
     @Override
