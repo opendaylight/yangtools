@@ -48,7 +48,7 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     }
 
     @Override
-    public final TypeStatement getDeclared() {
+    public final TypeStatement declared() {
         return null;
     }
 

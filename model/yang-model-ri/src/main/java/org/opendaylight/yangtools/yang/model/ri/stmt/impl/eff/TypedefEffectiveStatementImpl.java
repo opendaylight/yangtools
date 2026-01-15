@@ -122,7 +122,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
 
     private final class ProxyTypeEffectiveStatement implements TypeEffectiveStatement<TypeStatement> {
         @Override
-        public TypeStatement getDeclared() {
+        public TypeStatement declared() {
             return null;
         }
 
