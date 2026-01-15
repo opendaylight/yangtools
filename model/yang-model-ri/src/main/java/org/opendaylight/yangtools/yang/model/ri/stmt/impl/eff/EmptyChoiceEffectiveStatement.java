@@ -26,7 +26,7 @@ public final class EmptyChoiceEffectiveStatement extends AbstractChoiceEffective
 
     @Override
     public QName argument() {
-        return getDeclared().argument();
+        return declared().argument();
     }
 
     @Override

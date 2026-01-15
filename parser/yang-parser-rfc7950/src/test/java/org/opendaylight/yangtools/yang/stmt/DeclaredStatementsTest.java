@@ -18,42 +18,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
-import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 
 class DeclaredStatementsTest extends AbstractYangTest {
     @Test
@@ -65,10 +32,10 @@ class DeclaredStatementsTest extends AbstractYangTest {
 
         final var anyxmlSchemaNode = assertInstanceOf(AnyxmlSchemaNode.class,
             testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "foobar")));
-        final var anyxmlStatement = anyxmlSchemaNode.asEffectiveStatement().getDeclared();
+        final var anyxmlStatement = anyxmlSchemaNode.asEffectiveStatement().declared();
         assertNotNull(anyxmlStatement);
 
-        final QName name = anyxmlStatement.argument();
+        final var name = anyxmlStatement.argument();
         assertNotNull(name);
 
         final var whenStatement = anyxmlStatement.getWhenStatement().orElseThrow();
@@ -93,17 +60,17 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertTrue(mustStatement.getDescription().isPresent());
         assertTrue(mustStatement.getReference().isPresent());
 
-        final ConfigStatement configStatement = anyxmlStatement.getConfig().orElseThrow();
+        final var configStatement = anyxmlStatement.getConfig().orElseThrow();
         assertFalse(configStatement.argument());
 
-        final StatusStatement statusStatement = anyxmlStatement.getStatus().orElseThrow();
-        final Status status = statusStatement.argument();
+        final var statusStatement = anyxmlStatement.getStatus().orElseThrow();
+        final var status = statusStatement.argument();
         assertNotNull(status);
 
-        final DescriptionStatement descriptionStatement = anyxmlStatement.getDescription().orElseThrow();
+        final var descriptionStatement = anyxmlStatement.getDescription().orElseThrow();
         assertEquals("anyxml description", descriptionStatement.argument());
 
-        final ReferenceStatement referenceStatement = anyxmlStatement.getReference().orElseThrow();
+        final var referenceStatement = anyxmlStatement.getReference().orElseThrow();
         assertEquals("anyxml reference", referenceStatement.argument());
 
         assertTrue(anyxmlStatement.getMandatory().isPresent());
@@ -113,18 +80,18 @@ class DeclaredStatementsTest extends AbstractYangTest {
     void testDeclaredChoice() {
         final var schemaContext = assertEffectiveModel("/declared-statements-test/choice-declared-test.yang");
 
-        final Module testModule = schemaContext.findModules("choice-declared-test").iterator().next();
+        final var testModule = schemaContext.findModules("choice-declared-test").iterator().next();
         assertNotNull(testModule);
 
-        final ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) testModule.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "test-choice"));
+        final var choiceSchemaNode = assertInstanceOf(ChoiceSchemaNode.class,
+            testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "test-choice")));
         assertNotNull(choiceSchemaNode);
-        final ChoiceStatement choiceStatement = ((ChoiceEffectiveStatement) choiceSchemaNode).getDeclared();
+        final var choiceStatement = choiceSchemaNode.asEffectiveStatement().requireDeclared();
 
-        final QName name = choiceStatement.argument();
+        final var name = choiceStatement.argument();
         assertNotNull(name);
 
-        final DefaultStatement defaultStatement = choiceStatement.getDefault().orElseThrow();
+        final var defaultStatement = choiceStatement.getDefault().orElseThrow();
         assertEquals("case-two", defaultStatement.argument());
 
         assertTrue(choiceStatement.getConfig().isPresent());
@@ -133,8 +100,8 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var caseStatements = choiceStatement.getCases();
         assertNotNull(caseStatements);
         assertEquals(3, caseStatements.size());
-        final CaseStatement caseStatement = caseStatements.iterator().next();
-        final QName caseStatementName = caseStatement.argument();
+        final var caseStatement = caseStatements.iterator().next();
+        final var caseStatementName = caseStatement.argument();
         assertNotNull(caseStatementName);
         assertNotNull(caseStatement.getWhenStatement().orElseThrow());
         final var caseStatementIfFeatures = caseStatement.getIfFeatures();
@@ -169,10 +136,10 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertNotNull(augmentationSchemas);
         assertEquals(1, augmentationSchemas.size());
 
-        final AugmentationSchemaNode augmentationSchema = augmentationSchemas.iterator().next();
-        final AugmentStatement augmentStatement = ((AugmentEffectiveStatement) augmentationSchema).getDeclared();
+        final var augmentationSchema = augmentationSchemas.iterator().next();
+        final var augmentStatement = augmentationSchema.asEffectiveStatement().requireDeclared();
 
-        final SchemaNodeIdentifier targetNode = augmentStatement.argument();
+        final var targetNode = augmentStatement.argument();
         assertNotNull(targetNode);
 
         final var augmentStatementDataDefinitions = augmentStatement.getDataDefinitions();
@@ -185,41 +152,41 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var schemaContext = assertEffectiveModel("/declared-statements-test/parent-module-declared-test.yang",
             "/declared-statements-test/child-module-declared-test.yang");
 
-        final Module testModule = schemaContext.findModules("parent-module-declared-test").iterator().next();
+        final var testModule = schemaContext.findModules("parent-module-declared-test").iterator().next();
         assertNotNull(testModule);
 
-        final ModuleStatement moduleStatement = ((ModuleEffectiveStatement) testModule).getDeclared();
+        final var moduleStatement = testModule.asEffectiveStatement().requireDeclared();
         assertNotNull(moduleStatement.argument());
 
-        final YangVersionStatement moduleStatementYangVersion = moduleStatement.getYangVersion();
+        final var moduleStatementYangVersion = moduleStatement.getYangVersion();
         assertNotNull(moduleStatementYangVersion);
         assertNotNull(moduleStatementYangVersion.argument());
 
-        final NamespaceStatement moduleStatementNamspace = moduleStatement.getNamespace();
+        final var moduleStatementNamspace = moduleStatement.getNamespace();
         assertNotNull(moduleStatementNamspace);
         assertNotNull(moduleStatementNamspace.argument());
 
-        final PrefixStatement moduleStatementPrefix = moduleStatement.getPrefix();
+        final var moduleStatementPrefix = moduleStatement.getPrefix();
         assertNotNull(moduleStatementPrefix);
         assertNotNull(moduleStatementPrefix.argument());
 
         assertEquals(1, moduleStatement.getIncludes().size());
-        final IncludeStatement includeStatement = moduleStatement.getIncludes().iterator().next();
+        final var includeStatement = moduleStatement.getIncludes().iterator().next();
         assertEquals(Unqualified.of("child-module-declared-test"), includeStatement.argument());
 
         final var submodules = testModule.getSubmodules();
         assertNotNull(submodules);
         assertEquals(1, submodules.size());
 
-        final Submodule submodule = submodules.iterator().next();
-        final SubmoduleStatement submoduleStatement = ((SubmoduleEffectiveStatement) submodule).getDeclared();
+        final var submodule = submodules.iterator().next();
+        final var submoduleStatement = submodule.asEffectiveStatement().requireDeclared();
 
         assertNotNull(submoduleStatement.argument());
 
-        final YangVersionStatement submoduleStatementYangVersion = submoduleStatement.getYangVersion();
+        final var submoduleStatementYangVersion = submoduleStatement.getYangVersion();
         assertNotNull(submoduleStatementYangVersion);
 
-        final BelongsToStatement belongsToStatement = submoduleStatement.getBelongsTo();
+        final var belongsToStatement = submoduleStatement.getBelongsTo();
         assertNotNull(belongsToStatement);
         assertNotNull(belongsToStatement.argument());
         assertNotNull(belongsToStatement.getPrefix());
@@ -230,14 +197,14 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var schemaContext = assertEffectiveModel("/declared-statements-test/root-module-declared-test.yang",
             "/declared-statements-test/imported-module-declared-test.yang");
 
-        final Revision revision = Revision.of("2016-09-28");
-        final Module testModule = schemaContext.findModule("root-module-declared-test", revision).orElseThrow();
+        final var revision = Revision.of("2016-09-28");
+        final var testModule = schemaContext.findModule("root-module-declared-test", revision).orElseThrow();
         assertNotNull(testModule);
 
-        final ModuleStatement moduleStatement = ((ModuleEffectiveStatement) testModule).getDeclared();
+        final var moduleStatement = testModule.asEffectiveStatement().requireDeclared();
 
         assertEquals(1, moduleStatement.getImports().size());
-        final ImportStatement importStatement = moduleStatement.getImports().iterator().next();
+        final var importStatement = moduleStatement.getImports().iterator().next();
         assertEquals(Unqualified.of("imported-module-declared-test"), importStatement.argument());
         assertEquals("imdt", importStatement.getPrefix().argument());
         assertEquals(revision, importStatement.getRevisionDate().argument());
@@ -248,22 +215,22 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals("test contact", moduleStatement.getContact().orElseThrow().argument());
 
         assertEquals(1, moduleStatement.getRevisions().size());
-        final RevisionStatement revisionStatement = moduleStatement.getRevisions().iterator().next();
+        final var revisionStatement = moduleStatement.getRevisions().iterator().next();
         assertEquals(revision, revisionStatement.argument());
         assertEquals("test description", revisionStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", revisionStatement.getReference().orElseThrow().argument());
 
         assertEquals(1, moduleStatement.getExtensions().size());
-        final ExtensionStatement extensionStatement = moduleStatement.getExtensions().iterator().next();
+        final var extensionStatement = moduleStatement.getExtensions().iterator().next();
         assertEquals(Status.CURRENT, extensionStatement.getStatus().orElseThrow().argument());
         assertEquals("test description", extensionStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", extensionStatement.getReference().orElseThrow().argument());
-        final ArgumentStatement argumentStatement = extensionStatement.getArgument();
+        final var argumentStatement = extensionStatement.getArgument();
         assertEquals("ext-argument", argumentStatement.argument().getLocalName());
         assertTrue(argumentStatement.getYinElement().argument());
 
         assertEquals(2, moduleStatement.getFeatures().size());
-        final FeatureStatement featureStatement = moduleStatement.getFeatures().iterator().next();
+        final var featureStatement = moduleStatement.getFeatures().iterator().next();
         assertEquals(Status.CURRENT, featureStatement.getStatus().orElseThrow().argument());
         assertEquals("test description", featureStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", featureStatement.getReference().orElseThrow().argument());
@@ -271,7 +238,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals(1, featureStatement.getIfFeatures().size());
 
         assertEquals(2, moduleStatement.getIdentities().size());
-        IdentityStatement identityStatement = moduleStatement.getIdentities().stream()
+        final var identityStatement = moduleStatement.getIdentities().stream()
             .filter(identity -> identity.argument().getLocalName().equals("test-id"))
             .findFirst()
             .orElseThrow();
@@ -283,7 +250,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals("test-id", identityStatement.argument().getLocalName());
 
         assertEquals(1, moduleStatement.getTypedefs().size());
-        final TypedefStatement typedefStatement = moduleStatement.getTypedefs().iterator().next();
+        final var typedefStatement = moduleStatement.getTypedefs().iterator().next();
         assertEquals(Status.CURRENT, typedefStatement.getStatus().orElseThrow().argument());
         assertEquals("test description", typedefStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", typedefStatement.getReference().orElseThrow().argument());
@@ -296,16 +263,14 @@ class DeclaredStatementsTest extends AbstractYangTest {
     void testDeclaredContainer() {
         final var schemaContext = assertEffectiveModel("/declared-statements-test/container-declared-test.yang");
 
-        final Module testModule = schemaContext.findModules("container-declared-test").iterator().next();
+        final var testModule = schemaContext.findModules("container-declared-test").iterator().next();
         assertNotNull(testModule);
 
-        final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) testModule.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "test-container"));
-        assertNotNull(containerSchemaNode);
-        final ContainerStatement containerStatement =
-            ((ContainerEffectiveStatement) containerSchemaNode).getDeclared();
+        final var containerSchemaNode = assertInstanceOf(ContainerSchemaNode.class,
+            testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "test-container")));
+        final var containerStatement = containerSchemaNode.asEffectiveStatement().requireDeclared();
 
-        final QName name = containerStatement.argument();
+        final var name = containerStatement.argument();
         assertNotNull(name);
 
         final var containerStatementWhen = containerStatement.getWhenStatement().orElseThrow();
@@ -319,7 +284,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertNotNull(containerStatementMusts);
         assertEquals(1, containerStatementMusts.size());
 
-        final PresenceStatement containerStatementPresence = containerStatement.getPresence();
+        final var containerStatementPresence = containerStatement.getPresence();
         assertNotNull(containerStatementPresence);
         assertNotNull(containerStatementPresence.argument());
 

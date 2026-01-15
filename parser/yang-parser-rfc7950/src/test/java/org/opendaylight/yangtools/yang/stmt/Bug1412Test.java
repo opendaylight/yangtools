@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
 /**
@@ -25,13 +25,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 class Bug1412Test extends AbstractYangTest {
     @Test
     void test() {
-        final Module bug1412 = assertEffectiveModelDir("/bugs/bug1412").findModules("bug1412").iterator().next();
-
-        final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
-            bug1412.getQNameModule(), "node"));
-        var unknownNodes = node.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class);
+        final var bug1412 = assertEffectiveModelDir("/bugs/bug1412").findModules("bug1412").iterator().next();
+        final var node = assertInstanceOf(ContainerSchemaNode.class,
+            bug1412.getDataChildByName(QName.create(bug1412.getQNameModule(), "node")));
+        var unknownNodes = node.asEffectiveStatement().requireDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
-        final UnrecognizedStatement action = unknownNodes.iterator().next();
+        final var action = unknownNodes.iterator().next();
 
         assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action"),
             action.statementDefinition().statementName());
@@ -43,24 +43,16 @@ class Bug1412Test extends AbstractYangTest {
         UnrecognizedStatement description = null;
         UnrecognizedStatement actionPoint = null;
         UnrecognizedStatement output = null;
-        for (final UnrecognizedStatement un : unknownNodes) {
+        for (var un : unknownNodes) {
             final String name = un.statementDefinition().statementName().getLocalName();
             switch (name) {
-                case "info":
-                    info = un;
-                    break;
-                case "description":
-                    description = un;
-                    break;
-                case "actionpoint":
-                    actionPoint = un;
-                    break;
-                case "output":
-                    output = un;
-                    break;
-                case null:
-                default:
-                    break;
+                case "info" -> info = un;
+                case "description" -> description = un;
+                case "actionpoint" -> actionPoint = un;
+                case "output" -> output = un;
+                default -> {
+                    // no-op
+                }
             }
         }
 
