@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 public abstract non-sealed class AbstractUndeclaredEffectiveStatement<A, D extends DeclaredStatement<A>>
         extends AbstractIndexedEffectiveStatement<A, D>  {
     @Override
-    public final D getDeclared() {
+    public final D declared() {
         return null;
     }
 
@@ -78,12 +78,12 @@ public abstract non-sealed class AbstractUndeclaredEffectiveStatement<A, D exten
 
         protected DefaultWithSchemaTree(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.substatements = maskList(substatements);
-            this.schemaTree = immutableNamespaceOf(createSchemaTreeNamespace(substatements));
+            schemaTree = immutableNamespaceOf(createSchemaTreeNamespace(substatements));
         }
 
         protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D> original) {
-            this.schemaTree = original.schemaTree;
-            this.substatements = original.substatements;
+            schemaTree = original.schemaTree;
+            substatements = original.substatements;
         }
 
         @Override
@@ -111,15 +111,15 @@ public abstract non-sealed class AbstractUndeclaredEffectiveStatement<A, D exten
 
         protected DefaultWithDataTree(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
-            this.schemaTree = immutableNamespaceOf(schema);
-            this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
+            schemaTree = immutableNamespaceOf(schema);
+            dataTree = createDataTreeNamespace(schema.values(), schemaTree);
             this.substatements = maskList(substatements);
         }
 
         protected DefaultWithDataTree(final DefaultWithDataTree<A, D> original) {
-            this.schemaTree = original.schemaTree;
-            this.dataTree = original.dataTree;
-            this.substatements = original.substatements;
+            schemaTree = original.schemaTree;
+            dataTree = original.dataTree;
+            substatements = original.substatements;
         }
 
         @Override
