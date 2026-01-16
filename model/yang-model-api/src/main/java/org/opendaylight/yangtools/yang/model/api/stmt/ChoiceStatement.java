@@ -23,7 +23,7 @@ public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatemen
         return YangStmtMapping.CHOICE;
     }
 
-    default @NonNull Collection<? extends CaseStatement> getCases() {
+    default @NonNull Collection<? extends @NonNull CaseStatement> getCases() {
         return declaredSubstatements(CaseStatement.class);
     }
 }

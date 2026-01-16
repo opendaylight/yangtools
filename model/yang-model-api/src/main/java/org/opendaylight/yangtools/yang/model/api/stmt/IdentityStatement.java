@@ -28,7 +28,7 @@ public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatu
      *
      * @return base identities, empty if there are none.
      */
-    default @NonNull Collection<? extends BaseStatement> getBases() {
+    default @NonNull Collection<? extends @NonNull BaseStatement> getBases() {
         return declaredSubstatements(BaseStatement.class);
     }
 }

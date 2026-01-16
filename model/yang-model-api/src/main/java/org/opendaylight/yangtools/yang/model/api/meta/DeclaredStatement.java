@@ -38,7 +38,7 @@ public non-sealed interface DeclaredStatement<A> extends ModelStatement<A> {
      *
      * @return Collection of statements, which were explicitly declared in source of model.
      */
-    @NonNull List<? extends DeclaredStatement<?>> declaredSubstatements();
+    @NonNull List<? extends @NonNull DeclaredStatement<?>> declaredSubstatements();
 
     /**
      * Returns collection of explicitly declared child statements, while preserving its original ordering from original
@@ -49,7 +49,7 @@ public non-sealed interface DeclaredStatement<A> extends ModelStatement<A> {
      * @return Collection of statements, which were explicitly declared in source of model.
      * @throws NullPointerException if {@code type} is null
      */
-    default <T extends DeclaredStatement<?>> @NonNull Collection<? extends T> declaredSubstatements(
+    default <T extends DeclaredStatement<?>> @NonNull Collection<? extends @NonNull T> declaredSubstatements(
             final Class<T> type) {
         requireNonNull(type);
         return Collections2.transform(Collections2.filter(declaredSubstatements(), type::isInstance), type::cast);
@@ -111,7 +111,7 @@ public non-sealed interface DeclaredStatement<A> extends ModelStatement<A> {
      * @throws NullPointerException if {@code type} is null
      */
     @Beta
-    default <T extends DeclaredStatement<?>> @NonNull Stream<T> streamDeclaredSubstatements(
+    default <T extends DeclaredStatement<?>> @NonNull Stream<@NonNull T> streamDeclaredSubstatements(
             final @NonNull Class<T> type) {
         requireNonNull(type);
         return declaredSubstatements().stream().filter(type::isInstance).map(type::cast);
