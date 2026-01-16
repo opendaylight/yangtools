@@ -33,39 +33,39 @@ public sealed interface RootDeclaredStatement
         return findFirstDeclaredSubstatement(ContactStatement.class);
     }
 
-    default @NonNull Collection<? extends ImportStatement> getImports() {
+    default @NonNull Collection<? extends @NonNull ImportStatement> getImports() {
         return declaredSubstatements(ImportStatement.class);
     }
 
-    default @NonNull Collection<? extends IncludeStatement> getIncludes() {
+    default @NonNull Collection<? extends @NonNull IncludeStatement> getIncludes() {
         return declaredSubstatements(IncludeStatement.class);
     }
 
-    default @NonNull Collection<? extends RevisionStatement> getRevisions() {
+    default @NonNull Collection<? extends @NonNull RevisionStatement> getRevisions() {
         return declaredSubstatements(RevisionStatement.class);
     }
 
-    default @NonNull Collection<? extends ExtensionStatement> getExtensions() {
+    default @NonNull Collection<? extends @NonNull ExtensionStatement> getExtensions() {
         return declaredSubstatements(ExtensionStatement.class);
     }
 
-    default @NonNull Collection<? extends FeatureStatement> getFeatures() {
+    default @NonNull Collection<? extends @NonNull FeatureStatement> getFeatures() {
         return declaredSubstatements(FeatureStatement.class);
     }
 
-    default @NonNull Collection<? extends IdentityStatement> getIdentities() {
+    default @NonNull Collection<? extends @NonNull IdentityStatement> getIdentities() {
         return declaredSubstatements(IdentityStatement.class);
     }
 
-    default @NonNull Collection<? extends AugmentStatement> getAugments() {
+    default @NonNull Collection<? extends @NonNull AugmentStatement> getAugments() {
         return declaredSubstatements(AugmentStatement.class);
     }
 
-    default @NonNull Collection<? extends RpcStatement> getRpcs() {
+    default @NonNull Collection<? extends @NonNull RpcStatement> getRpcs() {
         return declaredSubstatements(RpcStatement.class);
     }
 
-    default @NonNull Collection<? extends DeviationStatement> getDeviations() {
+    default @NonNull Collection<? extends @NonNull DeviationStatement> getDeviations() {
         return declaredSubstatements(DeviationStatement.class);
     }
 }

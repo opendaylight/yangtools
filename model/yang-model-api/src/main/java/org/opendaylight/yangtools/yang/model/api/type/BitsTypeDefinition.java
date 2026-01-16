@@ -24,7 +24,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
      *
      * @return list of {@code Bit} type instances with data about all individual bits of {@code bits} YANG built-in type
      */
-    @NonNull Collection<? extends Bit> getBits();
+    @NonNull Collection<? extends @NonNull Bit> getBits();
 
     static int hashCode(final @NonNull BitsTypeDefinition type) {
         return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),

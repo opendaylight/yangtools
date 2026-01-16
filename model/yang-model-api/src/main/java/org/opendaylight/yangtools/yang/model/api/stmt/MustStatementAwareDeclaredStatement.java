@@ -20,7 +20,7 @@ public interface MustStatementAwareDeclaredStatement<A> extends DeclaredStatemen
      *
      * @return collection of must statements
      */
-    default @NonNull Collection<? extends MustStatement> getMustStatements() {
+    default @NonNull Collection<? extends @NonNull MustStatement> getMustStatements() {
         return declaredSubstatements(MustStatement.class);
     }
 }
