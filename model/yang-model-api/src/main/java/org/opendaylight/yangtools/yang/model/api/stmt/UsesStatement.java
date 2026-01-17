@@ -21,11 +21,11 @@ public interface UsesStatement extends DataDefinitionStatement {
         return YangStmtMapping.USES;
     }
 
-    default @NonNull Collection<? extends RefineStatement> getRefines() {
+    default @NonNull Collection<? extends @NonNull RefineStatement> getRefines() {
         return declaredSubstatements(RefineStatement.class);
     }
 
-    default @NonNull Collection<? extends AugmentStatement> getAugments() {
+    default @NonNull Collection<? extends @NonNull AugmentStatement> getAugments() {
         return declaredSubstatements(AugmentStatement.class);
     }
 }

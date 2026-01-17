@@ -29,7 +29,7 @@ public interface LeafListStatement extends MultipleElementsDeclaredStatement, Ty
      *
      * @return collection of default statements
      */
-    default @NonNull Collection<? extends DefaultStatement> getDefaults() {
+    default @NonNull Collection<? extends @NonNull DefaultStatement> getDefaults() {
         return declaredSubstatements(DefaultStatement.class);
     }
 }

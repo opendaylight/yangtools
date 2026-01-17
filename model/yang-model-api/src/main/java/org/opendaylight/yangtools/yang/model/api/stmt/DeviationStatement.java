@@ -23,7 +23,7 @@ public interface DeviationStatement extends DocumentedDeclaredStatement<Absolute
     }
 
     // FIXME: 11.0.0: evaluate usefulness of this
-    default @NonNull Collection<? extends DeviateStatement> getDeviateStatements() {
+    default @NonNull Collection<? extends @NonNull DeviateStatement> getDeviateStatements() {
         return declaredSubstatements(DeviateStatement.class);
     }
 }

@@ -23,7 +23,7 @@ public interface ActionStatementAwareDeclaredStatement<A> extends DeclaredStatem
      *
      * @return collection of action statements
      */
-    default @NonNull Collection<? extends ActionStatement> getActions() {
+    default @NonNull Collection<? extends @NonNull ActionStatement> getActions() {
         return declaredSubstatements(ActionStatement.class);
     }
 }

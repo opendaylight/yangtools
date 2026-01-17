@@ -27,7 +27,7 @@ public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
     }
 
     // FIXME: 7.0.0: determine the utility of this method
-    default @NonNull Collection<? extends CaseStatement> getCases() {
+    default @NonNull Collection<? extends @NonNull CaseStatement> getCases() {
         return declaredSubstatements(CaseStatement.class);
     }
 }

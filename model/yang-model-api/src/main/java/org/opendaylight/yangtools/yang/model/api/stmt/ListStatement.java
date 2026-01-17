@@ -31,7 +31,7 @@ public interface ListStatement extends MultipleElementsDeclaredStatement,
         return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
-    default @NonNull Collection<? extends UniqueStatement> getUnique() {
+    default @NonNull Collection<? extends @NonNull UniqueStatement> getUnique() {
         return declaredSubstatements(UniqueStatement.class);
     }
 }

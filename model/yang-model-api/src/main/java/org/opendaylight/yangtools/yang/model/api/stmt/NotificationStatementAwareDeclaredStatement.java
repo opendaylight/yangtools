@@ -20,7 +20,7 @@ public interface NotificationStatementAwareDeclaredStatement<A> extends Declared
      *
      * @return collection of notification statements
      */
-    default @NonNull Collection<? extends NotificationStatement> getNotifications() {
+    default @NonNull Collection<? extends @NonNull NotificationStatement> getNotifications() {
         return declaredSubstatements(NotificationStatement.class);
     }
 }

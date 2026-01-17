@@ -49,13 +49,13 @@ public interface TypeStatement extends DeclaredStatement<QName> {
             return opt.isPresent() ? opt.orElseThrow() : null;
         }
 
-        default @NonNull Collection<? extends PatternStatement> getPatterns() {
+        default @NonNull Collection<? extends @NonNull PatternStatement> getPatterns() {
             return declaredSubstatements(PatternStatement.class);
         }
     }
 
     interface EnumSpecification extends TypeStatement {
-        default @NonNull Collection<? extends EnumStatement> getEnums() {
+        default @NonNull Collection<? extends @NonNull EnumStatement> getEnums() {
             return declaredSubstatements(EnumStatement.class);
         }
     }
@@ -96,25 +96,25 @@ public interface TypeStatement extends DeclaredStatement<QName> {
          * @return collection of base statements (in YANG 1.1 models) or a collection containing just one base
          *         statement (in YANG 1.0 models)
          */
-        default @NonNull Collection<? extends BaseStatement> getBases() {
+        default @NonNull Collection<? extends @NonNull BaseStatement> getBases() {
             return declaredSubstatements(BaseStatement.class);
         }
     }
 
     interface BitsSpecification extends TypeStatement {
-        default @NonNull Collection<? extends BitStatement> getBits() {
+        default @NonNull Collection<? extends @NonNull BitStatement> getBits() {
             return declaredSubstatements(BitStatement.class);
         }
     }
 
     interface UnionSpecification extends TypeStatement {
-        default @NonNull Collection<? extends TypeStatement> getTypes() {
+        default @NonNull Collection<? extends @NonNull TypeStatement> getTypes() {
             return declaredSubstatements(TypeStatement.class);
         }
     }
 
     interface BinarySpecification extends TypeStatement {
-        default @NonNull Collection<? extends LengthStatement> getLength() {
+        default @NonNull Collection<? extends @NonNull LengthStatement> getLength() {
             return declaredSubstatements(LengthStatement.class);
         }
     }

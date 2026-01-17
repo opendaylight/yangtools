@@ -20,7 +20,7 @@ public interface IfFeatureAwareDeclaredStatement<A> extends DeclaredStatement<A>
      *
      * @return collection of if-feature statements
      */
-    default @NonNull Collection<? extends IfFeatureStatement> getIfFeatures() {
+    default @NonNull Collection<? extends @NonNull IfFeatureStatement> getIfFeatures() {
         return declaredSubstatements(IfFeatureStatement.class);
     }
 }

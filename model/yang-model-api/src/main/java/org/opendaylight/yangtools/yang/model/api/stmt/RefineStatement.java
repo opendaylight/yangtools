@@ -26,7 +26,7 @@ public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<D
         return YangStmtMapping.REFINE;
     }
 
-    default @NonNull Collection<? extends DefaultStatement> getDefaults() {
+    default @NonNull Collection<? extends @NonNull DefaultStatement> getDefaults() {
         return declaredSubstatements(DefaultStatement.class);
     }
 

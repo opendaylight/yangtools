@@ -28,11 +28,11 @@ public sealed interface OperationDeclaredStatement
         return findFirstDeclaredSubstatement(OutputStatement.class);
     }
 
-    default @NonNull Collection<? extends TypedefStatement> getTypedefs() {
+    default @NonNull Collection<? extends @NonNull TypedefStatement> getTypedefs() {
         return declaredSubstatements(TypedefStatement.class);
     }
 
-    default @NonNull Collection<? extends GroupingStatement> getGroupings() {
+    default @NonNull Collection<? extends @NonNull GroupingStatement> getGroupings() {
         return declaredSubstatements(GroupingStatement.class);
     }
 }
