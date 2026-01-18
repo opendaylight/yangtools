@@ -244,11 +244,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @Override
-    protected boolean isIgnoringConfig() {
-        return false;
-    }
-
-    @Override
     protected boolean isParentSupportedByFeatures() {
         return true;
     }

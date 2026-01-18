@@ -23,6 +23,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         super(original);
         this.parent = requireNonNull(parent);
         argument = original.argument;
+        initIgnoringConfig(parent);
     }
 
     SubstatementContext(final OriginalStmtCtx<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
@@ -30,6 +31,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         super(def, ref, rawArgument);
         this.parent = requireNonNull(parent);
         argument = def.parseArgumentValue(this, rawArgument());
+        initIgnoringConfig(parent, def);
     }
 
     @Override
@@ -71,11 +73,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     protected boolean isIgnoringIfFeatures() {
         return isIgnoringIfFeatures(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringConfig() {
-        return isIgnoringConfig(parent);
     }
 
     @Override

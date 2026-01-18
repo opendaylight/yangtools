@@ -46,6 +46,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         } else {
             haveSourceRef = false;
         }
+        initIgnoringConfig(parent);
     }
 
     @Override
@@ -255,11 +256,6 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     @Override
     protected boolean isIgnoringIfFeatures() {
         return isIgnoringIfFeatures(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringConfig() {
-        return isIgnoringConfig(parent);
     }
 
     @Override

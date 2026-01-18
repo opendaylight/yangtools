@@ -121,8 +121,14 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     private boolean isSupportedToBuildEffective = true;
 
     // EffectiveConfig mapping
-    private static final int MASK_CONFIG                = 0x03;
-    private static final int HAVE_CONFIG                = 0x04;
+    private static final int CONFIG_ABSENT       = 0b000;
+    private static final int CONFIG_FALSE        = 0b001;
+    private static final int CONFIG_TRUE         = 0b010;
+    private static final int CONFIG_UNDETERMINED = 0b011;
+    private static final int MASK_CONFIG         = CONFIG_UNDETERMINED;
+    // Note: 0b1xx is reserved
+    private static final int CONFIG_IGNORED      = 0b100;
+
     // Effective instantiation mechanics for StatementContextBase: if this flag is set all substatements are known not
     // change when instantiated. This includes context-independent statements as well as any statements which are
     // ignored during copy instantiation.
@@ -136,14 +142,14 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     private static final int SET_SUPPORTED_BY_FEATURES  = HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
     private static final int SET_IGNORE_IF_FEATURE      = HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE;
 
-    private static final EffectiveConfig[] EFFECTIVE_CONFIGS;
-
-    static {
-        final EffectiveConfig[] values = EffectiveConfig.values();
-        final int length = values.length;
-        verify(length == 4, "Unexpected EffectiveConfig cardinality %s", length);
-        EFFECTIVE_CONFIGS = values;
-    }
+//    private static final EffectiveConfig[] EFFECTIVE_CONFIGS;
+//
+//    static {
+//        final EffectiveConfig[] values = EffectiveConfig.values();
+//        final int length = values.length;
+//        verify(length == 4, "Unexpected EffectiveConfig cardinality %s", length);
+//        EFFECTIVE_CONFIGS = values;
+//    }
 
     // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above boolean and
     // hence improve memory layout.
@@ -517,7 +523,18 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
      * {@link #isIgnoringConfig(StatementContextBase)}.
      */
     final @NonNull EffectiveConfig effectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
-        return (flags & HAVE_CONFIG) != 0 ? EFFECTIVE_CONFIGS[flags & MASK_CONFIG] : loadEffectiveConfig(parent);
+        if (isIgnoringConfig()) {
+            return EffectiveConfig.IGNORED;
+        }
+
+        final var cfgFlags = flags & MASK_CONFIG;
+        return switch (cfgFlags) {
+            case CONFIG_ABSENT -> loadEffectiveConfig(parent);
+            case CONFIG_FALSE -> EffectiveConfig.FALSE;
+            case CONFIG_TRUE -> EffectiveConfig.TRUE;
+            case CONFIG_UNDETERMINED -> EffectiveConfig.UNDETERMINED;
+            default -> throw new VerifyException("Unhandled cfgFlags " + cfgFlags);
+        };
     }
 
     private @NonNull EffectiveConfig loadEffectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
@@ -543,22 +560,25 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
             myConfig = EffectiveConfig.IGNORED;
         }
 
-        flags = (byte) (flags & ~MASK_CONFIG | HAVE_CONFIG | myConfig.ordinal());
+        flags = (byte) (flags & ~MASK_CONFIG_ALL | HAVE_CONFIG | myConfig.ordinal());
         return myConfig;
     }
 
-    protected abstract boolean isIgnoringConfig();
+    protected final void initIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
+        if (parent.isIgnoringConfig()) {
+            flags |= CONFIG_IGNORED;
+        }
+    }
 
-    /**
-     * This method maintains a resolution cache for ignore config, so once we have returned a result, we will
-     * keep on returning the same result without performing any lookups. Exists only to support
-     * {@link SubstatementContext#isIgnoringConfig()}.
-     *
-     * <p>Note: use of this method implies that {@link #isConfiguration()} is realized with
-     * {@link #effectiveConfig(StatementContextBase)}.
-     */
-    final boolean isIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
-        return EffectiveConfig.IGNORED == effectiveConfig(parent);
+    protected final void initIgnoringConfig(final StatementContextBase<?, ?, ?> parent,
+            final StatementDefinitionContext<A, D, E> def) {
+        if (parent.isIgnoringConfig() || def.support().isIgnoringConfig()) {
+            flags |= CONFIG_IGNORED;
+        }
+    }
+
+    protected final boolean isIgnoringConfig() {
+        return (flags & CONFIG_IGNORED) != 0;
     }
 
     protected abstract boolean isIgnoringIfFeatures();
