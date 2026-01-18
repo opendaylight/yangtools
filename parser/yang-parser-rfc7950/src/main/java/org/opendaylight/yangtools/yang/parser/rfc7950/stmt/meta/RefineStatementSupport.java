@@ -95,6 +95,11 @@ public abstract sealed class RefineStatementSupport
     }
 
     @Override
+    protected ConfigPolicy configPolicy() {
+        return ConfigPolicy.NORESOLVE;
+    }
+
+    @Override
     protected final RefineStatement createDeclared(final BoundStmtCtx<Descendant> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createRefine(ctx.getRawArgument(), ctx.getArgument(), substatements);
