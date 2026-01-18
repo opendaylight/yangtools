@@ -120,48 +120,76 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
     private boolean isSupportedToBuildEffective = true;
 
+    // Set in constructor based on StatementSupport and parent
+    private static final int IN_STRUCTURE        = 0x01;
+    private static final int IN_TEMPLATE         = 0x02;
+    private static final int FEATURE_INDEPENDENT = 0x04;
+
     // EffectiveConfig mapping
-    private static final int MASK_CONFIG                = 0x03;
-    private static final int HAVE_CONFIG                = 0x04;
+    private static final int CONFIG_ABSENT       = 0x00;
+    private static final int CONFIG_FALSE        = 0x08;
+    private static final int CONFIG_TRUE         = 0x10;
+    private static final int CONFIG_UNDETERMINED = 0x18;
+    private static final int MASK_CONFIG         = CONFIG_UNDETERMINED;
+
     // Effective instantiation mechanics for StatementContextBase: if this flag is set all substatements are known not
     // change when instantiated. This includes context-independent statements as well as any statements which are
     // ignored during copy instantiation.
-    private static final int ALL_INDEPENDENT            = 0x08;
+    private static final int ALL_INDEPENDENT            = 0x20;
     // Flag bit assignments
-    private static final int IS_SUPPORTED_BY_FEATURES   = 0x10;
-    private static final int HAVE_SUPPORTED_BY_FEATURES = 0x20;
-    private static final int IS_IGNORE_IF_FEATURE       = 0x40;
-    private static final int HAVE_IGNORE_IF_FEATURE     = 0x80;
+    private static final int IS_SUPPORTED_BY_FEATURES   = 0x40;
+    private static final int HAVE_SUPPORTED_BY_FEATURES = 0x80;
     // Have-and-set flag constants, also used as masks
     private static final int SET_SUPPORTED_BY_FEATURES  = HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
-    private static final int SET_IGNORE_IF_FEATURE      = HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE;
 
-    private static final EffectiveConfig[] EFFECTIVE_CONFIGS;
-
-    static {
-        final EffectiveConfig[] values = EffectiveConfig.values();
-        final int length = values.length;
-        verify(length == 4, "Unexpected EffectiveConfig cardinality %s", length);
-        EFFECTIVE_CONFIGS = values;
-    }
+    // The implication of FEATURE_INDEPENDENT: there are no if-feature statements by definition, hence this statement
+    // is known to be IS_SUPPORTED_BY_FEATURES.
+    private static final int SET_FEATURE_INDEPENDENT = FEATURE_INDEPENDENT | SET_SUPPORTED_BY_FEATURES;
 
     // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above boolean and
     // hence improve memory layout.
     private byte flags;
 
-    ReactorStmtCtx() {
-        // Empty on purpose
+    ReactorStmtCtx(final StatementDefinitionContext<A, D, E> def) {
+        initFlags(def);
     }
 
     ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original) {
         isSupportedToBuildEffective = original.isSupportedToBuildEffective;
-        flags = original.flags;
+        initFlags(original.definition());
     }
 
     // Used by ReplicaStatementContext only
     ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original, final Void dummy) {
         isSupportedToBuildEffective = original.isSupportedToBuildEffective;
-        flags = original.flags;
+        initFlags(original.definition());
+    }
+
+    private void initFlags(final StatementDefinitionContext<?, ?, ?> def) {
+        final var subtreePolicy = def.support().subtreePolicy();
+        switch (subtreePolicy) {
+            case null -> throw new NullPointerException();
+            case NORMAL -> {
+                // No-op
+            }
+            case STRUCTURE, STRUCTURE_WITHOUT_IF_FEATURE -> flags |= IN_STRUCTURE;
+            case TEMPLATE -> flags |= IN_TEMPLATE;
+        }
+        if (subtreePolicy.featureIndependent()) {
+            flags |= SET_FEATURE_INDEPENDENT;
+        }
+    }
+
+    final void initFlags(final ReactorStmtCtx<?, ?, ?> parent) {
+        if (parent.inStructure()) {
+            flags |= IN_STRUCTURE;
+        }
+        if (parent.inTemplate()) {
+            flags |= IN_TEMPLATE;
+        }
+        if (parent.featureIndependent()) {
+            flags |= SET_FEATURE_INDEPENDENT;
+        }
     }
 
     //
@@ -479,7 +507,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
         if (fl != 0) {
             return fl == SET_SUPPORTED_BY_FEATURES;
         }
-        if (isIgnoringIfFeatures()) {
+        if (featureIndependent()) {
             flags |= SET_SUPPORTED_BY_FEATURES;
             return true;
         }
@@ -517,69 +545,77 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
      * {@link #isIgnoringConfig(StatementContextBase)}.
      */
     final @NonNull EffectiveConfig effectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
-        return (flags & HAVE_CONFIG) != 0 ? EFFECTIVE_CONFIGS[flags & MASK_CONFIG] : loadEffectiveConfig(parent);
+        final var cfgFlags = flags & MASK_CONFIG;
+        return switch (cfgFlags) {
+            case CONFIG_ABSENT -> loadEffectiveConfig(parent);
+            case CONFIG_FALSE -> EffectiveConfig.FALSE;
+            case CONFIG_TRUE -> EffectiveConfig.TRUE;
+            case CONFIG_UNDETERMINED -> EffectiveConfig.UNDETERMINED;
+            default -> throw new VerifyException("Unhandled cfgFlags " + cfgFlags);
+        };
     }
 
     private @NonNull EffectiveConfig loadEffectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
-        final EffectiveConfig parentConfig = parent.effectiveConfig();
+        // Note: this order matches implied SubtreePolicy's ConfigHandling
+        if (inStructure()) {
+            return EffectiveConfig.IGNORED;
+        }
+        if (inTemplate()) {
+            return EffectiveConfig.UNDETERMINED;
+        }
 
-        final EffectiveConfig myConfig;
-        if (parentConfig != EffectiveConfig.IGNORED && !definition().support().isIgnoringConfig()) {
-            final Optional<Boolean> optConfig = findSubstatementArgument(ConfigEffectiveStatement.class);
-            if (optConfig.isPresent()) {
-                if (optConfig.orElseThrow()) {
-                    // Validity check: if parent is config=false this cannot be a config=true
-                    InferenceException.throwIf(parentConfig == EffectiveConfig.FALSE, this,
-                        "Parent node has config=false, this node must not be specifed as config=true");
-                    myConfig = EffectiveConfig.TRUE;
-                } else {
-                    myConfig = EffectiveConfig.FALSE;
-                }
-            } else {
-                // If "config" statement is not specified, the default is the same as the parent's "config" value.
-                myConfig = parentConfig;
+        final var parentEffective = parent.effectiveConfig();
+        return loadEffectiveConfig(switch (parentEffective) {
+            case IGNORED -> throw new VerifyException(parent + " is ignoring config: this should never happen");
+            default -> parentEffective.asNullable();
+        }, findSubstatementArgument(ConfigEffectiveStatement.class).orElse(null));
+    }
+
+    private @NonNull EffectiveConfig loadEffectiveConfig(final @Nullable Boolean parentConfig,
+            final @Nullable Boolean arg) {
+        final Boolean newConfig;
+        if (arg != null) {
+            // Validity check: if parent is config=false this cannot be a config=true
+            if (arg && parentConfig != null && !parentConfig) {
+                throw new InferenceException(
+                    "Parent node has config=false, this node must not be specifed as config=true",
+                    this);
             }
+            newConfig = arg;
         } else {
-            myConfig = EffectiveConfig.IGNORED;
+            // If "config" statement is not specified, the default is the same as the parent's "config" value.
+            newConfig = parentConfig;
         }
 
-        flags = (byte) (flags & ~MASK_CONFIG | HAVE_CONFIG | myConfig.ordinal());
-        return myConfig;
+        if (newConfig == null) {
+            setConfig(CONFIG_UNDETERMINED);
+            return EffectiveConfig.UNDETERMINED;
+        }
+        if (newConfig) {
+            setConfig(CONFIG_TRUE);
+            return EffectiveConfig.TRUE;
+        }
+        setConfig(CONFIG_FALSE);
+        return EffectiveConfig.FALSE;
     }
 
-    protected abstract boolean isIgnoringConfig();
-
-    /**
-     * This method maintains a resolution cache for ignore config, so once we have returned a result, we will
-     * keep on returning the same result without performing any lookups. Exists only to support
-     * {@link SubstatementContext#isIgnoringConfig()}.
-     *
-     * <p>Note: use of this method implies that {@link #isConfiguration()} is realized with
-     * {@link #effectiveConfig(StatementContextBase)}.
-     */
-    final boolean isIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
-        return EffectiveConfig.IGNORED == effectiveConfig(parent);
+    private void setConfig(final int flag) {
+        flags = (byte) (flags & ~MASK_CONFIG | flag);
     }
 
-    protected abstract boolean isIgnoringIfFeatures();
+    @Override
+    public final boolean featureIndependent() {
+        return (flags & FEATURE_INDEPENDENT) != 0;
+    }
 
-    /**
-     * This method maintains a resolution cache for ignore if-feature, so once we have returned a result, we will
-     * keep on returning the same result without performing any lookups. Exists only to support
-     * {@link SubstatementContext#isIgnoringIfFeatures()}.
-     */
-    final boolean isIgnoringIfFeatures(final StatementContextBase<?, ?, ?> parent) {
-        final int fl = flags & SET_IGNORE_IF_FEATURE;
-        if (fl != 0) {
-            return fl == SET_IGNORE_IF_FEATURE;
-        }
-        if (definition().support().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures()) {
-            flags |= SET_IGNORE_IF_FEATURE;
-            return true;
-        }
+    @Override
+    public final boolean inStructure() {
+        return (flags & IN_STRUCTURE) != 0;
+    }
 
-        flags |= HAVE_IGNORE_IF_FEATURE;
-        return false;
+    @Override
+    public final boolean inTemplate() {
+        return (flags & IN_TEMPLATE) != 0;
     }
 
     // These two exist only for StatementContextBase. Since we are squeezed for size, with only a single bit available
@@ -762,7 +798,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     static final void markNoParentRef(final Collection<? extends ReactorStmtCtx<?, ?, ?>> substatements) {
-        for (ReactorStmtCtx<?, ?, ?> stmt : substatements) {
+        for (var stmt : substatements) {
             final byte prevRef = stmt.parentRef;
             stmt.parentRef = PARENTREF_ABSENT;
             if (prevRef == PARENTREF_PRESENT && stmt.refcount == REFCOUNT_NONE) {
@@ -775,7 +811,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     abstract void markNoParentRef();
 
     static final void sweep(final Collection<? extends ReactorStmtCtx<?, ?, ?>> substatements) {
-        for (ReactorStmtCtx<?, ?, ?> stmt : substatements) {
+        for (var stmt : substatements) {
             stmt.sweep();
         }
     }
