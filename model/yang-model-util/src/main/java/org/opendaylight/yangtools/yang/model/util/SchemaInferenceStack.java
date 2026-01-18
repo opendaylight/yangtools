@@ -930,18 +930,13 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
         final var tmp = new SchemaInferenceStack(modelContext, deque.size());
         for (var stmt : deque) {
             // Order of checks is significant
-            if (stmt instanceof DataTreeEffectiveStatement<?> dataTree) {
-                tmp.resolveDataTreeSteps(dataTree.argument());
-            } else if (stmt instanceof ChoiceEffectiveStatement choice) {
-                tmp.resolveChoiceSteps(choice.argument());
-            } else if (stmt instanceof SchemaTreeEffectiveStatement<?> schemaTree) {
-                tmp.enterSchemaTree(schemaTree.argument());
-            } else if (stmt instanceof GroupingEffectiveStatement grouping) {
-                tmp.enterGrouping(grouping.argument());
-            } else if (stmt instanceof TypedefEffectiveStatement typedef) {
-                tmp.enterTypedef(typedef.argument());
-            } else {
-                throw new VerifyException("Unexpected statement " + stmt);
+            switch (stmt) {
+                case DataTreeEffectiveStatement<?> dataTree -> tmp.resolveDataTreeSteps(dataTree.argument());
+                case ChoiceEffectiveStatement choice -> tmp.resolveChoiceSteps(choice.argument());
+                case SchemaTreeEffectiveStatement<?> schemaTree -> tmp.enterSchemaTree(schemaTree.argument());
+                case GroupingEffectiveStatement grouping -> tmp.enterGrouping(grouping.argument());
+                case TypedefEffectiveStatement typedef -> tmp.enterTypedef(typedef.argument());
+                default -> throw new VerifyException("Unexpected statement " + stmt);
             }
         }
 
