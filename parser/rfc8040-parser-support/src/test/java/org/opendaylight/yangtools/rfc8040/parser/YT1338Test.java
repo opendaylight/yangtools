@@ -25,7 +25,13 @@ class YT1338Test extends AbstractYangDataTest {
     @Test
     void testAddedLeaves() throws Exception {
         final var restconf = assertInstanceOf(ContainerEffectiveStatement.class, REACTOR.newBuild()
-            .addSources(IETF_RESTCONF_MODULE, sourceForResource("/yt1338.yang"))
+            .addSources(IETF_RESTCONF_MODULE, sourceForYangText("""
+                module yt1338 {
+                  namespace yt1338;
+                  prefix yt1338;
+
+                  rpc foo;
+                }"""))
             .buildEffective()
             .findModuleStatement(YangDataConstants.RFC8040_MODULE)
             .orElseThrow()

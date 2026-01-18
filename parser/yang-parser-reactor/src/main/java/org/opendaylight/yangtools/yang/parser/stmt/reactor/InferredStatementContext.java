@@ -109,11 +109,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             final StatementContextBase<?, ?, ?> parent) {
         super(original);
         this.parent = requireNonNull(parent);
+        initParent(parent);
         targetModule = original.targetModule;
         prototype = original.prototype;
         originalCtx = original.originalCtx;
         argument = original.argument;
         modified = original.modified;
+
         // Substatements are initialized here
         substatements = ImmutableList.of();
     }
@@ -122,6 +124,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             final CopyType myCopyType, final CopyType childCopyType, final QNameModule targetModule) {
         super(prototype, myCopyType, childCopyType);
         this.parent = requireNonNull(parent);
+        initParent(parent);
         this.prototype = requireNonNull(prototype);
         argument = targetModule == null ? prototype.argument()
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
@@ -530,7 +533,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         substatements = SWEPT_SUBSTATEMENTS;
         int count = 0;
         if (local instanceof List) {
-            final List<ReactorStmtCtx<?, ?, ?>> list = castEffective(local);
+            final var list = castEffective(local);
             sweep(list);
             count = countUnswept(list);
         }
@@ -707,16 +710,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     public EffectiveConfig effectiveConfig() {
         return effectiveConfig(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringIfFeatures() {
-        return isIgnoringIfFeatures(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringConfig() {
-        return isIgnoringConfig(parent);
     }
 
     @Override
