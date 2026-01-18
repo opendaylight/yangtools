@@ -16,7 +16,18 @@ class YT1443Test extends AbstractYangDataTest {
     @Test
     void buildEffectiveModelTest() throws Exception {
         final var module = REACTOR.newBuild()
-            .addSources(IETF_RESTCONF_MODULE, sourceForResource("/yt1443.yang"))
+            .addSources(IETF_RESTCONF_MODULE, sourceForYangText("""
+                module yt1443 {
+                  yang-version 1.1;
+                  namespace "yt1443";
+                  prefix "yt1443";
+
+                  import ietf-restconf { prefix rc; }
+
+                  rc:yang-data support-save-data {
+                    anydata support-save-data;
+                  }
+                }"""))
             .buildEffective()
             .findModuleStatement(QName.create("yt1443", "yt1443"))
             .orElseThrow();
