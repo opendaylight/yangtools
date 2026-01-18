@@ -177,6 +177,10 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         return getRoot().identifierBinding();
     }
 
+    boolean isIgnoringConfig();
+
+    boolean isIgnoringIfFeature();
+
     /**
      * An mutable view of an inference context associated with an instance of a statement.
      *

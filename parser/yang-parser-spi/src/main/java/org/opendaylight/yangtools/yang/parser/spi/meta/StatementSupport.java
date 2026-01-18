@@ -195,6 +195,24 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     }
 
     /**
+     * {@code config} handling policy.
+     */
+    protected enum ConfigPolicy {
+        /**
+         * Completely ignore {@code config} statements.
+         */
+        IGNORE,
+        /**
+         * Do not resolve {@code config} statements, for example in {@code grouping}.
+         */
+        NORESOLVE,
+        /**
+         * Resolve {@code config} statements as usual.
+         */
+        REGULAR;
+    }
+
+    /**
      * Projection of {@link StatementSupport}s available within a particular source. This namespace is purely virtual
      * and its behaviour corresponds to {@link NamespaceBehaviour#rootStatementLocal(ParserNamespace)} and is always
      * available.
@@ -427,7 +445,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      *
      * @return true if this statement support ignores if-feature statements, otherwise false.
      */
-    @Beta
     public boolean isIgnoringIfFeatures() {
         return false;
     }
@@ -437,12 +454,18 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      * extension defined in <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>). Default
      * implementation returns false.
      *
-     * @return true if this statement support ignores config statements,
-     *         otherwise false.
+     * @return true if this statement support ignores config statements, otherwise false.
      */
-    @Beta
-    public boolean isIgnoringConfig() {
-        return false;
+    public final boolean isIgnoringConfig() {
+        return configPolicy() == ConfigPolicy.IGNORE;
+    }
+
+    public final boolean notResolvingConfig() {
+        return configPolicy() == ConfigPolicy.NORESOLVE;
+    }
+
+    protected @NonNull ConfigPolicy configPolicy() {
+        return ConfigPolicy.REGULAR;
     }
 
     public final @NonNull QName statementName() {
