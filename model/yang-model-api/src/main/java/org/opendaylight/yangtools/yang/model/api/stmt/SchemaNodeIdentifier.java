@@ -70,9 +70,26 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          * @return An absolute schema node identifier
          * @throws NullPointerException if {@code nodeIdentifiers} or any of its members is null
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
+         * @deprecated Use {@link #of(List)} instead
          */
+        @Deprecated(since = "15.0.0", forRemoval = true)
         public static @NonNull Absolute of(final Collection<QName> nodeIdentifiers) {
-            final var qnames = ImmutableList.copyOf(nodeIdentifiers);
+            return of(ImmutableList.copyOf(nodeIdentifiers));
+        }
+
+        /**
+         * Create an absolute schema node identifier composed of multiple node identifiers.
+         *
+         * @param nodeIdentifiers Node identifiers
+         * @return An absolute schema node identifier
+         * @throws NullPointerException if {@code nodeIdentifiers} or any of its members is null
+         * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
+         */
+        public static @NonNull Absolute of(final List<? extends QName> nodeIdentifiers) {
+            return of(ImmutableList.copyOf(nodeIdentifiers));
+        }
+
+        private static @NonNull Absolute of(final ImmutableList<QName> qnames) {
             return qnames.size() == 1 ? of(qnames.getFirst()) : new Absolute(qnames);
         }
 
