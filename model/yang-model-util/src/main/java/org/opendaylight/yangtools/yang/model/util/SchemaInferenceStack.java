@@ -632,15 +632,14 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
             }
 
             final var result = typeAware.getType();
-            if (result instanceof LeafrefTypeDefinition leafref) {
-                if (result == type) {
-                    throw new IllegalArgumentException(
-                        "Resolution of " + type + " loops back onto itself via " + current);
-                }
-                current = leafref;
-            } else {
+            if (!(result instanceof LeafrefTypeDefinition leafref)) {
                 return result;
             }
+            if (result == type) {
+                throw new IllegalArgumentException(
+                    "Resolution of " + type + " loops back onto itself via " + current);
+            }
+            current = leafref;
         }
     }
 
@@ -718,11 +717,10 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
                     }
                 }
                 case CHILD -> {
-                    if (step instanceof QNameStep qnameStep) {
-                        current = enterChild(qnameStep, defaultNamespace);
-                    } else {
+                    if (!(step instanceof QNameStep qnameStep)) {
                         throw new VerifyException("Unexpected child step " + step);
                     }
+                    current = enterChild(qnameStep, defaultNamespace);
                 }
                 default -> throw new VerifyException("Unexpected step " + step);
             }
