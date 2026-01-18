@@ -126,7 +126,7 @@ public final class DeviateStatementSupport
             final SubstatementValidator addValidator, final SubstatementValidator deleteValidator) {
         // Note: we are performing our own validation based on deviate kind.
         // TODO: perhaps we should do argumentSpecificSupport?
-        super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent(), config, null);
+        super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent(), SubtreePolicy.template(), config, null);
         this.addValidator = requireNonNull(addValidator);
         this.deleteValidator = requireNonNull(deleteValidator);
     }

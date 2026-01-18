@@ -58,6 +58,12 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
         StatementPolicy.copyDeclared(new SchemaTreeEquality<>());
 
     protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<QName, D> policy, final SubtreePolicy subtreePolicy,
+            final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, subtreePolicy, config, validator);
+    }
+
+    protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);

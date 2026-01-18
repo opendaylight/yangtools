@@ -39,6 +39,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     ReplicaStatementContext(final StatementContextBase<?, ?, ?> parent, final ReactorStmtCtx<A, D, E> source) {
         super(source, null);
         this.parent = requireNonNull(parent);
+        initFlags(parent);
         this.source = requireNonNull(source);
         if (source.isSupportedToBuildEffective()) {
             source.incRef();
@@ -250,16 +251,6 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     @Override
     public RootStatementContext<?, ?, ?> getRoot() {
         return parent.getRoot();
-    }
-
-    @Override
-    protected boolean isIgnoringIfFeatures() {
-        return isIgnoringIfFeatures(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringConfig() {
-        return isIgnoringConfig(parent);
     }
 
     @Override
