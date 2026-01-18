@@ -41,6 +41,7 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     private UndeclaredStmtCtx(final UndeclaredStmtCtx<A, D, E> original, final StatementContextBase<?, ?, ?> parent) {
         super(original);
         this.parent = requireNonNull(parent);
+        initFlags(parent);
         argument = original.argument;
     }
 
@@ -48,6 +49,7 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
             final @Nullable A argument) {
         super(new StatementDefinitionContext<>(support), ImplicitSubstatement.of(parent.sourceReference()));
         this.parent = requireNonNull(parent);
+        initFlags(parent);
         this.argument = argument != null ? argument : definition().parseArgumentValue(this, null);
     }
 
@@ -56,6 +58,7 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
         super(new StatementDefinitionContext<>(verifySupport(support)), original.sourceReference(),
             original.getLastOperation());
         parent = original.getParentContext();
+        initFlags(parent);
         argument = castArgument(original);
     }
 
@@ -64,6 +67,7 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
             final StatementContextBase<?, ?, ?> original, final CopyType type) {
         super(new StatementDefinitionContext<>(verifySupport(support)), original.sourceReference(), type);
         this.parent = requireNonNull(parent);
+        initFlags(parent);
         argument = castArgument(original);
     }
 
@@ -72,6 +76,7 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
             final String rawArgument) {
         super(new StatementDefinitionContext<>(support), ImplicitSubstatement.of(parent.sourceReference()));
         this.parent = requireNonNull(parent);
+        initFlags(parent);
         argument = definition().parseArgumentValue(this, rawArgument);
     }
 
@@ -159,16 +164,6 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     @Override
     public EffectiveConfig effectiveConfig() {
         return effectiveConfig(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringIfFeatures() {
-        return isIgnoringIfFeatures(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringConfig() {
-        return isIgnoringConfig(parent);
     }
 
     @Override

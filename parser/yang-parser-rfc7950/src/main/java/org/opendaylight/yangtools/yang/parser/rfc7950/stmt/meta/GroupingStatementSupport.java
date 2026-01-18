@@ -88,6 +88,11 @@ public final class GroupingStatementSupport
     }
 
     @Override
+    protected ConfigPolicy configPolicy() {
+        return ConfigPolicy.NORESOLVE;
+    }
+
+    @Override
     public void onFullDefinitionDeclared(final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
