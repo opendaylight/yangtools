@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -15,6 +14,7 @@ import com.google.common.base.VerifyException;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -240,6 +240,155 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     }
 
     /**
+     * Statement tree instantiation policy. This construct does not have a direct definition in YANG, but is a capture
+     * capture of a couple of statement processing quirks present in RFC7950 and its extensions as they apply to our
+     * modeling of YANG metamodel.
+     *
+     * <p>An instantiation policy is inherited along the parent/child axis, so that parent's policy dominates the policy
+     * decision in all child contexts. For {@link #configHandling()} this works by preferring the higher-ordinal member,
+     * which is to say that
+     * <ol>
+     *   <li>{@link ConfigHandling#NORESOLVE} in parent overrides {@link ConfigHandling#RESOLVE} in children</li>
+     *   <li>{@link ConfigHandling#IGNORE} in parent overrides both
+     *       {@link ConfigHandling#RESOLVE} and {@link ConfigHandling#NORESOLVE} in children</li>
+     * </ol>
+     * @since 15.0.0
+     */
+    @Beta
+    @NonNullByDefault
+    public sealed interface SubtreePolicy
+            permits SubtreePolicy.Normal, SubtreePolicy.Structure, SubtreePolicy.Template {
+        /**
+         * {@return the {@code ConfigHandling} policy}
+         */
+        ConfigHandling configHandling();
+
+        /**
+         * {@return {@code true} if this statement support and all its substatements ignore {@code if-feature}
+         * statements (e.g. yang-data extension defined in
+         * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>)}
+         */
+        default boolean featureIndependent() {
+            return false;
+        }
+
+        /**
+         * Instantiation policy for most statements.
+         */
+        final class Normal implements SubtreePolicy {
+            static final Normal VALUE = new Normal();
+
+            private Normal() {
+                // Hidden on purpose
+            }
+
+            @Override
+            public ConfigHandling configHandling() {
+                return ConfigHandling.RESOLVE;
+            }
+        }
+
+        /**
+         * Instantiation policy for statements which act as standalone (i.e. non-datastore} instantiatios of
+         * YANG-modeled data. This places an additional restriction in that other structure statements may not be used.
+         * This includes
+         * <ul>
+         *   <li>{@code notification}</li>
+         *   <li>nominally {@code input} and {@code output}, but we apply it to {@code rpc} and {@code action}, as that
+         *       more precisely models the semantics of {@code groupings} defined in those contexts</li>
+         *   <li>{@code sx:structure}</li>
+         * </ul>
+         */
+        sealed interface Structure extends SubtreePolicy permits StructurePolicy {
+            @Override
+            default ConfigHandling configHandling() {
+                return ConfigHandling.IGNORE;
+            }
+        }
+
+        /**
+         * Instantiation policy for statements which act as a template, which can be either instantiated or otherwise
+         * applied to a disjunct place in the statement tree. This includes
+         * <ul>
+         *   <li>{@code grouping}, which is then instantiated via uses</li>
+         *   <li>{@code augment}, which is then applied to target</li>
+         *   <li>{@code deviate}, which is then applied to target</li>
+         * </ul>
+         */
+        final class Template implements SubtreePolicy {
+            static final Template VALUE = new Template();
+
+            private Template() {
+                // Hidden on purpose
+            }
+
+            @Override
+            public ConfigHandling configHandling() {
+                return ConfigHandling.NORESOLVE;
+            }
+        }
+
+        /**
+         * {@return the {@link Normal} policy}
+         */
+        static Normal normal() {
+            return Normal.VALUE;
+        }
+
+        /**
+         * {@return the {@link Structure} policy}
+         */
+        static Structure structure() {
+            return StructurePolicy.DEFAULT;
+        }
+
+        /**
+         * Returns a {@link Structure} policy which is optionally carrying implication that all {@code if-feature}
+         * statements are ignored (e.g. as required by {@code rc:yang-data}).
+         *
+         * @param featureIndepent true of {@code rc:yang-data} handling of {@code if-feature} statements is requested
+         * @return a potentially feature-indepent {@link Structure} policy
+         */
+        static Structure structure(final boolean featureIndepent) {
+            return featureIndepent ? StructurePolicy.FEATURE_INDEPENDENT : structure();
+        }
+
+        /**
+         * {@return the {@link Template} policy}
+         */
+        static Template template() {
+            return Template.VALUE;
+        }
+    }
+
+    // hidden to prevent duplicate instantiation, record to aid featureIndepent() constant propagation
+    @NonNullByDefault
+    private record StructurePolicy(boolean featureIndependent) implements SubtreePolicy.Structure {
+        static final StructurePolicy DEFAULT = new StructurePolicy(false);
+        static final StructurePolicy FEATURE_INDEPENDENT = new StructurePolicy(true);
+    }
+
+    /**
+     * Policy dictating how {@code config} statements are treated in the context of their parent statement.
+     * @since 15.0.0
+     */
+    @Beta
+    public enum ConfigHandling {
+        /**
+         * Resolve {@code config} statements as usual.
+         */
+        RESOLVE,
+        /**
+         * Do not resolve {@code config} statements, for example in {@code grouping}.
+         */
+        NORESOLVE,
+        /**
+         * Completely ignore {@code config} statements.
+         */
+        IGNORE,
+    }
+
+    /**
      * Projection of {@link StatementSupport}s available within a particular source. This namespace is purely virtual
      * and its behaviour corresponds to {@link NamespaceBehaviour#rootStatementLocal(ParserNamespace)} and is always
      * available.
@@ -250,20 +399,26 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     public static final @NonNull ParserNamespace<QName, StatementSupport<?, ?, ?>> NAMESPACE =
         new ParserNamespace<>("statementSupports");
 
-    private final @NonNull StatementPolicy<A, D> policy;
     private final @NonNull StatementDefinition publicDefinition;
+    private final @NonNull StatementPolicy<A, D> policy;
+    private final @NonNull SubtreePolicy subtreePolicy;
     private final @NonNull CopyPolicy copyPolicy;
 
     protected StatementSupport(final StatementSupport<A, D, E> delegate) {
-        checkArgument(delegate != this);
+        if (delegate == this) {
+            throw new IllegalArgumentException("Cannot delegate " + this + " to self");
+        }
         publicDefinition = delegate.publicDefinition;
         policy = delegate.policy;
+        subtreePolicy = delegate.subtreePolicy;
         copyPolicy = delegate.copyPolicy;
     }
 
-    protected StatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
+    protected StatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy,
+            final SubtreePolicy subtreePolicy) {
         this.publicDefinition = requireNonNull(publicDefinition);
         this.policy = requireNonNull(policy);
+        this.subtreePolicy = requireNonNull(subtreePolicy);
         copyPolicy = policy.copyPolicy;
     }
 
@@ -319,6 +474,14 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      */
     public final @NonNull CopyPolicy copyPolicy() {
         return copyPolicy;
+    }
+
+    /**
+     * {@return this statement's contribution to {@code SubtreePolicy}}
+     * @since 15.0.0
+     */
+    public final @NonNull SubtreePolicy subtreePolicy() {
+        return subtreePolicy;
     }
 
     @Override
@@ -463,31 +626,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      */
     public String internArgument(final String rawArgument) {
         return rawArgument;
-    }
-
-    /**
-     * Returns true if this statement support and all its substatements ignore if-feature statements (e.g. yang-data
-     * extension defined in <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>). Default
-     * implementation returns false.
-     *
-     * @return true if this statement support ignores if-feature statements, otherwise false.
-     */
-    @Beta
-    public boolean isIgnoringIfFeatures() {
-        return false;
-    }
-
-    /**
-     * Returns true if this statement support and all its substatements ignore config statements (e.g. yang-data
-     * extension defined in <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>). Default
-     * implementation returns false.
-     *
-     * @return true if this statement support ignores config statements,
-     *         otherwise false.
-     */
-    @Beta
-    public boolean isIgnoringConfig() {
-        return false;
     }
 
     public final @NonNull QName statementName() {

@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ConfigStatementSupport
@@ -29,9 +30,17 @@ public final class ConfigStatementSupport
     public ConfigStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.CONFIG,
             EffectiveStatements.createConfig(false), EffectiveStatements.createConfig(true),
-            // FIXME: This is not quite true. If we are instantiated in a context which ignores config, which should
-            //        really fizzle. This needs some more analysis.
-            StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+            // FIXME: not quite: we want to have a 'parent sensitive' policy where we get the new BoundStmtCtx or
+            //        similar, but will do for now
+            StatementPolicy.((copy, current, substatements) ->
+                copy.effectiveConfig() == current.effectiveConfig()), config, SUBSTATEMENT_VALIDATOR);
+    }
+
+    @Override
+    public void onStatementAdded(final Mutable<Boolean, ConfigStatement, ConfigEffectiveStatement> stmt) {
+        if (stmt.inStructure()) {
+            stmt.setUnsupported();
+        }
     }
 
     @Override

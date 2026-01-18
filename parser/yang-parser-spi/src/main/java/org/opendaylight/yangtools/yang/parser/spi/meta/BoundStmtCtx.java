@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy;
 
 /**
  * A {@link CommonStmtCtx} which has additionally been bound to a {@link StatementSupport}. It provides
@@ -70,4 +71,23 @@ public interface BoundStmtCtx<A> extends CommonStmtCtx {
      * @return True if such a child statement exists, false otherwise
      */
     boolean hasSubstatement(@NonNull Class<? extends EffectiveStatement<?, ?>> type);
+
+    /**
+     * {@return {@code true} iff this statement resides within a subtree which is independent of the set of features
+     * this parsing instance supports}
+     * @since 15.0.0
+     */
+    boolean featureIndependent();
+
+    /**
+     * {@return {@code true} iff this statement resides within a subtree with implied structure {@link SubtreePolicy}}
+     * @since 15.0.0
+     */
+    boolean inStructure();
+
+    /**
+     * {@return {@code true} iff this statement resides within a subtree with implied template {@link SubtreePolicy}}
+     * @since 15.0.0
+     */
+    boolean inTemplate();
 }
