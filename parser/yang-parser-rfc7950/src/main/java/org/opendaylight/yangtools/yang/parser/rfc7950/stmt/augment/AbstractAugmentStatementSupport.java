@@ -46,6 +46,11 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
+    protected ConfigPolicy configPolicy() {
+        return ConfigPolicy.NORESOLVE;
+    }
+
+    @Override
     public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         // As per:
         //   https://www.rfc-editor.org/rfc/rfc6020#section-7.15

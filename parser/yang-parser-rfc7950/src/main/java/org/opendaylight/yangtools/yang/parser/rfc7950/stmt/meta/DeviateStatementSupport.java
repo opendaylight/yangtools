@@ -214,6 +214,11 @@ public final class DeviateStatementSupport
     }
 
     @Override
+    protected ConfigPolicy configPolicy() {
+        return ConfigPolicy.NORESOLVE;
+    }
+
+    @Override
     protected DeviateStatement createDeclared(final BoundStmtCtx<DeviateKind> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createDeviate(ctx.getArgument(), substatements);
