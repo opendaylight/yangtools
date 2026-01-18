@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.rfc8040.parser.dagger.Rfc8040Module;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -39,12 +41,13 @@ abstract class AbstractYangDataTest {
         REACTOR = null;
     }
 
+    static StatementStreamSource sourceForYangText(final String yangText) {
+        return assertDoesNotThrow(() -> YangStatementStreamSource.create(
+            new StringYangTextSource(SourceIdentifier.ofYangFileName("dummy.yang"), yangText)));
+    }
+
     static StatementStreamSource sourceForResource(final String resourceName) {
-        try {
-            return YangStatementStreamSource.create(
-                new URLYangTextSource(AbstractYangDataTest.class.getResource(resourceName)));
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new IllegalArgumentException("Failed to create source", e);
-        }
+        return assertDoesNotThrow(() -> YangStatementStreamSource.create(
+            new URLYangTextSource(AbstractYangDataTest.class.getResource(resourceName))));
     }
 }

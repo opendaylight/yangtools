@@ -1,6 +1,0 @@
-module yt1338 {
-  namespace yt1338;
-  prefix yt1338;
-
-  rpc foo;
-}

@@ -115,6 +115,21 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
+    public boolean featureIndependent() {
+        return delegate.featureIndependent();
+    }
+
+    @Override
+    public boolean inStructure() {
+        return delegate.inStructure();
+    }
+
+    @Override
+    public boolean inTemplate() {
+        return delegate.inTemplate();
+    }
+
+    @Override
     protected Current<A, D> delegate() {
         return delegate;
     }
