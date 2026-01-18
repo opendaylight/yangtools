@@ -35,6 +35,17 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
 
     protected AbstractBooleanStatementSupport(final StatementDefinition publicDefinition,
             final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy,
+            final SubtreePolicy subtreePolicy, final YangParserConfiguration config,
+            final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, subtreePolicy, config, validator);
+        this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
+        this.emptyEffectiveTrue = requireNonNull(emptyEffectiveTrue);
+        emptyDeclaredFalse = emptyEffectiveFalse.requireDeclared();
+        emptyDeclaredTrue = emptyEffectiveTrue.requireDeclared();
+    }
+
+    protected AbstractBooleanStatementSupport(final StatementDefinition publicDefinition,
+            final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy,
             final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);

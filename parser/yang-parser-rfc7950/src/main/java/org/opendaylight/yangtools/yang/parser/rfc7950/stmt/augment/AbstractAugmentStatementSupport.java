@@ -42,7 +42,7 @@ abstract class AbstractAugmentStatementSupport
     AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
             (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
-            config, validator);
+            SubtreePolicy.TEMPLATE, config, validator);
     }
 
     @Override

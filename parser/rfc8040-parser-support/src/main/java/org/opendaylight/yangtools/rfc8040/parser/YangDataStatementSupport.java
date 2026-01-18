@@ -83,7 +83,8 @@ public final class YangDataStatementSupport
     static final YangDataName YANG_API = new YangDataName(YangDataConstants.RFC8040_MODULE, "yang-api");
 
     public YangDataStatementSupport(final YangParserConfiguration config) {
-        super(YangDataStatements.YANG_DATA, StatementPolicy.reject(), config, VALIDATOR);
+        super(YangDataStatements.YANG_DATA, StatementPolicy.reject(), SubtreePolicy.STRUCTURE_WITHOUT_IF_FEATURE,
+            config, VALIDATOR);
     }
 
     @Override
@@ -146,16 +147,6 @@ public final class YangDataStatementSupport
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isIgnoringIfFeatures() {
-        return true;
-    }
-
-    @Override
-    public boolean isIgnoringConfig() {
-        return true;
     }
 
     @Override
