@@ -10,11 +10,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -32,7 +30,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
     public static final class Absolute extends SchemaNodeIdentifier {
         private static final Interner<@NonNull Absolute> INTERNER = Interners.newWeakInterner();
 
-        private Absolute(final ImmutableList<QName> qnames) {
+        private Absolute(final List<QName> qnames) {
             super(qnames);
         }
 
@@ -60,7 +58,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
          */
         public static @NonNull Absolute of(final QName... nodeIdentifiers) {
-            return of(ImmutableList.copyOf(nodeIdentifiers));
+            return ofCopy(List.of(nodeIdentifiers));
         }
 
         /**
@@ -71,8 +69,11 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          * @throws NullPointerException if {@code nodeIdentifiers} or any of its members is null
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
          */
-        public static @NonNull Absolute of(final Collection<QName> nodeIdentifiers) {
-            final var qnames = ImmutableList.copyOf(nodeIdentifiers);
+        public static @NonNull Absolute of(final List<? extends QName> nodeIdentifiers) {
+            return ofCopy(List.copyOf(nodeIdentifiers));
+        }
+
+        private static @NonNull Absolute ofCopy(final List<QName> qnames) {
             return qnames.size() == 1 ? of(qnames.getFirst()) : new Absolute(qnames);
         }
 
@@ -90,7 +91,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
      * A descendant schema node identifier.
      */
     public static final class Descendant extends SchemaNodeIdentifier {
-        private Descendant(final ImmutableList<QName> qnames) {
+        private Descendant(final List<QName> qnames) {
             super(qnames);
         }
 
@@ -118,7 +119,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
          */
         public static @NonNull Descendant of(final QName... nodeIdentifiers) {
-            return of(ImmutableList.copyOf(nodeIdentifiers));
+            return ofCopy(List.of(nodeIdentifiers));
         }
 
         /**
@@ -129,8 +130,11 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          * @throws NullPointerException if {@code nodeIdentifiers} or any of its members is null
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
          */
-        public static @NonNull Descendant of(final Collection<QName> nodeIdentifiers) {
-            final var qnames = ImmutableList.copyOf(nodeIdentifiers);
+        public static @NonNull Descendant of(final List<? extends QName> nodeIdentifiers) {
+            return ofCopy(List.copyOf(nodeIdentifiers));
+        }
+
+        private static @NonNull Descendant ofCopy(final List<QName> qnames) {
             return qnames.size() == 1 ? of(qnames.getFirst()) : new Descendant(qnames);
         }
     }
@@ -144,7 +148,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
         pathObj = requireNonNull(qname);
     }
 
-    private SchemaNodeIdentifier(final ImmutableList<QName> qnames) {
+    private SchemaNodeIdentifier(final List<QName> qnames) {
         if (qnames.isEmpty()) {
             throw new IllegalArgumentException("SchemaNodeIdentifier has to have at least one node identifier");
         }
@@ -157,7 +161,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
      * @return Non-empty sequence of node identifiers
      */
     public final @NonNull List<QName> getNodeIdentifiers() {
-        return pathObj instanceof QName qname ? ImmutableList.of(qname) : coerceList();
+        return pathObj instanceof QName qname ? List.of(qname) : coerceList();
     }
 
     /**
@@ -195,7 +199,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
     @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("qnames", pathObj instanceof QName qname ? ImmutableList.of(qname) : simpleQNames())
+            .add("qnames", pathObj instanceof QName qname ? List.of(qname) : simpleQNames())
             .toString();
     }
 
@@ -214,7 +218,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
     }
 
     @SuppressWarnings("unchecked")
-    private ImmutableList<QName> coerceList() {
-        return (ImmutableList<QName>) pathObj;
+    private List<QName> coerceList() {
+        return (List<QName>) pathObj;
     }
 }

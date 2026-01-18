@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
@@ -19,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -135,7 +135,9 @@ abstract class UniqueValidator<T> implements Immutable {
     }
 
     private static @NonNull Descendant decodeDescendant(final Object obj) {
-        return Descendant.of(Collections2.transform(decodePath(obj), NodeIdentifier::getNodeType));
+        return Descendant.of(decodePath(obj).stream()
+            .map(NodeIdentifier::getNodeType)
+            .collect(Collectors.toUnmodifiableList()));
     }
 
     /**
