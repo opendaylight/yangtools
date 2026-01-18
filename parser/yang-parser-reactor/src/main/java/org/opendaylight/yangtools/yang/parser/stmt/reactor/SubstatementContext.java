@@ -22,6 +22,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             final StatementContextBase<?, ?, ?> parent) {
         super(original);
         this.parent = requireNonNull(parent);
+        initFlags(parent);
         argument = original.argument;
     }
 
@@ -29,6 +30,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.parent = requireNonNull(parent);
+        initFlags(parent);
         argument = def.parseArgumentValue(this, rawArgument());
     }
 
@@ -66,16 +68,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public EffectiveConfig effectiveConfig() {
         return effectiveConfig(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringIfFeatures() {
-        return isIgnoringIfFeatures(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringConfig() {
-        return isIgnoringConfig(parent);
     }
 
     @Override
