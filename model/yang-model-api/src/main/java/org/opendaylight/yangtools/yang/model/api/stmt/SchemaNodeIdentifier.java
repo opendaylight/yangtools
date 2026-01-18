@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -71,8 +70,11 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          * @throws NullPointerException if {@code nodeIdentifiers} or any of its members is null
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
          */
-        public static @NonNull Absolute of(final Collection<QName> nodeIdentifiers) {
-            final var qnames = ImmutableList.copyOf(nodeIdentifiers);
+        public static @NonNull Absolute of(final List<? extends QName> nodeIdentifiers) {
+            return of(ImmutableList.copyOf(nodeIdentifiers));
+        }
+
+        private static @NonNull Absolute of(final ImmutableList<QName> qnames) {
             return qnames.size() == 1 ? of(qnames.getFirst()) : new Absolute(qnames);
         }
 
@@ -129,7 +131,7 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
          * @throws NullPointerException if {@code nodeIdentifiers} or any of its members is null
          * @throws IllegalArgumentException if {@code nodeIdentifiers} is empty
          */
-        public static @NonNull Descendant of(final Collection<QName> nodeIdentifiers) {
+        public static @NonNull Descendant of(final List<QName> nodeIdentifiers) {
             final var qnames = ImmutableList.copyOf(nodeIdentifiers);
             return qnames.size() == 1 ? of(qnames.getFirst()) : new Descendant(qnames);
         }

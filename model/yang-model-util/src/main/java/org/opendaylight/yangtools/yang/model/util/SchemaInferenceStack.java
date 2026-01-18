@@ -777,7 +777,7 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
      */
     public @NonNull Absolute toSchemaNodeIdentifier() {
         checkInInstantiatedContext();
-        return Absolute.of(simplePathFromRoot());
+        return Absolute.of(ImmutableList.copyOf(simplePathFromRoot()));
     }
 
     private void checkInInstantiatedContext() {
