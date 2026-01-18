@@ -78,7 +78,7 @@ public abstract sealed class RefineStatementSupport
     }
 
     private RefineStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.REFINE, StatementPolicy.reject(), config, validator);
+        super(YangStmtMapping.REFINE, StatementPolicy.reject(), SubtreePolicy.template(), config, validator);
     }
 
     public static @NonNull RefineStatementSupport rfc6020Instance(final YangParserConfiguration config) {

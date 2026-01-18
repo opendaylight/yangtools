@@ -74,7 +74,7 @@ class EffectiveUsesRefineAndConstraintsTest extends AbstractYangTest {
         final var listSchemaNode = assertInstanceOf(ListSchemaNode.class, grp.findSchemaTreeNode(qnames).orElseThrow());
         assertEquals(Optional.of("original reference"), listSchemaNode.getReference());
         assertEquals(Optional.of("original description"), listSchemaNode.getDescription());
-        assertEquals(Optional.of(Boolean.FALSE), listSchemaNode.effectiveConfig());
+        assertEquals(Optional.empty(), listSchemaNode.effectiveConfig());
 
         final var listConstraints = assertInstanceOf(ElementCountMatcher.InRange.class,
             listSchemaNode.elementCountMatcher());

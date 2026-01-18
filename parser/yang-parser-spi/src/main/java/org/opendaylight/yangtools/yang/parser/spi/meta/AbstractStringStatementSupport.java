@@ -23,6 +23,12 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 public abstract class AbstractStringStatementSupport<D extends DeclaredStatement<String>,
         E extends EffectiveStatement<String, D>> extends AbstractStatementSupport<String, D, E> {
     protected AbstractStringStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<String, D> policy, final SubtreePolicy subtreePolicy,
+            final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, subtreePolicy, config, validator);
+    }
+
+    protected AbstractStringStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<String, D> policy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);
