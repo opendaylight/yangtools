@@ -71,6 +71,13 @@ public final class IfFeatureStatementSupport
     }
 
     @Override
+    public void onStatementAdded(final Mutable<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> stmt) {
+        if (stmt.featureIndependent()) {
+            stmt.setUnsupported();
+        }
+    }
+
+    @Override
     public void onFullDefinitionDeclared(
             final Mutable<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);

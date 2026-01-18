@@ -25,6 +25,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public abstract class AbstractUnqualifiedStatementSupport<D extends DeclaredStatement<Unqualified>,
         E extends EffectiveStatement<Unqualified, D>> extends AbstractStatementSupport<Unqualified, D, E> {
     protected AbstractUnqualifiedStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<Unqualified, D> policy, final SubtreePolicy subtreePolicy,
+            final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, subtreePolicy, config, validator);
+    }
+
+    protected AbstractUnqualifiedStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<Unqualified, D> policy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);
