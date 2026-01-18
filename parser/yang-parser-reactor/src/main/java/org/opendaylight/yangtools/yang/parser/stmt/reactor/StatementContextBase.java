@@ -167,17 +167,20 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
+        super(def);
         definition = requireNonNull(def);
         bitsAight = COPY_ORIGINAL;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
+        super(def);
         definition = requireNonNull(def);
         bitsAight = (byte) copyFlags(copyType);
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType,
             final CopyType childCopyType) {
+        super(prototype.definition);
         definition = prototype.definition;
         bitsAight = (byte) (copyFlags(copyType)
             | prototype.bitsAight & ~COPY_LAST_TYPE_MASK | childCopyType.ordinal() << COPY_CHILD_TYPE_SHIFT);
