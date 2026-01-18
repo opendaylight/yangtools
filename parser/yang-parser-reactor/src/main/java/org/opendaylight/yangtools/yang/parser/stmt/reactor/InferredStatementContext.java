@@ -114,6 +114,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         originalCtx = original.originalCtx;
         argument = original.argument;
         modified = original.modified;
+        initIgnoringConfig(parent);
+
         // Substatements are initialized here
         substatements = ImmutableList.of();
     }
@@ -126,6 +128,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         argument = targetModule == null ? prototype.argument()
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
         this.targetModule = targetModule;
+        initIgnoringConfig(parent);
 
         final var origCtx = prototype.getOriginalCtx().orElse(prototype);
         verify(origCtx instanceof ReactorStmtCtx, "Unexpected original %s", origCtx);
@@ -712,11 +715,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     protected boolean isIgnoringIfFeatures() {
         return isIgnoringIfFeatures(parent);
-    }
-
-    @Override
-    protected boolean isIgnoringConfig() {
-        return isIgnoringConfig(parent);
     }
 
     @Override
