@@ -154,8 +154,8 @@ public final class YangDataStatementSupport
     }
 
     @Override
-    public boolean isIgnoringConfig() {
-        return true;
+    protected ConfigPolicy configPolicy() {
+        return ConfigPolicy.IGNORE;
     }
 
     @Override
