@@ -220,8 +220,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
 
         // creates SourceIdentifier for a submodule
-        return new SourceIdentifier(unqualified,
-            StmtContextUtils.getLatestRevision(root.declaredSubstatements()).orElse(null));
+        return new SourceIdentifier(unqualified, StmtContextUtils.latestRevisionIn(root.declaredSubstatements()));
     }
 
     @NonNull DeclaredStatement<?> declaredRoot() {
