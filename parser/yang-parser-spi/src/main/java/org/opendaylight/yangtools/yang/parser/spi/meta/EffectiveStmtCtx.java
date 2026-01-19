@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * Effective view of a {@link StmtContext} for the purposes of creating an {@link EffectiveStatement}.
  */
 @Beta
-public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immutable {
+public non-sealed interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immutable {
     /**
      * Return parent of this context, if there is one. All statements except for top-level source statements, such as
      * {@code module} and {@code submodule}.
@@ -108,7 +108,10 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
      * @param <D> Class representing declared version of this statement
      */
     @Beta
-    interface Current<A, D extends DeclaredStatement<A>> extends Parent, NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
+    non-sealed interface Current<A, D extends DeclaredStatement<A>>
+            extends Parent, NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
+        @Override
+        <X, Y extends DeclaredStatement<X>> @Nullable Current<X, Y> tryDeclaring(Class<Y> type);
 
         @NonNull QName moduleName();
 
