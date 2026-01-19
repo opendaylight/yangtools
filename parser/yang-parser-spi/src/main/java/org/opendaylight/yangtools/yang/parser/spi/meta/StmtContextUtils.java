@@ -14,7 +14,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -535,20 +534,17 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static Optional<Revision> getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
+    public static @Nullable Revision latestRevisionIn(final Collection<? extends @NonNull StmtContext<?, ?, ?>> stmts) {
         Revision revision = null;
-        for (var subStmt : subStmts) {
-            if (subStmt.producesDeclared(RevisionStatement.class)) {
-                if (revision == null && subStmt.argument() != null) {
-                    revision = (Revision) subStmt.argument();
-                } else {
-                    final var subArg = (Revision) subStmt.argument();
-                    if (subArg != null && subArg.compareTo(revision) > 0) {
-                        revision = subArg;
-                    }
+        for (var subStmt : stmts) {
+            final var revStmt = subStmt.tryDeclaring(RevisionStatement.class);
+            if (revStmt != null) {
+                final var rev = revStmt.argument();
+                if (Revision.compare(rev, revision) > 0) {
+                    revision = rev;
                 }
             }
         }
-        return Optional.ofNullable(revision);
+        return revision;
     }
 }
