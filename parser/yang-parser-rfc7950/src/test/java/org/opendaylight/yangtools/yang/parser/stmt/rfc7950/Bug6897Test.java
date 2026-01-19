@@ -77,8 +77,7 @@ class Bug6897Test extends AbstractYangTest {
 
     @Test
     void invalid11Test() {
-        assertSourceException(
-            startsWith("Notification (foo)grp-notification is defined within an rpc, action, or another notification"),
+        assertSourceException(startsWith("Notification (foo)grp-notification is defined within another structure"),
             "/rfc7950/notifications-in-data-nodes/foo-invalid.yang");
     }
 
