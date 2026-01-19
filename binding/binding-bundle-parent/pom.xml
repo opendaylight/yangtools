@@ -10,22 +10,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
+        <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>15.0.0-SNAPSHOT</version>
-        <relativePath>../../bundle-parent/pom.xml</relativePath>
+        <version>14.2.1</version>
+        <relativePath/>
     </parent>
 
+    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>binding-bundle-parent</artifactId>
+    <version>15.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
+    <description>Binding Bundle parent (felix-based)</description>
 
     <properties>
         <spotbugs.onlyAnalyze>!org.opendaylight.yang.gen.-,!org.opendaylight.yang.svc.-</spotbugs.onlyAnalyze>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
-        <!-- Do not assume downstreams have .mvn/jvm.config -->
-        <odl.ep.fork>true</odl.ep.fork>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>bnd-parent</artifactId>
+                <version>15.0.0-SNAPSHOT</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <!-- https://bugs.opendaylight.org/show_bug.cgi?id=6252 -->
@@ -108,4 +122,11 @@
             </build>
         </profile>
     </profiles>
+
+    <scm>
+        <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
+        <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://wiki.opendaylight.org/display/ODL/YANG+Tools</url>
+    </scm>
 </project>
