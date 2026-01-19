@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
@@ -39,12 +37,9 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -53,9 +48,6 @@ import org.slf4j.LoggerFactory;
 public final class ListStatementSupport
         extends AbstractSchemaTreeStatementSupport<ListStatement, ListEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(ListStatementSupport.class);
-    private static final ImmutableSet<YangStmtMapping> UNINSTANTIATED_DATATREE_STATEMENTS = ImmutableSet.of(
-        YangStmtMapping.GROUPING, YangStmtMapping.NOTIFICATION, YangStmtMapping.INPUT, YangStmtMapping.OUTPUT);
-
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.CHOICE)
@@ -166,9 +158,17 @@ public final class ListStatementSupport
         }
 
         final int flags = computeFlags(stmt, substatements);
-        if (warnForUnkeyedLists && stmt.effectiveConfig() == EffectiveConfig.TRUE
-                && keyDefinition.isEmpty() && isInstantied(stmt)) {
-            warnConfigList(stmt);
+        if (keyDefinition.isEmpty() && warnForUnkeyedLists
+            && Boolean.TRUE.equals(stmt.effectiveConfig().asNullable())) {
+            // FIXME: This is not easily testable and assumes the context of the calling thread, whereas logging
+            //        might want to collect all messages first, perhaps do analytics on them.
+            //        We should a BuilderGlobalContext-level facility to report warnings in the build.
+            //        These should then be properly reported an YangParser level, so that users can decide what to
+            //        do with them.
+            LOG.info("""
+                Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. \
+                While this is fine with OpenDaylight, it can cause interoperability issues with other systems \
+                [defined at {}]""", stmt.argument(), stmt.sourceReference());
         }
 
         EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);
@@ -206,46 +206,5 @@ public final class ListStatementSupport
             .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
                 .equals(Ordering.USER))
             .toFlags();
-    }
-
-    private static void warnConfigList(final @NonNull Current<QName, ListStatement> stmt) {
-        final StatementSourceReference ref = stmt.sourceReference();
-        final Boolean warned = stmt.namespaceItem(ConfigListWarningNamespace.INSTANCE, ref);
-        // Hacky check if we have issued a warning for the original statement
-        if (warned == null) {
-            final var ctx = stmt.caerbannog();
-            if (!(ctx instanceof Mutable<?, ?, ?> mutable)) {
-                throw new VerifyException("Unexpected context " + ctx);
-            }
-
-            mutable.addToNs(ConfigListWarningNamespace.INSTANCE, ref, Boolean.TRUE);
-            LOG.info("""
-                Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While this is \
-                fine with OpenDaylight, it can cause interoperability issues with other systems [defined at {}]""",
-                stmt.argument(), ref);
-        }
-    }
-
-    private static boolean isInstantied(final EffectiveStmtCtx ctx) {
-        var parent = ctx.effectiveParent();
-        while (parent != null) {
-            final var parentDef = parent.publicDefinition();
-            if (UNINSTANTIATED_DATATREE_STATEMENTS.contains(parentDef)) {
-                return false;
-            }
-
-            final var grandParent = parent.effectiveParent();
-            if (YangStmtMapping.AUGMENT == parentDef && grandParent != null) {
-                // If this is an augment statement and its parent is either a 'module' or 'submodule' statement, we are
-                // dealing with an uninstantiated context.
-                final var grandParentDef = grandParent.publicDefinition();
-                if (YangStmtMapping.MODULE == grandParentDef || YangStmtMapping.SUBMODULE == grandParentDef) {
-                    return false;
-                }
-            }
-
-            parent = grandParent;
-        }
-        return true;
     }
 }
