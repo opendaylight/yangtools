@@ -262,12 +262,12 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public final boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
-        final E existing = effectiveInstance();
+        final var existing = effectiveInstance();
         return existing != null ? existing.findFirstEffectiveSubstatement(type).isPresent() : hasSubstatementImpl(type);
     }
 
-    private E effectiveInstance() {
-        final Object existing = effectiveInstance;
+    private @Nullable E effectiveInstance() {
+        final var existing = effectiveInstance;
         return existing != null ? EffectiveInstances.local(existing) : null;
     }
 
