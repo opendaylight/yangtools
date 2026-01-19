@@ -231,11 +231,12 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             }
         }
 
-        final GeneratorResult<T> result = GeneratorResult.of(builder
+        final GeneratorResult<T> result = GeneratorResult.of(new UnloadedLoadableClass<>(builder
             .defineMethod("serialize", BB_VOID, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC)
                 .withParameters(BB_DOSR, BB_DATA_CONTAINER, BB_BESV)
                 .throwing(BB_IOX)
-            .intercept(new SerializeImplementation(bindingInterface, startEvent, children)).make(), depBuilder.build());
+            .intercept(new SerializeImplementation(bindingInterface, startEvent, children)).make()),
+            depBuilder.build());
 
         LOG.trace("Definition of {} done", fqcn);
         return result;
