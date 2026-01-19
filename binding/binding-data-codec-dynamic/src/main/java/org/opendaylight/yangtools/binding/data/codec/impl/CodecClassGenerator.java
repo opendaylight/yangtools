@@ -53,7 +53,7 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
     private final @NonNull GetterGenerator getterGenerator;
 
     @NonNullByDefault
-    CodecClassGenerator(final TypeDescription superClass, GetterGenerator getterGenerator) {
+    CodecClassGenerator(final TypeDescription superClass, final GetterGenerator getterGenerator) {
         this.superClass = requireNonNull(superClass);
         this.getterGenerator = requireNonNull(getterGenerator);
     }
@@ -76,7 +76,7 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
         builder = customizeBuilder(getterGenerator.generateGetters(builder));
 
         // Final bits:
-        return GeneratorResult.of(builder
+        return GeneratorResult.of(new UnloadedLoadableClass<>(builder
             // codecHashCode() ...
             .defineMethod("codecHashCode", BB_INT, PROT_FINAL)
             .intercept(codecHashCode(bindingInterface))
@@ -87,7 +87,7 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
             .defineMethod("toString", BB_STRING, PUB_FINAL)
             .intercept(toString(bindingInterface))
             // ... and build it
-            .make());
+            .make()));
     }
 
     /**

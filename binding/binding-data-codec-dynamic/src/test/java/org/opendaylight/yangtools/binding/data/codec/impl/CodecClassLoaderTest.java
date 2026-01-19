@@ -27,17 +27,17 @@ public class CodecClassLoaderTest {
     @ParameterizedTest(name = "Generate class within namespace: {0}")
     @MethodSource("generateClassWithinNamespaceArgs")
     void generateClassWithinNamespace(final CodecPackage pkg, final String expectedClassName) {
-        final Class<?> generated = pkg.generateClass(codecClassLoader, Top.class,
-            (loader, fqcn, bindingInterface) -> GeneratorResult.of(new ByteBuddy()
+        final var generated = pkg.generateClass(codecClassLoader, Top.class,
+            (loader, fqcn, bindingInterface) -> GeneratorResult.of(new UnloadedLoadableClass<>(new ByteBuddy()
                 .subclass(Object.class)
                 .name(fqcn)
                 .method(ElementMatchers.isToString())
                 .intercept(FixedValue.value("test"))
-                .make()));
+                .make())));
         assertNotNull(generated);
         assertEquals(expectedClassName, generated.getName());
 
-        final Class<?> stored = pkg.getGeneratedClass(codecClassLoader, Top.class);
+        final var stored = pkg.getGeneratedClass(codecClassLoader, Top.class);
         assertEquals(generated, stored);
     }
 

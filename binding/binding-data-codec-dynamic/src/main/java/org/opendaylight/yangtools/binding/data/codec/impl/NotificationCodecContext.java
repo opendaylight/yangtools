@@ -77,8 +77,7 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
         final var eventAwareClass = CodecPackage.EVENT_AWARE.generateClass(prototype().contextFactory().getLoader(),
             bindingClass, (loader, fqcn, bindingInterface) -> {
                 final var codecImpl = CodecPackage.CODEC.getGeneratedClass(loader, bindingClass);
-
-                return GeneratorResult.of(new ByteBuddy()
+                return GeneratorResult.of(new UnloadedLoadableClass<>(new ByteBuddy()
                     .subclass(codecImpl, ConstructorStrategy.Default.NO_CONSTRUCTORS)
                     .implement(EVENT_INSTANT_AWARE)
                     .name(fqcn)
@@ -88,7 +87,7 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
                         .intercept(ConstructorImplementation.INSTANCE)
                     .defineMethod(EVENT_INSTANT_NAME, EVENT_INSTANT_RETTYPE, Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC)
                         .intercept(EventInstantImplementation.INSTANCE)
-                    .make());
+                    .make()));
             });
 
         final MethodHandle ctor;
