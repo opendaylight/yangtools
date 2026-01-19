@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -138,8 +138,8 @@ public final class YangDataStatementSupport
         if (YANG_API.equals(ctx.getArgument())) {
             final var stmts = ctx.declaredSubstatements();
             if (stmts.size() == 1) {
-                final var stmt = stmts.iterator().next();
-                if (stmt.producesEffective(UsesEffectiveStatement.class) && "restconf".equals(stmt.rawArgument())) {
+                final var stmt = stmts.iterator().next().tryDeclaring(UsesStatement.class);
+                if (stmt != null && "restconf".equals(stmt.rawArgument())) {
                     // The rc:yang-data shape matches, but we are not sure about the module identity, that needs to be
                     // done later multiple stages, the first one being initiated through this call.
                     OperationsValidateModuleAction.applyTo(ctx.coerceParentContext());
