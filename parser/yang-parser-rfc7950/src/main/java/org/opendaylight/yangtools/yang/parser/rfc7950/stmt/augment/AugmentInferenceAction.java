@@ -176,9 +176,10 @@ final class AugmentInferenceAction implements InferenceAction {
 
         // Data definition statements must not collide on their namespace
         if (sourceCtx.producesDeclared(DataDefinitionStatement.class)) {
-            for (StmtContext<?, ?, ?> subStatement : targetCtx.allSubstatements()) {
-                if (subStatement.producesDeclared(DataDefinitionStatement.class)) {
-                    InferenceException.throwIf(Objects.equals(sourceCtx.argument(), subStatement.argument()), sourceCtx,
+            for (var subStatement : targetCtx.allSubstatements()) {
+                final var declaring = subStatement.tryDeclaring(DataDefinitionStatement.class);
+                if (declaring != null && Objects.equals(sourceCtx.argument(), declaring.argument())) {
+                    throw new InferenceException(sourceCtx,
                         "An augment cannot add node named '%s' because this name is already used in target",
                         sourceCtx.rawArgument());
                 }
