@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
-import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -43,9 +42,6 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             .addAny(YangStmtMapping.USES)
             .build();
 
-    private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS =
-        ImmutableSet.of(YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
-
     public NotificationStatementRFC7950Support(final YangParserConfiguration config) {
         super(config, SUBSTATEMENT_VALIDATOR);
     }
@@ -53,10 +49,16 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
     @Override
     public void onStatementAdded(final Mutable<QName, NotificationStatement, NotificationEffectiveStatement> stmt) {
         final var argument = stmt.argument();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), stmt,
-            "Notification %s is defined within an rpc, action, or another notification", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), stmt,
-            "Notification %s is defined within a case statement", argument);
+        final var parent = stmt.getParentContext();
+        if (parent != null) {
+            if (parent.inStructure()) {
+                throw new SourceException(stmt, "Notification %s is defined within another structure", argument);
+            }
+            if (parent.producesDeclared(CaseStatement.class)) {
+                throw new SourceException(stmt, "Notification %s is defined within a case statement", argument);
+            }
+        }
+
         StmtContextUtils.validateNoKeylessListAncestorOf(stmt, "Notification");
 
         super.onStatementAdded(stmt);
