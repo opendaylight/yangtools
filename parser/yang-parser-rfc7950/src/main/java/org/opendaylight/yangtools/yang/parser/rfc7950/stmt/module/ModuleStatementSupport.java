@@ -139,7 +139,7 @@ public final class ModuleStatementSupport
 
         stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
 
-        final var revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
+        final var revisionDate = StmtContextUtils.latestRevisionIn(stmt.declaredSubstatements());
         final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
 
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
@@ -152,7 +152,7 @@ public final class ModuleStatementSupport
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", stmt.argument());
 
-        final var revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()).orElse(null);
+        final var revisionDate = StmtContextUtils.latestRevisionIn(stmt.declaredSubstatements());
         final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
         final var possibleDuplicateModule = stmt.namespaceItem(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
