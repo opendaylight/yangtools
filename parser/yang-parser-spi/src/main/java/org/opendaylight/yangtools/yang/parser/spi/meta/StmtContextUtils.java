@@ -50,29 +50,29 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> A firstAttributeOf(
-            final Iterable<? extends StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
+    public static <A, D extends DeclaredStatement<A>> @Nullable A firstAttributeOf(
+            final Iterable<? extends @NonNull StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
         for (var ctx : contexts) {
             if (ctx.producesDeclared(declaredType)) {
-                return (A) ctx.argument();
+                return (A) ctx.getArgument();
             }
         }
         return null;
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
+    public static <A, D extends DeclaredStatement<A>> @Nullable A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
             final Class<D> declaredType) {
-        return ctx.producesDeclared(declaredType) ? (A) ctx.argument() : null;
+        return ctx.producesDeclared(declaredType) ? (A) ctx.getArgument() : null;
     }
 
-    public static <A, D extends DeclaredStatement<A>> A firstSubstatementAttributeOf(
+    public static <A, D extends DeclaredStatement<A>> @Nullable A firstSubstatementAttributeOf(
             final StmtContext<?, ?, ?> ctx, final Class<D> declaredType) {
         return firstAttributeOf(ctx.allSubstatements(), declaredType);
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstDeclaredSubstatement(
+    public static <A, D extends DeclaredStatement<A>> @Nullable StmtContext<A, ?, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         for (var subStmtContext : stmtContext.declaredSubstatements()) {
             if (subStmtContext.producesDeclared(declaredType)) {
