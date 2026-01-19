@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * Intermediate compatibility interface between {@link StmtContext} and {@link EffectiveStmtCtx.Current}.
  */
 @Beta
-public interface StmtContextCompat extends CommonStmtCtx {
+public sealed interface StmtContextCompat extends CommonStmtCtx permits EffectiveStmtCtx, BoundStmtCtxCompat {
     /**
      * Return the executive summary of the copy process that has produced this context.
      *

@@ -247,6 +247,13 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public final <X, Y extends DeclaredStatement<X>> @Nullable ReactorStmtCtx<X, Y, ?> tryDeclaring(
+            final Class<Y> type) {
+        return producesDeclared(type) ? (ReactorStmtCtx<X, Y, ?>) this : null;
+    }
+
+    @Override
     public final Parent effectiveParent() {
         return getParentContext();
     }
@@ -267,7 +274,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     @Override
     public final <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
             final @NonNull Class<Z> type) {
-        final E existing = effectiveInstance();
+        final var existing = effectiveInstance();
         return existing != null ? existing.findFirstEffectiveSubstatementArgument(type)
             : findSubstatementArgumentImpl(type);
     }

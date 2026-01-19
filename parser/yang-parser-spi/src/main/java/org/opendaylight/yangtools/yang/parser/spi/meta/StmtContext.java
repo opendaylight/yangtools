@@ -31,8 +31,11 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
+    @Override
+    <X, Y extends DeclaredStatement<X>> @Nullable StmtContext<X, Y, ?> tryDeclaring(Class<Y> type);
+
     /**
      * Return the parent statement context, or null if this is the root statement.
      *
@@ -186,7 +189,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
     interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
             extends StmtContext<A, D, E> {
-
         @Override
         Mutable<?, ?, ?> getParentContext();
 
@@ -198,6 +200,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
             }
             return ret;
         }
+
+        @Override
+        <X, Y extends DeclaredStatement<X>> @Nullable Mutable<X, Y, ?> tryDeclaring(Class<Y> type);
 
         /**
          * Associate a value with a key within a namespace.
