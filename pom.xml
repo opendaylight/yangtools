@@ -39,7 +39,6 @@
         <module>benchmarks</module>
         <module>binding</module>
         <module>bnd-parent</module>
-        <module>bundle-parent</module>
         <module>codec</module>
         <module>common</module>
         <module>data</module>
