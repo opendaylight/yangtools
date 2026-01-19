@@ -106,7 +106,7 @@ public abstract class NamespaceBehaviour<K, V> {
      * @param key type parameter
      * @return value from model namespace storage according to key param class
      */
-    public abstract V getFrom(GlobalStorage global, NamespaceStorage storage, K key);
+    public abstract @Nullable V getFrom(GlobalStorage global, NamespaceStorage storage, K key);
 
     /**
      * Returns the key/value mapping best matching specified criterion.
