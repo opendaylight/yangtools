@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -50,14 +49,13 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
 
     @Override
     public void onStatementDefinitionDeclared(final Mutable<QName, BaseStatement, BaseEffectiveStatement> baseStmtCtx) {
-        final Mutable<?, ?, ?> baseParentCtx = baseStmtCtx.coerceParentContext();
-        if (baseParentCtx.producesDeclared(IdentityStatement.class)) {
-            final QName baseIdentityQName = baseStmtCtx.getArgument();
-            final ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(
-                ModelProcessingPhase.STATEMENT_DEFINITION);
+        final var parentIdentity = baseStmtCtx.coerceParentContext().tryDeclaring(IdentityStatement.class);
+        if (parentIdentity != null) {
+            final var baseIdentityQName = baseStmtCtx.getArgument();
+            final var baseIdentityAction = baseStmtCtx.newInferenceAction(ModelProcessingPhase.STATEMENT_DEFINITION);
             baseIdentityAction.requiresCtx(baseStmtCtx, ParserNamespaces.IDENTITY, baseIdentityQName,
                 ModelProcessingPhase.STATEMENT_DEFINITION);
-            baseIdentityAction.mutatesCtx(baseParentCtx, ModelProcessingPhase.STATEMENT_DEFINITION);
+            baseIdentityAction.mutatesCtx(parentIdentity, ModelProcessingPhase.STATEMENT_DEFINITION);
 
             baseIdentityAction.apply(new InferenceAction() {
                 @Override
@@ -68,7 +66,7 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
                 @Override
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                     throw new InferenceException(baseStmtCtx, "Unable to resolve identity %s and base identity %s",
-                        baseParentCtx.argument(), baseStmtCtx.argument());
+                        parentIdentity.argument(), baseStmtCtx.argument());
                 }
             });
         }

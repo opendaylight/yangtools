@@ -49,21 +49,21 @@ public final class StmtContextUtils {
         // Hidden on purpose
     }
 
-    @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> @Nullable A firstAttributeOf(
             final Iterable<? extends @NonNull StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
         for (var ctx : contexts) {
-            if (ctx.producesDeclared(declaredType)) {
-                return (A) ctx.getArgument();
+            final var declaring = ctx.tryDeclaring(declaredType);
+            if (declaring != null) {
+                return declaring.getArgument();
             }
         }
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> @Nullable A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
             final Class<D> declaredType) {
-        return ctx.producesDeclared(declaredType) ? (A) ctx.getArgument() : null;
+        final var declaring = ctx.tryDeclaring(declaredType);
+        return declaring == null ? null : declaring.getArgument();
     }
 
     public static <A, D extends DeclaredStatement<A>> @Nullable A firstSubstatementAttributeOf(
@@ -71,12 +71,12 @@ public final class StmtContextUtils {
         return firstAttributeOf(ctx.allSubstatements(), declaredType);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> @Nullable StmtContext<A, ?, ?> findFirstDeclaredSubstatement(
+    public static <A, D extends DeclaredStatement<A>> @Nullable StmtContext<A, D, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         for (var subStmtContext : stmtContext.declaredSubstatements()) {
-            if (subStmtContext.producesDeclared(declaredType)) {
-                return (StmtContext<A, ?, ?>) subStmtContext;
+            final var declaring = subStmtContext.tryDeclaring(declaredType);
+            if (declaring != null) {
+                return declaring;
             }
         }
         return null;
@@ -98,25 +98,25 @@ public final class StmtContextUtils {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllDeclaredSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         final var listBuilder = ImmutableList.<StmtContext<A, D, ?>>builder();
         for (var subStmtContext : stmtContext.declaredSubstatements()) {
-            if (subStmtContext.producesDeclared(declaredType)) {
-                listBuilder.add((StmtContext<A, D, ?>) subStmtContext);
+            final var declaring = subStmtContext.tryDeclaring(declaredType);
+            if (declaring != null) {
+                listBuilder.add(declaring);
             }
         }
         return listBuilder.build();
     }
 
-    @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllEffectiveSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> type) {
         final var listBuilder = ImmutableList.<StmtContext<A, D, ?>>builder();
         for (var subStmtContext : stmtContext.effectiveSubstatements()) {
-            if (subStmtContext.producesDeclared(type)) {
-                listBuilder.add((StmtContext<A, D, ?>) subStmtContext);
+            final var declaring = subStmtContext.tryDeclaring(type);
+            if (declaring != null) {
+                listBuilder.add(declaring);
             }
         }
         return listBuilder.build();
@@ -130,12 +130,12 @@ public final class StmtContextUtils {
             .build();
     }
 
-    @SuppressWarnings("unchecked")
-    public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstEffectiveSubstatement(
+    public static <A, D extends DeclaredStatement<A>> StmtContext<A, D, ?> findFirstEffectiveSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         for (var subStmtContext : stmtContext.effectiveSubstatements()) {
-            if (subStmtContext.producesDeclared(declaredType)) {
-                return (StmtContext<A, ?, ?>) subStmtContext;
+            final var declaring = subStmtContext.tryDeclaring(declaredType);
+            if (declaring != null) {
+                return declaring;
             }
         }
         return null;
