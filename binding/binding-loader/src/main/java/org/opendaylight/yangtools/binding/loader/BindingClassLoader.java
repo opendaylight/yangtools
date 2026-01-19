@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.IOException;
@@ -22,9 +21,8 @@ import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.Set;
 import java.util.function.Supplier;
-import net.bytebuddy.dynamic.DynamicType.Unloaded;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AccessControllerCompat;
 import org.slf4j.Logger;
@@ -103,25 +101,25 @@ public abstract sealed class BindingClassLoader extends ClassLoader
      */
     public static final class GeneratorResult<T> {
         private final @NonNull ImmutableSet<Class<?>> dependecies;
-        private final @NonNull Unloaded<T> result;
+        private final @NonNull LoadableClass<T> source;
 
-        GeneratorResult(final Unloaded<T> result, final ImmutableSet<Class<?>> dependecies) {
-            this.result = requireNonNull(result);
+        GeneratorResult(final LoadableClass<T> source, final ImmutableSet<Class<?>> dependecies) {
+            this.source = requireNonNull(source);
             this.dependecies = requireNonNull(dependecies);
         }
 
-        public static <T> @NonNull GeneratorResult<T> of(final Unloaded<T> result) {
-            return new GeneratorResult<>(result, ImmutableSet.of());
+        public static <T> @NonNull GeneratorResult<T> of(final LoadableClass<T> source) {
+            return new GeneratorResult<>(source, ImmutableSet.of());
         }
 
-        public static <T> @NonNull GeneratorResult<T> of(final Unloaded<T> result,
+        public static <T> @NonNull GeneratorResult<T> of(final LoadableClass<T> source,
                 final Collection<Class<?>> dependencies) {
-            return dependencies.isEmpty() ? of(result) : new GeneratorResult<>(result,
-                ImmutableSet.copyOf(dependencies));
+            return dependencies.isEmpty() ? of(source)
+                : new GeneratorResult<>(source, ImmutableSet.copyOf(dependencies));
         }
 
-        @NonNull Unloaded<T> getResult() {
-            return result;
+        @NonNull LoadableClass<T> source() {
+            return source;
         }
 
         @NonNull ImmutableSet<Class<?>> getDependencies() {
@@ -129,27 +127,17 @@ public abstract sealed class BindingClassLoader extends ClassLoader
         }
     }
 
-    private static final ClassLoadingStrategy<BindingClassLoader> STRATEGY = (classLoader, types) -> {
-        verify(types.size() == 1, "Unexpected multiple types %s", types);
-        final var entry = types.entrySet().iterator().next();
-        return ImmutableMap.of(entry.getKey(), classLoader.loadClass(entry.getKey().getName(), entry.getValue()));
-    };
-
     static {
         verify(ClassLoader.registerAsParallelCapable());
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(BindingClassLoader.class);
 
-    private final @Nullable File dumpDir;
-
-    private BindingClassLoader(final ClassLoader parentLoader, final @Nullable File dumpDir) {
-        super(parentLoader);
-        this.dumpDir = dumpDir;
-    }
+    private final @Nullable Path dumpDir;
 
     BindingClassLoader(final ClassLoader parentLoader, final @Nullable Path dumpDir) {
-        this(parentLoader, dumpDir != null ? dumpDir.toFile() : null);
+        super(parentLoader);
+        this.dumpDir = dumpDir;
     }
 
     BindingClassLoader(final BindingClassLoader parentLoader) {
@@ -264,17 +252,17 @@ public abstract sealed class BindingClassLoader extends ClassLoader
             }
 
             final var result = generator.generateClass(this, fqcn, bindingInterface);
-            final var unloaded = result.getResult();
-            verify(fqcn.equals(unloaded.getTypeDescription().getName()), "Unexpected class in %s", unloaded);
-            verify(unloaded.getAuxiliaryTypes().isEmpty(), "Auxiliary types present in %s", unloaded);
-            dumpBytecode(unloaded);
+            final var source = result.source();
+            verify(fqcn.equals(source.name()), "Unexpected class in %s", source);
+            dumpBytecode(source);
 
             processDependencies(result.getDependencies());
-            return generator.customizeLoading(() -> (Class<T>) unloaded.load(this, STRATEGY).getLoaded());
+            return generator.customizeLoading(() -> source.load(this));
         }
     }
 
-    final Class<?> loadClass(final String fqcn, final byte[] byteCode) {
+    @NonNullByDefault
+    public final Class<?> loadClass(final String fqcn, final byte[] byteCode) {
         synchronized (getClassLoadingLock(fqcn)) {
             final var existing = findLoadedClass(fqcn);
             verify(existing == null, "Attempted to load existing %s", existing);
@@ -307,13 +295,13 @@ public abstract sealed class BindingClassLoader extends ClassLoader
         }
     }
 
-    private void dumpBytecode(final Unloaded<?> unloaded) {
+    private void dumpBytecode(final LoadableClass<?> source) {
         final var dir = dumpDir;
         if (dir != null) {
             try {
-                unloaded.saveIn(dir);
+                source.saveToDir(dir);
             } catch (IOException | IllegalArgumentException e) {
-                LOG.info("Failed to save {}", unloaded.getTypeDescription().getName(), e);
+                LOG.info("Failed to save {}", source.name(), e);
             }
         }
     }

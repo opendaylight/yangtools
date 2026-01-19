@@ -12,8 +12,6 @@
 module org.opendaylight.yangtools.binding.loader {
     exports org.opendaylight.yangtools.binding.loader;
 
-    requires transitive net.bytebuddy;
-
     requires com.google.common;
     requires org.opendaylight.yangtools.binding.spec;
     requires org.slf4j;
