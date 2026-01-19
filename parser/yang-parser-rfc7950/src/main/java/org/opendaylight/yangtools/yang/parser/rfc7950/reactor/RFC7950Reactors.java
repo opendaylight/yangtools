@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatem
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportedVersionNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ConfigListWarningNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ListStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ActionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.AnydataStatementSupport;
@@ -205,7 +204,6 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, GroupingStatementSupport.rfc7950Instance(config))
             .addVersionSpecificSupport(VERSION_1, ListStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, ListStatementSupport.rfc7950Instance(config))
-            .addSupport(ConfigListWarningNamespace.BEHAVIOUR)
             .addSupport(new UniqueStatementSupport(config))
             .addVersionSpecificSupport(VERSION_1_1, new ActionStatementSupport(config))
             .addVersionSpecificSupport(VERSION_1, new RpcStatementSupport(config))

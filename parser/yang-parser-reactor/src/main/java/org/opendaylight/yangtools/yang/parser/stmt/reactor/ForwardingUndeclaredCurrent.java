@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> extends ForwardingObject
         implements UndeclaredCurrent<A, D> {
@@ -44,12 +43,6 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    @Deprecated
-    public <E extends EffectiveStatement<A, D>> StmtContext<A, D, E> caerbannog() {
-        return delegate.caerbannog();
-    }
-
-    @Override
     public EffectiveConfig effectiveConfig() {
         return delegate.effectiveConfig();
     }
@@ -67,6 +60,11 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     @Override
     public StatementDefinition publicDefinition() {
         return delegate.publicDefinition();
+    }
+
+    @Override
+    public <X, Y extends DeclaredStatement<X>> Current<X, Y> tryDeclaring(final Class<Y> type) {
+        return delegate.tryDeclaring(type);
     }
 
     @Override
