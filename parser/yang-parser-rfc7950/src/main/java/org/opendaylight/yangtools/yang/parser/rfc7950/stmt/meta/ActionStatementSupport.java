@@ -10,16 +10,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -36,9 +35,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ActionStatementSupport
         extends AbstractOperationStatementSupport<ActionStatement, ActionEffectiveStatement> {
-    private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(
-            YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
-
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.ACTION)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -57,13 +53,20 @@ public final class ActionStatementSupport
 
     @Override
     public void onStatementAdded(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
-        final QName argument = stmt.getArgument();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), stmt,
-            "Action %s is defined within a notification, rpc or another action", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), stmt,
-            "Action %s is defined within a case statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.MODULE), stmt,
-            "Action %s is defined at the top level of a module", argument);
+        final var argument = stmt.getArgument();
+        final var parent = stmt.getParentContext();
+        if (parent != null) {
+            if (parent.inStructure()) {
+                throw new SourceException(stmt, "Action %s is defined within a another structure", argument);
+            }
+            if (parent.producesDeclared(CaseStatement.class)) {
+                throw new SourceException(stmt, "Action %s is defined within a case statement", argument);
+            }
+            if (parent.getParentContext() == null) {
+                throw new SourceException(stmt, "Action %s is defined at the top level of a source file", argument);
+            }
+        }
+
         StmtContextUtils.validateNoKeylessListAncestorOf(stmt, "Action");
 
         super.onStatementAdded(stmt);
