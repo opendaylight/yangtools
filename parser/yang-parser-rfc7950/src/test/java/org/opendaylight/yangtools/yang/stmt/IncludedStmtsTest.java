@@ -7,25 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collection;
-import java.util.Iterator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 class IncludedStmtsTest extends AbstractYangTest {
     private static EffectiveModelContext result;
@@ -42,62 +35,62 @@ class IncludedStmtsTest extends AbstractYangTest {
 
     @Test
     void includedTypedefsTest() {
-        final Module testModule = result.findModules("root-module").iterator().next();
+        final var testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
-        final Collection<? extends TypeDefinition<?>> typedefs = testModule.getTypeDefinitions();
-        assertEquals(2, typedefs.size());
-
-        final Iterator<? extends TypeDefinition<?>> typedefsIterator = typedefs.iterator();
-        TypeDefinition<?> typedef = typedefsIterator.next();
-        assertThat(typedef.getQName().getLocalName(), anyOf(is("new-string-type"), is("new-int32-type")));
-        assertThat(typedef.getBaseType().getQName().getLocalName(), anyOf(is("string"), is("int32")));
-        typedef = typedefsIterator.next();
-        assertThat(typedef.getQName().getLocalName(), anyOf(is("new-string-type"), is("new-int32-type")));
-        assertThat(typedef.getBaseType().getQName().getLocalName(), anyOf(is("string"), is("int32")));
+        assertThat(testModule.getTypeDefinitions())
+            .hasSize(2)
+            .allSatisfy(typedef -> {
+                assertThat(typedef.getQName().getLocalName()).matches(str -> switch (str) {
+                    case "new-int32-type", "new-string-type" -> true;
+                    default -> false;
+                });
+                final var baseType = typedef.getBaseType();
+                assertNotNull(baseType);
+                assertThat(baseType.getQName().getLocalName()).matches(str -> switch (str) {
+                    case "int32", "string" -> true;
+                    default -> false;
+                });
+            });
     }
 
     @Test
     void includedFeaturesTest() {
-        final Module testModule = result.findModules("root-module").iterator().next();
+        final var testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
-        final Collection<? extends FeatureDefinition> features = testModule.getFeatures();
-        assertEquals(2, features.size());
-
-        final Iterator<? extends FeatureDefinition> featuresIterator = features.iterator();
-        FeatureDefinition feature = featuresIterator.next();
-        assertThat(feature.getQName().getLocalName(), anyOf(is("new-feature1"), is("new-feature2")));
-        feature = featuresIterator.next();
-        assertThat(feature.getQName().getLocalName(), anyOf(is("new-feature1"), is("new-feature2")));
+        assertThat(testModule.getFeatures())
+            .hasSize(2)
+            .allSatisfy(feature -> {
+                assertThat(feature.getQName().getLocalName()).matches(str -> switch (str) {
+                    case "new-feature1", "new-feature2" -> true;
+                    default -> false;
+                });
+            });
     }
 
     @Test
     void includedContainersAndListsTest() {
-        final Module testModule = result.findModules("root-module").iterator().next();
+        final var testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
-        ContainerSchemaNode cont = (ContainerSchemaNode) testModule.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "parent-container"));
-        assertNotNull(cont);
-        cont = (ContainerSchemaNode) cont.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "child-container"));
-        assertNotNull(cont);
+        var cont = assertInstanceOf(ContainerSchemaNode.class,
+            testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "parent-container")));
+        cont = assertInstanceOf(ContainerSchemaNode.class,
+            cont.getDataChildByName(QName.create(testModule.getQNameModule(), "child-container")));
         assertEquals(2, cont.getChildNodes().size());
 
-        LeafSchemaNode leaf = (LeafSchemaNode) cont.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "autumn-leaf"));
-        assertNotNull(leaf);
-        leaf = (LeafSchemaNode) cont.getDataChildByName(QName.create(testModule.getQNameModule(), "winter-snow"));
-        assertNotNull(leaf);
+        assertInstanceOf(LeafSchemaNode.class,
+            cont.getDataChildByName(QName.create(testModule.getQNameModule(), "autumn-leaf")));
+        assertInstanceOf(LeafSchemaNode.class,
+            cont.getDataChildByName(QName.create(testModule.getQNameModule(), "winter-snow")));
     }
 
     @Test
     void submoduleNamespaceTest() {
-        final Module testModule = result.findModules("root-module").iterator().next();
+        final var testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
-
-        final Submodule subModule = testModule.getSubmodules().iterator().next();
+        final var subModule = testModule.getSubmodules().iterator().next();
         assertEquals("urn:opendaylight.org/root-module", subModule.getNamespace().toString());
     }
 }
