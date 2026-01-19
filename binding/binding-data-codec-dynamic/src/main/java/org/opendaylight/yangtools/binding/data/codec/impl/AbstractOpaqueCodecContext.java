@@ -117,11 +117,11 @@ abstract sealed class AbstractOpaqueCodecContext<T extends OpaqueObject<T>> exte
     }
 
     private static MethodHandle createImpl(final BindingClassLoader rootLoader, final Class<?> bindingClass) {
-        final Class<?> proxyClass = CodecPackage.CODEC.generateClass(rootLoader, bindingClass,
-            (loader, fqcn, bindingInterface) -> GeneratorResult.of(TEMPLATE
+        final var proxyClass = CodecPackage.CODEC.generateClass(rootLoader, bindingClass,
+            (loader, fqcn, bindingInterface) -> GeneratorResult.of(new UnloadedLoadableClass<>(TEMPLATE
                 .name(fqcn)
                 .implement(bindingInterface)
-                .make()));
+                .make())));
 
         try {
             return MethodHandles.publicLookup().findConstructor(proxyClass, CTOR_LOOKUP_TYPE).asType(CTOR_INVOKE_TYPE);
