@@ -20,11 +20,22 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  * @param path the {@link YangInstanceIdentifier}, {@link YangInstanceIdentifier#empty()} denotes the data root
  */
 public record ErrorPath(DatabindContext databind, YangInstanceIdentifier path) {
+    /**
+     * Default constructor.
+     *
+     * @param databind the {@link DatabindContext} to which this path is bound
+     * @param path the {@link YangInstanceIdentifier}, {@link YangInstanceIdentifier#empty()} denotes the data root
+     */
     public ErrorPath {
         requireNonNull(databind);
         requireNonNull(path);
     }
 
+    /**
+     * Convenience constructor for {@link Data} path, equivalent to {@code ErrorPath(data.databind(), data.instance())}.
+     *
+     * @param path the {@link Data} path
+     */
     public ErrorPath(final Data path) {
         this(path.databind(), path.instance());
     }

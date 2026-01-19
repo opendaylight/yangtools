@@ -77,8 +77,18 @@ public abstract class AbstractRequest<R> implements Request<R> {
         onFailure(requireNonNull(failure));
     }
 
+    /**
+     * Callback invoked when this request completes successfully.
+     *
+     * @param result the request result
+     */
     protected abstract void onSuccess(@NonNull R result);
 
+    /**
+     * Callback invoked when this request completes unsuccessfully..
+     *
+     * @param failure the cause for failure
+     */
     protected abstract void onFailure(@NonNull RequestException failure);
 
     @Override

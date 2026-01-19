@@ -36,6 +36,16 @@ public record RequestError(
         @Nullable String appTag,
         @Nullable ErrorPath path,
         @Nullable ErrorInfo info) {
+    /**
+     * Default constructor.
+     *
+     * @param type value of {@code error-type} leaf
+     * @param tag value of {@code error-tag} leaf
+     * @param message optional value of {@code error-message} leaf, potentially with metadata
+     * @param appTag optional value of {@code error-api-tag} leaf
+     * @param path optional {@code error-path} leaf
+     * @param info optional content of {@code error-info} anydata
+     */
     public RequestError {
         requireNonNull(type);
         requireNonNull(tag);

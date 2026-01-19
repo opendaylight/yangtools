@@ -26,10 +26,21 @@ import org.eclipse.jdt.annotation.Nullable;
 @Beta
 @NonNullByDefault
 public record ErrorMessage(String elementBody, @Nullable String xmlLang) {
+    /**
+     * Default constructor.
+     *
+     * @param elementBody the string to be displayed
+     * @param xmlLang optional Language Identification string
+     */
     public ErrorMessage {
         requireNonNull(elementBody);
     }
 
+    /**
+     * Convenience constructor equivalent to {@code ErrorMessage(elementBody, null)}.
+     *
+     * @param elementBody the string to be displayed
+     */
     public ErrorMessage(final String elementBody) {
         this(elementBody, null);
     }

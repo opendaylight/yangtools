@@ -108,36 +108,28 @@ public final class DatabindContext {
     }
 
     /**
-     * Returns the {@link EffectiveModelContext}.
-     *
-     * @return the {@link EffectiveModelContext}
+     * {@return the {@link EffectiveModelContext}}
      */
     public @NonNull EffectiveModelContext modelContext() {
         return mountContext.modelContext();
     }
 
     /**
-     * Returns the {@link MountPointContext}.
-     *
-     * @return the {@link MountPointContext}
+     * {@return the {@link MountPointContext}}
      */
     public @NonNull MountPointContext mountContext() {
         return mountContext;
     }
 
     /**
-     * Returns the {@link BuilderFactory}.
-     *
-     * @return the {@link BuilderFactory}
+     * {@return the {@link BuilderFactory}}
      */
     public @NonNull BuilderFactory builderFactory() {
         return builderFactory;
     }
 
     /**
-     * Returns the {@link DataSchemaContextTree}.
-     *
-     * @return the {@link DataSchemaContextTree}
+     * {@return the {@link DataSchemaContextTree}}
      */
     public @NonNull DataSchemaContextTree schemaTree() {
         final var existing = (DataSchemaContextTree) SCHEMA_TREE.getAcquire(this);
@@ -151,9 +143,7 @@ public final class DatabindContext {
     }
 
     /**
-     * Returns the {@link JSONCodecFactory}.
-     *
-     * @return the {@link JSONCodecFactory}
+     * {@return the {@link JSONCodecFactory}}
      */
     public @NonNull JSONCodecFactory jsonCodecs() {
         final var existing = (JSONCodecFactory) JSON_CODECS.getAcquire(this);
@@ -167,9 +157,7 @@ public final class DatabindContext {
     }
 
     /**
-     * Returns the {@link XmlCodecFactory}.
-     *
-     * @return the {@link XmlCodecFactory}
+     * {@return the {@link XmlCodecFactory}}
      */
     public @NonNull XmlCodecFactory xmlCodecs() {
         final var existing = (XmlCodecFactory) XML_CODECS.getAcquire(this);

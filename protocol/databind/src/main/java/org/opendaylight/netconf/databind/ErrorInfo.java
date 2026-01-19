@@ -20,11 +20,16 @@ import com.google.common.annotations.Beta;
  */
 // FIXME: String here is legacy coming from RestconfError. This really should be a FormattableBody or similar, i.e.
 //        structured content which itself is formattable -- unlike FormattableBody, though, it needs to be defined as
-//        being formatted to a output. This format should include writing.
+//        being formatted to an output. This format should include writing.
 // FIXME: given that the normalized-node-based FormattableBody lives in server.spi, this should probably be an interface
 //        implemented in at server.spi level.
 @Beta
 public record ErrorInfo(String elementBody) {
+    /**
+     * Default constructor.
+     *
+     * @param elementBody the elementBody
+     */
     public ErrorInfo {
         requireNonNull(elementBody);
     }

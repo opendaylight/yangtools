@@ -35,16 +35,12 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference
 @NonNullByDefault
 public sealed interface DatabindPath {
     /**
-     * Returns the associated DatabindContext.
-     *
-     * @return the associated DatabindContext
+     * {@return the associated {@link DatabindContext}}
      */
     DatabindContext databind();
 
     /**
-     * Returns the {@link EffectiveStatementInference} made by this path.
-     *
-     * @return the {@link EffectiveStatementInference} made by this path
+     * {@return the {@link EffectiveStatementInference} made by this path}
      */
     Inference inference();
 
@@ -62,6 +58,14 @@ public sealed interface DatabindPath {
             Inference inference,
             YangInstanceIdentifier instance,
             ActionEffectiveStatement statement) implements InstanceRequest, OperationPath {
+        /**
+         * Default constructor.
+         *
+         * @param databind the {@link DatabindContext} to which this path is bound
+         * @param inference the {@link EffectiveStatementInference} made by this path
+         * @param instance the {@link YangInstanceIdentifier} of the instance being referenced, most not be empty
+         * @param statement the {@link ActionEffectiveStatement}
+         */
         public Action {
             requireNonNull(databind);
             requireNonNull(inference);
@@ -114,7 +118,7 @@ public sealed interface DatabindPath {
         /**
          * Retrieves the parent non-null {@link Data} object.
          *
-         * @return The parent {@link Data} object, in case of Datastore (root value) return this object.
+         * @return the parent {@link Data} object, in case of Datastore (root value) return this object
          * @throws IllegalArgumentException If the parent path exists but cannot be resolved within the schema tree.
          */
         public Data parent() {
@@ -129,7 +133,8 @@ public sealed interface DatabindPath {
          * Create {@link Data} based on the provided {@link YangInstanceIdentifier} if it exist in the current
          * {@link DatabindContext}.
          *
-         * @return The {@link Data} corresponding to the provided {@link YangInstanceIdentifier}.
+         * @param identifier the {@link YangInstanceIdentifier}
+         * @return the {@link Data} corresponding to the provided {@link YangInstanceIdentifier}
          * @throws IllegalArgumentException If the path cannot be resolved within the {@link DatabindContext}
          *         schema tree.
          */
@@ -217,17 +222,13 @@ public sealed interface DatabindPath {
      */
     sealed interface InstanceReference extends DatabindPath {
         /**
-         * Returns the {@link YangInstanceIdentifier} of the instance being referenced.
-         *
-         * @return the {@link YangInstanceIdentifier} of the instance being referenced,
-         *         {@link YangInstanceIdentifier#empty()} denotes the data root
+         * {@return the {@link YangInstanceIdentifier} of the instance being referenced,
+         *          {@link YangInstanceIdentifier#empty()} denotes the data root}
          */
         YangInstanceIdentifier instance();
 
         /**
-         * Returns this reference as a {@link ErrorPath}.
-         *
-         * @return this reference as a {@link ErrorPath}
+         * {@return this reference as a {@link ErrorPath}}
          */
         default ErrorPath toErrorPath() {
             return new ErrorPath(databind(), instance());
@@ -252,16 +253,12 @@ public sealed interface DatabindPath {
      */
     sealed interface OperationPath extends DatabindPath permits Action, Rpc {
         /**
-         * Returns the {@code input} statement of this operation.
-         *
-         * @return the {@code input} statement of this operation
+         * {@return the {@code input} statement of this operation}
          */
         InputEffectiveStatement inputStatement();
 
         /**
-         * Returns the {@code output} statement of this operation.
-         *
-         * @return the {@code output} statement of this operation
+         * {@return the {@code output} statement of this operation}
          */
         OutputEffectiveStatement outputStatement();
     }
