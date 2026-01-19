@@ -114,16 +114,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
 
         // FIXME: 8.0.0: this method should be moved to stmt.type in some shape or form
         @NonNull QName argumentAsTypeQName();
-
-        /**
-         * Summon the <a href="https://en.wikipedia.org/wiki/Rabbit_of_Caerbannog">Rabbit of Caerbannog</a>.
-         *
-         * @param <E> Effective Statement representation
-         * @return The {@code Legendary Black Beast of Arrrghhh}.
-         */
-        // FIXME: YANGTOOLS-1186: lob the Holy Hand Grenade of Antioch
-        @Deprecated
-        <E extends EffectiveStatement<A, D>> @NonNull StmtContext<A, D, E> caerbannog();
     }
 
     /**

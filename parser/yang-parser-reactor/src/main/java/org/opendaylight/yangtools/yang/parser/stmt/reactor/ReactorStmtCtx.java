@@ -296,13 +296,6 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public final <Z extends EffectiveStatement<A, D>> StmtContext<A, D, Z> caerbannog() {
-        return (StmtContext<A, D, Z>) this;
-    }
-
-    @Override
     public final String toString() {
         return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
     }
