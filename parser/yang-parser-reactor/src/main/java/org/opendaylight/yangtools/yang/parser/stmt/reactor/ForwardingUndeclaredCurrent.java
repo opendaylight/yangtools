@@ -33,6 +33,11 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
+    public <X, Y extends DeclaredStatement<X>> Current<X, Y> tryDeclaring(final Class<Y> type) {
+        return delegate.tryDeclaring(type);
+    }
+
+    @Override
     public @NonNull QName moduleName() {
         return delegate.moduleName();
     }
