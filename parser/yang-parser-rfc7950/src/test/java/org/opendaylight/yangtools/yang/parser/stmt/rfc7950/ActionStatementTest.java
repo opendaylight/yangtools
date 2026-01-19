@@ -69,25 +69,29 @@ class ActionStatementTest extends AbstractYangTest {
 
     @Test
     void testActionWithinIllegalAncestor() {
-        assertSourceException(startsWith("Action (foo-namespace?revision=2016-12-13)action-in-grouping is defined"
-            + " within a notification, rpc or another action"), "/rfc7950/action-stmt/foo-invalid.yang");
+        assertSourceException(startsWith(
+            "Action (foo-namespace?revision=2016-12-13)action-in-grouping is defined within another structure"),
+            "/rfc7950/action-stmt/foo-invalid.yang");
     }
 
     @Test
     void testActionWithinListWithoutKey() {
-        assertSourceException(startsWith("Action (bar-namespace?revision=2016-12-13)my-action is defined within a list"
-            + " that has no key statement"), "/rfc7950/action-stmt/bar-invalid.yang");
+        assertSourceException(startsWith(
+            "Action (bar-namespace?revision=2016-12-13)my-action is defined within a list that has no key statement"),
+            "/rfc7950/action-stmt/bar-invalid.yang");
     }
 
     @Test
     void testActionInUsedGroupingWithinCase() {
-        assertSourceException(startsWith("Action (baz-namespace?revision=2016-12-13)action-in-grouping"
-            + " is defined within a case statement"), "/rfc7950/action-stmt/baz-invalid.yang");
+        assertSourceException(startsWith(
+            "Action (baz-namespace?revision=2016-12-13)action-in-grouping is defined within a case statement"),
+            "/rfc7950/action-stmt/baz-invalid.yang");
     }
 
     @Test
     void testActionInUsedGroupingAtTopLevelOfModule() {
-        assertSourceException(startsWith("Action (foobar-namespace?revision=2016-12-13)my-action is defined"
-            + " at the top level of a module"), "/rfc7950/action-stmt/foobar-invalid.yang");
+        assertSourceException(startsWith(
+            "Action (foobar-namespace?revision=2016-12-13)my-action is defined at the top level of a source file"),
+            "/rfc7950/action-stmt/foobar-invalid.yang");
     }
 }
