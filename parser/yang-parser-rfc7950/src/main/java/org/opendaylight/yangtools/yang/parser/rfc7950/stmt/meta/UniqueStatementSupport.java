@@ -29,8 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
@@ -106,8 +106,8 @@ public final class UniqueStatementSupport
     @Override
     public void onStatementAdded(final Mutable<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> stmt) {
         // Check whether this statement is in a list statement and if so ...
-        final var list = stmt.coerceParentContext();
-        if (list.producesEffective(ListEffectiveStatement.class)) {
+        final var list = stmt.coerceParentContext().tryDeclaring(ListStatement.class);
+        if (list != null) {
             final var listParent = list.coerceParentContext();
             // ... do not allow parent to complete until we have resolved ...
             final var action = listParent.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
@@ -153,12 +153,12 @@ public final class UniqueStatementSupport
      * Inference action to process parent list reaching effective model, i.e. we can tell it is now complete.
      */
     private static final class RequireEffectiveList implements InferenceAction {
-        private final StmtContext<Set<Descendant>, ?, ?> unique;
-        private final StmtContext<?, ?, ?> list;
-        private final Mutable<?, ?, ?> parent;
+        private final @NonNull StmtContext<Set<Descendant>, UniqueStatement, ?> unique;
+        private final @NonNull StmtContext<QName, ListStatement, ?> list;
+        private final @NonNull Mutable<?, ?, ?> parent;
 
-        RequireEffectiveList(final StmtContext<Set<Descendant>, ?, ?> unique, final StmtContext<?, ?, ?> list,
-                final Mutable<?, ?, ?> parent) {
+        RequireEffectiveList(final StmtContext<Set<Descendant>, UniqueStatement, ?> unique,
+                final StmtContext<QName, ListStatement, ?> list, final Mutable<?, ?, ?> parent) {
             this.unique = requireNonNull(unique);
             this.list = requireNonNull(list);
             this.parent = requireNonNull(parent);
@@ -192,9 +192,9 @@ public final class UniqueStatementSupport
 
     private static final class RequireLeafDescendants implements InferenceAction {
         private final @NonNull Map<Prerequisite<StmtContext<?, ?, ?>>, Descendant> prereqs;
-        private final @NonNull StmtContext<Set<Descendant>, ?, ?> unique;
+        private final @NonNull StmtContext<Set<Descendant>, UniqueStatement, ?> unique;
 
-        RequireLeafDescendants(final StmtContext<Set<Descendant>, ?, ?> unique,
+        RequireLeafDescendants(final StmtContext<Set<Descendant>, UniqueStatement, ?> unique,
                 final Map<Prerequisite<StmtContext<?, ?, ?>>, Descendant> prereqs) {
             this.unique = requireNonNull(unique);
             this.prereqs = requireNonNull(prereqs);
@@ -206,7 +206,7 @@ public final class UniqueStatementSupport
             for (var entry : prereqs.entrySet()) {
                 final var stmt = entry.getKey().resolve(ctx);
                 // ... and if it is not a leaf, report an error
-                if (!stmt.producesEffective(LeafEffectiveStatement.class)) {
+                if (!stmt.producesDeclared(LeafStatement.class)) {
                     throw new SourceException(unique, "Path %s resolved to non-leaf %s", entry.getValue(),
                         stmt.publicDefinition().statementName());
                 }
