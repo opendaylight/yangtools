@@ -40,6 +40,51 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         implements StatementFactory<A, D, E> {
     /**
+     * Statement context copy policy, indicating how should reactor handle statement copy operations. Every statement
+     * copied by the reactor is subject to this policy.
+     */
+    public enum CopyPolicy {
+        /**
+         * Reuse the source statement context in the new place, as it cannot be affected by any further operations. This
+         * implies that the semantics of the effective statement are not affected by any of its substatements. Each
+         * of the substatements is free to make its own policy.
+         *
+         * <p>This policy is typically used by static constant statements such as {@code description} or {@code length},
+         * where the baseline RFC7950 does not allow any impact. A {@code description} could hold an extension statement
+         * in which case this interaction would come into play. Normal YANG will see empty substatements, so the reactor
+         * will be free to complete reuse the context.
+         *
+         * <p>In case any substatement is of stronger policy, it is up to the reactor to handle correct handling of
+         * resulting subobjects.
+         */
+        // TODO: does this mean source must have transitioned to ModelProcessingPhase.EFFECTIVE_MODEL?
+        CONTEXT_INDEPENDENT,
+        /**
+         * Reuse the source statement context in the new place completely. This policy is more stringent than
+         * {@link #CONTEXT_INDEPENDENT} in that the statement is dependent on circumstances of its original definition
+         * and any copy operation must replicate it exactly as is. This implies ignoring the usual policy of its
+         * substatements. A typical example of such a statement is {@code type}.
+         */
+        EXACT_REPLICA,
+        /**
+         * Create a copy sharing declared instance, but otherwise having a separate disconnected lifecycle.
+         */
+        // TODO: will the copy transition to ModelProcessingPhase.FULL_DECLARATION or which phase?
+        DECLARED_COPY,
+        /**
+         * Reject any attempt to copy this statement. This is useful for statements that are defined as top-level
+         * constructs, such as {@code contact}, {@code deviation} and similar.
+         */
+        REJECT,
+        /**
+         * Ignore this statement's existence for the purposes of the new place -- it is not impacted. This guidance
+         * is left here for completeness, as it can have justifiable uses (but I can't think of any). Any substatements
+         * need to be ignored, too.
+         */
+        IGNORE;
+    }
+
+    /**
      * A baseline class for implementing the {@link StatementFactory#canReuseCurrent(Current, Current, List)}
      * contract in a manner which is consistent with a statement's {@link CopyPolicy}.
      *
@@ -456,50 +501,5 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
 
     public final @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
         return publicDefinition.findArgumentDefinition();
-    }
-
-    /**
-     * Statement context copy policy, indicating how should reactor handle statement copy operations. Every statement
-     * copied by the reactor is subject to this policy.
-     */
-    public enum CopyPolicy {
-        /**
-         * Reuse the source statement context in the new place, as it cannot be affected by any further operations. This
-         * implies that the semantics of the effective statement are not affected by any of its substatements. Each
-         * of the substatements is free to make its own policy.
-         *
-         * <p>This policy is typically used by static constant statements such as {@code description} or {@code length},
-         * where the baseline RFC7950 does not allow any impact. A {@code description} could hold an extension statement
-         * in which case this interaction would come into play. Normal YANG will see empty substatements, so the reactor
-         * will be free to complete reuse the context.
-         *
-         * <p>In case any substatement is of stronger policy, it is up to the reactor to handle correct handling of
-         * resulting subobjects.
-         */
-        // TODO: does this mean source must have transitioned to ModelProcessingPhase.EFFECTIVE_MODEL?
-        CONTEXT_INDEPENDENT,
-        /**
-         * Reuse the source statement context in the new place completely. This policy is more stringent than
-         * {@link #CONTEXT_INDEPENDENT} in that the statement is dependent on circumstances of its original definition
-         * and any copy operation must replicate it exactly as is. This implies ignoring the usual policy of its
-         * substatements. A typical example of such a statement is {@code type}.
-         */
-        EXACT_REPLICA,
-        /**
-         * Create a copy sharing declared instance, but otherwise having a separate disconnected lifecycle.
-         */
-        // TODO: will the copy transition to ModelProcessingPhase.FULL_DECLARATION or which phase?
-        DECLARED_COPY,
-        /**
-         * Reject any attempt to copy this statement. This is useful for statements that are defined as top-level
-         * constructs, such as {@code contact}, {@code deviation} and similar.
-         */
-        REJECT,
-        /**
-         * Ignore this statement's existence for the purposes of the new place -- it is not impacted. This guidance
-         * is left here for completeness, as it can have justifiable uses (but I can't think of any). Any substatements
-         * need to be ignored, too.
-         */
-        IGNORE;
     }
 }
