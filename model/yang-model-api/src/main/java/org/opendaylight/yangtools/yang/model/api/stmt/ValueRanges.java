@@ -19,12 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @since 15.0.0
  */
 @NonNullByDefault
-public sealed interface ValueRanges extends Iterable<ValueRange> permits RegularValueRanges, SingleValueRanges {
-    /**
-     * {@return the number of {@link ValueRange}} contained in this object
-     */
-    int size();
-
+public sealed interface ValueRanges extends SizedIterable<ValueRange> permits RegularValueRanges, SingleValueRanges {
     /**
      * {@return an equivalent {@code List<ValueRange>}}
      */

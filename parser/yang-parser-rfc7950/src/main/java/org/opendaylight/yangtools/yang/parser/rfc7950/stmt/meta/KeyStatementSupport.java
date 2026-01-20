@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -34,7 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class KeyStatementSupport
-        extends AbstractStatementSupport<Set<QName>, KeyStatement, KeyEffectiveStatement> {
+        extends AbstractStatementSupport<KeyArgument, KeyStatement, KeyEffectiveStatement> {
     /**
      * This is equivalent to {@link YangStatementLexer#SEP}'s definition. Currently equivalent to the non-repeating
      * part of:
@@ -64,7 +65,7 @@ public final class KeyStatementSupport
     }
 
     @Override
-    public ImmutableSet<QName> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public KeyArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final var builder = ImmutableSet.<QName>builder();
         final var binding = ctx.identifierBinding();
         int tokens = 0;
@@ -80,7 +81,7 @@ public final class KeyStatementSupport
     }
 
     @Override
-    public Set<QName> adaptArgumentValue(final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx,
+    public KeyArgument adaptArgumentValue(final StmtContext<KeyArgument, KeyStatement, KeyEffectiveStatement> ctx,
             final QNameModule targetModule) {
         final Builder<QName> builder = ImmutableSet.builder();
         boolean replaced = false;
@@ -99,7 +100,7 @@ public final class KeyStatementSupport
     }
 
     @Override
-    protected KeyStatement createDeclared(final BoundStmtCtx<Set<QName>> ctx,
+    protected KeyStatement createDeclared(final BoundStmtCtx<KeyArgument> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createKey(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
