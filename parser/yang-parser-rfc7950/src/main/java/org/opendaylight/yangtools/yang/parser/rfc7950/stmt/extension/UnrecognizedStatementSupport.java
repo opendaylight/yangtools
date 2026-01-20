@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DefaultStatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -56,9 +57,11 @@ final class UnrecognizedStatementSupport
         final StatementDefinition def;
         final var argDef = childDef.argumentDefinition();
         if (argDef != null) {
-            def = new ModelDefinedStatementDefinition(statementName, argDef.argumentName(), argDef.isYinElement());
+            def = DefaultStatementDefinition.of(statementName, UnrecognizedStatement.class,
+                UnrecognizedEffectiveStatement.class, argDef.argumentName(), argDef.isYinElement());
         } else {
-            def = new ModelDefinedStatementDefinition(statementName);
+            def = DefaultStatementDefinition.of(statementName, UnrecognizedStatement.class,
+                UnrecognizedEffectiveStatement.class);
         }
         return new UnrecognizedStatementSupport(def, config);
     }

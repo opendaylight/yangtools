@@ -14,10 +14,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DefaultStatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -60,9 +62,13 @@ public final class ExtensionStatementSupport
         final var yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt, YinElementStatement.class);
 
         stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.argument(),
-            new UnrecognizedStatementSupport(new ModelDefinedStatementDefinition(stmt.getArgument(),
-                argument != null ? argument.argument() : null, yinElement != null && yinElement.getArgument()),
-                config));
+            new UnrecognizedStatementSupport(argument == null
+            ? DefaultStatementDefinition.of(stmt.getArgument(), UnrecognizedStatement.class,
+                UnrecognizedEffectiveStatement.class)
+            : DefaultStatementDefinition.of(stmt.getArgument(), UnrecognizedStatement.class,
+                UnrecognizedEffectiveStatement.class, argument.getArgument(),
+                yinElement == null ? false : yinElement.getArgument()),
+            config));
     }
 
     @Override
