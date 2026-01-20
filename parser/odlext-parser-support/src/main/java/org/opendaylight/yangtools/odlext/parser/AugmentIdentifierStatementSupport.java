@@ -10,15 +10,19 @@ package org.opendaylight.yangtools.odlext.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
+import org.opendaylight.yangtools.rfc8791.model.api.AugmentStructureStatement;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class AugmentIdentifierStatementSupport
         extends AbstractUnqualifiedStatementSupport<AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement> {
@@ -27,6 +31,17 @@ final class AugmentIdentifierStatementSupport
 
     AugmentIdentifierStatementSupport(final YangParserConfiguration config) {
         super(AugmentIdentifierStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
+    }
+
+    @Override
+    public void onStatementAdded(
+            final Mutable<Unqualified, AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement> ctx) {
+        final var parentDef = ctx.coerceParentContext().publicDefinition();
+        final var parentRepr = parentDef.getDeclaredRepresentationClass();
+        if (!AugmentStatement.class.isAssignableFrom(parentRepr)
+            && !AugmentStructureStatement.class.isAssignableFrom(parentRepr)) {
+            throw new SourceException(ctx, "augment-identifier cannot be defined in " + parentDef.statementName());
+        }
     }
 
     @Override

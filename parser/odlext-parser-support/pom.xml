@@ -78,6 +78,10 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odlext-model-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8791-model-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
