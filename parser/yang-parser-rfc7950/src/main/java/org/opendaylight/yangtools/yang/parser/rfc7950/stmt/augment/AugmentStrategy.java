@@ -403,29 +403,35 @@ abstract sealed class AugmentStrategy {
         final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
 
         for (var stmt : declared) {
-            copyStatement(buffer, target, rejectMandatory, stmt, unsupported || !stmt.isSupportedByFeatures());
+            if (needCopyFrom(augment, stmt)) {
+                copyStatement(buffer, target, rejectMandatory, stmt, unsupported || !stmt.isSupportedByFeatures());
+            }
         }
         for (var stmt : effective) {
-            copyStatement(buffer, target, rejectMandatory, stmt, unsupported);
+            if (needCopyFrom(augment, stmt)) {
+                copyStatement(buffer, target, rejectMandatory, stmt, unsupported);
+            }
         }
 
         target.addEffectiveSubstatements(buffer);
     }
 
+    private static boolean needCopyFrom(
+            final @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augment,
+            final StmtContext<?, ?, ?> stmt) {
+        // do not copy statements that pertain to the augment itself
+        return !stmt.producesAnyOf(NOCOPY_DEF_SET) && !stmt.ignoreCopyFrom(augment);
+    }
+
     private void copyStatement(final @NonNull List<Mutable<?, ?, ?>> buffer, final @NonNull Mutable<?, ?, ?> target,
             final boolean rejectMandatory, final StmtContext<?, ?, ?> stmt, final boolean unsupported) {
-        // do not copy statements that pertain to the augment itself
-        if (stmt.producesAnyOf(NOCOPY_DEF_SET)) {
-            return;
-        }
-
         // FIXME: These two checks are competing with each other for what gets reported: we can have an augment
         //        overlapping with an on schema tree namespace and the node cannot be legally introduced, for example
         //        because it is introducing a mandatory node into another module.
         //
-        //        The problem is that the determination of whether an introduced node is effectively mandatory, depends
-        //        on ancestor hierarchy, which can be modified after this code runs by 'deviate' -- and thus can only
-        //        be reliably ascertained only after the entire the top-most schema node has transitioned to
+        //        The problem is that the determination of whether an introduced node is effectively mandatory depends
+        //        on ancestor hierarchy, which can be modified after this code runs by 'deviate' -- and thus can be
+        //        reliably ascertained only after the entire the top-most schema node has transitioned to
         //        EFFECTIVE_MODEL.
 
         if (rejectMandatory) {
