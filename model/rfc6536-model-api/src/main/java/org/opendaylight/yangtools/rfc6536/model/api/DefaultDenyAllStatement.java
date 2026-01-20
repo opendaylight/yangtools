@@ -23,7 +23,7 @@ public interface DefaultDenyAllStatement extends UnknownStatement<Empty> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(NACMConstants.RFC6536_MODULE, "default-deny-all",
+    StatementDefinition DEFINITION = StatementDefinition.of(NACMConstants.RFC6536_MODULE, "default-deny-all",
         DefaultDenyAllStatement.class, DefaultDenyAllEffectiveStatement.class);
 
     @Override

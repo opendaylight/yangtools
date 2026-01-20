@@ -23,7 +23,7 @@ public interface GetFilterElementAttributesStatement extends UnknownStatement<Em
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(NetconfConstants.RFC6241_MODULE,
+    StatementDefinition DEFINITION = StatementDefinition.of(NetconfConstants.RFC6241_MODULE,
         "get-filter-element-attributes", GetFilterElementAttributesStatement.class,
         GetFilterElementAttributesEffectiveStatement.class);
 
