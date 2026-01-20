@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
-import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 
+@NonNullByDefault
 public final class EmptyKeyStatement extends AbstractKeyStatement {
-    public EmptyKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument) {
+    public EmptyKeyStatement(final String rawArgument, final KeyArgument argument) {
         super(rawArgument, argument);
     }
 }
