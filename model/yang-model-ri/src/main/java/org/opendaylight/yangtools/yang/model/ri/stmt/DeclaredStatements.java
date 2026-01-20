@@ -53,6 +53,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
@@ -429,7 +430,7 @@ public final class DeclaredStatements {
         return substatements.isEmpty() ? createInput(argument) : new RegularInputStatement(argument, substatements);
     }
 
-    public static KeyStatement createKey(final String rawArgument, final Set<QName> argument,
+    public static KeyStatement createKey(final String rawArgument, final KeyArgument argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyKeyStatement(rawArgument, argument)
             : new RegularKeyStatement(rawArgument, argument, substatements);
