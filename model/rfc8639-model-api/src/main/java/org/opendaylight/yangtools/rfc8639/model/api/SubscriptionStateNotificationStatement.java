@@ -19,9 +19,9 @@ public interface SubscriptionStateNotificationStatement extends DeclaredStatemen
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(SubscribedNotificationsConstants.RFC8639_MODULE,
-        "subscription-state-notification", SubscriptionStateNotificationStatement.class,
-        SubscriptionStateNotificationEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(
+        SubscriptionStateNotificationStatement.class, SubscriptionStateNotificationEffectiveStatement.class,
+        SubscribedNotificationsConstants.RFC8639_MODULE, "subscription-state-notification");
 
     @Override
     default StatementDefinition statementDefinition() {

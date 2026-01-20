@@ -23,14 +23,15 @@ public interface OpenConfigHashedValueStatement extends UnknownStatement<Empty> 
      *
      * @since 15.0.0
      */
-    StatementDefinition ENCRYPTED_DEFINITION = StatementDefinition.noArg(OpenConfigConstants.ENCRYPTED_VALUE_MODULE,
-        "openconfig-encrypted-value", OpenConfigHashedValueStatement.class,
-        OpenConfigHashedValueEffectiveStatement.class);
+    StatementDefinition ENCRYPTED_DEFINITION = StatementDefinition.of(
+        OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class,
+        OpenConfigConstants.ENCRYPTED_VALUE_MODULE, "openconfig-encrypted-value");
     /**
      * The definition of {@code oc-ext:openconfig-hashed-value} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition HASHED_DEFINITION = StatementDefinition.noArg(OpenConfigConstants.HASHED_VALUE_MODULE,
-        "openconfig-hashed-value", OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class);
+    StatementDefinition HASHED_DEFINITION = StatementDefinition.of(
+        OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class,
+        OpenConfigConstants.HASHED_VALUE_MODULE, "openconfig-hashed-value");
 }

@@ -66,8 +66,8 @@ public final class ExtensionStatementSupport
             : ArgumentDefinition.of(argument.getArgument(), yinElement == null ? false : yinElement.getArgument());
 
         stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.argument(), new UnrecognizedStatementSupport(
-            StatementDefinition.of(stmt.getArgument(), UnrecognizedStatement.class,
-                UnrecognizedEffectiveStatement.class, argDef),
+            StatementDefinition.of(UnrecognizedStatement.class, UnrecognizedEffectiveStatement.class,
+                stmt.getArgument(), argDef),
             config));
     }
 

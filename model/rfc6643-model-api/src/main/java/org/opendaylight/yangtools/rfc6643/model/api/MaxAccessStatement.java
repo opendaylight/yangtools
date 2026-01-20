@@ -18,8 +18,8 @@ public interface MaxAccessStatement extends UnknownStatement<MaxAccess> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "max-access", "access", MaxAccessStatement.class, MaxAccessEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(MaxAccessStatement.class, MaxAccessEffectiveStatement.class,
+        IetfYangSmiv2Constants.RFC6643_MODULE, "max-access", "access");
 
     @Override
     default StatementDefinition statementDefinition() {
