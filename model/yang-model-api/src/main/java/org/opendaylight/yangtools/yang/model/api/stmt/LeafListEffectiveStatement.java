@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -16,8 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * {@link EffectiveStatement} representation of a {@code leaf-list} statement as defined by
  * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.7">RFC7950</a>.
  */
-public interface LeafListEffectiveStatement extends DataTreeEffectiveStatement<LeafListStatement>,
-        OrderedByAwareEffectiveStatement<QName, LeafListStatement> {
+public non-sealed interface LeafListEffectiveStatement extends ElementAwareEffectiveStatement<LeafListStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
         return YangStmtMapping.LEAF_LIST;

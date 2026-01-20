@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
@@ -25,16 +26,16 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.A
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ElementAwareMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedAwareMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
 
 abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName, ListStatement>
         implements ListEffectiveStatement, ListSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
             NotificationNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
-            DataSchemaNodeMixin<ListStatement>, UserOrderedAwareMixin<QName, ListStatement, ListEffectiveStatement>,
+            DataSchemaNodeMixin<ListStatement>, ElementAwareMixin<ListStatement, ListEffectiveStatement>,
             DataNodeContainerMixin<QName, ListStatement>, WhenConditionMixin<QName, ListStatement>,
             AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
@@ -82,4 +83,7 @@ abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName
     public final ListEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public abstract ElementCountMatcher elementCountMatcher();
 }
