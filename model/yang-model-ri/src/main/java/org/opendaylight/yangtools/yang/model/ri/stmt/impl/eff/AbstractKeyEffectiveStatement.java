@@ -7,44 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static com.google.common.base.Verify.verify;
-
-import com.google.common.collect.ImmutableSet;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyKeyStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
 
 abstract class AbstractKeyEffectiveStatement
-        extends AbstractDeclaredEffectiveStatement.Default<Set<QName>, KeyStatement>
+        extends AbstractDeclaredEffectiveStatement.Default<KeyArgument, KeyStatement>
         implements KeyEffectiveStatement {
     abstract static class Foreign extends AbstractKeyEffectiveStatement {
-        // Polymorphic, with single value or a collection
-        private final Object argument;
+        // Polymorphic: either a QName or KeyArgument.OfMore
+        private final @NonNull Object argument;
 
-        Foreign(final KeyStatement declared, final Set<QName> argument) {
+        Foreign(final KeyStatement declared, final KeyArgument argument) {
             super(declared);
-            this.argument = maskSet(argument);
+            this.argument = EmptyKeyStatement.maskArgument(argument);
         }
 
         @Override
-        public final Set<QName> argument() {
-            return unmaskSet(argument);
-        }
-
-        private static @NonNull Object maskSet(final @NonNull Set<QName> set) {
-            return set.size() == 1 ? set.iterator().next() : set;
-        }
-
-        @SuppressWarnings("unchecked")
-        private static @NonNull Set<QName> unmaskSet(final @NonNull Object masked) {
-            if (masked instanceof Set) {
-                return (Set<QName>) masked;
-            }
-            verify(masked instanceof QName, "Unexpected argument %s", masked);
-            return ImmutableSet.of((QName) masked);
+        public final KeyArgument argument() {
+            return EmptyKeyStatement.unmaskArgument(argument);
         }
     }
 
@@ -54,7 +38,7 @@ abstract class AbstractKeyEffectiveStatement
         }
 
         @Override
-        public final Set<QName> argument() {
+        public final KeyArgument argument() {
             return declared().argument();
         }
     }

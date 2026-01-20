@@ -7,26 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Set;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code key} statement.
  */
-public interface KeyStatement extends DeclaredStatement<Set<QName>> {
+public interface KeyStatement extends DeclaredStatement<KeyArgument> {
+    /**
+     * The definition of {@code key} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        KeyStatement.class, KeyEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "key", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.KEY;
+        return DEFINITION;
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Iteration order of the returned set is required to match the order in which key components were declared.
-     */
-    @Override
-    Set<QName> argument();
 }
