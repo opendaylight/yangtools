@@ -19,8 +19,8 @@ public interface MountStatement extends UnknownStatement<Empty> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "mount", MountStatement.class, MountEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "mount",
+        MountStatement.class, MountEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

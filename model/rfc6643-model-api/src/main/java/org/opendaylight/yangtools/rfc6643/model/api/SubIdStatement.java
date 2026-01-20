@@ -19,8 +19,8 @@ public interface SubIdStatement extends UnknownStatement<Uint32> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "subid", "value", SubIdStatement.class, SubIdEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(IetfYangSmiv2Constants.RFC6643_MODULE, "subid", "value",
+        false, SubIdStatement.class, SubIdEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

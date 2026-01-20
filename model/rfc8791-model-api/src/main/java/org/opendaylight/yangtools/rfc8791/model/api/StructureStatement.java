@@ -22,8 +22,8 @@ public interface StructureStatement extends UnknownStatement<QName> {
     /**
      * The definition of {@code sx:structure} statement.
      */
-    StatementDefinition DEFINITION = StatementDefinition.elementArg(YangDataStructureConstants.RFC8791_MODULE,
-        "structure", "name", StructureStatement.class, StructureEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(YangDataStructureConstants.RFC8791_MODULE, "structure",
+        "name", false, StructureStatement.class, StructureEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

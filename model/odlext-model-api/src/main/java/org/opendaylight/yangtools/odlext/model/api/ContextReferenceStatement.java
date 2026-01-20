@@ -19,8 +19,9 @@ public interface ContextReferenceStatement extends UnknownStatement<QName> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "context-reference", "context-type", ContextReferenceStatement.class, ContextReferenceEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
+        "context-reference", "context-type", false, ContextReferenceStatement.class,
+        ContextReferenceEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

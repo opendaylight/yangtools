@@ -22,8 +22,8 @@ public interface ModuleTagStatement extends UnknownStatement<Tag> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(ModuleTagConstants.RFC8819_MODULE,
-        "module-tag", "tag", ModuleTagStatement.class, ModuleTagEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(ModuleTagConstants.RFC8819_MODULE, "module-tag", "tag",
+        false, ModuleTagStatement.class, ModuleTagEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

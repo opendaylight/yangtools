@@ -27,8 +27,8 @@ public interface MountPointStatement extends UnknownStatement<MountPointLabel>, 
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(SchemaMountConstants.RFC8528_MODULE,
-        "mount-point", "label", MountPointStatement.class, MountPointEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(SchemaMountConstants.RFC8528_MODULE, "mount-point", "label",
+        false, MountPointStatement.class, MountPointEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

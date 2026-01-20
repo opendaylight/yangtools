@@ -23,7 +23,7 @@ public interface OpenConfigHashedValueStatement extends UnknownStatement<Empty> 
      *
      * @since 15.0.0
      */
-    StatementDefinition ENCRYPTED_DEFINITION = StatementDefinition.noArg(OpenConfigConstants.ENCRYPTED_VALUE_MODULE,
+    StatementDefinition ENCRYPTED_DEFINITION = StatementDefinition.of(OpenConfigConstants.ENCRYPTED_VALUE_MODULE,
         "openconfig-encrypted-value", OpenConfigHashedValueStatement.class,
         OpenConfigHashedValueEffectiveStatement.class);
     /**
@@ -31,6 +31,6 @@ public interface OpenConfigHashedValueStatement extends UnknownStatement<Empty> 
      *
      * @since 15.0.0
      */
-    StatementDefinition HASHED_DEFINITION = StatementDefinition.noArg(OpenConfigConstants.HASHED_VALUE_MODULE,
+    StatementDefinition HASHED_DEFINITION = StatementDefinition.of(OpenConfigConstants.HASHED_VALUE_MODULE,
         "openconfig-hashed-value", OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class);
 }

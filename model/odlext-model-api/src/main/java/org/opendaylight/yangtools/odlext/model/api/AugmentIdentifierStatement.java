@@ -17,8 +17,8 @@ public interface AugmentIdentifierStatement extends UnknownStatement<Unqualified
     /**
      * The definition of {@code yang-ext:augment-identifier} statement.
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(CodegenExtensionsConstants.ORIGINAL_MODULE,
-        "augment-identifier", "identifier", AugmentIdentifierStatement.class,
+    StatementDefinition DEFINITION = StatementDefinition.of(CodegenExtensionsConstants.ORIGINAL_MODULE,
+        "augment-identifier", "identifier", false, AugmentIdentifierStatement.class,
         AugmentIdentifierEffectiveStatement.class);
 
     @Override
