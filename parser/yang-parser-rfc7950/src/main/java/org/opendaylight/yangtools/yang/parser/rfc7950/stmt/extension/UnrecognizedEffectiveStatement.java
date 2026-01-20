@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
  * An 'implementation' of an effective UnrecognizedStatement. This class is actually never instantiated and exists
  * only as an implementation-private marker for {@link StatementDefinition#getEffectiveRepresentationClass()}.
  */
+@NonNullByDefault
 final class UnrecognizedEffectiveStatement extends AbstractDeclaredEffectiveStatement<Object, UnrecognizedStatement> {
     private UnrecognizedEffectiveStatement() {
         // This should never be called
