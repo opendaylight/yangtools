@@ -33,7 +33,7 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public @NonNull QName moduleName() {
+    public QName moduleName() {
         return delegate.moduleName();
     }
 
@@ -43,7 +43,7 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public EffectiveConfig effectiveConfig() {
+    public Boolean effectiveConfig() {
         return delegate.effectiveConfig();
     }
 
