@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import org.eclipse.jdt.annotation.NonNull;
@@ -24,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
@@ -137,50 +137,45 @@ public final class ListStatementSupport
     @Override
     protected ListEffectiveStatement createEffective(final Current<QName, ListStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final ImmutableList<QName> keyDefinition;
         final var keyStmt = findFirstStatement(substatements, KeyEffectiveStatement.class);
+        final KeyArgument keyArgument;
         if (keyStmt != null) {
-            final var keyDefinitionInit = new ArrayList<QName>(keyStmt.argument().size());
+            keyArgument = keyStmt.argument();
             final var possibleLeafQNamesForKey = new HashSet<QName>();
             for (var effectiveStatement : substatements) {
                 if (effectiveStatement instanceof LeafSchemaNode leaf) {
                     possibleLeafQNamesForKey.add(leaf.getQName());
                 }
             }
-            for (var keyQName : keyStmt.argument()) {
+            for (var keyQName : keyArgument) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
                     throw new InferenceException(stmt, "Key '%s' misses node '%s' in list '%s'",
                         keyStmt.requireDeclared().rawArgument(), keyQName.getLocalName(), stmt.argument());
                 }
-                keyDefinitionInit.add(keyQName);
             }
-
-            keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
         } else {
-            keyDefinition = ImmutableList.of();
+            keyArgument = null;
+            if (warnForUnkeyedLists && Boolean.TRUE.equals(stmt.effectiveConfig().asNullable())) {
+                // FIXME: This is not easily testable and assumes the context of the calling thread, whereas logging
+                //        might want to collect all messages first, perhaps do analytics on them.
+                //        We should a BuilderGlobalContext-level facility to report warnings in the build.
+                //        These should then be properly reported an YangParser level, so that users can decide what to
+                //        do with them.
+                LOG.info("""
+                    Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. \
+                    While this is fine with OpenDaylight, it can cause interoperability issues with other systems \
+                    [defined at {}]""", stmt.argument(), stmt.sourceReference());
+            }
         }
 
         final int flags = computeFlags(stmt, substatements);
-        if (keyDefinition.isEmpty() && warnForUnkeyedLists
-            && Boolean.TRUE.equals(stmt.effectiveConfig().asNullable())) {
-            // FIXME: This is not easily testable and assumes the context of the calling thread, whereas logging
-            //        might want to collect all messages first, perhaps do analytics on them.
-            //        We should a BuilderGlobalContext-level facility to report warnings in the build.
-            //        These should then be properly reported an YangParser level, so that users can decide what to
-            //        do with them.
-            LOG.info("""
-                Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. \
-                While this is fine with OpenDaylight, it can cause interoperability issues with other systems \
-                [defined at {}]""", stmt.argument(), stmt.sourceReference());
-        }
-
         EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);
         EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
         EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
         try {
             return EffectiveStatements.createList(stmt.declared(), stmt.getArgument(), flags, substatements,
-                keyDefinition, EffectiveStmtUtils.createElementCountMatcher(stmt, substatements));
+                keyArgument, EffectiveStmtUtils.createElementCountMatcher(stmt, substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

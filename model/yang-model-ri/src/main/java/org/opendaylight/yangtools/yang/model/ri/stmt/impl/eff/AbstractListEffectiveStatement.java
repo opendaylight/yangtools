@@ -10,16 +10,19 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyKeyStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AugmentationTargetMixin;
@@ -39,19 +42,19 @@ abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName
             AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
-    private final @NonNull Object keyDefinition;
+    private final @Nullable Object keyArgument;
 
     AbstractListEffectiveStatement(final ListStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final ImmutableList<QName> keyDefinition) {
+            final @Nullable KeyArgument keyArgument) {
         super(declared, substatements);
-        this.keyDefinition = maskList(keyDefinition);
+        this.keyArgument = keyArgument == null ? null : EmptyKeyStatement.maskArgument(keyArgument);
         this.flags = flags;
     }
 
     AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final int flags) {
         super(original);
-        keyDefinition = original.keyDefinition;
+        keyArgument = original.keyArgument;
         this.flags = flags;
     }
 
@@ -62,7 +65,8 @@ abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName
 
     @Override
     public final List<QName> getKeyDefinition() {
-        return unmaskList(keyDefinition, QName.class);
+        final var local = keyArgument;
+        return local == null ? List.of() : EmptyKeyStatement.unmaskArgument(local).asList();
     }
 
     @Override
@@ -73,9 +77,9 @@ abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName
     @Override
     public final Collection<? extends UniqueEffectiveStatement> getUniqueConstraints() {
         return effectiveSubstatements().stream()
-                .filter(UniqueEffectiveStatement.class::isInstance)
-                .map(UniqueEffectiveStatement.class::cast)
-                .collect(ImmutableList.toImmutableList());
+            .filter(UniqueEffectiveStatement.class::isInstance)
+            .map(UniqueEffectiveStatement.class::cast)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
