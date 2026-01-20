@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Set;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code key} statement.
  */
-public interface KeyStatement extends DeclaredStatement<Set<QName>> {
+public interface KeyStatement extends DeclaredStatement<List<QName>> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.KEY;
@@ -25,8 +25,8 @@ public interface KeyStatement extends DeclaredStatement<Set<QName>> {
     /**
      * {@inheritDoc}
      *
-     * <p>Iteration order of the returned set is required to match the order in which key components were declared.
+     * <p>Returned {@link List} must contain unique elements in order in which they have been declared.
      */
     @Override
-    Set<QName> argument();
+    List<QName> argument();
 }
