@@ -207,8 +207,8 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @Override
-    public EffectiveConfig effectiveConfig() {
-        return EffectiveConfig.UNDETERMINED;
+    public Boolean effectiveConfig() {
+        return null;
     }
 
     @Override
