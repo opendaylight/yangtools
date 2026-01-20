@@ -18,8 +18,8 @@ public interface OidStatement extends UnknownStatement<ObjectIdentifier> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "oid", "value", OidStatement.class, OidEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(OidStatement.class, OidEffectiveStatement.class,
+        IetfYangSmiv2Constants.RFC6643_MODULE, "oid", "value");
 
     @Override
     default StatementDefinition statementDefinition() {

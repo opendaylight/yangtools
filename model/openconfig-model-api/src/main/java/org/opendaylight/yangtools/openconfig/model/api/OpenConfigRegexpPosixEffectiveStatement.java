@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -15,9 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective statement corresponding to config's "regexp-posix" .
  */
-@NonNullByDefault
 public interface OpenConfigRegexpPosixEffectiveStatement
-        extends EffectiveStatement<Empty, OpenConfigRegexpPosixStatement> {
+        extends EffectiveStatement<Empty, @NonNull OpenConfigRegexpPosixStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return OpenConfigRegexpPosixStatement.DEFINITION;

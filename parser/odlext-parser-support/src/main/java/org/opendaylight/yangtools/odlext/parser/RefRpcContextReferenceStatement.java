@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.odlext.model.api.RpcContextReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-@NonNullByDefault
 final class RefRpcContextReferenceStatement extends AbstractRefStatement<String, RpcContextReferenceStatement>
         implements RpcContextReferenceStatement {
     RefRpcContextReferenceStatement(final RpcContextReferenceStatement delegate, final DeclarationReference ref) {

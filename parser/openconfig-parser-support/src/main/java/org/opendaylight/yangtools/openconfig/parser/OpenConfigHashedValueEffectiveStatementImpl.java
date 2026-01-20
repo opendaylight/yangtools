@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.openconfig.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -18,11 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-@NonNullByDefault
 final class OpenConfigHashedValueEffectiveStatementImpl
-        extends AbstractEffectiveUnknownSchmemaNode<Empty, OpenConfigHashedValueStatement>
+        extends AbstractEffectiveUnknownSchmemaNode<Empty, @NonNull OpenConfigHashedValueStatement>
         implements OpenConfigHashedValueEffectiveStatement {
-    private final StatementDefinition definition;
+    private final @NonNull StatementDefinition definition;
 
     OpenConfigHashedValueEffectiveStatementImpl(final Current<Empty, OpenConfigHashedValueStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

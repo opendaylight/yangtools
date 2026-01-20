@@ -7,16 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Public interface exposed to the effective world.
  */
-@NonNullByDefault
 public interface ThirdPartyExtensionEffectiveStatement
-        extends UnknownEffectiveStatement<String, ThirdPartyExtensionStatement> {
+        extends UnknownEffectiveStatement<String, @NonNull ThirdPartyExtensionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return ThirdPartyExtensionStatement.DEFINITION;

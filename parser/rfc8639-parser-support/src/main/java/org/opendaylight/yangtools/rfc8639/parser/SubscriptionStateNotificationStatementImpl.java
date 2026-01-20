@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.rfc8639.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 
-@NonNullByDefault
 final class SubscriptionStateNotificationStatementImpl extends WithSubstatements
         implements SubscriptionStateNotificationStatement {
     SubscriptionStateNotificationStatementImpl(final ImmutableList<? extends DeclaredStatement<?>> substatements) {

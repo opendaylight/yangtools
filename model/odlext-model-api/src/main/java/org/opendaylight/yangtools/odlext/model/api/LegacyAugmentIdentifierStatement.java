@@ -19,9 +19,9 @@ public interface LegacyAugmentIdentifierStatement extends UnknownStatement<Unqua
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "augment-identifier", "identifier", LegacyAugmentIdentifierStatement.class,
-        LegacyAugmentIdentifierEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(
+        LegacyAugmentIdentifierStatement.class, LegacyAugmentIdentifierEffectiveStatement.class,
+        OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier", "identifier");
 
     @Override
     default StatementDefinition statementDefinition() {
