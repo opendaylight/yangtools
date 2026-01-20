@@ -25,36 +25,90 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
  *
  * <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3">RFC6020, section 6.3</a>
  */
-// FIXME: a hidden record implementation
-public sealed interface StatementDefinition extends Immutable permits AbstractStatementDefinition, YangStmtMapping {
+public sealed interface StatementDefinition extends Immutable permits DefaultStatementDefinition, YangStmtMapping {
+    /**
+     * Return a {@link StatementDefinition} combining all specified components.
+     *
+     * @param <A> argument type
+     * @param <D> declared statement representation
+     * @param <E> effective statement representation
+     * @param declaredRepresentation declared statement representation class
+     * @param effectiveRepresentation effective statement representation class
+     * @param statementName statement name
+     * @param argument optional {@link ArgumentDefinition}
+     * @return a {@link StatementDefinition}
+     */
     @NonNullByDefault
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
-            final QName statementName, final Class<D> declaredType, final Class<E> effectiveType,
-            final @Nullable ArgumentDefinition argument) {
-        return DefaultStatementDefinition.of(statementName, declaredType, effectiveType, argument);
+            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
+            final QName statementName, final @Nullable ArgumentDefinition argument) {
+        return new DefaultStatementDefinition<>(statementName, declaredRepresentation, effectiveRepresentation,
+            argument);
     }
 
+    /**
+     * Convenience method for creating a {@link StatementDefinition} without an argument. The statement name is
+     * specified as a combination of a {@link QNameModule} and a {@link String}, which this method combines.
+     *
+     * @param <A> argument type
+     * @param <D> declared statement representation
+     * @param <E> effective statement representation
+     * @param declaredRepresentation declared statement representation class
+     * @param effectiveRepresentation effective statement representation class
+     * @param module the module defining this statement
+     * @param statementName statement name
+     * @return a {@link StatementDefinition}
+     */
     @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition noArg(
-            final QNameModule module, final String statementName, final Class<D> declaredType,
-            final Class<E> effectiveType) {
-        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredType, effectiveType);
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
+            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
+            final QNameModule module, final String statementName) {
+        return of(declaredRepresentation, effectiveRepresentation, QName.create(module, statementName).intern(), null);
     }
 
+    /**
+     * Convenience method for creating a {@link StatementDefinition} with an argument. Both statement name and argument
+     * name are specified as a combination of a {@link QNameModule} and a {@link String}, which this method combines.
+     *
+     * @param <A> argument type
+     * @param <D> declared statement representation
+     * @param <E> effective statement representation
+     * @param declaredRepresentation declared statement representation class
+     * @param effectiveRepresentation effective statement representation class
+     * @param module the module defining this statement
+     * @param statementName statement name
+     * @param argumentName statement name
+     * @return a {@link StatementDefinition}
+     */
     @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition attributeArg(
-            final QNameModule module, final String statementName, final String argumentName,
-            final Class<D> declaredType, final Class<E> effectiveType) {
-        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredType, effectiveType,
-            QName.create(module, argumentName).intern(), false);
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
+            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
+            final QNameModule module, final String statementName,
+            final String argumentName) {
+        return of(declaredRepresentation, effectiveRepresentation, module, statementName, argumentName, false);
     }
 
+    /**
+     * Convenience method for creating a {@link StatementDefinition} with an argument. Both statement name and argument
+     * name are specified as a combination of a {@link QNameModule} and a {@link String}, which this method combines.
+     *
+     * @param <A> argument type
+     * @param <D> declared statement representation
+     * @param <E> effective statement representation
+     * @param declaredRepresentation declared statement representation class
+     * @param effectiveRepresentation effective statement representation class
+     * @param module the module defining this statement
+     * @param statementName statement name
+     * @param argumentName statement name
+     * @param yinElement P@code true} if the argument is encoded as YIN element
+     * @return a {@link StatementDefinition}
+     */
     @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition elementArg(
-            final QNameModule module, final String statementName, final String argumentName,
-            final Class<D> declaredType, final Class<E> effectiveType) {
-        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredType, effectiveType,
-            QName.create(module, argumentName).intern(), true);
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
+            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
+            final QNameModule module, final String statementName, final String argumentName, final boolean yinElement) {
+        return of(declaredRepresentation, effectiveRepresentation, QName.create(module, statementName).intern(),
+            ArgumentDefinition.of(QName.create(module, argumentName).intern(), yinElement));
     }
 
     /**
@@ -99,20 +153,36 @@ public sealed interface StatementDefinition extends Immutable permits AbstractSt
     }
 
     /**
+     * {@return the class representing the declared version of the statement associated with this definition}
+     */
+    @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation();
+
+    /**
+     * {@return the class representing the effective version of the statement associated with this definition}
+     */
+    @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation();
+
+    /**
      * Returns class which represents declared version of statement associated with this definition. This class should
      * be an interface which provides convenience access to declared substatements.
      *
      * @return class which represents declared version of statement associated with this definition.
+     * @deprecated Use {@link #declaredRepresentation()} instead.
      */
-    // FIXME: declaredRepresentation()
-    @NonNull Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass();
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default @NonNull Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+        return declaredRepresentation();
+    }
 
     /**
      * Returns class which represents derived behaviour from supplied statement. This class should be an interface which
      * defines convenience access to statement properties, namespace items and substatements.
      *
      * @return class which represents effective version of statement associated with this definition
+     * @deprecated Use {@link #effectiveRepresentation()} instead.
      */
-    // FIXME: effectiveRepresentation()
-    @NonNull Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass();
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default @NonNull Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
+        return effectiveRepresentation();
+    }
 }

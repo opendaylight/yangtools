@@ -8,17 +8,16 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.MountEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.MountStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-@NonNullByDefault
-final class MountEffectiveStatementImpl extends WithSubstatements<Empty, MountStatement>
+final class MountEffectiveStatementImpl extends WithSubstatements<Empty, @NonNull MountStatement>
         implements MountEffectiveStatement {
-    MountEffectiveStatementImpl(final MountStatement declared,
+    MountEffectiveStatementImpl(final @NonNull MountStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

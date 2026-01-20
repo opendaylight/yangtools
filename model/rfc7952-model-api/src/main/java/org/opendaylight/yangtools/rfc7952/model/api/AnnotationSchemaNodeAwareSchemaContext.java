@@ -16,5 +16,5 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 @Beta
 public interface AnnotationSchemaNodeAwareSchemaContext extends AnnotationSchemaNodeAware, SchemaContext {
-
+    // Nothing else
 }

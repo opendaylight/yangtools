@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -20,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@NonNullByDefault
 public final class ImpliedStatementSupport
         extends AbstractStringStatementSupport<ImpliedStatement, ImpliedEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =

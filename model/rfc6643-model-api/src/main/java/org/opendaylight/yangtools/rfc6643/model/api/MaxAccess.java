@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * <a href="https://www.rfc-editor.org/rfc/rfc2578#section-7.3">RFC2578 Section 7.3</a>.
  */
 @Beta
+// FIXME: rename to MaxAccessArgument
 public enum MaxAccess {
     /**
      * Indicates the annotated object is an auxiliary object, as per
@@ -47,17 +48,19 @@ public enum MaxAccess {
     private static final ImmutableMap<String, MaxAccess> VALUES =
             Maps.uniqueIndex(Arrays.asList(MaxAccess.values()), MaxAccess::stringLiteral);
 
-    private @NonNull String str;
+    private final @NonNull String str;
 
-    MaxAccess(final @NonNull String str) {
-        this.str = str;
+    MaxAccess(final String str) {
+        this.str = requireNonNull(str);
     }
 
     public @NonNull String stringLiteral() {
         return str;
     }
 
+    // FIXME: ofStringLiteral
     public static @Nullable MaxAccess forStringLiteral(final @NonNull String str) {
+        // FIXME: explicit switch
         return VALUES.get(requireNonNull(str));
     }
 }

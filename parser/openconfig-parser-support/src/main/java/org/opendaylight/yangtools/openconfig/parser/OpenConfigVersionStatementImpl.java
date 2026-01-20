@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.openconfig.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
-@NonNullByDefault
 final class OpenConfigVersionStatementImpl extends WithSubstatements<SemVer> implements OpenConfigVersionStatement {
     OpenConfigVersionStatementImpl(final SemVer argument,
             final ImmutableList<DeclaredStatement<?>> substatements) {

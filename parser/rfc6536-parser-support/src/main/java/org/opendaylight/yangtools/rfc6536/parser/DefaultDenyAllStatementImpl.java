@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.rfc6536.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 
-@NonNullByDefault
 final class DefaultDenyAllStatementImpl extends WithSubstatements implements DefaultDenyAllStatement {
-    static final DefaultDenyAllStatementImpl EMPTY = new DefaultDenyAllStatementImpl(ImmutableList.of());
+    static final @NonNull DefaultDenyAllStatementImpl EMPTY = new DefaultDenyAllStatementImpl(ImmutableList.of());
 
     DefaultDenyAllStatementImpl(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(substatements);

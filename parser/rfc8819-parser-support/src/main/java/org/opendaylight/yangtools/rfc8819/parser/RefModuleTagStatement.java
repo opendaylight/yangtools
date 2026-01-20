@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.rfc8819.parser;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagStatement;
 import org.opendaylight.yangtools.rfc8819.model.api.Tag;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-@NonNullByDefault
 final class RefModuleTagStatement extends AbstractRefStatement<Tag, ModuleTagStatement> implements ModuleTagStatement {
     RefModuleTagStatement(final ModuleTagStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

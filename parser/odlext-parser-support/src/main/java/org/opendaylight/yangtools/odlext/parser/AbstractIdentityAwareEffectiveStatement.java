@@ -21,7 +21,8 @@ abstract class AbstractIdentityAwareEffectiveStatement<D extends DeclaredStateme
         extends WithSubstatements<QName, D> {
     private final @NonNull IdentityEffectiveStatement identity;
 
-    AbstractIdentityAwareEffectiveStatement(final D declared, final IdentityEffectiveStatement identity,
+    AbstractIdentityAwareEffectiveStatement(final @NonNull D declared,
+            final @NonNull IdentityEffectiveStatement identity,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
         this.identity = requireNonNull(identity);

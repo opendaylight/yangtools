@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc7952.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
@@ -17,9 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * Effective statement representation of 'annotation' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  */
-@NonNullByDefault
-public interface AnnotationEffectiveStatement extends UnknownEffectiveStatement<AnnotationName, AnnotationStatement>,
-        TypeDefinitionAware {
+public interface AnnotationEffectiveStatement
+        extends UnknownEffectiveStatement<AnnotationName, @NonNull AnnotationStatement>, TypeDefinitionAware {
     @Override
     default StatementDefinition statementDefinition() {
         return AnnotationStatement.DEFINITION;

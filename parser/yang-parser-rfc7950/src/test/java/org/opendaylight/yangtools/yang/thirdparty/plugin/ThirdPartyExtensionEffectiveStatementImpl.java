@@ -10,16 +10,15 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-@NonNullByDefault
 final class ThirdPartyExtensionEffectiveStatementImpl
-        extends AbstractEffectiveUnknownSchmemaNode<String, ThirdPartyExtensionStatement>
+        extends AbstractEffectiveUnknownSchmemaNode<String, @NonNull ThirdPartyExtensionStatement>
         implements ThirdPartyExtensionEffectiveStatement {
     private final String valueFromNamespace;
 

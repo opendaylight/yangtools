@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc6536.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@NonNullByDefault
 public final class DefaultDenyAllStatementSupport
         extends AbstractEmptyStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =

@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.odlext.model.api.RpcContextReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
-@NonNullByDefault
 final class RpcContextReferenceStatementImpl extends WithSubstatements implements RpcContextReferenceStatement {
     RpcContextReferenceStatementImpl(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {

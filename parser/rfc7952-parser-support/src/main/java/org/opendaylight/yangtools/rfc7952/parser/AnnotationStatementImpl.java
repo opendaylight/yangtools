@@ -10,16 +10,15 @@ package org.opendaylight.yangtools.rfc7952.parser;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
-@NonNullByDefault
 final class AnnotationStatementImpl extends AbstractDeclaredStatement<AnnotationName> implements AnnotationStatement {
-    private final AnnotationName argument;
-    private final Object substatements;
+    private final @NonNull AnnotationName argument;
+    private final @NonNull Object substatements;
 
     AnnotationStatementImpl(final AnnotationName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {

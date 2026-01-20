@@ -7,27 +7,27 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@NonNullByDefault
 public interface AliasStatement extends UnknownStatement<String>, DocumentedDeclaredStatement.WithStatus<String> {
     /**
      * The definition of {@code smiv2:alias} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "alias", "descriptor", AliasStatement.class, AliasEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        AliasStatement.class, AliasEffectiveStatement.class,
+        IetfYangSmiv2Constants.RFC6643_MODULE, "alias", "descriptor");
 
     @Override
     default StatementDefinition statementDefinition() {
         return DEFINITION;
     }
 
-    default OidStatement getOidStatement() {
+    default @NonNull OidStatement getOidStatement() {
         return findFirstDeclaredSubstatement(OidStatement.class).orElseThrow();
     }
 }

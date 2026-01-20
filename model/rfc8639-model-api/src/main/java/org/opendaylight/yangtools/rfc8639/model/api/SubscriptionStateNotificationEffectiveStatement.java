@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc8639.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-@NonNullByDefault
 public interface SubscriptionStateNotificationEffectiveStatement
-        extends EffectiveStatement<Empty, SubscriptionStateNotificationStatement> {
+        extends EffectiveStatement<Empty, @NonNull SubscriptionStateNotificationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return SubscriptionStateNotificationStatement.DEFINITION;

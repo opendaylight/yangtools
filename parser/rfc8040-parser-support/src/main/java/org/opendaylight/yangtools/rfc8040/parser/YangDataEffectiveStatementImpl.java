@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
@@ -30,15 +30,15 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSc
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-@NonNullByDefault
 final class YangDataEffectiveStatementImpl
-        extends AbstractEffectiveUnknownSchmemaNode<YangDataName, YangDataStatement>
+        extends AbstractEffectiveUnknownSchmemaNode<YangDataName, @NonNull YangDataStatement>
         implements YangDataEffectiveStatement, YangDataSchemaNode,
-                   DataNodeContainerMixin<YangDataName, YangDataStatement> {
+                   DataNodeContainerMixin<YangDataName, @NonNull YangDataStatement> {
     private final DataSchemaNode child;
 
     YangDataEffectiveStatementImpl(final Current<YangDataName, YangDataStatement> stmt,
-             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final DataSchemaNode child) {
+             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+             final DataSchemaNode child) {
         super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
         this.child = requireNonNull(child);
     }

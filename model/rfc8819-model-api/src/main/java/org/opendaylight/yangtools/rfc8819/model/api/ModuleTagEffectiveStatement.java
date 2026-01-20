@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8819.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
@@ -15,8 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * Effective statement representation of 'module-tag' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8819">RFC8819</a>.
  */
-@NonNullByDefault
-public interface ModuleTagEffectiveStatement extends UnknownEffectiveStatement<Tag, ModuleTagStatement> {
+public interface ModuleTagEffectiveStatement extends UnknownEffectiveStatement<Tag, @NonNull ModuleTagStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return ModuleTagStatement.DEFINITION;

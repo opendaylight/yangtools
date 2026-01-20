@@ -52,8 +52,10 @@ final class UnrecognizedStatementSupport
          */
         // FIXME: remove this bit?
         final var statementName = QName.create(statementName(), childDef.statementName().getLocalName());
-        return new UnrecognizedStatementSupport(StatementDefinition.of(statementName, UnrecognizedStatement.class,
-            UnrecognizedEffectiveStatement.class, childDef.argumentDefinition()), config);
+        return new UnrecognizedStatementSupport(
+            StatementDefinition.of(UnrecognizedStatement.class, UnrecognizedEffectiveStatement.class,
+                statementName, childDef.argumentDefinition()),
+            config);
     }
 
     @Override

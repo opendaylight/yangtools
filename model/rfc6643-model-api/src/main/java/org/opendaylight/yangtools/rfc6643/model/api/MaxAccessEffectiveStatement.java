@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-@NonNullByDefault
-public interface MaxAccessEffectiveStatement extends UnknownEffectiveStatement<MaxAccess, MaxAccessStatement> {
+public interface MaxAccessEffectiveStatement extends UnknownEffectiveStatement<MaxAccess, @NonNull MaxAccessStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return MaxAccessStatement.DEFINITION;

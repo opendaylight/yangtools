@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-@NonNullByDefault
-public interface ImpliedEffectiveStatement extends UnknownEffectiveStatement<String, ImpliedStatement> {
+public interface ImpliedEffectiveStatement extends UnknownEffectiveStatement<String, @NonNull ImpliedStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return ImpliedStatement.DEFINITION;

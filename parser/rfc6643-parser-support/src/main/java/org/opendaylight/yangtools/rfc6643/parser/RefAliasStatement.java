@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-@NonNullByDefault
 final class RefAliasStatement extends AbstractRefStatement<String, AliasStatement> implements AliasStatement {
     RefAliasStatement(final AliasStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

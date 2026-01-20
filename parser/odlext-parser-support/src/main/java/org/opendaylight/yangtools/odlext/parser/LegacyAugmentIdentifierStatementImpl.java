@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierStatement;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-@NonNullByDefault
 final class LegacyAugmentIdentifierStatementImpl extends WithSubstatements<Unqualified>
         implements LegacyAugmentIdentifierStatement {
     LegacyAugmentIdentifierStatementImpl(final Unqualified argument,

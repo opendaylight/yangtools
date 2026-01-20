@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6241.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
@@ -16,9 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * Effective statement representation of 'get-filter-element-attributes' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  */
-@NonNullByDefault
 public interface GetFilterElementAttributesEffectiveStatement
-        extends UnknownEffectiveStatement<Empty, GetFilterElementAttributesStatement> {
+        extends UnknownEffectiveStatement<Empty, @NonNull GetFilterElementAttributesStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return GetFilterElementAttributesStatement.DEFINITION;

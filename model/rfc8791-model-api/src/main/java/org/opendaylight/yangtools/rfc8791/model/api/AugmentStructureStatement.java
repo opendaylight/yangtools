@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8791.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -17,14 +17,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  *
  * @since 14.0.21
  */
-@NonNullByDefault
 public interface AugmentStructureStatement
         extends DeclaredStatement<AugmentStructureArgument>, UnknownStatement<AugmentStructureArgument> {
     /**
      * The definition of {@code sx:augment-structure} statement.
      */
-    StatementDefinition DEFINITION = StatementDefinition.elementArg(YangDataStructureConstants.RFC8791_MODULE,
-        "augment-structure", "path", StructureStatement.class, StructureEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        AugmentStructureStatement.class, AugmentStructureEffectiveStatement.class,
+        YangDataStructureConstants.RFC8791_MODULE, "augment-structure", "path");
 
     @Override
     default StatementDefinition statementDefinition() {

@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.odlext.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@NonNullByDefault
 public interface MountStatement extends UnknownStatement<Empty> {
     /**
      * The definition of {@code yang-ext:mount} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "mount", MountStatement.class, MountEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        MountStatement.class, MountEffectiveStatement.class,
+        OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "mount");
 
     @Override
     default StatementDefinition statementDefinition() {

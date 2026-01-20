@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.rfc6241.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
@@ -18,12 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-@NonNullByDefault
 final class GetFilterElementAttributesEffectiveStatementImpl
-        extends AbstractEffectiveUnknownSchmemaNode<Empty, GetFilterElementAttributesStatement>
+        extends AbstractEffectiveUnknownSchmemaNode<Empty, @NonNull GetFilterElementAttributesStatement>
         implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
     GetFilterElementAttributesEffectiveStatementImpl(final Current<Empty, GetFilterElementAttributesStatement> stmt,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
     }
 

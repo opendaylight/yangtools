@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-@NonNullByDefault
 final class RefContextReferenceStatement extends AbstractRefStatement<QName, ContextReferenceStatement>
         implements ContextReferenceStatement {
     RefContextReferenceStatement(final ContextReferenceStatement delegate, final DeclarationReference ref) {

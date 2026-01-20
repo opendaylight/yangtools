@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.odlext.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@NonNullByDefault
 public interface ContextInstanceStatement extends UnknownStatement<QName> {
     /**
      * The definition of {@code yang-ext:context-instance} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "context-instance", "context-type", ContextInstanceStatement.class, ContextInstanceEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ContextInstanceStatement.class, ContextInstanceEffectiveStatement.class,
+        OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-instance", "context-type");
 
     @Override
     default StatementDefinition statementDefinition() {

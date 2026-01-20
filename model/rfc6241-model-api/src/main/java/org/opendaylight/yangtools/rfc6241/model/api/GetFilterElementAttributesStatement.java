@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6241.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -16,16 +16,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * Declared statement representation of 'get-filter-element-attributes' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  */
-@NonNullByDefault
 public interface GetFilterElementAttributesStatement extends UnknownStatement<Empty> {
     /**
      * The definition of {@code nc:get-filter-element-attributes} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(NetconfConstants.RFC6241_MODULE,
-        "get-filter-element-attributes", GetFilterElementAttributesStatement.class,
-        GetFilterElementAttributesEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        GetFilterElementAttributesStatement.class, GetFilterElementAttributesEffectiveStatement.class,
+        NetconfConstants.RFC6241_MODULE, "get-filter-element-attributes");
 
     @Override
     default StatementDefinition statementDefinition() {

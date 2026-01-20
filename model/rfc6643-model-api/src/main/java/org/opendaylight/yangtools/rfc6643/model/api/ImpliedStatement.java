@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@NonNullByDefault
 public interface ImpliedStatement extends UnknownStatement<String> {
     /**
      * The definition of {@code smiv2:implied} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "implied", "index", ImpliedStatement.class, ImpliedEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ImpliedStatement.class, ImpliedEffectiveStatement.class,
+        IetfYangSmiv2Constants.RFC6643_MODULE, "implied", "index");
 
     @Override
     default StatementDefinition statementDefinition() {

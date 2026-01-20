@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-@NonNullByDefault
 final class RefMaxAccessStatement extends AbstractRefStatement<MaxAccess, MaxAccessStatement>
         implements MaxAccessStatement {
     RefMaxAccessStatement(final MaxAccessStatement delegate, final DeclarationReference ref) {

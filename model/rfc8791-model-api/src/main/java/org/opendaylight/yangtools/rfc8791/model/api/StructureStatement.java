@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8791.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -17,13 +17,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  *
  * @since 14.0.21
  */
-@NonNullByDefault
 public interface StructureStatement extends UnknownStatement<QName> {
     /**
      * The definition of {@code sx:structure} statement.
      */
-    StatementDefinition DEFINITION = StatementDefinition.elementArg(YangDataStructureConstants.RFC8791_MODULE,
-        "structure", "name", StructureStatement.class, StructureEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        StructureStatement.class, StructureEffectiveStatement.class,
+        YangDataStructureConstants.RFC8791_MODULE, "structure", "name");
 
     @Override
     default StatementDefinition statementDefinition() {

@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-@NonNullByDefault
 final class RefSubIdStatement extends AbstractRefStatement<Uint32, SubIdStatement> implements SubIdStatement {
     RefSubIdStatement(final SubIdStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

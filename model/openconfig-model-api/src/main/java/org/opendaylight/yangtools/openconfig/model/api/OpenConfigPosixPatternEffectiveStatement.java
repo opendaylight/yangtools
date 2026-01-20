@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -16,9 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  *
  * @author Martin Bobak
  */
-@NonNullByDefault
 public interface OpenConfigPosixPatternEffectiveStatement
-        extends EffectiveStatement<String, OpenConfigPosixPatternStatement> {
+        extends EffectiveStatement<String, @NonNull OpenConfigPosixPatternStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return OpenConfigPosixPatternStatement.DEFINITION;

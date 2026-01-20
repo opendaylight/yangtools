@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.openconfig.parser;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-@NonNullByDefault
 final class RefOpenConfigVersionStatement extends AbstractRefStatement<SemVer, OpenConfigVersionStatement>
         implements OpenConfigVersionStatement {
     RefOpenConfigVersionStatement(final OpenConfigVersionStatement delegate, final DeclarationReference ref) {

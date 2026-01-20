@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.odlext.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@NonNullByDefault
 public interface InstanceTargetStatement extends UnknownStatement<String> {
     /**
      * The definition of {@code yang-ext:instance-target} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "instance-target", "path", InstanceTargetStatement.class, InstanceTargetEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        InstanceTargetStatement.class, InstanceTargetEffectiveStatement.class,
+        OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "instance-target", "path");
 
     @Override
     default StatementDefinition statementDefinition() {

@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-@NonNullByDefault
-public interface DisplayHintEffectiveStatement extends UnknownEffectiveStatement<String, DisplayHintStatement> {
+public interface DisplayHintEffectiveStatement
+        extends UnknownEffectiveStatement<String, @NonNull DisplayHintStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return DisplayHintStatement.DEFINITION;

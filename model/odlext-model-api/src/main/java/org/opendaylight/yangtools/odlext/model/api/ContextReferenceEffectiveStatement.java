@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.odlext.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-@NonNullByDefault
 public interface ContextReferenceEffectiveStatement
-        extends UnknownEffectiveStatement<QName, ContextReferenceStatement> {
+        extends UnknownEffectiveStatement<QName, @NonNull ContextReferenceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return ContextReferenceStatement.DEFINITION;
@@ -24,5 +23,5 @@ public interface ContextReferenceEffectiveStatement
     /**
      * {@return the {@link IdentityEffectiveStatement} identifying the {@code context type} of this reference}
      */
-    IdentityEffectiveStatement contextType();
+    @NonNull IdentityEffectiveStatement contextType();
 }

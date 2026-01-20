@@ -8,18 +8,17 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 
-@NonNullByDefault
 final class ContextReferenceEffectiveStatementImpl
-        extends AbstractIdentityAwareEffectiveStatement<ContextReferenceStatement>
+        extends AbstractIdentityAwareEffectiveStatement<@NonNull ContextReferenceStatement>
         implements ContextReferenceEffectiveStatement {
-    ContextReferenceEffectiveStatementImpl(final ContextReferenceStatement declared,
-            final IdentityEffectiveStatement identity,
+    ContextReferenceEffectiveStatementImpl(final @NonNull ContextReferenceStatement declared,
+            final @NonNull IdentityEffectiveStatement identity,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, identity, substatements);
     }

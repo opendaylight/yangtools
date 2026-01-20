@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc7952.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
@@ -20,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * Declared statement representation of 'annotation' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  */
-@NonNullByDefault
 public interface AnnotationStatement extends UnknownStatement<AnnotationName>, WithStatus<AnnotationName>,
         IfFeatureAwareDeclaredStatement<AnnotationName>, TypeAwareDeclaredStatement<AnnotationName> {
     /**
@@ -28,8 +26,9 @@ public interface AnnotationStatement extends UnknownStatement<AnnotationName>, W
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(MetadataConstants.RFC7952_MODULE,
-        "annotation", "name", AnnotationStatement.class, AnnotationEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        AnnotationStatement.class, AnnotationEffectiveStatement.class,
+        MetadataConstants.RFC7952_MODULE, "annotation", "name");
 
     @Override
     default StatementDefinition statementDefinition() {

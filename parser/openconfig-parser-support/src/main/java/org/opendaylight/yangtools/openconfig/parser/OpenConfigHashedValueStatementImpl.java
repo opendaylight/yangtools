@@ -10,15 +10,14 @@ package org.opendaylight.yangtools.openconfig.parser;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 
-@NonNullByDefault
 final class OpenConfigHashedValueStatementImpl extends WithSubstatements implements OpenConfigHashedValueStatement {
-    private final StatementDefinition definition;
+    private final @NonNull StatementDefinition definition;
 
     OpenConfigHashedValueStatementImpl(final StatementDefinition definition,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6536.model.api;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -16,15 +16,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * Declared statement representation of 'default-deny-all' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  */
-@NonNullByDefault
 public interface DefaultDenyAllStatement extends UnknownStatement<Empty> {
     /**
      * The definition of {@code nacm:default-deny-all} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(NACMConstants.RFC6536_MODULE, "default-deny-all",
-        DefaultDenyAllStatement.class, DefaultDenyAllEffectiveStatement.class);
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        DefaultDenyAllStatement.class, DefaultDenyAllEffectiveStatement.class,
+        NACMConstants.RFC6536_MODULE, "default-deny-all");
 
     @Override
     default StatementDefinition statementDefinition() {

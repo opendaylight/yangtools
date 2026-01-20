@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.OidSchemaNode;
@@ -18,11 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-@NonNullByDefault
-final class OidEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaNode<ObjectIdentifier, OidStatement>
+final class OidEffectiveStatementImpl
+        extends AbstractEffectiveUnknownSchmemaNode<ObjectIdentifier, @NonNull OidStatement>
         implements OidEffectiveStatement, OidSchemaNode {
     OidEffectiveStatementImpl(final Current<ObjectIdentifier, OidStatement> stmt,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
     }
 

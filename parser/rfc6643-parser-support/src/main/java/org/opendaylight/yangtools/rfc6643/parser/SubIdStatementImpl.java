@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
-@NonNullByDefault
 final class SubIdStatementImpl extends WithSubstatements<Uint32> implements SubIdStatement {
     SubIdStatementImpl(final Uint32 argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument, substatements);
