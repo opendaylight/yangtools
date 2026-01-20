@@ -8,16 +8,18 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 
 public final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
     public EmptyListEffectiveStatement(final ListStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final ImmutableList<QName> keyDefinition) {
-        super(declared, flags, substatements, keyDefinition);
+            final @Nullable KeyArgument keyArgument) {
+        super(declared, flags, substatements, keyArgument);
     }
 
     @Override
