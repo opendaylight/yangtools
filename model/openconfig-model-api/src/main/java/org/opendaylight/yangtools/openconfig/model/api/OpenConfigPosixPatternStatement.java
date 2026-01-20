@@ -23,9 +23,9 @@ public interface OpenConfigPosixPatternStatement extends UnknownStatement<String
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenConfigConstants.REGEXP_POSIX_MODULE,
-        "posix-pattern", "pattern", OpenConfigPosixPatternStatement.class,
-        OpenConfigPosixPatternEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(
+        OpenConfigPosixPatternStatement.class, OpenConfigPosixPatternEffectiveStatement.class,
+        OpenConfigConstants.REGEXP_POSIX_MODULE, "posix-pattern", "pattern");
 
     @Override
     default StatementDefinition statementDefinition() {

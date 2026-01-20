@@ -233,16 +233,16 @@ public enum YangStmtMapping implements StatementDefinition {
     YANG_VERSION(YangVersionStatement.class, YangVersionEffectiveStatement.class, "yang-version", "value"),
     YIN_ELEMENT(YinElementStatement.class, YinElementEffectiveStatement.class, "yin-element", "value");
 
-    private final @NonNull Class<? extends DeclaredStatement<?>> declaredType;
-    private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveType;
+    private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
+    private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
     private final @NonNull QName name;
     private final @Nullable QName argumentName;
     private final boolean yinElement;
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr) {
-        declaredType = requireNonNull(declared);
-        effectiveType = requireNonNull(effective);
+        declaredRepresentation = requireNonNull(declared);
+        effectiveRepresentation = requireNonNull(effective);
         name = yinQName(nameStr);
         argumentName = null;
         yinElement = false;
@@ -256,8 +256,8 @@ public enum YangStmtMapping implements StatementDefinition {
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
             final boolean yinElement) {
-        declaredType = requireNonNull(declared);
-        effectiveType = requireNonNull(effective);
+        declaredRepresentation = requireNonNull(declared);
+        effectiveRepresentation = requireNonNull(effective);
         name = yinQName(nameStr);
         argumentName = yinQName(argumentStr);
         this.yinElement = yinElement;
@@ -279,12 +279,12 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-        return declaredType;
+    public Class<? extends DeclaredStatement<?>> declaredRepresentation() {
+        return declaredRepresentation;
     }
 
     @Override
-    public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
-        return effectiveType;
+    public Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation() {
+        return effectiveRepresentation;
     }
 }

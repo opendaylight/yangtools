@@ -18,9 +18,9 @@ public interface RpcContextReferenceStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "rpc-context-reference", "context-type", RpcContextReferenceStatement.class,
-        RpcContextReferenceEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(
+        RpcContextReferenceStatement.class, RpcContextReferenceEffectiveStatement.class,
+        OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "rpc-context-reference", "context-type");
 
     @Override
     default StatementDefinition statementDefinition() {

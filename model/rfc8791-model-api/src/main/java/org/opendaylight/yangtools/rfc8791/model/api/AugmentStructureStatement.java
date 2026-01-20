@@ -23,8 +23,9 @@ public interface AugmentStructureStatement
     /**
      * The definition of {@code sx:augment-structure} statement.
      */
-    StatementDefinition DEFINITION = StatementDefinition.elementArg(YangDataStructureConstants.RFC8791_MODULE,
-        "augment-structure", "path", StructureStatement.class, StructureEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(
+        AugmentStructureStatement.class, AugmentStructureEffectiveStatement.class,
+        YangDataStructureConstants.RFC8791_MODULE, "augment-structure", "path");
 
     @Override
     default StatementDefinition statementDefinition() {

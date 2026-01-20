@@ -28,8 +28,9 @@ public interface AnnotationStatement extends UnknownStatement<AnnotationName>, W
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(MetadataConstants.RFC7952_MODULE,
-        "annotation", "name", AnnotationStatement.class, AnnotationEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(
+        AnnotationStatement.class, AnnotationEffectiveStatement.class,
+        MetadataConstants.RFC7952_MODULE, "annotation", "name");
 
     @Override
     default StatementDefinition statementDefinition() {

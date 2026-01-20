@@ -19,8 +19,8 @@ public interface AliasStatement extends UnknownStatement<String>, DocumentedDecl
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "alias", "descriptor", AliasStatement.class, AliasEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(AliasStatement.class, AliasEffectiveStatement.class,
+        IetfYangSmiv2Constants.RFC6643_MODULE, "alias", "descriptor");
 
     @Override
     default StatementDefinition statementDefinition() {

@@ -24,8 +24,9 @@ public interface OpenConfigRegexpPosixStatement extends UnknownStatement<Empty> 
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(OpenConfigConstants.REGEXP_POSIX_MODULE,
-        "regexp-posix", OpenConfigRegexpPosixStatement.class, OpenConfigRegexpPosixEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(
+        OpenConfigRegexpPosixStatement.class, OpenConfigRegexpPosixEffectiveStatement.class,
+        OpenConfigConstants.REGEXP_POSIX_MODULE, "regexp-posix");
 
     @Override
     default StatementDefinition statementDefinition() {

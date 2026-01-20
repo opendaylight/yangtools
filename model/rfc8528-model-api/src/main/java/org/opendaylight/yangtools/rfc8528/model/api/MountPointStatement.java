@@ -23,12 +23,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 public interface MountPointStatement extends UnknownStatement<MountPointLabel>, WithStatus<MountPointLabel>,
         ConfigStatementAwareDeclaredStatement<MountPointLabel> {
     /**
-     * The definition of {@code nc:get-filter-element-attributes} statement.
+     * The definition of {@code yangmnt:mount-point} statement.
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(SchemaMountConstants.RFC8528_MODULE,
-        "mount-point", "label", MountPointStatement.class, MountPointEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(
+        MountPointStatement.class, MountPointEffectiveStatement.class,
+        SchemaMountConstants.RFC8528_MODULE, "mount-point", "label");
 
     @Override
     default StatementDefinition statementDefinition() {
