@@ -17,10 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code list} statement.
  */
-public interface ListStatement extends MultipleElementsDeclaredStatement,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
-        ConfigStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName>,
-        MustStatementAwareDeclaredStatement<QName>, NotificationStatementAwareDeclaredStatement<QName> {
+public non-sealed interface ListStatement
+        extends ElementDefinitionStatement,
+                ActionStatementAwareDeclaredStatement<QName>,
+                DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
+                NotificationStatementAwareDeclaredStatement<QName> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.LIST;
