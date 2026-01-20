@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.ElementAwareDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
@@ -43,16 +44,16 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UserOrderedAware;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.WhenConditionAware;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ElementDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -326,17 +327,16 @@ public final class EffectiveStatementMixins {
     }
 
     /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@code ordered-by} statement.
+     * Bridge between {@link EffectiveStatementWithFlags} and {@link ElementAwareDataSchemaNode}.
      *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
     // FIXME: 9.0.0: remove this mixin once we have a properly-cached DataTree and JSON/XML codec tree and the speed
     //               of isUserOrdered() is not really critical.
-    public interface UserOrderedAwareMixin<A, D extends DeclaredStatement<A>,
-            E extends OrderedByAwareEffectiveStatement<A, D>>
-            extends EffectiveStatementWithFlags<A, D>, UserOrderedAware<E> {
+    public interface ElementAwareMixin<D extends ElementDefinitionStatement,
+            E extends ElementAwareEffectiveStatement<D>>
+            extends EffectiveStatementWithFlags<QName, D>, ElementAwareDataSchemaNode<E> {
         @Override
         default boolean isUserOrdered() {
             return (flags() & FlagsBuilder.USER_ORDERED) != 0;
