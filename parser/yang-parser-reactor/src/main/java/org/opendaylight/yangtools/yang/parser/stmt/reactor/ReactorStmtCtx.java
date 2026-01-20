@@ -123,23 +123,33 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
     private boolean isSupportedToBuildEffective = true;
 
-    // Set in constructor based on StatementSupport and parent
-    private static final int IN_STRUCTURE        = 0x01;
-    private static final int IN_TEMPLATE         = 0x02;
-    private static final int FEATURE_INDEPENDENT = 0x04;
+    //
+    // Squeezing as much state as possible into 8 bits:
+    //
+    // bit  | x80 x40 x20 x10 x08 x04 x02 x01
+    // name |  FEAT  | I |  CFG  | F | T | S
+    //                            ^^^^^^^^^^  constant after constructor via initFlags()
+    //                    ^^^^^^^             lazily instantiated during effectiveConfig() at the latest
+    //                ^^^                     established during StatementContextBase.summarizeSubstatementPolicy()
+    //       ^^^^^^^^                         established during isSupportedByFeatures() at the latest
 
-    // EffectiveConfig mapping
-    private static final int CONFIG_ABSENT       = 0x00;
-    private static final int CONFIG_FALSE        = 0x08;
-    private static final int CONFIG_TRUE         = 0x10;
-    private static final int CONFIG_UNDETERMINED = 0x18;
-    private static final int MASK_CONFIG         = CONFIG_UNDETERMINED;
+    // S, T and F bits: set in constructor based on StatementSupport and parent
+    private static final int IN_STRUCTURE               = 0x01;
+    private static final int IN_TEMPLATE                = 0x02;
+    private static final int FEATURE_INDEPENDENT        = 0x04;
 
-    // Effective instantiation mechanics for StatementContextBase: if this flag is set all substatements are known not
-    // change when instantiated. This includes context-independent statements as well as any statements which are
-    // ignored during copy instantiation.
+    // CFG bits: effective 'is configuration' flags. Defaults to CONFIG_UNKNOWN
+    private static final int CONFIG_UNKNOWN             = 0x00;
+    private static final int CONFIG_NULL                = 0x08;
+    private static final int CONFIG_FALSE               = 0x10;
+    private static final int CONFIG_TRUE                = 0x18;
+    private static final int MASK_CONFIG                = CONFIG_TRUE;
+
+    // I bit: the effective instantiation mechanics for StatementContextBase: if this flag is set all substatements are
+    //        known not change when instantiated. This includes context-independent statements as well as any statements
+    //        which are ignored during copy instantiation.
     private static final int ALL_INDEPENDENT            = 0x20;
-    // Flag bit assignments
+    // FEAT bits: lazily-instantiate decision about the effect of if-feature substatements
     private static final int IS_SUPPORTED_BY_FEATURES   = 0x40;
     private static final int HAVE_SUPPORTED_BY_FEATURES = 0x80;
     // Have-and-set flag constants, also used as masks
@@ -547,36 +557,27 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
      * <p>Note: use of this method implies that {@link #isIgnoringConfig()} is realized with
      * {@link #isIgnoringConfig(StatementContextBase)}.
      */
-    final @NonNull EffectiveConfig effectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
+    final @Nullable Boolean effectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
         final var cfgFlags = flags & MASK_CONFIG;
         return switch (cfgFlags) {
-            case CONFIG_ABSENT -> loadEffectiveConfig(parent);
-            case CONFIG_FALSE -> EffectiveConfig.FALSE;
-            case CONFIG_TRUE -> EffectiveConfig.TRUE;
-            case CONFIG_UNDETERMINED -> EffectiveConfig.UNDETERMINED;
+            case CONFIG_NULL -> null;
+            case CONFIG_FALSE -> Boolean.FALSE;
+            case CONFIG_TRUE -> Boolean.TRUE;
+            case CONFIG_UNKNOWN -> loadEffectiveConfig(parent);
             default -> throw new VerifyException("Unhandled cfgFlags " + cfgFlags);
         };
     }
 
-    private @NonNull EffectiveConfig loadEffectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
+    private @Nullable Boolean loadEffectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
         // Note: this order matches implied SubtreePolicy's ConfigHandling
-        if (inStructure()) {
-            return EffectiveConfig.IGNORED;
-        }
-        if (inTemplate()) {
-            return EffectiveConfig.UNDETERMINED;
-        }
-
-        final var parentEffective = parent.effectiveConfig();
-        return loadEffectiveConfig(switch (parentEffective) {
-            case IGNORED -> throw new VerifyException(parent + " is ignoring config: this should never happen");
-            default -> parentEffective.asNullable();
-        }, findSubstatementArgument(ConfigEffectiveStatement.class).orElse(null));
+        return inStructure() || inTemplate() ? null
+            : loadEffectiveConfig(parent.effectiveConfig(),
+                findSubstatementArgument(ConfigEffectiveStatement.class).orElse(null));
     }
 
-    private @NonNull EffectiveConfig loadEffectiveConfig(final @Nullable Boolean parentConfig,
+    private @Nullable Boolean loadEffectiveConfig(final @Nullable Boolean parentConfig,
             final @Nullable Boolean arg) {
-        final Boolean newConfig;
+        final Boolean effectiveConfig;
         if (arg != null) {
             // Validity check: if parent is config=false this cannot be a config=true
             if (arg && parentConfig != null && !parentConfig) {
@@ -584,22 +585,20 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                     "Parent node has config=false, this node must not be specifed as config=true",
                     this);
             }
-            newConfig = arg;
+            effectiveConfig = arg;
         } else {
             // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            newConfig = parentConfig;
+            effectiveConfig = parentConfig;
         }
 
-        if (newConfig == null) {
-            setConfig(CONFIG_UNDETERMINED);
-            return EffectiveConfig.UNDETERMINED;
-        }
-        if (newConfig) {
+        if (effectiveConfig == null) {
+            setConfig(CONFIG_NULL);
+        } else if (effectiveConfig) {
             setConfig(CONFIG_TRUE);
-            return EffectiveConfig.TRUE;
+        } else {
+            setConfig(CONFIG_FALSE);
         }
-        setConfig(CONFIG_FALSE);
-        return EffectiveConfig.FALSE;
+        return effectiveConfig;
     }
 
     private void setConfig(final int flag) {

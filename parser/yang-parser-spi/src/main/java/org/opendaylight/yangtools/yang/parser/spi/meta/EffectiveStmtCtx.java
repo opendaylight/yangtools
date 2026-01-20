@@ -90,11 +90,9 @@ public non-sealed interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextC
         }
 
         /**
-         * Return the effective {@code config} statement value.
-         *
-         * @return This statement's effective config
+         * {@return this statement's effective {@code config} value, {@code null} if not determined or applicable}
          */
-        @NonNull EffectiveConfig effectiveConfig();
+        @Nullable Boolean effectiveConfig();
 
         // FIXME: 7.0.0: this is currently only used by AbstractTypeStatement
         @NonNull QNameModule effectiveNamespace();
