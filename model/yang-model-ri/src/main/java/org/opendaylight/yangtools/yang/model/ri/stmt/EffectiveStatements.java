@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.ri.stmt;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -78,6 +77,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
@@ -546,7 +546,7 @@ public final class EffectiveStatements {
         return new DeclaredInputEffectiveStatement(declared, substatements, argument, flags);
     }
 
-    public static KeyEffectiveStatement createKey(final KeyStatement declared, final Set<QName> argument,
+    public static KeyEffectiveStatement createKey(final KeyStatement declared, final KeyArgument argument,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             return argument.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
@@ -622,11 +622,11 @@ public final class EffectiveStatements {
 
     public static ListEffectiveStatement createList(final ListStatement declared, final QName argument,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final ImmutableList<QName> keyDefinition, final @Nullable ElementCountMatcher elementCountMatcher) {
+            final @Nullable KeyArgument keyArgument, final @Nullable ElementCountMatcher elementCountMatcher) {
         return elementCountMatcher == null && argument.equals(declared.argument())
-            ? new EmptyListEffectiveStatement(declared, flags, substatements, keyDefinition)
-                : new RegularListEffectiveStatement(declared, argument, flags, substatements, keyDefinition,
-                    elementCountMatcher);
+            ? new EmptyListEffectiveStatement(declared, flags, substatements, keyArgument)
+            : new RegularListEffectiveStatement(declared, argument, flags, substatements, keyArgument,
+                elementCountMatcher);
     }
 
     public static MandatoryEffectiveStatement createMandatory(final MandatoryStatement declared) {
