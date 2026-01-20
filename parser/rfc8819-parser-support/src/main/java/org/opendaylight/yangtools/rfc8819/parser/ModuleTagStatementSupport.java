@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagEffectiveStatement;
 import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagStatement;
-import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagStatements;
 import org.opendaylight.yangtools.rfc8819.model.api.Tag;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -32,11 +31,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class ModuleTagStatementSupport
         extends AbstractStatementSupport<Tag, ModuleTagStatement, ModuleTagEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR = SubstatementValidator
-            .builder(ModuleTagStatements.MODULE_TAG).build();
+    private static final SubstatementValidator VALIDATOR =
+        SubstatementValidator.builder(ModuleTagStatement.DEFINITION).build();
 
     public ModuleTagStatementSupport(final YangParserConfiguration config) {
-        super(ModuleTagStatements.MODULE_TAG, StatementPolicy.reject(), config, VALIDATOR);
+        super(ModuleTagStatement.DEFINITION, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override

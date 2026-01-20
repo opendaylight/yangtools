@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.rfc8819.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagStatements;
+import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagStatement;
 import org.opendaylight.yangtools.rfc8819.parser.ModuleTagStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
@@ -30,7 +30,7 @@ public final class Rfc8819ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc8819ParserExtension() {
-        super(ModuleTagStatements.MODULE_TAG);
+        super(ModuleTagStatement.DEFINITION);
     }
 
     @Override
