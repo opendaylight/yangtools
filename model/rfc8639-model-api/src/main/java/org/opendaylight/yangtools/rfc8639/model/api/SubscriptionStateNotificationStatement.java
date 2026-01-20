@@ -7,13 +7,24 @@
  */
 package org.opendaylight.yangtools.rfc8639.model.api;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+@NonNullByDefault
 public interface SubscriptionStateNotificationStatement extends DeclaredStatement<Empty> {
+    /**
+     * The definition of {@code sn:subscription-state-notification} statement.
+     *
+     * @since 15.0.0
+     */
+    StatementDefinition DEFINITION = StatementDefinition.noArg(SubscribedNotificationsConstants.RFC8639_MODULE,
+        "subscription-state-notification", SubscriptionStateNotificationStatement.class,
+        SubscriptionStateNotificationEffectiveStatement.class);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return SubscribedNotificationsStatements.SUBSCRIPTION_STATE_NOTIFICATION;
+        return DEFINITION;
     }
 }
