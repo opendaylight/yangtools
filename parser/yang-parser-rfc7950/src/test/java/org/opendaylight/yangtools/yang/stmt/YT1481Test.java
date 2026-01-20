@@ -18,6 +18,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -71,7 +72,7 @@ class YT1481Test extends AbstractYangTest {
         assertEquals(BAR, bar.argument());
 
         final var baz = bar.findFirstEffectiveSubstatement(KeyEffectiveStatement.class).orElseThrow();
-        assertEquals(Set.of(BAZ), baz.argument());
+        assertEquals(KeyArgument.of(BAZ), baz.argument());
 
         final var qux = bar.findFirstEffectiveSubstatement(UniqueEffectiveStatement.class).orElseThrow();
         assertEquals(Set.of(Descendant.of(QUX)), qux.argument());

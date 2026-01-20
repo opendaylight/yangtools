@@ -14,7 +14,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -27,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -394,16 +395,22 @@ public final class StmtContextUtils {
         final var listStmtCtx = ctx.coerceParentContext();
         final var keyStmtCtx = findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
 
-        if (YangStmtMapping.LEAF.equals(ctx.publicDefinition())) {
-            if (isListKey(ctx, keyStmtCtx)) {
+        final var leafCtx = ctx.tryDeclaring(LeafStatement.class);
+        if (leafCtx != null) {
+            if (isListKey(leafCtx, keyStmtCtx)) {
                 disallowIfFeatureAndWhenOnListKeys(ctx);
             }
-        } else if (YangStmtMapping.USES.equals(ctx.publicDefinition())) {
-            findAllEffectiveSubstatements(listStmtCtx, LeafStatement.class).forEach(leafStmtCtx -> {
-                if (isListKey(leafStmtCtx, keyStmtCtx)) {
-                    disallowIfFeatureAndWhenOnListKeys(leafStmtCtx);
+            return;
+        }
+
+        final var usesCtx = ctx.tryDeclaring(UsesStatement.class);
+        if (usesCtx != null) {
+            for (var subStmtContext : listStmtCtx.effectiveSubstatements()) {
+                final var declaring = subStmtContext.tryDeclaring(LeafStatement.class);
+                if (declaring != null && isListKey(declaring, keyStmtCtx)) {
+                    disallowIfFeatureAndWhenOnListKeys(declaring);
                 }
-            });
+            }
         }
     }
 
@@ -412,9 +419,9 @@ public final class StmtContextUtils {
                 && findFirstDeclaredSubstatement(ctx.coerceParentContext(), KeyStatement.class) != null;
     }
 
-    private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
-            final StmtContext<Set<QName>, ?, ?> keyStmtCtx) {
-        return keyStmtCtx.getArgument().contains(leafStmtCtx.argument());
+    private static boolean isListKey(final StmtContext<QName, LeafStatement, ?> leafStmtCtx,
+            final StmtContext<KeyArgument, KeyStatement, ?> keyStmtCtx) {
+        return keyStmtCtx.getArgument().contains(leafStmtCtx.getArgument());
     }
 
     private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {
