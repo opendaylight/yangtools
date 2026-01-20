@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.odlext.model.api.RpcContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.RpcContextReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -25,11 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class RpcContextReferenceStatementSupport
         extends AbstractStringStatementSupport<RpcContextReferenceStatement, RpcContextReferenceEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE).build();
+        SubstatementValidator.builder(RpcContextReferenceStatement.DEFINITION).build();
 
     public RpcContextReferenceStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE, StatementPolicy.contextIndependent(), config,
-            VALIDATOR);
+        super(RpcContextReferenceStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

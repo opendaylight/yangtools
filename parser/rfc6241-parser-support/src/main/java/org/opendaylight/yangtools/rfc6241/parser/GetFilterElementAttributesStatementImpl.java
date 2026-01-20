@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.rfc6241.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 
+@NonNullByDefault
 final class GetFilterElementAttributesStatementImpl extends WithSubstatements
         implements GetFilterElementAttributesStatement {
-    static final @NonNull GetFilterElementAttributesStatementImpl EMPTY =
+    static final GetFilterElementAttributesStatementImpl EMPTY =
         new GetFilterElementAttributesStatementImpl(ImmutableList.of());
 
     GetFilterElementAttributesStatementImpl(final ImmutableList<? extends DeclaredStatement<?>> substatements) {

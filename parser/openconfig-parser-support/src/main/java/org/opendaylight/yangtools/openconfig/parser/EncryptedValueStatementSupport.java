@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.openconfig.parser;
 
-import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
+@NonNullByDefault
 public final class EncryptedValueStatementSupport extends AbstractHashedValueStatementSupport {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenConfigStatements.OPENCONFIG_ENCRYPTED_VALUE).build();
+        SubstatementValidator.builder(OpenConfigHashedValueStatement.ENCRYPTED_DEFINITION).build();
 
     public EncryptedValueStatementSupport(final YangParserConfiguration config) {
-        super(OpenConfigStatements.OPENCONFIG_ENCRYPTED_VALUE, config, VALIDATOR);
+        super(OpenConfigHashedValueStatement.ENCRYPTED_DEFINITION, config, VALIDATOR);
     }
 }

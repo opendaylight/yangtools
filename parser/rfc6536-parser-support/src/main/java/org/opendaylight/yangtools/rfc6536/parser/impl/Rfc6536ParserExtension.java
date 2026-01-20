@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.rfc6536.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
+import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
+import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteStatement;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -31,7 +32,7 @@ public final class Rfc6536ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc6536ParserExtension() {
-        super(NACMStatements.values());
+        super(DefaultDenyAllStatement.DEFINITION, DefaultDenyWriteStatement.DEFINITION);
     }
 
     @Override

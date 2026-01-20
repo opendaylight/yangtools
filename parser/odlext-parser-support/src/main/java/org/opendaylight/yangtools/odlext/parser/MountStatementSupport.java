@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.MountEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.MountStatement;
-import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -26,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class MountStatementSupport
         extends AbstractEmptyStatementSupport<MountStatement, MountEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenDaylightExtensionsStatements.MOUNT).build();
+        SubstatementValidator.builder(MountStatement.DEFINITION).build();
 
     public MountStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.MOUNT, StatementPolicy.exactReplica(), config, VALIDATOR);
+        super(MountStatement.DEFINITION, StatementPolicy.exactReplica(), config, VALIDATOR);
     }
 
     @Override

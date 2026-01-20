@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.rfc7952.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
@@ -24,18 +24,19 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSc
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
+@NonNullByDefault
 final class AnnotationEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<AnnotationName, AnnotationStatement>
         implements AnnotationEffectiveStatement, AnnotationSchemaNode {
-    private final @NonNull TypeDefinition<?> type;
+    private final TypeDefinition<?> type;
 
     AnnotationEffectiveStatementImpl(final Current<AnnotationName, AnnotationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
+        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
         final QName qname = stmt.getArgument().qname();
 
         // FIXME: move this into onFullDefinitionDeclared()
-        final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
+        final var typeStmt = SourceException.throwIfNull(
             findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElse(null), stmt,
             "AnnotationStatementSupport %s is missing a 'type' statement", qname);
 

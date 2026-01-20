@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.openconfig.parser;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
+@NonNullByDefault
 final class RefOpenConfigHashedValueStatement extends AbstractRefStatement<Empty, OpenConfigHashedValueStatement>
         implements OpenConfigHashedValueStatement {
     RefOpenConfigHashedValueStatement(final OpenConfigHashedValueStatement delegate, final DeclarationReference ref) {

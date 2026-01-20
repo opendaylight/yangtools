@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc7952.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
-import org.opendaylight.yangtools.rfc7952.model.api.MetadataStatements;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -28,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class AnnotationStatementSupport
          extends AbstractStatementSupport<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(MetadataStatements.ANNOTATION)
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AnnotationStatement.DEFINITION)
         .addMandatory(YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.DESCRIPTION)
         .addAny(YangStmtMapping.IF_FEATURE)
@@ -38,7 +37,7 @@ public final class AnnotationStatementSupport
         .build();
 
     public AnnotationStatementSupport(final YangParserConfiguration config) {
-        super(MetadataStatements.ANNOTATION, StatementPolicy.reject(), config, VALIDATOR);
+        super(AnnotationStatement.DEFINITION, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override

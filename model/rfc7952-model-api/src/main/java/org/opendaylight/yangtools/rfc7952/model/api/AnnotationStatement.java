@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc7952.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
@@ -19,16 +20,24 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * Declared statement representation of 'annotation' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  */
-@Beta
+@NonNullByDefault
 public interface AnnotationStatement extends UnknownStatement<AnnotationName>, WithStatus<AnnotationName>,
         IfFeatureAwareDeclaredStatement<AnnotationName>, TypeAwareDeclaredStatement<AnnotationName> {
+    /**
+     * The definition of {@code nc:get-filter-element-attributes} statement.
+     *
+     * @since 15.0.0
+     */
+    StatementDefinition DEFINITION = StatementDefinition.attributeArg(MetadataConstants.RFC7952_MODULE,
+        "annotation", "name", AnnotationStatement.class, AnnotationEffectiveStatement.class);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return MetadataStatements.ANNOTATION;
+        return DEFINITION;
     }
 
     @Override
-    default String rawArgument() {
+    default @NonNull String rawArgument() {
         return argument().qname().getLocalName();
     }
 }
