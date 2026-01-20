@@ -167,7 +167,7 @@ public final class ContainerStatementSupport
         return new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setConfiguration(stmt.effectiveConfig())
             .setPresence(findFirstStatement(substatements, PresenceEffectiveStatement.class) != null)
             .toFlags();
     }

@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -61,49 +60,9 @@ public non-sealed interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextC
     @Beta
     interface Parent extends EffectiveStmtCtx {
         /**
-         * Effective {@code config} statement value.
+         * {@return this statement's effective {@code config} value, {@code null} if not determined or applicable}
          */
-        @Beta
-        enum EffectiveConfig {
-            /**
-             * We have an effective {@code config true} statement.
-             */
-            TRUE(Boolean.TRUE),
-            /**
-             * We have an effective {@code config false} statement.
-             */
-            FALSE(Boolean.FALSE),
-            /**
-             * We are in a context where {@code config} statements are ignored.
-             */
-            IGNORED(null),
-            /**
-             * We are in a context where {@code config} is not determined, such as within a {@code grouping}.
-             */
-            UNDETERMINED(null);
-
-            private final Boolean config;
-
-            EffectiveConfig(final @Nullable Boolean config) {
-                this.config = config;
-            }
-
-            /**
-             * Return this value as a {@link Boolean} for use with {@link DataSchemaNode#effectiveConfig()}.
-             *
-             * @return A boolean or null
-             */
-            public @Nullable Boolean asNullable() {
-                return config;
-            }
-        }
-
-        /**
-         * Return the effective {@code config} statement value.
-         *
-         * @return This statement's effective config
-         */
-        @NonNull EffectiveConfig effectiveConfig();
+        @Nullable Boolean effectiveConfig();
 
         // FIXME: 7.0.0: this is currently only used by AbstractTypeStatement
         @NonNull QNameModule effectiveNamespace();

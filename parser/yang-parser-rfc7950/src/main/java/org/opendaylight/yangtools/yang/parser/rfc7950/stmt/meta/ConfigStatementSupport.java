@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -32,7 +33,7 @@ public final class ConfigStatementSupport
             // FIXME: not quite: we want to have a 'parent sensitive' policy where we get the new BoundStmtCtx or
             //        similar, but will do for now
             StatementPolicy.copyDeclared((copy, current, substatements) ->
-                copy.effectiveConfig() == current.effectiveConfig()), config, SUBSTATEMENT_VALIDATOR);
+                Objects.equals(copy.effectiveConfig(), current.effectiveConfig())), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

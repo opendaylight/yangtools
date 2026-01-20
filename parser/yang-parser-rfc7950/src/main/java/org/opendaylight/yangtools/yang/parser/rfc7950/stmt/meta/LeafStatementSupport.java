@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -128,8 +127,10 @@ public final class LeafStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final LeafEffectiveStatement stmt) {
-        verify(stmt instanceof LeafSchemaNode, "Unexpected statement %s", stmt);
-        final var schema = (LeafSchemaNode) stmt;
+        if (!(stmt instanceof LeafSchemaNode schema)) {
+            throw new VerifyException("Unexpected statement " + stmt);
+        }
+
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)
             .setStatus(schema.getStatus())
@@ -143,7 +144,7 @@ public final class LeafStatementSupport
         return new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setConfiguration(stmt.effectiveConfig())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
             .toFlags();
     }

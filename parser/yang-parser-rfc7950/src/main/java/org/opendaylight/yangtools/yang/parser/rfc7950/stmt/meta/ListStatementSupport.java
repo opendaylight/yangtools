@@ -176,7 +176,7 @@ public final class ListStatementSupport
             }
         } else {
             keyArgument = null;
-            if (warnForUnkeyedLists && Boolean.TRUE.equals(stmt.effectiveConfig().asNullable())) {
+            if (warnForUnkeyedLists && Boolean.TRUE.equals(stmt.effectiveConfig())) {
                 // FIXME: This is not easily testable and assumes the context of the calling thread, whereas logging
                 //        might want to collect all messages first, perhaps do analytics on them.
                 //        We should a BuilderGlobalContext-level facility to report warnings in the build.
@@ -221,7 +221,7 @@ public final class ListStatementSupport
         return new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setConfiguration(stmt.effectiveConfig())
             .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
                 .equals(Ordering.USER))
             .toFlags();

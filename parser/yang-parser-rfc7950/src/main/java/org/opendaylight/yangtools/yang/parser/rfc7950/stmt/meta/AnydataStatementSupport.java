@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -87,8 +86,10 @@ public final class AnydataStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final AnydataEffectiveStatement stmt) {
-        verify(stmt instanceof AnydataSchemaNode, "Unexpected statement %s", stmt);
-        final var schema = (AnydataSchemaNode) stmt;
+        if (!(stmt instanceof AnydataSchemaNode schema)) {
+            throw new VerifyException("Unexpected statement " + stmt);
+        }
+
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)
             .setStatus(schema.getStatus())
@@ -102,7 +103,7 @@ public final class AnydataStatementSupport
         return new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setConfiguration(stmt.effectiveConfig())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
             .toFlags();
     }

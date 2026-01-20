@@ -13,7 +13,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ForwardingObject;
 import java.util.Map;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -57,7 +56,7 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public @NonNull QName moduleName() {
+    public QName moduleName() {
         return delegate.moduleName();
     }
 
@@ -67,7 +66,7 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public EffectiveConfig effectiveConfig() {
+    public Boolean effectiveConfig() {
         return delegate.effectiveConfig();
     }
 

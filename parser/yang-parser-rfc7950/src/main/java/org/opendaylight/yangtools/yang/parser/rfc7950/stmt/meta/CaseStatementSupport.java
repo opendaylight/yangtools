@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -139,8 +138,10 @@ public final class CaseStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final CaseEffectiveStatement stmt) {
-        verify(stmt instanceof CaseSchemaNode, "Unexpected statement %s", stmt);
-        final var schema = (CaseSchemaNode) stmt;
+        if (!(stmt instanceof CaseSchemaNode schema)) {
+            throw new VerifyException("Unexpected statement " + stmt);
+        }
+
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)
             .setStatus(schema.getStatus())
@@ -149,24 +150,28 @@ public final class CaseStatementSupport
     }
 
     private static int computeFlags(final Current<?, ?> stmt,
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+            final List<? extends EffectiveStatement<?, ?>> substatements) {
+        // FIXME: is this dance even necessary?
+        final var effectiveConfig = stmt.effectiveConfig();
+        final Boolean configuration;
+        if (effectiveConfig == null) {
+            configuration = stmt.inStructure() ? null : substatementEffectiveConfig(substatements);
+        } else if (effectiveConfig) {
+            final var sub = substatementEffectiveConfig(substatements);
+            configuration = sub != null ? sub : Boolean.TRUE;
+        } else {
+            configuration = Boolean.FALSE;
+        }
+
         return new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .setConfiguration(switch (stmt.effectiveConfig()) {
-                case FALSE -> Boolean.FALSE;
-                case IGNORED -> null;
-                case TRUE -> {
-                    final var sub = substatementEffectiveConfig(substatements);
-                    yield sub != null ? sub : Boolean.TRUE;
-                }
-                case UNDETERMINED -> substatementEffectiveConfig(substatements);
-            })
+            .setConfiguration(configuration)
             .toFlags();
     }
 
     private static @Nullable Boolean substatementEffectiveConfig(
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+            final List<? extends EffectiveStatement<?, ?>> substatements) {
         for (var stmt : substatements) {
             if (stmt instanceof DataSchemaNode dataSchemaNode) {
                 final var opt = dataSchemaNode.effectiveConfig();
