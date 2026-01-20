@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "c2a5e4b9_86e211c9",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/meta/ConfigStatementSupport.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-20T05:37:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50bb8c0c_a99b5118",
+      "range": {
+        "startLine": 33,
+        "startChar": 12,
+        "endLine": 33,
+        "endChar": 41
+      },
+      "revId": "24f1d9be97bdef5f665f3c0ef59a7b809c12f781",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "de67ab45_5c646a09",
         "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/meta/RefineStatementSupport.java",
         "patchSetId": 10
