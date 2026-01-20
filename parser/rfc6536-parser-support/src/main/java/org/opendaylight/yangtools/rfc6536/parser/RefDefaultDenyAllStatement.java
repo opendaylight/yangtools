@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
+@NonNullByDefault
 final class RefDefaultDenyAllStatement extends AbstractRefStatement<Empty, DefaultDenyAllStatement>
         implements DefaultDenyAllStatement {
     RefDefaultDenyAllStatement(final DefaultDenyAllStatement delegate, final DeclarationReference ref) {

@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
+@NonNullByDefault
 final class RefAugmentIdentifierStatement extends AbstractRefStatement<Unqualified, AugmentIdentifierStatement>
         implements AugmentIdentifierStatement {
     RefAugmentIdentifierStatement(final AugmentIdentifierStatement delegate, final DeclarationReference ref) {

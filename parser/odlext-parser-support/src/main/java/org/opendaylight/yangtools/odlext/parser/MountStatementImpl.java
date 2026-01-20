@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.odlext.model.api.MountStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 
+@NonNullByDefault
 final class MountStatementImpl extends WithSubstatements implements MountStatement {
     MountStatementImpl(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(substatements);

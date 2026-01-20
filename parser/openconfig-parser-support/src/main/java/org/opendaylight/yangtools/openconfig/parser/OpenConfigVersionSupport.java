@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.openconfig.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -25,10 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class OpenConfigVersionSupport
         extends AbstractStatementSupport<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(OpenConfigStatements.OPENCONFIG_VERSION).build();
+        SubstatementValidator.builder(OpenConfigVersionStatement.DEFINITION).build();
 
     public OpenConfigVersionSupport(final YangParserConfiguration config) {
-        super(OpenConfigStatements.OPENCONFIG_VERSION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(OpenConfigVersionStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

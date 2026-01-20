@@ -7,15 +7,25 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@Beta
+@NonNullByDefault
 public interface OpenConfigVersionStatement extends UnknownStatement<SemVer> {
+    /**
+     * The definition of {@code oc-ext:openconfig-version} statement.
+     *
+     * @since 15.0.0
+     */
+    StatementDefinition DEFINITION = StatementDefinition.attributeArg(
+        QNameModule.of(OpenConfigConstants.MODULE_NAMESPACE), "openconfig-version", "semver",
+        OpenConfigVersionStatement.class, OpenConfigVersionEffectiveStatement.class);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return OpenConfigStatements.OPENCONFIG_VERSION;
+        return DEFINITION;
     }
 }

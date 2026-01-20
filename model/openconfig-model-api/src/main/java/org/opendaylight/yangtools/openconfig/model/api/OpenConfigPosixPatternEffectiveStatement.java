@@ -7,14 +7,20 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective statement corresponding to openconfig's "posix-pattern".
  *
  * @author Martin Bobak
  */
+@NonNullByDefault
 public interface OpenConfigPosixPatternEffectiveStatement
         extends EffectiveStatement<String, OpenConfigPosixPatternStatement> {
-
+    @Override
+    default StatementDefinition statementDefinition() {
+        return OpenConfigPosixPatternStatement.DEFINITION;
+    }
 }

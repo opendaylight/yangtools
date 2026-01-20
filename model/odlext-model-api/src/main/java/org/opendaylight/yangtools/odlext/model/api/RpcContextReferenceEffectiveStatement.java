@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.odlext.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-@Beta
+@NonNullByDefault
 public interface RpcContextReferenceEffectiveStatement
         extends UnknownEffectiveStatement<String, RpcContextReferenceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE;
+        return RpcContextReferenceStatement.DEFINITION;
     }
 }

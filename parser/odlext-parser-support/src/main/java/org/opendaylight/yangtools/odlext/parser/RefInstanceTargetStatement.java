@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.odlext.model.api.InstanceTargetStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
+@NonNullByDefault
 final class RefInstanceTargetStatement extends AbstractRefStatement<String, InstanceTargetStatement>
         implements InstanceTargetStatement {
     RefInstanceTargetStatement(final InstanceTargetStatement delegate, final DeclarationReference ref) {

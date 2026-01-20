@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-@Beta
+@NonNullByDefault
 public interface OpenConfigVersionEffectiveStatement
         extends UnknownEffectiveStatement<SemVer, OpenConfigVersionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return OpenConfigStatements.OPENCONFIG_VERSION;
+        return OpenConfigVersionStatement.DEFINITION;
     }
 }
